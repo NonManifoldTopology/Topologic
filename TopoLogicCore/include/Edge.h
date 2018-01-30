@@ -75,7 +75,6 @@ namespace TopoLogicCore
 		virtual TopoDS_Shape* GetOcctShape() const { return m_pOcctEdge; }
 
 	protected:
-
 		/// <summary>
 		/// The underlying OCCT edge.
 		/// </summary>

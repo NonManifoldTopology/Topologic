@@ -119,7 +119,5 @@ namespace TopoLogic
 	protected:
 		Topology();
 		virtual ~Topology();
-
-		TopoLogicCore::Topology* m_pCoreTopology;
 	};
 }

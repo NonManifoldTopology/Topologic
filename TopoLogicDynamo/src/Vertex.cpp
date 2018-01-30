@@ -1,4 +1,5 @@
 #include <Vertex.h>
+#include <Edge.h>
 
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRep_Tool.hxx>
@@ -22,14 +23,38 @@ namespace TopoLogic
 		return pDictionary;
 	}
 
-	Dictionary<String^, Object^>^ Vertex::Edges(Vertex ^ topoLogicVertex)
+	Dictionary<String^, Object^>^ Vertex::Edges(Vertex^ topoLogicVertex)
 	{
-		throw gcnew System::NotImplementedException();
-		// TODO: insert return statement here
+		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
+		try {
+			std::list<TopoLogicCore::Edge*> coreEdges;
+			topoLogicVertex->m_pCoreVertex->Edges(coreEdges);
+
+			List<Edge^>^ pEdges = gcnew List<Edge^>();
+			List<Object^>^ pDynamoCurves = gcnew List<Object^>();
+			for (std::list<TopoLogicCore::Edge*>::iterator coreEdgeIterator = coreEdges.begin();
+				coreEdgeIterator != coreEdges.end();
+				coreEdgeIterator++)
+			{
+				TopoLogicCore::Edge* pCoreEdge = *coreEdgeIterator;
+				Edge^ pEdge = gcnew Edge(pCoreEdge);
+				pEdges->Add(pEdge);
+				pDynamoCurves->Add(pEdge->Geometry);
+			}
+
+			pDictionary->Add("TopoLogic Edges", pEdges);
+			pDictionary->Add("Curves", pDynamoCurves);
+		}
+		catch (ArgumentNullException^)
+		{
+			throw gcnew ArgumentNullException("point");
+		}
+		return pDictionary;
 	}
 
 	Vertex::Vertex(Autodesk::DesignScript::Geometry::Point ^ pDynamoPoint)
-		: m_pCoreVertex(TopoLogicCore::Vertex::ByPoint(new Geom_CartesianPoint(gp_Pnt(pDynamoPoint->X, pDynamoPoint->Y, pDynamoPoint->Z))))
+		: Topology()
+		, m_pCoreVertex(TopoLogicCore::Vertex::ByPoint(new Geom_CartesianPoint(gp_Pnt(pDynamoPoint->X, pDynamoPoint->Y, pDynamoPoint->Z))))
 	{
 
 	}

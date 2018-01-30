@@ -37,6 +37,12 @@ namespace TopoLogic
 		throw gcnew System::NotImplementedException();
 		// TODO: insert return statement here
 	}
+	Edge::Edge(TopoLogicCore::Edge * const kpCoreEdge)
+		: Topology()
+		, m_pCoreEdge(kpCoreEdge)
+	{
+
+	}
 	Edge::Edge()
 	{
 		throw gcnew System::NotImplementedException();

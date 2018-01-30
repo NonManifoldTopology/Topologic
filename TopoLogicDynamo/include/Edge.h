@@ -106,6 +106,8 @@ namespace TopoLogic {
 			virtual Object^ get() override;
 		}
 
+	public protected:
+		Edge(TopoLogicCore::Edge* const kpCoreEdge);
 	protected:
 		/// <summary>
 		/// 

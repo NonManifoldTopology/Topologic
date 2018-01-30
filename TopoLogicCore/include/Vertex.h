@@ -39,7 +39,7 @@ namespace TopoLogicCore
 		/// Returns the list of edges of which this vertex is a constituent member.
 		/// </summary>
 		/// <param name="rEdges">The edges containing this vertex as a constituent member</param>
-		void Edges(std::list<Edge*>& rEdges);
+		void TOPOLOGIC_API Edges(std::list<Edge*>& rEdges);
 
 		/// <summary>
 		/// Return the corresponding point of this vertex. The output list only contains one vertex.
@@ -55,7 +55,6 @@ namespace TopoLogicCore
 		virtual TopoDS_Shape* GetOcctShape() const { return m_pOcctVertex; }
 
 	protected:
-
 		/// <summary>
 		/// The underlying OCCT vertex.
 		/// </summary>
