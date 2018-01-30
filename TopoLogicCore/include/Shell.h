@@ -1,10 +1,10 @@
 #pragma once
 
-#include <Topology.h>
+#include "Topology.h"
 
 #include <list>
 
-class TopoDS_Shell;
+#include <TopoDS_Shell.hxx>
 
 namespace TopoLogicCore
 {
@@ -22,37 +22,40 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkShell"></param>
-		/// <returns></returns>
-		static Cell* Cell(Shell const * const kpkShell);
+		/// <param name="kpOcctShell"></param>
+		Shell(TopoDS_Shell * const kpOcctShell);
+
+		virtual ~Shell();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkShell"></param>
+		/// <returns></returns>
+		Cell* Cell() const;
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="rEdges"></param>
-		static void Edges(Shell const * const kpkShell, std::list<Edge*>& rEdges);
+		void Edges(std::list<Edge*>& rEdges) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkShell"></param>
 		/// <param name="rFaces"></param>
-		static void Faces(Shell const * const kpkShell, std::list<Face*>& rFaces);
+		void Faces(std::list<Face*>& rFaces) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkShell"></param>
 		/// <returns></returns>
-		static bool IsClosed(Shell const * const kpkShell);
+		bool IsClosed() const;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkShell"></param>
 		/// <param name="rVertices"></param>
-		static void Vertices(Shell const * const kpkShell, std::list<Vertex*>& rVertices);
+		void Vertices(std::list<Vertex*>& rVertices) const;
 
 		/// <summary>
 		/// 
@@ -76,14 +79,12 @@ namespace TopoLogicCore
 		/// <returns></returns>
 		static Shell* ByVerticesFaceIndices(const std::list<Vertex*>& rkVertices, const std::list<int>& rkFaceIndices);
 
-	protected:
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpOcctShell"></param>
-		Shell(TopoDS_Shell * const kpOcctShell);
-		virtual ~Shell();
+		virtual TopoDS_Shape* GetOcctShape() const { return m_pOcctShell; }
 
+	protected:
 		/// <summary>
 		/// The underlying OCCT shell.
 		/// </summary>

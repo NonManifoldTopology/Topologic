@@ -2,17 +2,17 @@
 
 namespace TopoLogicCore
 {
-	void Wire::Edges(Wire const * const kpkWire, std::list<Edge*>& rEdges)
+	void Wire::Edges(std::list<Edge*>& rEdges) const
 	{
 	}
-	void Wire::Faces(Wire const * const kpkWire, std::list<Face*>& rFaces)
+	void Wire::Faces(std::list<Face*>& rFaces) const
 	{
 	}
-	bool Wire::IsClosed(Wire const * const kpkWire)
+	bool Wire::IsClosed() const
 	{
 		return false;
 	}
-	void Wire::Vertices(Wire const * const kpkWire, std::list<Vertex*>& rVertices)
+	void Wire::Vertices(std::list<Vertex*>& rVertices) const
 	{
 	}
 	Wire * Wire::ByEdges(const std::list<Edge*>& rkEdges)

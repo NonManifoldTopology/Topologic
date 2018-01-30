@@ -1,10 +1,10 @@
 #pragma once
 
-#include <Topology.h>
+#include "Topology.h"
 
 #include <list>
 
-class TopoDS_CompSolid;
+#include <TopoDS_CompSolid.hxx>
 
 namespace TopoLogicCore
 {
@@ -19,23 +19,28 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkCellComplex"></param>
-		/// <returns></returns>
-		static Cell* BoundingCell(CellComplex const * const kpkCellComplex);
+		/// <param name="kpOcctCompSolid"></param>
+		CellComplex(TopoDS_CompSolid * const kpOcctCompSolid);
+
+		virtual ~CellComplex();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkCellComplex"></param>
+		/// <returns></returns>
+		Cell* BoundingCell() const;
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="rCells"></param>
-		static void Cells(CellComplex const * const kpkCellComplex, std::list<Cell*>& rCells);
+		void Cells(std::list<Cell*>& rCells) const;
 		
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkCellComplex"></param>
 		/// <returns></returns>
-		static bool IsClosed(CellComplex const * const kpkCellComplex);
+		bool IsClosed() const;
 
 		/// <summary>
 		/// 
@@ -44,14 +49,13 @@ namespace TopoLogicCore
 		/// <returns></returns>
 		static CellComplex* ByCells(const std::list<Cell*>& rkCells);
 
-	protected:
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpOcctCompSolid"></param>
-		CellComplex(TopoDS_CompSolid * const kpOcctCompSolid);
-		virtual ~CellComplex();
+		virtual TopoDS_Shape* GetOcctShape() const { return m_pOcctCompSolid; }
 
+
+	protected:
 		/// <summary>
 		/// The underlying OCCT cell complex.
 		/// </summary>

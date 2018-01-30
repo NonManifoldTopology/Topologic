@@ -1,10 +1,10 @@
 #pragma once
 
-#include <Topology.h>
+#include "Topology.h"
 
 #include <list>
 
-class TopoDS_Wire;
+#include <TopoDS_Wire.hxx>
 
 namespace TopoLogicCore
 {
@@ -15,34 +15,37 @@ namespace TopoLogicCore
 	class Wire : Topology
 	{
 	public:
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpOcctWire"></param>
+		Wire(TopoDS_Wire * const kpOcctWire);
+
+		virtual ~Wire();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkWire"></param>
 		/// <param name="rEdges"></param>
-		static void Edges(Wire const * const kpkWire, std::list<Edge*>& rEdges);
+		void Edges(std::list<Edge*>& rEdges) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkWire"></param>
 		/// <param name="rFaces"></param>
-		static void Faces(Wire const * const kpkWire, std::list<Face*>& rFaces);
+		void Faces(std::list<Face*>& rFaces) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkWire"></param>
 		/// <returns></returns>
-		static bool IsClosed(Wire const * const kpkWire);
+		bool IsClosed() const;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkWire"></param>
 		/// <param name="rVertices"></param>
-		static void Vertices(Wire const * const kpkWire, std::list<Vertex*>& rVertices);
+		void Vertices(std::list<Vertex*>& rVertices) const;
 
 		/// <summary>
 		/// 
@@ -58,14 +61,12 @@ namespace TopoLogicCore
 		/// <returns></returns>
 		static Wire* ByPolyCurve(TopoDS_Wire const * const kpkWire);
 
-	protected:
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpOcctWire"></param>
-		Wire(TopoDS_Wire * const kpOcctWire);
-		virtual ~Wire();
+		virtual TopoDS_Shape* GetOcctShape() const { return m_pOcctWire; }
 
+	protected:
 		/// <summary>
 		/// The underlying OCCT wire.
 		/// </summary>

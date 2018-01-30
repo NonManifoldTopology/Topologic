@@ -1,13 +1,13 @@
 #pragma once
 
-#include <Topology.h>
+#include "Topology.h"
 
 #include <list>
 
 #include <Standard_Handle.hxx>
+#include <TopoDS_Face.hxx>
 
 class Geom_Surface;
-class TopoDS_Face;
 
 namespace TopoLogicCore
 {
@@ -26,65 +26,65 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkFace"></param>
-		/// <param name="rFaces"></param>
-		static void AdjacentFaces(Face const * const kpkFace, std::list<Face*>& rFaces);
+		/// <param name="kpOcctFace"></param>
+		Face(TopoDS_Face * const kpOcctFace);
+
+		virtual ~Face();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkFace"></param>
 		/// <param name="rFaces"></param>
-		static void Apertures(Face const * const kpkFace, std::list<Face*>& rFaces);
+		void AdjacentFaces(std::list<Face*>& rFaces) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkFace"></param>
+		/// <param name="rFaces"></param>
+		void Apertures(std::list<Face*>& rFaces) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="rCells"></param>
-		static void Cells(Face const * const kpkFace, std::list<Cell*>& rCells);
+		void Cells(std::list<Cell*>& rCells) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkFace"></param>
 		/// <param name="rEdges"></param>
-		static void Edges(Face const * const kpkFace, std::list<Edge*>& rEdges);
+		void Edges(std::list<Edge*>& rEdges) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkFace"></param>
 		/// <returns></returns>
-		static bool IsApplied(Face const * const kpkFace);
+		bool IsApplied() const;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkFace"></param>
 		/// <param name="rShells"></param>
-		static void Shells(Face const * const kpkFace, std::list<Shell*>& rShells);
+		void Shells(std::list<Shell*>& rShells) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkFace"></param>
 		/// <param name="rVertices"></param>
-		static void Vertices(Face const * const kpkFace, std::list<Vertex*>& rVertices);
+		void Vertices(std::list<Vertex*>& rVertices) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkFace"></param>
 		/// <param name="rWires"></param>
-		static void Wires(Face const * const kpkFace, std::list<Wire*>& rWires);
+		void Wires(std::list<Wire*>& rWires) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkApertures"></param>
 		/// <returns></returns>
-		static bool ApplyApertures(const std::list<Face*>& rkApertures);
+		bool ApplyApertures(const std::list<Face*>& rkApertures) const;
 
 		/// <summary>
 		/// 
@@ -110,23 +110,23 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkFace1"></param>
-		/// <param name="kpkFace2"></param>
+		/// <param name="kpkAnotherFace"></param>
 		/// <param name="rEdges"></param>
-		static void SharedEdges(Face const * const kpkFace1, Face const * const kpkFace2, std::list<Edge*>& rEdges);
+		void SharedEdges(Face const * const kpkAnotherFace, std::list<Edge*>& rEdges) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkFace1"></param>
-		/// <param name="kpkFace2"></param>
+		/// <param name="kpkAnotherFace"></param>
 		/// <param name="rVertices"></param>
-		static void SharedVertices(Face const * const kpkFace1, Face const * const kpkFace2, std::list<Vertex*>& rVertices);
+		void SharedVertices(Face const * const kpkAnotherFace, std::list<Vertex*>& rVertices) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		virtual TopoDS_Shape* GetOcctShape() const { return m_pOcctFace; }
 
 	protected:
-		Face(TopoDS_Face * const kpOcctFace);
-		virtual ~Face();
-
 		/// <summary>
 		/// The underlying OCCT face.
 		/// </summary>

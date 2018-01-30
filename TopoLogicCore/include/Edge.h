@@ -1,13 +1,12 @@
 #pragma once
 
-#include <Topology.h>
+#include "Topology.h"
 
 #include <list>
 
 #include <Standard_Handle.hxx>
 #include <Geom_Curve.hxx>
-
-class TopoDS_Edge;
+#include <TopoDS_Edge.hxx>
 
 namespace TopoLogicCore
 {
@@ -20,20 +19,28 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
-		static Vertex* StartVertex(Edge const * const kpkEdge);
+		/// <param name="kpOcctEdge"></param>
+		Edge(TopoDS_Edge * const kpOcctEdge);
+
+		virtual ~Edge();
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		static Vertex* EndVertex(Edge const * const kpkEdge);
+		Vertex* StartVertex() const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		Vertex* EndVertex() const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rWires"></param>
-		static void Wires(Edge const * const kpkEdge, std::list<Wire*>& rWires);
+		void Wires(std::list<Wire*>& rWires) const;
 
 		/// <summary>
 		/// 
@@ -52,18 +59,22 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkEdge1"></param>
-		/// <param name="kpkEdge2"></param>
+		/// <param name="kpkAnotherEdge"></param>
 		/// <returns></returns>
-		static Vertex* SharedVertex(Edge const * const kpkEdge1, Edge const * const kpkEdge2);
+		Vertex* SharedVertex(Edge const * const kpkAnotherEdge) const;
 
-	protected:
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpOcctEdge"></param>
-		Edge(TopoDS_Edge * const kpOcctEdge);
-		virtual ~Edge();
+		/// <param name="rOcctGeometries"></param>
+		virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		virtual TopoDS_Shape* GetOcctShape() const { return m_pOcctEdge; }
+
+	protected:
 
 		/// <summary>
 		/// The underlying OCCT edge.

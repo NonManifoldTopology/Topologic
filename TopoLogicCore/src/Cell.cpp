@@ -2,23 +2,23 @@
 
 namespace TopoLogicCore
 {
-	void Cell::AdjacentCells(Cell const * const kpkCell, std::list<Cell*>& rcells)
+	void Cell::AdjacentCells(std::list<Cell*>& rcells) const
 	{
 	}
-	CellComplex * Cell::CellComplex(Cell const * const kpkCell)
+	CellComplex * Cell::CellComplex() const
 	{
 		return nullptr;
 	}
-	void Cell::Edges(Cell const * const kpkCell, std::list<Edge*>& rEdges)
+	void Cell::Edges(std::list<Edge*>& rEdges) const
 	{
 	}
-	void Cell::Faces(Cell const * const kpkCell, std::list<Face*>& rFaces)
+	void Cell::Faces(std::list<Face*>& rFaces) const
 	{
 	}
-	void Cell::Vertices(Cell const * const kpkCell, std::list<Vertex*>& rVertices)
+	void Cell::Vertices(std::list<Vertex*>& rVertices) const
 	{
 	}
-	void Cell::Wires(Cell const * const kpkCell, std::list<Wire*>& rWires)
+	void Cell::Wires(std::list<Wire*>& rWires) const
 	{
 	}
 	Cell * Cell::BySolid(TopoDS_Solid const * const kpkOcctCell)
@@ -37,13 +37,13 @@ namespace TopoLogicCore
 	{
 		return nullptr;
 	}
-	void Cell::SharedEdges(Cell const * const kpkCell1, Cell const * const kpkCell2, std::list<Edge*>& rEdges)
+	void Cell::SharedEdges(Cell const * const kpkAnotherCell, std::list<Edge*>& rEdges) const
 	{
 	}
-	void Cell::SharedFaces(Cell const * const kpkCell1, Cell const * const kpkCell2, std::list<Face*>& rFaces)
+	void Cell::SharedFaces(Cell const * const kpkAnotherCell, std::list<Face*>& rFaces) const
 	{
 	}
-	void Cell::SharedVertices(Cell const * const kpkCell1, Cell const * const kpkCell2, std::list<Vertex*>& rVertices)
+	void Cell::SharedVertices(Cell const * const kpkAnotherCell, std::list<Vertex*>& rVertices) const
 	{
 	}
 	Cell::Cell(TopoDS_Solid * const kpOcctSolid)

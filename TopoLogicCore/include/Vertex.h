@@ -1,11 +1,12 @@
 #pragma once
 
-#include <Topology.h>
+#include "Topology.h"
+#include "Utilities.h"
 
 #include <Standard_Handle.hxx>
 #include <Geom_Geometry.hxx>
+#include <TopoDS_Vertex.hxx>
 
-class TopoDS_Vertex;
 class Geom_Point;
 class gp_Pnt;
 
@@ -14,31 +15,11 @@ namespace TopoLogicCore
 	class Edge;
 
 	/// <summary>
-	/// 
+	/// The representation of a topological vertex. This class wraps OCCT's TopoDS_Vertex.
 	/// </summary>
 	class Vertex : Topology
 	{
 	public:
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="rkPoint"></param>
-		/// <returns></returns>
-		static Vertex* ByPoint(Handle(Geom_Point) pOcctPoint);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="rEdges"></param>
-		void Edges(std::list<Edge*>& rEdges);
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const;
-
-	protected:
 		/// <summary>
 		/// Creates a vertex by an OCCT vertex.
 		/// </summary>
@@ -46,6 +27,34 @@ namespace TopoLogicCore
 		Vertex(TopoDS_Vertex * const kpOcctVertex);
 
 		virtual ~Vertex();
+
+		/// <summary>
+		/// Creates a vertex by a point.
+		/// </summary>
+		/// <param name="pOcctPoint">An OCCT point</param>
+		/// <returns>The created TopoLogic vertex.</returns>
+		static TOPOLOGIC_API Vertex* ByPoint(Handle(Geom_Point) pOcctPoint);
+
+		/// <summary>
+		/// Returns the list of edges of which this vertex is a constituent member.
+		/// </summary>
+		/// <param name="rEdges">The edges containing this vertex as a constituent member</param>
+		void Edges(std::list<Edge*>& rEdges);
+
+		/// <summary>
+		/// Return the corresponding point of this vertex. The output list only contains one vertex.
+		/// </summary>
+		/// <exception cref="std::exception">Null OCCT vertex</exception>
+		/// <param name="rOcctGeometries">The output parameter, containing only one point corresponding to this vertex.</param>
+		virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const;
+
+		/// <summary>
+		/// Returns the underlying OCCT vertex.
+		/// </summary>
+		/// <returns>The underlying OCCT vertex</returns>
+		virtual TopoDS_Shape* GetOcctShape() const { return m_pOcctVertex; }
+
+	protected:
 
 		/// <summary>
 		/// The underlying OCCT vertex.

@@ -4,26 +4,24 @@
     <ClInclude Include="include\Topology.h" />
     <ClInclude Include="include\Attribute.h" />
     <ClInclude Include="include\Vertex.h" />
-    <ClInclude Include="include\Edge.h" />
     <ClInclude Include="include\Cell.h" />
     <ClInclude Include="include\CellComplex.h" />
     <ClInclude Include="include\Cluster.h" />
+    <ClInclude Include="include\Edge.h" />
     <ClInclude Include="include\Face.h" />
     <ClInclude Include="include\Shell.h" />
     <ClInclude Include="include\Wire.h" />
-    <ClInclude Include="include\GlobalCluster.h" />
-    <ClInclude Include="include\Utilities.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
+    <ClCompile Include="src\Attribute.cpp" />
     <ClCompile Include="src\Vertex.cpp" />
-    <ClCompile Include="src\Edge.cpp" />
     <ClCompile Include="src\Cell.cpp" />
     <ClCompile Include="src\CellComplex.cpp" />
     <ClCompile Include="src\Cluster.cpp" />
+    <ClCompile Include="src\Edge.cpp" />
     <ClCompile Include="src\Face.cpp" />
     <ClCompile Include="src\Shell.cpp" />
     <ClCompile Include="src\Wire.cpp" />
-    <ClCompile Include="src\GlobalCluster.cpp" />
   </ItemGroup>
 </Project>

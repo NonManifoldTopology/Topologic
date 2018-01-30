@@ -2,14 +2,14 @@
 
 namespace TopoLogicCore
 {
-	Cell * CellComplex::BoundingCell(CellComplex const * const kpkCellComplex)
+	Cell * CellComplex::BoundingCell() const
 	{
 		return nullptr;
 	}
-	void CellComplex::Cells(CellComplex const * const kpkCellComplex, std::list<Cell*>& rCells)
+	void CellComplex::Cells(std::list<Cell*>& rCells) const
 	{
 	}
-	bool CellComplex::IsClosed(CellComplex const * const kpkCellComplex)
+	bool CellComplex::IsClosed() const
 	{
 		return false;
 	}

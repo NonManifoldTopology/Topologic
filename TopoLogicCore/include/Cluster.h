@@ -1,10 +1,10 @@
 #pragma once
 
-#include <Topology.h>
+#include "Topology.h"
 
 #include <list>
 
-class TopoDS_Compound;
+#include <TopoDS_Compound.hxx>
 
 namespace TopoLogicCore
 {
@@ -14,18 +14,24 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="kpOcctCompound"></param>
+		Cluster(TopoDS_Compound * const kpOcctCompound);
+
+		virtual ~Cluster();
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="rkTopologies"></param>
 		/// <returns></returns>
 		static Cluster* ByTopology(const std::list<Topology*>& rkTopologies);
 
-	protected:
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpOcctCompound"></param>
-		Cluster(TopoDS_Compound * const kpOcctCompound);
-		virtual ~Cluster();
+		virtual TopoDS_Shape* GetOcctShape() const { return m_pOcctCompound; }
 
+	protected:
 		/// <summary>
 		/// The underlying OCCT compound.
 		/// </summary>

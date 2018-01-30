@@ -2,32 +2,32 @@
 
 namespace TopoLogicCore
 {
-	void Face::AdjacentFaces(Face const * const kpkFace, std::list<Face*>& rFaces)
+	void Face::AdjacentFaces(std::list<Face*>& rFaces) const
 	{
 	}
-	void Face::Apertures(Face const * const kpkFace, std::list<Face*>& rFaces)
+	void Face::Apertures(std::list<Face*>& rFaces) const
 	{
 	}
-	void Face::Cells(Face const * const kpkFace, std::list<Cell*>& rCells)
+	void Face::Cells(std::list<Cell*>& rCells) const
 	{
 	}
-	void Face::Edges(Face const * const kpkFace, std::list<Edge*>& rEdges)
+	void Face::Edges(std::list<Edge*>& rEdges) const
 	{
 	}
-	bool Face::IsApplied(Face const * const kpkFace)
+	bool Face::IsApplied() const
 	{
 		return false;
 	}
-	void Face::Shells(Face const * const kpkFace, std::list<Shell*>& rShells)
+	void Face::Shells(std::list<Shell*>& rShells) const
 	{
 	}
-	void Face::Vertices(Face const * const kpkFace, std::list<Vertex*>& rVertices)
+	void Face::Vertices(std::list<Vertex*>& rVertices) const
 	{
 	}
-	void Face::Wires(Face const * const kpkFace, std::list<Wire*>& rWires)
+	void Face::Wires(std::list<Wire*>& rWires) const
 	{
 	}
-	bool Face::ApplyApertures(const std::list<Face*>& rkApertures)
+	bool Face::ApplyApertures(const std::list<Face*>& rkApertures) const
 	{
 		return false;
 	}
@@ -43,10 +43,10 @@ namespace TopoLogicCore
 	{
 		return nullptr;
 	}
-	void Face::SharedEdges(Face const * const kpkFace1, Face const * const kpkFace2, std::list<Edge*>& rEdges)
+	void Face::SharedEdges(Face const * const kpkAnotherFace, std::list<Edge*>& rEdges) const
 	{
 	}
-	void Face::SharedVertices(Face const * const kpkFace1, Face const * const kpkFace2, std::list<Vertex*>& rVertices)
+	void Face::SharedVertices(Face const * const kpkAnotherFace, std::list<Vertex*>& rVertices) const
 	{
 	}
 	Face::Face(TopoDS_Face * const kpOcctFace)

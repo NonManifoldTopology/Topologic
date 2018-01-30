@@ -1,10 +1,10 @@
 #pragma once
 
-#include <Topology.h>
+#include "Topology.h"
 
 #include <list>
 
-class TopoDS_Solid;
+#include <TopoDS_Solid.hxx>
 
 namespace TopoLogicCore
 {
@@ -21,44 +21,45 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkCell"></param>
+		/// <param name="kpOcctCell"></param>
+		Cell(TopoDS_Solid * const kpOcctSolid);
+		virtual ~Cell();
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="rcells"></param>
-		static void AdjacentCells(Cell const * const kpkCell, std::list<Cell*>& rcells);
+		void AdjacentCells(std::list<Cell*>& rcells) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkCell"></param>
 		/// <returns></returns>
-		static CellComplex* CellComplex(Cell const * const kpkCell);
+		CellComplex* CellComplex() const;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkCell"></param>
 		/// <param name="rEdges"></param>
-		static void Edges(Cell const * const kpkCell, std::list<Edge*>& rEdges);
+		void Edges(std::list<Edge*>& rEdges) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkCell"></param>
 		/// <param name="rFaces"></param>
-		static void Faces(Cell const * const kpkCell, std::list<Face*>& rFaces);
+		void Faces(std::list<Face*>& rFaces) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkCell"></param>
 		/// <param name="rVertices"></param>
-		static void Vertices(Cell const * const kpkCell, std::list<Vertex*>& rVertices);
+		void Vertices(std::list<Vertex*>& rVertices) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkCell"></param>
 		/// <param name="rWires"></param>
-		static void Wires(Cell const * const kpkCell, std::list<Wire*>& rWires);
+		void Wires(std::list<Wire*>& rWires) const;
 
 		/// <summary>
 		/// 
@@ -92,35 +93,30 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkCell1"></param>
-		/// <param name="kpkCell12"></param>
+		/// <param name="kpkAnotherCell"></param>
 		/// <param name="rEdges"></param>
-		static void SharedEdges(Cell const * const kpkCell1, Cell const * const kpkCell12, std::list<Edge*>& rEdges);
+		void SharedEdges(Cell const * const kpkAnotherCell, std::list<Edge*>& rEdges) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkCell1"></param>
-		/// <param name="kpkCell12"></param>
+		/// <param name="kpkAnotherCell"></param>
 		/// <param name="rFaces"></param>
-		static void SharedFaces(Cell const * const kpkCell1, Cell const * const kpkCell12, std::list<Face*>& rFaces);
+		void SharedFaces(Cell const * const kpkAnotherCell, std::list<Face*>& rFaces) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkCell1"></param>
-		/// <param name="kpkCell12"></param>
+		/// <param name="kpkAnotherCell"></param>
 		/// <param name="rVertices"></param>
-		static void SharedVertices(Cell const * const kpkCell1, Cell const * const kpkCell2, std::list<Vertex*>& rVertices);
+		void SharedVertices(Cell const * const kpkAnotherCell, std::list<Vertex*>& rVertices) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		virtual TopoDS_Shape* GetOcctShape() const { return m_pOcctSolid; }
 
 	protected:
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="kpOcctCell"></param>
-		Cell(TopoDS_Solid * const kpOcctSolid);
-		virtual ~Cell();
-
 		/// <summary>
 		/// The underlying OCCT cell.
 		/// </summary>

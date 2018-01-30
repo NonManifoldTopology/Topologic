@@ -1,13 +1,14 @@
 #pragma once
 
-#include <Attribute.h>
-#include <Utilities.h>
+#include "Attribute.h"
 
 #include <Standard_Handle.hxx>
 #include <Geom_Geometry.hxx>
 
 #include <list>
 #include <map>
+
+class TopoDS_Shape;
 
 namespace TopoLogicCore
 {
@@ -21,6 +22,8 @@ namespace TopoLogicCore
 		typedef std::map<std::string, Attribute*>::iterator AttributeMapIterator;
 
 	public:
+		virtual ~Topology();
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -80,7 +83,7 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
+		/// <param name="rOcctGeometries"></param>
 		virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const = 0;
 
 		/// <summary>
@@ -128,9 +131,14 @@ namespace TopoLogicCore
 			return m_dimensionality; 
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual TopoDS_Shape* GetOcctShape() const = 0;
+
 	protected:
 		Topology(const int kDimensionality);
-		virtual ~Topology();
 
 		AttributeMap m_attributeMap;
 		std::list<Topology*> m_members;

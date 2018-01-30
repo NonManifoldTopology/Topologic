@@ -2,15 +2,15 @@
 
 namespace TopoLogicCore
 {
-	Vertex * Edge::StartVertex(Edge const * const kpkEdge)
+	Vertex * Edge::StartVertex() const
 	{
 		return nullptr;
 	}
-	Vertex * Edge::EndVertex(Edge const * const kpkEdge)
+	Vertex * Edge::EndVertex() const
 	{
 		return nullptr;
 	}
-	void Edge::Wires(Edge const * const kpkEdge, std::list<Wire*>& rWires)
+	void Edge::Wires(std::list<Wire*>& rWires) const
 	{
 	}
 	Edge * Edge::ByCurve(Handle(Geom_Curve) pOcctCurve)
@@ -21,10 +21,17 @@ namespace TopoLogicCore
 	{
 		return nullptr;
 	}
-	Vertex * Edge::SharedVertex(Edge const * const kpkEdge1, Edge const * const kpkEdge2)
+	Vertex * Edge::SharedVertex(Edge const * const kpkAnotherEdge) const
 	{
 		return nullptr;
 	}
+
+
+	void Edge::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
+	{
+
+	}
+
 	Edge::Edge(TopoDS_Edge * const kpOcctEdge)
 		: Topology(1)
 		, m_pOcctEdge(kpOcctEdge)

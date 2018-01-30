@@ -2,21 +2,21 @@
 
 namespace TopoLogicCore
 {
-	Cell * Shell::Cell(Shell const * const kpkShell)
+	Cell * Shell::Cell() const
 	{
 		return nullptr;
 	}
-	void Shell::Edges(Shell const * const kpkShell, std::list<Edge*>& rEdges)
+	void Shell::Edges(std::list<Edge*>& rEdges) const
 	{
 	}
-	void Shell::Faces(Shell const * const kpkShell, std::list<Face*>& rFaces)
+	void Shell::Faces(std::list<Face*>& rFaces) const
 	{
 	}
-	bool Shell::IsClosed(Shell const * const kpkShell)
+	bool Shell::IsClosed() const
 	{
 		return false;
 	}
-	void Shell::Vertices(Shell const * const kpkShell, std::list<Vertex*>& rVertices)
+	void Shell::Vertices(std::list<Vertex*>& rVertices) const
 	{
 	}
 	Shell * Shell::ByFaces(const std::list<Face*>& rkFaces)
