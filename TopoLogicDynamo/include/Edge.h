@@ -118,6 +118,10 @@ namespace TopoLogic {
 		/// </summary>
 		Edge(Autodesk::DesignScript::Geometry::Curve^ curve);
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
 		Autodesk::DesignScript::Geometry::Curve^ Curve();
 
 		/// <summary>

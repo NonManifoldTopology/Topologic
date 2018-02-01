@@ -116,7 +116,7 @@ namespace TopoLogic {
 		/// <returns></returns>
 		virtual TopoLogicCore::Topology* GetCoreTopology() override;
 
-		// Utility classes
+		// Utility methods
 
 		/// <summary>
 		/// 

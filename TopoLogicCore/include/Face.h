@@ -149,14 +149,14 @@ namespace TopoLogicCore
 		/// </summary>
 		/// <param name="kpkAnotherFace"></param>
 		/// <param name="rEdges"></param>
-		void SharedEdges(Face const * const kpkAnotherFace, std::list<Edge*>& rEdges) const;
+		void TOPOLOGIC_API SharedEdges(Face const * const kpkAnotherFace, std::list<Edge*>& rEdges) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpkAnotherFace"></param>
 		/// <param name="rVertices"></param>
-		void SharedVertices(Face const * const kpkAnotherFace, std::list<Vertex*>& rVertices) const;
+		void TOPOLOGIC_API SharedVertices(Face const * const kpkAnotherFace, std::list<Vertex*>& rVertices) const;
 
 		/// <summary>
 		/// 
@@ -168,6 +168,12 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		virtual TopoDS_Shape* GetOcctShape() const { return m_pOcctFace; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		TOPOLOGIC_API Handle(Geom_Surface) Surface() const;
 
 	protected:
 		/// <summary>

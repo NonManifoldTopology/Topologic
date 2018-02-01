@@ -5,6 +5,7 @@
 #include <TopoLogicCore/include/Face.h>
 
 namespace TopoLogic {
+	ref class Vertex;
 	ref class Edge;
 	ref class Wire;
 
@@ -165,8 +166,8 @@ namespace TopoLogic {
 		/// <summary>
 		/// Returns the shared edges between two faces. 
 		/// </summary>
-		/// <param name="face1">A face</param>
-		/// <param name="face2">Another face</param>
+		/// <param name="topoLogicFace1">A face</param>
+		/// <param name="topoLogicFace2">Another face</param>
 		/// <returns name="TopoLogic Edges">
 		/// "TopoLogic Edges": the shared edges
 		/// </returns>
@@ -174,13 +175,13 @@ namespace TopoLogic {
 		/// "Curves": the Dynamo curves counterpart of the shared edges
 		/// </returns>
 		[MultiReturn(gcnew array<String^> { "TopoLogic Edges", "Curves" })]
-		static Dictionary<String^, Object^>^ SharedEdges(Face^ face1, Face^ face2);
+		static Dictionary<String^, Object^>^ SharedEdges(Face^ topoLogicFace1, Face^ topoLogicFace2);
 
 		/// <summary>
 		/// Returns the shared vertices between two faces. 
 		/// </summary>
-		/// <param name="face1">A face</param>
-		/// <param name="face2">Another face</param>
+		/// <param name="topoLogicFace1">A face</param>
+		/// <param name="topoLogicFace2">Another face</param>
 		/// <returns name="TopoLogic Vertices">
 		/// "TopoLogic Vertices": the shared vertices
 		/// </returns>
@@ -188,7 +189,7 @@ namespace TopoLogic {
 		/// "Points": the Dynamo points counterpart of the shared edges
 		/// </returns>
 		[MultiReturn(gcnew array<String^> { "TopoLogic Vertices", "Points" })]
-		static Dictionary<String^, Object^>^ SharedVertices(Face^ face1, Face^ face2);
+		static Dictionary<String^, Object^>^ SharedVertices(Face^ topoLogicFace1, Face^ topoLogicFace2);
 
 		property Object^ Geometry
 		{
@@ -218,6 +219,17 @@ namespace TopoLogic {
 		/// <param name="pDynamoSurface"></param>
 		Face(Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface);
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		Autodesk::DesignScript::Geometry::Surface^ Surface();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		Autodesk::DesignScript::Geometry::Mesh^ TriangulatedMesh();
 
 		/// <summary>
 		/// 
@@ -225,6 +237,25 @@ namespace TopoLogic {
 		/// <returns></returns>
 		virtual TopoLogicCore::Topology* GetCoreTopology() override;
 
+		// Utility methods
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		List<Vertex^>^ Vertices();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		List<Edge^>^ Edges();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		List<Wire^>^ Wires();
 
 	protected:
 		virtual ~Face();

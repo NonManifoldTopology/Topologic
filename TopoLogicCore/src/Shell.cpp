@@ -1,4 +1,5 @@
 #include <Shell.h>
+#include <GlobalCluster.h>
 
 namespace TopoLogicCore
 {
@@ -34,12 +35,17 @@ namespace TopoLogicCore
 	void Shell::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
 	{
 	}
+
 	Shell::Shell(TopoDS_Shell * const kpOcctShell)
 		: Topology(2)
 		, m_pOcctShell(kpOcctShell)
 	{
+		GlobalCluster::GetInstance().Add(this);
 	}
+
 	Shell::~Shell()
 	{
+		GlobalCluster::GetInstance().Remove(this);
+		delete m_pOcctShell;
 	}
 }

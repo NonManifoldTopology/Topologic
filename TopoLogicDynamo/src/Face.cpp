@@ -6,11 +6,29 @@
 #include <Cell.h>
 
 #include <BRepBuilderAPI_MakeFace.hxx>
+#include <BRepMesh_IncrementalMesh.hxx>
+#include <GeomAdaptor_Surface.hxx>
+#include <Geom_BezierSurface.hxx>
+#include <Geom_BSplineSurface.hxx>
+#include <Geom_RectangularTrimmedSurface.hxx>
+#include <Geom_ConicalSurface.hxx>
+#include <Geom_CylindricalSurface.hxx>
+#include <Geom_Plane.hxx>
+#include <Geom_SphericalSurface.hxx>
+#include <Geom_ToroidalSurface.hxx>
+#include <Geom_OffsetSurface.hxx>
+#include <Geom_SurfaceOfLinearExtrusion.hxx>
+#include <Geom_SurfaceOfRevolution.hxx>
+#include <GeomPlate_Surface.hxx>
+#include <ShapeAnalysis.hxx>
+#include <ShapeFix_Edge.hxx>
 #include <TColgp_Array2OfPnt.hxx>
 #include <TColStd_Array2OfReal.hxx>
+#include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
 
 #include <algorithm>
+#include <assert.h>
 
 namespace TopoLogic
 {
@@ -70,22 +88,12 @@ namespace TopoLogic
 		return pDictionary;
 	}
 
-	Dictionary<String^, Object^>^ Face::Edges(Face ^ topoLogicFace)
+	Dictionary<String^, Object^>^ Face::Edges(Face^ topoLogicFace)
 	{
-		TopoLogicCore::Face* pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(topoLogicFace->GetCoreTopology());
-		std::list<TopoLogicCore::Edge*> pCoreEdges;
-		pCoreFace->Edges(pCoreEdges);
-
-		List<Edge^>^ pEdges = gcnew List<Edge^>();
+		List<Edge^>^ pEdges = topoLogicFace->Edges();
 		List<System::Object^>^ pDynamoCurves = gcnew List<System::Object^>();
-
-		for (std::list<TopoLogicCore::Edge*>::const_iterator kEdgeIterator = pCoreEdges.begin();
-			kEdgeIterator != pCoreEdges.end();
-			kEdgeIterator++)
+		for each(Edge^ pEdge in pEdges)
 		{
-			TopoLogicCore::Edge* pCoreEdge = *kEdgeIterator;
-			Edge^ pEdge = gcnew Edge(pCoreEdge);
-			pEdges->Add(pEdge);
 			pDynamoCurves->Add(pEdge->Geometry);
 		}
 
@@ -120,22 +128,13 @@ namespace TopoLogic
 		return pDictionary;
 	}
 
-	Dictionary<String^, Object^>^ Face::Vertices(Face ^ topoLogicFace)
+	Dictionary<String^, Object^>^ Face::Vertices(Face^ topoLogicFace)
 	{
-		TopoLogicCore::Face* pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(topoLogicFace->GetCoreTopology());
-		std::list<TopoLogicCore::Vertex*> pCoreVertices;
-		pCoreFace->Vertices(pCoreVertices);
-
-		List<Vertex^>^ pVertices = gcnew List<Vertex^>();
+		List<Vertex^>^ pVertices = topoLogicFace->Vertices();
 		List<System::Object^>^ pDynamoPoints = gcnew List<System::Object^>();
 
-		for (std::list<TopoLogicCore::Vertex*>::const_iterator kVertexIterator = pCoreVertices.begin();
-			kVertexIterator != pCoreVertices.end();
-			kVertexIterator++)
+		for each(Vertex^ pVertex in pVertices)
 		{
-			TopoLogicCore::Vertex* pCoreVertex = *kVertexIterator;
-			Vertex^ pVertex = gcnew Vertex(pCoreVertex);
-			pVertices->Add(pVertex);
 			pDynamoPoints->Add(pVertex->Geometry);
 		}
 
@@ -145,22 +144,12 @@ namespace TopoLogic
 		return pDictionary;
 	}
 
-	Dictionary<String^, Object^>^ Face::Wires(Face ^ topoLogicFace)
+	Dictionary<String^, Object^>^ Face::Wires(Face^ topoLogicFace)
 	{
-		TopoLogicCore::Face* pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(topoLogicFace->GetCoreTopology());
-		std::list<TopoLogicCore::Wire*> pCoreWires;
-		pCoreFace->Wires(pCoreWires);
-
-		List<Wire^>^ pWires = gcnew List<Wire^>();
+		List<Wire^>^ pWires = topoLogicFace->Wires();
 		List<System::Object^>^ pDynamoPolycurves = gcnew List<System::Object^>();
-
-		for (std::list<TopoLogicCore::Wire*>::const_iterator kWireIterator = pCoreWires.begin();
-			kWireIterator != pCoreWires.end();
-			kWireIterator++)
+		for each(Wire^ pWire in pWires)
 		{
-			TopoLogicCore::Wire* pCoreWire = *kWireIterator;
-			Wire^ pWire = gcnew Wire(pCoreWire);
-			pWires->Add(pWire);
 			pDynamoPolycurves->Add(pWire->Geometry);
 		}
 
@@ -199,34 +188,91 @@ namespace TopoLogic
 		return pDictionary;
 	}
 
-	Dictionary<String^, Object^>^ Face::SharedEdges(Face ^ face1, Face ^ face2)
+	Dictionary<String^, Object^>^ Face::SharedEdges(Face^ topoLogicFace1, Face^ topoLogicFace2)
 	{
-		throw gcnew System::NotImplementedException();
-		// TODO: insert return statement here
+		TopoLogicCore::Face* pCoreFace1 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(topoLogicFace1->GetCoreTopology());
+		TopoLogicCore::Face* pCoreFace2 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(topoLogicFace2->GetCoreTopology());
+		std::list<TopoLogicCore::Edge*> pCoreEdges;
+		pCoreFace1->SharedEdges(pCoreFace2, pCoreEdges);
+
+		List<Edge^>^ pSharedEdges = gcnew List<Edge^>();
+		List<System::Object^>^ pDynamoCurves = gcnew List<System::Object^>();
+
+		for (std::list<TopoLogicCore::Edge*>::const_iterator kEdgeIterator = pCoreEdges.begin();
+			kEdgeIterator != pCoreEdges.end();
+			kEdgeIterator++)
+		{
+			TopoLogicCore::Edge* pCoreEdge = *kEdgeIterator;
+			Edge^ pEdge = gcnew Edge(pCoreEdge);
+			pSharedEdges->Add(pEdge);
+			pDynamoCurves->Add(pEdge->Geometry);
+		}
+
+		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
+		pDictionary->Add("TopoLogic Edges", pSharedEdges);
+		pDictionary->Add("Curves", pDynamoCurves);
+		return pDictionary;
 	}
 
-	Dictionary<String^, Object^>^ Face::SharedVertices(Face ^ face1, Face ^ face2)
+	Dictionary<String^, Object^>^ Face::SharedVertices(Face^ topoLogicFace1, Face^ topoLogicFace2)
 	{
-		throw gcnew System::NotImplementedException();
-		// TODO: insert return statement here
+		TopoLogicCore::Face* pCoreFace1 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(topoLogicFace1->GetCoreTopology());
+		TopoLogicCore::Face* pCoreFace2 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(topoLogicFace2->GetCoreTopology());
+		std::list<TopoLogicCore::Vertex*> pCoreVertices;
+		pCoreFace1->SharedVertices(pCoreFace2, pCoreVertices);
+
+		List<Vertex^>^ pSharedVertices = gcnew List<Vertex^>();
+		List<System::Object^>^ pDynamoPoints = gcnew List<System::Object^>();
+
+		for (std::list<TopoLogicCore::Vertex*>::const_iterator kVertexIterator = pCoreVertices.begin();
+			kVertexIterator != pCoreVertices.end();
+			kVertexIterator++)
+		{
+			TopoLogicCore::Vertex* pCoreVertex = *kVertexIterator;
+			Vertex^ pVertex = gcnew Vertex(pCoreVertex);
+			pSharedVertices->Add(pVertex);
+			pDynamoPoints->Add(pVertex->Geometry);
+		}
+
+		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
+		pDictionary->Add("TopoLogic Vertices", pSharedVertices);
+		pDictionary->Add("Points", pDynamoPoints);
+		return pDictionary;
 	}
+
 	bool Face::IsApplied::get()
 	{
 		throw gcnew System::NotImplementedException();
 		// TODO: insert return statement here
 	}
+
 	Object^ Face::Geometry::get()
 	{
-		throw gcnew System::NotImplementedException();
-		// TODO: insert return statement here
+		try {
+			return Surface();
+		}
+		catch (ApplicationException^)
+		{
+			return TriangulatedMesh();
+		}
 	}
-	TopoLogicCore::Topology * Face::GetCoreTopology()
+
+	TopoLogicCore::Topology* Face::GetCoreTopology()
 	{
-		return nullptr;
+		assert(m_pCoreFace != nullptr && "Face::m_pCoreFace is null.");
+		if (m_pCoreFace == nullptr)
+		{
+			throw gcnew Exception("Face::m_pCoreFace is null.");
+		}
+
+		return m_pCoreFace;
 	}
+
 	Face::Face(TopoLogicCore::Face* const kpCoreFace)
+		: Topology()
+		, m_pCoreFace(kpCoreFace)
 	{
-		throw gcnew System::NotImplementedException();
+
 	}
 
 	Face::Face(Wire^ pWire)
@@ -258,6 +304,379 @@ namespace TopoLogic
 		{
 			throw gcnew ArgumentException("The argument is not a valid Dynamo surface.");
 		}
+	}
+
+	Autodesk::DesignScript::Geometry::Surface^ Face::Surface()
+	{
+		TopoLogicCore::Face* pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(GetCoreTopology());
+		Handle(Geom_Surface) pOcctSurface = pCoreFace->Surface();
+
+		Handle(Geom_BezierSurface) pOcctBezierSurface = Handle_Geom_BezierSurface::DownCast(pOcctSurface);
+		if (!pOcctBezierSurface.IsNull())
+		{
+			throw gcnew NotImplementedException("Feature not yet implemented");
+		}
+
+		Handle(Geom_BSplineSurface) pOcctBSplineSurface = Handle_Geom_BSplineSurface::DownCast(pOcctSurface);
+		if (!pOcctBSplineSurface.IsNull())
+		{
+			// Transfer the control points
+			const TColgp_Array2OfPnt& rkOcctControlPoints = pOcctBSplineSurface->Poles();
+			array<array<Autodesk::DesignScript::Geometry::Point^>^>^ pDynamoControlPoints = gcnew array<array<Autodesk::DesignScript::Geometry::Point^>^>(rkOcctControlPoints.ColLength());
+			for (int i = rkOcctControlPoints.LowerRow(); i <= rkOcctControlPoints.UpperRow(); i++)
+			{
+				pDynamoControlPoints[i - rkOcctControlPoints.LowerRow()] = gcnew array<Autodesk::DesignScript::Geometry::Point^>(rkOcctControlPoints.RowLength());
+				for (int j = rkOcctControlPoints.LowerCol(); j <= rkOcctControlPoints.UpperCol(); j++)
+				{
+					const gp_Pnt& rkControlPoint = rkOcctControlPoints.Value(i, j);
+					pDynamoControlPoints[i - rkOcctControlPoints.LowerRow()][j - rkOcctControlPoints.LowerCol()] = Autodesk::DesignScript::Geometry::Point::ByCoordinates(rkControlPoint.X(), rkControlPoint.Y(), rkControlPoint.Z());
+				}
+			}
+
+			// Transfer the control points' weights
+			//const TColStd_Array2OfReal* pkOcctWeights = pOcctBSplineSurface->Weights();
+			TColStd_Array2OfReal* pkOcctWeights = new TColStd_Array2OfReal(rkOcctControlPoints.LowerRow(), rkOcctControlPoints.UpperRow(), rkOcctControlPoints.LowerCol(), pOcctBSplineSurface->NbVPoles());
+			pOcctBSplineSurface->Weights(*pkOcctWeights);
+			array<array<double>^>^ pWeights = gcnew array<array<double>^>(pkOcctWeights->ColLength());
+			assert(pkOcctWeights->Length() == rkOcctControlPoints.Length() && "Weights and control points have different lengths.");
+			for (int i = pkOcctWeights->LowerRow(); i <= pkOcctWeights->UpperRow(); i++)
+			{
+				pWeights[i - pkOcctWeights->LowerRow()] = gcnew array<double>(pkOcctWeights->RowLength());
+				for (int j = pkOcctWeights->LowerCol(); j <= pkOcctWeights->UpperCol(); j++)
+				{
+					pWeights[i - pkOcctWeights->LowerRow()][j - rkOcctControlPoints.LowerCol()] = pkOcctWeights->Value(i, j);
+				}
+			}
+			delete pkOcctWeights;
+
+			// Transfer the U knots. Note the format difference. OCCT has a separate multiplicity list, while Dynamo simply repeats the knots.
+			const TColStd_Array1OfReal& krOcctUKnots = pOcctBSplineSurface->UKnots();
+			List<double>^ pUKnots = gcnew List<double>();
+			for (int i = krOcctUKnots.Lower(); i <= krOcctUKnots.Upper(); i++)
+			{
+				int uMultiplicity = pOcctBSplineSurface->UMultiplicity(i);
+				for (int j = 0; j < uMultiplicity; j++)
+				{
+					pUKnots->Add(krOcctUKnots.Value(i));
+				}
+			}
+
+			// Transfer the V knots. Note the format difference. OCCT has a separate multiplicity list, while Dynamo simply repeats the knots.
+			const TColStd_Array1OfReal& krOcctVKnots = pOcctBSplineSurface->VKnots();
+			List<double>^ pVKnots = gcnew List<double>();
+			for (int i = krOcctVKnots.Lower(); i <= krOcctVKnots.Upper(); i++)
+			{
+				int vMultiplicity = pOcctBSplineSurface->VMultiplicity(i);
+				for (int j = 0; j < vMultiplicity; j++)
+				{
+					pVKnots->Add(krOcctVKnots.Value(i));
+				}
+			}
+
+			// OCCT has arbitrary parameters. Dynamo's parameter ranges between 0 and 1.
+			// Order: First - Start - End - Last
+			TopoDS_Face occtFace = TopoDS::Face(*pCoreFace->GetOcctShape());
+			TopExp_Explorer ex(occtFace, TopAbs_EDGE);
+			for (; ex.More(); ex.Next()) {
+				ShapeFix_Edge occtShapeFix;
+				occtShapeFix.FixAddPCurve(TopoDS::Edge(ex.Current()), occtFace, false);
+			}
+
+			double u0 = 0.0, u1 = 0.0, v0 = 0.0, v1 = 0.0;
+			ShapeAnalysis::GetFaceUVBounds(occtFace, u0, u1, v0, v1);
+
+			GeomAdaptor_Surface occtSurfaceAdaptor(pOcctSurface);
+			double occtFirstUParameter = occtSurfaceAdaptor.FirstUParameter();
+			double occtLastUParameter = occtSurfaceAdaptor.LastUParameter();
+			double occtDeltaUParameter = occtLastUParameter - occtFirstUParameter;
+			if (occtDeltaUParameter < Precision::Confusion())
+				occtDeltaUParameter = Precision::Confusion();
+			double dynamoStartUParameter = (u0 - occtFirstUParameter) / occtDeltaUParameter;
+			if (dynamoStartUParameter < 0.0)
+				dynamoStartUParameter = 0.0;
+			double dynamoEndUParameter = (u1 - occtFirstUParameter) / occtDeltaUParameter;
+			if (dynamoEndUParameter > 1.0)
+				dynamoEndUParameter = 1.0;
+
+			double occtFirstVParameter = occtSurfaceAdaptor.FirstVParameter();
+			double occtLastVParameter = occtSurfaceAdaptor.LastVParameter();
+			double occtDeltaVParameter = occtLastVParameter - occtFirstVParameter;
+			if (occtDeltaVParameter < Precision::Confusion())
+				occtDeltaVParameter = Precision::Confusion();
+			double dynamoStartVParameter = (v0 - occtFirstVParameter) / occtDeltaVParameter;
+			if (dynamoStartVParameter < 0.0)
+				dynamoStartVParameter = 0.0;
+			double dynamoEndVParameter = (v1 - occtFirstVParameter) / occtDeltaVParameter;
+			if (dynamoEndVParameter > 1.0)
+				dynamoEndVParameter = 1.0;
+
+			Autodesk::DesignScript::Geometry::UV^ pDynamoUMinVMin = Autodesk::DesignScript::Geometry::UV::ByCoordinates(dynamoStartUParameter, dynamoStartVParameter);
+			Autodesk::DesignScript::Geometry::UV^ pDynamoUMinVMax = Autodesk::DesignScript::Geometry::UV::ByCoordinates(dynamoStartUParameter, dynamoEndVParameter);
+			Autodesk::DesignScript::Geometry::UV^ pDynamoUMaxVMin = Autodesk::DesignScript::Geometry::UV::ByCoordinates(dynamoEndUParameter, dynamoStartVParameter);
+			Autodesk::DesignScript::Geometry::UV^ pDynamoUMaxVMax = Autodesk::DesignScript::Geometry::UV::ByCoordinates(dynamoEndUParameter, dynamoEndVParameter);
+
+			// Create an untrimmed Dynamo surface
+			Autodesk::DesignScript::Geometry::NurbsSurface^ pDynamoUntrimmedSurface =
+				Autodesk::DesignScript::Geometry::NurbsSurface::ByControlPointsWeightsKnots(
+					pDynamoControlPoints,
+					pWeights,
+					pUKnots->ToArray(),
+					pVKnots->ToArray(),
+					pOcctBSplineSurface->UDegree(),
+					pOcctBSplineSurface->VDegree()
+				);
+
+			// The newly created surface corresponds to the whole surface in OCCT. 
+			// It needs to be trimmed by the outer wire and inner wires.
+			List<Autodesk::DesignScript::Geometry::PolyCurve^>^ pDynamoEdgeLoops = gcnew List<Autodesk::DesignScript::Geometry::PolyCurve^>();
+
+			List<Wire^>^ pWires = Wires();
+			for each(Wire^ pWire in pWires)
+			{
+				pDynamoEdgeLoops->Add(safe_cast<Autodesk::DesignScript::Geometry::PolyCurve^>(pWire->Geometry));
+			}
+
+			try {
+				Autodesk::DesignScript::Geometry::Surface^ pDynamoTrimmedSurfaceByParameters = 
+					pDynamoUntrimmedSurface->TrimWithEdgeLoops(pDynamoEdgeLoops);
+				return pDynamoTrimmedSurfaceByParameters;
+			}
+			catch (std::exception& e)
+			{
+				String^ str = gcnew String(e.what());
+				return pDynamoUntrimmedSurface;
+			}
+			catch (Exception^ e)
+			{
+				String^ str(e->Message);
+				return pDynamoUntrimmedSurface;
+			}
+			catch (...)
+			{
+				return pDynamoUntrimmedSurface;
+			}
+		}
+
+		Handle(Geom_RectangularTrimmedSurface) pOcctRectangularTrimmedSurface = Handle_Geom_RectangularTrimmedSurface::DownCast(pOcctSurface);
+		if (!pOcctRectangularTrimmedSurface.IsNull())
+		{
+			throw gcnew NotImplementedException("Feature not yet implemented");
+		}
+
+		Handle(Geom_ConicalSurface) pOcctConicalSurface = Handle_Geom_ConicalSurface::DownCast(pOcctSurface);
+		if (!pOcctConicalSurface.IsNull())
+		{
+			throw gcnew NotImplementedException("Feature not yet implemented");
+		}
+
+		Handle(Geom_CylindricalSurface) pOcctCylindricalSurface = Handle_Geom_CylindricalSurface::DownCast(pOcctSurface);
+		if (!pOcctCylindricalSurface.IsNull())
+		{
+			throw gcnew NotImplementedException("Feature not yet implemented");
+		}
+
+		Handle(Geom_Plane) pOcctPlane = Handle_Geom_Plane::DownCast(pOcctSurface);
+		if (!pOcctPlane.IsNull())
+		{
+			// This is a planar face, and pOcctPlane is simply the supporting infinite plane.
+			// In this case, do the following steps.
+
+			// 1. Get the edges of the input face
+			List<Edge^>^ pEdges = Edges();
+
+			List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoCurves = gcnew List<Autodesk::DesignScript::Geometry::Curve^>();
+			for each(Edge^ pEdge in pEdges)
+			{
+				// 2. Convert the edges to Dynamo curves
+				pDynamoCurves->Add(pEdge->Curve());
+			}
+
+			// 4. Create a surface by patch, via a Polycurve
+			Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface = Autodesk::DesignScript::Geometry::Surface::ByPatch(
+				Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoCurves)
+			);
+
+			List<Wire^>^ pWires = Wires();
+			if (pWires->Count < 2)
+			{
+				return pDynamoSurface;
+			}
+
+			List<Autodesk::DesignScript::Geometry::PolyCurve^>^ pDynamoEdgeLoops = gcnew List<Autodesk::DesignScript::Geometry::PolyCurve^>();
+			bool isOuterWireFound = false;
+			const TopoDS_Wire& rkOcctOuterWire = ShapeAnalysis::OuterWire(TopoDS::Face(*pCoreFace->GetOcctShape()));
+
+			for each(Wire^ pWire in pWires)
+			{
+				if (!isOuterWireFound)
+				{
+					if (pWire->GetCoreTopology()->GetOcctShape()->IsEqual(rkOcctOuterWire))
+					{
+						isOuterWireFound = true;
+						continue;
+					}
+				}
+				Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoPolycurve = 
+					safe_cast<Autodesk::DesignScript::Geometry::PolyCurve^>(pWire->Geometry);
+				if (pDynamoPolycurve != nullptr)
+				{
+					pDynamoEdgeLoops->Add(pDynamoPolycurve);
+				}
+			}
+
+			Autodesk::DesignScript::Geometry::Surface^ pDynamoTrimmedSurface = nullptr;
+
+			// this may raise exception
+			try{
+				return pDynamoSurface->TrimWithEdgeLoops(pDynamoEdgeLoops);
+			}
+			catch (Exception^ e)
+			{
+				String^ str(e->Message);
+				throw e;
+			}
+			catch (...)
+			{
+				throw gcnew Exception("Unknown exception");
+			}
+		}
+
+		Handle(Geom_SphericalSurface) pOcctSphericalSurface = Handle_Geom_SphericalSurface::DownCast(pOcctSurface);
+		if (!pOcctSphericalSurface.IsNull())
+		{
+			throw gcnew NotImplementedException("Feature not yet implemented");
+		}
+
+		Handle(Geom_ToroidalSurface) pOcctToroidalSurface = Handle_Geom_ToroidalSurface::DownCast(pOcctSurface);
+		if (!pOcctToroidalSurface.IsNull())
+		{
+			throw gcnew NotImplementedException("Feature not yet implemented");
+		}
+
+		Handle(Geom_OffsetSurface) pOcctOffsetSurface = Handle_Geom_OffsetSurface::DownCast(pOcctSurface);
+		if (!pOcctOffsetSurface.IsNull())
+		{
+			throw gcnew NotImplementedException("Feature not yet implemented");
+		}
+
+		Handle(Geom_SurfaceOfLinearExtrusion) pOcctSurfaceOfLinearExtrusion = Handle_Geom_SurfaceOfLinearExtrusion::DownCast(pOcctSurface);
+		if (!pOcctSurfaceOfLinearExtrusion.IsNull())
+		{
+			throw gcnew NotImplementedException("Feature not yet implemented");
+		}
+
+		Handle(Geom_SurfaceOfRevolution) pOcctSurfaceOfRevolution = Handle_Geom_SurfaceOfRevolution::DownCast(pOcctSurface);
+		if (!pOcctSurfaceOfRevolution.IsNull())
+		{
+			throw gcnew NotImplementedException("Feature not yet implemented");
+		}
+
+		Handle(GeomPlate_Surface) pOcctPlateSurface = Handle_GeomPlate_Surface::DownCast(pOcctSurface);
+		if (!pOcctPlateSurface.IsNull())
+		{
+			throw gcnew NotImplementedException("Feature not yet implemented");
+		}
+
+		List<Vertex^>^ pVertices = Vertices();
+		List<Autodesk::DesignScript::Geometry::Point^>^ pDynamoPoints = gcnew List<Autodesk::DesignScript::Geometry::Point^>();
+		for each(Vertex^ pVertex in pVertices)
+		{
+			pDynamoPoints->Add(safe_cast<Autodesk::DesignScript::Geometry::Point^>(pVertex->Geometry));
+		}
+
+		return Autodesk::DesignScript::Geometry::Surface::ByPerimeterPoints(pDynamoPoints);
+	}
+
+	Autodesk::DesignScript::Geometry::Mesh^ Face::TriangulatedMesh()
+	{
+		TopoDS_Face occtFace = TopoDS::Face(*GetCoreTopology()->GetOcctShape());
+		BRepMesh_IncrementalMesh occtMesh(occtFace, 0.1);
+		TopLoc_Location occtLocation;
+		Handle_Poly_Triangulation occtTriangulation = BRep_Tool::Triangulation(occtFace, occtLocation);
+		if (occtTriangulation.IsNull())
+			return nullptr;
+
+		// retrieve the faces
+		List<Autodesk::DesignScript::Geometry::Point^>^ pDynamoPoints = gcnew List<Autodesk::DesignScript::Geometry::Point^>();
+		const TColgp_Array1OfPnt& rkOcctPoints = occtTriangulation->Nodes();
+		TColgp_Array1OfPnt::Iterator occtPointsIterator;
+		for (occtPointsIterator.Init(rkOcctPoints); occtPointsIterator.More(); occtPointsIterator.Next())
+		{
+			const gp_Pnt& rkOcctPoint = occtPointsIterator.Value();
+			pDynamoPoints->Add(Autodesk::DesignScript::Geometry::Point::ByCoordinates(rkOcctPoint.X(), rkOcctPoint.Y(), rkOcctPoint.Z()));
+		}
+		int occtLowerBound = rkOcctPoints.Lower();
+
+		// retrieve the triangle indices
+		List<Autodesk::DesignScript::Geometry::IndexGroup^>^ pDynamoTriangleIndices = gcnew List<Autodesk::DesignScript::Geometry::IndexGroup^>();
+		const Poly_Array1OfTriangle& rkOcctTriangleIndices = occtTriangulation->Triangles(); Poly_Array1OfTriangle::Iterator occtTriangleIndicesIterator;
+		for (occtTriangleIndicesIterator.Init(rkOcctTriangleIndices); occtTriangleIndicesIterator.More(); occtTriangleIndicesIterator.Next())
+		{
+			const Poly_Triangle& rkOcctTriangleIndices = occtTriangleIndicesIterator.Value();
+			int occtIndex1 = -1, occtIndex2 = -1, occtIndex3 = -1;
+			rkOcctTriangleIndices.Get(occtIndex1, occtIndex2, occtIndex3);
+
+			// OCCT indices start from occtLowerBound (1), while Dynamo's start from 0.
+			pDynamoTriangleIndices->Add(Autodesk::DesignScript::Geometry::IndexGroup::ByIndices(occtIndex1 - occtLowerBound, occtIndex2 - occtLowerBound, occtIndex3 - occtLowerBound));
+		}
+
+		return Autodesk::DesignScript::Geometry::Mesh::ByPointsFaceIndices(pDynamoPoints, pDynamoTriangleIndices);
+	}
+
+	List<Vertex^>^ Face::Vertices()
+	{
+		TopoLogicCore::Face* pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(GetCoreTopology());
+		std::list<TopoLogicCore::Vertex*> pCoreVertices;
+		pCoreFace->Vertices(pCoreVertices);
+
+		List<Vertex^>^ pVertices = gcnew List<Vertex^>();
+		for (std::list<TopoLogicCore::Vertex*>::const_iterator kVertexIterator = pCoreVertices.begin();
+			kVertexIterator != pCoreVertices.end();
+			kVertexIterator++)
+		{
+			TopoLogicCore::Vertex* pCoreVertex = *kVertexIterator;
+			Vertex^ pVertex = gcnew Vertex(pCoreVertex);
+			pVertices->Add(pVertex);
+		}
+		return pVertices;
+	}
+
+	List<Edge^>^ Face::Edges()
+	{
+		TopoLogicCore::Face* pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(GetCoreTopology());
+		std::list<TopoLogicCore::Edge*> pCoreEdges;
+		pCoreFace->Edges(pCoreEdges);
+
+		List<Edge^>^ pEdges = gcnew List<Edge^>();
+		for (std::list<TopoLogicCore::Edge*>::const_iterator kEdgeIterator = pCoreEdges.begin();
+			kEdgeIterator != pCoreEdges.end();
+			kEdgeIterator++)
+		{
+			TopoLogicCore::Edge* pCoreEdge = *kEdgeIterator;
+			Edge^ pEdge = gcnew Edge(pCoreEdge);
+			pEdges->Add(pEdge);
+		}
+
+		return pEdges;
+	}
+
+	List<Wire^>^ Face::Wires()
+	{
+		TopoLogicCore::Face* pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(GetCoreTopology());
+		std::list<TopoLogicCore::Wire*> pCoreWires;
+		pCoreFace->Wires(pCoreWires);
+
+		List<Wire^>^ pWires = gcnew List<Wire^>();
+		for (std::list<TopoLogicCore::Wire*>::const_iterator kWireIterator = pCoreWires.begin();
+			kWireIterator != pCoreWires.end();
+			kWireIterator++)
+		{
+			TopoLogicCore::Wire* pCoreWire = *kWireIterator;
+			Wire^ pWire = gcnew Wire(pCoreWire);
+			pWires->Add(pWire);
+		}
+
+		return pWires;
 	}
 
 	Face::~Face()

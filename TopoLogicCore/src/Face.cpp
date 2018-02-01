@@ -8,6 +8,7 @@
 
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepAlgoAPI_Section.hxx>
+#include <BRep_Tool.hxx>
 #include <BRepTools_WireExplorer.hxx>
 #include <BSplCLib.hxx>
 #include <Geom_BSplineSurface.hxx>
@@ -387,7 +388,7 @@ namespace TopoLogicCore
 
 	void Face::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
 	{
-		throw std::exception("Not implemented yet");
+		rOcctGeometries.push_back(Surface());
 	}
 
 	Face::Face(TopoDS_Face * const kpOcctFace)
@@ -401,6 +402,12 @@ namespace TopoLogicCore
 	{
 		GlobalCluster::GetInstance().Remove(this);
 		delete m_pOcctFace;
+	}
+
+	Handle(Geom_Surface) Face::Surface() const
+	{
+		TopoDS_Face occtFace = TopoDS::Face(*GetOcctShape());
+		return BRep_Tool::Surface(occtFace);
 	}
 
 	std::string Face::GetOcctMakeFaceErrorMessage(const BRepBuilderAPI_MakeFace& rkOcctMakeFace)
