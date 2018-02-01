@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Attribute.h"
+#include "Utilities.h"
 
 #include <Standard_Handle.hxx>
 #include <Geom_Geometry.hxx>
@@ -136,6 +137,17 @@ namespace TopoLogicCore
 		/// </summary>
 		/// <returns></returns>
 		virtual TopoDS_Shape* GetOcctShape() const = 0;
+
+		template <typename T>
+		static T* Downcast(Topology *const kpTopology)
+		{
+			T* pSubclassTopology = dynamic_cast<T*>(kpTopology);
+			if (pSubclassTopology == nullptr)
+			{
+				throw std::exception("Failed downcasting topology");
+			}
+			return pSubclassTopology;
+		}
 
 	protected:
 		Topology(const int kDimensionality);

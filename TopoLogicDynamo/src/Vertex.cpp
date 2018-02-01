@@ -6,6 +6,8 @@
 #include <Geom_CartesianPoint.hxx>
 #include <TopoDS.hxx>
 
+#include <assert.h>
+
 namespace TopoLogic
 {
 	Dictionary<String^, Object^>^ Vertex::ByPoint(Autodesk::DesignScript::Geometry::Point ^ point)
@@ -28,7 +30,8 @@ namespace TopoLogic
 		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
 		try {
 			std::list<TopoLogicCore::Edge*> coreEdges;
-			topoLogicVertex->m_pCoreVertex->Edges(coreEdges);
+			TopoLogicCore::Vertex* pCoreVertex = TopoLogicCore::Topology::Downcast<TopoLogicCore::Vertex>(topoLogicVertex->GetCoreTopology());
+			pCoreVertex->Edges(coreEdges);
 
 			List<Edge^>^ pEdges = gcnew List<Edge^>();
 			List<Object^>^ pDynamoCurves = gcnew List<Object^>();
@@ -52,11 +55,35 @@ namespace TopoLogic
 		return pDictionary;
 	}
 
-	Vertex::Vertex(Autodesk::DesignScript::Geometry::Point ^ pDynamoPoint)
+	TopoLogicCore::Topology* Vertex::GetCoreTopology()
+	{
+		assert(m_pCoreVertex != nullptr && "Vertex::m_pCoreVertex is null.");
+		if (m_pCoreVertex == nullptr)
+		{
+			throw gcnew Exception("Vertex::m_pCoreVertex is null.");
+		}
+
+		return m_pCoreVertex;
+	}
+
+	Vertex::Vertex(TopoLogicCore::Vertex * const kpCoreVertex)
+		: Topology()
+		, m_pCoreVertex(kpCoreVertex)
+	{
+
+	}
+
+	Vertex::Vertex(Autodesk::DesignScript::Geometry::Point^ pDynamoPoint)
 		: Topology()
 		, m_pCoreVertex(TopoLogicCore::Vertex::ByPoint(new Geom_CartesianPoint(gp_Pnt(pDynamoPoint->X, pDynamoPoint->Y, pDynamoPoint->Z))))
 	{
 
+	}
+
+	Autodesk::DesignScript::Geometry::Point^ Vertex::Point()
+	{
+		gp_Pnt occtPoint = BRep_Tool::Pnt(TopoDS::Vertex(*GetCoreTopology()->GetOcctShape()));
+		return Autodesk::DesignScript::Geometry::Point::ByCoordinates(occtPoint.X(), occtPoint.Y(), occtPoint.Z());
 	}
 
 	Vertex::~Vertex()
@@ -66,7 +93,6 @@ namespace TopoLogic
 
 	Object^ Vertex::Geometry::get()
 	{
-		gp_Pnt occtPoint = BRep_Tool::Pnt(TopoDS::Vertex(*m_pCoreVertex->GetOcctShape()));
-		return Autodesk::DesignScript::Geometry::Point::ByCoordinates(occtPoint.X(), occtPoint.Y(), occtPoint.Z());
+		return Point();
 	}
 }

@@ -16,7 +16,7 @@ namespace TopoLogicCore
 	/// <summary>
 	/// 
 	/// </summary>
-	class Shell : Topology
+	class Shell : public Topology
 	{
 	public:
 		/// <summary>
@@ -83,6 +83,12 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		virtual TopoDS_Shape* GetOcctShape() const { return m_pOcctShell; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rOcctGeometries"></param>
+		virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const;
 
 	protected:
 		/// <summary>

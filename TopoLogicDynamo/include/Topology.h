@@ -116,6 +116,9 @@ namespace TopoLogic
 		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
 		static Dictionary<String^, Object^>^ Union(List<Topology^>^ topologyList);
 
+	public protected:
+		virtual TopoLogicCore::Topology* GetCoreTopology() = 0;
+
 	protected:
 		Topology();
 		virtual ~Topology();

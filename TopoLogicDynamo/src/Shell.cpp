@@ -47,9 +47,14 @@ namespace TopoLogic
 		throw gcnew System::NotImplementedException();
 		// TODO: insert return statement here
 	}
-	Shell::Shell()
+	Shell::Shell(TopoLogicCore::Shell* const kpCoreShell)
 	{
 
+	}
+
+	TopoLogicCore::Topology * Shell::GetCoreTopology()
+	{
+		return nullptr;
 	}
 
 	Shell::~Shell()

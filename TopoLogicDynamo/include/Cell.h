@@ -126,11 +126,21 @@ namespace TopoLogic
 			virtual Object^ get() override;
 		}
 
-	protected:
+	public protected:
 		/// <summary>
 		/// 
 		/// </summary>
-		Cell();
+		/// <param name="kpCoreCell"></param>
+		Cell(TopoLogicCore::Cell* const kpCoreCell);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual TopoLogicCore::Topology* GetCoreTopology() override;
+
+
+	protected:
 		virtual ~Cell();
 
 		/// <summary>

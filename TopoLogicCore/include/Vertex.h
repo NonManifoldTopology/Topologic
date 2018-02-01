@@ -17,7 +17,7 @@ namespace TopoLogicCore
 	/// <summary>
 	/// The representation of a topological vertex. This class wraps OCCT's TopoDS_Vertex.
 	/// </summary>
-	class Vertex : Topology
+	class Vertex : public Topology
 	{
 	public:
 		/// <summary>
@@ -52,7 +52,13 @@ namespace TopoLogicCore
 		/// Returns the underlying OCCT vertex.
 		/// </summary>
 		/// <returns>The underlying OCCT vertex</returns>
-		virtual TopoDS_Shape* GetOcctShape() const { return m_pOcctVertex; }
+		virtual TopoDS_Shape* GetOcctShape() const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		Handle(Geom_Point) Point() const;
 
 	protected:
 		/// <summary>

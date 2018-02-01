@@ -118,8 +118,21 @@ namespace TopoLogic
 			virtual Object^ get() override;
 		}
 
+	public protected:
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpCoreShell"></param>
+		Shell(TopoLogicCore::Shell* const kpCoreShell);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual TopoLogicCore::Topology* GetCoreTopology() override;
+
+
 	protected:
-		Shell();
 		virtual ~Shell();
 
 		/// <summary>

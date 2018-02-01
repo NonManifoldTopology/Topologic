@@ -107,13 +107,44 @@ namespace TopoLogic {
 		}
 
 	public protected:
-		Edge(TopoLogicCore::Edge* const kpCoreEdge);
-	protected:
 		/// <summary>
 		/// 
 		/// </summary>
-		Edge();
+		/// <param name="kpCoreEdge"></param>
+		Edge(TopoLogicCore::Edge* const kpCoreEdge);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		Edge(Autodesk::DesignScript::Geometry::Curve^ curve);
+
+		Autodesk::DesignScript::Geometry::Curve^ Curve();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual TopoLogicCore::Topology* GetCoreTopology() override;
+
+	protected:
 		virtual ~Edge();
+
+		/// <summary>
+		/// Initialises the edge given a NurbsCurve argument. Called by the respective constructor.
+		/// </summary>
+		/// <exception cref="Standard_ConstructionError">	Thrown if OCCT fails to initialise the
+		/// 												underlying curve. </exception>
+		/// <exception cref="StdFail_NotDone">			 	Thrown if OCCT fails to create an edge from
+		/// 												the curve. </exception>
+		///
+		/// <param name="pDynamoNurbsCurve">	A Dynamo NURBS curve. </param>
+		void Init(Autodesk::DesignScript::Geometry::NurbsCurve^ pDynamoNurbsCurve);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="pDynamoLine"></param>
+		void Init(Autodesk::DesignScript::Geometry::Line^ pDynamoLine);
 
 		/// <summary>
 		/// 

@@ -31,6 +31,9 @@ namespace TopoLogicCore
 	{
 		return nullptr;
 	}
+	void Shell::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
+	{
+	}
 	Shell::Shell(TopoDS_Shell * const kpOcctShell)
 		: Topology(2)
 		, m_pOcctShell(kpOcctShell)

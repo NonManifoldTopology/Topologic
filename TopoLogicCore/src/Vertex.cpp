@@ -27,7 +27,7 @@ namespace TopoLogicCore
 		delete m_pOcctVertex;
 	}
 
-	Vertex * Vertex::ByPoint(Handle(Geom_Point) pOcctPoint)
+	Vertex* Vertex::ByPoint(Handle(Geom_Point) pOcctPoint)
 	{
 		return new Vertex(new TopoDS_Vertex(BRepBuilderAPI_MakeVertex(pOcctPoint->Pnt())));
 	}
@@ -45,20 +45,30 @@ namespace TopoLogicCore
 		{
 			if (kIterator->ShapeType() == TopAbs_EDGE)
 			{
-				const TopoDS_Edge& pOcctEdge = TopoDS::Edge(*kIterator);
-				rEdges.push_back(new Edge(new TopoDS_Edge(pOcctEdge)));
+				const TopoDS_Edge& rkOcctEdge = TopoDS::Edge(*kIterator);
+				rEdges.push_back(new Edge(new TopoDS_Edge(rkOcctEdge)));
 			}
 		}
 	}
 
 	void Vertex::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
 	{
+		rOcctGeometries.push_back(Point());
+	}
+
+	TopoDS_Shape* Vertex::GetOcctShape() const
+	{
 		assert(m_pOcctVertex != nullptr && "Vertex::m_pOcctVertex is null.");
 		if (m_pOcctVertex == nullptr)
 		{
 			throw std::exception("Vertex::m_pOcctVertex is null.");
 		}
-		
-		rOcctGeometries.push_back(new Geom_CartesianPoint(BRep_Tool::Pnt(TopoDS::Vertex(*m_pOcctVertex))));
+
+		return m_pOcctVertex;
+	}
+
+	Handle(Geom_Point) Vertex::Point() const
+	{
+		return new Geom_CartesianPoint(BRep_Tool::Pnt(TopoDS::Vertex(*GetOcctShape())));
 	}
 }

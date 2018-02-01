@@ -15,7 +15,7 @@ namespace TopoLogicCore
 	class Shell;
 	class CellComplex;
 
-	class Cell : Topology
+	class Cell : public Topology
 	{
 	public:
 		/// <summary>
@@ -115,6 +115,12 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		virtual TopoDS_Shape* GetOcctShape() const { return m_pOcctSolid; }
+		
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rOcctGeometries"></param>
+		virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const;
 
 	protected:
 		/// <summary>

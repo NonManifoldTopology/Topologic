@@ -6,7 +6,12 @@
 
 #include <Standard_Handle.hxx>
 #include <TopoDS_Face.hxx>
+#include <TColgp_Array2OfPnt.hxx>
+#include <TColStd_Array1OfInteger.hxx>
+#include <TColStd_Array1OfReal.hxx>
+#include <TColStd_Array2OfReal.hxx>
 
+class BRepBuilderAPI_MakeFace;
 class Geom_Surface;
 
 namespace TopoLogicCore
@@ -20,7 +25,7 @@ namespace TopoLogicCore
 	/// <summary>
 	/// 
 	/// </summary>
-	class Face : Topology
+	class Face : public Topology
 	{
 	public:
 		/// <summary>
@@ -35,70 +40,70 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <param name="rFaces"></param>
-		void AdjacentFaces(std::list<Face*>& rFaces) const;
+		TOPOLOGIC_API void AdjacentFaces(std::list<Face*>& rFaces) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rFaces"></param>
-		void Apertures(std::list<Face*>& rFaces) const;
+		TOPOLOGIC_API void Apertures(std::list<Face*>& rFaces) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rCells"></param>
-		void Cells(std::list<Cell*>& rCells) const;
+		TOPOLOGIC_API void Cells(std::list<Cell*>& rCells) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rEdges"></param>
-		void Edges(std::list<Edge*>& rEdges) const;
+		TOPOLOGIC_API void Edges(std::list<Edge*>& rEdges) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		bool IsApplied() const;
+		TOPOLOGIC_API bool IsApplied() const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rShells"></param>
-		void Shells(std::list<Shell*>& rShells) const;
+		TOPOLOGIC_API void Shells(std::list<Shell*>& rShells) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rVertices"></param>
-		void Vertices(std::list<Vertex*>& rVertices) const;
+		TOPOLOGIC_API void Vertices(std::list<Vertex*>& rVertices) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rWires"></param>
-		void Wires(std::list<Wire*>& rWires) const;
+		TOPOLOGIC_API void Wires(std::list<Wire*>& rWires) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkApertures"></param>
 		/// <returns></returns>
-		bool ApplyApertures(const std::list<Face*>& rkApertures) const;
+		TOPOLOGIC_API bool ApplyApertures(const std::list<Face*>& rkApertures) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpkWire"></param>
 		/// <returns></returns>
-		static Face* ByClosedWire(Wire const * const kpkWire);
+		TOPOLOGIC_API static Face* ByClosedWire(Wire const * const kpkWire);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkEdges"></param>
 		/// <returns></returns>
-		static Face* ByEdges(const std::list<Edge*>* rkEdges);
+		static Face* ByEdges(const std::list<Edge*>& rkEdges);
 
 		/// <summary>
 		/// 
@@ -106,6 +111,38 @@ namespace TopoLogicCore
 		/// <param name="pOcctSurface"></param>
 		/// <returns></returns>
 		static Face* BySurface(Handle(Geom_Surface) pOcctSurface);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkOcctPoles"></param>
+		/// <param name="rkOcctWeights"></param>
+		/// <param name="rkOcctUKnots"></param>
+		/// <param name="rkOcctVKnots"></param>
+		/// <param name="rkOcctMultiplicities"></param>
+		/// <param name="rkOcctVMultiplicities"></param>
+		/// <param name="kUDegree"></param>
+		/// <param name="kVDegree"></param>
+		/// <param name="kIsUPeriodic"></param>
+		/// <param name="kIsVPeriodic"></param>
+		/// <param name="kIsRational"></param>
+		/// <param name="kpkOuterWire"></param>
+		/// <param name="rkInnerWires"></param>
+		/// <returns></returns>
+		static TOPOLOGIC_API Face* BySurface(
+			const TColgp_Array2OfPnt& rkOcctPoles,
+			const TColStd_Array2OfReal& rkOcctWeights,
+			const TColStd_Array1OfReal& rkOcctUKnots,
+			const TColStd_Array1OfReal& rkOcctVKnots,
+			const TColStd_Array1OfInteger& rkOcctUMultiplicities,
+			const TColStd_Array1OfInteger& rkOcctVMultiplicities,
+			const int kUDegree,
+			const int kVDegree,
+			const bool kIsUPeriodic,
+			const bool kIsVPeriodic,
+			const bool kIsRational,
+			Wire const * const kpkOuterWire,
+			const std::list<Wire*>& rkInnerWires);
 
 		/// <summary>
 		/// 
@@ -124,9 +161,22 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="rOcctGeometries"></param>
+		virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
 		virtual TopoDS_Shape* GetOcctShape() const { return m_pOcctFace; }
 
 	protected:
+		/// <summary>
+		/// Returns error messages when creating a face using OCCT's BRepBuilderAPI_MakeFace.
+		/// </summary>
+		/// <param name="rkOcctMakeFace">An instantiation of OCCT's BRepBuilderAPI_MakeFace</param>
+		/// <returns>The error messsages</returns>
+		static std::string GetOcctMakeFaceErrorMessage(const BRepBuilderAPI_MakeFace& rkOcctMakeFace);
+
 		/// <summary>
 		/// The underlying OCCT face.
 		/// </summary>

@@ -91,11 +91,40 @@ namespace TopoLogic {
 			virtual Object^ get() override;
 		}
 
-	protected:
+	public protected:
 		/// <summary>
 		/// 
 		/// </summary>
-		Wire();
+		/// <param name="kpCoreWire"></param>
+		Wire(TopoLogicCore::Wire* const kpCoreWire);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="pEdges"></param>
+		Wire(List<Edge^>^ pEdges);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="pDynamoPolycurve"></param>
+		Wire(Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoPolycurve);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual TopoLogicCore::Topology* GetCoreTopology() override;
+
+		// Utility classes
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		List<Edge^>^ Edges();
+
+	protected:
 		virtual ~Wire();
 
 		/// <summary>

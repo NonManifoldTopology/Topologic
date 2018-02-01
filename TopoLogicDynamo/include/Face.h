@@ -5,7 +5,12 @@
 #include <TopoLogicCore/include/Face.h>
 
 namespace TopoLogic {
+	ref class Edge;
+	ref class Wire;
 
+	/// <summary>
+	/// 
+	/// </summary>
 	public ref class Face : Topology
 	{
 	public:
@@ -128,7 +133,7 @@ namespace TopoLogic {
 		/// "Surface": the Dynamo surface counterpart of the created face
 		/// </returns>
 		[MultiReturn(gcnew array<String^> { "TopoLogic Face", "Surface" })]
-		static Dictionary<String^, Object^>^ ByClosedWire(Object^ wire);
+		static Dictionary<String^, Object^>^ ByClosedWire(Wire^ wire);
 
 		/// <summary>
 		/// A factory method that directly creates a face by a list of edges. A wire will be internally created.
@@ -142,7 +147,7 @@ namespace TopoLogic {
 		/// "Surface": the Dynamo surface counterpart of the created face
 		/// </returns>
 		[MultiReturn(gcnew array<String^> { "TopoLogic Face", "Surface" })]
-		static Dictionary<String^, Object^>^ ByEdges(List<Object^>^ edges);
+		static Dictionary<String^, Object^>^ ByEdges(List<Edge^>^ edges);
 
 		/// <summary>
 		/// A factory method that creates a face by a surface
@@ -194,12 +199,44 @@ namespace TopoLogic {
 			virtual Object^ get() override;
 		}
 
-	protected:
+	public protected:
 		/// <summary>
 		/// 
 		/// </summary>
-		Face();
+		/// <param name="kpCoreFace"></param>
+		Face(TopoLogicCore::Face* const kpCoreFace);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="pWire"></param>
+		Face(Wire^ pWire);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="pDynamoSurface"></param>
+		Face(Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface);
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual TopoLogicCore::Topology* GetCoreTopology() override;
+
+
+	protected:
 		virtual ~Face();
+
+		/// <summary>
+		/// Initialises the face given a NurbsSurface argument. Called by the respective constructor.
+		/// </summary>
+		/// <param name="pDynamoNurbsSurface">A Dynamo NURBS surface</param>
+		/// <exception cref="Standard_ConstructionError">Thrown if OCCT fails to initialise the underlying curve</exception>
+		/// <exception cref="StdFail_NotDone">Thrown if OCCT fails to create an edge from the curve</exception>
+		void Init(Autodesk::DesignScript::Geometry::NurbsSurface^ pDynamoNurbsSurface,
+			array<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoPerimeterCurves);
 
 		/// <summary>
 		/// 

@@ -8,7 +8,7 @@
 
 namespace TopoLogicCore
 {
-	class Cluster : Topology
+	class Cluster : public Topology
 	{
 	public:
 		/// <summary>

@@ -13,7 +13,7 @@ namespace TopoLogicCore
 	/// <summary>
 	/// 
 	/// </summary>
-	class CellComplex : Topology
+	class CellComplex : public Topology
 	{
 	public:
 		/// <summary>

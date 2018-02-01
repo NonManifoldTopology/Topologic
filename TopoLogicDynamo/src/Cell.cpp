@@ -72,7 +72,11 @@ namespace TopoLogic
 		throw gcnew System::NotImplementedException();
 		// TODO: insert return statement here
 	}
-	Cell::Cell()
+	TopoLogicCore::Topology * Cell::GetCoreTopology()
+	{
+		return nullptr;
+	}
+	Cell::Cell(TopoLogicCore::Cell* const kpCoreCell)
 	{
 
 	}

@@ -44,8 +44,15 @@ namespace TopoLogic
 			virtual Object^ get() override;
 		}
 
-	protected:
+	public protected:
+		Vertex(TopoLogicCore::Vertex* const kpCoreVertex);
 		Vertex(Autodesk::DesignScript::Geometry::Point^ pDynamoPoint);
+
+		Autodesk::DesignScript::Geometry::Point^ Point();
+
+		virtual TopoLogicCore::Topology* GetCoreTopology() override;
+
+	protected:
 		virtual ~Vertex();
 
 		/// <summary>

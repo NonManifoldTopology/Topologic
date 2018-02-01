@@ -46,6 +46,9 @@ namespace TopoLogicCore
 	void Cell::SharedVertices(Cell const * const kpkAnotherCell, std::list<Vertex*>& rVertices) const
 	{
 	}
+	void Cell::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
+	{
+	}
 	Cell::Cell(TopoDS_Solid * const kpOcctSolid)
 		: Topology(3)
 		, m_pOcctSolid(kpOcctSolid)
