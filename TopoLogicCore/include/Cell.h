@@ -3,7 +3,9 @@
 #include "Topology.h"
 
 #include <list>
+#include <vector>
 
+#include <Geom_CartesianPoint.hxx>
 #include <TopoDS_Solid.hxx>
 
 namespace TopoLogicCore
@@ -29,58 +31,61 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <param name="rcells"></param>
-		void AdjacentCells(std::list<Cell*>& rcells) const;
+		TOPOLOGIC_API void AdjacentCells(std::list<Cell*>& rcells) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		CellComplex* CellComplex() const;
+		TOPOLOGIC_API CellComplex* CellComplex() const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rEdges"></param>
-		void Edges(std::list<Edge*>& rEdges) const;
+		TOPOLOGIC_API void Edges(std::list<Edge*>& rEdges) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rFaces"></param>
-		void Faces(std::list<Face*>& rFaces) const;
+		TOPOLOGIC_API void Faces(std::list<Face*>& rFaces) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rVertices"></param>
-		void Vertices(std::list<Vertex*>& rVertices) const;
+		TOPOLOGIC_API void Vertices(std::list<Vertex*>& rVertices) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rWires"></param>
-		void Wires(std::list<Wire*>& rWires) const;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="kpkOcctCell"></param>
-		/// <returns></returns>
-		static Cell* BySolid(TopoDS_Solid const * const kpkOcctCell);
+		TOPOLOGIC_API void Wires(std::list<Wire*>& rWires) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkFaces"></param>
 		/// <returns></returns>
-		static Cell* ByFace(const std::list<Face*>& rkFaces);
+		static TOPOLOGIC_API Cell* ByFaces(const std::list<Face*>& rkFaces);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpkShells"></param>
 		/// <returns></returns>
-		static Cell* ByShell(Shell const * const kpkShells);
+		static TOPOLOGIC_API Cell* ByShell(Shell const * const kpkShells);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="pOcctCentroid"></param>
+		/// <param name="kXDimension"></param>
+		/// <param name="kYDimension"></param>
+		/// <param name="kZDimension"></param>
+		/// <returns></returns>
+		static TOPOLOGIC_API Cell* ByCuboid(Handle(Geom_CartesianPoint) pOcctCentroid, const double kXDimension, const double kYDimension, const double kZDimension);
 
 		/// <summary>
 		/// 
@@ -88,33 +93,33 @@ namespace TopoLogicCore
 		/// <param name="rkVertices"></param>
 		/// <param name="rkFaceIndices"></param>
 		/// <returns></returns>
-		static Cell* ByVerticesFaceIndices(const std::list<Vertex*>& rkVertices, const std::list<int>& rkFaceIndices);
+		static TOPOLOGIC_API Cell* ByVerticesFaceIndices(const std::vector<Vertex*>& rkVertices, const std::list<std::list<int>>& rkFaceIndices);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpkAnotherCell"></param>
 		/// <param name="rEdges"></param>
-		void SharedEdges(Cell const * const kpkAnotherCell, std::list<Edge*>& rEdges) const;
+		TOPOLOGIC_API void SharedEdges(Cell const * const kpkAnotherCell, std::list<Edge*>& rEdges) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpkAnotherCell"></param>
 		/// <param name="rFaces"></param>
-		void SharedFaces(Cell const * const kpkAnotherCell, std::list<Face*>& rFaces) const;
+		TOPOLOGIC_API void SharedFaces(Cell const * const kpkAnotherCell, std::list<Face*>& rFaces) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpkAnotherCell"></param>
 		/// <param name="rVertices"></param>
-		void SharedVertices(Cell const * const kpkAnotherCell, std::list<Vertex*>& rVertices) const;
+		TOPOLOGIC_API void SharedVertices(Cell const * const kpkAnotherCell, std::list<Vertex*>& rVertices) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		virtual TopoDS_Shape* GetOcctShape() const { return m_pOcctSolid; }
+		virtual TopoDS_Shape* GetOcctShape() const;
 		
 		/// <summary>
 		/// 

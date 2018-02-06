@@ -15,7 +15,8 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <param name="kpOcctCompound"></param>
-		Cluster(TopoDS_Compound * const kpOcctCompound);
+		/// <param name="kAddToGlobalCluster"></param>
+		Cluster(TopoDS_Compound * const kpOcctCompound, const bool kAddToGlobalCluster = true);
 
 		virtual ~Cluster();
 
@@ -24,12 +25,33 @@ namespace TopoLogicCore
 		/// </summary>
 		/// <param name="rkTopologies"></param>
 		/// <returns></returns>
-		static Cluster* ByTopology(const std::list<Topology*>& rkTopologies);
+		static TOPOLOGIC_API Cluster* ByTopology(const std::list<Topology*>& rkTopologies);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		virtual TopoDS_Shape* GetOcctShape() const { return m_pOcctCompound; }
+		/// <param name="kpCluster"></param>
+		/// <param name="kpkTopology"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API bool Add(Topology const * const kpkTopology);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpkTopology"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API bool Remove(Topology const * const kpkTopology);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		virtual TopoDS_Shape* GetOcctShape() const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rOcctGeometries"></param>
+		virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const;
 
 	protected:
 		/// <summary>

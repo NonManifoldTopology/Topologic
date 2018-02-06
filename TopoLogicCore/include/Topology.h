@@ -28,58 +28,57 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="topology1"></param>
-		/// <param name="topology2"></param>
+		/// <param name="rkTopologyArguments"></param>
+		/// <param name="rkTopologyTools"></param>
 		/// <returns></returns>
-		static Topology* Difference(Topology const * const kpkTopology1, Topology const * const kpkTopology2);
+		static TOPOLOGIC_API Topology* Difference(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkTopology1"></param>
-		/// <param name="kpkTopology2"></param>
+		/// <param name="rkTopologyArguments"></param>
+		/// <param name="rkTopologyTools"></param>
 		/// <returns></returns>
-		static Topology* Impose(Topology const * const kpkTopology1, Topology const * const kpkTopology2);
+		static TOPOLOGIC_API Topology* Impose(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkTopology1"></param>
-		/// <param name="kpkTopology2"></param>
+		/// <param name="rkTopologyArguments"></param>
+		/// <param name="rkTopologyTools"></param>
 		/// <returns></returns>
-		static Topology* Imprint(Topology const * const kpkTopology1, Topology const * const kpkTopology2);
+		static TOPOLOGIC_API Topology* Imprint(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkTopology1"></param>
-		/// <param name="kpkTopology2"></param>
+		/// <param name="rkTopologyArguments"></param>
+		/// <param name="rkTopologyTools"></param>
 		/// <returns></returns>
-		static Topology* Intersection(Topology const * const kpkTopology1, Topology const * const kpkTopology2);
+		static TOPOLOGIC_API Topology* Intersection(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkTopology1"></param>
-		/// <param name="kpkTopology2"></param>
+		/// <param name="rkTopologyArguments"></param>
 		/// <returns></returns>
-		static Topology* Merge(Topology const * const kpkTopology1, Topology const * const kpkTopology2);
+		static TOPOLOGIC_API Topology* Merge(const std::list<Topology*>& rkTopologyArguments);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkTopology1"></param>
-		/// <param name="kpkTopology2"></param>
+		/// <param name="rkTopologyArguments"></param>
+		/// <param name="rkTopologyTools"></param>
 		/// <returns></returns>
-		static Topology* Slice(Topology const * const kpkTopology1, Topology const * const kpkTopology2);
+		static TOPOLOGIC_API Topology* Slice(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkTopology1"></param>
-		/// <param name="kpkTopology2"></param>
+		/// <param name="rkTopologyArguments"></param>
+		/// <param name="rkTopologyTools"></param>
 		/// <returns></returns>
-		static Topology* Union(Topology const * const kpkTopology1, Topology const * const kpkTopology2);
+		static TOPOLOGIC_API Topology* Union(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools);
 
 		/// <summary>
 		/// 
@@ -126,11 +125,44 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="rkPath"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API bool SaveToBrep(const std::string& rkPath) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkPath"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API bool LoadFromBrep(const std::string& rkPath) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpkTopology"></param>
+		/// <returns></returns>
+		static TOPOLOGIC_API std::string Analyze(Topology const * const kpkTopology);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <returns></returns>
 		int Dimensionality() const
 		{ 
 			return m_dimensionality; 
 		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		TOPOLOGIC_API bool Locked() const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kLocked"></param>
+		TOPOLOGIC_API void Locked(const bool kLocked);
 
 		/// <summary>
 		/// 
@@ -151,6 +183,13 @@ namespace TopoLogicCore
 
 	protected:
 		Topology(const int kDimensionality);
+		
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkOcctShape"></param>
+		/// <returns></returns>
+		static Topology* ByOcctShape(const TopoDS_Shape& rkOcctShape);
 
 		AttributeMap m_attributeMap;
 		std::list<Topology*> m_members;

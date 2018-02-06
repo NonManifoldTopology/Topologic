@@ -6,6 +6,8 @@
 
 namespace TopoLogic
 {
+	ref class Cell;
+
 	public ref class CellComplex : Topology
 	{
 	public:
@@ -15,7 +17,7 @@ namespace TopoLogic
 		/// <param name="cells"></param>
 		/// <returns></returns>
 		[MultiReturn(gcnew array<String^> { "TopoLogic CellComplex", "Solids" })]
-		static Dictionary<String^, Object^>^ ByCells(List<Object^>^ cells);
+		static Dictionary<String^, Object^>^ ByCells(List<Cell^>^ cells);
 
 		/// <summary>
 		/// 
@@ -58,11 +60,28 @@ namespace TopoLogic
 			virtual Object^ get() override;
 		}
 
-	protected:
+	public protected:
 		/// <summary>
 		/// 
 		/// </summary>
-		CellComplex();
+		CellComplex(TopoLogicCore::CellComplex* const kpCoreCellComplex);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual TopoLogicCore::Topology* GetCoreTopology() override;
+
+		// Utility methods
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		List<Cell^>^ Cells();
+
+
+	protected:
 		virtual ~CellComplex();
 
 		/// <summary>

@@ -17,19 +17,21 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <param name="kpkTopology"></param>
-		void Add(Topology const * const kpkTopology);
+		/// <returns></returns>
+		bool Add(Topology const * const kpkTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpkTopology"></param>
-		void Remove(Topology* kpkTopology);
+		/// <returns></returns>
+		bool Remove(Topology* kpkTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		Cluster* GetCluster() const { return m_pCluster; }
+		Cluster* GetCluster() const;
 
 	private:
 		GlobalCluster();

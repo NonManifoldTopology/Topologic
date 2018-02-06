@@ -167,7 +167,7 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		virtual TopoDS_Shape* GetOcctShape() const { return m_pOcctFace; }
+		virtual TopoDS_Shape* GetOcctShape() const;
 
 		/// <summary>
 		/// 

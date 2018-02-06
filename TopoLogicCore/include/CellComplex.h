@@ -8,6 +8,7 @@
 
 namespace TopoLogicCore
 {
+	class Face;
 	class Cell;
 
 	/// <summary>
@@ -28,32 +29,43 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		Cell* BoundingCell() const;
+		TOPOLOGIC_API Cell* BoundingCell() const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rCells"></param>
-		void Cells(std::list<Cell*>& rCells) const;
-		
+		TOPOLOGIC_API void Cells(std::list<Cell*>& rCells) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rCells"></param>
+		TOPOLOGIC_API void Faces(std::list<Face*>& rFaces) const;
+
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		bool IsClosed() const;
+		TOPOLOGIC_API  bool IsClosed() const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkCells"></param>
 		/// <returns></returns>
-		static CellComplex* ByCells(const std::list<Cell*>& rkCells);
+		static TOPOLOGIC_API CellComplex* ByCells(const std::list<Cell*>& rkCells);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		virtual TopoDS_Shape* GetOcctShape() const { return m_pOcctCompSolid; }
+		virtual TopoDS_Shape* GetOcctShape() const;
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rOcctGeometries"></param>
+		virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const;
 
 	protected:
 		/// <summary>

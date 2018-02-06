@@ -6,6 +6,10 @@
 
 namespace TopoLogic
 {
+	ref class Vertex;
+	ref class Face;
+	ref class Shell;
+
 	public ref class Cell : Topology
 	{
 	public:
@@ -15,7 +19,7 @@ namespace TopoLogic
 		/// <param name="faces"></param>
 		/// <returns></returns>
 		[MultiReturn(gcnew array<String^> { "TopoLogic Cell", "Solid" })]
-		static Dictionary<String^, Object^>^ ByFaces(List<Object^>^ faces);
+		static Dictionary<String^, Object^>^ ByFaces(List<Face^>^ faces);
 
 		/// <summary>
 		/// 
@@ -31,7 +35,7 @@ namespace TopoLogic
 		/// <param name="shell"></param>
 		/// <returns></returns>
 		[MultiReturn(gcnew array<String^> { "TopoLogic Cell", "Solid" })]
-		static Dictionary<String^, Object^>^ ByShell(Object^ shell);
+		static Dictionary<String^, Object^>^ ByShell(Shell^ shell);
 
 		/// <summary>
 		/// 
@@ -40,7 +44,7 @@ namespace TopoLogic
 		/// <param name="faceIndices"></param>
 		/// <returns></returns>
 		[MultiReturn(gcnew array<String^> { "TopoLogic Cell", "Solid" })]
-		static Dictionary<String^, Object^>^ ByVerticesFaceIndices(List<Object^>^ vertices, List<List<int>^>^ faceIndices);
+		static Dictionary<String^, Object^>^ ByVerticesFaceIndices(List<Vertex^>^ vertices, List<List<int>^>^ faceIndices);
 
 		/// <summary>
 		/// 
@@ -130,6 +134,18 @@ namespace TopoLogic
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="solid"></param>
+		Cell(Autodesk::DesignScript::Geometry::Solid^ solid);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="faces"></param>
+		Cell::Cell(List<Face^>^ faces);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="kpCoreCell"></param>
 		Cell(TopoLogicCore::Cell* const kpCoreCell);
 
@@ -139,9 +155,28 @@ namespace TopoLogic
 		/// <returns></returns>
 		virtual TopoLogicCore::Topology* GetCoreTopology() override;
 
+		// Utility methods
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		List<Face^>^ Faces();
 
 	protected:
 		virtual ~Cell();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="faces"></param>
+		void Init(List<Face^>^ faces);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="cuboid"></param>
+		void Init(Autodesk::DesignScript::Geometry::Cuboid^ cuboid);
 
 		/// <summary>
 		/// 

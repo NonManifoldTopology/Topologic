@@ -57,38 +57,38 @@ namespace TopoLogic
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="topology1"></param>
-		/// <param name="topology2"></param>
+		/// <param name="topologyArguments"></param>
+		/// <param name="topologyTools"></param>
 		/// <returns></returns>
 		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
-		static Dictionary<String^, Object^>^ Difference(Topology^ topology1, Topology^ topology2);
+		static Dictionary<String^, Object^>^ Difference(List<Topology^> topologyArguments, List<Topology^> topologyTools);
+		
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="topologyArguments"></param>
+		/// <param name="topologyTools"></param>
+		/// <returns></returns>
+		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
+		static Dictionary<String^, Object^>^ Impose(List<Topology^> topologyArguments, List<Topology^> topologyTools);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="topology1"></param>
-		/// <param name="topology2"></param>
+		/// <param name="topologyArguments"></param>
+		/// <param name="topologyTools"></param>
 		/// <returns></returns>
 		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
-		static Dictionary<String^, Object^>^ Impose(Topology^ topology1, Topology^ topology2);
+		static Dictionary<String^, Object^>^ Imprint(List<Topology^> topologyArguments, List<Topology^> topologyTools);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="topology1"></param>
-		/// <param name="topology2"></param>
+		/// <param name="topologyArguments"></param>
+		/// <param name="topologyTools"></param>
 		/// <returns></returns>
 		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
-		static Dictionary<String^, Object^>^ Imprint(Topology^ topology1, Topology^ topology2);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="topology1"></param>
-		/// <param name="topology2"></param>
-		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
-		static Dictionary<String^, Object^>^ Intersection(Topology^ topology1, Topology^ topology2);
+		static Dictionary<String^, Object^>^ Intersection(List<Topology^> topologyArguments, List<Topology^> topologyTools);
 
 		/// <summary>
 		/// 
@@ -101,22 +101,47 @@ namespace TopoLogic
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="topology"></param>
-		/// <param name="topologyList"></param>
+		/// <param name="topologyArguments"></param>
+		/// <param name="topologyTools"></param>
 		/// <returns></returns>
 		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
-		static Dictionary<String^, Object^>^ Slice(Topology^ topology, List<Topology^>^ topologyList);
+		static Dictionary<String^, Object^>^ Slice(List<Topology^> topologyArguments, List<Topology^> topologyTools);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="topology1"></param>
-		/// <param name="topology2"></param>
+		/// <param name="topologyArguments"></param>
+		/// <param name="topologyTools"></param>
 		/// <returns></returns>
 		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
-		static Dictionary<String^, Object^>^ Union(List<Topology^>^ topologyList);
+		static Dictionary<String^, Object^>^ Union(List<Topology^> topologyArguments, List<Topology^> topologyTools);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="topology"></param>
+		/// <param name="path"></param>
+		/// <returns></returns>
+		static bool SaveToBRep(Topology^ topology, String^ path);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="topology"></param>
+		/// <param name="path"></param>
+		/// <returns></returns>
+		static bool LoadFromBRep(Topology^ topology, String^ path);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="topology"></param>
+		/// <returns></returns>
+		static String^ Analyze(Topology^ topology);
 
 	public protected:
+		static Topology^ ByCoreTopology(TopoLogicCore::Topology * const kpCoreTopology);
+
 		virtual TopoLogicCore::Topology* GetCoreTopology() = 0;
 
 	protected:

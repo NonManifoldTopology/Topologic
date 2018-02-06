@@ -6,6 +6,9 @@
 
 namespace TopoLogic
 {
+	ref class Vertex;
+	ref class Face;
+
 	public ref class Shell : Topology
 	{
 	public:
@@ -80,7 +83,7 @@ namespace TopoLogic
 		/// "PolySurface": the Dynamo polysurface counterpart of the created sje;;
 		/// </returns>
 		[MultiReturn(gcnew array<String^> { "TopoLogic Shell", "PolySurface" })]
-		static Dictionary<String^, Object^>^ ByFaces(List<Object^>^ faces);
+		static Dictionary<String^, Object^>^ ByFaces(List<Face^>^ faces);
 
 		/// <summary>
 		/// Creates a shell by a polysurface.
@@ -107,7 +110,7 @@ namespace TopoLogic
 		/// "PolySurface": the Dynamo polysurface counterpart of the created sje;;
 		/// </returns>
 		[MultiReturn(gcnew array<String^> { "TopoLogic Shell", "PolySurface" })]
-		static Dictionary<String^, Object^>^ ByVerticesFaceIndices(List<Object^>^ vertices, List<List<int>^>^ faceIndices);
+		static Dictionary<String^, Object^>^ ByVerticesFaceIndices(List<Vertex^>^ vertices, List<List<int>^>^ faceIndices);
 
 		property Object^ Geometry
 		{
@@ -130,6 +133,14 @@ namespace TopoLogic
 		/// </summary>
 		/// <returns></returns>
 		virtual TopoLogicCore::Topology* GetCoreTopology() override;
+
+		// Utility methods
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		List<Face^>^ Faces();
 
 
 	protected:

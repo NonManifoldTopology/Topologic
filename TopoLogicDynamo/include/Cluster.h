@@ -16,6 +16,22 @@ namespace TopoLogic
 		/// <returns></returns>
 		static Cluster^ ByTopology(List<Topology^>^ topology);
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="cluster"></param>
+		/// <param name="topology"></param>
+		/// <returns></returns>
+		static Cluster^ Add(Cluster^ cluster, Topology^ topology);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="cluster"></param>
+		/// <param name="topology"></param>
+		/// <returns></returns>
+		static Cluster^ Remove(Cluster^ cluster, Topology^ topology);
+
 		property Object^ Geometry
 		{
 			/// <summary>
@@ -25,11 +41,21 @@ namespace TopoLogic
 			virtual Object^ get() override;
 		}
 
-	protected:
+	public protected:
 		/// <summary>
 		/// 
 		/// </summary>
-		Cluster();
+		/// <param name="kpCoreCell"></param>
+		Cluster(TopoLogicCore::Cluster* const kpCoreCluster);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual TopoLogicCore::Topology* GetCoreTopology() override;
+
+
+	protected:
 		virtual ~Cluster();
 
 		/// <summary>

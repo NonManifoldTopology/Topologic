@@ -20,6 +20,8 @@
 #include <TopOpeBRepBuild_Tools.hxx>
 #include <TopTools_MapOfShape.hxx>
 
+#include <assert.h>
+
 namespace TopoLogicCore
 {
 	void Face::AdjacentFaces(std::list<Face*>& rFaces) const
@@ -389,6 +391,17 @@ namespace TopoLogicCore
 	void Face::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
 	{
 		rOcctGeometries.push_back(Surface());
+	}
+
+	TopoDS_Shape* Face::GetOcctShape() const
+	{
+		assert(m_pOcctFace != nullptr && "Face::m_pOcctFace is null.");
+		if (m_pOcctFace == nullptr)
+		{
+			throw std::exception("Face::m_pOcctFace is null.");
+		}
+
+		return m_pOcctFace;
 	}
 
 	Face::Face(TopoDS_Face * const kpOcctFace)

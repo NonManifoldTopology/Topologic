@@ -3,6 +3,7 @@
 #include "Topology.h"
 
 #include <list>
+#include <vector>
 
 #include <TopoDS_Shell.hxx>
 
@@ -31,45 +32,38 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		Cell* Cell() const;
+		TOPOLOGIC_API Cell* Cell() const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rEdges"></param>
-		void Edges(std::list<Edge*>& rEdges) const;
+		TOPOLOGIC_API void Edges(std::list<Edge*>& rEdges) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rFaces"></param>
-		void Faces(std::list<Face*>& rFaces) const;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		bool IsClosed() const;
+		TOPOLOGIC_API void Faces(std::list<Face*>& rFaces) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rVertices"></param>
-		void Vertices(std::list<Vertex*>& rVertices) const;
+		TOPOLOGIC_API void Vertices(std::list<Vertex*>& rVertices) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		TOPOLOGIC_API bool IsClosed() const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkFaces"></param>
 		/// <returns></returns>
-		static Shell* ByFaces(const std::list<Face*>& rkFaces);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="kpkOcctShell"></param>
-		/// <returns></returns>
-		static Shell* ByPolySurface(TopoDS_Shell const * const kpkOcctShell);
+		static TOPOLOGIC_API Shell* ByFaces(const std::list<Face*>& rkFaces);
 
 		/// <summary>
 		/// 
@@ -77,12 +71,12 @@ namespace TopoLogicCore
 		/// <param name="rkVertices"></param>
 		/// <param name="rkFaceIndices"></param>
 		/// <returns></returns>
-		static Shell* ByVerticesFaceIndices(const std::list<Vertex*>& rkVertices, const std::list<int>& rkFaceIndices);
+		static TOPOLOGIC_API Shell* ByVerticesFaceIndices(const std::vector<Vertex*>& rkVertices, const std::list<std::list<int>>& rkFaceIndices);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		virtual TopoDS_Shape* GetOcctShape() const { return m_pOcctShell; }
+		virtual TopoDS_Shape* GetOcctShape() const;
 
 		/// <summary>
 		/// 
