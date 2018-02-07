@@ -5,12 +5,19 @@
 #include <list>
 
 #include <TopoDS_Compound.hxx>
+#include <TopoDS_Builder.hxx>
 
 namespace TopoLogicCore
 {
 	class Cluster : public Topology
 	{
 	public:
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kAddToGlobalCluster"></param>
+		Cluster(const bool kAddToGlobalCluster = true);
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -58,5 +65,7 @@ namespace TopoLogicCore
 		/// The underlying OCCT compound.
 		/// </summary>
 		TopoDS_Compound* m_pOcctCompound;
+
+		TopoDS_Builder m_occtBuilder;
 	};
 }

@@ -85,7 +85,7 @@ namespace TopoLogicCore
 
 		// Compute the non-normalised parameters.
 		const double kOcctParameter1 = kOcctFirstParameter + rkParameter1 * kOcctDeltaParameter;
-		const double kOcctParameter2 = kOcctLastParameter + rkParameter2 * kOcctDeltaParameter;
+		const double kOcctParameter2 = kOcctFirstParameter + rkParameter2 * kOcctDeltaParameter;
 
 		return new Edge(new TopoDS_Edge(BRepBuilderAPI_MakeEdge(pOcctCurve, kOcctParameter1, kOcctParameter2)));
 	}

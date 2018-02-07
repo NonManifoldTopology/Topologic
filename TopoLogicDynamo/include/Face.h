@@ -191,6 +191,14 @@ namespace TopoLogic {
 		[MultiReturn(gcnew array<String^> { "TopoLogic Vertices", "Points" })]
 		static Dictionary<String^, Object^>^ SharedVertices(Face^ topoLogicFace1, Face^ topoLogicFace2);
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="topoLogicFace"></param>
+		/// <returns></returns>
+		[MultiReturn(gcnew array<String^> { "TopoLogic Wire", "Polycurve" })]
+		static Dictionary<String^, Object^>^ OuterWire(Face^ topoLogicFace);
+
 		property Object^ Geometry
 		{
 			/// <summary>

@@ -26,7 +26,7 @@ namespace TopoLogicCore
 	}
 
 	GlobalCluster::GlobalCluster()
-		: m_pCluster(new Cluster(new TopoDS_Compound(), false))
+		: m_pCluster(new Cluster(false))
 	{
 	}
 

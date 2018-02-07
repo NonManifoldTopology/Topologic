@@ -34,14 +34,14 @@ namespace TopoLogic
 			kCellIterator != coreCells.end();
 			kCellIterator++)
 		{
-			Cell^ pFace = gcnew Cell(*kCellIterator);
-			pCells->Add(pFace);
-			pDynamoEntities->Add(pFace->Geometry);
+			Cell^ pCell = gcnew Cell(*kCellIterator);
+			pCells->Add(pCell);
+			pDynamoEntities->Add(pCell->Geometry);
 		}
 
 		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Faces", pCells);
-		pDictionary->Add("Surfaces", pDynamoEntities);
+		pDictionary->Add("TopoLogic Cells", pCells);
+		pDictionary->Add("Solids", pDynamoEntities);
 		return pDictionary;
 	}
 

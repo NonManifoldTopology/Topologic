@@ -19,6 +19,10 @@
 #include <ShapeAnalysis_ShapeContents.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
+#include <TopoDS_FrozenShape.hxx>
+#include <TopoDS_UnCompatibleShapes.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopTools_MapOfShape.hxx>
 
 namespace TopoLogicCore
 {
@@ -46,6 +50,37 @@ namespace TopoLogicCore
 		default:
 			throw std::exception("Topology::ByOcctShape: unknown topology.");
 		}
+	}
+
+	TopoDS_CompSolid Topology::MakeCompSolid(const TopoDS_Shape& rkOcctShape)
+	{
+		TopoDS_CompSolid occtCompSolid;
+		BRep_Builder occtBuilder;
+		occtBuilder.MakeCompSolid(occtCompSolid);
+
+		TopExp_Explorer occtExplorer;
+		TopTools_MapOfShape occtCells;
+		for (occtExplorer.Init(rkOcctShape, TopAbs_SOLID); occtExplorer.More(); occtExplorer.Next())
+		{
+			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
+			if (!occtCells.Contains(occtCurrent))
+			{
+				occtCells.Add(occtCurrent);
+				try {
+					occtBuilder.Add(occtCompSolid, occtCurrent);
+				}
+				catch (TopoDS_FrozenShape&)
+				{
+					throw std::exception("The cell is not free and cannot be modified.");
+				}
+				catch (TopoDS_UnCompatibleShapes&)
+				{
+					throw std::exception("The cell and face are not compatible.");
+				}
+			}
+		}
+
+		return occtCompSolid;
 	}
 
 	Topology::~Topology()
@@ -124,16 +159,16 @@ namespace TopoLogicCore
 	bool Topology::Locked() const
 	{
 		// TODO: Or locked?
-		return GetOcctShape()->Free();
+		return GetOcctShape()->Locked();
 	}
 
 	void Topology::Locked(const bool kLocked)
 	{
 		// TODO: Or locked?
-		GetOcctShape()->Free(kLocked);
+		GetOcctShape()->Locked(kLocked);
 	}
 
-	Topology* Topology::Difference(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools)
+	Topology* Topology::Difference(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools, const bool kOutputCellComplex)
 	{
 		BOPCol_ListOfShape occtShapeArguments;
 		for (std::list<Topology*>::const_iterator kTopologyIterator = rkTopologyArguments.begin();
@@ -167,10 +202,15 @@ namespace TopoLogicCore
 		}
 
 		const TopoDS_Shape& rkOcctCutShape = occtCut.Shape();
+		if (kOutputCellComplex)
+		{
+			return ByOcctShape(MakeCompSolid(rkOcctCutShape));
+		}
+
 		return ByOcctShape(rkOcctCutShape);
 	}
 
-	Topology* Topology::Impose(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools)
+	Topology* Topology::Impose(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools, const bool kOutputCellComplex)
 	{
 		// Impose: C = (A diff B) merge B
 		Topology* pDifferenceTopology = Difference(rkTopologyArguments, rkTopologyArguments);
@@ -186,7 +226,7 @@ namespace TopoLogicCore
 		return pMergeTopology;
 	}
 
-	Topology* Topology::Imprint(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools)
+	Topology* Topology::Imprint(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools, const bool kOutputCellComplex)
 	{
 		// Imprint: C = (A diff B) merge (A intersection B)
 		Topology* pDifferenceTopology = Difference(rkTopologyArguments, rkTopologyArguments);
@@ -205,7 +245,7 @@ namespace TopoLogicCore
 		return pMergeTopology;
 	}
 
-	Topology* Topology::Intersection(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools)
+	Topology* Topology::Intersection(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools, const bool kOutputCellComplex)
 	{
 		BOPCol_ListOfShape occtShapeArguments;
 		for (std::list<Topology*>::const_iterator kTopologyIterator = rkTopologyArguments.begin();
@@ -239,10 +279,15 @@ namespace TopoLogicCore
 		}
 
 		const TopoDS_Shape& rkOcctCommonShape = occtCommon.Shape();
+		if (kOutputCellComplex)
+		{
+			return ByOcctShape(MakeCompSolid(rkOcctCommonShape));
+		}
+
 		return ByOcctShape(rkOcctCommonShape);
 	}
 
-	Topology* Topology::Merge(const std::list<Topology*>& rkTopologyArguments)
+	Topology* Topology::Merge(const std::list<Topology*>& rkTopologyArguments, const bool kOutputCellComplex)
 	{
 		BOPCol_ListOfShape occtShapeArguments;
 		for (std::list<Topology*>::const_iterator kTopologyIterator = rkTopologyArguments.begin();
@@ -266,10 +311,16 @@ namespace TopoLogicCore
 		}
 
 		const TopoDS_Shape& rkOcctMergeShape= occtAlgoBuilder.Shape();
+
+		if (kOutputCellComplex)
+		{
+			return ByOcctShape(MakeCompSolid(rkOcctMergeShape));
+		}
+
 		return ByOcctShape(rkOcctMergeShape);
 	}
 
-	Topology* Topology::Slice(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools)
+	Topology* Topology::Slice(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools, const bool kOutputCellComplex)
 	{
 		BOPCol_ListOfShape occtShapeArguments;
 		for (std::list<Topology*>::const_iterator kTopologyIterator = rkTopologyArguments.begin();
@@ -304,10 +355,16 @@ namespace TopoLogicCore
 		}
 
 		const TopoDS_Shape& rkOcctSplitShape = occtSplitter.Shape();
+
+		if (kOutputCellComplex)
+		{
+			return ByOcctShape(MakeCompSolid(rkOcctSplitShape));
+		}
+
 		return ByOcctShape(rkOcctSplitShape);
 	}
 
-	Topology* Topology::Union(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools)
+	Topology* Topology::Union(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools, const bool kOutputCellComplex)
 	{
 		BOPCol_ListOfShape occtShapeArguments;
 		for (std::list<Topology*>::const_iterator kTopologyIterator = rkTopologyArguments.begin();
@@ -341,6 +398,11 @@ namespace TopoLogicCore
 		}
 
 		const TopoDS_Shape& rkFuseShape = occtFuse.Shape();
+		if (kOutputCellComplex)
+		{
+			return ByOcctShape(MakeCompSolid(rkFuseShape));
+		}
+
 		return ByOcctShape(rkFuseShape);
 	}
 }

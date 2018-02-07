@@ -12,6 +12,7 @@
 #include <BRepTools_WireExplorer.hxx>
 #include <BSplCLib.hxx>
 #include <Geom_BSplineSurface.hxx>
+#include <ShapeAnalysis.hxx>
 #include <ShapeFix_Wire.hxx>
 #include <StdFail_NotDone.hxx>
 #include <TopExp.hxx>
@@ -386,6 +387,11 @@ namespace TopoLogicCore
 		{
 			rVertices.push_back(new Vertex(new TopoDS_Vertex(TopoDS::Vertex(*kOcctShapeIterator))));
 		}
+	}
+
+	Wire* Face::OuterWire() const
+	{
+		return new Wire(new TopoDS_Wire(ShapeAnalysis::OuterWire(TopoDS::Face(*GetOcctShape()))));
 	}
 
 	void Face::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const

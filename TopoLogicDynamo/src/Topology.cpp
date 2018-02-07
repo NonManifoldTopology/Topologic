@@ -26,6 +26,12 @@ namespace TopoLogic
 		return GetCoreTopology()->Locked();
 	}
 
+	Topology^ Topology::SetLocked(bool value)
+	{
+		GetCoreTopology()->Locked(value);
+		return this;
+	}
+
 	bool Topology::SaveToBRep(Topology^ topology, String^ path)
 	{
 		std::string cppPath = msclr::interop::marshal_as<std::string>(path);
@@ -83,7 +89,7 @@ namespace TopoLogic
 		// TODO: insert return statement here
 	}
 
-	Dictionary<String^, Object^>^ Topology::Difference(List<Topology^> topologyArguments, List<Topology^> topologyTools)
+	Dictionary<String^, Object^>^ Topology::Difference(List<Topology^> topologyArguments, List<Topology^> topologyTools, bool outputCellComplex)
 	{
 		std::list<TopoLogicCore::Topology*> pCoreArguments;
 		for each(Topology^ pTopology in topologyArguments)
@@ -97,7 +103,7 @@ namespace TopoLogic
 			pCoreTools.push_back(pTopology->GetCoreTopology());
 		}
 
-		TopoLogicCore::Topology* pDifferenceCoreTopology = TopoLogicCore::Topology::Difference(pCoreArguments, pCoreTools);
+		TopoLogicCore::Topology* pDifferenceCoreTopology = TopoLogicCore::Topology::Difference(pCoreArguments, pCoreTools, outputCellComplex);
 		Topology^ pTopology = Topology::ByCoreTopology(pDifferenceCoreTopology);
 
 		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
@@ -106,7 +112,7 @@ namespace TopoLogic
 		return pDictionary;
 	}
 
-	Dictionary<String^, Object^>^ Topology::Impose(List<Topology^> topologyArguments, List<Topology^> topologyTools)
+	Dictionary<String^, Object^>^ Topology::Impose(List<Topology^> topologyArguments, List<Topology^> topologyTools, bool outputCellComplex)
 	{
 		std::list<TopoLogicCore::Topology*> pCoreArguments;
 		for each(Topology^ pTopology in topologyArguments)
@@ -120,7 +126,7 @@ namespace TopoLogic
 			pCoreTools.push_back(pTopology->GetCoreTopology());
 		}
 
-		TopoLogicCore::Topology* pImposeCoreTopology = TopoLogicCore::Topology::Impose(pCoreArguments, pCoreTools);
+		TopoLogicCore::Topology* pImposeCoreTopology = TopoLogicCore::Topology::Impose(pCoreArguments, pCoreTools, outputCellComplex);
 		Topology^ pTopology = Topology::ByCoreTopology(pImposeCoreTopology);
 
 		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
@@ -129,7 +135,7 @@ namespace TopoLogic
 		return pDictionary;
 	}
 
-	Dictionary<String^, Object^>^ Topology::Imprint(List<Topology^> topologyArguments, List<Topology^> topologyTools)
+	Dictionary<String^, Object^>^ Topology::Imprint(List<Topology^> topologyArguments, List<Topology^> topologyTools, bool outputCellComplex)
 	{
 		std::list<TopoLogicCore::Topology*> pCoreArguments;
 		for each(Topology^ pTopology in topologyArguments)
@@ -143,7 +149,7 @@ namespace TopoLogic
 			pCoreTools.push_back(pTopology->GetCoreTopology());
 		}
 
-		TopoLogicCore::Topology* pImprintCoreTopology = TopoLogicCore::Topology::Imprint(pCoreArguments, pCoreTools);
+		TopoLogicCore::Topology* pImprintCoreTopology = TopoLogicCore::Topology::Imprint(pCoreArguments, pCoreTools, outputCellComplex);
 		Topology^ pTopology = Topology::ByCoreTopology(pImprintCoreTopology);
 
 		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
@@ -152,7 +158,7 @@ namespace TopoLogic
 		return pDictionary;
 	}
 
-	Dictionary<String^, Object^>^ Topology::Intersection(List<Topology^> topologyArguments, List<Topology^> topologyTools)
+	Dictionary<String^, Object^>^ Topology::Intersection(List<Topology^> topologyArguments, List<Topology^> topologyTools, bool outputCellComplex)
 	{
 		std::list<TopoLogicCore::Topology*> pCoreArguments;
 		for each(Topology^ pTopology in topologyArguments)
@@ -166,7 +172,7 @@ namespace TopoLogic
 			pCoreTools.push_back(pTopology->GetCoreTopology());
 		}
 
-		TopoLogicCore::Topology* pIntersectionCoreTopology = TopoLogicCore::Topology::Intersection(pCoreArguments, pCoreTools);
+		TopoLogicCore::Topology* pIntersectionCoreTopology = TopoLogicCore::Topology::Intersection(pCoreArguments, pCoreTools, outputCellComplex);
 		Topology^ pTopology = Topology::ByCoreTopology(pIntersectionCoreTopology);
 
 		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
@@ -175,7 +181,7 @@ namespace TopoLogic
 		return pDictionary;
 	}
 
-	Dictionary<String^, Object^>^ Topology::Union(List<Topology^> topologyArguments, List<Topology^> topologyTools)
+	Dictionary<String^, Object^>^ Topology::Union(List<Topology^> topologyArguments, List<Topology^> topologyTools, bool outputCellComplex)
 	{
 		std::list<TopoLogicCore::Topology*> pCoreArguments;
 		for each(Topology^ pTopology in topologyArguments)
@@ -189,7 +195,7 @@ namespace TopoLogic
 			pCoreTools.push_back(pTopology->GetCoreTopology());
 		}
 
-		TopoLogicCore::Topology* pUnionCoreTopology = TopoLogicCore::Topology::Union(pCoreArguments, pCoreTools);
+		TopoLogicCore::Topology* pUnionCoreTopology = TopoLogicCore::Topology::Union(pCoreArguments, pCoreTools, outputCellComplex);
 		Topology^ pTopology = Topology::ByCoreTopology(pUnionCoreTopology);
 
 		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
@@ -198,7 +204,7 @@ namespace TopoLogic
 		return pDictionary;
 	}
 
-	Dictionary<String^, Object^>^ Topology::Merge(List<Topology^>^ topologyList)
+	Dictionary<String^, Object^>^ Topology::Merge(List<Topology^>^ topologyList, bool outputCellComplex)
 	{
 		std::list<TopoLogicCore::Topology*> pCoreTopologyList;
 		for each(Topology^ pTopology in topologyList)
@@ -206,7 +212,7 @@ namespace TopoLogic
 			pCoreTopologyList.push_back(pTopology->GetCoreTopology());
 		}
 
-		TopoLogicCore::Topology* pMergeCoreTopology = TopoLogicCore::Topology::Merge(pCoreTopologyList);
+		TopoLogicCore::Topology* pMergeCoreTopology = TopoLogicCore::Topology::Merge(pCoreTopologyList, outputCellComplex);
 		Topology^ pTopology = Topology::ByCoreTopology(pMergeCoreTopology);
 
 		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
@@ -215,7 +221,7 @@ namespace TopoLogic
 		return pDictionary;
 	}
 
-	Dictionary<String^, Object^>^ Topology::Slice(List<Topology^> topologyArguments, List<Topology^> topologyTools)
+	Dictionary<String^, Object^>^ Topology::Slice(List<Topology^> topologyArguments, List<Topology^> topologyTools, bool outputCellComplex)
 	{
 		std::list<TopoLogicCore::Topology*> pCoreArguments;
 		for each(Topology^ pTopology in topologyArguments)
@@ -229,7 +235,7 @@ namespace TopoLogic
 			pCoreTools.push_back(pTopology->GetCoreTopology());
 		}
 
-		TopoLogicCore::Topology* pSliceCoreTopology = TopoLogicCore::Topology::Slice(pCoreArguments, pCoreTools);
+		TopoLogicCore::Topology* pSliceCoreTopology = TopoLogicCore::Topology::Slice(pCoreArguments, pCoreTools, outputCellComplex);
 		Topology^ pTopology = Topology::ByCoreTopology(pSliceCoreTopology);
 
 		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();

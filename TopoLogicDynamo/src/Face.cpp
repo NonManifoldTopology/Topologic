@@ -240,6 +240,17 @@ namespace TopoLogic
 		return pDictionary;
 	}
 
+	Dictionary<String^, Object^>^ Face::OuterWire(Face ^ topoLogicFace)
+	{
+		TopoLogicCore::Face* pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(topoLogicFace->GetCoreTopology());
+		Wire^ pOuterWire = gcnew Wire(pCoreFace->OuterWire());
+
+		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
+		pDictionary->Add("TopoLogic Wire", pOuterWire);
+		pDictionary->Add("Polycurve", pOuterWire->Geometry);
+		return pDictionary;
+	}
+
 	bool Face::IsApplied::get()
 	{
 		throw gcnew System::NotImplementedException();
@@ -481,41 +492,53 @@ namespace TopoLogic
 			// This is a planar face, and pOcctPlane is simply the supporting infinite plane.
 			// In this case, do the following steps.
 
-			// 1. Get the edges of the input face
+			// Get the wires and edges.
+			List<Wire^>^ pWires = Wires();
 			List<Edge^>^ pEdges = Edges();
 
-			List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoCurves = gcnew List<Autodesk::DesignScript::Geometry::Curve^>();
-			for each(Edge^ pEdge in pEdges)
-			{
-				// 2. Convert the edges to Dynamo curves
-				pDynamoCurves->Add(pEdge->Curve());
-			}
-
-			// 4. Create a surface by patch, via a Polycurve
-			Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface = Autodesk::DesignScript::Geometry::Surface::ByPatch(
-				Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoCurves)
-			);
-
-			List<Wire^>^ pWires = Wires();
+			// If there is only one wire, create a surface and return it.
 			if (pWires->Count < 2)
 			{
+				List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoCurves = gcnew List<Autodesk::DesignScript::Geometry::Curve^>();
+				for each(Edge^ pEdge in pEdges)
+				{
+					// 2. Convert the edges to Dynamo curves
+					pDynamoCurves->Add(pEdge->Curve());
+				}
+				Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface = Autodesk::DesignScript::Geometry::Surface::ByPatch(
+					Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoCurves)
+				);
 				return pDynamoSurface;
 			}
 
+			// Otherwise, identify the outer wire.
+			// Create a surface from this wire
+			// Trim the surface with all the wires (including the outer wire)
+
+			Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface = nullptr;
+
 			List<Autodesk::DesignScript::Geometry::PolyCurve^>^ pDynamoEdgeLoops = gcnew List<Autodesk::DesignScript::Geometry::PolyCurve^>();
-			bool isOuterWireFound = false;
 			const TopoDS_Wire& rkOcctOuterWire = ShapeAnalysis::OuterWire(TopoDS::Face(*pCoreFace->GetOcctShape()));
 
 			for each(Wire^ pWire in pWires)
 			{
-				if (!isOuterWireFound)
+				if (pDynamoSurface == nullptr)
 				{
-					if (pWire->GetCoreTopology()->GetOcctShape()->IsEqual(rkOcctOuterWire))
+					if (pWire->GetCoreTopology()->GetOcctShape()->IsSame(rkOcctOuterWire))
 					{
-						isOuterWireFound = true;
-						continue;
+						List<Edge^>^ pOuterEdges = pWire->Edges();
+						List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoOuterCurves = gcnew List<Autodesk::DesignScript::Geometry::Curve^>();
+						for each(Edge^ pOuterEdge in pOuterEdges)
+						{
+							// 2. Convert the edges to Dynamo curves
+							pDynamoOuterCurves->Add(pOuterEdge->Curve());
+						}
+						pDynamoSurface = Autodesk::DesignScript::Geometry::Surface::ByPatch(
+							Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoOuterCurves)
+						);
 					}
 				}
+
 				Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoPolycurve = 
 					safe_cast<Autodesk::DesignScript::Geometry::PolyCurve^>(pWire->Geometry);
 				if (pDynamoPolycurve != nullptr)
@@ -524,11 +547,10 @@ namespace TopoLogic
 				}
 			}
 
-			Autodesk::DesignScript::Geometry::Surface^ pDynamoTrimmedSurface = nullptr;
-
 			// this may raise exception
 			try{
-				return pDynamoSurface->TrimWithEdgeLoops(pDynamoEdgeLoops);
+				Autodesk::DesignScript::Geometry::Surface^ pTrimmedDynamoSurface = pDynamoSurface->TrimWithEdgeLoops(pDynamoEdgeLoops);
+				return pTrimmedDynamoSurface;
 			}
 			catch (Exception^ e)
 			{

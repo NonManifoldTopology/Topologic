@@ -5,6 +5,7 @@
 
 #include <Standard_Handle.hxx>
 #include <Geom_Geometry.hxx>
+#include <TopoDS_CompSolid.hxx>
 
 #include <list>
 #include <map>
@@ -30,55 +31,62 @@ namespace TopoLogicCore
 		/// </summary>
 		/// <param name="rkTopologyArguments"></param>
 		/// <param name="rkTopologyTools"></param>
+		/// <param name="kOutputCellComplex"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API Topology* Difference(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools);
+		static TOPOLOGIC_API Topology* Difference(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools, const bool kOutputCellComplex = false);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkTopologyArguments"></param>
 		/// <param name="rkTopologyTools"></param>
+		/// <param name="kOutputCellComplex"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API Topology* Impose(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools);
+		static TOPOLOGIC_API Topology* Impose(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools, const bool kOutputCellComplex = false);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkTopologyArguments"></param>
 		/// <param name="rkTopologyTools"></param>
+		/// <param name="kOutputCellComplex"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API Topology* Imprint(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools);
+		static TOPOLOGIC_API Topology* Imprint(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools, const bool kOutputCellComplex = false);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkTopologyArguments"></param>
 		/// <param name="rkTopologyTools"></param>
+		/// <param name="kOutputCellComplex"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API Topology* Intersection(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools);
+		static TOPOLOGIC_API Topology* Intersection(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools, const bool kOutputCellComplex = false);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkTopologyArguments"></param>
+		/// <param name="kOutputCellComplex"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API Topology* Merge(const std::list<Topology*>& rkTopologyArguments);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="rkTopologyArguments"></param>
-		/// <param name="rkTopologyTools"></param>
-		/// <returns></returns>
-		static TOPOLOGIC_API Topology* Slice(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools);
+		static TOPOLOGIC_API Topology* Merge(const std::list<Topology*>& rkTopologyArguments, const bool kOutputCellComplex = false);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkTopologyArguments"></param>
 		/// <param name="rkTopologyTools"></param>
+		/// <param name="kOutputCellComplex"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API Topology* Union(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools);
+		static TOPOLOGIC_API Topology* Slice(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools, const bool kOutputCellComplex = false);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkTopologyArguments"></param>
+		/// <param name="rkTopologyTools"></param>
+		/// <param name="kOutputCellComplex"></param>
+		/// <returns></returns>
+		static TOPOLOGIC_API Topology* Union(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools, const bool kOutputCellComplex = false);
 
 		/// <summary>
 		/// 
@@ -190,6 +198,13 @@ namespace TopoLogicCore
 		/// <param name="rkOcctShape"></param>
 		/// <returns></returns>
 		static Topology* ByOcctShape(const TopoDS_Shape& rkOcctShape);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkOcctShape"></param>
+		/// <returns></returns>
+		static TopoDS_CompSolid MakeCompSolid(const TopoDS_Shape& rkOcctShape);
 
 		AttributeMap m_attributeMap;
 		std::list<Topology*> m_members;

@@ -41,6 +41,13 @@ namespace TopoLogic
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		Topology^ SetLocked(bool value);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="topology"></param>
 		/// <returns></returns>
 		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
@@ -59,62 +66,69 @@ namespace TopoLogic
 		/// </summary>
 		/// <param name="topologyArguments"></param>
 		/// <param name="topologyTools"></param>
+		/// <param name="outputCellComplex"></param>
 		/// <returns></returns>
 		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
-		static Dictionary<String^, Object^>^ Difference(List<Topology^> topologyArguments, List<Topology^> topologyTools);
+		static Dictionary<String^, Object^>^ Difference(List<Topology^> topologyArguments, List<Topology^> topologyTools, bool outputCellComplex);
 		
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="topologyArguments"></param>
 		/// <param name="topologyTools"></param>
+		/// <param name="outputCellComplex"></param>
 		/// <returns></returns>
 		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
-		static Dictionary<String^, Object^>^ Impose(List<Topology^> topologyArguments, List<Topology^> topologyTools);
+		static Dictionary<String^, Object^>^ Impose(List<Topology^> topologyArguments, List<Topology^> topologyTools, bool outputCellComplex);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="topologyArguments"></param>
 		/// <param name="topologyTools"></param>
+		/// <param name="outputCellComplex"></param>
 		/// <returns></returns>
 		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
-		static Dictionary<String^, Object^>^ Imprint(List<Topology^> topologyArguments, List<Topology^> topologyTools);
+		static Dictionary<String^, Object^>^ Imprint(List<Topology^> topologyArguments, List<Topology^> topologyTools, bool outputCellComplex);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="topologyArguments"></param>
 		/// <param name="topologyTools"></param>
+		/// <param name="outputCellComplex"></param>
 		/// <returns></returns>
 		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
-		static Dictionary<String^, Object^>^ Intersection(List<Topology^> topologyArguments, List<Topology^> topologyTools);
+		static Dictionary<String^, Object^>^ Intersection(List<Topology^> topologyArguments, List<Topology^> topologyTools, bool outputCellComplex);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="topologyList"></param>
+		/// <param name="outputCellComplex"></param>
 		/// <returns></returns>
 		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
-		static Dictionary<String^, Object^>^ Merge(List<Topology^>^ topologyList);
+		static Dictionary<String^, Object^>^ Merge(List<Topology^>^ topologyList, bool outputCellComplex);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="topologyArguments"></param>
 		/// <param name="topologyTools"></param>
+		/// <param name="outputCellComplex"></param>
 		/// <returns></returns>
 		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
-		static Dictionary<String^, Object^>^ Slice(List<Topology^> topologyArguments, List<Topology^> topologyTools);
+		static Dictionary<String^, Object^>^ Slice(List<Topology^> topologyArguments, List<Topology^> topologyTools, bool outputCellComplex);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="topologyArguments"></param>
 		/// <param name="topologyTools"></param>
+		/// <param name="outputCellComplex"></param>
 		/// <returns></returns>
 		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
-		static Dictionary<String^, Object^>^ Union(List<Topology^> topologyArguments, List<Topology^> topologyTools);
+		static Dictionary<String^, Object^>^ Union(List<Topology^> topologyArguments, List<Topology^> topologyTools, bool outputCellComplex);
 
 		/// <summary>
 		/// 
