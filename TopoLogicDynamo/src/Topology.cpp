@@ -135,6 +135,39 @@ namespace TopoLogic
 		return pDictionary;
 	}
 
+	Dictionary<String^, Object^>^ Topology::TestImposeIntermediate(List<Topology^> topologyArguments, List<Topology^> topologyTools, bool outputCellComplex)
+	{
+		std::list<TopoLogicCore::Topology*> pCoreArguments;
+		for each(Topology^ pTopology in topologyArguments)
+		{
+			pCoreArguments.push_back(pTopology->GetCoreTopology());
+		}
+
+		std::list<TopoLogicCore::Topology*> pCoreTools;
+		for each(Topology^ pTopology in topologyTools)
+		{
+			pCoreTools.push_back(pTopology->GetCoreTopology());
+		}
+
+		std::list<TopoLogicCore::Topology*> pCoreTopologyList;
+		TopoLogicCore::Topology::TestImposeIntermediate(pCoreArguments, pCoreTools, outputCellComplex, pCoreTopologyList);
+		List<Topology^>^ topologyLists = gcnew List<Topology^>();
+		List<Object^>^ objectList = gcnew List<Object^>();
+		for (std::list<TopoLogicCore::Topology*>::const_iterator kCoreTopologyIterator = pCoreTopologyList.cbegin();
+			kCoreTopologyIterator != pCoreTopologyList.cend();
+			kCoreTopologyIterator++)
+		{
+			Topology^ pTopology = Topology::ByCoreTopology(*kCoreTopologyIterator);
+			topologyLists->Add(pTopology);
+			objectList->Add(pTopology->Geometry);
+		}
+
+		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
+		pDictionary->Add("Topology", topologyLists);
+		pDictionary->Add("Geometry", objectList);
+		return pDictionary;
+	}
+
 	Dictionary<String^, Object^>^ Topology::Imprint(List<Topology^> topologyArguments, List<Topology^> topologyTools, bool outputCellComplex)
 	{
 		std::list<TopoLogicCore::Topology*> pCoreArguments;

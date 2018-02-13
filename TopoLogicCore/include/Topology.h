@@ -44,6 +44,8 @@ namespace TopoLogicCore
 		/// <returns></returns>
 		static TOPOLOGIC_API Topology* Impose(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools, const bool kOutputCellComplex = false);
 
+		static TOPOLOGIC_API void TestImposeIntermediate(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools, const bool kOutputCellComplex, std::list<Topology*>& rTopology);
+
 		/// <summary>
 		/// 
 		/// </summary>
