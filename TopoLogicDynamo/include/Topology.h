@@ -81,9 +81,6 @@ namespace TopoLogic
 		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
 		static Dictionary<String^, Object^>^ Impose(List<Topology^> topologyArguments, List<Topology^> topologyTools, bool outputCellComplex);
 
-		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
-		static Dictionary<String^, Object^>^ TestImposeIntermediate(List<Topology^> topologyArguments, List<Topology^> topologyTools, bool outputCellComplex);
-
 		/// <summary>
 		/// 
 		/// </summary>
