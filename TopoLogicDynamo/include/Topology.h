@@ -66,6 +66,24 @@ namespace TopoLogic
 		/// </summary>
 		/// <param name="topologyArguments"></param>
 		/// <param name="topologyTools"></param>
+		/// <returns></returns>
+		[MultiReturn(gcnew array<String^> { 
+			"ArgumentImagesInArguments", 
+			"ArgumentImagesInTools",
+			"ToolImagesInArguments",
+			"ToolImagesInTools",
+			"GeometryArgumentImagesInArguments",
+			"GeometryArgumentImagesInTools",
+			"GeometryToolImagesInArguments",
+			"GeometryToolImagesInTools"
+			})]
+		static Dictionary<String^, Object^>^ BooleanImages(List<Topology^> topologyArguments, List<Topology^> topologyTools);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="topologyArguments"></param>
+		/// <param name="topologyTools"></param>
 		/// <param name="outputCellComplex"></param>
 		/// <returns></returns>
 		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]

@@ -31,6 +31,23 @@ namespace TopoLogicCore
 		/// </summary>
 		/// <param name="rkTopologyArguments"></param>
 		/// <param name="rkTopologyTools"></param>
+		/// <param name="kArgumentImagesInArguments"></param>
+		/// <param name="kArgumentImagesInTools"></param>
+		/// <param name="kToolsImagesInArguments"></param>
+		/// <param name="kToolsImagesInTools"></param>
+		static TOPOLOGIC_API void BooleanImages(
+			const std::list<Topology*>& rkTopologyArguments, 
+			const std::list<Topology*>& rkTopologyTools, 
+			std::list<Topology*>& kArgumentImagesInArguments,
+			std::list<Topology*>& kArgumentImagesInTools,
+			std::list<Topology*>& kToolsImagesInArguments,
+			std::list<Topology*>& kToolsImagesInTools);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkTopologyArguments"></param>
+		/// <param name="rkTopologyTools"></param>
 		/// <param name="kOutputCellComplex"></param>
 		/// <returns></returns>
 		static TOPOLOGIC_API Topology* Difference(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools, const bool kOutputCellComplex = false);

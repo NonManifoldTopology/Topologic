@@ -89,6 +89,82 @@ namespace TopoLogic
 		// TODO: insert return statement here
 	}
 
+	Dictionary<String^, Object^>^ Topology::BooleanImages(List<Topology^> topologyArguments, List<Topology^> topologyTools)
+	{
+		std::list<TopoLogicCore::Topology*> pCoreArguments;
+		for each(Topology^ pTopology in topologyArguments)
+		{
+			pCoreArguments.push_back(pTopology->GetCoreTopology());
+		}
+
+		std::list<TopoLogicCore::Topology*> pCoreTools;
+		for each(Topology^ pTopology in topologyTools)
+		{
+			pCoreTools.push_back(pTopology->GetCoreTopology());
+		}
+
+		std::list<TopoLogicCore::Topology*> coreArgumentsInArguments;
+		std::list<TopoLogicCore::Topology*> coreArgumentsInTools;
+		std::list<TopoLogicCore::Topology*> coreToolsInArguments;
+		std::list<TopoLogicCore::Topology*> coreToolsInTools;
+		TopoLogicCore::Topology::BooleanImages(pCoreArguments, pCoreTools, coreArgumentsInArguments, coreArgumentsInTools, coreToolsInArguments, coreToolsInTools);
+
+		List<Topology^>^ pArgumentsInArguments = gcnew List<Topology^>();
+		List<Object^>^ pGeometryArgumentsInArguments = gcnew List<Object^>();
+		for (std::list<TopoLogicCore::Topology*>::const_iterator kCoreTopology = coreArgumentsInArguments.begin();
+			kCoreTopology != coreArgumentsInArguments.end();
+			kCoreTopology++)
+		{
+			Topology^ pTopology = Topology::ByCoreTopology(*kCoreTopology);
+			pArgumentsInArguments->Add(pTopology);
+			pGeometryArgumentsInArguments->Add(pTopology->Geometry);
+		}
+
+		List<Topology^>^ pArgumentsInTools = gcnew List<Topology^>();
+		List<Object^>^ pGeometryArgumentsInTools = gcnew List<Object^>();
+		for (std::list<TopoLogicCore::Topology*>::const_iterator kCoreTopology = coreArgumentsInTools.begin();
+			kCoreTopology != coreArgumentsInTools.end();
+			kCoreTopology++)
+		{
+			Topology^ pTopology = Topology::ByCoreTopology(*kCoreTopology);
+			pArgumentsInTools->Add(pTopology);
+			pGeometryArgumentsInTools->Add(pTopology->Geometry);
+		}
+
+		List<Topology^>^ pToolsInArguments = gcnew List<Topology^>();
+		List<Object^>^ pGeometryToolsInArguments = gcnew List<Object^>();
+		for (std::list<TopoLogicCore::Topology*>::const_iterator kCoreTopology = coreToolsInArguments.begin();
+			kCoreTopology != coreToolsInArguments.end();
+			kCoreTopology++)
+		{
+			Topology^ pTopology = Topology::ByCoreTopology(*kCoreTopology);
+			pToolsInArguments->Add(pTopology);
+			pGeometryToolsInArguments->Add(pTopology->Geometry);
+		}
+
+		List<Topology^>^ pToolsInTools = gcnew List<Topology^>();
+		List<Object^>^ pGeometryToolsInTools = gcnew List<Object^>();
+		for (std::list<TopoLogicCore::Topology*>::const_iterator kCoreTopology = coreToolsInTools.begin();
+			kCoreTopology != coreToolsInTools.end();
+			kCoreTopology++)
+		{
+			Topology^ pTopology = Topology::ByCoreTopology(*kCoreTopology);
+			pToolsInTools->Add(pTopology);
+			pGeometryToolsInTools->Add(pTopology->Geometry);
+		}
+
+		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
+		pDictionary->Add("ArgumentImagesInArguments", pArgumentsInArguments);
+		pDictionary->Add("ArgumentImagesInTools", pArgumentsInTools);
+		pDictionary->Add("ToolImagesInArguments", pToolsInArguments);
+		pDictionary->Add("ToolImagesInTools", pToolsInTools);
+		pDictionary->Add("GeometryArgumentImagesInArguments", pGeometryArgumentsInArguments);
+		pDictionary->Add("GeometryArgumentImagesInTools", pGeometryArgumentsInTools);
+		pDictionary->Add("GeometryToolImagesInArguments", pGeometryToolsInArguments);
+		pDictionary->Add("GeometryToolImagesInTools", pGeometryToolsInTools);
+		return pDictionary;
+	}
+
 	Dictionary<String^, Object^>^ Topology::Difference(List<Topology^> topologyArguments, List<Topology^> topologyTools, bool outputCellComplex)
 	{
 		std::list<TopoLogicCore::Topology*> pCoreArguments;

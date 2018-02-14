@@ -174,6 +174,192 @@ namespace TopoLogicCore
 		GetOcctShape()->Locked(kLocked);
 	}
 
+	void Topology::BooleanImages(
+		const std::list<Topology*>& rkTopologyArguments, 
+		const std::list<Topology*>& rkTopologyTools, 
+		std::list<Topology*>& kArgumentImagesInArguments, 
+		std::list<Topology*>& kArgumentImagesInTools, 
+		std::list<Topology*>& kToolsImagesInArguments, 
+		std::list<Topology*>& kToolsImagesInTools)
+	{
+		// 1. Prepare the OCCT arguments and tools
+		BOPCol_ListOfShape occtShapeArguments;
+		for (std::list<Topology*>::const_iterator kTopologyIterator = rkTopologyArguments.begin();
+			kTopologyIterator != rkTopologyArguments.end();
+			kTopologyIterator++)
+		{
+			Topology* pTopology = *kTopologyIterator;
+
+			// If cell complex, add the cells
+			CellComplex* pCellComplex = dynamic_cast<CellComplex*>(pTopology);
+			if (pCellComplex != nullptr)
+			{
+				std::list<Cell*> cells;
+				pCellComplex->Cells(cells);
+				for (std::list<Cell*>::const_iterator kCellIterator = cells.begin();
+					kCellIterator != cells.end();
+					kCellIterator++)
+				{
+					occtShapeArguments.Append(*(*kCellIterator)->GetOcctShape());
+				}
+			}
+			else
+			{
+				occtShapeArguments.Append(*pTopology->GetOcctShape());
+			}
+		}
+
+		// 2. Perform the split
+		BOPAlgo_Splitter occtSplitter;
+		occtSplitter.SetArguments(occtShapeArguments);
+		BOPCol_ListOfShape occtShapeTools;
+		for (std::list<Topology*>::const_iterator kTopologyIterator = rkTopologyTools.begin();
+			kTopologyIterator != rkTopologyTools.end();
+			kTopologyIterator++)
+		{
+			Topology* pTopology = *kTopologyIterator;
+			CellComplex* pCellComplex = dynamic_cast<CellComplex*>(pTopology);
+			if (pCellComplex != nullptr)
+			{
+				std::list<Cell*> cells;
+				pCellComplex->Cells(cells);
+				for (std::list<Cell*>::const_iterator kCellIterator = cells.begin();
+					kCellIterator != cells.end();
+					kCellIterator++)
+				{
+					occtShapeTools.Append(*(*kCellIterator)->GetOcctShape());
+				}
+			}
+			else
+			{
+				occtShapeTools.Append(*pTopology->GetOcctShape());
+			}
+		}
+
+		occtSplitter.SetTools(occtShapeTools);
+		// Split the arguments and tools
+		occtSplitter.Perform();
+
+		const TopoDS_Shape& rkOcctSplitShape = occtSplitter.Shape();
+
+		const BOPCol_DataMapOfShapeListOfShape& rkImages = occtSplitter.Images();
+
+		// 3. Get the faces of arguments' and tools' images.
+		TopTools_MapOfShape occtArgumentImageFaces;
+		for (BOPCol_ListOfShape::const_iterator kArgumentIterator = occtShapeArguments.begin();
+			kArgumentIterator != occtShapeArguments.end();
+			kArgumentIterator++)
+		{
+			const BOPCol_ListOfShape& rkArgumentImages = rkImages.Find(*kArgumentIterator);
+
+			for (BOPCol_ListOfShape::const_iterator kArgumentImageIterator = rkArgumentImages.begin();
+				kArgumentImageIterator != rkArgumentImages.end();
+				kArgumentImageIterator++)
+			{
+				const TopoDS_Shape& rkImage = *kArgumentImageIterator;
+
+				// Check the individual faces, later add them to create a shell
+				bool hasElement = false;
+				TopoDS_Builder occtBuilder;
+				TopoDS_Shell occtImageShell;
+				occtBuilder.MakeShell(occtImageShell);
+
+				TopExp_Explorer occtArgumentExplorer;
+				for (occtArgumentExplorer.Init(rkImage, TopAbs_FACE); occtArgumentExplorer.More(); occtArgumentExplorer.Next())
+				{
+					const TopoDS_Shape& rkOcctCurrent = occtArgumentExplorer.Current();
+					if (!occtArgumentImageFaces.Contains(rkOcctCurrent))
+					{
+						occtArgumentImageFaces.Add(rkOcctCurrent);
+					}
+				}
+			}
+		}
+
+		TopTools_MapOfShape occtToolImageFaces;
+		for (BOPCol_ListOfShape::const_iterator kToolIterator = occtShapeTools.begin();
+			kToolIterator != occtShapeTools.end();
+			kToolIterator++)
+		{
+			const TopoDS_Shape& rkTool = *kToolIterator;
+
+			const BOPCol_ListOfShape& rkToolImages = rkImages.Find(rkTool);
+
+			// Is this image face part of any of this tool's faces?
+			// If not, add to create a shell
+			for (BOPCol_ListOfShape::const_iterator kToolImageIterator = rkToolImages.begin();
+				kToolImageIterator != rkToolImages.end();
+				kToolImageIterator++)
+			{
+				const TopoDS_Shape& rkToolImage = *kToolImageIterator;
+
+				TopExp_Explorer occtToolExplorer;
+				for (occtToolExplorer.Init(rkToolImage, TopAbs_FACE); occtToolExplorer.More(); occtToolExplorer.Next())
+				{
+					const TopoDS_Shape& rkOcctCurrent = occtToolExplorer.Current();
+					if (!occtToolImageFaces.Contains(rkOcctCurrent))
+					{
+						occtToolImageFaces.Add(rkOcctCurrent);
+					}
+				}
+			}
+		}
+
+		// 4. Identify the argument faces in a tool by doing IsSame Comparison
+		for (TopTools_MapOfShape::const_iterator kArgumentImageFaceIterator = occtArgumentImageFaces.cbegin();
+			kArgumentImageFaceIterator != occtArgumentImageFaces.cend();
+			kArgumentImageFaceIterator++)
+		{
+			bool isInTools = false;
+			for (TopTools_MapOfShape::const_iterator kToolImageFaceIterator = occtToolImageFaces.cbegin();
+				kToolImageFaceIterator != occtToolImageFaces.cend() && !isInTools;
+				kToolImageFaceIterator++)
+			{
+				if (kArgumentImageFaceIterator->IsSame(*kToolImageFaceIterator))
+				{
+					isInTools = true;
+				}
+			}
+
+			Topology* pArgumentTopology = ByOcctShape(*kArgumentImageFaceIterator);
+			if (isInTools)
+			{
+				kArgumentImagesInTools.push_back(pArgumentTopology);
+			}
+			else
+			{
+				kArgumentImagesInArguments.push_back(pArgumentTopology);
+			}
+		}
+
+		// 5. Identify the tool faces in an image by doing IsSame Comparison
+		for (TopTools_MapOfShape::const_iterator kToolImageFaceIterator = occtToolImageFaces.cbegin();
+			kToolImageFaceIterator != occtToolImageFaces.cend();
+			kToolImageFaceIterator++)
+		{
+			bool isInArguments = false;
+			for (TopTools_MapOfShape::const_iterator kArgumentImageFaceIterator = occtArgumentImageFaces.cbegin();
+				kArgumentImageFaceIterator != occtArgumentImageFaces.cend() && !isInArguments;
+				kArgumentImageFaceIterator++)
+			{
+				if (kToolImageFaceIterator->IsSame(*kArgumentImageFaceIterator))
+				{
+					isInArguments = true;
+				}
+			}
+
+			Topology* pToolTopology = ByOcctShape(*kToolImageFaceIterator);
+			if (isInArguments)
+			{
+				kToolsImagesInArguments.push_back(pToolTopology);
+			}
+			else
+			{
+				kToolsImagesInTools.push_back(pToolTopology);
+			}
+		}
+	}
+
 	Topology* Topology::Difference(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools, const bool kOutputCellComplex)
 	{
 		BOPCol_ListOfShape occtShapeArguments;
