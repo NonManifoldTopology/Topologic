@@ -72,18 +72,23 @@ namespace TopoLogic
 		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(topoLogicCell->GetCoreTopology());
 
 		TopoLogicCore::CellComplex* pCoreCellComplex = pCoreCell->CellComplex();
-		TopoLogic::CellComplex^ pCellComplex = gcnew TopoLogic::CellComplex(pCoreCellComplex);
-		
-		std::list<TopoLogicCore::Cell*> coreCells;
-		pCoreCellComplex->Cells(coreCells);
-
+		TopoLogic::CellComplex^ pCellComplex = nullptr;
 		List<System::Object^>^ pDynamoSolids = gcnew List<System::Object^>();
-		for (std::list<TopoLogicCore::Cell*>::const_iterator kCellIterator = coreCells.begin();
-			kCellIterator != coreCells.end();
-			kCellIterator++)
+		
+		if(pCoreCellComplex != nullptr)
 		{
-			Cell^ pCell = gcnew Cell(*kCellIterator);
-			pDynamoSolids->Add(pCell->Geometry);
+			pCellComplex = gcnew TopoLogic::CellComplex(pCoreCellComplex);
+		
+			std::list<TopoLogicCore::Cell*> coreCells;
+			pCoreCellComplex->Cells(coreCells);
+
+			for (std::list<TopoLogicCore::Cell*>::const_iterator kCellIterator = coreCells.begin();
+				kCellIterator != coreCells.end();
+				kCellIterator++)
+			{
+				Cell^ pCell = gcnew Cell(*kCellIterator);
+				pDynamoSolids->Add(pCell->Geometry);
+			}
 		}
 
 		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
