@@ -244,8 +244,11 @@ namespace TopoLogicCore
 
 		const BOPCol_DataMapOfShapeListOfShape& rkImages = occtSplitter.Images();
 
-		// 3. Get the faces of arguments' and tools' images.
-		TopTools_MapOfShape occtArgumentImageFaces;
+		// 3. Classify the images: exclusively from argument, exclusively from tools, or shared.
+		BOPCol_ListOfShape occtExclusivelyArgumentImages;
+		BOPCol_ListOfShape occtExclusivelyToolImages;
+		BOPCol_ListOfShape occtSharedImages;
+
 		for (BOPCol_ListOfShape::const_iterator kArgumentIterator = occtShapeArguments.begin();
 			kArgumentIterator != occtShapeArguments.end();
 			kArgumentIterator++)
@@ -256,73 +259,146 @@ namespace TopoLogicCore
 				kArgumentImageIterator != rkArgumentImages.end();
 				kArgumentImageIterator++)
 			{
-				const TopoDS_Shape& rkImage = *kArgumentImageIterator;
+				const TopoDS_Shape& rkArgumentImage = *kArgumentImageIterator;
 
-				// Check the individual faces, later add them to create a shell
-				bool hasElement = false;
-				TopoDS_Builder occtBuilder;
-				TopoDS_Shell occtImageShell;
-				occtBuilder.MakeShell(occtImageShell);
-
-				TopExp_Explorer occtArgumentExplorer;
-				for (occtArgumentExplorer.Init(rkImage, TopAbs_FACE); occtArgumentExplorer.More(); occtArgumentExplorer.Next())
+				// Is this in tool too?
+				bool isArgumentImageInTools = false;
+				for (BOPCol_ListOfShape::const_iterator kToolIterator = occtShapeTools.begin();
+					kToolIterator != occtShapeTools.end() && !isArgumentImageInTools;
+					kToolIterator++)
 				{
-					const TopoDS_Shape& rkOcctCurrent = occtArgumentExplorer.Current();
-					if (!occtArgumentImageFaces.Contains(rkOcctCurrent))
+					const BOPCol_ListOfShape& rkToolImages = rkImages.Find(*kToolIterator);
+
+					for (BOPCol_ListOfShape::const_iterator kToolImageIterator = rkToolImages.begin();
+						kToolImageIterator != rkToolImages.end() && !isArgumentImageInTools;
+						kToolImageIterator++)
 					{
-						occtArgumentImageFaces.Add(rkOcctCurrent);
+						if (kArgumentImageIterator->IsSame(*kToolImageIterator))
+						{
+							isArgumentImageInTools = true;
+						}
 					}
+				}
+
+				if (isArgumentImageInTools)
+				{
+					occtSharedImages.Append(rkArgumentImage);
+				}
+				else
+				{
+					occtExclusivelyArgumentImages.Append(rkArgumentImage);
 				}
 			}
 		}
 
-		TopTools_MapOfShape occtToolImageFaces;
 		for (BOPCol_ListOfShape::const_iterator kToolIterator = occtShapeTools.begin();
 			kToolIterator != occtShapeTools.end();
 			kToolIterator++)
 		{
-			const TopoDS_Shape& rkTool = *kToolIterator;
+			const BOPCol_ListOfShape& rkToolImages = rkImages.Find(*kToolIterator);
 
-			const BOPCol_ListOfShape& rkToolImages = rkImages.Find(rkTool);
-
-			// Is this image face part of any of this tool's faces?
-			// If not, add to create a shell
 			for (BOPCol_ListOfShape::const_iterator kToolImageIterator = rkToolImages.begin();
 				kToolImageIterator != rkToolImages.end();
 				kToolImageIterator++)
 			{
 				const TopoDS_Shape& rkToolImage = *kToolImageIterator;
 
-				TopExp_Explorer occtToolExplorer;
-				for (occtToolExplorer.Init(rkToolImage, TopAbs_FACE); occtToolExplorer.More(); occtToolExplorer.Next())
+				// Is this in tool too?
+				bool isToolInArguments = false;
+				for (BOPCol_ListOfShape::const_iterator kArgumentIterator = occtShapeArguments.begin();
+					kArgumentIterator != occtShapeArguments.end() && !isToolInArguments;
+					kArgumentIterator++)
 				{
-					const TopoDS_Shape& rkOcctCurrent = occtToolExplorer.Current();
-					if (!occtToolImageFaces.Contains(rkOcctCurrent))
+					const BOPCol_ListOfShape& rkArgumentImages = rkImages.Find(*kArgumentIterator);
+
+					for (BOPCol_ListOfShape::const_iterator kArgumentImageIterator = rkArgumentImages.begin();
+						kArgumentImageIterator != rkArgumentImages.end() && !isToolInArguments;
+						kArgumentImageIterator++)
 					{
-						occtToolImageFaces.Add(rkOcctCurrent);
+						if (kArgumentImageIterator->IsSame(*kToolImageIterator))
+						{
+							isToolInArguments = true;
+						}
 					}
+				}
+
+				if (!isToolInArguments)
+				{
+					occtExclusivelyToolImages.Append(rkToolImage);
+				}
+
+				// The shared images have been taken care of; no need to check them.
+			}
+		}
+
+		// 4. Get the faces
+		BOPCol_ListOfShape occtExclusivelyArgumentImageFaces;
+		BOPCol_ListOfShape occtExclusivelyToolImageFaces;
+		BOPCol_ListOfShape occtSharedImageFaces;
+
+		for (BOPCol_ListOfShape::const_iterator kArgumentImageIterator = occtExclusivelyArgumentImages.begin();
+			kArgumentImageIterator != occtExclusivelyArgumentImages.end();
+			kArgumentImageIterator++)
+		{
+			TopExp_Explorer occtArgumentImageExplorer;
+			for (occtArgumentImageExplorer.Init(*kArgumentImageIterator, TopAbs_FACE); occtArgumentImageExplorer.More(); occtArgumentImageExplorer.Next())
+			{
+				const TopoDS_Shape& rkOcctCurrent = occtArgumentImageExplorer.Current();
+				if (!occtExclusivelyArgumentImageFaces.Contains(rkOcctCurrent))
+				{
+					occtExclusivelyArgumentImageFaces.Append(rkOcctCurrent);
 				}
 			}
 		}
 
-		// 4. Identify the argument faces in a tool by doing IsSame Comparison
-		for (TopTools_MapOfShape::const_iterator kArgumentImageFaceIterator = occtArgumentImageFaces.cbegin();
-			kArgumentImageFaceIterator != occtArgumentImageFaces.cend();
+		for (BOPCol_ListOfShape::const_iterator kToolImageIterator = occtExclusivelyToolImages.begin();
+			kToolImageIterator != occtExclusivelyToolImages.end();
+			kToolImageIterator++)
+		{
+			TopExp_Explorer occtToolImageExplorer;
+			for (occtToolImageExplorer.Init(*kToolImageIterator, TopAbs_FACE); occtToolImageExplorer.More(); occtToolImageExplorer.Next())
+			{
+				const TopoDS_Shape& rkOcctCurrent = occtToolImageExplorer.Current();
+				if (!occtExclusivelyToolImageFaces.Contains(rkOcctCurrent))
+				{
+					occtExclusivelyToolImageFaces.Append(rkOcctCurrent);
+				}
+			}
+		}
+
+		for (BOPCol_ListOfShape::const_iterator kSharedImageIterator = occtSharedImages.begin();
+			kSharedImageIterator != occtSharedImages.end();
+			kSharedImageIterator++)
+		{
+			TopExp_Explorer occtSharedImageExplorer;
+			for (occtSharedImageExplorer.Init(*kSharedImageIterator, TopAbs_FACE); occtSharedImageExplorer.More(); occtSharedImageExplorer.Next())
+			{
+				const TopoDS_Shape& rkOcctCurrent = occtSharedImageExplorer.Current();
+				if (!occtSharedImageFaces.Contains(rkOcctCurrent))
+				{
+					occtSharedImageFaces.Append(rkOcctCurrent);
+				}
+			}
+		}
+
+		// 5. Identify the argument faces in a tool by doing IsSame Comparison
+		for (BOPCol_ListOfShape::const_iterator kArgumentImageFaceIterator = occtExclusivelyArgumentImageFaces.cbegin();
+			kArgumentImageFaceIterator != occtExclusivelyArgumentImageFaces.cend();
 			kArgumentImageFaceIterator++)
 		{
-			bool isInTools = false;
-			for (TopTools_MapOfShape::const_iterator kToolImageFaceIterator = occtToolImageFaces.cbegin();
-				kToolImageFaceIterator != occtToolImageFaces.cend() && !isInTools;
-				kToolImageFaceIterator++)
+			bool isInSharedImage = false;
+			for (BOPCol_ListOfShape::const_iterator kSharedImageFaceIterator = occtSharedImageFaces.cbegin();
+				kSharedImageFaceIterator != occtSharedImageFaces.cend() && !isInSharedImage;
+				kSharedImageFaceIterator++)
 			{
-				if (kArgumentImageFaceIterator->IsSame(*kToolImageFaceIterator))
+				if (kArgumentImageFaceIterator->IsSame(*kSharedImageFaceIterator))
 				{
-					isInTools = true;
+					isInSharedImage = true;
 				}
 			}
 
 			Topology* pArgumentTopology = ByOcctShape(*kArgumentImageFaceIterator);
-			if (isInTools)
+			if (isInSharedImage)
 			{
 				kArgumentImagesInTools.push_back(pArgumentTopology);
 			}
@@ -333,23 +409,23 @@ namespace TopoLogicCore
 		}
 
 		// 5. Identify the tool faces in an image by doing IsSame Comparison
-		for (TopTools_MapOfShape::const_iterator kToolImageFaceIterator = occtToolImageFaces.cbegin();
-			kToolImageFaceIterator != occtToolImageFaces.cend();
+		for (BOPCol_ListOfShape::const_iterator kToolImageFaceIterator = occtExclusivelyToolImageFaces.cbegin();
+			kToolImageFaceIterator != occtExclusivelyToolImageFaces.cend();
 			kToolImageFaceIterator++)
 		{
-			bool isInArguments = false;
-			for (TopTools_MapOfShape::const_iterator kArgumentImageFaceIterator = occtArgumentImageFaces.cbegin();
-				kArgumentImageFaceIterator != occtArgumentImageFaces.cend() && !isInArguments;
-				kArgumentImageFaceIterator++)
+			bool isInSharedImage = false;
+			for (BOPCol_ListOfShape::const_iterator kSharedImageFaceIterator = occtSharedImageFaces.cbegin();
+				kSharedImageFaceIterator != occtSharedImageFaces.cend() && !isInSharedImage;
+				kSharedImageFaceIterator++)
 			{
-				if (kToolImageFaceIterator->IsSame(*kArgumentImageFaceIterator))
+				if (kToolImageFaceIterator->IsSame(*kSharedImageFaceIterator))
 				{
-					isInArguments = true;
+					isInSharedImage = true;
 				}
 			}
 
 			Topology* pToolTopology = ByOcctShape(*kToolImageFaceIterator);
-			if (isInArguments)
+			if (isInSharedImage)
 			{
 				kToolsImagesInArguments.push_back(pToolTopology);
 			}
