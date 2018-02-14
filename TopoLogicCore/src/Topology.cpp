@@ -28,7 +28,6 @@
 #include <BRepAlgo_Image.hxx>
 
 #include <BRepBuilderAPI_MakeSolid.hxx>
-#include <GEOMAlgo_Splitter.h>
 
 namespace TopoLogicCore
 {
