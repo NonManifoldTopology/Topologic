@@ -9,6 +9,7 @@
 #include <Vertex.h>
 
 #include <BOPAlgo_Builder.hxx>
+#include <BOPAlgo_Splitter.hxx>
 #include <BOPCol_ListOfShape.hxx>
 #include <BRepAlgoAPI_Common.hxx>
 #include <BRepAlgoAPI_Fuse.hxx>
@@ -18,11 +19,16 @@
 #include <BRepTools.hxx>
 #include <ShapeAnalysis_ShapeContents.hxx>
 #include <TopoDS.hxx>
+#include <TopoDS_Builder.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_FrozenShape.hxx>
 #include <TopoDS_UnCompatibleShapes.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopTools_MapOfShape.hxx>
+#include <BRepAlgo_Image.hxx>
+
+#include <BRepBuilderAPI_MakeSolid.hxx>
+#include <GEOMAlgo_Splitter.h>
 
 namespace TopoLogicCore
 {
@@ -210,20 +216,195 @@ namespace TopoLogicCore
 		return ByOcctShape(rkOcctCutShape);
 	}
 
-	Topology* Topology::Impose(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools, const bool kOutputCellComplex)
+	Topology* Topology::Impose(
+		const std::list<Topology*>& rkTopologyArguments, 
+		const std::list<Topology*>& rkTopologyTools, 
+		const bool kOutputCellComplex)
 	{
-		// Impose: C = (A diff B) merge B
-		Topology* pDifferenceTopology = Difference(rkTopologyArguments, rkTopologyArguments);
+		BOPCol_ListOfShape occtShapeArguments;
+		for (std::list<Topology*>::const_iterator kTopologyIterator = rkTopologyArguments.begin();
+			kTopologyIterator != rkTopologyArguments.end();
+			kTopologyIterator++)
+		{
+			Topology* pTopology = *kTopologyIterator;
 
-		std::list<Topology*> mergeTopologyList;
-		mergeTopologyList.push_back(pDifferenceTopology);
-		mergeTopologyList.insert(mergeTopologyList.end(), rkTopologyTools.begin(), rkTopologyTools.end());
-		Topology* pMergeTopology = Merge(mergeTopologyList);
+			// If cell complex, add the cells
+			CellComplex* pCellComplex = dynamic_cast<CellComplex*>(pTopology);
+			if (pCellComplex != nullptr)
+			{
+				std::list<Cell*> cells;
+				pCellComplex->Cells(cells);
+				for (std::list<Cell*>::const_iterator kCellIterator = cells.begin();
+					kCellIterator != cells.end();
+					kCellIterator++)
+				{
+					occtShapeArguments.Append(*(*kCellIterator)->GetOcctShape());
+				}
+			}else
+			{
+				occtShapeArguments.Append(*pTopology->GetOcctShape());
+			}
+		}
 
-		mergeTopologyList.clear();
-		delete pDifferenceTopology;
+		BOPAlgo_Splitter occtSplitter;
+		occtSplitter.SetArguments(occtShapeArguments);
+		BOPCol_ListOfShape occtShapeTools;
+		for (std::list<Topology*>::const_iterator kTopologyIterator = rkTopologyTools.begin();
+			kTopologyIterator != rkTopologyTools.end();
+			kTopologyIterator++)
+		{
+			Topology* pTopology = *kTopologyIterator;
+			CellComplex* pCellComplex = dynamic_cast<CellComplex*>(pTopology);
+			if (pCellComplex != nullptr)
+			{
+				std::list<Cell*> cells;
+				pCellComplex->Cells(cells);
+				for (std::list<Cell*>::const_iterator kCellIterator = cells.begin();
+					kCellIterator != cells.end();
+					kCellIterator++)
+				{
+					occtShapeTools.Append(*(*kCellIterator)->GetOcctShape());
+				}
+			}else
+			{
+				occtShapeTools.Append(*pTopology->GetOcctShape());
+			}
+		}
 
-		return pMergeTopology;
+		occtSplitter.SetTools(occtShapeTools);
+		// Split the arguments and tools
+		occtSplitter.Perform();
+
+		const TopoDS_Shape& rkOcctSplitShape = occtSplitter.Shape();
+		const BOPCol_DataMapOfShapeListOfShape& rkImages = occtSplitter.Images();
+
+		// Add only shapes that are NOT in the tools.
+		BOPCol_ListOfShape occtMergeArguments;
+		for (BOPCol_ListOfShape::const_iterator kArgumentIterator = occtShapeArguments.begin();
+			kArgumentIterator != occtShapeArguments.end();
+			kArgumentIterator++)
+		{
+			if (!occtMergeArguments.Contains(*kArgumentIterator))
+			{
+				const BOPCol_ListOfShape& rkArgumentImages = rkImages.Find(*kArgumentIterator);
+
+				for (BOPCol_ListOfShape::const_iterator kArgumentImageIterator = rkArgumentImages.begin();
+					kArgumentImageIterator != rkArgumentImages.end();
+					kArgumentImageIterator++)
+				{
+					const TopoDS_Shape& rkImage = *kArgumentImageIterator;
+
+					// Check the individual faces, later add them to create a shell
+					bool hasElement = false;
+					TopoDS_Builder occtBuilder;
+					TopoDS_Shell occtImageShell;
+					occtBuilder.MakeShell(occtImageShell);
+
+					TopTools_MapOfShape occtArgumentImageFaces;
+					TopExp_Explorer occtArgumentExplorer;
+					for (occtArgumentExplorer.Init(rkImage, TopAbs_FACE); occtArgumentExplorer.More(); occtArgumentExplorer.Next())
+					{
+						const TopoDS_Shape& rkOcctCurrent = occtArgumentExplorer.Current();
+						if (!occtArgumentImageFaces.Contains(rkOcctCurrent))
+						{
+							occtArgumentImageFaces.Add(rkOcctCurrent);
+						}
+					}
+
+					for (TopTools_MapOfShape::const_iterator kOcctArgumentImageFaceIterator = occtArgumentImageFaces.cbegin();
+						kOcctArgumentImageFaceIterator != occtArgumentImageFaces.cend();
+						kOcctArgumentImageFaceIterator++)
+					{
+						const TopoDS_Shape& rkArgumentImageFace = *kOcctArgumentImageFaceIterator;
+
+						bool isInTools = false;
+						for (BOPCol_ListOfShape::const_iterator kToolIterator = occtShapeTools.begin();
+							kToolIterator != occtShapeTools.end() && !isInTools;
+							kToolIterator++)
+						{
+							const TopoDS_Shape& rkTool = *kToolIterator;
+
+							const BOPCol_ListOfShape& rkToolImages = rkImages.Find(rkTool);
+
+							// Is this image face part of any of this tool's faces?
+							// If not, add to create a shell
+							for (BOPCol_ListOfShape::const_iterator kToolImageIterator = rkToolImages.begin();
+								kToolImageIterator != rkToolImages.end() && !isInTools;
+								kToolImageIterator++)
+							{
+								const TopoDS_Shape& rkToolImage = *kToolImageIterator;
+								TopTools_MapOfShape occtToolImageFaces;
+								TopExp_Explorer occtToolExplorer;
+								for (occtToolExplorer.Init(rkToolImage, TopAbs_FACE); occtToolExplorer.More(); occtToolExplorer.Next())
+								{
+									const TopoDS_Shape& rkOcctCurrent = occtToolExplorer.Current();
+									if (!occtToolImageFaces.Contains(rkOcctCurrent))
+									{
+										occtToolImageFaces.Add(rkOcctCurrent);
+									}
+								}
+
+								for (TopTools_MapOfShape::const_iterator kOcctToolImageFaceIterator = occtToolImageFaces.cbegin();
+									kOcctToolImageFaceIterator != occtToolImageFaces.cend() && !isInTools;
+									kOcctToolImageFaceIterator++)
+								{
+									if (kOcctToolImageFaceIterator->IsSame(rkArgumentImageFace))
+									{
+										isInTools = true;
+									}
+								}
+							}
+						}
+
+						if (!isInTools)
+						{
+							occtMergeArguments.Append(*kArgumentImageIterator);
+
+							occtBuilder.Add(occtImageShell, rkArgumentImageFace);
+							hasElement = true;
+						}
+					}
+
+					if (hasElement)
+					{
+						occtMergeArguments.Append(occtImageShell);
+					}
+				}
+			}
+		}
+
+		// Merge the tools again
+		occtMergeArguments.Append(occtShapeTools);
+
+		if (occtMergeArguments.Size() == 1)
+		{
+			if (kOutputCellComplex)
+			{
+				return ByOcctShape(MakeCompSolid(*occtMergeArguments.begin()));
+			}
+
+			return ByOcctShape(*occtMergeArguments.begin());
+		}
+
+		BOPAlgo_Builder occtAlgoBuilder;
+		occtAlgoBuilder.SetArguments(occtMergeArguments);
+		occtAlgoBuilder.Perform();
+
+		if (occtAlgoBuilder.HasErrors())
+		{
+			std::ostringstream errorStream;
+			occtAlgoBuilder.DumpErrors(errorStream);
+			throw std::exception(errorStream.str().c_str());
+		}
+
+		const TopoDS_Shape& rkOcctMergeShape = occtAlgoBuilder.Shape();
+
+		if (kOutputCellComplex)
+		{
+			return ByOcctShape(MakeCompSolid(rkOcctMergeShape));
+		}
+
+		return ByOcctShape(rkOcctMergeShape);
 	}
 
 	Topology* Topology::Imprint(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools, const bool kOutputCellComplex)
