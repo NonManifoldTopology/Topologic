@@ -59,6 +59,14 @@ namespace TopoLogic
 		/// </summary>
 		/// <param name="topoLogicCell"></param>
 		/// <returns></returns>
+		[MultiReturn(gcnew array<String^> { "TopoLogic Shells", "Polysurfaces" })]
+		static Dictionary<String^, Object^>^ Shells(Cell^ topoLogicCell);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="topoLogicCell"></param>
+		/// <returns></returns>
 		[MultiReturn(gcnew array<String^> { "TopoLogic Faces", "Surfaces" })]
 		static Dictionary<String^, Object^>^ Faces(Cell^ topoLogicCell);
 

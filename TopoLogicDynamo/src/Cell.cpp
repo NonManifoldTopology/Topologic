@@ -97,6 +97,30 @@ namespace TopoLogic
 		return pDictionary;
 	}
 
+	Dictionary<String^, Object^>^ Cell::Shells(Cell ^ topoLogicCell)
+	{
+		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(topoLogicCell->GetCoreTopology());
+
+		std::list<TopoLogicCore::Shell*> coreShells;
+		pCoreCell->Shells(coreShells);
+
+		List<Shell^>^ pShells = gcnew List<Shell^>();
+		List<System::Object^>^ pDynamoEntities = gcnew List<System::Object^>();
+		for (std::list<TopoLogicCore::Shell*>::const_iterator kShellIterator = coreShells.begin();
+			kShellIterator != coreShells.end();
+			kShellIterator++)
+		{
+			Shell^ pShell = gcnew Shell(*kShellIterator);
+			pShells->Add(pShell);
+			pDynamoEntities->Add(pShell->Geometry);
+		}
+
+		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
+		pDictionary->Add("TopoLogic Shells", pShells);
+		pDictionary->Add("Polysurfaces", pDynamoEntities);
+		return pDictionary;
+	}
+
 	Dictionary<String^, Object^>^ Cell::Faces(Cell^ topoLogicCell)
 	{
 		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(topoLogicCell->GetCoreTopology());
@@ -298,11 +322,22 @@ namespace TopoLogic
 		List<Face^>^ pFaces = Faces();
 		for each(Face^ pFace in pFaces)
 		{
-			pDynamoSurfaces->Add(pFace->Surface());
+			Autodesk::DesignScript::Geometry::Surface^ pSurface = pFace->Surface();
+			if(pSurface != nullptr)
+			{
+				pDynamoSurfaces->Add(pSurface);
+			}
 		}
 
 		try {
-			return Autodesk::DesignScript::Geometry::Solid::ByJoinedSurfaces(pDynamoSurfaces);
+			if (!pDynamoSurfaces->Contains(nullptr))
+			{
+				return Autodesk::DesignScript::Geometry::Solid::ByJoinedSurfaces(pDynamoSurfaces);
+			}
+			else
+			{
+				return pDynamoSurfaces;
+			}
 		}
 		catch (ApplicationException^)
 		{

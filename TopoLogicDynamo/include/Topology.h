@@ -77,7 +77,7 @@ namespace TopoLogic
 			"GeometryToolImagesInArguments",
 			"GeometryToolImagesInTools"
 			})]
-		static Dictionary<String^, Object^>^ BooleanImages(List<Topology^> topologyArguments, List<Topology^> topologyTools);
+		static Dictionary<String^, Object^>^ BooleanImages(Topology^ topologyA, Topology^ topologyB);
 
 		/// <summary>
 		/// 
@@ -92,12 +92,12 @@ namespace TopoLogic
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="topologyArguments"></param>
-		/// <param name="topologyTools"></param>
+		/// <param name="topologyA"></param>
+		/// <param name="topologyB"></param>
 		/// <param name="outputCellComplex"></param>
 		/// <returns></returns>
 		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
-		static Dictionary<String^, Object^>^ Impose(List<Topology^> topologyArguments, List<Topology^> topologyTools, bool outputCellComplex);
+		static Dictionary<String^, Object^>^ Impose(Topology^ topologyA, Topology^ topologyB, bool outputCellComplex);
 
 		/// <summary>
 		/// 

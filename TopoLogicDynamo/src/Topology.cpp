@@ -89,25 +89,16 @@ namespace TopoLogic
 		// TODO: insert return statement here
 	}
 
-	Dictionary<String^, Object^>^ Topology::BooleanImages(List<Topology^> topologyArguments, List<Topology^> topologyTools)
+	Dictionary<String^, Object^>^ Topology::BooleanImages(Topology^ topologyA, Topology^ topologyB)
 	{
-		std::list<TopoLogicCore::Topology*> pCoreArguments;
-		for each(Topology^ pTopology in topologyArguments)
-		{
-			pCoreArguments.push_back(pTopology->GetCoreTopology());
-		}
-
-		std::list<TopoLogicCore::Topology*> pCoreTools;
-		for each(Topology^ pTopology in topologyTools)
-		{
-			pCoreTools.push_back(pTopology->GetCoreTopology());
-		}
+		TopoLogicCore::Topology* pCoreTopologyA = topologyA->GetCoreTopology();
+		TopoLogicCore::Topology* pCoreTopologyB = topologyB->GetCoreTopology();
 
 		std::list<TopoLogicCore::Topology*> coreArgumentsInArguments;
 		std::list<TopoLogicCore::Topology*> coreArgumentsInTools;
 		std::list<TopoLogicCore::Topology*> coreToolsInArguments;
 		std::list<TopoLogicCore::Topology*> coreToolsInTools;
-		TopoLogicCore::Topology::BooleanImages(pCoreArguments, pCoreTools, coreArgumentsInArguments, coreArgumentsInTools, coreToolsInArguments, coreToolsInTools);
+		TopoLogicCore::Topology::BooleanImages(pCoreTopologyA, pCoreTopologyB, coreArgumentsInArguments, coreArgumentsInTools, coreToolsInArguments, coreToolsInTools);
 
 		List<Topology^>^ pArgumentsInArguments = gcnew List<Topology^>();
 		List<Object^>^ pGeometryArgumentsInArguments = gcnew List<Object^>();
@@ -188,21 +179,10 @@ namespace TopoLogic
 		return pDictionary;
 	}
 
-	Dictionary<String^, Object^>^ Topology::Impose(List<Topology^> topologyArguments, List<Topology^> topologyTools, bool outputCellComplex)
+	Dictionary<String^, Object^>^ Topology::Impose(Topology^ topologyA, Topology^ topologyB, bool outputCellComplex)
 	{
-		std::list<TopoLogicCore::Topology*> pCoreArguments;
-		for each(Topology^ pTopology in topologyArguments)
-		{
-			pCoreArguments.push_back(pTopology->GetCoreTopology());
-		}
-
-		std::list<TopoLogicCore::Topology*> pCoreTools;
-		for each(Topology^ pTopology in topologyTools)
-		{
-			pCoreTools.push_back(pTopology->GetCoreTopology());
-		}
-
-		TopoLogicCore::Topology* pImposeCoreTopology = TopoLogicCore::Topology::Impose(pCoreArguments, pCoreTools, outputCellComplex);
+		//TopoLogicCore::Topology* pImposeCoreTopology = TopoLogicCore::Topology::Impose(pCoreArguments, pCoreTools, outputCellComplex);
+		TopoLogicCore::Topology* pImposeCoreTopology = TopoLogicCore::Topology::BooleanOperation(topologyA->GetCoreTopology(), topologyB->GetCoreTopology(), outputCellComplex, TopoLogicCore::BOOLEAN_IMPOSE);
 		Topology^ pTopology = Topology::ByCoreTopology(pImposeCoreTopology);
 
 		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();

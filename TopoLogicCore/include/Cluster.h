@@ -9,6 +9,12 @@
 
 namespace TopoLogicCore
 {
+	class Cell;
+	class Vertex;
+	class Edge;
+	class Wire;
+	class Face;
+	class Shell;
 	class Cluster : public Topology
 	{
 	public:
@@ -59,6 +65,45 @@ namespace TopoLogicCore
 		/// </summary>
 		/// <param name="rOcctGeometries"></param>
 		virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const;
+
+
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rShells"></param>
+		TOPOLOGIC_API void Shells(std::list<Shell*>& rShells) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rEdges"></param>
+		TOPOLOGIC_API void Edges(std::list<Edge*>& rEdges) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rFaces"></param>
+		TOPOLOGIC_API void Faces(std::list<Face*>& rFaces) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rVertices"></param>
+		TOPOLOGIC_API void Vertices(std::list<Vertex*>& rVertices) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rWires"></param>
+		TOPOLOGIC_API void Wires(std::list<Wire*>& rWires) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rCells"></param>
+		TOPOLOGIC_API void Cells(std::list<Cell*>& rCells) const;
 
 	protected:
 		/// <summary>

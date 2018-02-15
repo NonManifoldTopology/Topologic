@@ -505,9 +505,14 @@ namespace TopoLogic
 					// 2. Convert the edges to Dynamo curves
 					pDynamoCurves->Add(pEdge->Curve());
 				}
-				Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface = Autodesk::DesignScript::Geometry::Surface::ByPatch(
-					Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoCurves)
-				);
+				Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface = nullptr;
+				
+				if (pDynamoCurves->Count > 0)
+				{
+					pDynamoSurface = Autodesk::DesignScript::Geometry::Surface::ByPatch(
+						Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoCurves)
+					);
+				}
 				return pDynamoSurface;
 			}
 

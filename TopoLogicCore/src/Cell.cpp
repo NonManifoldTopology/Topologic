@@ -89,6 +89,27 @@ namespace TopoLogicCore
 		return nullptr;
 	}
 
+	void Cell::Shells(std::list<Shell*>& rShells) const
+	{
+		TopTools_MapOfShape occtShells;
+		TopExp_Explorer occtExplorer;
+		for (occtExplorer.Init(*GetOcctShape(), TopAbs_SHELL); occtExplorer.More(); occtExplorer.Next())
+		{
+			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
+			if (!occtShells.Contains(occtCurrent))
+			{
+				occtShells.Add(occtCurrent);
+			}
+		}
+
+		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtShells.cbegin();
+			kOcctShapeIterator != occtShells.cend();
+			kOcctShapeIterator++)
+		{
+			rShells.push_back(new Shell(new TopoDS_Shell(TopoDS::Shell(*kOcctShapeIterator))));
+		}
+	}
+
 	void Cell::Edges(std::list<Edge*>& rEdges) const
 	{
 		TopTools_MapOfShape occtEdges;
@@ -175,16 +196,16 @@ namespace TopoLogicCore
 
 	Cell* Cell::ByFaces(const std::list<Face*>& rkFaces)
 	{
-		TopoDS_Solid* pOcctSolid = new TopoDS_Solid();
+		TopoDS_Shell* pOcctShell = new TopoDS_Shell();
 		BRep_Builder occtBuilder;
-		occtBuilder.MakeSolid(*pOcctSolid);
+		occtBuilder.MakeShell(*pOcctShell);
 		for(std::list<Face*>::const_iterator kFaceIterator = rkFaces.begin();
 			kFaceIterator != rkFaces.end();
 			kFaceIterator++)
 		{
 			Face* pFace = *kFaceIterator;
 			try {
-				occtBuilder.Add(*pOcctSolid, *pFace->GetOcctShape());
+				occtBuilder.Add(*pOcctShell, *pFace->GetOcctShape());
 			}
 			catch (TopoDS_FrozenShape&)
 			{
@@ -196,7 +217,7 @@ namespace TopoLogicCore
 			}
 		}
 
-		return new Cell(pOcctSolid);
+		return ByShell(new Shell(pOcctShell));
 	}
 
 	Cell* Cell::ByShell(Shell const * const kpkShells)

@@ -14,6 +14,18 @@ class TopoDS_Shape;
 
 namespace TopoLogicCore
 {
+	enum BooleanFlag
+	{
+		BOOLEAN_UNION,
+		BOOLEAN_DIFFERENCE,
+		BOOLEAN_INTERSECTION,
+		BOOLEAN_MERGE,
+		BOOLEAN_SLICE,
+		BOOLEAN_IMPOSE,
+		BOOLEAN_IMPRINT,
+		BOOLEAN_XOR
+	};
+
 	/// <summary>
 	/// The base class for all topology classes in TopoLogic.
 	/// </summary>
@@ -29,19 +41,33 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="rkTopologyArguments"></param>
-		/// <param name="rkTopologyTools"></param>
+		/// <param name="kpkTopologyA"></param>
+		/// <param name="kpkTopologyB"></param>
 		/// <param name="kArgumentImagesInArguments"></param>
 		/// <param name="kArgumentImagesInTools"></param>
 		/// <param name="kToolsImagesInArguments"></param>
 		/// <param name="kToolsImagesInTools"></param>
 		static TOPOLOGIC_API void BooleanImages(
-			const std::list<Topology*>& rkTopologyArguments, 
-			const std::list<Topology*>& rkTopologyTools, 
+			Topology const * const kpkTopologyA, 
+			Topology const * const kpkTopologyB,
 			std::list<Topology*>& kArgumentImagesInArguments,
 			std::list<Topology*>& kArgumentImagesInTools,
 			std::list<Topology*>& kToolsImagesInArguments,
 			std::list<Topology*>& kToolsImagesInTools);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpkTopologyA"></param>
+		/// <param name="kpkTopologyB"></param>
+		/// <param name="kOutputCellComplex"></param>
+		/// <param name="kBooleanFlag"></param>
+		/// <returns></returns>
+		static TOPOLOGIC_API Topology* BooleanOperation(
+			Topology const * const kpkTopologyA,
+			Topology const * const kpkTopologyB,
+			const bool kOutputCellComplex,
+			const BooleanFlag kBooleanFlag);
 
 		/// <summary>
 		/// 

@@ -42,6 +42,12 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="rShells"></param>
+		TOPOLOGIC_API void Shells(std::list<Shell*>& rShells) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="rEdges"></param>
 		TOPOLOGIC_API void Edges(std::list<Edge*>& rEdges) const;
 
