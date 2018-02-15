@@ -109,7 +109,7 @@
       <PreprocessorDefinitions>TOPOLOGIC_EXPORTS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>GEOMAlgo_Splitter.lib;TKIGES.lib;TKPrim.lib;TKMesh.lib;TKXSBase.lib;TKStep.lib;TKBool.lib;TKBO.lib;TKShHealing.lib;TKG3d.lib;TKG2d.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKTopAlgo.lib;TKernel.lib;TKBrep.lib;TKMath.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>TKIGES.lib;TKPrim.lib;TKMesh.lib;TKXSBase.lib;TKStep.lib;TKBool.lib;TKBO.lib;TKShHealing.lib;TKG3d.lib;TKG2d.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKTopAlgo.lib;TKernel.lib;TKBrep.lib;TKMath.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\Users\Nicholas Wardhana\Documents\Project\GEOMAlgo_Splitter\x64\$(Configuration);$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\libd</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -145,7 +145,7 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>GEOMAlgo_Splitter.lib;TKIGES.lib;TKPrim.lib;TKMesh.lib;TKXSBase.lib;TKStep.lib;TKBool.lib;TKBO.lib;TKShHealing.lib;TKG3d.lib;TKG2d.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKTopAlgo.lib;TKernel.lib;TKBrep.lib;TKMath.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>TKIGES.lib;TKPrim.lib;TKMesh.lib;TKXSBase.lib;TKStep.lib;TKBool.lib;TKBO.lib;TKShHealing.lib;TKG3d.lib;TKG2d.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKTopAlgo.lib;TKernel.lib;TKBrep.lib;TKMath.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\Users\Nicholas Wardhana\Documents\Project\GEOMAlgo_Splitter\x64\$(Configuration);$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
