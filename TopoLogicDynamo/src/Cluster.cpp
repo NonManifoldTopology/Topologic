@@ -210,5 +210,4 @@ namespace TopoLogic
 		pDictionary->Add("Solids", pDynamoEntities);
 		return pDictionary;
 	}
-
 }

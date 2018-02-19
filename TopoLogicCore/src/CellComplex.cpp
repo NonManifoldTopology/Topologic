@@ -69,18 +69,41 @@ namespace TopoLogicCore
 
 	CellComplex* CellComplex::ByCells(const std::list<Cell*>& rkCells)
 	{
-		std::list<Topology*> topologyList;
-		for (std::list<Cell*>::const_iterator rkCellIterator = rkCells.begin();
-			rkCellIterator != rkCells.end();
-			rkCellIterator++)
+		std::list<Cell*>::const_iterator rkCellIterator = rkCells.begin();
+		Topology* pMergeTopology = *rkCellIterator;
+		rkCellIterator++;
+		for (; rkCellIterator != rkCells.end(); rkCellIterator++)
 		{
-			topologyList.push_back(*rkCellIterator);
+			pMergeTopology = pMergeTopology->Merge(*rkCellIterator);
 		}
-		Topology* pMergeTopology = Topology::Merge(topologyList, true);
 
+		TopoDS_CompSolid occtCompSolid;
+		BRep_Builder occtBuilder;
+		occtBuilder.MakeCompSolid(occtCompSolid);
+
+		TopExp_Explorer occtExplorer;
+		TopTools_MapOfShape occtCells;
+		for (occtExplorer.Init(*pMergeTopology->GetOcctShape(), TopAbs_SOLID); occtExplorer.More(); occtExplorer.Next())
+		{
+			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
+			if (!occtCells.Contains(occtCurrent))
+			{
+				occtCells.Add(occtCurrent);
+				try {
+					occtBuilder.Add(occtCompSolid, occtCurrent);
+				}
+				catch (TopoDS_FrozenShape&)
+				{
+					throw std::exception("The cell is not free and cannot be modified.");
+				}
+				catch (TopoDS_UnCompatibleShapes&)
+				{
+					throw std::exception("The cell and face are not compatible.");
+				}
+			}
+		}
 		// Should get us a CellComplex, otherwise an exception.
-
-		CellComplex* pMergeCellComplex = dynamic_cast<CellComplex*>(pMergeTopology);
+		CellComplex* pMergeCellComplex = dynamic_cast<CellComplex*>(CellComplex::ByOcctShape(occtCompSolid));
 		if (pMergeCellComplex == nullptr)
 		{
 			throw std::exception("CellComplex::ByCells(): Merge operation is not giving a cell complex");

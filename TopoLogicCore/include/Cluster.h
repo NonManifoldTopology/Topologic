@@ -15,6 +15,7 @@ namespace TopoLogicCore
 	class Wire;
 	class Face;
 	class Shell;
+
 	class Cluster : public Topology
 	{
 	public:

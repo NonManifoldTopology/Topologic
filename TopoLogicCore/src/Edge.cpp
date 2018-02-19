@@ -105,9 +105,10 @@ namespace TopoLogicCore
 		else if (numberOfVertices == 2) // a line
 		{
 			Vertex* pVertex1 = *(rkVertices.begin());
-			Vertex* pVertex2 = *(rkVertices.begin()++);
-			return new Edge(new TopoDS_Edge(BRepBuilderAPI_MakeEdge(TopoDS::Vertex(*pVertex1->GetOcctShape()), 
-																	TopoDS::Vertex(*pVertex2->GetOcctShape()))));
+			Vertex* pVertex2 = *(++rkVertices.begin());
+			BRepBuilderAPI_MakeEdge occtMakeEdge(TopoDS::Vertex(*pVertex1->GetOcctShape()),
+				TopoDS::Vertex(*pVertex2->GetOcctShape()));
+			return new Edge(new TopoDS_Edge(occtMakeEdge.Edge()));
 		}
 
 		// else more than 2 vertices

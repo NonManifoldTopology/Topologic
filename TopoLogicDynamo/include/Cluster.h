@@ -97,7 +97,7 @@ namespace TopoLogic
 		/// <returns></returns>
 		[MultiReturn(gcnew array<String^> { "TopoLogic Cells", "Solids" })]
 		static Dictionary<String^, Object^>^ Cells(Cluster^ topoLogicCluster);
-
+			
 
 	public protected:
 		/// <summary>

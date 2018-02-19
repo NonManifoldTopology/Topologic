@@ -41,7 +41,8 @@ namespace TopoLogicCore
 {
 	Cluster* Cluster::ByTopology(const std::list<Topology*>& rkTopologies)
 	{
-		Cluster* pCluster = new Cluster(true);
+		// TODO: Error if the cluster is added to the global cluster. Currently setting this to false.
+		Cluster* pCluster = new Cluster(false);
 		for(std::list<Topology*>::const_iterator kTopologyIterator = rkTopologies.begin();
 			kTopologyIterator != rkTopologies.end();
 			kTopologyIterator++)

@@ -51,7 +51,7 @@ namespace TopoLogic
 		/// <param name="topology"></param>
 		/// <returns></returns>
 		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
-		static Dictionary<String^, Object^>^ MemberOf(Topology^ topology);
+		Dictionary<String^, Object^>^ MemberOf();
 
 		/// <summary>
 		/// 
@@ -59,117 +59,109 @@ namespace TopoLogic
 		/// <param name="topology"></param>
 		/// <returns></returns>
 		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
-		static Dictionary<String^, Object^>^ Members(Topology^ topology);
+		Dictionary<String^, Object^>^ Members();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="topologyArguments"></param>
-		/// <param name="topologyTools"></param>
+		/// <param name="topology"></param>
 		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { 
-			"ArgumentImagesInArguments", 
-			"ArgumentImagesInTools",
-			"ToolImagesInArguments",
-			"ToolImagesInTools",
-			"GeometryArgumentImagesInArguments",
-			"GeometryArgumentImagesInTools",
-			"GeometryToolImagesInArguments",
-			"GeometryToolImagesInTools"
-			})]
-		static Dictionary<String^, Object^>^ BooleanImages(Topology^ topologyA, Topology^ topologyB);
+		[MultiReturn(gcnew array<String^> {
+			"ArgumentImagesInArguments",
+				"ArgumentImagesInTools",
+				"ToolImagesInArguments",
+				"ToolImagesInTools",
+				"GeometryArgumentImagesInArguments",
+				"GeometryArgumentImagesInTools",
+				"GeometryToolImagesInArguments",
+				"GeometryToolImagesInTools"
+		})]
+		Dictionary<String^, Object^>^ BooleanImages(Topology^ topology);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="topologyArguments"></param>
-		/// <param name="topologyTools"></param>
-		/// <param name="outputCellComplex"></param>
+		/// <param name="topology"></param>
 		/// <returns></returns>
 		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
-		static Dictionary<String^, Object^>^ Difference(List<Topology^> topologyArguments, List<Topology^> topologyTools, bool outputCellComplex);
+		Dictionary<String^, Object^>^ Difference(Topology^ topology);
 		
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="topologyA"></param>
-		/// <param name="topologyB"></param>
-		/// <param name="outputCellComplex"></param>
+		/// <param name="topology"></param>
 		/// <returns></returns>
 		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
-		static Dictionary<String^, Object^>^ Impose(Topology^ topologyA, Topology^ topologyB, bool outputCellComplex);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="topologyArguments"></param>
-		/// <param name="topologyTools"></param>
-		/// <param name="outputCellComplex"></param>
-		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
-		static Dictionary<String^, Object^>^ Imprint(List<Topology^> topologyArguments, List<Topology^> topologyTools, bool outputCellComplex);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="topologyArguments"></param>
-		/// <param name="topologyTools"></param>
-		/// <param name="outputCellComplex"></param>
-		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
-		static Dictionary<String^, Object^>^ Intersection(List<Topology^> topologyArguments, List<Topology^> topologyTools, bool outputCellComplex);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="topologyList"></param>
-		/// <param name="outputCellComplex"></param>
-		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
-		static Dictionary<String^, Object^>^ Merge(List<Topology^>^ topologyList, bool outputCellComplex);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="topologyArguments"></param>
-		/// <param name="topologyTools"></param>
-		/// <param name="outputCellComplex"></param>
-		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
-		static Dictionary<String^, Object^>^ Slice(List<Topology^> topologyArguments, List<Topology^> topologyTools, bool outputCellComplex);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="topologyArguments"></param>
-		/// <param name="topologyTools"></param>
-		/// <param name="outputCellComplex"></param>
-		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
-		static Dictionary<String^, Object^>^ Union(List<Topology^> topologyArguments, List<Topology^> topologyTools, bool outputCellComplex);
+		Dictionary<String^, Object^>^ Impose(Topology^ topology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="topology"></param>
+		/// <returns></returns>
+		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
+		Dictionary<String^, Object^>^ Imprint(Topology^ topology);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="topology"></param>
+		/// <returns></returns>
+		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
+		Dictionary<String^, Object^>^ Intersection(Topology^ topology);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="topology"></param>
+		/// <returns></returns>
+		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
+		Dictionary<String^, Object^>^ Merge(Topology^ topology);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="topology"></param>
+		/// <returns></returns>
+		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
+		Dictionary<String^, Object^>^ Slice(Topology^ topology);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="topology"></param>
+		/// <returns></returns>
+		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
+		Dictionary<String^, Object^>^ Union(Topology^ topology);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="topology"></param>
+		/// <returns></returns>
+		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
+		Dictionary<String^, Object^>^ XOR(Topology^ topology);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="path"></param>
 		/// <returns></returns>
-		static bool SaveToBRep(Topology^ topology, String^ path);
+		bool SaveToBRep(String^ path);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="topology"></param>
 		/// <param name="path"></param>
 		/// <returns></returns>
-		static bool LoadFromBRep(Topology^ topology, String^ path);
+		bool LoadFromBRep(String^ path);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="topology"></param>
 		/// <returns></returns>
-		static String^ Analyze(Topology^ topology);
+		String^ Analyze();
 
 	public protected:
 		static Topology^ ByCoreTopology(TopoLogicCore::Topology * const kpCoreTopology);

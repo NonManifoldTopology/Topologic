@@ -3,6 +3,8 @@
 #include "Attribute.h"
 #include "Utilities.h"
 
+#include <BOPCol_ListOfShape.hxx>
+#include <BOPAlgo_CellsBuilder.hxx>
 #include <Standard_Handle.hxx>
 #include <Geom_Geometry.hxx>
 #include <TopoDS_CompSolid.hxx>
@@ -41,15 +43,14 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkTopologyA"></param>
-		/// <param name="kpkTopologyB"></param>
+		/// <param name="kpkOtherTopology"></param>
 		/// <param name="kArgumentImagesInArguments"></param>
 		/// <param name="kArgumentImagesInTools"></param>
 		/// <param name="kToolsImagesInArguments"></param>
 		/// <param name="kToolsImagesInTools"></param>
-		static TOPOLOGIC_API void BooleanImages(
-			Topology const * const kpkTopologyA, 
-			Topology const * const kpkTopologyB,
+		/// <returns></returns>
+		TOPOLOGIC_API void BooleanImages(
+			Topology const * const kpkOtherTopology,
 			std::list<Topology*>& kArgumentImagesInArguments,
 			std::list<Topology*>& kArgumentImagesInTools,
 			std::list<Topology*>& kToolsImagesInArguments,
@@ -58,78 +59,84 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkTopologyA"></param>
-		/// <param name="kpkTopologyB"></param>
-		/// <param name="kOutputCellComplex"></param>
+		/// <param name="kpkOtherTopology"></param>
+		/// <param name="kOcctArgumentImagesInArguments"></param>
+		/// <param name="kOcctArgumentImagesInTools"></param>
+		/// <param name="kOcctToolsImagesInArguments"></param>
+		/// <param name="kOcctToolsImagesInTools"></param>
+		void BooleanImages(
+			Topology const * const kpkOtherTopology,
+			BOPAlgo_CellsBuilder& rOcctCellsBuilder,
+			BOPCol_ListOfShape& kOcctArgumentImagesInArguments,
+			BOPCol_ListOfShape& kOcctArgumentImagesInTools,
+			BOPCol_ListOfShape& kOcctToolsImagesInArguments,
+			BOPCol_ListOfShape& kOcctToolsImagesInTools);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpkOtherTopology"></param>
 		/// <param name="kBooleanFlag"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API Topology* BooleanOperation(
-			Topology const * const kpkTopologyA,
-			Topology const * const kpkTopologyB,
-			const bool kOutputCellComplex,
+		TOPOLOGIC_API Topology* BooleanOperation(
+			Topology const * const kpkOtherTopology, 
 			const BooleanFlag kBooleanFlag);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="rkTopologyArguments"></param>
-		/// <param name="rkTopologyTools"></param>
-		/// <param name="kOutputCellComplex"></param>
+		/// <param name="kpkOtherTopology"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API Topology* Difference(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools, const bool kOutputCellComplex = false);
+		TOPOLOGIC_API Topology* Difference(Topology const * const kpkOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="rkTopologyArguments"></param>
-		/// <param name="rkTopologyTools"></param>
-		/// <param name="kOutputCellComplex"></param>
+		/// <param name="kpkOtherTopology"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API Topology* Impose(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools, const bool kOutputCellComplex = false);
+		TOPOLOGIC_API Topology* Impose(Topology const * const kpkOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="rkTopologyArguments"></param>
-		/// <param name="rkTopologyTools"></param>
-		/// <param name="kOutputCellComplex"></param>
+		/// <param name="kpkOtherTopology"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API Topology* Imprint(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools, const bool kOutputCellComplex = false);
+		TOPOLOGIC_API Topology* Imprint(Topology const * const kpkOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="rkTopologyArguments"></param>
-		/// <param name="rkTopologyTools"></param>
-		/// <param name="kOutputCellComplex"></param>
+		/// <param name="kpkOtherTopology"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API Topology* Intersection(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools, const bool kOutputCellComplex = false);
+		TOPOLOGIC_API Topology* Intersection(Topology const * const kpkOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="rkTopologyArguments"></param>
-		/// <param name="kOutputCellComplex"></param>
+		/// <param name="kpkOtherTopology"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API Topology* Merge(const std::list<Topology*>& rkTopologyArguments, const bool kOutputCellComplex = false);
+		TOPOLOGIC_API Topology* Merge(Topology const * const kpkOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="rkTopologyArguments"></param>
-		/// <param name="rkTopologyTools"></param>
-		/// <param name="kOutputCellComplex"></param>
+		/// <param name="kpkOtherTopology"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API Topology* Slice(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools, const bool kOutputCellComplex = false);
+		TOPOLOGIC_API Topology* Slice(Topology const * const kpkOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="rkTopologyArguments"></param>
-		/// <param name="rkTopologyTools"></param>
-		/// <param name="kOutputCellComplex"></param>
+		/// <param name="kpkOtherTopology"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API Topology* Union(const std::list<Topology*>& rkTopologyArguments, const std::list<Topology*>& rkTopologyTools, const bool kOutputCellComplex = false);
+		TOPOLOGIC_API Topology* Union(Topology const * const kpkOtherTopology);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpkOtherTopology"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API Topology* XOR(Topology const * const kpkOtherTopology);
 
 		/// <summary>
 		/// 
