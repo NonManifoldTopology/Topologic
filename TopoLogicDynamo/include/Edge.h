@@ -127,6 +127,13 @@ namespace TopoLogic {
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="pOcctCurve"></param>
+		/// <returns></returns>
+		Autodesk::DesignScript::Geometry::Curve^ Curve(Handle(Geom_Curve) pOcctCurve, const double u0, const double u1);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <returns></returns>
 		virtual TopoLogicCore::Topology* GetCoreTopology() override;
 

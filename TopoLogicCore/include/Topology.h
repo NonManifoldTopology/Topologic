@@ -199,7 +199,7 @@ namespace TopoLogicCore
 		/// </summary>
 		/// <param name="kpkTopology"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API std::string Analyze(Topology const * const kpkTopology);
+		TOPOLOGIC_API std::string Analyze();
 
 		/// <summary>
 		/// 

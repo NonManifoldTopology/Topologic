@@ -131,13 +131,13 @@ namespace TopoLogicCore
 		return BRepTools::Read(occtShape, rkPath.c_str(), occtBRepBuilder);
 	}
 
-	std::string Topology::Analyze(Topology const * const kpkTopology)
+	std::string Topology::Analyze()
 	{
 		ShapeAnalysis_ShapeContents occtShapeAnalysis;
-		occtShapeAnalysis.Perform(*kpkTopology->GetOcctShape());
+		occtShapeAnalysis.Perform(*GetOcctShape());
 
 		std::string shapeType;
-		switch (kpkTopology->GetOcctShape()->ShapeType())
+		switch (GetOcctShape()->ShapeType())
 		{
 		case TopAbs_COMPOUND: shapeType = "Cluster"; break;
 		case TopAbs_COMPSOLID: shapeType = "CellComplex"; break;
@@ -150,9 +150,24 @@ namespace TopoLogicCore
 		default: shapeType = "invalid shape"; break;
 		}
 
+		// No method is provided in ShapeAnalysis_ShapeContents to compute the number of CompSolids.
+		// Do this manually.
+		int numberCompSolids = 0;
+		TopExp_Explorer occtExplorer;
+		BOPCol_ListOfShape occtCompSolids;
+		for (occtExplorer.Init(*GetOcctShape(), TopAbs_COMPSOLID); occtExplorer.More(); occtExplorer.Next())
+		{
+			const TopoDS_Shape& rkOcctCurrent = occtExplorer.Current();
+			if (!occtCompSolids.Contains(rkOcctCurrent))
+			{
+				occtCompSolids.Append(rkOcctCurrent);
+				numberCompSolids++;
+			}
+		}
 		std::stringstream resultStream;
 		resultStream <<
 			"The shape is a " << shapeType << "." << std::endl <<
+			"Number of cell complexes = " << numberCompSolids << std::endl <<
 			"Number of cells = " << occtShapeAnalysis.NbSharedSolids() << std::endl <<
 			"Number of shells = " << occtShapeAnalysis.NbSharedShells() << std::endl <<
 			"Number of faces = " << occtShapeAnalysis.NbSharedFaces() << std::endl <<
@@ -254,7 +269,7 @@ namespace TopoLogicCore
 
 		const TopoDS_Shape& rkParts = rOcctCellsBuilder.GetAllParts();
 		Topology* pTopologyParts = Topology::ByOcctShape(rkParts);
-		std::string strParts = Topology::Analyze(pTopologyParts);
+		std::string strParts = pTopologyParts->Analyze();
 
 		// 3. Classify the images: exclusively from argument, exclusively from tools, or shared.
 		BOPCol_ListOfShape occtExclusivelyArgumentImages;
@@ -458,17 +473,9 @@ namespace TopoLogicCore
 
 		BOPAlgo_CellsBuilder occtCellsBuilder;
 		occtCellsBuilder.SetArguments(occtCellsBuildersArguments);
+
 		// Split the arguments and tools
 		occtCellsBuilder.Perform();
-		//BooleanImages(kpkOtherTopology, occtCellsBuilder, occtArgumentImagesInArguments, occtArgumentImagesInTools, occtToolsImagesInArguments, occtToolsImagesInTools);
-
-		/*const TopoDS_Shape& rkParts = occtCellsBuilder.GetAllParts();
-		Topology* pTopologyParts = Topology::ByOcctShape(rkParts);
-		std::string strParts = Topology::Analyze(pTopologyParts);
-
-		BOPCol_ListOfShape occtBuilderArguments;
-		BOPCol_ListOfShape occtAvoidBuilderArguments;*/
-
 
 		BOPCol_ListOfShape occtListToTake;
 		BOPCol_ListOfShape occtListToAvoid;
@@ -558,7 +565,7 @@ namespace TopoLogicCore
 
 		const TopoDS_Shape& rkOcctMergeShape = occtCellsBuilder.Shape();
 		Topology* pTopology = Topology::ByOcctShape(rkOcctMergeShape);
-		std::string str = Topology::Analyze(pTopology);
+		std::string str = pTopology->Analyze();
 
 		return ByOcctShape(rkOcctMergeShape);
 	}

@@ -108,6 +108,16 @@ namespace TopoLogic
 		double u0 = 0.0, u1 = 0.0;
 		Handle(Geom_Curve) pOcctCurve = BRep_Tool::Curve(TopoDS::Edge(*GetCoreTopology()->GetOcctShape()), u0, u1);
 
+		return Curve(pOcctCurve, u0, u1);
+	}
+
+	Object^ Edge::Geometry::get()
+	{
+		return Curve();
+	}
+
+	Autodesk::DesignScript::Geometry::Curve^ Edge::Curve(Handle(Geom_Curve) pOcctCurve, const double u0, const double u1)
+	{
 		Handle(Geom_BezierCurve) pOcctBezierCurve = Handle_Geom_BezierCurve::DownCast(pOcctCurve);
 		if (!pOcctBezierCurve.IsNull())
 		{
@@ -131,11 +141,6 @@ namespace TopoLogic
 				pDynamoControlPoints[i - rkOcctControlPoints.Lower()] = Autodesk::DesignScript::Geometry::Point::ByCoordinates(rkControlPoint.X(), rkControlPoint.Y(), rkControlPoint.Z());
 			}
 
-			/*if (isPeriodic)
-			{
-			pDynamoControlPoints[pDynamoControlPoints->Length - 1] = (pDynamoControlPoints[0]);
-			}*/
-
 			// Transfer the control points' weights
 			const TColStd_Array1OfReal* pkOcctWeights = pOcctBsplineCurve->Weights();
 			array<double>^ pWeights = nullptr;
@@ -158,24 +163,15 @@ namespace TopoLogic
 				}
 			}
 
-			/*if (isPeriodic)
-			{
-			pWeights[pWeights->Length - 1] = (pWeights[0]);
-			}*/
-
 			// Transfer the knots. Note the format difference. OCCT has a separate multiplicity list, while Dynamo simply repeats the knots.
 			const TColStd_Array1OfReal& krOcctKnots = pOcctBsplineCurve->Knots();
 			List<double>^ pKnots = gcnew List<double>();
-			/*double minOcctKnot = krOcctKnots.Value(krOcctKnots.Lower());
-			double maxOcctKnot = krOcctKnots.Value(krOcctKnots.Upper());
-			double occtDKnot = maxOcctKnot - minOcctKnot;*/
 			for (int i = krOcctKnots.Lower(); i <= krOcctKnots.Upper(); i++)
 			{
 				int multiplicity = pOcctBsplineCurve->Multiplicity(i);
 				for (int j = 0; j < multiplicity; j++)
 				{
 					double occtKnot = krOcctKnots.Value(i);
-					//double dynamoKnot = (occtKnot - minOcctKnot) / occtDKnot;
 					pKnots->Add(occtKnot);
 				}
 			}
@@ -198,7 +194,7 @@ namespace TopoLogic
 		Handle(Geom_TrimmedCurve) pOcctTrimmedCurve = Handle_Geom_TrimmedCurve::DownCast(pOcctCurve);
 		if (!pOcctTrimmedCurve.IsNull())
 		{
-			throw gcnew NotImplementedException("Feature not yet implemented");
+			return Curve(pOcctTrimmedCurve->BasisCurve(), pOcctTrimmedCurve->FirstParameter(), pOcctTrimmedCurve->LastParameter());
 		}
 
 		Handle(Geom_Circle) pOcctCircle = Handle_Geom_Circle::DownCast(pOcctCurve);
@@ -242,11 +238,6 @@ namespace TopoLogic
 			safe_cast<Autodesk::DesignScript::Geometry::Point^>(pStartVertex->Geometry),
 			safe_cast<Autodesk::DesignScript::Geometry::Point^>(pEndVertex->Geometry)
 		);
-	}
-
-	Object^ Edge::Geometry::get()
-	{
-		return Curve();
 	}
 
 	TopoLogicCore::Topology* Edge::GetCoreTopology()

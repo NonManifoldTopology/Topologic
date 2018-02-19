@@ -46,7 +46,7 @@ namespace TopoLogic
 
 	String^ Topology::Analyze()
 	{
-		return gcnew String(TopoLogicCore::Topology::Analyze(GetCoreTopology()).c_str());
+		return gcnew String(GetCoreTopology()->Analyze().c_str());
 	}
 
 	Topology^ Topology::ByCoreTopology(TopoLogicCore::Topology * const kpCoreTopology)
