@@ -172,15 +172,15 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="DynamoCore">
-      <HintPath>..\..\..\..\..\..\..\Program Files\Dynamo\Dynamo Core\1.3\DynamoCore.dll</HintPath>
+      <HintPath>..\..\Software development\TopoLogic\TopoLogic\output\x64\Debug\DynamoCore.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="DynamoServices">
-      <HintPath>..\..\..\..\..\..\..\Program Files\Dynamo\Dynamo Core\1.3\DynamoServices.dll</HintPath>
+      <HintPath>..\..\Software development\TopoLogic\TopoLogic\output\x64\Debug\DynamoServices.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="ProtoGeometry">
-      <HintPath>..\..\..\..\..\..\..\Program Files\Dynamo\Dynamo Core\1.3\ProtoGeometry.dll</HintPath>
+      <HintPath>..\..\Software development\TopoLogic\TopoLogic\output\x64\Debug\ProtoGeometry.dll</HintPath>
       <Private>false</Private>
     </Reference>
   </ItemGroup>
