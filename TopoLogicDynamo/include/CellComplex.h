@@ -6,6 +6,7 @@
 
 namespace TopoLogic
 {
+	ref class Face;
 	ref class Cell;
 
 	public ref class CellComplex : Topology
@@ -16,32 +17,26 @@ namespace TopoLogic
 		/// </summary>
 		/// <param name="cells"></param>
 		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic CellComplex", "Solids" })]
-		static Dictionary<String^, Object^>^ ByCells(List<Cell^>^ cells);
+		static CellComplex^ ByCells(List<Cell^>^ cells);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		List<Cell^>^ Cells();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		List<Face^>^ Faces();
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="cellComplex"></param>
 		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Cells", "Solids" })]
-		static Dictionary<String^, Object^>^ Cells(CellComplex^ cellComplex);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="cellComplex"></param>
-		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Faces", "Surfaces" })]
-		static Dictionary<String^, Object^>^ Faces(CellComplex^ cellComplex);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="cellComplex"></param>
-		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Cell", "Solid" })]
-		static Dictionary<String^, Object^>^ BoundingCell(CellComplex^ cellComplex);
+		Cell^ BoundingCell();
 
 		property bool IsClosed {
 			/// <summary>
@@ -71,15 +66,6 @@ namespace TopoLogic
 		/// </summary>
 		/// <returns></returns>
 		virtual TopoLogicCore::Topology* GetCoreTopology() override;
-
-		// Utility methods
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		List<Cell^>^ Cells();
-
 
 	protected:
 		virtual ~CellComplex();

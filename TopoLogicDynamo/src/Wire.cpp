@@ -1,4 +1,4 @@
-#include <Wire.h>
+#include "Wire.h"
 #include <Vertex.h>
 #include <Edge.h>
 #include <Face.h>
@@ -7,29 +7,31 @@
 
 namespace TopoLogic
 {
-	Dictionary<String^, Object^>^ Wire::Edges(Wire^ topoLogicWire)
+	List<Edge^>^ Wire::Edges()
 	{
-		List<Edge^>^ pEdges = topoLogicWire->Edges();
-		List<Object^>^ pDynamoCurves = gcnew List<Object^>();
+		TopoLogicCore::Wire* pCoreWire = TopoLogicCore::Topology::Downcast<TopoLogicCore::Wire>(GetCoreTopology());
+		std::list<TopoLogicCore::Edge*> pCoreEdgeList;
+		pCoreWire->Edges(pCoreEdgeList);
+		List<Edge^>^ pEdges = gcnew List<Edge^>();
 
-		for each(Edge^ pEdge in pEdges)
+		for (std::list<TopoLogicCore::Edge*>::iterator kCoreEdgeIterator = pCoreEdgeList.begin();
+			kCoreEdgeIterator != pCoreEdgeList.end();
+			kCoreEdgeIterator++)
 		{
-			pDynamoCurves->Add(pEdge->Geometry);
+			TopoLogicCore::Edge* pCoreEdge = *kCoreEdgeIterator;
+			Edge^ pEdge = gcnew Edge(pCoreEdge);
+			pEdges->Add(pEdge);
 		}
 
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Edges", pEdges);
-		pDictionary->Add("Curves", pDynamoCurves);
-		return pDictionary;
+		return pEdges;
 	}
 
-	Dictionary<String^, Object^>^ Wire::Faces(Wire ^ topoLogicWire)
+	List<Face^>^ Wire::Faces()
 	{
-		TopoLogicCore::Wire* pCoreWire = TopoLogicCore::Topology::Downcast<TopoLogicCore::Wire>(topoLogicWire->GetCoreTopology());
+		TopoLogicCore::Wire* pCoreWire = TopoLogicCore::Topology::Downcast<TopoLogicCore::Wire>(GetCoreTopology());
 		std::list<TopoLogicCore::Face*> pCoreFaceList;
 		pCoreWire->Faces(pCoreFaceList);
 		List<Face^>^ pFaces = gcnew List<Face^>();
-		List<Object^>^ pDynamoSurfaces = gcnew List<Object^>();
 
 		for (std::list<TopoLogicCore::Face*>::iterator kCoreFaceIterator = pCoreFaceList.begin();
 			kCoreFaceIterator != pCoreFaceList.end();
@@ -38,27 +40,22 @@ namespace TopoLogic
 			TopoLogicCore::Face* pCoreFace = *kCoreFaceIterator;
 			Face^ pFace = gcnew Face(pCoreFace);
 			pFaces->Add(pFace);
-			pDynamoSurfaces->Add(pFace->Geometry);
 		}
 
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Faces", pFaces);
-		pDictionary->Add("Surfaces", pDynamoSurfaces);
-		return pDictionary;
+		return pFaces;
 	}
 
 	bool Wire::IsClosed()
 	{
-		return TopoLogicCore::Topology::Downcast<TopoLogicCore::Wire>(GetCoreTopology());
+		return TopoLogicCore::Topology::Downcast<TopoLogicCore::Wire>(GetCoreTopology())->IsClosed();
 	}
 
-	Dictionary<String^, Object^>^ Wire::Vertices(Wire^ topoLogicWire)
+	List<Vertex^>^ Wire::Vertices()
 	{
-		TopoLogicCore::Wire* pCoreWire = TopoLogicCore::Topology::Downcast<TopoLogicCore::Wire>(topoLogicWire->GetCoreTopology());
+		TopoLogicCore::Wire* pCoreWire = TopoLogicCore::Topology::Downcast<TopoLogicCore::Wire>(GetCoreTopology());
 		std::list<TopoLogicCore::Vertex*> pCoreVertexList;
 		pCoreWire->Vertices(pCoreVertexList);
 		List<Vertex^>^ pVertices = gcnew List<Vertex^>();
-		List<Object^>^ pDynamoPoints = gcnew List<Object^>();
 
 		for (std::list<TopoLogicCore::Vertex*>::iterator kCoreVertexIterator = pCoreVertexList.begin();
 			kCoreVertexIterator != pCoreVertexList.end();
@@ -67,31 +64,19 @@ namespace TopoLogic
 			TopoLogicCore::Vertex* pCoreVertex = *kCoreVertexIterator;
 			Vertex^ pVertex = gcnew Vertex(pCoreVertex);
 			pVertices->Add(pVertex);
-			pDynamoPoints->Add(pVertex->Geometry);
 		}
 
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Vertices", pVertices);
-		pDictionary->Add("Points", pDynamoPoints);
-		return pDictionary;
+		return pVertices;
 	}
 
-	Dictionary<String^, Object^>^ Wire::ByEdges(List<Edge^>^ edges)
+	Wire^ Wire::ByEdges(List<Edge^>^ edges)
 	{
-		Wire^ pWire = gcnew Wire(edges);
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Wire", pWire);
-		pDictionary->Add("PolyCurve", pWire->Geometry);
-		return pDictionary;
+		return gcnew Wire(edges);
 	}
 
-	Dictionary<String^, Object^>^ Wire::ByPolyCurve(Autodesk::DesignScript::Geometry::PolyCurve ^ polycurve)
+	Wire^ Wire::ByPolyCurve(Autodesk::DesignScript::Geometry::PolyCurve ^ polycurve)
 	{
-		Wire^ pWire = gcnew Wire(polycurve);
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Wire", pWire);
-		pDictionary->Add("PolyCurve", pWire->Geometry);
-		return pDictionary;
+		return gcnew Wire(polycurve);
 	}
 
 	Object^ Wire::Geometry::get()
@@ -169,25 +154,6 @@ namespace TopoLogic
 		}
 
 		m_pCoreWire = TopoLogicCore::Wire::ByEdges(coreEdges);
-	}
-
-	List<Edge^>^ Wire::Edges()
-	{
-		TopoLogicCore::Wire* pCoreWire = TopoLogicCore::Topology::Downcast<TopoLogicCore::Wire>(GetCoreTopology());
-		std::list<TopoLogicCore::Edge*> pCoreEdgeList;
-		pCoreWire->Edges(pCoreEdgeList);
-		List<Edge^>^ pEdges = gcnew List<Edge^>();
-
-		for (std::list<TopoLogicCore::Edge*>::iterator kCoreEdgeIterator = pCoreEdgeList.begin();
-			kCoreEdgeIterator != pCoreEdgeList.end();
-			kCoreEdgeIterator++)
-		{
-			TopoLogicCore::Edge* pCoreEdge = *kCoreEdgeIterator;
-			Edge^ pEdge = gcnew Edge(pCoreEdge);
-			pEdges->Add(pEdge);
-		}
-
-		return pEdges;
 	}
 
 	Wire::~Wire()

@@ -7,8 +7,11 @@
 namespace TopoLogic
 {
 	ref class Vertex;
+	ref class Edge;
+	ref class Wire;
 	ref class Face;
 	ref class Shell;
+	ref class CellComplex;
 
 	public ref class Cell : Topology
 	{
@@ -16,26 +19,21 @@ namespace TopoLogic
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="faces"></param>
 		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Cell", "Solid" })]
-		static Dictionary<String^, Object^>^ ByFaces(List<Face^>^ faces);
+		static Cell^ ByFaces(List<Face^>^ faces);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		static Cell^ BySolid(Autodesk::DesignScript::Geometry::Solid^ solid);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="shell"></param>
 		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Cell", "Solid" })]
-		static Dictionary<String^, Object^>^ BySolid(Autodesk::DesignScript::Geometry::Solid^ solid);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="shell"></param>
-		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Cell", "Solid" })]
-		static Dictionary<String^, Object^>^ ByShell(Shell^ shell);
+		static Cell^ ByShell(Shell^ shell);
 
 		/// <summary>
 		/// 
@@ -43,91 +41,71 @@ namespace TopoLogic
 		/// <param name="vertices"></param>
 		/// <param name="faceIndices"></param>
 		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Cell", "Solid" })]
-		static Dictionary<String^, Object^>^ ByVerticesFaceIndices(List<Vertex^>^ vertices, List<List<int>^>^ faceIndices);
+		static Cell^ ByVerticesFaceIndices(List<Vertex^>^ vertices, List<List<int>^>^ faceIndices);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="topoLogicCell"></param>
 		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic CellComplexes", "Solids" })]
-		static Dictionary<String^, Object^>^ CellComplex(Cell^ topoLogicCell);
+		CellComplex^ CellComplex();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="topoLogicCell"></param>
 		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Shells", "Polysurfaces" })]
-		static Dictionary<String^, Object^>^ Shells(Cell^ topoLogicCell);
+		List<Shell^>^ Shells();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="topoLogicCell"></param>
 		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Faces", "Surfaces" })]
-		static Dictionary<String^, Object^>^ Faces(Cell^ topoLogicCell);
+		List<Face^>^ Faces();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="topoLogicCell"></param>
 		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Wires", "PolyCurves" })]
-		static Dictionary<String^, Object^>^ Wires(Cell^ topoLogicCell);
+		List<Wire^>^ Wires();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="topoLogicCell"></param>
 		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Edges", "Curves" })]
-		static Dictionary<String^, Object^>^ Edges(Cell^ topoLogicCell);
+		List<Edge^>^ Edges();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="topoLogicCell"></param>
 		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Vertices", "Points" })]
-		static Dictionary<String^, Object^>^ Vertices(Cell^ topoLogicCell);
+		List<Vertex^>^ Vertices();
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="cell"></param>
 		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Cells", "Solids" })]
-		static Dictionary<String^, Object^>^ AdjacentCells(Cell^ cell);
+		List<Cell^>^ AdjacentCells(Cell^ cell);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="cell1"></param>
-		/// <param name="cell2"></param>
+		/// <param name="cell"></param>
 		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Faces", "Surfaces" })]
-		static Dictionary<String^, Object^>^ SharedFaces(Cell^ cell1, Cell^ cell2);
+		List<Face^>^ SharedFaces(Cell^ cell);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="cell1"></param>
-		/// <param name="cell2"></param>
+		/// <param name="cell"></param>
 		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Edges", "Curves" })]
-		static Dictionary<String^, Object^>^ SharedEdges(Cell^ cell1, Cell^ cell2);
+		List<Edge^>^ SharedEdges(Cell^ cell);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="cell1"></param>
-		/// <param name="cell2"></param>
+		/// <param name="cell"></param>
 		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Vertices", "Points" })]
-		static Dictionary<String^, Object^>^ SharedVertices(Cell^ cell1, Cell^ cell2);
+		List<Vertex^>^ SharedVertices(Cell^ cell);
 
 		property Object^ Geometry
 		{
@@ -162,14 +140,6 @@ namespace TopoLogic
 		/// </summary>
 		/// <returns></returns>
 		virtual TopoLogicCore::Topology* GetCoreTopology() override;
-
-		// Utility methods
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		List<Face^>^ Faces();
 
 	protected:
 		virtual ~Cell();

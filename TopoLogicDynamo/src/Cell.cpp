@@ -1,4 +1,4 @@
-#include <Cell.h>
+#include "Cell.h"
 #include <Vertex.h>
 #include <Edge.h>
 #include <Wire.h>
@@ -13,35 +13,23 @@
 
 namespace TopoLogic
 {
-	Dictionary<String^, Object^>^ Cell::ByFaces(List<Face^>^ faces)
+	Cell^ Cell::ByFaces(List<Face^>^ faces)
 	{
-		Cell^ pCell = gcnew Cell(faces);
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Cell", pCell);
-		pDictionary->Add("Solid", pCell->Geometry);
-		return pDictionary;
+		return gcnew Cell(faces);
 	}
 
-	Dictionary<String^, Object^>^ Cell::BySolid(Autodesk::DesignScript::Geometry::Solid^ solid)
+	Cell^ Cell::BySolid(Autodesk::DesignScript::Geometry::Solid^ solid)
 	{
-		Cell^ pCell = gcnew Cell(solid);
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Cell", pCell);
-		pDictionary->Add("Solid", pCell->Geometry);
-		return pDictionary;
+		return gcnew Cell(solid);
 	}
 
-	Dictionary<String^, Object^>^ Cell::ByShell(Shell^ shell)
+	Cell^ Cell::ByShell(Shell^ shell)
 	{
 		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Cell::ByShell(TopoLogicCore::Topology::Downcast<TopoLogicCore::Shell>(shell->GetCoreTopology()));
-		Cell^ pCell = gcnew Cell(pCoreCell);
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Cell", pCell);
-		pDictionary->Add("Solid", pCell->Geometry);
-		return pDictionary;
+		return gcnew Cell(pCoreCell);
 	}
 
-	Dictionary<String^, Object^>^ Cell::ByVerticesFaceIndices(List<Vertex^>^ vertices, List<List<int>^>^ faceIndices)
+	Cell^ Cell::ByVerticesFaceIndices(List<Vertex^>^ vertices, List<List<int>^>^ faceIndices)
 	{
 		std::vector<TopoLogicCore::Vertex*> coreVertices;
 		for each(Vertex^ pVertex in vertices)
@@ -61,163 +49,120 @@ namespace TopoLogic
 		}
 
 		Cell^ pCell = gcnew Cell(TopoLogicCore::Cell::ByVerticesFaceIndices(coreVertices, coreFaceIndices));
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Cell", pCell);
-		pDictionary->Add("Solid", pCell->Geometry);
-		return pDictionary;
+		return pCell;
 	}
 
-	Dictionary<String^, Object^>^ Cell::CellComplex(Cell ^ topoLogicCell)
+	CellComplex^ Cell::CellComplex()
 	{
-		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(topoLogicCell->GetCoreTopology());
+		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopology());
 
 		TopoLogicCore::CellComplex* pCoreCellComplex = pCoreCell->CellComplex();
 		TopoLogic::CellComplex^ pCellComplex = nullptr;
-		List<System::Object^>^ pDynamoSolids = gcnew List<System::Object^>();
 		
 		if(pCoreCellComplex != nullptr)
 		{
 			pCellComplex = gcnew TopoLogic::CellComplex(pCoreCellComplex);
-		
-			std::list<TopoLogicCore::Cell*> coreCells;
-			pCoreCellComplex->Cells(coreCells);
-
-			for (std::list<TopoLogicCore::Cell*>::const_iterator kCellIterator = coreCells.begin();
-				kCellIterator != coreCells.end();
-				kCellIterator++)
-			{
-				Cell^ pCell = gcnew Cell(*kCellIterator);
-				pDynamoSolids->Add(pCell->Geometry);
-			}
 		}
 
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic CellComplex", pCellComplex);
-		pDictionary->Add("Solids", pDynamoSolids);
-		return pDictionary;
+		return pCellComplex;
 	}
 
-	Dictionary<String^, Object^>^ Cell::Shells(Cell ^ topoLogicCell)
+	List<Shell^>^ Cell::Shells()
 	{
-		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(topoLogicCell->GetCoreTopology());
+		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopology());
 
 		std::list<TopoLogicCore::Shell*> coreShells;
 		pCoreCell->Shells(coreShells);
 
 		List<Shell^>^ pShells = gcnew List<Shell^>();
-		List<System::Object^>^ pDynamoEntities = gcnew List<System::Object^>();
 		for (std::list<TopoLogicCore::Shell*>::const_iterator kShellIterator = coreShells.begin();
 			kShellIterator != coreShells.end();
 			kShellIterator++)
 		{
 			Shell^ pShell = gcnew Shell(*kShellIterator);
 			pShells->Add(pShell);
-			pDynamoEntities->Add(pShell->Geometry);
 		}
 
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Shells", pShells);
-		pDictionary->Add("Polysurfaces", pDynamoEntities);
-		return pDictionary;
+		return pShells;
 	}
 
-	Dictionary<String^, Object^>^ Cell::Faces(Cell^ topoLogicCell)
+	List<Face^>^ Cell::Faces()
 	{
-		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(topoLogicCell->GetCoreTopology());
+		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopology());
 
 		std::list<TopoLogicCore::Face*> coreFaces;
 		pCoreCell->Faces(coreFaces);
 
 		List<Face^>^ pFaces = gcnew List<Face^>();
-		List<System::Object^>^ pDynamoEntities = gcnew List<System::Object^>();
 		for (std::list<TopoLogicCore::Face*>::const_iterator kFaceIterator = coreFaces.begin();
 			kFaceIterator != coreFaces.end();
 			kFaceIterator++)
 		{
 			Face^ pFace = gcnew Face(*kFaceIterator);
 			pFaces->Add(pFace);
-			pDynamoEntities->Add(pFace->Geometry);
 		}
 
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Faces", pFaces);
-		pDictionary->Add("Surfaces", pDynamoEntities);
-		return pDictionary;
+		return pFaces;
 	}
 
-	Dictionary<String^, Object^>^ Cell::Wires(Cell ^ topoLogicCell)
+	List<Wire^>^ Cell::Wires()
 	{
-		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(topoLogicCell->GetCoreTopology());
+		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopology());
 
 		std::list<TopoLogicCore::Wire*> coreWires;
 		pCoreCell->Wires(coreWires);
 
 		List<Wire^>^ pWires = gcnew List<Wire^>();
-		List<System::Object^>^ pDynamoPolycurves = gcnew List<System::Object^>();
 		for (std::list<TopoLogicCore::Wire*>::const_iterator kWireIterator = coreWires.begin();
 			kWireIterator != coreWires.end();
 			kWireIterator++)
 		{
 			Wire^ pWire = gcnew Wire(*kWireIterator);
 			pWires->Add(pWire);
-			pDynamoPolycurves->Add(pWire->Geometry);
 		}
 
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Wires", pWires);
-		pDictionary->Add("PolyCurves", pDynamoPolycurves);
-		return pDictionary;
+		return pWires;
 	}
 
-	Dictionary<String^, Object^>^ Cell::Edges(Cell^ topoLogicCell)
+	List<Edge^>^ Cell::Edges()
 	{
-		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(topoLogicCell->GetCoreTopology());
+		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopology());
 
 		std::list<TopoLogicCore::Edge*> coreEdges;
 		pCoreCell->Edges(coreEdges);
 
 		List<Edge^>^ pEdges = gcnew List<Edge^>();
-		List<System::Object^>^ pDynamoCurves = gcnew List<System::Object^>();
 		for (std::list<TopoLogicCore::Edge*>::const_iterator kEdgeIterator = coreEdges.begin();
 			kEdgeIterator != coreEdges.end();
 			kEdgeIterator++)
 		{
 			Edge^ pEdge = gcnew Edge(*kEdgeIterator);
 			pEdges->Add(pEdge);
-			pDynamoCurves->Add(pEdge->Geometry);
 		}
 
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Edges", pEdges);
-		pDictionary->Add("Curves", pDynamoCurves);
-		return pDictionary;
+		return pEdges;
 	}
 
-	Dictionary<String^, Object^>^ Cell::Vertices(Cell^ topoLogicCell)
+	List<Vertex^>^ Cell::Vertices()
 	{
-		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(topoLogicCell->GetCoreTopology());
+		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopology());
 
 		std::list<TopoLogicCore::Vertex*> coreVertices;
 		pCoreCell->Vertices(coreVertices);
 
 		List<Vertex^>^ pVertices = gcnew List<Vertex^>();
-		List<System::Object^>^ pDynamoPoints = gcnew List<System::Object^>();
 		for (std::list<TopoLogicCore::Vertex*>::const_iterator kVertexIterator = coreVertices.begin();
 			kVertexIterator != coreVertices.end();
 			kVertexIterator++)
 		{
 			Vertex^ pVertex = gcnew Vertex(*kVertexIterator);
 			pVertices->Add(pVertex);
-			pDynamoPoints->Add(pVertex->Geometry);
 		}
 
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Vertices", pVertices);
-		pDictionary->Add("Points", pDynamoPoints);
-		return pDictionary;
+		return pVertices;
 	}
 
-	Dictionary<String^, Object^>^ Cell::AdjacentCells(Cell^ cell)
+	List<Cell^>^ Cell::AdjacentCells(Cell^ cell)
 	{
 		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(cell->GetCoreTopology());
 
@@ -225,95 +170,75 @@ namespace TopoLogic
 		pCoreCell->AdjacentCells(coreAdjacentCells);
 
 		List<Cell^>^ pAdjacentCells = gcnew List<Cell^>();
-		List<System::Object^>^ pDynamoSolids = gcnew List<System::Object^>();
 		for (std::list<TopoLogicCore::Cell*>::const_iterator kCellIterator = coreAdjacentCells.begin();
 			kCellIterator != coreAdjacentCells.end();
 			kCellIterator++)
 		{
 			Cell^ pCell = gcnew Cell(*kCellIterator);
 			pAdjacentCells->Add(pCell);
-			pDynamoSolids->Add(pCell->Geometry);
 		}
 
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Cells", pAdjacentCells);
-		pDictionary->Add("Solids", pDynamoSolids);
-		return pDictionary;
+		return pAdjacentCells;
 	}
 
-	Dictionary<String^, Object^>^ Cell::SharedFaces(Cell^ cell1, Cell^ cell2)
+	List<Face^>^ Cell::SharedFaces(Cell^ cell)
 	{
-		TopoLogicCore::Cell* pCoreCell1 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(cell1->GetCoreTopology());
-		TopoLogicCore::Cell* pCoreCell2 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(cell2->GetCoreTopology());
+		TopoLogicCore::Cell* pCoreCell1 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopology());
+		TopoLogicCore::Cell* pCoreCell2 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(cell->GetCoreTopology());
 
 		std::list<TopoLogicCore::Face*> sharedFaces;
 		pCoreCell1->SharedFaces(pCoreCell2, sharedFaces);
 
 		List<Face^>^ pSharedFaces = gcnew List<Face^>();
-		List<System::Object^>^ pDynamoEntities = gcnew List<System::Object^>();
 		for(std::list<TopoLogicCore::Face*>::const_iterator kFaceIterator = sharedFaces.begin();
 			kFaceIterator != sharedFaces.end();
 			kFaceIterator++)
 		{
 			Face^ pFace = gcnew Face(*kFaceIterator);
 			pSharedFaces->Add(pFace);
-			pDynamoEntities->Add(pFace->Geometry);
 		}
 
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Faces", pSharedFaces);
-		pDictionary->Add("Surfaces", pDynamoEntities);
-		return pDictionary;
+		return pSharedFaces;
 	}
 
-	Dictionary<String^, Object^>^ Cell::SharedEdges(Cell^ cell1, Cell^ cell2)
+	List<Edge^>^ Cell::SharedEdges(Cell^ cell)
 	{
-		TopoLogicCore::Cell* pCoreCell1 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(cell1->GetCoreTopology());
-		TopoLogicCore::Cell* pCoreCell2 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(cell2->GetCoreTopology());
+		TopoLogicCore::Cell* pCoreCell1 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopology());
+		TopoLogicCore::Cell* pCoreCell2 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(cell->GetCoreTopology());
 
 		std::list<TopoLogicCore::Edge*> sharedEdges;
 		pCoreCell1->SharedEdges(pCoreCell2, sharedEdges);
 
 		List<Edge^>^ pSharedEdges = gcnew List<Edge^>();
-		List<System::Object^>^ pDynamoCurves = gcnew List<System::Object^>();
 		for (std::list<TopoLogicCore::Edge*>::const_iterator kEdgeIterator = sharedEdges.begin();
 			kEdgeIterator != sharedEdges.end();
 			kEdgeIterator++)
 		{
 			Edge^ pEdge = gcnew Edge(*kEdgeIterator);
 			pSharedEdges->Add(pEdge);
-			pDynamoCurves->Add(pEdge->Geometry);
 		}
 
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Edges", pSharedEdges);
-		pDictionary->Add("Curves", pDynamoCurves);
-		return pDictionary;
+		return pSharedEdges;
 	}
 
-	Dictionary<String^, Object^>^ Cell::SharedVertices(Cell^ cell1, Cell^ cell2)
+	List<Vertex^>^ Cell::SharedVertices(Cell^ cell)
 	{
-		TopoLogicCore::Cell* pCoreCell1 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(cell1->GetCoreTopology());
-		TopoLogicCore::Cell* pCoreCell2 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(cell2->GetCoreTopology());
+		TopoLogicCore::Cell* pCoreCell1 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopology());
+		TopoLogicCore::Cell* pCoreCell2 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(cell->GetCoreTopology());
 
 		std::list<TopoLogicCore::Vertex*> sharedVertices;
 		pCoreCell1->SharedVertices(pCoreCell2, sharedVertices);
 
 		List<Vertex^>^ pSharedVertices = gcnew List<Vertex^>();
-		List<System::Object^>^ pDynamoPoints = gcnew List<System::Object^>();
 		for (std::list<TopoLogicCore::Vertex*>::const_iterator kVertexIterator = sharedVertices.begin();
 			kVertexIterator != sharedVertices.end();
 			kVertexIterator++)
 		{
 			Vertex^ pVertex = gcnew Vertex(*kVertexIterator);
 			pSharedVertices->Add(pVertex);
-			pDynamoPoints->Add(pVertex->Geometry);
 		}
 
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Vertices", pSharedVertices);
-		pDictionary->Add("Points", pDynamoPoints);
-		return pDictionary;
+		return pSharedVertices;
 	}
 
 	Object^ Cell::Geometry::get()
@@ -445,24 +370,6 @@ namespace TopoLogic
 			width,
 			height
 		);
-	}
-
-	List<Face^>^ Cell::Faces()
-	{
-		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopology());
-		std::list<TopoLogicCore::Face*> coreFaces;
-		pCoreCell->Faces(coreFaces);
-
-		List<Face^>^ pFaces = gcnew List<Face^>();
-		for (std::list<TopoLogicCore::Face*>::const_iterator kCoreFaceIterator = coreFaces.begin();
-			kCoreFaceIterator != coreFaces.end();
-			kCoreFaceIterator++)
-		{
-			Face^ pFace = gcnew Face(*kCoreFaceIterator);
-			pFaces->Add(pFace);
-		}
-
-		return pFaces;
 	}
 
 	Cell::~Cell()

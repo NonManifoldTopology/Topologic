@@ -1,4 +1,4 @@
-#include <Edge.h>
+#include "Edge.h"
 #include <Vertex.h>
 #include <Wire.h>
 
@@ -19,29 +19,21 @@
 
 namespace TopoLogic
 {
-	Dictionary<String^, Object^>^ Edge::StartVertex(Edge^ topoLogicEdge)
+	Vertex^ Edge::StartVertex()
 	{
-		TopoLogicCore::Edge* pCoreEdge = TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(topoLogicEdge->GetCoreTopology());
-		Vertex^ pVertex = gcnew Vertex(pCoreEdge->StartVertex());
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Vertex", pVertex);
-		pDictionary->Add("Point", pVertex->Geometry);
-		return pDictionary;
+		TopoLogicCore::Edge* pCoreEdge = TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(GetCoreTopology());
+		return gcnew Vertex(pCoreEdge->StartVertex());
 	}
 
-	Dictionary<String^, Object^>^ Edge::EndVertex(Edge^ topoLogicEdge)
+	Vertex^ Edge::EndVertex()
 	{
-		TopoLogicCore::Edge* pCoreEdge = TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(topoLogicEdge->GetCoreTopology());
-		Vertex^ pVertex = gcnew Vertex(pCoreEdge->EndVertex());
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Vertex", pVertex);
-		pDictionary->Add("Point", pVertex->Geometry);
-		return pDictionary;
+		TopoLogicCore::Edge* pCoreEdge = TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(GetCoreTopology());
+		return gcnew Vertex(pCoreEdge->EndVertex());
 	}
 
-	Dictionary<String^, Object^>^ Edge::Wires(Edge ^ topoLogicEdge)
+	List<Wire^>^ Edge::Wires()
 	{
-		TopoLogicCore::Edge* pCoreEdge = TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(topoLogicEdge->GetCoreTopology());
+		TopoLogicCore::Edge* pCoreEdge = TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(GetCoreTopology());
 		std::list<TopoLogicCore::Wire*> coreWires;
 		pCoreEdge->Wires(coreWires);
 
@@ -57,22 +49,15 @@ namespace TopoLogic
 			pDynamoPolycurves->Add(pWire->Geometry);
 		}
 		
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Wires", pWires);
-		pDictionary->Add("PolyCurves", pDynamoPolycurves);
-		return pDictionary;
+		return pWires;
 	}
 
-	Dictionary<String^, Object^>^ Edge::ByCurve(Autodesk::DesignScript::Geometry::Curve^ curve)
+	Edge^ Edge::ByCurve(Autodesk::DesignScript::Geometry::Curve^ curve)
 	{
-		Edge^ pEdge = gcnew Edge(curve);
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Edge", pEdge);
-		pDictionary->Add("Curve", pEdge->Geometry);
-		return pDictionary;
+		return gcnew Edge(curve);
 	}
 
-	Dictionary<String^, Object^>^ Edge::ByVertices(List<Vertex^>^ vertices)
+	Edge^ Edge::ByVertices(List<Vertex^>^ vertices)
 	{
 		std::list<TopoLogicCore::Vertex*> pCoreVertices;
 		for each(Vertex^ pVertex in vertices)
@@ -80,27 +65,16 @@ namespace TopoLogic
 			pCoreVertices.push_back(TopoLogicCore::Topology::Downcast<TopoLogicCore::Vertex>(pVertex->GetCoreTopology()));
 		}
 		TopoLogicCore::Edge* pCoreEdge = TopoLogicCore::Edge::ByVertices(pCoreVertices);
-		Edge^ pEdge = gcnew Edge(pCoreEdge);
-
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Edge", pEdge);
-		pDictionary->Add("Line", pEdge->Geometry);
-
-		return pDictionary;
+		return gcnew Edge(pCoreEdge);
 	}
 
-	Dictionary<String^, Object^>^ Edge::SharedVertex(Edge^ topoLogicEdge1, Edge^ topoLogicEdge2)
+	Vertex^ Edge::SharedVertex(Edge^ edge)
 	{
-		TopoLogicCore::Edge* pCoreEdge1 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(topoLogicEdge1->GetCoreTopology());
-		TopoLogicCore::Edge* pCoreEdge2 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(topoLogicEdge2->GetCoreTopology());
+		TopoLogicCore::Edge* pCoreEdge1 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(GetCoreTopology());
+		TopoLogicCore::Edge* pCoreEdge2 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(edge->GetCoreTopology());
 		TopoLogicCore::Vertex* pCoreVertex = pCoreEdge1->SharedVertex(pCoreEdge2);
 
-		Vertex^ pVertex = gcnew Vertex(pCoreVertex);
-
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Vertex", pVertex);
-		pDictionary->Add("Point", pVertex->Geometry);
-		return pDictionary;
+		return gcnew Vertex(pCoreVertex);
 	}
 
 	Autodesk::DesignScript::Geometry::Curve^ Edge::Curve()

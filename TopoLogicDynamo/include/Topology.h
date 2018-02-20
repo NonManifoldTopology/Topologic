@@ -8,6 +8,9 @@ using namespace Autodesk::DesignScript::Runtime;
 
 namespace TopoLogic
 {
+	/// <summary>
+	/// The abstract base class for all topological entities in the library.
+	/// </summary>
 	public ref class Topology abstract
 	{
 	public:
@@ -16,25 +19,25 @@ namespace TopoLogic
 			/// <summary>
 			/// 
 			/// </summary>
-			/// <returns></returns>
+			/// <returns name="int">The shape's dimentionality</returns>
 			int get();
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns name="Geometry">The host geometry counter part of the topological shape</returns>
 		property Object^ Geometry
 		{
-			/// <summary>
-			/// 
-			/// </summary>
-			/// <returns></returns>
 			virtual Object^ get() abstract;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns name="bool">The locked flag of this shape</returns>
 		property bool Locked
 		{
-			/// <summary>
-			/// 
-			/// </summary>
-			/// <returns></returns>
 			bool get();
 		}
 
@@ -42,24 +45,20 @@ namespace TopoLogic
 		/// 
 		/// </summary>
 		/// <param name="value"></param>
-		/// <returns></returns>
+		/// <returns name="Topology">The original topology with the new locked flag</returns>
 		Topology^ SetLocked(bool value);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="topology"></param>
-		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
-		Dictionary<String^, Object^>^ MemberOf();
+		/// <returns name="Topology[]">The topological shapes containing the input shape as a non-constituent member.</returns>
+		List<Topology^>^ MemberOf();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="topology"></param>
-		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
-		Dictionary<String^, Object^>^ Members();
+		/// <returns name="Topology[]">The non-constituent members of the input topological shape.</returns>
+		List<Topology^>^ Members();
 
 		/// <summary>
 		/// 
@@ -82,85 +81,77 @@ namespace TopoLogic
 		/// 
 		/// </summary>
 		/// <param name="topology"></param>
-		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
-		Dictionary<String^, Object^>^ Difference(Topology^ topology);
+		/// <returns name="Topology">The result of the Difference operation</returns>
+		Topology^ Difference(Topology^ topology);
 		
 		/// <summary>
-		/// 
+		/// Impose the second topology to the first one.
 		/// </summary>
-		/// <param name="topology"></param>
-		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
-		Dictionary<String^, Object^>^ Impose(Topology^ topology);
+		/// <param name="topology">Another topology</param>
+		/// <returns name="Topology">The result of the Impose operation</returns>
+		Topology^ Impose(Topology^ topology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="topology"></param>
-		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
-		Dictionary<String^, Object^>^ Imprint(Topology^ topology);
+		/// <returns name="Topology">The result of the Imprint operation</returns>
+		Topology^ Imprint(Topology^ topology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="topology"></param>
-		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
-		Dictionary<String^, Object^>^ Intersection(Topology^ topology);
+		/// <returns name="Topology">The result of the Intersection operation</returns>
+		Topology^ Intersection(Topology^ topology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="topology"></param>
-		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
-		Dictionary<String^, Object^>^ Merge(Topology^ topology);
+		/// <returns name="Topology">The result of the Merge operation</returns>
+		Topology^ Merge(Topology^ topology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="topology"></param>
-		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
-		Dictionary<String^, Object^>^ Slice(Topology^ topology);
+		/// <returns name="Topology">The result of the Slice operation</returns>
+		Topology^ Slice(Topology^ topology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="topology"></param>
-		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
-		Dictionary<String^, Object^>^ Union(Topology^ topology);
+		/// <returns name="Topology">The result of the Union operation</returns>
+		Topology^ Union(Topology^ topology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="topology"></param>
-		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "Topology", "Geometry" })]
-		Dictionary<String^, Object^>^ XOR(Topology^ topology);
+		/// <returns name="Topology">The result of the XOR operation</returns>
+		Topology^ XOR(Topology^ topology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="path"></param>
-		/// <returns></returns>
+		/// <returns name="bool">True if the BRep file is succesffully created, otherwise false</returns>
 		bool SaveToBRep(String^ path);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="path"></param>
-		/// <returns></returns>
+		/// <returns name="bool">True if the BRep file is succesffully loaded, otherwise false</returns>
 		bool LoadFromBRep(String^ path);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="topology"></param>
-		/// <returns></returns>
+		/// <returns name="String">The topological information of the input shape</returns>
 		String^ Analyze();
 
 	public protected:

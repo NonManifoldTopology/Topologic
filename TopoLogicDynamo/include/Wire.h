@@ -5,82 +5,51 @@
 #include <TopoLogicCore/include/Wire.h>
 
 namespace TopoLogic {
+	ref class Vertex;
 	ref class Edge;
+	ref class Face;
 
 	public ref class Wire : Topology
 	{
 	public:
 		/// <summary>
-		/// Gets the list of edges constituent to this wire.
+		/// Creates a wire by a list of edges.
 		/// </summary>
-		/// <param name="topoLogicWire">A TopoLogic wire</param>
-		/// <returns name="TopoLogic Edges">
-		/// "TopoLogic Edges": the constituent edges
-		/// </returns>
-		/// <returns name="Curves">
-		/// "Curves": the Dynamo curves counterpart of the edges
-		/// </returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Edges", "Curves" })]
-		static Dictionary<String^, Object^>^ Edges(Wire^ topoLogicWire);
+		/// <param name="edges">The edges.</param>
+		/// <exception cref="ArgumentException">Thrown if any of the arguments is not a TopoLogic edge.</exception>
+		/// <returns>Te created TopoLogic wire</returns>
+		Wire^ ByEdges(List<Edge^>^ edges);
 
 		/// <summary>
-		/// Gets the list of faces incident to this wire.
+		/// Creates a wire by a polycurve (including a polygon)
 		/// </summary>
-		/// <param name="topoLogicWire">A TopoLogic wire</param>
-		/// <returns name="TopoLogic Faces">
-		/// "TopoLogic Faces": the created TopoLogic faces
-		/// </returns>
-		/// <returns name="Surfaces">
-		/// "Surfaces": the Dynamo surfaces counterpart of the faces
-		/// </returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Faces", "Surfaces" })]
-		static Dictionary<String^, Object^>^ Faces(Wire^ topoLogicWire);
+		/// <param name="polycurve">The polycurve</param>
+		/// <returns>The created TopoLogic wire</returns>
+		Wire^ ByPolyCurve(Autodesk::DesignScript::Geometry::PolyCurve^ polycurve);
+
+		/// <summary>
+		/// Gets the list of edges constituent to this wire.
+		/// </summary>
+		/// <returns>The constituent edges</returns>
+		List<Edge^>^ Edges();
+
+		/// <summary>
+		/// Gets the list of faces that contain to this wire.
+		/// </summary>
+		/// <returns>The faces that contain this wire</returns>
+		List<Face^>^ Faces();
+
+		/// <summary>
+		/// Gets the list of vertices constituent to this wire.
+		/// </summary>
+		/// <returns>The constituent vertices</returns>
+		List<Vertex^>^ Vertices();
 
 		/// <summary>
 		/// Checks if the wire is closed.
 		/// </summary>
 		/// <returns>True if the wire is closed, otherwise false</returns>
 		bool IsClosed();
-
-		/// <summary>
-		/// Gets the list of vertices constituent to this wire.
-		/// </summary>
-		/// <param name="topoLogicWire">A TopoLogic wire</param>
-		/// <returns name="TopoLogic Vertices">
-		/// "TopoLogic Vertices": the constituent vertices
-		/// </returns>
-		/// <returns name="Points">
-		/// "Points": the Dynamo points counterpart of the vertices
-		/// </returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Vertices", "Points" })]
-		static Dictionary<String^, Object^>^ Vertices(Wire^ topoLogicWire);
-
-		/// <summary>
-		/// Creates a wire by a list of edges.
-		/// </summary>
-		/// <param name="edges">The edges. Must be (and internally verified if it is) a list of Dynamo or TopoLogic edges.</param>
-		/// <exception cref="ArgumentException">Thrown if any of the arguments is neither a list of Dynamo or TopoLogic edges</exception>
-		/// <returns name="TopoLogic Wire">
-		/// "TopoLogic Wire": the created TopoLogic wire
-		/// </returns>
-		/// <returns name="PolyCurve">
-		/// "PolyCurve": the Dynamo polycurve counterpart of the wire
-		/// </returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Wire", "PolyCurve" })]
-		static Dictionary<String^, Object^>^ ByEdges(List<Edge^>^ edges);
-
-		/// <summary>
-		/// Creates a wire by a polycurve (including a polygon)
-		/// </summary>
-		/// <param name="polycurve">The polycurve</param>
-		/// <returns name="TopoLogic Wire">
-		/// "TopoLogic Wire": the created TopoLogic wire
-		/// </returns>
-		/// <returns name="PolyCurve">
-		/// "PolyCurve": the Dynamo polycurve counterpart of the wire
-		/// </returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Wire", "PolyCurve" })]
-		static Dictionary<String^, Object^>^ ByPolyCurve(Autodesk::DesignScript::Geometry::PolyCurve^ polycurve);
 
 		property Object^ Geometry
 		{
@@ -115,14 +84,6 @@ namespace TopoLogic {
 		/// </summary>
 		/// <returns></returns>
 		virtual TopoLogicCore::Topology* GetCoreTopology() override;
-
-		// Utility methods
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		List<Edge^>^ Edges();
 
 	protected:
 		virtual ~Wire();

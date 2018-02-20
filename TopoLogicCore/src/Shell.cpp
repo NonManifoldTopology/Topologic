@@ -3,6 +3,7 @@
 #include <Cell.h>
 #include <Vertex.h>
 #include <Edge.h>
+#include <Wire.h>
 #include <Face.h>
 
 #include <BRepBuilderAPI_MakeEdge.hxx>
@@ -64,6 +65,27 @@ namespace TopoLogicCore
 			kOcctShapeIterator++)
 		{
 			rEdges.push_back(new Edge(new TopoDS_Edge(TopoDS::Edge(*kOcctShapeIterator))));
+		}
+	}
+
+	TOPOLOGIC_API void Shell::Wires(std::list<Wire*>& rWires) const
+	{
+		TopTools_MapOfShape occtWires;
+		TopExp_Explorer occtExplorer;
+		for (occtExplorer.Init(*GetOcctShape(), TopAbs_WIRE); occtExplorer.More(); occtExplorer.Next())
+		{
+			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
+			if (!occtWires.Contains(occtCurrent))
+			{
+				occtWires.Add(occtCurrent);
+			}
+		}
+
+		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtWires.cbegin();
+			kOcctShapeIterator != occtWires.cend();
+			kOcctShapeIterator++)
+		{
+			rWires.push_back(new Wire(new TopoDS_Wire(TopoDS::Wire(*kOcctShapeIterator))));
 		}
 	}
 

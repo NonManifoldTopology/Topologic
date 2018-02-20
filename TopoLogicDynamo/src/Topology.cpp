@@ -1,6 +1,6 @@
 #include <msclr/marshal_cppstd.h>
 
-#include <Topology.h>
+#include "Topology.h"
 #include <Cluster.h>
 #include <CellComplex.h>
 #include <Cell.h>
@@ -77,13 +77,13 @@ namespace TopoLogic
 
 	}
 
-	Dictionary<String^, Object^>^ Topology::MemberOf()
+	List<Topology^>^ Topology::MemberOf()
 	{
 		throw gcnew System::NotImplementedException();
 		// TODO: insert return statement here
 	}
 
-	Dictionary<String^, Object^>^ Topology::Members()
+	List<Topology^>^ Topology::Members()
 	{
 		throw gcnew System::NotImplementedException();
 		// TODO: insert return statement here
@@ -156,115 +156,75 @@ namespace TopoLogic
 		return pDictionary;
 	}
 
-	Dictionary<String^, Object^>^ Topology::Difference(Topology^ topology)
+	Topology^ Topology::Difference(Topology^ topology)
 	{
 		TopoLogicCore::Topology* pCoreTopologyA = GetCoreTopology();
 		TopoLogicCore::Topology* pCoreTopologyB = topology->GetCoreTopology();
 
 		TopoLogicCore::Topology* pDifferenceCoreTopology = pCoreTopologyA->Difference(pCoreTopologyB);
-		Topology^ pTopology = Topology::ByCoreTopology(pDifferenceCoreTopology);
-
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("Topology", pTopology);
-		pDictionary->Add("Geometry", pTopology->Geometry);
-		return pDictionary;
+		return Topology::ByCoreTopology(pDifferenceCoreTopology);
 	}
 
-	Dictionary<String^, Object^>^ Topology::Impose(Topology^ topology)
+	Topology^ Topology::Impose(Topology^ topology)
 	{
 		TopoLogicCore::Topology* pCoreTopologyA = GetCoreTopology();
 		TopoLogicCore::Topology* pCoreTopologyB = topology->GetCoreTopology();
 
 		TopoLogicCore::Topology* pImposeCoreTopology = pCoreTopologyA->Impose(pCoreTopologyB); 
-		Topology^ pTopology = Topology::ByCoreTopology(pImposeCoreTopology);
-
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("Topology", pTopology);
-		pDictionary->Add("Geometry", pTopology->Geometry);
-		return pDictionary;
+		return Topology::ByCoreTopology(pImposeCoreTopology);
 	}
 
-	Dictionary<String^, Object^>^ Topology::Imprint(Topology^ topology)
+	Topology^ Topology::Imprint(Topology^ topology)
 	{
 		TopoLogicCore::Topology* pCoreTopologyA = GetCoreTopology();
 		TopoLogicCore::Topology* pCoreTopologyB = topology->GetCoreTopology();
 
 		TopoLogicCore::Topology* pImprintCoreTopology = pCoreTopologyA->Imprint(pCoreTopologyB);
-		Topology^ pTopology = Topology::ByCoreTopology(pImprintCoreTopology);
-
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("Topology", pTopology);
-		pDictionary->Add("Geometry", pTopology->Geometry);
-		return pDictionary;
+		return Topology::ByCoreTopology(pImprintCoreTopology);
 	}
 
-	Dictionary<String^, Object^>^ Topology::Intersection(Topology^ topology)
+	Topology^ Topology::Intersection(Topology^ topology)
 	{
 		TopoLogicCore::Topology* pCoreTopologyA = GetCoreTopology();
 		TopoLogicCore::Topology* pCoreTopologyB = topology->GetCoreTopology();
 
 		TopoLogicCore::Topology* pIntersectionCoreTopology = pCoreTopologyA->Intersection(pCoreTopologyB);
-		Topology^ pTopology = Topology::ByCoreTopology(pIntersectionCoreTopology);
-
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("Topology", pTopology);
-		pDictionary->Add("Geometry", pTopology->Geometry);
-		return pDictionary;
+		return Topology::ByCoreTopology(pIntersectionCoreTopology);
 	}
 	
-	Dictionary<String^, Object^>^ Topology::Union(Topology^ topology)
+	Topology^ Topology::Union(Topology^ topology)
 	{
 		TopoLogicCore::Topology* pCoreTopologyA = GetCoreTopology();
 		TopoLogicCore::Topology* pCoreTopologyB = topology->GetCoreTopology();
 
 		TopoLogicCore::Topology* pUnionCoreTopology = pCoreTopologyA->Union(pCoreTopologyB);
-		Topology^ pTopology = Topology::ByCoreTopology(pUnionCoreTopology);
-
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("Topology", pTopology);
-		pDictionary->Add("Geometry", pTopology->Geometry);
-		return pDictionary;
+		return Topology::ByCoreTopology(pUnionCoreTopology);
 	}
 
-	Dictionary<String^, Object^>^ Topology::Merge(Topology^ topology)
+	Topology^ Topology::Merge(Topology^ topology)
 	{
 		TopoLogicCore::Topology* pCoreTopologyA = GetCoreTopology();
 		TopoLogicCore::Topology* pCoreTopologyB = topology->GetCoreTopology();
 
 		TopoLogicCore::Topology* pMergeCoreTopology = pCoreTopologyA->Merge(pCoreTopologyB);
-		Topology^ pTopology = Topology::ByCoreTopology(pMergeCoreTopology);
-
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("Topology", pTopology);
-		pDictionary->Add("Geometry", pTopology->Geometry);
-		return pDictionary;
+		return Topology::ByCoreTopology(pMergeCoreTopology);
 	}
 
-	Dictionary<String^, Object^>^ Topology::Slice(Topology^ topology)
+	Topology^ Topology::Slice(Topology^ topology)
 	{
 		TopoLogicCore::Topology* pCoreTopologyA = GetCoreTopology();
 		TopoLogicCore::Topology* pCoreTopologyB = topology->GetCoreTopology();
 
 		TopoLogicCore::Topology* pSliceCoreTopology = pCoreTopologyA->Slice(pCoreTopologyB);
-		Topology^ pTopology = Topology::ByCoreTopology(pSliceCoreTopology);
-
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("Topology", pTopology);
-		pDictionary->Add("Geometry", pTopology->Geometry);
-		return pDictionary;
+		return Topology::ByCoreTopology(pSliceCoreTopology);
 	}
 
-	Dictionary<String^, Object^>^ Topology::XOR(Topology^ topology)
+	Topology^ Topology::XOR(Topology^ topology)
 	{
 		TopoLogicCore::Topology* pCoreTopologyA = GetCoreTopology();
 		TopoLogicCore::Topology* pCoreTopologyB = topology->GetCoreTopology();
 
 		TopoLogicCore::Topology* pSliceCoreTopology = pCoreTopologyA->XOR(pCoreTopologyB);
-		Topology^ pTopology = Topology::ByCoreTopology(pSliceCoreTopology);
-
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("Topology", pTopology);
-		pDictionary->Add("Geometry", pTopology->Geometry);
-		return pDictionary;
+		return Topology::ByCoreTopology(pSliceCoreTopology);
 	}
 }

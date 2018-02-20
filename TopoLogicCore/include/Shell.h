@@ -11,6 +11,7 @@ namespace TopoLogicCore
 {
 	class Vertex;
 	class Edge;
+	class Wire;
 	class Face;
 	class Cell;
 
@@ -39,6 +40,12 @@ namespace TopoLogicCore
 		/// </summary>
 		/// <param name="rEdges"></param>
 		TOPOLOGIC_API void Edges(std::list<Edge*>& rEdges) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rWires"></param>
+		TOPOLOGIC_API void Wires(std::list<Wire*>& rWires) const;
 
 		/// <summary>
 		/// 

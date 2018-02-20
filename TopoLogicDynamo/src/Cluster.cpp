@@ -1,4 +1,4 @@
-#include <Cluster.h>
+#include "Cluster.h"
 
 #include <Vertex.h>
 #include <Edge.h>
@@ -23,24 +23,24 @@ namespace TopoLogic
 		return gcnew Cluster(TopoLogicCore::Cluster::ByTopology(coreTopologies));
 	}
 
-	Cluster^ Cluster::Add(Cluster^ cluster, Topology^ topology)
+	Cluster^ Cluster::Add(Topology^ topology)
 	{
-		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(cluster->GetCoreTopology());
+		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(GetCoreTopology());
 		if (!pCoreCluster->Add(topology->GetCoreTopology()))
 		{
 			throw gcnew Exception("Cluster::Add(): fails to add topology");
 		}
-		return cluster;
+		return this;
 	}
 
-	Cluster^ Cluster::Remove(Cluster^ cluster, Topology^ topology)
+	Cluster^ Cluster::Remove(Topology^ topology)
 	{
-		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(cluster->GetCoreTopology());
+		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(GetCoreTopology());
 		if(!pCoreCluster->Remove(topology->GetCoreTopology()))
 		{
 			throw gcnew Exception("Cluster::Remove(): fails to remove topology");
 		}
-		return cluster;
+		return this;
 	}
 
 	Object^ Cluster::Geometry::get()
@@ -73,147 +73,117 @@ namespace TopoLogic
 	}
 
 
-	Dictionary<String^, Object^>^ Cluster::Shells(Cluster^ topoLogicCluster)
+	List<Shell^>^ Cluster::Shells()
 	{
-		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(topoLogicCluster->GetCoreTopology());
+		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(GetCoreTopology());
 
 		std::list<TopoLogicCore::Shell*> coreShells;
 		pCoreCluster->Shells(coreShells);
 
 		List<Shell^>^ pShells = gcnew List<Shell^>();
-		List<System::Object^>^ pDynamoEntities = gcnew List<System::Object^>();
 		for (std::list<TopoLogicCore::Shell*>::const_iterator kShellIterator = coreShells.begin();
 			kShellIterator != coreShells.end();
 			kShellIterator++)
 		{
 			Shell^ pShell = gcnew Shell(*kShellIterator);
 			pShells->Add(pShell);
-			pDynamoEntities->Add(pShell->Geometry);
 		}
 
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Shells", pShells);
-		pDictionary->Add("Polysurfaces", pDynamoEntities);
-		return pDictionary;
+		return pShells;
 	}
 
-	Dictionary<String^, Object^>^ Cluster::Faces(Cluster^ topoLogicCluster)
+	List<Face^>^ Cluster::Faces()
 	{
-		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(topoLogicCluster->GetCoreTopology());
+		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(GetCoreTopology());
 
 		std::list<TopoLogicCore::Face*> coreFaces;
 		pCoreCluster->Faces(coreFaces);
 
 		List<Face^>^ pFaces = gcnew List<Face^>();
-		List<System::Object^>^ pDynamoEntities = gcnew List<System::Object^>();
 		for (std::list<TopoLogicCore::Face*>::const_iterator kFaceIterator = coreFaces.begin();
 			kFaceIterator != coreFaces.end();
 			kFaceIterator++)
 		{
 			Face^ pFace = gcnew Face(*kFaceIterator);
 			pFaces->Add(pFace);
-			pDynamoEntities->Add(pFace->Geometry);
 		}
 
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Faces", pFaces);
-		pDictionary->Add("Surfaces", pDynamoEntities);
-		return pDictionary;
+		return pFaces;
 	}
 
-	Dictionary<String^, Object^>^ Cluster::Wires(Cluster^ topoLogicCluster)
+	List<Wire^>^ Cluster::Wires()
 	{
-		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(topoLogicCluster->GetCoreTopology());
+		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(GetCoreTopology());
 
 		std::list<TopoLogicCore::Wire*> coreWires;
 		pCoreCluster->Wires(coreWires);
 
 		List<Wire^>^ pWires = gcnew List<Wire^>();
-		List<System::Object^>^ pDynamoPolycurves = gcnew List<System::Object^>();
 		for (std::list<TopoLogicCore::Wire*>::const_iterator kWireIterator = coreWires.begin();
 			kWireIterator != coreWires.end();
 			kWireIterator++)
 		{
 			Wire^ pWire = gcnew Wire(*kWireIterator);
 			pWires->Add(pWire);
-			pDynamoPolycurves->Add(pWire->Geometry);
 		}
 
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Wires", pWires);
-		pDictionary->Add("PolyCurves", pDynamoPolycurves);
-		return pDictionary;
+		return pWires;
 	}
 
-	Dictionary<String^, Object^>^ Cluster::Edges(Cluster^ topoLogicCluster)
+	List<Edge^>^ Cluster::Edges()
 	{
-		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(topoLogicCluster->GetCoreTopology());
+		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(GetCoreTopology());
 
 		std::list<TopoLogicCore::Edge*> coreEdges;
 		pCoreCluster->Edges(coreEdges);
 
 		List<Edge^>^ pEdges = gcnew List<Edge^>();
-		List<System::Object^>^ pDynamoCurves = gcnew List<System::Object^>();
 		for (std::list<TopoLogicCore::Edge*>::const_iterator kEdgeIterator = coreEdges.begin();
 			kEdgeIterator != coreEdges.end();
 			kEdgeIterator++)
 		{
 			Edge^ pEdge = gcnew Edge(*kEdgeIterator);
 			pEdges->Add(pEdge);
-			pDynamoCurves->Add(pEdge->Geometry);
 		}
 
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Edges", pEdges);
-		pDictionary->Add("Curves", pDynamoCurves);
-		return pDictionary;
+		return pEdges;
 	}
 
-	Dictionary<String^, Object^>^ Cluster::Vertices(Cluster^ topoLogicCluster)
+	List<Vertex^>^ Cluster::Vertices()
 	{
-		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(topoLogicCluster->GetCoreTopology());
+		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(GetCoreTopology());
 
 		std::list<TopoLogicCore::Vertex*> coreVertices;
 		pCoreCluster->Vertices(coreVertices);
 
 		List<Vertex^>^ pVertices = gcnew List<Vertex^>();
-		List<System::Object^>^ pDynamoPoints = gcnew List<System::Object^>();
 		for (std::list<TopoLogicCore::Vertex*>::const_iterator kVertexIterator = coreVertices.begin();
 			kVertexIterator != coreVertices.end();
 			kVertexIterator++)
 		{
 			Vertex^ pVertex = gcnew Vertex(*kVertexIterator);
 			pVertices->Add(pVertex);
-			pDynamoPoints->Add(pVertex->Geometry);
 		}
 
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Vertices", pVertices);
-		pDictionary->Add("Points", pDynamoPoints);
-		return pDictionary;
+		return pVertices;
 	}
 
-	Dictionary<String^, Object^>^ Cluster::Cells(Cluster^ topoLogicCluster)
+	List<Cell^>^ Cluster::Cells()
 	{
-		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(topoLogicCluster->GetCoreTopology());
+		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(GetCoreTopology());
 
 		std::list<TopoLogicCore::Cell*> coreCells;
 		pCoreCluster->Cells(coreCells);
 
 		List<Cell^>^ pCells = gcnew List<Cell^>();
-		List<System::Object^>^ pDynamoEntities = gcnew List<System::Object^>();
 		for (std::list<TopoLogicCore::Cell*>::const_iterator kCellIterator = coreCells.begin();
 			kCellIterator != coreCells.end();
 			kCellIterator++)
 		{
 			Cell^ pCell = gcnew Cell(*kCellIterator);
 			pCells->Add(pCell);
-			pDynamoEntities->Add(pCell->Geometry);
 		}
 
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Cells", pCells);
-		pDictionary->Add("Solids", pDynamoEntities);
-		return pDictionary;
+		return pCells;
 	}
 }

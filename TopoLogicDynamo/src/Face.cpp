@@ -1,4 +1,4 @@
-#include <Face.h>
+#include "Face.h"
 #include <Vertex.h>
 #include <Edge.h>
 #include <Wire.h>
@@ -32,9 +32,9 @@
 
 namespace TopoLogic
 {
-	Dictionary<String^, Object^>^ Face::AdjacentFaces(Face^ topoLogicFace)
+	List<Face^>^ Face::AdjacentFaces()
 	{
-		TopoLogicCore::Face* pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(topoLogicFace->GetCoreTopology());
+		TopoLogicCore::Face* pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(GetCoreTopology());
 		std::list<TopoLogicCore::Face*> pAdjacentCoreFaces;
 		pCoreFace->AdjacentFaces(pAdjacentCoreFaces);
 
@@ -51,27 +51,22 @@ namespace TopoLogic
 			pDynamoAdjacentFaces->Add(pFace->Geometry);
 		}
 
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Faces", pAdjacentFaces);
-		pDictionary->Add("Surfaces", pDynamoAdjacentFaces);
-		return pDictionary;
+		return pAdjacentFaces;
 	}
 
-	Dictionary<String^, Object^>^ Face::Apertures(Face ^ topoLogicFace)
+	List<Face^>^ Face::Apertures()
 	{
 		throw gcnew System::NotImplementedException();
 		// TODO: insert return statement here
 	}
 
-	Dictionary<String^, Object^>^ Face::Cells(Face ^ topoLogicFace)
+	List<Cell^>^ Face::Cells()
 	{
-		TopoLogicCore::Face* pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(topoLogicFace->GetCoreTopology());
+		TopoLogicCore::Face* pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(GetCoreTopology());
 		std::list<TopoLogicCore::Cell*> pCoreCells;
 		pCoreFace->Cells(pCoreCells);
 
 		List<Cell^>^ pCells = gcnew List<Cell^>();
-		List<System::Object^>^ pDynamoSolids = gcnew List<System::Object^>();
-
 		for (std::list<TopoLogicCore::Cell*>::const_iterator kCellIterator = pCoreCells.begin();
 			kCellIterator != pCoreCells.end();
 			kCellIterator++)
@@ -79,33 +74,14 @@ namespace TopoLogic
 			TopoLogicCore::Cell* pCoreCell = *kCellIterator;
 			Cell^ pCell = gcnew Cell(pCoreCell);
 			pCells->Add(pCell);
-			pDynamoSolids->Add(pCell->Geometry);
 		}
 
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Cells", pCells);
-		pDictionary->Add("Solids", pDynamoSolids);
-		return pDictionary;
+		return pCells;
 	}
 
-	Dictionary<String^, Object^>^ Face::Edges(Face^ topoLogicFace)
+	List<Shell^>^ Face::Shells()
 	{
-		List<Edge^>^ pEdges = topoLogicFace->Edges();
-		List<System::Object^>^ pDynamoCurves = gcnew List<System::Object^>();
-		for each(Edge^ pEdge in pEdges)
-		{
-			pDynamoCurves->Add(pEdge->Geometry);
-		}
-
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Edges", pEdges);
-		pDictionary->Add("Curves", pDynamoCurves);
-		return pDictionary;
-	}
-
-	Dictionary<String^, Object^>^ Face::Shells(Face ^ topoLogicFace)
-	{
-		TopoLogicCore::Face* pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(topoLogicFace->GetCoreTopology());
+		TopoLogicCore::Face* pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(GetCoreTopology());
 		std::list<TopoLogicCore::Shell*> pCoreShells;
 		pCoreFace->Shells(pCoreShells);
 
@@ -122,81 +98,38 @@ namespace TopoLogic
 			pDynamoPolysurfaces->Add(pShell->Geometry);
 		}
 
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Shells", pShells);
-		pDictionary->Add("PolySurfaces", pDynamoPolysurfaces);
-		return pDictionary;
+		return pShells;
 	}
 
-	Dictionary<String^, Object^>^ Face::Vertices(Face^ topoLogicFace)
-	{
-		List<Vertex^>^ pVertices = topoLogicFace->Vertices();
-		List<System::Object^>^ pDynamoPoints = gcnew List<System::Object^>();
-
-		for each(Vertex^ pVertex in pVertices)
-		{
-			pDynamoPoints->Add(pVertex->Geometry);
-		}
-
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Vertices", pVertices);
-		pDictionary->Add("Points", pDynamoPoints);
-		return pDictionary;
-	}
-
-	Dictionary<String^, Object^>^ Face::Wires(Face^ topoLogicFace)
-	{
-		List<Wire^>^ pWires = topoLogicFace->Wires();
-		List<System::Object^>^ pDynamoPolycurves = gcnew List<System::Object^>();
-		for each(Wire^ pWire in pWires)
-		{
-			pDynamoPolycurves->Add(pWire->Geometry);
-		}
-
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Wires", pWires);
-		pDictionary->Add("PolyCurves", pDynamoPolycurves);
-		return pDictionary;
-	}
-
-	Dictionary<String^, Object^>^ Face::ApplyApertures(Face ^ topoLogicFace, List<Face^>^ apertures)
+	Face^ Face::ApplyApertures(List<Face^>^ apertures)
 	{
 		throw gcnew System::NotImplementedException();
 		// TODO: insert return statement here
 	}
 
-	Dictionary<String^, Object^>^ Face::ByClosedWire(Wire^ wire)
+	Face^ Face::ByClosedWire(Wire^ wire)
 	{
-		Face^ pFace = gcnew Face(wire);
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Face", pFace);
-		pDictionary->Add("Surface", pFace->Geometry);
-		return pDictionary;
+		return gcnew Face(wire);
 	}
 
-	Dictionary<String^, Object^>^ Face::ByEdges(List<Edge^>^ edges)
+	Face^ Face::ByEdges(List<Edge^>^ edges)
 	{
 		return ByClosedWire(gcnew Wire(edges));
 	}
 
-	Dictionary<String^, Object^>^ Face::BySurface(Autodesk::DesignScript::Geometry::Surface^ surface)
+	Face^ Face::BySurface(Autodesk::DesignScript::Geometry::Surface^ surface)
 	{
-		Face^ pFace = gcnew Face(surface);
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Face", pFace);
-		pDictionary->Add("Surface", pFace->Geometry);
-		return pDictionary;
+		return gcnew Face(surface);
 	}
 
-	Dictionary<String^, Object^>^ Face::SharedEdges(Face^ topoLogicFace1, Face^ topoLogicFace2)
+	List<Edge^>^ Face::SharedEdges(Face^ face)
 	{
-		TopoLogicCore::Face* pCoreFace1 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(topoLogicFace1->GetCoreTopology());
-		TopoLogicCore::Face* pCoreFace2 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(topoLogicFace2->GetCoreTopology());
+		TopoLogicCore::Face* pCoreFace1 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(GetCoreTopology());
+		TopoLogicCore::Face* pCoreFace2 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(face->GetCoreTopology());
 		std::list<TopoLogicCore::Edge*> pCoreEdges;
 		pCoreFace1->SharedEdges(pCoreFace2, pCoreEdges);
 
 		List<Edge^>^ pSharedEdges = gcnew List<Edge^>();
-		List<System::Object^>^ pDynamoCurves = gcnew List<System::Object^>();
 
 		for (std::list<TopoLogicCore::Edge*>::const_iterator kEdgeIterator = pCoreEdges.begin();
 			kEdgeIterator != pCoreEdges.end();
@@ -205,24 +138,19 @@ namespace TopoLogic
 			TopoLogicCore::Edge* pCoreEdge = *kEdgeIterator;
 			Edge^ pEdge = gcnew Edge(pCoreEdge);
 			pSharedEdges->Add(pEdge);
-			pDynamoCurves->Add(pEdge->Geometry);
 		}
 
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Edges", pSharedEdges);
-		pDictionary->Add("Curves", pDynamoCurves);
-		return pDictionary;
+		return pSharedEdges;
 	}
 
-	Dictionary<String^, Object^>^ Face::SharedVertices(Face^ topoLogicFace1, Face^ topoLogicFace2)
+	List<Vertex^>^ Face::SharedVertices(Face^ face)
 	{
-		TopoLogicCore::Face* pCoreFace1 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(topoLogicFace1->GetCoreTopology());
-		TopoLogicCore::Face* pCoreFace2 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(topoLogicFace2->GetCoreTopology());
+		TopoLogicCore::Face* pCoreFace1 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(GetCoreTopology());
+		TopoLogicCore::Face* pCoreFace2 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(face->GetCoreTopology());
 		std::list<TopoLogicCore::Vertex*> pCoreVertices;
 		pCoreFace1->SharedVertices(pCoreFace2, pCoreVertices);
 
 		List<Vertex^>^ pSharedVertices = gcnew List<Vertex^>();
-		List<System::Object^>^ pDynamoPoints = gcnew List<System::Object^>();
 
 		for (std::list<TopoLogicCore::Vertex*>::const_iterator kVertexIterator = pCoreVertices.begin();
 			kVertexIterator != pCoreVertices.end();
@@ -231,24 +159,71 @@ namespace TopoLogic
 			TopoLogicCore::Vertex* pCoreVertex = *kVertexIterator;
 			Vertex^ pVertex = gcnew Vertex(pCoreVertex);
 			pSharedVertices->Add(pVertex);
-			pDynamoPoints->Add(pVertex->Geometry);
 		}
 
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Vertices", pSharedVertices);
-		pDictionary->Add("Points", pDynamoPoints);
-		return pDictionary;
+		return pSharedVertices;
 	}
 
-	Dictionary<String^, Object^>^ Face::OuterWire(Face ^ topoLogicFace)
+	Wire^ Face::OuterWire()
 	{
-		TopoLogicCore::Face* pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(topoLogicFace->GetCoreTopology());
-		Wire^ pOuterWire = gcnew Wire(pCoreFace->OuterWire());
+		TopoLogicCore::Face* pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(GetCoreTopology());
+		return gcnew Wire(pCoreFace->OuterWire());
+	}
 
-		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("TopoLogic Wire", pOuterWire);
-		pDictionary->Add("Polycurve", pOuterWire->Geometry);
-		return pDictionary;
+	List<Vertex^>^ Face::Vertices()
+	{
+		TopoLogicCore::Face* pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(GetCoreTopology());
+		std::list<TopoLogicCore::Vertex*> pCoreVertices;
+		pCoreFace->Vertices(pCoreVertices);
+
+		List<Vertex^>^ pVertices = gcnew List<Vertex^>();
+		for (std::list<TopoLogicCore::Vertex*>::const_iterator kVertexIterator = pCoreVertices.begin();
+			kVertexIterator != pCoreVertices.end();
+			kVertexIterator++)
+		{
+			TopoLogicCore::Vertex* pCoreVertex = *kVertexIterator;
+			Vertex^ pVertex = gcnew Vertex(pCoreVertex);
+			pVertices->Add(pVertex);
+		}
+		return pVertices;
+	}
+
+	List<Edge^>^ Face::Edges()
+	{
+		TopoLogicCore::Face* pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(GetCoreTopology());
+		std::list<TopoLogicCore::Edge*> pCoreEdges;
+		pCoreFace->Edges(pCoreEdges);
+
+		List<Edge^>^ pEdges = gcnew List<Edge^>();
+		for (std::list<TopoLogicCore::Edge*>::const_iterator kEdgeIterator = pCoreEdges.begin();
+			kEdgeIterator != pCoreEdges.end();
+			kEdgeIterator++)
+		{
+			TopoLogicCore::Edge* pCoreEdge = *kEdgeIterator;
+			Edge^ pEdge = gcnew Edge(pCoreEdge);
+			pEdges->Add(pEdge);
+		}
+
+		return pEdges;
+	}
+
+	List<Wire^>^ Face::Wires()
+	{
+		TopoLogicCore::Face* pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(GetCoreTopology());
+		std::list<TopoLogicCore::Wire*> pCoreWires;
+		pCoreFace->Wires(pCoreWires);
+
+		List<Wire^>^ pWires = gcnew List<Wire^>();
+		for (std::list<TopoLogicCore::Wire*>::const_iterator kWireIterator = pCoreWires.begin();
+			kWireIterator != pCoreWires.end();
+			kWireIterator++)
+		{
+			TopoLogicCore::Wire* pCoreWire = *kWireIterator;
+			Wire^ pWire = gcnew Wire(pCoreWire);
+			pWires->Add(pWire);
+		}
+
+		return pWires;
 	}
 
 	bool Face::IsApplied::get()
@@ -648,62 +623,6 @@ namespace TopoLogic
 		}
 
 		return Autodesk::DesignScript::Geometry::Mesh::ByPointsFaceIndices(pDynamoPoints, pDynamoTriangleIndices);
-	}
-
-	List<Vertex^>^ Face::Vertices()
-	{
-		TopoLogicCore::Face* pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(GetCoreTopology());
-		std::list<TopoLogicCore::Vertex*> pCoreVertices;
-		pCoreFace->Vertices(pCoreVertices);
-
-		List<Vertex^>^ pVertices = gcnew List<Vertex^>();
-		for (std::list<TopoLogicCore::Vertex*>::const_iterator kVertexIterator = pCoreVertices.begin();
-			kVertexIterator != pCoreVertices.end();
-			kVertexIterator++)
-		{
-			TopoLogicCore::Vertex* pCoreVertex = *kVertexIterator;
-			Vertex^ pVertex = gcnew Vertex(pCoreVertex);
-			pVertices->Add(pVertex);
-		}
-		return pVertices;
-	}
-
-	List<Edge^>^ Face::Edges()
-	{
-		TopoLogicCore::Face* pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(GetCoreTopology());
-		std::list<TopoLogicCore::Edge*> pCoreEdges;
-		pCoreFace->Edges(pCoreEdges);
-
-		List<Edge^>^ pEdges = gcnew List<Edge^>();
-		for (std::list<TopoLogicCore::Edge*>::const_iterator kEdgeIterator = pCoreEdges.begin();
-			kEdgeIterator != pCoreEdges.end();
-			kEdgeIterator++)
-		{
-			TopoLogicCore::Edge* pCoreEdge = *kEdgeIterator;
-			Edge^ pEdge = gcnew Edge(pCoreEdge);
-			pEdges->Add(pEdge);
-		}
-
-		return pEdges;
-	}
-
-	List<Wire^>^ Face::Wires()
-	{
-		TopoLogicCore::Face* pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(GetCoreTopology());
-		std::list<TopoLogicCore::Wire*> pCoreWires;
-		pCoreFace->Wires(pCoreWires);
-
-		List<Wire^>^ pWires = gcnew List<Wire^>();
-		for (std::list<TopoLogicCore::Wire*>::const_iterator kWireIterator = pCoreWires.begin();
-			kWireIterator != pCoreWires.end();
-			kWireIterator++)
-		{
-			TopoLogicCore::Wire* pCoreWire = *kWireIterator;
-			Wire^ pWire = gcnew Wire(pCoreWire);
-			pWires->Add(pWire);
-		}
-
-		return pWires;
 	}
 
 	Face::~Face()

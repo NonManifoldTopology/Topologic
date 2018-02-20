@@ -8,6 +8,8 @@ namespace TopoLogic {
 	ref class Vertex;
 	ref class Edge;
 	ref class Wire;
+	ref class Shell;
+	ref class Cell;
 
 	/// <summary>
 	/// 
@@ -18,54 +20,20 @@ namespace TopoLogic {
 		/// <summary>
 		/// Gets the list of faces adjacent to this face.
 		/// </summary>
-		/// <param name="topoLogicFace">A face</param>
-		/// <returns name="TopoLogic Faces">
-		/// "TopoLogic Faces": the faces adjacent to this face
-		/// </returns>
-		/// <returns name="Surfaces">
-		/// "Surfaces": the Dynamo surfaces counterpart of the adjacent faces
-		/// </returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Faces", "Surfaces" })]
-		static Dictionary<String^, Object^>^ AdjacentFaces(Face^ topoLogicFace);
+		/// <returns>The faces adjacent to this face</returns>
+		List<Face^>^ AdjacentFaces();
 
 		/// <summary>
 		/// Gets the list of aperture wires of this face.
 		/// </summary>
-		/// <param name="topoLogicFace">A face</param>
-		/// <returns name="TopoLogic Wires">
-		/// "TopoLogic Wires": the aperture wires of this face
-		/// </returns>
-		/// <returns name="PolyCurves">
-		/// "PolyCurves": the Dynamo polycurves counterpart of the aperture wires
-		/// </returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Wires", "PolyCurves" })]
-		static Dictionary<String^, Object^>^ Apertures(Face^ topoLogicFace);
+		/// <returns>The apertures of this face</returns>
+		List<Face^>^ Apertures();
 
 		/// <summary>
 		/// Gets the list of cells incident to this face.
 		/// </summary>
-		/// <param name="topoLogicFace">A face</param>
-		/// <returns name="TopoLogic Cells">
-		/// "TopoLogic Cells": the cells incident to this face
-		/// </returns>
-		/// <returns name="Solids">
-		/// "Solids": the Dynamo solids counterpart of the incident cells
-		/// </returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Cells", "Solids" })]
-		static Dictionary<String^, Object^>^ Cells(Face^ topoLogicFace);
-
-		/// <summary>
-		/// Gets the list of edges constituent to this face. 
-		/// </summary>
-		/// <param name="topoLogicFace">A face</param>
-		/// <returns name="TopoLogic Edges">
-		/// "TopoLogic Edges": the edges consituent to this face
-		/// </returns>
-		/// <returns name="Curves">
-		/// "Curves": the Dynamo curves counterpart of the constituent edges
-		/// </returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Edges", "Curves" })]
-		static Dictionary<String^, Object^>^ Edges(Face^ topoLogicFace);
+		/// <returns>The cells incident to this face</returns>
+		List<Cell^>^ Cells();
 
 		/// <summary>
 		/// Returns true if the apertures are applied and false otherwise.
@@ -75,52 +43,36 @@ namespace TopoLogic {
 			bool get();
 		}
 
-
 		/// <summary>
 		/// Gets the list of shells incident to this face.
 		/// </summary>
-		/// <param name="topoLogicFace">A face</param>
-		/// <returns name="TopoLogic Shells">
-		/// "TopoLogic Shells": the shells incident to this face
-		/// </returns>
-		/// <returns name="Meshes">
-		/// "PolySurfaces": the Dynamo polysurfaces counterpart of the incident shells
-		/// </returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Shells", "Meshes" })]
-		static Dictionary<String^, Object^>^ Shells(Face^ topoLogicFace);
+		/// <returns>The shells incident to this face</returns>
+		List<Shell^>^ Shells();
 
 		/// <summary>
 		/// Gets the list of vertices constituent to this face. 
 		/// </summary>
-		/// <param name="topoLogicFace">A face</param>
-		/// <returns name="TopoLogic Vertices">
-		/// "TopoLogic Vertices": the vertices consituent to this face
-		/// </returns>
-		/// <returns name="Points">
-		/// "Points": the Dynamo points counterpart of the constituent points
-		/// </returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Vertices", "Points" })]
-		static Dictionary<String^, Object^>^ Vertices(Face^ topoLogicFace);
+		/// <returns>The vertices consituent to this face</returns>
+		List<Vertex^>^ Vertices();
+
+		/// <summary>
+		/// Gets the list of edges constituent to this face.
+		/// </summary>
+		/// <returns>The edges consituent to this face</returns>
+		List<Edge^>^ Edges();
 
 		/// <summary>
 		/// Gets the list of wires constituent to this face.
 		/// </summary>
-		/// <param name="topoLogicFace">A face</param>
-		/// <returns name="TopoLogic Wires">
-		/// "TopoLogic Wires": the wires consituent to this face
-		/// </returns>
-		/// <returns name="PolyCurves">
-		/// "PolyCurves": the Dynamo polycurves counterpart of the constituent wires
-		/// </returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Wires", "PolyCurves" })]
-		static Dictionary<String^, Object^>^ Wires(Face^ topoLogicFace);
+		/// <returns>The wires consituent to this face</returns>
+		List<Wire^>^ Wires();
 
 		/// <summary>
 		/// Call this method to apply apertures.
 		/// </summary>
+		/// <param name="apertures"></param>
 		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Face", "Aperture Faces", "Surface", "Aperture Surfaces" })]
-		static Dictionary<String^, Object^>^ ApplyApertures(Face^ topoLogicFace, List<Face^>^ apertures);
+		Face^ ApplyApertures(List<Face^>^ apertures);
 
 		/// <summary>
 		/// A factory method that creates a face by a closed wire.
@@ -133,71 +85,42 @@ namespace TopoLogic {
 		/// <returns name="Surface">
 		/// "Surface": the Dynamo surface counterpart of the created face
 		/// </returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Face", "Surface" })]
-		static Dictionary<String^, Object^>^ ByClosedWire(Wire^ wire);
+		static Face^ ByClosedWire(Wire^ wire);
 
 		/// <summary>
-		/// A factory method that directly creates a face by a list of edges. A wire will be internally created.
+		/// Creates a face by a list of edges. A wire will be internally created.
 		/// </summary>
-		/// <param name="edges">The edges. Must be (and internally verified if it is) a list of Dynamo or TopoLogic edges.</param>
-		/// <exception cref="ArgumentException">Thrown if any of the arguments is neither a list of Dynamo nor TopoLogic edges</exception>
-		/// <returns name="TopoLogic Face">
-		/// "TopoLogic Face": the created face
-		/// </returns>
-		/// <returns name="Surface">
-		/// "Surface": the Dynamo surface counterpart of the created face
-		/// </returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Face", "Surface" })]
-		static Dictionary<String^, Object^>^ ByEdges(List<Edge^>^ edges);
+		/// <param name="edges">The edges. </param>
+		/// <exception cref="ArgumentException">Thrown if any of the arguments is not a TopoLogic edge</exception>
+		/// <returns>the created face</returns>
+		static Face^ ByEdges(List<Edge^>^ edges);
 
 		/// <summary>
-		/// A factory method that creates a face by a surface
+		/// Creates a face by a surface.
 		/// </summary>
 		/// <param name="surface">The surface</param>
-		/// <returns name="TopoLogic Face">
-		/// "TopoLogic Face": the created face
-		/// </returns>
-		/// <returns name="Surface">
-		/// "Surface": the Dynamo surface counterpart of the created face
-		/// </returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Face", "Surface" })]
-		static Dictionary<String^, Object^>^ BySurface(Autodesk::DesignScript::Geometry::Surface^ surface);
+		/// <returns>The created face</returns>
+		static Face^ BySurface(Autodesk::DesignScript::Geometry::Surface^ surface);
 
 		/// <summary>
 		/// Returns the shared edges between two faces. 
 		/// </summary>
-		/// <param name="topoLogicFace1">A face</param>
-		/// <param name="topoLogicFace2">Another face</param>
-		/// <returns name="TopoLogic Edges">
-		/// "TopoLogic Edges": the shared edges
-		/// </returns>
-		/// <returns name="Curves">
-		/// "Curves": the Dynamo curves counterpart of the shared edges
-		/// </returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Edges", "Curves" })]
-		static Dictionary<String^, Object^>^ SharedEdges(Face^ topoLogicFace1, Face^ topoLogicFace2);
+		/// <param name="face">Another face</param>
+		/// <returns>The shared edges</returns>
+		List<Edge^>^ SharedEdges(Face^ face);
 
 		/// <summary>
-		/// Returns the shared vertices between two faces. 
+		/// Returns the shared vertices between two faces.
 		/// </summary>
-		/// <param name="topoLogicFace1">A face</param>
-		/// <param name="topoLogicFace2">Another face</param>
-		/// <returns name="TopoLogic Vertices">
-		/// "TopoLogic Vertices": the shared vertices
-		/// </returns>
-		/// <returns name="Points">
-		/// "Points": the Dynamo points counterpart of the shared edges
-		/// </returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Vertices", "Points" })]
-		static Dictionary<String^, Object^>^ SharedVertices(Face^ topoLogicFace1, Face^ topoLogicFace2);
+		/// <param name="face">Another face</param>
+		/// <returns>The shared vertices</returns>
+		List<Vertex^>^ SharedVertices(Face^ face);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="topoLogicFace"></param>
 		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Wire", "Polycurve" })]
-		static Dictionary<String^, Object^>^ OuterWire(Face^ topoLogicFace);
+		Wire^ OuterWire();
 
 		property Object^ Geometry
 		{
@@ -244,26 +167,6 @@ namespace TopoLogic {
 		/// </summary>
 		/// <returns></returns>
 		virtual TopoLogicCore::Topology* GetCoreTopology() override;
-
-		// Utility methods
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		List<Vertex^>^ Vertices();
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		List<Edge^>^ Edges();
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		List<Wire^>^ Wires();
 
 	protected:
 		virtual ~Face();

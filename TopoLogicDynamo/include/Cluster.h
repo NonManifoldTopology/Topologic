@@ -7,6 +7,8 @@
 namespace TopoLogic
 {
 	ref class Vertex;
+	ref class Edge;
+	ref class Wire;
 	ref class Face;
 	ref class Shell;
 	ref class Cell;
@@ -25,18 +27,16 @@ namespace TopoLogic
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="cluster"></param>
 		/// <param name="topology"></param>
 		/// <returns></returns>
-		static Cluster^ Add(Cluster^ cluster, Topology^ topology);
+		Cluster^ Add(Topology^ topology);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="cluster"></param>
 		/// <param name="topology"></param>
 		/// <returns></returns>
-		static Cluster^ Remove(Cluster^ cluster, Topology^ topology);
+		Cluster^ Remove(Topology^ topology);
 
 		property Object^ Geometry
 		{
@@ -47,56 +47,41 @@ namespace TopoLogic
 			virtual Object^ get() override;
 		}
 
-
-
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		List<Shell^>^ Shells();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="topoLogicCell"></param>
 		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Shells", "Polysurfaces" })]
-		static Dictionary<String^, Object^>^ Shells(Cluster^ topoLogicCluster);
+		List<Face^>^ Faces();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="topoLogicCell"></param>
 		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Faces", "Surfaces" })]
-		static Dictionary<String^, Object^>^ Faces(Cluster^ topoLogicCluster);
+		List<Wire^>^ Wires();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="topoLogicCell"></param>
 		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Wires", "PolyCurves" })]
-		static Dictionary<String^, Object^>^ Wires(Cluster^ topoLogicCluster);
+		List<Edge^>^ Edges();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="topoLogicCell"></param>
 		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Edges", "Curves" })]
-		static Dictionary<String^, Object^>^ Edges(Cluster^ topoLogicCluster);
+		List<Vertex^>^ Vertices();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="topoLogicCell"></param>
 		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Vertices", "Points" })]
-		static Dictionary<String^, Object^>^ Vertices(Cluster^ topoLogicCluster);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="cellComplex"></param>
-		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "TopoLogic Cells", "Solids" })]
-		static Dictionary<String^, Object^>^ Cells(Cluster^ topoLogicCluster);
+		List<Cell^>^ Cells();
 			
 
 	public protected:

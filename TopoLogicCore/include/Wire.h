@@ -42,7 +42,7 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		bool IsClosed() const;
+		bool TOPOLOGIC_API IsClosed() const;
 
 		/// <summary>
 		/// 
