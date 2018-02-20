@@ -41,8 +41,7 @@ namespace TopoLogicCore
 {
 	Cluster* Cluster::ByTopology(const std::list<Topology*>& rkTopologies)
 	{
-		// TODO: Error if the cluster is added to the global cluster. Currently setting this to false.
-		Cluster* pCluster = new Cluster(false);
+		Cluster* pCluster = new Cluster(true);
 		for(std::list<Topology*>::const_iterator kTopologyIterator = rkTopologies.begin();
 			kTopologyIterator != rkTopologies.end();
 			kTopologyIterator++)
@@ -54,23 +53,49 @@ namespace TopoLogicCore
 
 	bool Cluster::Add(Topology const * const kpkTopology)
 	{
+		// If this cluster is not the global cluster, it must have been inside the global cluster.
+		// (Added during initialisation.) The free flag is therefore at this point false.
+		// To add a new member to this cluster, unfreeze it first/set the flag to true.
+		Cluster* pGlobalCluster = GlobalCluster::GetInstance().GetCluster();
+		if (GetOcctShape()->IsNotEqual(*pGlobalCluster->GetOcctShape()))
+		{
+			GetOcctShape()->Free(true);
+		}
+
+		// Do the addition
+		bool returnValue = true;
 		try {
 			m_occtBuilder.Add(*GetOcctShape(), *kpkTopology->GetOcctShape());
-				 
-			return true;
 		}
 		catch (TopoDS_UnCompatibleShapes &)
 		{
-			return false;
+			returnValue = false;
 		}
 		catch (TopoDS_FrozenShape &)
 		{
-			return false;
+			returnValue = false;
 		}
+
+		// Then reset the free flag to false, i.e. freeze the cluster.
+		if (GetOcctShape()->IsNotEqual(*pGlobalCluster->GetOcctShape()))
+		{
+			GetOcctShape()->Free(false);
+		}
+
+		return returnValue;
 	}
 
 	bool Cluster::Remove(Topology const * const kpkTopology)
 	{
+		// If this cluster is not the global cluster, it must have been inside the global cluster.
+		// (Added during initialisation.) The free flag is therefore at this point false.
+		// To remove a new member to this cluster, unfreeze it first/set the flag to true.
+		Cluster* pGlobalCluster = GlobalCluster::GetInstance().GetCluster();
+		if (GetOcctShape()->IsNotEqual(*pGlobalCluster->GetOcctShape()))
+		{
+			GetOcctShape()->Free(true);
+		}
+
 		try {
 			m_occtBuilder.Remove(*GetOcctShape(), *kpkTopology->GetOcctShape());
 
@@ -83,6 +108,12 @@ namespace TopoLogicCore
 		catch (TopoDS_FrozenShape &)
 		{
 			return false;
+		}
+
+		// Then reset the free flag to false, i.e. freeze the cluster.
+		if (GetOcctShape()->IsNotEqual(*pGlobalCluster->GetOcctShape()))
+		{
+			GetOcctShape()->Free(false);
 		}
 	}
 

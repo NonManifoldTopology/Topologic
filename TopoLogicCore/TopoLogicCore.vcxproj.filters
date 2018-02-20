@@ -11,8 +11,8 @@
     <ClInclude Include="include\Face.h" />
     <ClInclude Include="include\Shell.h" />
     <ClInclude Include="include\Wire.h" />
-    <ClInclude Include="include\GlobalCluster.h" />
     <ClInclude Include="include\Utilities.h" />
+    <ClInclude Include="include\GlobalCluster.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
