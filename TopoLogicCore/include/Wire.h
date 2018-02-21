@@ -60,13 +60,6 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkWire"></param>
-		/// <returns></returns>
-		//static Wire* ByPolyCurve(TopoDS_Wire const * const kpkWire);
-
-		/// <summary>
-		/// 
-		/// </summary>
 		/// <param name="rOcctGeometries"></param>
 		virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const;
 
@@ -74,6 +67,8 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		virtual TopoDS_Shape* GetOcctShape() const;
+
+		virtual TopologyType GetType() const { return TOPOLOGY_WIRE; }
 
 	protected:
 		/// <summary>

@@ -60,6 +60,8 @@ namespace TopoLogicCore
 		/// <returns></returns>
 		Handle(Geom_Point) Point() const;
 
+		virtual TopologyType GetType() const { return TOPOLOGY_VERTEX; }
+
 	protected:
 		/// <summary>
 		/// The underlying OCCT vertex.

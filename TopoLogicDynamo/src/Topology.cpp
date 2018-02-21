@@ -1,6 +1,7 @@
 #include <msclr/marshal_cppstd.h>
 
 #include "Topology.h"
+
 #include <Cluster.h>
 #include <CellComplex.h>
 #include <Cell.h>
@@ -12,7 +13,6 @@
 #include <TopoLogicCore/include/Topology.h>
 
 #include <TopoDS_Shape.hxx>
-
 
 namespace TopoLogic
 {

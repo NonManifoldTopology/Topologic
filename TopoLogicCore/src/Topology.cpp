@@ -250,13 +250,6 @@ namespace TopoLogicCore
 		occtShapeTools.Append(*kpkOtherTopology->GetOcctShape());
 		occtCellsBuildersArguments.Append(*kpkOtherTopology->GetOcctShape());
 
-		// 2. Perform the split
-		//BOPAlgo_Splitter occtSplitter;
-		//occtSplitter.SetArguments(occtShapeArguments);
-		//occtSplitter.SetTools(occtShapeTools);
-		//// Split the arguments and tools
-		//occtSplitter.Perform();
-
 		rOcctCellsBuilder.SetArguments(occtCellsBuildersArguments);
 		// Split the arguments and tools
 		rOcctCellsBuilder.Perform();
@@ -470,7 +463,7 @@ namespace TopoLogicCore
 		BOPCol_ListOfShape occtCellsBuildersArguments;
 		occtCellsBuildersArguments.Append(*GetOcctShape());
 		occtCellsBuildersArguments.Append(*kpkOtherTopology->GetOcctShape());
-
+		
 		BOPAlgo_CellsBuilder occtCellsBuilder;
 		occtCellsBuilder.SetArguments(occtCellsBuildersArguments);
 

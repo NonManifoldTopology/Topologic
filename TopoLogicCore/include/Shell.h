@@ -91,6 +91,8 @@ namespace TopoLogicCore
 		/// <param name="rOcctGeometries"></param>
 		virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const;
 
+		virtual TopologyType GetType() const { return TOPOLOGY_SHELL; }
+
 	protected:
 		/// <summary>
 		/// The underlying OCCT shell.

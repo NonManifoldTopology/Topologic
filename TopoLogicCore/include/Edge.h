@@ -106,6 +106,8 @@ namespace TopoLogicCore
 		/// <returns></returns>
 		Handle(Geom_Curve) Curve() const;
 
+		virtual TopologyType GetType() const { return TOPOLOGY_EDGE; }
+
 	protected:
 		/// <summary>
 		/// The underlying OCCT edge.

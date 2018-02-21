@@ -28,6 +28,18 @@ namespace TopoLogicCore
 		BOOLEAN_XOR
 	};
 
+	enum TopologyType
+	{
+		TOPOLOGY_VERTEX = 0,
+		TOPOLOGY_EDGE = 1,
+		TOPOLOGY_WIRE = 2,
+		TOPOLOGY_FACE = 3,
+		TOPOLOGY_SHELL = 4,
+		TOPOLOGY_CELL = 5,
+		TOPOLOGY_CELLCOMPLEX = 6,
+		TOPOLOGY_CLUSTER = 7
+	};
+
 	/// <summary>
 	/// The base class for all topology classes in TopoLogic.
 	/// </summary>
@@ -227,6 +239,8 @@ namespace TopoLogicCore
 		/// </summary>
 		/// <returns></returns>
 		virtual TopoDS_Shape* GetOcctShape() const = 0;
+
+		virtual TopologyType GetType() const = 0;
 
 		template <typename T>
 		static T* Downcast(Topology *const kpTopology)

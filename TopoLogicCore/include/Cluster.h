@@ -106,6 +106,8 @@ namespace TopoLogicCore
 		/// <param name="rCells"></param>
 		TOPOLOGIC_API void Cells(std::list<Cell*>& rCells) const;
 
+		virtual TopologyType GetType() const { return TOPOLOGY_CLUSTER; }
+
 	protected:
 		/// <summary>
 		/// The underlying OCCT compound.

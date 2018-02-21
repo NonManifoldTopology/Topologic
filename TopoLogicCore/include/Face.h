@@ -181,6 +181,8 @@ namespace TopoLogicCore
 		/// <returns></returns>
 		TOPOLOGIC_API Handle(Geom_Surface) Surface() const;
 
+		virtual TopologyType GetType() const { return TOPOLOGY_FACE; }
+
 	protected:
 		/// <summary>
 		/// Returns error messages when creating a face using OCCT's BRepBuilderAPI_MakeFace.

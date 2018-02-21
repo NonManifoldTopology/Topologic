@@ -67,6 +67,8 @@ namespace TopoLogicCore
 		/// <param name="rOcctGeometries"></param>
 		virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const;
 
+		virtual TopologyType GetType() const { return TOPOLOGY_CELLCOMPLEX; }
+
 	protected:
 		/// <summary>
 		/// The underlying OCCT cell complex.
