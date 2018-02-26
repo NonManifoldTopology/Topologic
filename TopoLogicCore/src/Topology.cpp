@@ -279,25 +279,8 @@ namespace TopoLogicCore
 		BOPCol_ListOfShape& rOcctToolsImagesInArguments, 
 		BOPCol_ListOfShape& rOcctToolsImagesInTools)
 	{
-		// 1. Prepare the OCCT arguments and tools
-		//BOPCol_ListOfShape occtShapeArguments;
-		//BOPCol_ListOfShape occtShapeTools;
-		//BOPCol_ListOfShape occtCellsBuildersArguments;
-
-		//occtShapeArguments.Append(*GetOcctShape());
-		//occtCellsBuildersArguments.Append(*GetOcctShape());
-
-		//occtShapeTools.Append(*kpkOtherTopology->GetOcctShape());
-		//occtCellsBuildersArguments.Append(*kpkOtherTopology->GetOcctShape());
-
-		//rOcctCellsBuilder.SetArguments(occtCellsBuildersArguments);
-		//// Split the arguments and tools
-		//rOcctCellsBuilder.Perform();
-
-		//const TopoDS_Shape& rkOcctSplitShape = occtSplitter.Shape();
 		const TopoDS_Shape& rMergeResult = rOcctCellsBuilder.Shape();
 
-		//const BOPCol_DataMapOfShapeListOfShape& rkImages = occtSplitter.Images();
 		const BOPCol_DataMapOfShapeListOfShape& rkImages = rOcctCellsBuilder.Images();
 		int size = rkImages.Size();
 
@@ -306,7 +289,6 @@ namespace TopoLogicCore
 		std::string strParts = pTopologyParts->Analyze();
 
 		// 3. Classify the images: exclusively from argument, exclusively from tools, or shared.
-
 		for (BOPCol_ListOfShape::const_iterator kArgumentIterator = kOcctArguments.begin();
 			kArgumentIterator != kOcctArguments.end();
 			kArgumentIterator++)
