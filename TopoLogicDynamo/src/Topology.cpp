@@ -161,8 +161,14 @@ namespace TopoLogic
 		TopoLogicCore::Topology* pCoreTopologyA = GetCoreTopology();
 		TopoLogicCore::Topology* pCoreTopologyB = topology->GetCoreTopology();
 
-		TopoLogicCore::Topology* pDifferenceCoreTopology = pCoreTopologyA->Difference(pCoreTopologyB);
-		return Topology::ByCoreTopology(pDifferenceCoreTopology);
+		try{
+			TopoLogicCore::Topology* pDifferenceCoreTopology = pCoreTopologyA->Difference(pCoreTopologyB);
+			return Topology::ByCoreTopology(pDifferenceCoreTopology);
+		}
+		catch (std::exception& e)
+		{
+			throw gcnew Exception(gcnew String(e.what()));
+		}
 	}
 
 	Topology^ Topology::Impose(Topology^ topology)
@@ -170,8 +176,14 @@ namespace TopoLogic
 		TopoLogicCore::Topology* pCoreTopologyA = GetCoreTopology();
 		TopoLogicCore::Topology* pCoreTopologyB = topology->GetCoreTopology();
 
-		TopoLogicCore::Topology* pImposeCoreTopology = pCoreTopologyA->Impose(pCoreTopologyB); 
-		return Topology::ByCoreTopology(pImposeCoreTopology);
+		try{
+			TopoLogicCore::Topology* pImposeCoreTopology = pCoreTopologyA->Impose(pCoreTopologyB); 
+			return Topology::ByCoreTopology(pImposeCoreTopology);
+		}
+		catch (std::exception& e)
+		{
+			throw gcnew Exception(gcnew String(e.what()));
+		}
 	}
 
 	Topology^ Topology::Imprint(Topology^ topology)
@@ -179,8 +191,14 @@ namespace TopoLogic
 		TopoLogicCore::Topology* pCoreTopologyA = GetCoreTopology();
 		TopoLogicCore::Topology* pCoreTopologyB = topology->GetCoreTopology();
 
-		TopoLogicCore::Topology* pImprintCoreTopology = pCoreTopologyA->Imprint(pCoreTopologyB);
-		return Topology::ByCoreTopology(pImprintCoreTopology);
+		try{
+			TopoLogicCore::Topology* pImprintCoreTopology = pCoreTopologyA->Imprint(pCoreTopologyB);
+			return Topology::ByCoreTopology(pImprintCoreTopology);
+		}
+		catch (std::exception& e)
+		{
+			throw gcnew Exception(gcnew String(e.what()));
+		}
 	}
 
 	Topology^ Topology::Intersection(Topology^ topology)
@@ -188,8 +206,14 @@ namespace TopoLogic
 		TopoLogicCore::Topology* pCoreTopologyA = GetCoreTopology();
 		TopoLogicCore::Topology* pCoreTopologyB = topology->GetCoreTopology();
 
-		TopoLogicCore::Topology* pIntersectionCoreTopology = pCoreTopologyA->Intersection(pCoreTopologyB);
-		return Topology::ByCoreTopology(pIntersectionCoreTopology);
+		try {
+			TopoLogicCore::Topology* pIntersectionCoreTopology = pCoreTopologyA->Intersection(pCoreTopologyB);
+			return Topology::ByCoreTopology(pIntersectionCoreTopology);
+		}
+		catch (std::exception& e)
+		{
+			throw gcnew Exception(gcnew String(e.what()));
+		}
 	}
 	
 	Topology^ Topology::Union(Topology^ topology)
@@ -197,8 +221,14 @@ namespace TopoLogic
 		TopoLogicCore::Topology* pCoreTopologyA = GetCoreTopology();
 		TopoLogicCore::Topology* pCoreTopologyB = topology->GetCoreTopology();
 
-		TopoLogicCore::Topology* pUnionCoreTopology = pCoreTopologyA->Union(pCoreTopologyB);
-		return Topology::ByCoreTopology(pUnionCoreTopology);
+		try{
+			TopoLogicCore::Topology* pUnionCoreTopology = pCoreTopologyA->Union(pCoreTopologyB);
+			return Topology::ByCoreTopology(pUnionCoreTopology);
+		}
+		catch (std::exception& e)
+		{
+			throw gcnew Exception(gcnew String(e.what()));
+		}
 	}
 
 	Topology^ Topology::Merge(Topology^ topology)
@@ -206,8 +236,14 @@ namespace TopoLogic
 		TopoLogicCore::Topology* pCoreTopologyA = GetCoreTopology();
 		TopoLogicCore::Topology* pCoreTopologyB = topology->GetCoreTopology();
 
-		TopoLogicCore::Topology* pMergeCoreTopology = pCoreTopologyA->Merge(pCoreTopologyB);
-		return Topology::ByCoreTopology(pMergeCoreTopology);
+		try{
+			TopoLogicCore::Topology* pMergeCoreTopology = pCoreTopologyA->Merge(pCoreTopologyB);
+			return Topology::ByCoreTopology(pMergeCoreTopology);
+		}
+		catch (std::exception& e)
+		{
+			throw gcnew Exception(gcnew String(e.what()));
+		}
 	}
 
 	Topology^ Topology::Slice(Topology^ topology)
@@ -215,8 +251,14 @@ namespace TopoLogic
 		TopoLogicCore::Topology* pCoreTopologyA = GetCoreTopology();
 		TopoLogicCore::Topology* pCoreTopologyB = topology->GetCoreTopology();
 
-		TopoLogicCore::Topology* pSliceCoreTopology = pCoreTopologyA->Slice(pCoreTopologyB);
-		return Topology::ByCoreTopology(pSliceCoreTopology);
+		try{
+			TopoLogicCore::Topology* pSliceCoreTopology = pCoreTopologyA->Slice(pCoreTopologyB);
+			return Topology::ByCoreTopology(pSliceCoreTopology);
+		}
+		catch (std::exception& e)
+		{
+			throw gcnew Exception(gcnew String(e.what()));
+		}
 	}
 
 	Topology^ Topology::XOR(Topology^ topology)
@@ -224,7 +266,13 @@ namespace TopoLogic
 		TopoLogicCore::Topology* pCoreTopologyA = GetCoreTopology();
 		TopoLogicCore::Topology* pCoreTopologyB = topology->GetCoreTopology();
 
-		TopoLogicCore::Topology* pSliceCoreTopology = pCoreTopologyA->XOR(pCoreTopologyB);
-		return Topology::ByCoreTopology(pSliceCoreTopology);
+		try{
+			TopoLogicCore::Topology* pSliceCoreTopology = pCoreTopologyA->XOR(pCoreTopologyB);
+			return Topology::ByCoreTopology(pSliceCoreTopology);
+		}
+		catch (std::exception& e)
+		{
+			throw gcnew Exception(gcnew String(e.what()));
+		}
 	}
 }

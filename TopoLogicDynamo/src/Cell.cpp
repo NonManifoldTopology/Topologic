@@ -366,8 +366,8 @@ namespace TopoLogic
 		}
 		m_pCoreCell = TopoLogicCore::Cell::ByCuboid(
 			new Geom_CartesianPoint(pDynamoCentroid->X, pDynamoCentroid->Y, pDynamoCentroid->Z),
-			length,
 			width,
+			length,
 			height
 		);
 	}

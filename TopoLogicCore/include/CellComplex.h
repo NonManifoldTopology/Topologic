@@ -28,12 +28,6 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
-		TOPOLOGIC_API Cell* BoundingCell() const;
-
-		/// <summary>
-		/// 
-		/// </summary>
 		/// <param name="rCells"></param>
 		TOPOLOGIC_API void Cells(std::list<Cell*>& rCells) const;
 
@@ -55,6 +49,19 @@ namespace TopoLogicCore
 		/// <param name="rkCells"></param>
 		/// <returns></returns>
 		static TOPOLOGIC_API CellComplex* ByCells(const std::list<Cell*>& rkCells);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		TOPOLOGIC_API Cell* Envelope() const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkInternalFaces"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API void InternalFaces(std::list<Face*>& rInternalFaces) const;
 
 		/// <summary>
 		/// 

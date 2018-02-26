@@ -9,6 +9,7 @@
 
 namespace TopoLogicCore
 {
+	class CellComplex;
 	class Cell;
 	class Vertex;
 	class Edge;
@@ -105,6 +106,12 @@ namespace TopoLogicCore
 		/// </summary>
 		/// <param name="rCells"></param>
 		TOPOLOGIC_API void Cells(std::list<Cell*>& rCells) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rCells"></param>
+		TOPOLOGIC_API void CellComplexes(std::list<CellComplex*>& rCellComplexes) const;
 
 		virtual TopologyType GetType() const { return TOPOLOGY_CLUSTER; }
 

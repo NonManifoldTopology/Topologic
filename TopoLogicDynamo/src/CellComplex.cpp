@@ -56,11 +56,30 @@ namespace TopoLogic
 		return pFaces;
 	}
 
-	Cell^ CellComplex::BoundingCell()
+	Cell^ CellComplex::Envelope()
 	{
 		TopoLogicCore::CellComplex* pCoreCellComplex = TopoLogicCore::Topology::Downcast<TopoLogicCore::CellComplex>(GetCoreTopology());
-		TopoLogicCore::Cell* pCoreBoundingCell = pCoreCellComplex->BoundingCell();
-		return gcnew Cell(pCoreBoundingCell);
+		TopoLogicCore::Cell* pCoreEnvelope = pCoreCellComplex->Envelope();
+		return gcnew Cell(pCoreEnvelope);
+	}
+
+	List<Face^>^ CellComplex::InternalFaces()
+	{
+		TopoLogicCore::CellComplex* pCoreCellComplex = TopoLogicCore::Topology::Downcast<TopoLogicCore::CellComplex>(GetCoreTopology());
+
+		std::list<TopoLogicCore::Face*> coreInternalFaces;
+		pCoreCellComplex->InternalFaces(coreInternalFaces);
+
+		List<Face^>^ pInternalFaces = gcnew List<Face^>();
+		for (std::list<TopoLogicCore::Face*>::const_iterator kInternalFaceIterator = coreInternalFaces.begin();
+			kInternalFaceIterator != coreInternalFaces.end();
+			kInternalFaceIterator++)
+		{
+			Face^ pInternalFace = gcnew Face(*kInternalFaceIterator);
+			pInternalFaces->Add(pInternalFace);
+		}
+
+		return pInternalFaces;
 	}
 
 	bool CellComplex::IsClosed::get()

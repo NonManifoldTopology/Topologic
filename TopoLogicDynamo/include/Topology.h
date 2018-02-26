@@ -95,9 +95,9 @@ namespace TopoLogic
 		/// <summary>
 		/// Impose the second topological entity to the first one.
 		/// </summary>
-		/// <param name="topology">Another topology</param>
-		/// <returns name="Topology">The result of the Impose operation</returns>
-		Topology^ Impose(Topology^ topology);
+		/// <param name="topology">TopoLogic.Topology</param>
+		/// <returns name="Topology">TopoLogic.Topology</returns>
+		Topology^ Impose(TopoLogic::Topology^ topology);
 
 		/// <summary>
 		/// Imprint the second topological entity to the first one.
@@ -158,7 +158,7 @@ namespace TopoLogic
 		/// <summary>
 		/// Print the topological information of the input entity.
 		/// </summary>
-		/// <param name="topology"></param>
+		/// <param name="topology">A topological entity</param>
 		/// <returns name="String">The topological information of the input entity</returns>
 		String^ Analyze();
 

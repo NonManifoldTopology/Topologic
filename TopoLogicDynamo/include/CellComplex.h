@@ -34,9 +34,14 @@ namespace TopoLogic
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="cellComplex"></param>
 		/// <returns></returns>
-		Cell^ BoundingCell();
+		Cell^ Envelope();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		List<Face^>^ InternalFaces();
 
 		property bool IsClosed {
 			/// <summary>

@@ -69,6 +69,30 @@ namespace TopoLogicCore
 			std::list<Topology*>& kToolsImagesInTools);
 
 		/// <summary>
+		/// Does not perform cells builder.
+		/// </summary>
+		/// <param name="kpkOtherTopology"></param>
+		/// <param name="rOcctCellsBuilder"></param>
+		/// <param name="kOcctArgumentImagesInArguments"></param>
+		/// <param name="kOcctArgumentImagesInTools"></param>
+		/// <param name="kOcctToolsImagesInArguments"></param>
+		/// <param name="kOcctToolsImagesInTools"></param>
+		void BooleanImages(
+			const BOPCol_ListOfShape& kOcctArguments,
+			const BOPCol_ListOfShape& kOcctTools,
+			BOPAlgo_CellsBuilder& rOcctCellsBuilder,
+			BOPCol_ListOfShape& rOcctExclusivelyArgumentImages,
+			BOPCol_ListOfShape& rOcctExclusivelyToolImages,
+			BOPCol_ListOfShape& rOcctSharedImages,
+			BOPCol_ListOfShape& rOcctExclusivelyArgumentImageFaces,
+			BOPCol_ListOfShape& rOcctExclusivelyToolImageFaces,
+			BOPCol_ListOfShape& rOcctSharedImageFaces,
+			BOPCol_ListOfShape& kOcctArgumentImagesInArguments,
+			BOPCol_ListOfShape& kOcctArgumentImagesInTools,
+			BOPCol_ListOfShape& kOcctToolsImagesInArguments,
+			BOPCol_ListOfShape& kOcctToolsImagesInTools);
+
+		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpkOtherTopology"></param>
@@ -76,13 +100,14 @@ namespace TopoLogicCore
 		/// <param name="kOcctArgumentImagesInTools"></param>
 		/// <param name="kOcctToolsImagesInArguments"></param>
 		/// <param name="kOcctToolsImagesInTools"></param>
-		void BooleanImages(
-			Topology const * const kpkOtherTopology,
+		/*static void BooleanImages(
+			const BOPCol_ListOfShape& rkOcctArgumentA,
+			const BOPCol_ListOfShape& rkOcctArgumentB,
 			BOPAlgo_CellsBuilder& rOcctCellsBuilder,
 			BOPCol_ListOfShape& kOcctArgumentImagesInArguments,
 			BOPCol_ListOfShape& kOcctArgumentImagesInTools,
 			BOPCol_ListOfShape& kOcctToolsImagesInArguments,
-			BOPCol_ListOfShape& kOcctToolsImagesInTools);
+			BOPCol_ListOfShape& kOcctToolsImagesInTools);*/
 
 		/// <summary>
 		/// 
@@ -246,6 +271,17 @@ namespace TopoLogicCore
 		static T* Downcast(Topology *const kpTopology)
 		{
 			T* pSubclassTopology = dynamic_cast<T*>(kpTopology);
+			if (pSubclassTopology == nullptr)
+			{
+				throw std::exception("Failed downcasting topology");
+			}
+			return pSubclassTopology;
+		}
+
+		template <typename T>
+		static T const * Downcast(Topology const *const kpTopology)
+		{
+			T const * pSubclassTopology = dynamic_cast<T const *>(kpTopology);
 			if (pSubclassTopology == nullptr)
 			{
 				throw std::exception("Failed downcasting topology");

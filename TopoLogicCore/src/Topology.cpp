@@ -33,6 +33,16 @@
 
 namespace TopoLogicCore
 {
+	void AddOcctListShapeToAnotherList(const BOPCol_ListOfShape& rkAList, BOPCol_ListOfShape& rAnotherList)
+	{
+		for (BOPCol_ListOfShape::const_iterator kIterator = rkAList.begin();
+			kIterator != rkAList.end();
+			kIterator++)
+		{
+			rAnotherList.Append(*kIterator);
+		}
+	}
+
 	Topology::Topology(const int kDimensionality)
 		: m_dimensionality(kDimensionality)
 		, m_isLocked(false)
@@ -65,10 +75,10 @@ namespace TopoLogicCore
 		BRep_Builder occtBuilder;
 		occtBuilder.MakeCompSolid(occtCompSolid);
 
-		TopExp_Explorer occtExplorer;
-		TopTools_MapOfShape occtCells;
-		for (occtExplorer.Init(rkOcctShape, TopAbs_SOLID); occtExplorer.More(); occtExplorer.Next())
-		{
+			TopExp_Explorer occtExplorer;
+			TopTools_MapOfShape occtCells;
+			for (occtExplorer.Init(rkOcctShape, TopAbs_SOLID); occtExplorer.More(); occtExplorer.Next())
+			{
 			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
 			if (!occtCells.Contains(occtCurrent))
 			{
@@ -201,9 +211,32 @@ namespace TopoLogicCore
 		BOPCol_ListOfShape occtArgumentImagesInTools;
 		BOPCol_ListOfShape occtToolsImagesInArguments;
 		BOPCol_ListOfShape occtToolsImagesInTools;
+		BOPCol_ListOfShape occtExclusivelyArgumentImages;
+		BOPCol_ListOfShape occtExclusivelyToolImages;
+		BOPCol_ListOfShape occtSharedImages;
+		BOPCol_ListOfShape occtExclusivelyArgumentImageFaces;
+		BOPCol_ListOfShape occtExclusivelyToolImageFaces;
+		BOPCol_ListOfShape occtSharedImageFaces;
 
+		BOPCol_ListOfShape occtArguments;
+		occtArguments.Append(*GetOcctShape());
+		BOPCol_ListOfShape occtTools;
+		occtTools.Append(*kpkOtherTopology->GetOcctShape());
 		BOPAlgo_CellsBuilder occtCellsBuilder;
-		BooleanImages(kpkOtherTopology, occtCellsBuilder, occtArgumentImagesInArguments, occtArgumentImagesInTools, occtToolsImagesInArguments, occtToolsImagesInTools);
+		BooleanImages(
+			occtArguments, 
+			occtTools, 
+			occtCellsBuilder,
+			occtExclusivelyArgumentImages,
+			occtExclusivelyToolImages,
+			occtSharedImages,
+			occtExclusivelyArgumentImageFaces,
+			occtExclusivelyToolImageFaces,
+			occtSharedImageFaces,
+			occtArgumentImagesInArguments, 
+			occtArgumentImagesInTools, 
+			occtToolsImagesInArguments, 
+			occtToolsImagesInTools);
 
 		for (BOPCol_ListOfShape::const_iterator kImageIterator = occtArgumentImagesInArguments.begin();
 			kImageIterator != occtArgumentImagesInArguments.end();
@@ -232,45 +265,50 @@ namespace TopoLogicCore
 	}
 
 	void Topology::BooleanImages(
-		Topology const * const kpkOtherTopology,
+		const BOPCol_ListOfShape& kOcctArguments,
+		const BOPCol_ListOfShape& kOcctTools,
 		BOPAlgo_CellsBuilder& rOcctCellsBuilder,
-		BOPCol_ListOfShape& kOcctArgumentImagesInArguments, 
-		BOPCol_ListOfShape& kOcctArgumentImagesInTools, 
-		BOPCol_ListOfShape& kOcctToolsImagesInArguments, 
-		BOPCol_ListOfShape& kOcctToolsImagesInTools)
+		BOPCol_ListOfShape& rOcctExclusivelyArgumentImages,
+		BOPCol_ListOfShape& rOcctExclusivelyToolImages,
+		BOPCol_ListOfShape& rOcctSharedImages,
+		BOPCol_ListOfShape& rOcctExclusivelyArgumentImageFaces,
+		BOPCol_ListOfShape& rOcctExclusivelyToolImageFaces,
+		BOPCol_ListOfShape& rOcctSharedImageFaces,
+		BOPCol_ListOfShape& rOcctArgumentImagesInArguments, 
+		BOPCol_ListOfShape& rOcctArgumentImagesInTools, 
+		BOPCol_ListOfShape& rOcctToolsImagesInArguments, 
+		BOPCol_ListOfShape& rOcctToolsImagesInTools)
 	{
 		// 1. Prepare the OCCT arguments and tools
-		BOPCol_ListOfShape occtShapeArguments;
-		BOPCol_ListOfShape occtCellsBuildersArguments;
-		BOPCol_ListOfShape occtShapeTools;
+		//BOPCol_ListOfShape occtShapeArguments;
+		//BOPCol_ListOfShape occtShapeTools;
+		//BOPCol_ListOfShape occtCellsBuildersArguments;
 
-		occtShapeArguments.Append(*GetOcctShape());
-		occtCellsBuildersArguments.Append(*GetOcctShape());
+		//occtShapeArguments.Append(*GetOcctShape());
+		//occtCellsBuildersArguments.Append(*GetOcctShape());
 
-		occtShapeTools.Append(*kpkOtherTopology->GetOcctShape());
-		occtCellsBuildersArguments.Append(*kpkOtherTopology->GetOcctShape());
+		//occtShapeTools.Append(*kpkOtherTopology->GetOcctShape());
+		//occtCellsBuildersArguments.Append(*kpkOtherTopology->GetOcctShape());
 
-		rOcctCellsBuilder.SetArguments(occtCellsBuildersArguments);
-		// Split the arguments and tools
-		rOcctCellsBuilder.Perform();
+		//rOcctCellsBuilder.SetArguments(occtCellsBuildersArguments);
+		//// Split the arguments and tools
+		//rOcctCellsBuilder.Perform();
 
 		//const TopoDS_Shape& rkOcctSplitShape = occtSplitter.Shape();
 		const TopoDS_Shape& rMergeResult = rOcctCellsBuilder.Shape();
 
 		//const BOPCol_DataMapOfShapeListOfShape& rkImages = occtSplitter.Images();
 		const BOPCol_DataMapOfShapeListOfShape& rkImages = rOcctCellsBuilder.Images();
+		int size = rkImages.Size();
 
 		const TopoDS_Shape& rkParts = rOcctCellsBuilder.GetAllParts();
 		Topology* pTopologyParts = Topology::ByOcctShape(rkParts);
 		std::string strParts = pTopologyParts->Analyze();
 
 		// 3. Classify the images: exclusively from argument, exclusively from tools, or shared.
-		BOPCol_ListOfShape occtExclusivelyArgumentImages;
-		BOPCol_ListOfShape occtExclusivelyToolImages;
-		BOPCol_ListOfShape occtSharedImages;
 
-		for (BOPCol_ListOfShape::const_iterator kArgumentIterator = occtShapeArguments.begin();
-			kArgumentIterator != occtShapeArguments.end();
+		for (BOPCol_ListOfShape::const_iterator kArgumentIterator = kOcctArguments.begin();
+			kArgumentIterator != kOcctArguments.end();
 			kArgumentIterator++)
 		{
 			const BOPCol_ListOfShape& rkArgumentImages = rkImages.Find(*kArgumentIterator);
@@ -283,8 +321,8 @@ namespace TopoLogicCore
 
 				// Is this in tool too?
 				bool isArgumentImageInTools = false;
-				for (BOPCol_ListOfShape::const_iterator kToolIterator = occtShapeTools.begin();
-					kToolIterator != occtShapeTools.end() && !isArgumentImageInTools;
+				for (BOPCol_ListOfShape::const_iterator kToolIterator = kOcctTools.begin();
+					kToolIterator != kOcctTools.end() && !isArgumentImageInTools;
 					kToolIterator++)
 				{
 					const BOPCol_ListOfShape& rkToolImages = rkImages.Find(*kToolIterator);
@@ -302,17 +340,17 @@ namespace TopoLogicCore
 
 				if (isArgumentImageInTools)
 				{
-					occtSharedImages.Append(rkArgumentImage);
+					rOcctSharedImages.Append(rkArgumentImage);
 				}
 				else
 				{
-					occtExclusivelyArgumentImages.Append(rkArgumentImage);
+					rOcctExclusivelyArgumentImages.Append(rkArgumentImage);
 				}
 			}
 		}
 
-		for (BOPCol_ListOfShape::const_iterator kToolIterator = occtShapeTools.begin();
-			kToolIterator != occtShapeTools.end();
+		for (BOPCol_ListOfShape::const_iterator kToolIterator = kOcctTools.begin();
+			kToolIterator != kOcctTools.end();
 			kToolIterator++)
 		{
 			const BOPCol_ListOfShape& rkToolImages = rkImages.Find(*kToolIterator);
@@ -325,8 +363,8 @@ namespace TopoLogicCore
 
 				// Is this in tool too?
 				bool isToolInArguments = false;
-				for (BOPCol_ListOfShape::const_iterator kArgumentIterator = occtShapeArguments.begin();
-					kArgumentIterator != occtShapeArguments.end() && !isToolInArguments;
+				for (BOPCol_ListOfShape::const_iterator kArgumentIterator = kOcctArguments.begin();
+					kArgumentIterator != kOcctArguments.end() && !isToolInArguments;
 					kArgumentIterator++)
 				{
 					const BOPCol_ListOfShape& rkArgumentImages = rkImages.Find(*kArgumentIterator);
@@ -344,7 +382,7 @@ namespace TopoLogicCore
 
 				if (!isToolInArguments)
 				{
-					occtExclusivelyToolImages.Append(rkToolImage);
+					rOcctExclusivelyToolImages.Append(rkToolImage);
 				}
 
 				// The shared images have been taken care of; no need to check them.
@@ -352,106 +390,129 @@ namespace TopoLogicCore
 		}
 
 		// 4. Get the faces
-		BOPCol_ListOfShape occtExclusivelyArgumentImageFaces;
-		BOPCol_ListOfShape occtExclusivelyToolImageFaces;
-		BOPCol_ListOfShape occtSharedImageFaces;
 
-		for (BOPCol_ListOfShape::const_iterator kArgumentImageIterator = occtExclusivelyArgumentImages.begin();
-			kArgumentImageIterator != occtExclusivelyArgumentImages.end();
+		for (BOPCol_ListOfShape::const_iterator kArgumentImageIterator = rOcctExclusivelyArgumentImages.begin();
+			kArgumentImageIterator != rOcctExclusivelyArgumentImages.end();
 			kArgumentImageIterator++)
 		{
 			TopExp_Explorer occtArgumentImageExplorer;
 			for (occtArgumentImageExplorer.Init(*kArgumentImageIterator, TopAbs_FACE); occtArgumentImageExplorer.More(); occtArgumentImageExplorer.Next())
 			{
 				const TopoDS_Shape& rkOcctCurrent = occtArgumentImageExplorer.Current();
-				if (!occtExclusivelyArgumentImageFaces.Contains(rkOcctCurrent))
+				if (!rOcctExclusivelyArgumentImageFaces.Contains(rkOcctCurrent))
 				{
-					occtExclusivelyArgumentImageFaces.Append(rkOcctCurrent);
+					rOcctExclusivelyArgumentImageFaces.Append(rkOcctCurrent);
 				}
 			}
 		}
 
-		for (BOPCol_ListOfShape::const_iterator kToolImageIterator = occtExclusivelyToolImages.begin();
-			kToolImageIterator != occtExclusivelyToolImages.end();
+		for (BOPCol_ListOfShape::const_iterator kToolImageIterator = rOcctExclusivelyToolImages.begin();
+			kToolImageIterator != rOcctExclusivelyToolImages.end();
 			kToolImageIterator++)
 		{
 			TopExp_Explorer occtToolImageExplorer;
 			for (occtToolImageExplorer.Init(*kToolImageIterator, TopAbs_FACE); occtToolImageExplorer.More(); occtToolImageExplorer.Next())
 			{
 				const TopoDS_Shape& rkOcctCurrent = occtToolImageExplorer.Current();
-				if (!occtExclusivelyToolImageFaces.Contains(rkOcctCurrent))
+				if (!rOcctExclusivelyToolImageFaces.Contains(rkOcctCurrent))
 				{
-					occtExclusivelyToolImageFaces.Append(rkOcctCurrent);
+					rOcctExclusivelyToolImageFaces.Append(rkOcctCurrent);
 				}
 			}
 		}
 
-		for (BOPCol_ListOfShape::const_iterator kSharedImageIterator = occtSharedImages.begin();
-			kSharedImageIterator != occtSharedImages.end();
+		for (BOPCol_ListOfShape::const_iterator kSharedImageIterator = rOcctSharedImages.begin();
+			kSharedImageIterator != rOcctSharedImages.end();
 			kSharedImageIterator++)
 		{
 			TopExp_Explorer occtSharedImageExplorer;
 			for (occtSharedImageExplorer.Init(*kSharedImageIterator, TopAbs_FACE); occtSharedImageExplorer.More(); occtSharedImageExplorer.Next())
 			{
 				const TopoDS_Shape& rkOcctCurrent = occtSharedImageExplorer.Current();
-				if (!occtSharedImageFaces.Contains(rkOcctCurrent))
+				if (!rOcctSharedImageFaces.Contains(rkOcctCurrent))
 				{
-					occtSharedImageFaces.Append(rkOcctCurrent);
+					rOcctSharedImageFaces.Append(rkOcctCurrent);
 				}
 			}
 		}
 
 		// 5. Identify the argument faces in a tool by doing IsSame Comparison
-		for (BOPCol_ListOfShape::const_iterator kArgumentImageFaceIterator = occtExclusivelyArgumentImageFaces.cbegin();
-			kArgumentImageFaceIterator != occtExclusivelyArgumentImageFaces.cend();
+		for (BOPCol_ListOfShape::const_iterator kArgumentImageFaceIterator = rOcctExclusivelyArgumentImageFaces.cbegin();
+			kArgumentImageFaceIterator != rOcctExclusivelyArgumentImageFaces.cend();
 			kArgumentImageFaceIterator++)
 		{
 			bool isInSharedImage = false;
-			for (BOPCol_ListOfShape::const_iterator kSharedImageFaceIterator = occtSharedImageFaces.cbegin();
-				kSharedImageFaceIterator != occtSharedImageFaces.cend() && !isInSharedImage;
+			for (BOPCol_ListOfShape::const_iterator kSharedImageFaceIterator = rOcctSharedImageFaces.cbegin();
+				kSharedImageFaceIterator != rOcctSharedImageFaces.cend() && !isInSharedImage;
 				kSharedImageFaceIterator++)
 			{
 				if (kArgumentImageFaceIterator->IsSame(*kSharedImageFaceIterator))
 				{
 					isInSharedImage = true;
+					//rOcctSharedImageFaces.Remove(*kSharedImageFaceIterator);
 				}
 			}
 
 			if (isInSharedImage)
 			{
 				// part of tools in the arguments
-				kOcctToolsImagesInArguments.Append(*kArgumentImageFaceIterator);
+				rOcctToolsImagesInArguments.Append(*kArgumentImageFaceIterator);
 			}
 			else
 			{
-				kOcctArgumentImagesInArguments.Append(*kArgumentImageFaceIterator);
+				rOcctArgumentImagesInArguments.Append(*kArgumentImageFaceIterator);
 			}
 		}
 
 		// 6. Identify the tool faces in an image by doing IsSame Comparison
-		for (BOPCol_ListOfShape::const_iterator kToolImageFaceIterator = occtExclusivelyToolImageFaces.cbegin();
-			kToolImageFaceIterator != occtExclusivelyToolImageFaces.cend();
+		for (BOPCol_ListOfShape::const_iterator kToolImageFaceIterator = rOcctExclusivelyToolImageFaces.cbegin();
+			kToolImageFaceIterator != rOcctExclusivelyToolImageFaces.cend();
 			kToolImageFaceIterator++)
 		{
 			bool isInSharedImage = false;
-			for (BOPCol_ListOfShape::const_iterator kSharedImageFaceIterator = occtSharedImageFaces.cbegin();
-				kSharedImageFaceIterator != occtSharedImageFaces.cend() && !isInSharedImage;
+			for (BOPCol_ListOfShape::const_iterator kSharedImageFaceIterator = rOcctSharedImageFaces.cbegin();
+				kSharedImageFaceIterator != rOcctSharedImageFaces.cend() && !isInSharedImage;
 				kSharedImageFaceIterator++)
 			{
 				if (kToolImageFaceIterator->IsSame(*kSharedImageFaceIterator))
 				{
 					isInSharedImage = true;
+					//rOcctSharedImageFaces.Remove(*kSharedImageFaceIterator);
 				}
 			}
 
 			if (isInSharedImage)
 			{
 				// part of arguments in the tools
-				kOcctArgumentImagesInTools.Append(*kToolImageFaceIterator);
+				rOcctArgumentImagesInTools.Append(*kToolImageFaceIterator);
 			}
 			else
 			{
-				kOcctToolsImagesInTools.Append(*kToolImageFaceIterator);
+				rOcctToolsImagesInTools.Append(*kToolImageFaceIterator);
+			}
+		}
+
+		// 7. Identify faces inside the shared images that are inside the arguments or tools.
+		for (BOPCol_ListOfShape::const_iterator kSharedImageFaceIterator = rOcctSharedImageFaces.cbegin();
+			kSharedImageFaceIterator != rOcctSharedImageFaces.cend();
+			kSharedImageFaceIterator++)
+		{
+			bool isInTools = false;
+			for (BOPCol_ListOfShape::const_iterator kToolImageFaceIterator = rOcctExclusivelyToolImageFaces.cbegin();
+				kToolImageFaceIterator != rOcctExclusivelyToolImageFaces.cend() && !isInTools;
+				kToolImageFaceIterator++)
+			{
+				if (kToolImageFaceIterator->IsSame(*kSharedImageFaceIterator))
+				{
+					isInTools = true;
+					rOcctArgumentImagesInTools.Append(*kSharedImageFaceIterator);
+				}
+			}
+
+			// If not in the arguments, then it is in the tools.
+			if (!isInTools)
+			{
+				rOcctToolsImagesInArguments.Append(*kSharedImageFaceIterator);
 			}
 		}
 	}
@@ -460,94 +521,54 @@ namespace TopoLogicCore
 		Topology const * const kpkOtherTopology,
 		const BooleanFlag kBooleanFlag)
 	{
+		// Buffer lists are currently provided for cell complexes to be processed per cells.
 		BOPCol_ListOfShape occtCellsBuildersArguments;
-		occtCellsBuildersArguments.Append(*GetOcctShape());
-		occtCellsBuildersArguments.Append(*kpkOtherTopology->GetOcctShape());
+		BOPCol_ListOfShape occtCellsBuildersBufferA;
+		if (GetType() == TOPOLOGY_CELLCOMPLEX)
+		{
+			CellComplex* pCellComplex = Topology::Downcast<CellComplex>(this);
+			std::list<Cell*> cells;
+			pCellComplex->Cells(cells);
+			for (std::list<Cell*>::const_iterator kCellIterator = cells.begin();
+				kCellIterator != cells.end();
+				kCellIterator++)
+			{
+				occtCellsBuildersBufferA.Append(*(*kCellIterator)->GetOcctShape());
+				occtCellsBuildersArguments.Append(*(*kCellIterator)->GetOcctShape());
+			}
+		}
+		else
+		{
+			occtCellsBuildersBufferA.Append(*GetOcctShape());
+			occtCellsBuildersArguments.Append(*GetOcctShape());
+		}
+
+		BOPCol_ListOfShape occtCellsBuildersBufferB;
+		if (kpkOtherTopology->GetType() == TOPOLOGY_CELLCOMPLEX)
+		{
+			CellComplex const * const kpkCellComplex = Topology::Downcast<CellComplex const>(kpkOtherTopology);
+			std::list<Cell*> cells;
+			kpkCellComplex->Cells(cells);
+			for (std::list<Cell*>::const_iterator kCellIterator = cells.begin();
+				kCellIterator != cells.end();
+				kCellIterator++)
+			{
+				occtCellsBuildersBufferB.Append(*(*kCellIterator)->GetOcctShape());
+				occtCellsBuildersArguments.Append(*(*kCellIterator)->GetOcctShape());
+			}
+		}
+		else
+		{
+			occtCellsBuildersBufferB.Append(*kpkOtherTopology->GetOcctShape());
+			occtCellsBuildersArguments.Append(*kpkOtherTopology->GetOcctShape());
+		}
+
 		
 		BOPAlgo_CellsBuilder occtCellsBuilder;
 		occtCellsBuilder.SetArguments(occtCellsBuildersArguments);
 
 		// Split the arguments and tools
 		occtCellsBuilder.Perform();
-
-		BOPCol_ListOfShape occtListToTake;
-		BOPCol_ListOfShape occtListToAvoid;
-
-		if (kBooleanFlag == BOOLEAN_UNION)
-		{
-			occtListToTake.Append(*GetOcctShape());
-			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid, 1, true);
-
-			occtListToTake.Clear();
-			occtListToTake.Append(*kpkOtherTopology->GetOcctShape());
-			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid, 1, true);
-		}
-		else if (kBooleanFlag == BOOLEAN_DIFFERENCE)
-		{
-			occtListToTake.Append(*GetOcctShape());
-			occtListToAvoid.Append(*kpkOtherTopology->GetOcctShape());
-			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid, 1, true);
-		}
-		else if (kBooleanFlag == BOOLEAN_INTERSECTION)
-		{
-			occtListToTake.Append(*GetOcctShape());
-			occtListToTake.Append(*kpkOtherTopology->GetOcctShape());
-			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid, 1, true);
-		}else if(kBooleanFlag == BOOLEAN_MERGE)
-		{
-			occtListToTake.Append(*GetOcctShape());
-			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
-
-			occtListToTake.Clear();
-			occtListToTake.Append(*kpkOtherTopology->GetOcctShape());
-			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
-		}
-		else if (kBooleanFlag == BOOLEAN_SLICE)
-		{
-			// same as imprint
-			occtListToTake.Append(*GetOcctShape());
-			occtListToTake.Append(*kpkOtherTopology->GetOcctShape());
-			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
-
-			occtListToTake.Clear();
-			occtListToTake.Append(*GetOcctShape());
-			occtListToAvoid.Append(*kpkOtherTopology->GetOcctShape());
-			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
-		}
-		else if (kBooleanFlag == BOOLEAN_IMPOSE)
-		{
-			occtListToTake.Append(*GetOcctShape());
-			occtListToAvoid.Append(*kpkOtherTopology->GetOcctShape());
-			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
-			
-			occtListToTake.Clear();
-			occtListToAvoid.Clear();
-			occtListToTake.Append(*kpkOtherTopology->GetOcctShape());
-			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid, 1, true);
-		}
-		else if (kBooleanFlag == BOOLEAN_IMPRINT)
-		{
-			occtListToTake.Append(*GetOcctShape());
-			occtListToTake.Append(*kpkOtherTopology->GetOcctShape());
-			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
-
-			occtListToTake.Clear();
-			occtListToTake.Append(*GetOcctShape());
-			occtListToAvoid.Append(*kpkOtherTopology->GetOcctShape());
-			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
-		}
-		else // BOOLEAN_XOR
-		{
-			occtListToTake.Append(*GetOcctShape());
-			occtListToAvoid.Append(*kpkOtherTopology->GetOcctShape());
-			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
-
-			occtListToTake.Clear();
-			occtListToAvoid.Clear();
-			occtListToTake.Append(*kpkOtherTopology->GetOcctShape());
-			occtListToAvoid.Append(*GetOcctShape());
-			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
-		}
 
 		if (occtCellsBuilder.HasErrors())
 		{
@@ -556,11 +577,216 @@ namespace TopoLogicCore
 			throw std::exception(errorStream.str().c_str());
 		}
 
-		const TopoDS_Shape& rkOcctMergeShape = occtCellsBuilder.Shape();
-		Topology* pTopology = Topology::ByOcctShape(rkOcctMergeShape);
-		std::string str = pTopology->Analyze();
+		BOPCol_ListOfShape occtListToTake;
+		BOPCol_ListOfShape occtListToAvoid;
 
-		return ByOcctShape(rkOcctMergeShape);
+		if (kBooleanFlag == BOOLEAN_UNION)
+		{
+			for (BOPCol_ListOfShape::const_iterator kOcctShapeIterator = occtCellsBuildersBufferA.begin();
+				kOcctShapeIterator != occtCellsBuildersBufferA.end();
+				kOcctShapeIterator++)
+			{
+				occtListToTake.Clear();
+				occtListToAvoid.Clear();
+				occtListToTake.Append(*kOcctShapeIterator);
+				occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid, 1, true);
+			}
+
+			for (BOPCol_ListOfShape::const_iterator kOcctShapeIterator = occtCellsBuildersBufferB.begin();
+				kOcctShapeIterator != occtCellsBuildersBufferB.end();
+				kOcctShapeIterator++)
+			{
+				occtListToTake.Clear();
+				occtListToAvoid.Clear();
+				occtListToTake.Append(*kOcctShapeIterator);
+				occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid, 1, true);
+			}
+		}
+		else if (kBooleanFlag == BOOLEAN_DIFFERENCE)
+		{
+			for (BOPCol_ListOfShape::const_iterator kOcctShapeIteratorA = occtCellsBuildersBufferA.begin();
+				kOcctShapeIteratorA != occtCellsBuildersBufferA.end();
+				kOcctShapeIteratorA++)
+			{
+				occtListToTake.Clear();
+				occtListToAvoid.Clear();
+				occtListToTake.Append(*kOcctShapeIteratorA);
+				for (BOPCol_ListOfShape::const_iterator kOcctShapeIteratorB = occtCellsBuildersBufferB.begin();
+					kOcctShapeIteratorB != occtCellsBuildersBufferB.end();
+					kOcctShapeIteratorB++)
+				{
+					occtListToAvoid.Append(*kOcctShapeIteratorB);
+				}
+				occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
+			}
+		}
+		else if (kBooleanFlag == BOOLEAN_INTERSECTION)
+		{
+			for (BOPCol_ListOfShape::const_iterator kOcctShapeIteratorA = occtCellsBuildersBufferA.begin();
+				kOcctShapeIteratorA != occtCellsBuildersBufferA.end();
+				kOcctShapeIteratorA++)
+			{
+				for (BOPCol_ListOfShape::const_iterator kOcctShapeIteratorB = occtCellsBuildersBufferB.begin();
+					kOcctShapeIteratorB != occtCellsBuildersBufferB.end();
+					kOcctShapeIteratorB++)
+				{
+					occtListToTake.Clear();
+					occtListToAvoid.Clear();
+					occtListToTake.Append(*kOcctShapeIteratorA);
+					occtListToTake.Append(*kOcctShapeIteratorB);
+					occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
+				}
+			}
+		}else if(kBooleanFlag == BOOLEAN_MERGE)
+		{
+			for (BOPCol_ListOfShape::const_iterator kOcctShapeIterator = occtCellsBuildersBufferA.begin();
+				kOcctShapeIterator != occtCellsBuildersBufferA.end();
+				kOcctShapeIterator++)
+			{
+				occtListToTake.Clear();
+				occtListToAvoid.Clear();
+				occtListToTake.Append(*kOcctShapeIterator);
+				occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
+			}
+
+			for (BOPCol_ListOfShape::const_iterator kOcctShapeIterator = occtCellsBuildersBufferB.begin();
+				kOcctShapeIterator != occtCellsBuildersBufferB.end();
+				kOcctShapeIterator++)
+			{
+				occtListToTake.Clear();
+				occtListToAvoid.Clear();
+				occtListToTake.Append(*kOcctShapeIterator);
+				occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
+			}
+		}
+		else if (kBooleanFlag == BOOLEAN_SLICE)
+		{
+
+			for (BOPCol_ListOfShape::const_iterator kOcctShapeIteratorA = occtCellsBuildersBufferA.begin();
+				kOcctShapeIteratorA != occtCellsBuildersBufferA.end();
+				kOcctShapeIteratorA++)
+			{
+				for (BOPCol_ListOfShape::const_iterator kOcctShapeIteratorB = occtCellsBuildersBufferB.begin();
+					kOcctShapeIteratorB != occtCellsBuildersBufferB.end();
+					kOcctShapeIteratorB++)
+				{
+					occtListToTake.Clear();
+					occtListToAvoid.Clear();
+					occtListToTake.Append(*kOcctShapeIteratorA);
+					occtListToTake.Append(*kOcctShapeIteratorB);
+					occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
+				}
+			}
+
+			for (BOPCol_ListOfShape::const_iterator kOcctShapeIterator = occtCellsBuildersBufferA.begin();
+				kOcctShapeIterator != occtCellsBuildersBufferA.end();
+				kOcctShapeIterator++)
+			{
+				occtListToTake.Clear();
+				occtListToAvoid.Clear();
+				occtListToTake.Append(*kOcctShapeIterator);
+				occtListToAvoid.Append(occtCellsBuildersBufferB);
+				occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
+			}
+		}
+		else if (kBooleanFlag == BOOLEAN_IMPOSE)
+		{
+			// Get part of A not in B
+			for (BOPCol_ListOfShape::const_iterator kOcctShapeIteratorA = occtCellsBuildersBufferA.begin();
+				kOcctShapeIteratorA != occtCellsBuildersBufferA.end();
+				kOcctShapeIteratorA++)
+			{
+				occtListToTake.Clear();
+				occtListToAvoid.Clear();
+				occtListToTake.Append(*kOcctShapeIteratorA);
+				for (BOPCol_ListOfShape::const_iterator kOcctShapeIteratorB = occtCellsBuildersBufferB.begin();
+					kOcctShapeIteratorB != occtCellsBuildersBufferB.end();
+					kOcctShapeIteratorB++)
+				{
+					occtListToAvoid.Append(*kOcctShapeIteratorB);
+				}
+				occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
+			}
+
+			// Add B
+			int i = 1;
+			for (BOPCol_ListOfShape::const_iterator kOcctShapeIterator = occtCellsBuildersBufferB.begin();
+				kOcctShapeIterator != occtCellsBuildersBufferB.end();
+				kOcctShapeIterator++)
+			{
+				occtListToTake.Clear();
+				occtListToAvoid.Clear();
+				occtListToTake.Append(*kOcctShapeIterator);
+				occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid, i++, true);
+			}
+		}
+		else if (kBooleanFlag == BOOLEAN_IMPRINT)
+		{
+			for (BOPCol_ListOfShape::const_iterator kOcctShapeIteratorA = occtCellsBuildersBufferA.begin();
+				kOcctShapeIteratorA != occtCellsBuildersBufferA.end();
+				kOcctShapeIteratorA++)
+			{
+				for (BOPCol_ListOfShape::const_iterator kOcctShapeIteratorB = occtCellsBuildersBufferB.begin();
+					kOcctShapeIteratorB != occtCellsBuildersBufferB.end();
+					kOcctShapeIteratorB++)
+				{
+					occtListToTake.Clear();
+					occtListToAvoid.Clear();
+					occtListToTake.Append(*kOcctShapeIteratorA);
+					occtListToTake.Append(*kOcctShapeIteratorB);
+					occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
+				}
+			}
+
+			for (BOPCol_ListOfShape::const_iterator kOcctShapeIterator = occtCellsBuildersBufferA.begin();
+				kOcctShapeIterator != occtCellsBuildersBufferA.end();
+				kOcctShapeIterator++)
+			{
+				occtListToTake.Clear();
+				occtListToAvoid.Clear();
+				occtListToTake.Append(*kOcctShapeIterator);
+				occtListToAvoid.Append(occtCellsBuildersBufferB);
+				occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
+			}
+		}
+		else // BOOLEAN_XOR
+		{
+			for (BOPCol_ListOfShape::const_iterator kOcctShapeIteratorA = occtCellsBuildersBufferA.begin();
+				kOcctShapeIteratorA != occtCellsBuildersBufferA.end();
+				kOcctShapeIteratorA++)
+			{
+				occtListToTake.Clear();
+				occtListToAvoid.Clear();
+				occtListToTake.Append(*kOcctShapeIteratorA);
+				for (BOPCol_ListOfShape::const_iterator kOcctShapeIteratorB = occtCellsBuildersBufferB.begin();
+					kOcctShapeIteratorB != occtCellsBuildersBufferB.end();
+					kOcctShapeIteratorB++)
+				{
+					occtListToAvoid.Append(*kOcctShapeIteratorB);
+				}
+				occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
+			}
+
+			for (BOPCol_ListOfShape::const_iterator kOcctShapeIteratorB = occtCellsBuildersBufferB.begin();
+				kOcctShapeIteratorB != occtCellsBuildersBufferB.end();
+				kOcctShapeIteratorB++)
+			{
+				occtListToTake.Clear();
+				occtListToAvoid.Clear();
+				occtListToTake.Append(*kOcctShapeIteratorB);
+				for (BOPCol_ListOfShape::const_iterator kOcctShapeIteratorA = occtCellsBuildersBufferA.begin();
+					kOcctShapeIteratorA != occtCellsBuildersBufferA.end();
+					kOcctShapeIteratorA++)
+				{
+					occtListToAvoid.Append(*kOcctShapeIteratorA);
+				}
+				occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
+			}
+		}
+
+		TopoDS_Shape occtBooleanResult = occtCellsBuilder.Shape();
+		Topology* pTopology = Topology::ByOcctShape(occtBooleanResult);
+		return pTopology;
 	}
 
 	Topology* Topology::Difference(Topology const * const kpkOtherTopology)
@@ -595,7 +821,67 @@ namespace TopoLogicCore
 
 	Topology* Topology::Union(Topology const * const kpkOtherTopology)
 	{
-		return BooleanOperation(kpkOtherTopology, BOOLEAN_UNION);
+		Topology* pTopology = BooleanOperation(kpkOtherTopology, BOOLEAN_UNION);
+		std::string str = pTopology->Analyze();
+
+		TopologyType topologyType = pTopology->GetType();
+		if (topologyType == TOPOLOGY_CLUSTER)
+		{
+			Cluster* pCluster = Topology::Downcast<Cluster>(pTopology);
+			std::list<CellComplex*> cellComplexes;
+			pCluster->CellComplexes(cellComplexes);
+			for (std::list<CellComplex*>::const_iterator kCellComplexIterator = cellComplexes.begin();
+				kCellComplexIterator != cellComplexes.end();
+				kCellComplexIterator++)
+			{
+				CellComplex* pCellComplex = *kCellComplexIterator;
+				Cell* pEnvelope = pCellComplex->Envelope();
+				std::list<Face*> envelopeFaces;
+				pEnvelope->Faces(envelopeFaces);
+			}
+		}
+
+		std::list<Face*> internalFaces;
+		if (GetType() == TOPOLOGY_CELLCOMPLEX)
+		{
+			CellComplex* pCellComplex = Topology::Downcast<CellComplex>(this);
+			pCellComplex->InternalFaces(internalFaces);
+		}
+
+		if (kpkOtherTopology->GetType() == TOPOLOGY_CELLCOMPLEX)
+		{
+			CellComplex const* pCellComplex = Topology::Downcast<CellComplex>(kpkOtherTopology);
+			pCellComplex->InternalFaces(internalFaces);
+		}
+
+
+		BOPAlgo_CellsBuilder occtCellsBuilder;
+		BOPCol_ListOfShape occtCellsBuildersArguments;
+		occtCellsBuildersArguments.Append(*pTopology->GetOcctShape());
+
+		for (std::list<Face*>::const_iterator kFaceIterator = internalFaces.begin();
+			kFaceIterator != internalFaces.end();
+			kFaceIterator++)
+		{
+			Face* pInternalFace = *kFaceIterator;
+			occtCellsBuildersArguments.Append(*pInternalFace->GetOcctShape());
+		}
+
+		occtCellsBuilder.SetArguments(occtCellsBuildersArguments);
+
+		// Split the arguments and tools
+		occtCellsBuilder.Perform();
+
+		if (occtCellsBuilder.HasErrors())
+		{
+			std::ostringstream errorStream;
+			occtCellsBuilder.DumpErrors(errorStream);
+			throw std::exception(errorStream.str().c_str());
+		}
+		occtCellsBuilder.AddAllToResult();
+		TopoDS_Shape occtUnionResult = occtCellsBuilder.Shape();
+		Topology* pUnionTopology = Topology::ByOcctShape(occtUnionResult);
+		return pUnionTopology;
 	}
 
 	Topology* Topology::XOR(Topology const * const kpkOtherTopology)

@@ -5,6 +5,7 @@
 
 #include <BRep_Builder.hxx>
 #include <Geom_Surface.hxx>
+#include <ShapeAnalysis_ShapeContents.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_FrozenShape.hxx>
@@ -15,11 +16,6 @@
 
 namespace TopoLogicCore
 {
-	Cell* CellComplex::BoundingCell() const
-	{
-		throw std::exception("Not implemented yet");
-	}
-
 	void CellComplex::Cells(std::list<Cell*>& rCells) const
 	{
 		TopExp_Explorer occtExplorer;
@@ -109,6 +105,93 @@ namespace TopoLogicCore
 			throw std::exception("CellComplex::ByCells(): Merge operation is not giving a cell complex");
 		}
 		return pMergeCellComplex;
+	}
+
+	Cell* CellComplex::Envelope() const
+	{
+		BOPCol_ListOfShape occtCellsBuildersArguments;
+		std::list<Cell*> cells;
+		Cells(cells);
+		for (std::list<Cell*>::const_iterator kCellIterator = cells.begin();
+			kCellIterator != cells.end();
+			kCellIterator++)
+		{
+			occtCellsBuildersArguments.Append(*(*kCellIterator)->GetOcctShape());
+		}
+
+		BOPAlgo_CellsBuilder occtCellsBuilder;
+		occtCellsBuilder.SetArguments(occtCellsBuildersArguments);
+
+		occtCellsBuilder.Perform();
+
+		if (occtCellsBuilder.HasErrors())
+		{
+			std::ostringstream errorStream;
+			occtCellsBuilder.DumpErrors(errorStream);
+			throw std::exception(errorStream.str().c_str());
+		}
+
+		BOPCol_ListOfShape occtListToTake;
+		BOPCol_ListOfShape occtListToAvoid;
+		for (BOPCol_ListOfShape::const_iterator kShapeIterator = occtCellsBuildersArguments.begin();
+			kShapeIterator != occtCellsBuildersArguments.end();
+			kShapeIterator++)
+		{
+			occtListToTake.Clear();
+			occtListToTake.Append(*kShapeIterator);
+			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid, 1, true);
+		}
+
+		// A cell complex is a contiguous shape, so there can be at maximum only one envelope cell.
+		TopoDS_Shape occtEnvelopeShape = occtCellsBuilder.Shape();
+		ShapeAnalysis_ShapeContents occtShapeAnalysis;
+		occtShapeAnalysis.Perform(occtEnvelopeShape);
+		int numberOfSolids = occtShapeAnalysis.NbSharedSolids();
+		std::stringstream ssErrorMessage;
+		ssErrorMessage << "There can be only 0 or 1 envelope cell, but this cell complex has " << numberOfSolids << " cells.";
+		assert(numberOfSolids < 2 && ssErrorMessage.str().c_str());
+
+		TopExp_Explorer occtExplorer;
+		TopTools_MapOfShape occtCells;
+		for (occtExplorer.Init(occtEnvelopeShape, TopAbs_SOLID); occtExplorer.More(); occtExplorer.Next())
+		{
+			return new Cell(new TopoDS_Solid(TopoDS::Solid(occtExplorer.Current())));
+		}
+		return nullptr;
+	}
+
+	void CellComplex::InternalFaces(std::list<Face*>& rInternalFaces) const
+	{
+		Cell* pEnvelopeCell = Envelope();
+
+		std::list<Face*> envelopeFaces;
+		pEnvelopeCell->Faces(envelopeFaces);
+
+		std::list<Face*> faces;
+		Faces(faces);
+
+		for (std::list<Face*>::const_iterator kFaceIterator = faces.begin();
+			kFaceIterator != faces.end();
+			kFaceIterator++)
+		{
+			Face* pFace = *kFaceIterator;
+			bool isEnvelopeFace = false;
+			for (std::list<Face*>::const_iterator kEnvelopeFaceIterator = envelopeFaces.begin();
+				kEnvelopeFaceIterator != envelopeFaces.end() && !isEnvelopeFace;
+				kEnvelopeFaceIterator++)
+			{
+				Face* pEnvelopeFace = *kEnvelopeFaceIterator;
+				if (pFace->GetOcctShape()->IsSame(*pEnvelopeFace->GetOcctShape()))
+				{
+					isEnvelopeFace = true;
+				}
+			}
+
+			if (!isEnvelopeFace)
+			{
+				rInternalFaces.push_back(pFace);
+			}
+		}
 	}
 
 	TopoDS_Shape* CellComplex::GetOcctShape() const

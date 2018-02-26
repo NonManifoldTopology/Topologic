@@ -85,25 +85,15 @@ namespace TopoLogicCore
 
 	void Face::Edges(std::list<Edge*>& rEdges) const
 	{
-		TopTools_MapOfShape occtWires;
+		TopTools_MapOfShape occtEdges;
 		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(*GetOcctShape(), TopAbs_WIRE); occtExplorer.More(); occtExplorer.Next())
+		for (occtExplorer.Init(*GetOcctShape(), TopAbs_EDGE); occtExplorer.More(); occtExplorer.Next())
 		{
 			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-			if (!occtWires.Contains(occtCurrent))
+			if (!occtEdges.Contains(occtCurrent))
 			{
-				occtWires.Add(occtCurrent);
-			}
-		}
-
-		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtWires.cbegin();
-			kOcctShapeIterator != occtWires.cend();
-			kOcctShapeIterator++)
-		{
-			BRepTools_WireExplorer occtWireExplorer;
-			for (occtWireExplorer.Init(TopoDS::Wire(*kOcctShapeIterator)); occtWireExplorer.More(); occtWireExplorer.Next())
-			{
-				rEdges.push_back(new Edge(new TopoDS_Edge(occtWireExplorer.Current())));
+				occtEdges.Add(occtCurrent);
+				rEdges.push_back(new Edge(new TopoDS_Edge(TopoDS::Edge(occtCurrent))));
 			}
 		}
 	}

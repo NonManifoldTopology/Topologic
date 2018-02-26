@@ -18,14 +18,14 @@ namespace TopoLogic {
 		/// <param name="edges">The edges.</param>
 		/// <exception cref="ArgumentException">Thrown if any of the arguments is not a TopoLogic edge.</exception>
 		/// <returns>Te created TopoLogic wire</returns>
-		Wire^ ByEdges(List<Edge^>^ edges);
+		static Wire^ ByEdges(List<Edge^>^ edges);
 
 		/// <summary>
 		/// Creates a wire by a polycurve (including a polygon)
 		/// </summary>
 		/// <param name="polycurve">The polycurve</param>
 		/// <returns>The created TopoLogic wire</returns>
-		Wire^ ByPolyCurve(Autodesk::DesignScript::Geometry::PolyCurve^ polycurve);
+		static Wire^ ByPolyCurve(Autodesk::DesignScript::Geometry::PolyCurve^ polycurve);
 
 		/// <summary>
 		/// Gets the list of edges constituent to this wire.

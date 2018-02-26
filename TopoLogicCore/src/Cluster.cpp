@@ -1,5 +1,6 @@
 #include <Cluster.h>
 #include <GlobalCluster.h>
+#include <CellComplex.h>
 #include <Cell.h>
 #include <Vertex.h>
 #include <Edge.h>
@@ -290,6 +291,27 @@ namespace TopoLogicCore
 			kOcctShapeIterator++)
 		{
 			rCells.push_back(new Cell(new TopoDS_Solid(TopoDS::Solid(*kOcctShapeIterator))));
+		}
+	}
+
+	void Cluster::CellComplexes(std::list<CellComplex*>& rCellComplexes) const
+	{
+		TopExp_Explorer occtExplorer;
+		TopTools_MapOfShape occtCellComplexes;
+		for (occtExplorer.Init(*GetOcctShape(), TopAbs_COMPSOLID); occtExplorer.More(); occtExplorer.Next())
+		{
+			const TopoDS_Shape& rkOcctCurrent = occtExplorer.Current();
+			if (!occtCellComplexes.Contains(rkOcctCurrent))
+			{
+				occtCellComplexes.Add(rkOcctCurrent);
+			}
+		}
+
+		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtCellComplexes.cbegin();
+			kOcctShapeIterator != occtCellComplexes.cend();
+			kOcctShapeIterator++)
+		{
+			rCellComplexes.push_back(new CellComplex(new TopoDS_CompSolid(TopoDS::CompSolid(*kOcctShapeIterator))));
 		}
 	}
 
