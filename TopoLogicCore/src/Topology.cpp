@@ -28,6 +28,8 @@
 #include <TopExp_Explorer.hxx>
 #include <TopTools_MapOfShape.hxx>
 
+#include <array>
+
 namespace TopoLogicCore
 {
 	void AddOcctListShapeToAnotherList(const BOPCol_ListOfShape& rkAList, BOPCol_ListOfShape& rAnotherList)
@@ -138,51 +140,72 @@ namespace TopoLogicCore
 		return BRepTools::Read(occtShape, rkPath.c_str(), occtBRepBuilder);
 	}
 
+	std::string Topology::Analyze(const TopoDS_Shape& rkShape, const int kLevel)
+	{
+		BOPCol_ListOfShape occtImmediateMembers;
+		ImmediateMembers(rkShape, occtImmediateMembers);
+
+		std::array<std::string, 8> occtShapeNameSingular;
+		occtShapeNameSingular[0] = "a Cluster";
+		occtShapeNameSingular[1] = "a CellComplex";
+		occtShapeNameSingular[2] = "a Cell";
+		occtShapeNameSingular[3] = "a Shell";
+		occtShapeNameSingular[4] = "a Face";
+		occtShapeNameSingular[5] = "a Wire";
+		occtShapeNameSingular[6] = "an Edge";
+		occtShapeNameSingular[7] = "a Vertex";
+
+		std::array<std::string, 8> occtShapeNamePlural;
+		occtShapeNamePlural[0] = "Clusters";
+		occtShapeNamePlural[1] = "CellComplexes";
+		occtShapeNamePlural[2] = "Cells";
+		occtShapeNamePlural[3] = "Shells";
+		occtShapeNamePlural[4] = "Faces";
+		occtShapeNamePlural[5] = "Wires";
+		occtShapeNamePlural[6] = "Edges";
+		occtShapeNamePlural[7] = "Vertices";
+
+		TopAbs_ShapeEnum occtShapeType = rkShape.ShapeType();
+		std::stringstream ssCurrentIndent;
+		for (int i = 0; i < kLevel; ++i)
+		{
+			ssCurrentIndent << "  ";
+		}
+		std::string currentIndent = ssCurrentIndent.str();
+		int numberOfSubentities[8] = { 0,0,0,0,0,0,0,0 };
+		for (BOPCol_ListOfShape::const_iterator kMemberIterator = occtImmediateMembers.begin();
+			kMemberIterator != occtImmediateMembers.end();
+			kMemberIterator++)
+		{
+			const TopoDS_Shape& rkMemberTopology = *kMemberIterator;
+			TopAbs_ShapeEnum occtShapeMemberType = rkMemberTopology.ShapeType();
+			numberOfSubentities[occtShapeMemberType]++;
+		}
+
+		std::stringstream ssCurrentResult;
+		ssCurrentResult << currentIndent << "The shape is " << occtShapeNameSingular[occtShapeType] << "." << std::endl;
+
+		for (int i = occtShapeType + 1; i < 8; ++i)
+		{
+			ssCurrentResult << currentIndent << "Number of " << occtShapeNamePlural[i] << " = " << numberOfSubentities[i] << std::endl;
+		}
+		ssCurrentResult << currentIndent << "================" << std::endl;
+
+		for (BOPCol_ListOfShape::const_iterator kMemberIterator = occtImmediateMembers.begin();
+			kMemberIterator != occtImmediateMembers.end();
+			kMemberIterator++)
+		{
+			const TopoDS_Shape& rkMemberTopology = *kMemberIterator;
+			std::string strMemberAnalyze = Analyze(rkMemberTopology, kLevel + 1);
+			ssCurrentResult << strMemberAnalyze;
+		}
+
+		return ssCurrentResult.str();
+	}
+
 	std::string Topology::Analyze()
 	{
-		ShapeAnalysis_ShapeContents occtShapeAnalysis;
-		occtShapeAnalysis.Perform(*GetOcctShape());
-
-		std::string shapeType;
-		switch (GetOcctShape()->ShapeType())
-		{
-		case TopAbs_COMPOUND: shapeType = "Cluster"; break;
-		case TopAbs_COMPSOLID: shapeType = "CellComplex"; break;
-		case TopAbs_SOLID: shapeType = "Cell"; break;
-		case TopAbs_SHELL: shapeType = "Shell"; break;
-		case TopAbs_FACE: shapeType = "Face"; break;
-		case TopAbs_WIRE: shapeType = "Wire"; break;
-		case TopAbs_EDGE: shapeType = "Edge"; break;
-		case TopAbs_VERTEX: shapeType = "Vertex"; break;
-		default: shapeType = "invalid shape"; break;
-		}
-
-		// No method is provided in ShapeAnalysis_ShapeContents to compute the number of CompSolids.
-		// Do this manually.
-		int numberCompSolids = 0;
-		TopExp_Explorer occtExplorer;
-		BOPCol_ListOfShape occtCompSolids;
-		for (occtExplorer.Init(*GetOcctShape(), TopAbs_COMPSOLID); occtExplorer.More(); occtExplorer.Next())
-		{
-			const TopoDS_Shape& rkOcctCurrent = occtExplorer.Current();
-			if (!occtCompSolids.Contains(rkOcctCurrent))
-			{
-				occtCompSolids.Append(rkOcctCurrent);
-				numberCompSolids++;
-			}
-		}
-		std::stringstream resultStream;
-		resultStream <<
-			"The shape is a " << shapeType << "." << std::endl <<
-			"Number of cell complexes = " << numberCompSolids << std::endl <<
-			"Number of cells = " << occtShapeAnalysis.NbSharedSolids() << std::endl <<
-			"Number of shells = " << occtShapeAnalysis.NbSharedShells() << std::endl <<
-			"Number of faces = " << occtShapeAnalysis.NbSharedFaces() << std::endl <<
-			"Number of wires = " << occtShapeAnalysis.NbSharedWires() << std::endl <<
-			"Number of edges = " << occtShapeAnalysis.NbSharedEdges() << std::endl <<
-			"Number of vertices = " << occtShapeAnalysis.NbSharedVertices() << std::endl;
-
-		return resultStream.str();
+		return Analyze(*GetOcctShape(), 0);
 	}
 
 	bool Topology::Locked() const
@@ -868,8 +891,7 @@ namespace TopoLogicCore
 		return BooleanOperation(kpkOtherTopology, BOOLEAN_XOR);
 	}
 
-
-	void Topology::ImmediateMembers(std::list<Topology*>& rImmediateMembers) const
+	void Topology::ImmediateMembers(const TopoDS_Shape& rkShape, BOPCol_ListOfShape& rImmediateMembers)
 	{
 		TopAbs_ShapeEnum occtShapeEnum[8] =
 		{
@@ -883,16 +905,16 @@ namespace TopoLogicCore
 			TopAbs_VERTEX
 		};
 
-		TopAbs_ShapeEnum occtShapeType = GetOcctShape()->ShapeType();
+		TopAbs_ShapeEnum occtShapeType = rkShape.ShapeType();
 		for (int typeIndex = occtShapeType; typeIndex < 8; ++typeIndex)
 		{
 			// Get all children of this type
 			TopExp_Explorer occtExplorer;
-			for (occtExplorer.Init(*GetOcctShape(), occtShapeEnum[typeIndex]); occtExplorer.More(); occtExplorer.Next())
+			for (occtExplorer.Init(rkShape, occtShapeEnum[typeIndex]); occtExplorer.More(); occtExplorer.Next())
 			{
 				bool hasAnotherParent = false;
 				const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-				if (occtCurrent.IsSame(*GetOcctShape()))
+				if (occtCurrent.IsSame(rkShape))
 				{
 					continue;
 				}
@@ -902,7 +924,7 @@ namespace TopoLogicCore
 				for (int parentTypeIndex = occtShapeType; parentTypeIndex < typeIndex && !hasAnotherParent; ++parentTypeIndex)
 				{
 					TopTools_IndexedDataMapOfShapeListOfShape occtParentsMap;
-					TopExp::MapShapesAndUniqueAncestors(*GetOcctShape(), occtShapeEnum[typeIndex], occtShapeEnum[parentTypeIndex], occtParentsMap);
+					TopExp::MapShapesAndUniqueAncestors(rkShape, occtShapeEnum[typeIndex], occtShapeEnum[parentTypeIndex], occtParentsMap);
 
 					const TopTools_ListOfShape& rkOcctParents = occtParentsMap.FindFromKey(occtCurrent);
 
@@ -912,7 +934,7 @@ namespace TopoLogicCore
 					{
 						const TopoDS_Shape& rkOcctParent = *kParentIterator;
 						if (rkOcctParent.ShapeType() != occtShapeType ||
-							(rkOcctParent.ShapeType() == occtShapeType && !rkOcctParent.IsSame(*GetOcctShape())))
+							(rkOcctParent.ShapeType() == occtShapeType && !rkOcctParent.IsSame(rkShape)))
 						{
 							hasAnotherParent = true;
 						}
@@ -921,10 +943,21 @@ namespace TopoLogicCore
 
 				if (!hasAnotherParent)
 				{
-					rImmediateMembers.push_back(Topology::ByOcctShape(occtCurrent));
+					rImmediateMembers.Append(occtCurrent);
 				}
 			}
+		}
+	}
 
+	void Topology::ImmediateMembers(std::list<Topology*>& rImmediateMembers) const
+	{
+		BOPCol_ListOfShape occtListMembers;
+		Topology::ImmediateMembers(*GetOcctShape(), occtListMembers);
+		for (BOPCol_ListOfShape::const_iterator kIterator = occtListMembers.begin();
+			kIterator != occtListMembers.end();
+			kIterator++)
+		{
+			rImmediateMembers.push_back(Topology::ByOcctShape(*kIterator));
 		}
 	}
 }

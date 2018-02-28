@@ -234,7 +234,6 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkTopology"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API std::string Analyze();
 
@@ -311,6 +310,21 @@ namespace TopoLogicCore
 		/// <param name="rkOcctShape"></param>
 		/// <returns></returns>
 		static TopoDS_CompSolid MakeCompSolid(const TopoDS_Shape& rkOcctShape);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkShape"></param>
+		/// <param name="rImmediateMembers"></param>
+		static void ImmediateMembers(const TopoDS_Shape& rkShape, BOPCol_ListOfShape& rImmediateMembers);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkShape"></param>
+		/// <param name="kLevel"></param>
+		/// <returns></returns>
+		static std::string Analyze(const TopoDS_Shape& rkShape, const int kLevel = 0);
 
 		AttributeMap m_attributeMap;
 		std::list<Topology*> m_members;
