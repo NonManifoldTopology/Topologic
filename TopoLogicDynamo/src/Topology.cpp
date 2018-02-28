@@ -275,4 +275,22 @@ namespace TopoLogic
 			throw gcnew Exception(gcnew String(e.what()));
 		}
 	}
+
+	List<Topology^>^ Topology::ImmediateMembers()
+	{
+		TopoLogicCore::Topology* pCoreTopology = GetCoreTopology();
+
+		std::list<TopoLogicCore::Topology*> coreTopologies;
+		pCoreTopology->ImmediateMembers(coreTopologies);
+
+		List<Topology^>^ pTopologies = gcnew List<Topology^>();
+		for (std::list<TopoLogicCore::Topology*>::const_iterator kTopologyIterator = coreTopologies.begin();
+			kTopologyIterator != coreTopologies.end();
+			kTopologyIterator++)
+		{
+			Topology^ pTopology = Topology::ByCoreTopology(*kTopologyIterator);
+			pTopologies->Add(pTopology);
+		}
+		return pTopologies;
+	}
 }

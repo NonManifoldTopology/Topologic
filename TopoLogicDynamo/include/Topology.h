@@ -162,6 +162,12 @@ namespace TopoLogic
 		/// <returns name="String">The topological information of the input entity</returns>
 		String^ Analyze();
 
+		/// <summary>
+		/// Returns all sub-entities that have no other parents than this cluster, i.e. do not belong to other entities.
+		/// </summary>
+		/// <returns>The immediate members</returns>
+		List<Topology^>^ ImmediateMembers();
+
 	public protected:
 		static Topology^ ByCoreTopology(TopoLogicCore::Topology * const kpCoreTopology);
 

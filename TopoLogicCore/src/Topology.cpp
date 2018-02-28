@@ -24,12 +24,9 @@
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_FrozenShape.hxx>
 #include <TopoDS_UnCompatibleShapes.hxx>
+#include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopTools_MapOfShape.hxx>
-#include <BRepAlgo_Image.hxx>
-#include <BOPAlgo_MakerVolume.hxx>
-
-#include <BRepBuilderAPI_MakeSolid.hxx>
 
 namespace TopoLogicCore
 {
@@ -869,5 +866,65 @@ namespace TopoLogicCore
 	Topology* Topology::XOR(Topology const * const kpkOtherTopology)
 	{
 		return BooleanOperation(kpkOtherTopology, BOOLEAN_XOR);
+	}
+
+
+	void Topology::ImmediateMembers(std::list<Topology*>& rImmediateMembers) const
+	{
+		TopAbs_ShapeEnum occtShapeEnum[8] =
+		{
+			TopAbs_COMPOUND,
+			TopAbs_COMPSOLID,
+			TopAbs_SOLID,
+			TopAbs_SHELL,
+			TopAbs_FACE,
+			TopAbs_WIRE,
+			TopAbs_EDGE,
+			TopAbs_VERTEX
+		};
+
+		TopAbs_ShapeEnum occtShapeType = GetOcctShape()->ShapeType();
+		for (int typeIndex = occtShapeType; typeIndex < 8; ++typeIndex)
+		{
+			// Get all children of this type
+			TopExp_Explorer occtExplorer;
+			for (occtExplorer.Init(*GetOcctShape(), occtShapeEnum[typeIndex]); occtExplorer.More(); occtExplorer.Next())
+			{
+				bool hasAnotherParent = false;
+				const TopoDS_Shape& occtCurrent = occtExplorer.Current();
+				if (occtCurrent.IsSame(*GetOcctShape()))
+				{
+					continue;
+				}
+
+				// Check if there is any parent other than this topology.
+				// Stop checking if any other parent is found.
+				for (int parentTypeIndex = occtShapeType; parentTypeIndex < typeIndex && !hasAnotherParent; ++parentTypeIndex)
+				{
+					TopTools_IndexedDataMapOfShapeListOfShape occtParentsMap;
+					TopExp::MapShapesAndUniqueAncestors(*GetOcctShape(), occtShapeEnum[typeIndex], occtShapeEnum[parentTypeIndex], occtParentsMap);
+
+					const TopTools_ListOfShape& rkOcctParents = occtParentsMap.FindFromKey(occtCurrent);
+
+					for (TopTools_ListOfShape::const_iterator kParentIterator = rkOcctParents.cbegin();
+						kParentIterator != rkOcctParents.cend();
+						kParentIterator++)
+					{
+						const TopoDS_Shape& rkOcctParent = *kParentIterator;
+						if (rkOcctParent.ShapeType() != occtShapeType ||
+							(rkOcctParent.ShapeType() == occtShapeType && !rkOcctParent.IsSame(*GetOcctShape())))
+						{
+							hasAnotherParent = true;
+						}
+					}
+				}
+
+				if (!hasAnotherParent)
+				{
+					rImmediateMembers.push_back(Topology::ByOcctShape(occtCurrent));
+				}
+			}
+
+		}
 	}
 }

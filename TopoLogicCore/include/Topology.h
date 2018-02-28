@@ -289,6 +289,12 @@ namespace TopoLogicCore
 			return pSubclassTopology;
 		}
 
+		/// <summary>
+		/// Returns all sub-entities that have no other parents than this topology, i.e. do not belong to other entities.
+		/// </summary>
+		/// <param name="rImmediateMembers">The immediate members</param>
+		TOPOLOGIC_API void ImmediateMembers(std::list<Topology*>& rImmediateMembers) const;
+
 	protected:
 		Topology(const int kDimensionality);
 		
