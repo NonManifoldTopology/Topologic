@@ -31,8 +31,8 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpOcctFace"></param>
-		Face(TopoDS_Face * const kpOcctFace);
+		/// <param name="rkOcctFace"></param>
+		Face(const TopoDS_Face& rkOcctFace);
 
 		virtual ~Face();
 

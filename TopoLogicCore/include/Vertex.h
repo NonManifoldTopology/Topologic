@@ -23,8 +23,8 @@ namespace TopoLogicCore
 		/// <summary>
 		/// Creates a vertex by an OCCT vertex.
 		/// </summary>
-		/// <param name="kpOcctVertex">An OCCT vertex</param>
-		Vertex(TopoDS_Vertex * const kpOcctVertex);
+		/// <param name="rkOcctVertex">An OCCT vertex</param>
+		Vertex(const TopoDS_Vertex& rkOcctVertex);
 
 		virtual ~Vertex();
 

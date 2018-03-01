@@ -147,9 +147,9 @@ namespace TopoLogicCore
 		}
 	}
 
-	Cluster::Cluster(TopoDS_Compound * const kpOcctCompound, const bool kAddToGlobalCluster)
+	Cluster::Cluster(const TopoDS_Compound& rkOcctCompound, const bool kAddToGlobalCluster)
 		: Topology(3)
-		, m_pOcctCompound(kpOcctCompound)
+		, m_pOcctCompound(new TopoDS_Compound(rkOcctCompound))
 	{
 		// This constructor does not initialise the compound with MakeCompound.
 
@@ -185,7 +185,7 @@ namespace TopoLogicCore
 			kOcctShapeIterator != occtShells.cend();
 			kOcctShapeIterator++)
 		{
-			rShells.push_back(new Shell(new TopoDS_Shell(TopoDS::Shell(*kOcctShapeIterator))));
+			rShells.push_back(new Shell(TopoDS::Shell(*kOcctShapeIterator)));
 		}
 	}
 
@@ -206,7 +206,7 @@ namespace TopoLogicCore
 			kOcctShapeIterator != occtEdges.cend();
 			kOcctShapeIterator++)
 		{
-			rEdges.push_back(new Edge(new TopoDS_Edge(TopoDS::Edge(*kOcctShapeIterator))));
+			rEdges.push_back(new Edge(TopoDS::Edge(*kOcctShapeIterator)));
 		}
 	}
 
@@ -227,7 +227,7 @@ namespace TopoLogicCore
 			kOcctShapeIterator != occtFaces.cend();
 			kOcctShapeIterator++)
 		{
-			rFaces.push_back(new Face(new TopoDS_Face(TopoDS::Face(*kOcctShapeIterator))));
+			rFaces.push_back(new Face(TopoDS::Face(*kOcctShapeIterator)));
 		}
 	}
 
@@ -248,7 +248,7 @@ namespace TopoLogicCore
 			kOcctShapeIterator != occtVertices.cend();
 			kOcctShapeIterator++)
 		{
-			rVertices.push_back(new Vertex(new TopoDS_Vertex(TopoDS::Vertex(*kOcctShapeIterator))));
+			rVertices.push_back(new Vertex(TopoDS::Vertex(*kOcctShapeIterator)));
 		}
 	}
 
@@ -269,7 +269,7 @@ namespace TopoLogicCore
 			kOcctShapeIterator != occtWires.cend();
 			kOcctShapeIterator++)
 		{
-			rWires.push_back(new Wire(new TopoDS_Wire(TopoDS::Wire(*kOcctShapeIterator))));
+			rWires.push_back(new Wire(TopoDS::Wire(*kOcctShapeIterator)));
 		}
 	}
 
@@ -290,7 +290,7 @@ namespace TopoLogicCore
 			kOcctShapeIterator != occtCells.cend();
 			kOcctShapeIterator++)
 		{
-			rCells.push_back(new Cell(new TopoDS_Solid(TopoDS::Solid(*kOcctShapeIterator))));
+			rCells.push_back(new Cell(TopoDS::Solid(*kOcctShapeIterator)));
 		}
 	}
 
@@ -311,7 +311,7 @@ namespace TopoLogicCore
 			kOcctShapeIterator != occtCellComplexes.cend();
 			kOcctShapeIterator++)
 		{
-			rCellComplexes.push_back(new CellComplex(new TopoDS_CompSolid(TopoDS::CompSolid(*kOcctShapeIterator))));
+			rCellComplexes.push_back(new CellComplex(TopoDS::CompSolid(*kOcctShapeIterator)));
 		}
 	}
 

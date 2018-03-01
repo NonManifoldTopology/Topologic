@@ -29,9 +29,9 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpOcctCompound"></param>
+		/// <param name="rkOcctCompound"></param>
 		/// <param name="kAddToGlobalCluster"></param>
-		Cluster(TopoDS_Compound * const kpOcctCompound, const bool kAddToGlobalCluster = true);
+		Cluster(const TopoDS_Compound& rkOcctCompound, const bool kAddToGlobalCluster = true);
 
 		virtual ~Cluster();
 

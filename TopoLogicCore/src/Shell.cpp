@@ -40,7 +40,7 @@ namespace TopoLogicCore
 			if (kIterator->ShapeType() == TopAbs_SOLID)
 			{
 				const TopoDS_Solid& rkOcctSolid = TopoDS::Solid(*kIterator);
-				return new TopoLogicCore::Cell(new TopoDS_Solid(rkOcctSolid));
+				return new TopoLogicCore::Cell(rkOcctSolid);
 			}
 		}
 
@@ -64,7 +64,7 @@ namespace TopoLogicCore
 			kOcctShapeIterator != occtEdges.cend();
 			kOcctShapeIterator++)
 		{
-			rEdges.push_back(new Edge(new TopoDS_Edge(TopoDS::Edge(*kOcctShapeIterator))));
+			rEdges.push_back(new Edge(TopoDS::Edge(*kOcctShapeIterator)));
 		}
 	}
 
@@ -85,7 +85,7 @@ namespace TopoLogicCore
 			kOcctShapeIterator != occtWires.cend();
 			kOcctShapeIterator++)
 		{
-			rWires.push_back(new Wire(new TopoDS_Wire(TopoDS::Wire(*kOcctShapeIterator))));
+			rWires.push_back(new Wire(TopoDS::Wire(*kOcctShapeIterator)));
 		}
 	}
 
@@ -106,7 +106,7 @@ namespace TopoLogicCore
 			kOcctShapeIterator != occtFaces.cend();
 			kOcctShapeIterator++)
 		{
-			rFaces.push_back(new Face(new TopoDS_Face(TopoDS::Face(*kOcctShapeIterator))));
+			rFaces.push_back(new Face(TopoDS::Face(*kOcctShapeIterator)));
 		}
 	}
 
@@ -132,7 +132,7 @@ namespace TopoLogicCore
 			kOcctShapeIterator != occtVertices.cend();
 			kOcctShapeIterator++)
 		{
-			rVertices.push_back(new Vertex(new TopoDS_Vertex(TopoDS::Vertex(*kOcctShapeIterator))));
+			rVertices.push_back(new Vertex(TopoDS::Vertex(*kOcctShapeIterator)));
 		}
 	}
 
@@ -148,12 +148,7 @@ namespace TopoLogicCore
 		}
 
 		occtSewing.Perform();
-		TopoDS_Shell* pOcctShell = new TopoDS_Shell(TopoDS::Shell(occtSewing.SewedShape()));
-		ShapeFix_Shell occtShapeFixShell;
-		occtShapeFixShell.Init(*pOcctShell);
-		occtShapeFixShell.Perform();
-
-		return new Shell(pOcctShell);
+		return new Shell(TopoDS::Shell(occtSewing.SewedShape()));
 	}
 
 	/*Shell * Shell::ByPolySurface(TopoDS_Shell const * const kpkOcctShell)
@@ -195,7 +190,7 @@ namespace TopoLogicCore
 
 			TopoDS_Wire* pOcctWire = new TopoDS_Wire(occtMakeWire);
 			BRepBuilderAPI_MakeFace occtMakeFace(*pOcctWire);
-			faces.push_back(new Face(new TopoDS_Face(occtMakeFace)));
+			faces.push_back(new Face(occtMakeFace));
 		}
 		return ByFaces(faces);
 	}
@@ -225,10 +220,13 @@ namespace TopoLogicCore
 		}
 	}
 
-	Shell::Shell(TopoDS_Shell * const kpOcctShell)
+	Shell::Shell(const TopoDS_Shell& rkOcctShell)
 		: Topology(2)
-		, m_pOcctShell(kpOcctShell)
+		, m_pOcctShell(nullptr)
 	{
+		ShapeFix_Shell occtShapeFixShell(rkOcctShell);
+		occtShapeFixShell.Perform();
+		m_pOcctShell = new TopoDS_Shell(occtShapeFixShell.Shell());
 		GlobalCluster::GetInstance().Add(this);
 	}
 

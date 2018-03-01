@@ -21,13 +21,13 @@ namespace TopoLogicCore
 	Vertex* Edge::StartVertex() const
 	{
 		ShapeAnalysis_Edge shapeAnalysisEdge;
-		return new Vertex(new TopoDS_Vertex(shapeAnalysisEdge.FirstVertex(TopoDS::Edge(*GetOcctShape()))));
+		return new Vertex(shapeAnalysisEdge.FirstVertex(TopoDS::Edge(*GetOcctShape())));
 	}
 
 	Vertex* Edge::EndVertex() const
 	{
 		ShapeAnalysis_Edge shapeAnalysisEdge;
-		return new Vertex(new TopoDS_Vertex(shapeAnalysisEdge.LastVertex(TopoDS::Edge(*GetOcctShape()))));
+		return new Vertex(shapeAnalysisEdge.LastVertex(TopoDS::Edge(*GetOcctShape())));
 	}
 
 	void Edge::Wires(std::list<Wire*>& rWires) const
@@ -44,7 +44,7 @@ namespace TopoLogicCore
 			if (kIterator->ShapeType() == TopAbs_WIRE)
 			{
 				const TopoDS_Wire& rkOcctWire = TopoDS::Wire(*kIterator);
-				rWires.push_back(new Wire(new TopoDS_Wire(rkOcctWire)));
+				rWires.push_back(new Wire(rkOcctWire));
 			}
 		}
 	}
@@ -87,7 +87,7 @@ namespace TopoLogicCore
 		const double kOcctParameter1 = kOcctFirstParameter + rkParameter1 * kOcctDeltaParameter;
 		const double kOcctParameter2 = kOcctFirstParameter + rkParameter2 * kOcctDeltaParameter;
 
-		return new Edge(new TopoDS_Edge(BRepBuilderAPI_MakeEdge(pOcctCurve, kOcctParameter1, kOcctParameter2)));
+		return new Edge(BRepBuilderAPI_MakeEdge(pOcctCurve, kOcctParameter1, kOcctParameter2));
 	}
 
 	Edge* Edge::ByVertices(const std::list<Vertex*>& rkVertices)
@@ -108,7 +108,7 @@ namespace TopoLogicCore
 			Vertex* pVertex2 = *(++rkVertices.begin());
 			BRepBuilderAPI_MakeEdge occtMakeEdge(TopoDS::Vertex(*pVertex1->GetOcctShape()),
 				TopoDS::Vertex(*pVertex2->GetOcctShape()));
-			return new Edge(new TopoDS_Edge(occtMakeEdge.Edge()));
+			return new Edge(occtMakeEdge.Edge());
 		}
 
 		// else more than 2 vertices
@@ -126,20 +126,15 @@ namespace TopoLogicCore
 		occtInterpolate.Perform();
 		Handle(Geom_Curve) pOcctCurveOnTargetSurface = occtInterpolate.Curve();
 
-		return new Edge(new TopoDS_Edge(BRepBuilderAPI_MakeEdge(pOcctCurveOnTargetSurface)));
+		return new Edge(BRepBuilderAPI_MakeEdge(pOcctCurveOnTargetSurface));
 	}
 
 	Vertex* Edge::SharedVertex(Edge const * const kpkAnotherEdge) const
 	{
-		TopoDS_Vertex* pOcctSharedVertex = new TopoDS_Vertex();
-		bool result = TopExp::CommonVertex(*m_pOcctEdge, TopoDS::Edge(*kpkAnotherEdge->GetOcctShape()), *pOcctSharedVertex);
-		if (!result)
-		{
-			delete pOcctSharedVertex;
-			return nullptr;
-		}
+		TopoDS_Vertex occtSharedVertex;
+		bool result = TopExp::CommonVertex(*m_pOcctEdge, TopoDS::Edge(*kpkAnotherEdge->GetOcctShape()), occtSharedVertex);
 
-		return new Vertex(pOcctSharedVertex);
+		return new Vertex(occtSharedVertex);
 	}
 
 	void Edge::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
@@ -165,9 +160,9 @@ namespace TopoLogicCore
 		return BRep_Tool::Curve(TopoDS::Edge(*GetOcctShape()), u0, u1);
 	}
 
-	Edge::Edge(TopoDS_Edge * const kpOcctEdge)
+	Edge::Edge(const TopoDS_Edge& rkOcctEdge)
 		: Topology(1)
-		, m_pOcctEdge(kpOcctEdge)
+		, m_pOcctEdge(new TopoDS_Edge(rkOcctEdge))
 	{
 		GlobalCluster::GetInstance().Add(this);
 	}

@@ -23,8 +23,8 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpOcctCell"></param>
-		Cell(TopoDS_Solid * const kpOcctSolid);
+		/// <param name="rkOcctSolid"></param>
+		Cell(const TopoDS_Solid& rkOcctSolid);
 		virtual ~Cell();
 
 		/// <summary>

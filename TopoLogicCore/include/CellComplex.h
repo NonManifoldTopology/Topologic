@@ -20,8 +20,8 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpOcctCompSolid"></param>
-		CellComplex(TopoDS_CompSolid * const kpOcctCompSolid);
+		/// <param name="rkOcctCompSolid"></param>
+		CellComplex(const TopoDS_CompSolid& rkOcctCompSolid);
 
 		virtual ~CellComplex();
 

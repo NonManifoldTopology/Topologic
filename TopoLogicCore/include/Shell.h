@@ -24,8 +24,8 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpOcctShell"></param>
-		Shell(TopoDS_Shell * const kpOcctShell);
+		/// <param name="rkOcctShell"></param>
+		Shell(const TopoDS_Shell& rkOcctShell);
 
 		virtual ~Shell();
 

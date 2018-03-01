@@ -54,7 +54,7 @@ namespace TopoLogicCore
 				bool faceFound = TopOpeBRepBuild_Tools::GetAdjacentFace(*GetOcctShape(), occtWireExplorer.Current(), occtEdgeFaceMap, occtFace);
 				if (faceFound)
 				{
-					rFaces.push_back(new Face(new TopoDS_Face(occtFace)));
+					rFaces.push_back(new Face(occtFace));
 				}
 			}
 		}
@@ -79,7 +79,7 @@ namespace TopoLogicCore
 			if (kIterator->ShapeType() == TopAbs_SOLID)
 			{
 				const TopoDS_Solid& rkOcctSolid = TopoDS::Solid(*kIterator);
-				rCells.push_back(new Cell(new TopoDS_Solid(rkOcctSolid)));
+				rCells.push_back(new Cell(rkOcctSolid));
 			}
 		}
 	}
@@ -94,7 +94,7 @@ namespace TopoLogicCore
 			if (!occtEdges.Contains(occtCurrent))
 			{
 				occtEdges.Add(occtCurrent);
-				rEdges.push_back(new Edge(new TopoDS_Edge(TopoDS::Edge(occtCurrent))));
+				rEdges.push_back(new Edge(TopoDS::Edge(occtCurrent)));
 			}
 		}
 	}
@@ -119,7 +119,7 @@ namespace TopoLogicCore
 			if (kIterator->ShapeType() == TopAbs_SHELL)
 			{
 				const TopoDS_Shell& pOcctShell = TopoDS::Shell(*kIterator);
-				rShells.push_back(new Shell(new TopoDS_Shell(pOcctShell)));
+				rShells.push_back(new Shell(pOcctShell));
 			}
 		}
 	}
@@ -134,7 +134,7 @@ namespace TopoLogicCore
 			if (!occtVertices.Contains(occtCurrent))
 			{
 				occtVertices.Add(occtCurrent);
-				rVertices.push_back(new Vertex(new TopoDS_Vertex(TopoDS::Vertex(occtCurrent))));
+				rVertices.push_back(new Vertex(TopoDS::Vertex(occtCurrent)));
 			}
 		}
 	}
@@ -149,7 +149,7 @@ namespace TopoLogicCore
 			if (!occtWires.Contains(occtCurrent))
 			{
 				occtWires.Add(occtCurrent);
-				rWires.push_back(new Wire(new TopoDS_Wire(TopoDS::Wire(occtCurrent))));
+				rWires.push_back(new Wire(TopoDS::Wire(occtCurrent)));
 			}
 		}
 	}
@@ -165,7 +165,7 @@ namespace TopoLogicCore
 		BRepBuilderAPI_MakeFace occtMakeFace;
 		try {
 			occtMakeFace = BRepBuilderAPI_MakeFace(TopoDS::Wire(*kpkWire->GetOcctShape()));
-			return new Face(new TopoDS_Face(occtMakeFace));
+			return new Face(occtMakeFace);
 		}
 		catch (StdFail_NotDone&)
 		{
@@ -183,10 +183,7 @@ namespace TopoLogicCore
 		BRepBuilderAPI_MakeFace occtMakeFace;
 		try {
 			occtMakeFace = BRepBuilderAPI_MakeFace(pOcctSurface, Precision::Confusion());
-			ShapeFix_Face occtFixFace(occtMakeFace.Face());
-			occtFixFace.Perform();
-			const TopoDS_Face& rkFixedFace = occtFixFace.Face();
-			return new Face(new TopoDS_Face(rkFixedFace));
+			return new Face(occtMakeFace);
 		}
 		catch (StdFail_NotDone&)
 		{
@@ -313,10 +310,7 @@ namespace TopoLogicCore
 			occtMakeFace.Add(TopoDS::Wire(*(*kInnerWireIterator)->GetOcctShape()));
 		}
 
-		ShapeFix_Face occtFixFace(occtMakeFace.Face());
-		occtFixFace.Perform();
-		const TopoDS_Face& rkFixedFace = occtFixFace.Face();
-		return new Face(new TopoDS_Face(rkFixedFace));
+		return new Face(occtMakeFace);
 	}
 
 	void Face::SharedEdges(Face const * const kpkAnotherFace, std::list<Edge*>& rEdges) const
@@ -339,7 +333,7 @@ namespace TopoLogicCore
 			kOcctShapeIterator != occtEdges.cend();
 			kOcctShapeIterator++)
 		{
-			rEdges.push_back(new Edge(new TopoDS_Edge(TopoDS::Edge(*kOcctShapeIterator))));
+			rEdges.push_back(new Edge(TopoDS::Edge(*kOcctShapeIterator)));
 		}
 	}
 
@@ -363,13 +357,13 @@ namespace TopoLogicCore
 			kOcctShapeIterator != occtVertices.cend();
 			kOcctShapeIterator++)
 		{
-			rVertices.push_back(new Vertex(new TopoDS_Vertex(TopoDS::Vertex(*kOcctShapeIterator))));
+			rVertices.push_back(new Vertex(TopoDS::Vertex(*kOcctShapeIterator)));
 		}
 	}
 
 	Wire* Face::OuterWire() const
 	{
-		return new Wire(new TopoDS_Wire(ShapeAnalysis::OuterWire(TopoDS::Face(*GetOcctShape()))));
+		return new Wire(ShapeAnalysis::OuterWire(TopoDS::Face(*GetOcctShape())));
 	}
 
 	void Face::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
@@ -388,10 +382,13 @@ namespace TopoLogicCore
 		return m_pOcctFace;
 	}
 
-	Face::Face(TopoDS_Face * const kpOcctFace)
+	Face::Face(const TopoDS_Face& rkOcctFace)
 		: Topology(2)
-		, m_pOcctFace(kpOcctFace)
+		, m_pOcctFace(nullptr)
 	{
+		ShapeFix_Face occtShapeFix(rkOcctFace);
+		occtShapeFix.Perform();
+		m_pOcctFace = new TopoDS_Face(occtShapeFix.Face());
 		GlobalCluster::GetInstance().Add(this);
 	}
 

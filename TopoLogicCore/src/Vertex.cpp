@@ -14,9 +14,9 @@
 
 namespace TopoLogicCore
 {
-	Vertex::Vertex(TopoDS_Vertex * const kpOcctVertex)
+	Vertex::Vertex(const TopoDS_Vertex& rkOcctVertex)
 		: Topology(0)
-		, m_pOcctVertex(kpOcctVertex)
+		, m_pOcctVertex(new TopoDS_Vertex(rkOcctVertex))
 	{
 		GlobalCluster::GetInstance().Add(this);
 	}
@@ -29,7 +29,7 @@ namespace TopoLogicCore
 
 	Vertex* Vertex::ByPoint(Handle(Geom_Point) pOcctPoint)
 	{
-		return new Vertex(new TopoDS_Vertex(BRepBuilderAPI_MakeVertex(pOcctPoint->Pnt())));
+		return new Vertex(BRepBuilderAPI_MakeVertex(pOcctPoint->Pnt()));
 	}
 
 	void Vertex::Edges(std::list<Edge*>& rEdges)
@@ -46,7 +46,7 @@ namespace TopoLogicCore
 			if (kIterator->ShapeType() == TopAbs_EDGE)
 			{
 				const TopoDS_Edge& rkOcctEdge = TopoDS::Edge(*kIterator);
-				rEdges.push_back(new Edge(new TopoDS_Edge(rkOcctEdge)));
+				rEdges.push_back(new Edge(rkOcctEdge));
 			}
 		}
 	}

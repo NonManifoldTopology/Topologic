@@ -64,14 +64,14 @@ namespace TopoLogicCore
 		TopAbs_ShapeEnum occtShapeType = rkOcctShape.ShapeType();
 		switch (occtShapeType)
 		{
-		case TopAbs_COMPOUND: return new Cluster(new TopoDS_Compound(TopoDS::Compound(rkOcctShape)));
-		case TopAbs_COMPSOLID: return new CellComplex(new TopoDS_CompSolid(TopoDS::CompSolid(rkOcctShape)));
-		case TopAbs_SOLID: return new Cell(new TopoDS_Solid(TopoDS::Solid(rkOcctShape)));
-		case TopAbs_SHELL: return new Shell(new TopoDS_Shell(TopoDS::Shell(rkOcctShape)));
-		case TopAbs_FACE: return new Face(new TopoDS_Face(TopoDS::Face(rkOcctShape)));
-		case TopAbs_WIRE: return new Wire(new TopoDS_Wire(TopoDS::Wire(rkOcctShape)));
-		case TopAbs_EDGE: return new Edge(new TopoDS_Edge(TopoDS::Edge(rkOcctShape)));
-		case TopAbs_VERTEX: return new Vertex(new TopoDS_Vertex(TopoDS::Vertex(rkOcctShape)));
+		case TopAbs_COMPOUND: return new Cluster(TopoDS::Compound(rkOcctShape));
+		case TopAbs_COMPSOLID: return new CellComplex(TopoDS::CompSolid(rkOcctShape));
+		case TopAbs_SOLID: return new Cell(TopoDS::Solid(rkOcctShape));
+		case TopAbs_SHELL: return new Shell(TopoDS::Shell(rkOcctShape));
+		case TopAbs_FACE: return new Face(TopoDS::Face(rkOcctShape));
+		case TopAbs_WIRE: return new Wire(TopoDS::Wire(rkOcctShape));
+		case TopAbs_EDGE: return new Edge(TopoDS::Edge(rkOcctShape));
+		case TopAbs_VERTEX: return new Vertex(TopoDS::Vertex(rkOcctShape));
 		default:
 			throw std::exception("Topology::ByOcctShape: unknown topology.");
 		}

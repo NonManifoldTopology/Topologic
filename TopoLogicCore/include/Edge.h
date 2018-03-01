@@ -23,8 +23,8 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpOcctEdge"></param>
-		Edge(TopoDS_Edge * const kpOcctEdge);
+		/// <param name="rkOcctEdge"></param>
+		Edge(const TopoDS_Edge& rkOcctEdge);
 
 		virtual ~Edge();
 

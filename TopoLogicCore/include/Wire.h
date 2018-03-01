@@ -22,7 +22,7 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <param name="kpOcctWire"></param>
-		Wire(TopoDS_Wire * const kpOcctWire);
+		Wire(const TopoDS_Wire& rkOcctWire);
 
 		virtual ~Wire();
 

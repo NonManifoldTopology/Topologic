@@ -33,7 +33,7 @@ namespace TopoLogicCore
 			kOcctShapeIterator != occtCells.cend();
 			kOcctShapeIterator++)
 		{
-			rCells.push_back(new Cell(new TopoDS_Solid(TopoDS::Solid(*kOcctShapeIterator))));
+			rCells.push_back(new Cell(TopoDS::Solid(*kOcctShapeIterator)));
 		}
 	}
 
@@ -54,7 +54,7 @@ namespace TopoLogicCore
 			kOcctShapeIterator != occtFaces.cend();
 			kOcctShapeIterator++)
 		{
-			rFaces.push_back(new Face(new TopoDS_Face(TopoDS::Face(*kOcctShapeIterator))));
+			rFaces.push_back(new Face(TopoDS::Face(*kOcctShapeIterator)));
 		}
 	}
 
@@ -155,7 +155,7 @@ namespace TopoLogicCore
 		TopTools_MapOfShape occtCells;
 		for (occtExplorer.Init(occtEnvelopeShape, TopAbs_SOLID); occtExplorer.More(); occtExplorer.Next())
 		{
-			return new Cell(new TopoDS_Solid(TopoDS::Solid(occtExplorer.Current())));
+			return new Cell(TopoDS::Solid(occtExplorer.Current()));
 		}
 		return nullptr;
 	}
@@ -218,9 +218,9 @@ namespace TopoLogicCore
 		}
 	}
 
-	CellComplex::CellComplex(TopoDS_CompSolid * const kpOcctCompSolid)
+	CellComplex::CellComplex(const TopoDS_CompSolid& rkOcctCompSolid)
 		: Topology(3)
-		, m_pOcctCompSolid(kpOcctCompSolid)
+		, m_pOcctCompSolid(new TopoDS_CompSolid(rkOcctCompSolid))
 	{
 		GlobalCluster::GetInstance().Add(this);
 	}

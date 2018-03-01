@@ -7,6 +7,7 @@
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepTools_WireExplorer.hxx>
 #include <ShapeAnalysis_Wire.hxx>
+#include <ShapeFix_Wire.hxx>
 #include <StdFail_NotDone.hxx>
 #include <TopoDS.hxx>
 #include <TopExp.hxx>
@@ -22,7 +23,7 @@ namespace TopoLogicCore
 		BRepTools_WireExplorer occtWireExplorer;
 		for (occtWireExplorer.Init(TopoDS::Wire(*GetOcctShape())); occtWireExplorer.More(); occtWireExplorer.Next())
 		{
-			rEdges.push_back(new Edge(new TopoDS_Edge(occtWireExplorer.Current())));
+			rEdges.push_back(new Edge(occtWireExplorer.Current()));
 		}
 
 		if ((int)rEdges.size() > initialEdgeSize)
@@ -46,7 +47,7 @@ namespace TopoLogicCore
 			kOcctShapeIterator != occtEdges.cend();
 			kOcctShapeIterator++)
 		{
-			rEdges.push_back(new Edge(new TopoDS_Edge(TopoDS::Edge(*kOcctShapeIterator))));
+			rEdges.push_back(new Edge(TopoDS::Edge(*kOcctShapeIterator)));
 		}
 	}
 
@@ -63,7 +64,7 @@ namespace TopoLogicCore
 		{
 			if (kIterator->ShapeType() == TopAbs_FACE)
 			{
-				rFaces.push_back(new Face(new TopoDS_Face(TopoDS::Face(*kIterator))));
+				rFaces.push_back(new Face(TopoDS::Face(*kIterator)));
 			}
 		}
 	}
@@ -80,7 +81,7 @@ namespace TopoLogicCore
 		BRepTools_WireExplorer occtWireExplorer;
 		for (occtWireExplorer.Init(TopoDS::Wire(*GetOcctShape())); occtWireExplorer.More(); occtWireExplorer.Next())
 		{
-			rVertices.push_back(new Vertex(new TopoDS_Vertex(occtWireExplorer.CurrentVertex())));
+			rVertices.push_back(new Vertex(occtWireExplorer.CurrentVertex()));
 		}
 	}
 
@@ -98,7 +99,7 @@ namespace TopoLogicCore
 		occtMakeWire.Add(occtEdges);
 
 		try {
-			return new Wire(new TopoDS_Wire(occtMakeWire));
+			return new Wire(occtMakeWire);
 		}
 		catch (StdFail_NotDone&)
 		{
@@ -157,10 +158,14 @@ namespace TopoLogicCore
 		}
 	}
 
-	Wire::Wire(TopoDS_Wire * const kpOcctWire)
+	Wire::Wire(const TopoDS_Wire& rkOcctWire)
 		: Topology(1)
-		, m_pOcctWire(kpOcctWire)
+		, m_pOcctWire(nullptr)
 	{
+		ShapeFix_Wire occtFixWire;
+		occtFixWire.Load(rkOcctWire);
+		occtFixWire.Perform();
+		m_pOcctWire = new TopoDS_Wire(occtFixWire.Wire());
 		GlobalCluster::GetInstance().Add(this);
 	}
 

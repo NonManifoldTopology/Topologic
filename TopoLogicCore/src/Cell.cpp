@@ -15,6 +15,7 @@
 #include <BRepBuilderAPI_MakeSolid.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepPrimAPI_MakeBox.hxx>
+#include <ShapeFix_Solid.hxx>
 #include <StdFail_NotDone.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
@@ -62,7 +63,7 @@ namespace TopoLogicCore
 				const TopoDS_Shape& rkIncidentCell = *kOcctCellIterator;
 				if (!pOcctSolid->IsSame(rkIncidentCell))
 				{
-					rcells.push_back(new Cell(new TopoDS_Solid(TopoDS::Solid(rkIncidentCell))));
+					rcells.push_back(new Cell(TopoDS::Solid(rkIncidentCell)));
 				}
 			}
 		}
@@ -82,7 +83,7 @@ namespace TopoLogicCore
 		{
 			if (kIterator->ShapeType() == TopAbs_COMPSOLID)
 			{
-				return new TopoLogicCore::CellComplex(new TopoDS_CompSolid(TopoDS::CompSolid(*kIterator)));
+				return new TopoLogicCore::CellComplex(TopoDS::CompSolid(*kIterator));
 			}
 		}
 
@@ -106,7 +107,7 @@ namespace TopoLogicCore
 			kOcctShapeIterator != occtShells.cend();
 			kOcctShapeIterator++)
 		{
-			rShells.push_back(new Shell(new TopoDS_Shell(TopoDS::Shell(*kOcctShapeIterator))));
+			rShells.push_back(new Shell(TopoDS::Shell(*kOcctShapeIterator)));
 		}
 	}
 
@@ -127,7 +128,7 @@ namespace TopoLogicCore
 			kOcctShapeIterator != occtEdges.cend();
 			kOcctShapeIterator++)
 		{
-			rEdges.push_back(new Edge(new TopoDS_Edge(TopoDS::Edge(*kOcctShapeIterator))));
+			rEdges.push_back(new Edge(TopoDS::Edge(*kOcctShapeIterator)));
 		}
 	}
 
@@ -148,7 +149,7 @@ namespace TopoLogicCore
 			kOcctShapeIterator != occtFaces.cend();
 			kOcctShapeIterator++)
 		{
-			rFaces.push_back(new Face(new TopoDS_Face(TopoDS::Face(*kOcctShapeIterator))));
+			rFaces.push_back(new Face(TopoDS::Face(*kOcctShapeIterator)));
 		}
 	}
 
@@ -169,7 +170,7 @@ namespace TopoLogicCore
 			kOcctShapeIterator != occtVertices.cend();
 			kOcctShapeIterator++)
 		{
-			rVertices.push_back(new Vertex(new TopoDS_Vertex(TopoDS::Vertex(*kOcctShapeIterator))));
+			rVertices.push_back(new Vertex(TopoDS::Vertex(*kOcctShapeIterator)));
 		}
 	}
 
@@ -183,29 +184,23 @@ namespace TopoLogicCore
 			if (!occtWires.Contains(occtCurrent))
 			{
 				occtWires.Add(occtCurrent);
+				rWires.push_back(new Wire(TopoDS::Wire(occtCurrent)));
 			}
-		}
-
-		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtWires.cbegin();
-			kOcctShapeIterator != occtWires.cend();
-			kOcctShapeIterator++)
-		{
-			rWires.push_back(new Wire(new TopoDS_Wire(TopoDS::Wire(*kOcctShapeIterator))));
 		}
 	}
 
 	Cell* Cell::ByFaces(const std::list<Face*>& rkFaces)
 	{
-		TopoDS_Shell* pOcctShell = new TopoDS_Shell();
+		TopoDS_Shell occtShell;
 		BRep_Builder occtBuilder;
-		occtBuilder.MakeShell(*pOcctShell);
+		occtBuilder.MakeShell(occtShell);
 		for(std::list<Face*>::const_iterator kFaceIterator = rkFaces.begin();
 			kFaceIterator != rkFaces.end();
 			kFaceIterator++)
 		{
 			Face* pFace = *kFaceIterator;
 			try {
-				occtBuilder.Add(*pOcctShell, *pFace->GetOcctShape());
+				occtBuilder.Add(occtShell, *pFace->GetOcctShape());
 			}
 			catch (TopoDS_FrozenShape&)
 			{
@@ -217,7 +212,7 @@ namespace TopoLogicCore
 			}
 		}
 
-		return ByShell(new Shell(pOcctShell));
+		return ByShell(new Shell(occtShell));
 	}
 
 	Cell* Cell::ByShell(Shell const * const kpkShells)
@@ -231,7 +226,7 @@ namespace TopoLogicCore
 			throw std::exception("The solid was not built.");
 		}
 
-		return new Cell(new TopoDS_Solid(occtMakeSolid));
+		return new Cell(occtMakeSolid);
 	}
 
 	Cell* Cell::ByCuboid(Handle(Geom_CartesianPoint) pOcctCentroid, const double kXDimension, const double kYDimension, const double kZDimension)
@@ -244,7 +239,7 @@ namespace TopoLogicCore
 		BRepPrimAPI_MakeBox occtMakeBox(occtLowCorner, kXDimension, kYDimension, kZDimension);
 		occtMakeBox.Build();
 
-		return new Cell(new TopoDS_Solid(occtMakeBox.Solid()));
+		return new Cell(occtMakeBox.Solid());
 	}
 
 	Cell* Cell::ByVerticesFaceIndices(const std::vector<Vertex*>& rkVertices, const std::list<std::list<int>>& rkFaceIndices)
@@ -281,7 +276,7 @@ namespace TopoLogicCore
 
 			TopoDS_Wire* pOcctWire = new TopoDS_Wire(occtMakeWire);
 			BRepBuilderAPI_MakeFace occtMakeFace(*pOcctWire);
-			faces.push_back(new Face(new TopoDS_Face(occtMakeFace)));
+			faces.push_back(new Face(occtMakeFace));
 		}
 		return ByFaces(faces);
 	}
@@ -306,7 +301,7 @@ namespace TopoLogicCore
 			kOcctShapeIterator != occtEdges.cend();
 			kOcctShapeIterator++)
 		{
-			rEdges.push_back(new Edge(new TopoDS_Edge(TopoDS::Edge(*kOcctShapeIterator))));
+			rEdges.push_back(new Edge(TopoDS::Edge(*kOcctShapeIterator)));
 		}
 	}
 
@@ -330,7 +325,7 @@ namespace TopoLogicCore
 			kOcctShapeIterator != occtFaces.cend();
 			kOcctShapeIterator++)
 		{
-			rFaces.push_back(new Face(new TopoDS_Face(TopoDS::Face(*kOcctShapeIterator))));
+			rFaces.push_back(new Face(TopoDS::Face(*kOcctShapeIterator)));
 		}
 	}
 
@@ -354,7 +349,7 @@ namespace TopoLogicCore
 			kOcctShapeIterator != occtVertices.cend();
 			kOcctShapeIterator++)
 		{
-			rVertices.push_back(new Vertex(new TopoDS_Vertex(TopoDS::Vertex(*kOcctShapeIterator))));
+			rVertices.push_back(new Vertex(TopoDS::Vertex(*kOcctShapeIterator)));
 		}
 	}
 
@@ -383,10 +378,13 @@ namespace TopoLogicCore
 		}
 	}
 
-	Cell::Cell(TopoDS_Solid * const kpOcctSolid)
+	Cell::Cell(const TopoDS_Solid& rkOcctSolid)
 		: Topology(3)
-		, m_pOcctSolid(kpOcctSolid)
+		, m_pOcctSolid(nullptr)
 	{
+		ShapeFix_Solid occtShapeFixSolid(rkOcctSolid);
+		occtShapeFixSolid.Perform(Handle(Message_ProgressIndicator)());
+		m_pOcctSolid = new TopoDS_Solid(TopoDS::Solid(occtShapeFixSolid.Solid()));
 		GlobalCluster::GetInstance().Add(this);
 	}
 
