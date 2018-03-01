@@ -237,7 +237,7 @@ namespace TopoLogic
 		try {
 			return Surface();
 		}
-		catch (ApplicationException^)
+		catch (Exception^)
 		{
 			return TriangulatedMesh();
 		}

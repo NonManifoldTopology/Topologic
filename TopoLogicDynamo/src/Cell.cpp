@@ -244,30 +244,39 @@ namespace TopoLogic
 	Object^ Cell::Geometry::get()
 	{
 		List<Autodesk::DesignScript::Geometry::Surface^>^ pDynamoSurfaces = gcnew List<Autodesk::DesignScript::Geometry::Surface^>();
+		List<Object^>^ pDynamoGeometry = gcnew List<Object^>();
 		List<Face^>^ pFaces = Faces();
+		bool hasFallbackVisualization = false;
 		for each(Face^ pFace in pFaces)
 		{
-			Autodesk::DesignScript::Geometry::Surface^ pSurface = pFace->Surface();
-			if(pSurface != nullptr)
+			Object^ pFaceGeometry = pFace->Geometry;
+			Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface = dynamic_cast<Autodesk::DesignScript::Geometry::Surface^>(pFaceGeometry);
+			pDynamoGeometry->Add(pFaceGeometry);
+			if(pDynamoSurface != nullptr)
 			{
-				pDynamoSurfaces->Add(pSurface);
+				pDynamoSurfaces->Add(pDynamoSurface);
+				hasFallbackVisualization = true;
 			}
 		}
 
-		try {
-			if (!pDynamoSurfaces->Contains(nullptr))
-			{
-				return Autodesk::DesignScript::Geometry::Solid::ByJoinedSurfaces(pDynamoSurfaces);
-			}
-			else
-			{
-				return pDynamoSurfaces;
-			}
-		}
-		catch (ApplicationException^)
+		if(!hasFallbackVisualization)
 		{
-			return pDynamoSurfaces;
+			try {
+				if (!pDynamoSurfaces->Contains(nullptr))
+				{
+					return Autodesk::DesignScript::Geometry::Solid::ByJoinedSurfaces(pDynamoSurfaces);
+				}
+				else
+				{
+					return pDynamoSurfaces;
+				}
+			}
+			catch (Exception^)
+			{
+			}
 		}
+
+		return pDynamoGeometry;
 	}
 
 	TopoLogicCore::Topology* Cell::GetCoreTopology()

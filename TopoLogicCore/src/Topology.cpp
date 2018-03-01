@@ -832,26 +832,9 @@ namespace TopoLogicCore
 
 	Topology* Topology::Union(Topology const * const kpkOtherTopology)
 	{
+		// This returns the union of the boundaries
 		Topology* pTopology = BooleanOperation(kpkOtherTopology, BOOLEAN_UNION);
-		std::string str = pTopology->Analyze();
-
-		TopologyType topologyType = pTopology->GetType();
-		if (topologyType == TOPOLOGY_CLUSTER)
-		{
-			Cluster* pCluster = Topology::Downcast<Cluster>(pTopology);
-			std::list<CellComplex*> cellComplexes;
-			pCluster->CellComplexes(cellComplexes);
-			for (std::list<CellComplex*>::const_iterator kCellComplexIterator = cellComplexes.begin();
-				kCellComplexIterator != cellComplexes.end();
-				kCellComplexIterator++)
-			{
-				CellComplex* pCellComplex = *kCellComplexIterator;
-				Cell* pEnvelope = pCellComplex->Envelope();
-				std::list<Face*> envelopeFaces;
-				pEnvelope->Faces(envelopeFaces);
-			}
-		}
-
+		
 		std::list<Face*> internalFaces;
 		if (GetType() == TOPOLOGY_CELLCOMPLEX)
 		{

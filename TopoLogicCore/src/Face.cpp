@@ -13,7 +13,6 @@
 #include <BSplCLib.hxx>
 #include <Geom_BSplineSurface.hxx>
 #include <ShapeAnalysis.hxx>
-#include <ShapeFix_Wire.hxx>
 #include <ShapeFix_Face.hxx>
 #include <StdFail_NotDone.hxx>
 #include <TopExp.hxx>

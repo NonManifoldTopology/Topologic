@@ -12,6 +12,9 @@
 #include <TopoDS_UnCompatibleShapes.hxx>
 #include <TopTools_MapOfShape.hxx>
 
+#include <BOPTools_AlgoTools.hxx>
+#include <IntTools_Context.hxx>
+
 #include <assert.h>
 
 namespace TopoLogicCore
@@ -170,6 +173,7 @@ namespace TopoLogicCore
 		std::list<Face*> faces;
 		Faces(faces);
 
+		Handle(IntTools_Context) pOcctIntToolsContext = new IntTools_Context();
 		for (std::list<Face*>::const_iterator kFaceIterator = faces.begin();
 			kFaceIterator != faces.end();
 			kFaceIterator++)
@@ -181,7 +185,7 @@ namespace TopoLogicCore
 				kEnvelopeFaceIterator++)
 			{
 				Face* pEnvelopeFace = *kEnvelopeFaceIterator;
-				if (pFace->GetOcctShape()->IsSame(*pEnvelopeFace->GetOcctShape()))
+				if(BOPTools_AlgoTools::CheckSameGeom(TopoDS::Face(*pFace->GetOcctShape()), TopoDS::Face(*pEnvelopeFace->GetOcctShape()), pOcctIntToolsContext))
 				{
 					isEnvelopeFace = true;
 				}
@@ -192,6 +196,8 @@ namespace TopoLogicCore
 				rInternalFaces.push_back(pFace);
 			}
 		}
+
+		delete pEnvelopeCell;
 	}
 
 	TopoDS_Shape* CellComplex::GetOcctShape() const
