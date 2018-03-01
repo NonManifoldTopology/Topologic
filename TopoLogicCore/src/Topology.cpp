@@ -8,14 +8,23 @@
 #include <Edge.h>
 #include <Vertex.h>
 
+#include <TopoDS_Vertex.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS_Vertex.hxx>
+#include <TopoDS_Face.hxx>
+#include <BOPAlgo_CellsBuilder.hxx>
+#include <BRepBuilderAPI_MakeVertex.hxx>
+#include <BRepBuilderAPI_MakeEdge.hxx>
+#include <BRepBuilderAPI_MakeWire.hxx>
+#include <BRepBuilderAPI_MakeFace.hxx>
+#include <BRepBuilderAPI_MakeFace.hxx>
+#include <TopoDS.hxx>
+#include <ShapeAnalysis_ShapeContents.hxx>
+
 #include <BOPAlgo_Builder.hxx>
 #include <BOPAlgo_CellsBuilder.hxx>
 #include <BOPAlgo_Splitter.hxx>
 #include <BOPCol_ListOfShape.hxx>
-#include <BRepAlgoAPI_Common.hxx>
-#include <BRepAlgoAPI_Fuse.hxx>
-#include <BRepAlgoAPI_Cut.hxx>
-#include <BRepAlgoAPI_Splitter.hxx>
 #include <BRep_Builder.hxx>
 #include <BRepTools.hxx>
 #include <ShapeAnalysis_ShapeContents.hxx>
@@ -786,7 +795,7 @@ namespace TopoLogicCore
 			}
 		}
 
-		TopoDS_Shape occtBooleanResult = occtCellsBuilder.Shape();
+		const TopoDS_Shape& occtBooleanResult = occtCellsBuilder.Shape();
 		Topology* pTopology = Topology::ByOcctShape(occtBooleanResult);
 		return pTopology;
 	}

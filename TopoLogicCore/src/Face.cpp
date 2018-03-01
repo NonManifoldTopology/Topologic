@@ -14,6 +14,7 @@
 #include <Geom_BSplineSurface.hxx>
 #include <ShapeAnalysis.hxx>
 #include <ShapeFix_Wire.hxx>
+#include <ShapeFix_Face.hxx>
 #include <StdFail_NotDone.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
@@ -127,27 +128,13 @@ namespace TopoLogicCore
 	{
 		TopTools_MapOfShape occtVertices;
 		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(*GetOcctShape(), TopAbs_WIRE); occtExplorer.More(); occtExplorer.Next())
+		for (occtExplorer.Init(*GetOcctShape(), TopAbs_VERTEX); occtExplorer.More(); occtExplorer.Next())
 		{
 			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
 			if (!occtVertices.Contains(occtCurrent))
 			{
 				occtVertices.Add(occtCurrent);
-			}
-		}
-
-		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtVertices.cbegin();
-			kOcctShapeIterator != occtVertices.cend();
-			kOcctShapeIterator++)
-		{
-			ShapeFix_Wire occtShapeFixWire;
-			occtShapeFixWire.Load(TopoDS::Wire(*kOcctShapeIterator));
-			occtShapeFixWire.FixReorder();
-
-			BRepTools_WireExplorer occtWireExplorer;
-			for (occtWireExplorer.Init(occtShapeFixWire.Wire()); occtWireExplorer.More(); occtWireExplorer.Next())
-			{
-				rVertices.push_back(new Vertex(new TopoDS_Vertex(occtWireExplorer.CurrentVertex())));
+				rVertices.push_back(new Vertex(new TopoDS_Vertex(TopoDS::Vertex(occtCurrent))));
 			}
 		}
 	}
@@ -162,14 +149,8 @@ namespace TopoLogicCore
 			if (!occtWires.Contains(occtCurrent))
 			{
 				occtWires.Add(occtCurrent);
+				rWires.push_back(new Wire(new TopoDS_Wire(TopoDS::Wire(occtCurrent))));
 			}
-		}
-
-		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtWires.cbegin();
-			kOcctShapeIterator != occtWires.cend();
-			kOcctShapeIterator++)
-		{
-			rWires.push_back(new Wire(new TopoDS_Wire(TopoDS::Wire(*kOcctShapeIterator))));
 		}
 	}
 
@@ -202,7 +183,10 @@ namespace TopoLogicCore
 		BRepBuilderAPI_MakeFace occtMakeFace;
 		try {
 			occtMakeFace = BRepBuilderAPI_MakeFace(pOcctSurface, Precision::Confusion());
-			return new Face(new TopoDS_Face(occtMakeFace));
+			ShapeFix_Face occtFixFace(occtMakeFace.Face());
+			occtFixFace.Perform();
+			const TopoDS_Face& rkFixedFace = occtFixFace.Face();
+			return new Face(new TopoDS_Face(rkFixedFace));
 		}
 		catch (StdFail_NotDone&)
 		{
@@ -329,7 +313,10 @@ namespace TopoLogicCore
 			occtMakeFace.Add(TopoDS::Wire(*(*kInnerWireIterator)->GetOcctShape()));
 		}
 
-		return new TopoLogicCore::Face(new TopoDS_Face(occtMakeFace));
+		ShapeFix_Face occtFixFace(occtMakeFace.Face());
+		occtFixFace.Perform();
+		const TopoDS_Face& rkFixedFace = occtFixFace.Face();
+		return new Face(new TopoDS_Face(rkFixedFace));
 	}
 
 	void Face::SharedEdges(Face const * const kpkAnotherFace, std::list<Edge*>& rEdges) const
