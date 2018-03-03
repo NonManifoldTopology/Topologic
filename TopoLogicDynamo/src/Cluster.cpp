@@ -45,8 +45,19 @@ namespace TopoLogic
 
 	Object^ Cluster::Geometry::get()
 	{
-		//throw gcnew System::NotImplementedException();
-		return nullptr;
+		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(GetCoreTopology());
+		std::list<TopoLogicCore::Topology*> immediateCoreMembers;
+		pCoreCluster->ImmediateMembers(immediateCoreMembers);
+
+		List<Object^>^ pTopologies = gcnew List<Object^>();
+
+		for (std::list<TopoLogicCore::Topology*>::const_iterator kCoreIterator = immediateCoreMembers.begin();
+			kCoreIterator != immediateCoreMembers.end();
+			kCoreIterator++)
+		{
+			pTopologies->Add(Topology::ByCoreTopology(*kCoreIterator)->Geometry);
+		}
+		return pTopologies;
 	}
 
 	Cluster::Cluster(TopoLogicCore::Cluster* const kpCoreCluster)
