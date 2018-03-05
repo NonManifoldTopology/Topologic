@@ -378,6 +378,41 @@ namespace TopoLogicCore
 		}
 	}
 
+	void Cell::InnerShells(std::list<Shell*>& rShells) const
+	{
+		TopTools_MapOfShape occtShells;
+		TopExp_Explorer occtExplorer;
+		for (occtExplorer.Init(*GetOcctShape(), TopAbs_SHELL); occtExplorer.More(); occtExplorer.Next())
+		{
+			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
+			if (!occtShells.Contains(occtCurrent))
+			{
+				bool isInternal = false;
+				TopAbs_Orientation occtOrientation;
+				TopoDS_Iterator occtIterator;
+
+				occtIterator.Initialize(occtCurrent);
+				if (occtIterator.More()) {
+					const TopoDS_Shape& rkMember = occtIterator.Value();
+					occtOrientation = rkMember.Orientation();
+					isInternal = (occtOrientation == TopAbs_INTERNAL);
+				}
+
+				if (isInternal)
+				{
+					occtShells.Add(occtCurrent);
+				}
+			}
+		}
+
+		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtShells.cbegin();
+			kOcctShapeIterator != occtShells.cend();
+			kOcctShapeIterator++)
+		{
+			rShells.push_back(new Shell(TopoDS::Shell(*kOcctShapeIterator)));
+		}
+	}
+
 	Cell::Cell(const TopoDS_Solid& rkOcctSolid)
 		: Topology(3)
 		, m_pOcctSolid(nullptr)

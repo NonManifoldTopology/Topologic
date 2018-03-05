@@ -135,6 +135,8 @@ namespace TopoLogicCore
 
 		virtual TopologyType GetType() const { return TOPOLOGY_CELL; }
 
+		void InnerShells(std::list<Shell*>& rShells) const;
+
 	protected:
 		/// <summary>
 		/// The underlying OCCT cell.
