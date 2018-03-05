@@ -11,6 +11,7 @@
 
 #include <list>
 #include <map>
+#include <memory>
 
 class TopoDS_Shape;
 
@@ -309,6 +310,14 @@ namespace TopoLogicCore
 		/// </summary>
 		/// <param name="rkOcctShape"></param>
 		/// <returns></returns>
+		static std::unique_ptr<Topology> ByOcctShape2(const TopoDS_Shape& rkOcctShape);
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkOcctShape"></param>
+		/// <returns></returns>
 		static TopoDS_CompSolid MakeCompSolid(const TopoDS_Shape& rkOcctShape);
 
 		/// <summary>
@@ -325,6 +334,13 @@ namespace TopoLogicCore
 		/// <param name="kLevel"></param>
 		/// <returns></returns>
 		static std::string Analyze(const TopoDS_Shape& rkShape, const int kLevel = 0);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkOcctShape"></param>
+		/// <param name="rUnionArguments"></param>
+		static void AddUnionInternalStructure(const TopoDS_Shape& rkOcctShape, BOPCol_ListOfShape& rUnionArguments);
 
 		AttributeMap m_attributeMap;
 		std::list<Topology*> m_members;

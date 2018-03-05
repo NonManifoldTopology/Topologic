@@ -37,6 +37,8 @@
 #include <TopExp_Explorer.hxx>
 #include <TopTools_MapOfShape.hxx>
 
+#include <ShapeFix_Shape.hxx>
+
 #include <array>
 
 namespace TopoLogicCore
@@ -77,16 +79,34 @@ namespace TopoLogicCore
 		}
 	}
 
+	std::unique_ptr<Topology> Topology::ByOcctShape2(const TopoDS_Shape& rkOcctShape)
+	{
+		TopAbs_ShapeEnum occtShapeType = rkOcctShape.ShapeType();
+		switch (occtShapeType)
+		{
+		case TopAbs_COMPOUND: return std::make_unique<Cluster>(TopoDS::Compound(rkOcctShape));
+		case TopAbs_COMPSOLID: return std::make_unique<CellComplex>(TopoDS::CompSolid(rkOcctShape));
+		case TopAbs_SOLID: return std::make_unique<Cell>(TopoDS::Solid(rkOcctShape));
+		case TopAbs_SHELL: return std::make_unique<Shell>(TopoDS::Shell(rkOcctShape));
+		case TopAbs_FACE: return std::make_unique<Face>(TopoDS::Face(rkOcctShape));
+		case TopAbs_WIRE: return std::make_unique<Wire>(TopoDS::Wire(rkOcctShape));
+		case TopAbs_EDGE: return std::make_unique<Edge>(TopoDS::Edge(rkOcctShape));
+		case TopAbs_VERTEX: return std::make_unique<Vertex>(TopoDS::Vertex(rkOcctShape));
+		default:
+			throw std::exception("Topology::ByOcctShape: unknown topology.");
+		}
+	}
+
 	TopoDS_CompSolid Topology::MakeCompSolid(const TopoDS_Shape& rkOcctShape)
 	{
 		TopoDS_CompSolid occtCompSolid;
 		BRep_Builder occtBuilder;
 		occtBuilder.MakeCompSolid(occtCompSolid);
 
-			TopExp_Explorer occtExplorer;
-			TopTools_MapOfShape occtCells;
-			for (occtExplorer.Init(rkOcctShape, TopAbs_SOLID); occtExplorer.More(); occtExplorer.Next())
-			{
+		TopExp_Explorer occtExplorer;
+		TopTools_MapOfShape occtCells;
+		for (occtExplorer.Init(rkOcctShape, TopAbs_SOLID); occtExplorer.More(); occtExplorer.Next())
+		{
 			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
 			if (!occtCells.Contains(occtCurrent))
 			{
@@ -192,6 +212,44 @@ namespace TopoLogicCore
 		}
 
 		std::stringstream ssCurrentResult;
+
+
+		// For the topmost level only, print the overall subentities result
+		if (kLevel == 0)
+		{
+			ShapeAnalysis_ShapeContents occtShapeAnalysis;
+			occtShapeAnalysis.Perform(rkShape);
+
+			// No method is provided in ShapeAnalysis_ShapeContents to compute the number of CompSolids.
+			// Do this manually.
+			int numberCompSolids = 0;
+			TopExp_Explorer occtExplorer;
+			BOPCol_ListOfShape occtCompSolids;
+			for (occtExplorer.Init(rkShape, TopAbs_COMPSOLID); occtExplorer.More(); occtExplorer.Next())
+			{
+				const TopoDS_Shape& rkOcctCurrent = occtExplorer.Current();
+				if (!occtCompSolids.Contains(rkOcctCurrent))
+				{
+					occtCompSolids.Append(rkOcctCurrent);
+					numberCompSolids++;
+				}
+			}
+			ssCurrentResult <<
+				"OVERALL ANALYSIS" << std::endl <<
+				"================" << std::endl <<
+				"The shape is " << occtShapeNameSingular[occtShapeType] << "." << std::endl <<
+				"Number of cell complexes = " << numberCompSolids << std::endl <<
+				"Number of cells = " << occtShapeAnalysis.NbSharedSolids() << std::endl <<
+				"Number of shells = " << occtShapeAnalysis.NbSharedShells() << std::endl <<
+				"Number of faces = " << occtShapeAnalysis.NbSharedFaces() << std::endl <<
+				"Number of wires = " << occtShapeAnalysis.NbSharedWires() << std::endl <<
+				"Number of edges = " << occtShapeAnalysis.NbSharedEdges() << std::endl <<
+				"Number of vertices = " << occtShapeAnalysis.NbSharedVertices() << std::endl <<
+				std::endl << std::endl <<
+				"INDIVIDUAL ANALYSIS" << std::endl <<
+				"================" << std::endl;
+		}
+
 		ssCurrentResult << currentIndent << "The shape is " << occtShapeNameSingular[occtShapeType] << "." << std::endl;
 
 		for (int i = occtShapeType + 1; i < 8; ++i)
@@ -544,14 +602,22 @@ namespace TopoLogicCore
 				kCellIterator != cells.end();
 				kCellIterator++)
 			{
-				occtCellsBuildersBufferA.Append(*(*kCellIterator)->GetOcctShape());
-				occtCellsBuildersArguments.Append(*(*kCellIterator)->GetOcctShape());
+				Handle(ShapeFix_Shape) sfs = new ShapeFix_Shape();
+				sfs->Init(*(*kCellIterator)->GetOcctShape());
+				sfs->SetPrecision(Precision::Confusion());
+				sfs->Perform();
+				occtCellsBuildersBufferA.Append(sfs->Shape());
+				occtCellsBuildersArguments.Append(sfs->Shape());
 			}
 		}
 		else
 		{
-			occtCellsBuildersBufferA.Append(*GetOcctShape());
-			occtCellsBuildersArguments.Append(*GetOcctShape());
+			Handle(ShapeFix_Shape) sfs = new ShapeFix_Shape();
+			sfs->Init(*GetOcctShape());
+			sfs->SetPrecision(Precision::Confusion());
+			sfs->Perform();
+			occtCellsBuildersBufferA.Append(sfs->Shape());
+			occtCellsBuildersArguments.Append(sfs->Shape());
 		}
 
 		BOPCol_ListOfShape occtCellsBuildersBufferB;
@@ -564,17 +630,24 @@ namespace TopoLogicCore
 				kCellIterator != cells.end();
 				kCellIterator++)
 			{
-				occtCellsBuildersBufferB.Append(*(*kCellIterator)->GetOcctShape());
-				occtCellsBuildersArguments.Append(*(*kCellIterator)->GetOcctShape());
+				Handle(ShapeFix_Shape) sfs = new ShapeFix_Shape();
+				sfs->Init(*(*kCellIterator)->GetOcctShape());
+				sfs->SetPrecision(Precision::Confusion());
+				sfs->Perform();
+				occtCellsBuildersBufferB.Append(sfs->Shape());
+				occtCellsBuildersArguments.Append(sfs->Shape());
 			}
 		}
 		else
 		{
-			occtCellsBuildersBufferB.Append(*kpkOtherTopology->GetOcctShape());
-			occtCellsBuildersArguments.Append(*kpkOtherTopology->GetOcctShape());
+			Handle(ShapeFix_Shape) sfs = new ShapeFix_Shape();
+			sfs->Init(*kpkOtherTopology->GetOcctShape());
+			sfs->SetPrecision(Precision::Confusion());
+			sfs->Perform();
+			occtCellsBuildersBufferB.Append(sfs->Shape());
+			occtCellsBuildersArguments.Append(sfs->Shape());
 		}
 
-		
 		BOPAlgo_CellsBuilder occtCellsBuilder;
 		occtCellsBuilder.SetArguments(occtCellsBuildersArguments);
 
@@ -830,40 +903,130 @@ namespace TopoLogicCore
 		return BooleanOperation(kpkOtherTopology, BOOLEAN_SLICE);
 	}
 
+	void Topology::AddUnionInternalStructure(const TopoDS_Shape& rkOcctShape, BOPCol_ListOfShape& rUnionArguments)
+	{
+		TopAbs_ShapeEnum occtShapeType = rkOcctShape.ShapeType();
+		std::unique_ptr<Topology> pTopology = Topology::ByOcctShape2(rkOcctShape);
+		std::list<Face*> faces;
+		if (occtShapeType == TopAbs_COMPOUND)
+		{
+			Cluster* pCluster = Topology::Downcast<Cluster>(pTopology.get());
+			std::list<Topology*> immediateMembers;
+			pCluster->ImmediateMembers(immediateMembers);
+			for (std::list<Topology*>::const_iterator kIterator = immediateMembers.begin();
+				kIterator != immediateMembers.end();
+				kIterator++)
+			{
+				Topology* pTopology = *kIterator;
+				AddUnionInternalStructure(*pTopology->GetOcctShape(), rUnionArguments);
+			}
+		} else if (occtShapeType == TopAbs_COMPSOLID)
+		{
+			CellComplex* pCellComplex = Topology::Downcast<CellComplex>(pTopology.get());
+			pCellComplex->InternalFaces(faces);
+			for (std::list<Face*>::iterator kFaceIterator = faces.begin();
+				kFaceIterator != faces.end();
+				kFaceIterator++)
+			{
+				Face* pInternalFace = *kFaceIterator;
+				rUnionArguments.Append(*pInternalFace->GetOcctShape());
+			}
+		}
+		else if (occtShapeType == TopAbs_SOLID)
+		{
+			Cell* pCell = Topology::Downcast<Cell>(pTopology.get());
+			std::list<Shell*> shells;
+			pCell->InnerShells(shells);
+			for (std::list<Shell*>::iterator kShellIterator = shells.begin();
+				kShellIterator != shells.end();
+				kShellIterator++)
+			{
+				Shell* pInternalShell = *kShellIterator;
+				rUnionArguments.Append(*pInternalShell->GetOcctShape());
+			}
+		}
+		else if (occtShapeType == TopAbs_SHELL)
+		{
+			TopExp_Explorer occtShellExplorer;
+			for (occtShellExplorer.Init(rkOcctShape, TopAbs_FACE); occtShellExplorer.More(); occtShellExplorer.Next())
+			{
+				const TopoDS_Shape& rkOcctCurrentFace = occtShellExplorer.Current();
+				TopoDS_Wire occtOuterWire = BRepTools::OuterWire(TopoDS::Face(rkOcctCurrentFace));
+
+				TopExp_Explorer occtFaceExplorer;
+				for (occtFaceExplorer.Init(rkOcctShape, TopAbs_WIRE); occtFaceExplorer.More(); occtFaceExplorer.Next())
+				{
+					const TopoDS_Shape& rkOcctCurrentFace = occtFaceExplorer.Current();
+					if (!rUnionArguments.Contains(rkOcctCurrentFace) && !rkOcctCurrentFace.IsSame(occtOuterWire))
+					{
+						rUnionArguments.Append(rkOcctCurrentFace);
+					}
+				}
+			}
+		}
+		else if (occtShapeType == TopAbs_FACE)
+		{
+			TopoDS_Wire occtOuterWire = BRepTools::OuterWire(TopoDS::Face(rkOcctShape));
+
+			TopExp_Explorer occtExplorer;
+			for (occtExplorer.Init(rkOcctShape, TopAbs_WIRE); occtExplorer.More(); occtExplorer.Next())
+			{
+				const TopoDS_Shape& occtCurrent = occtExplorer.Current();
+				if (!rUnionArguments.Contains(occtCurrent) && !occtCurrent.IsSame(occtOuterWire))
+				{
+					rUnionArguments.Append(occtCurrent);
+				}
+			}
+		}
+	}
+
 	Topology* Topology::Union(Topology const * const kpkOtherTopology)
 	{
 		// This returns the union of the boundaries
 		Topology* pTopology = BooleanOperation(kpkOtherTopology, BOOLEAN_UNION);
-		
-		std::list<Face*> internalFaces;
-		if (GetType() == TOPOLOGY_CELLCOMPLEX)
-		{
-			CellComplex* pCellComplex = Topology::Downcast<CellComplex>(this);
-			pCellComplex->InternalFaces(internalFaces);
-		}
-
-		if (kpkOtherTopology->GetType() == TOPOLOGY_CELLCOMPLEX)
-		{
-			CellComplex const* pCellComplex = Topology::Downcast<CellComplex>(kpkOtherTopology);
-			pCellComplex->InternalFaces(internalFaces);
-		}
-
 
 		BOPAlgo_CellsBuilder occtCellsBuilder;
 		BOPCol_ListOfShape occtCellsBuildersArguments;
 		occtCellsBuildersArguments.Append(*pTopology->GetOcctShape());
 
-		for (std::list<Face*>::const_iterator kFaceIterator = internalFaces.begin();
-			kFaceIterator != internalFaces.end();
-			kFaceIterator++)
+		// Get the internal boundaries
+		// Cell complex -> faces not part of the envelope
+		// Cell -> inner shells
+		// Shell --> inner wires of the faces
+		// Face --> inner wires
+		// Wire --> n/a
+		// Edge --> n/a
+		// Vertex --> n/a
+		AddUnionInternalStructure(*pTopology->GetOcctShape(), occtCellsBuildersArguments);
+		//std::list<Face*> internalFaces;
+		//if (GetType() == TOPOLOGY_CELLCOMPLEX)
+		//{
+		//	CellComplex* pCellComplex = Topology::Downcast<CellComplex>(this);
+		//	pCellComplex->InternalFaces(internalFaces);
+		//}
+
+		//if (kpkOtherTopology->GetType() == TOPOLOGY_CELLCOMPLEX)
+		//{
+		//	CellComplex const* pCellComplex = Topology::Downcast<CellComplex>(kpkOtherTopology);
+		//	pCellComplex->InternalFaces(internalFaces);
+		//}
+
+
+		//for (std::list<Face*>::const_iterator kFaceIterator = internalFaces.begin();
+		//	kFaceIterator != internalFaces.end();
+		//	kFaceIterator++)
+		//{
+		//	Face* pInternalFace = *kFaceIterator;
+		//	occtCellsBuildersArguments.Append(*pInternalFace->GetOcctShape());
+		//}
+
+		//occtCellsBuilder.SetArguments(occtCellsBuildersArguments);
+
+		if (occtCellsBuildersArguments.Size() < 2)
 		{
-			Face* pInternalFace = *kFaceIterator;
-			occtCellsBuildersArguments.Append(*pInternalFace->GetOcctShape());
+			return Topology::ByOcctShape(occtCellsBuildersArguments.First());
 		}
 
-		occtCellsBuilder.SetArguments(occtCellsBuildersArguments);
-
-		// Split the arguments and tools
 		occtCellsBuilder.Perform();
 
 		if (occtCellsBuilder.HasErrors())
