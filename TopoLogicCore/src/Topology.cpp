@@ -908,6 +908,13 @@ namespace TopoLogicCore
 		TopAbs_ShapeEnum occtShapeType = rkOcctShape.ShapeType();
 		std::unique_ptr<Topology> pTopology = Topology::ByOcctShape2(rkOcctShape);
 		std::list<Face*> faces;
+		// Cell complex -> faces not part of the envelope
+		// Cell -> inner shells
+		// Shell --> inner wires of the faces
+		// Face --> inner wires
+		// Wire --> n/a
+		// Edge --> n/a
+		// Vertex --> n/a
 		if (occtShapeType == TopAbs_COMPOUND)
 		{
 			Cluster* pCluster = Topology::Downcast<Cluster>(pTopology.get());
@@ -990,43 +997,15 @@ namespace TopoLogicCore
 		occtCellsBuildersArguments.Append(*pTopology->GetOcctShape());
 
 		// Get the internal boundaries
-		// Cell complex -> faces not part of the envelope
-		// Cell -> inner shells
-		// Shell --> inner wires of the faces
-		// Face --> inner wires
-		// Wire --> n/a
-		// Edge --> n/a
-		// Vertex --> n/a
-		AddUnionInternalStructure(*pTopology->GetOcctShape(), occtCellsBuildersArguments);
-		//std::list<Face*> internalFaces;
-		//if (GetType() == TOPOLOGY_CELLCOMPLEX)
-		//{
-		//	CellComplex* pCellComplex = Topology::Downcast<CellComplex>(this);
-		//	pCellComplex->InternalFaces(internalFaces);
-		//}
-
-		//if (kpkOtherTopology->GetType() == TOPOLOGY_CELLCOMPLEX)
-		//{
-		//	CellComplex const* pCellComplex = Topology::Downcast<CellComplex>(kpkOtherTopology);
-		//	pCellComplex->InternalFaces(internalFaces);
-		//}
-
-
-		//for (std::list<Face*>::const_iterator kFaceIterator = internalFaces.begin();
-		//	kFaceIterator != internalFaces.end();
-		//	kFaceIterator++)
-		//{
-		//	Face* pInternalFace = *kFaceIterator;
-		//	occtCellsBuildersArguments.Append(*pInternalFace->GetOcctShape());
-		//}
-
-		//occtCellsBuilder.SetArguments(occtCellsBuildersArguments);
-
+		AddUnionInternalStructure(*GetOcctShape(), occtCellsBuildersArguments);
+		AddUnionInternalStructure(*kpkOtherTopology->GetOcctShape(), occtCellsBuildersArguments);
+		
 		if (occtCellsBuildersArguments.Size() < 2)
 		{
 			return Topology::ByOcctShape(occtCellsBuildersArguments.First());
 		}
 
+		occtCellsBuilder.SetArguments(occtCellsBuildersArguments);
 		occtCellsBuilder.Perform();
 
 		if (occtCellsBuilder.HasErrors())
