@@ -79,24 +79,6 @@ namespace TopoLogicCore
 		}
 	}
 
-	std::unique_ptr<Topology> Topology::ByOcctShape2(const TopoDS_Shape& rkOcctShape)
-	{
-		TopAbs_ShapeEnum occtShapeType = rkOcctShape.ShapeType();
-		switch (occtShapeType)
-		{
-		case TopAbs_COMPOUND: return std::make_unique<Cluster>(TopoDS::Compound(rkOcctShape));
-		case TopAbs_COMPSOLID: return std::make_unique<CellComplex>(TopoDS::CompSolid(rkOcctShape));
-		case TopAbs_SOLID: return std::make_unique<Cell>(TopoDS::Solid(rkOcctShape));
-		case TopAbs_SHELL: return std::make_unique<Shell>(TopoDS::Shell(rkOcctShape));
-		case TopAbs_FACE: return std::make_unique<Face>(TopoDS::Face(rkOcctShape));
-		case TopAbs_WIRE: return std::make_unique<Wire>(TopoDS::Wire(rkOcctShape));
-		case TopAbs_EDGE: return std::make_unique<Edge>(TopoDS::Edge(rkOcctShape));
-		case TopAbs_VERTEX: return std::make_unique<Vertex>(TopoDS::Vertex(rkOcctShape));
-		default:
-			throw std::exception("Topology::ByOcctShape: unknown topology.");
-		}
-	}
-
 	TopoDS_CompSolid Topology::MakeCompSolid(const TopoDS_Shape& rkOcctShape)
 	{
 		TopoDS_CompSolid occtCompSolid;
@@ -175,24 +157,24 @@ namespace TopoLogicCore
 		ImmediateMembers(rkShape, occtImmediateMembers);
 
 		std::array<std::string, 8> occtShapeNameSingular;
-		occtShapeNameSingular[0] = "a Cluster";
-		occtShapeNameSingular[1] = "a CellComplex";
-		occtShapeNameSingular[2] = "a Cell";
-		occtShapeNameSingular[3] = "a Shell";
-		occtShapeNameSingular[4] = "a Face";
-		occtShapeNameSingular[5] = "a Wire";
-		occtShapeNameSingular[6] = "an Edge";
-		occtShapeNameSingular[7] = "a Vertex";
+		occtShapeNameSingular[0] = "a cluster";
+		occtShapeNameSingular[1] = "a cellComplex";
+		occtShapeNameSingular[2] = "a cell";
+		occtShapeNameSingular[3] = "a shell";
+		occtShapeNameSingular[4] = "a face";
+		occtShapeNameSingular[5] = "a wire";
+		occtShapeNameSingular[6] = "an edge";
+		occtShapeNameSingular[7] = "a vertex";
 
 		std::array<std::string, 8> occtShapeNamePlural;
-		occtShapeNamePlural[0] = "Clusters";
-		occtShapeNamePlural[1] = "CellComplexes";
-		occtShapeNamePlural[2] = "Cells";
-		occtShapeNamePlural[3] = "Shells";
-		occtShapeNamePlural[4] = "Faces";
-		occtShapeNamePlural[5] = "Wires";
-		occtShapeNamePlural[6] = "Edges";
-		occtShapeNamePlural[7] = "Vertices";
+		occtShapeNamePlural[0] = "clusters";
+		occtShapeNamePlural[1] = "cellComplexes";
+		occtShapeNamePlural[2] = "cells";
+		occtShapeNamePlural[3] = "shells";
+		occtShapeNamePlural[4] = "faces";
+		occtShapeNamePlural[5] = "wires";
+		occtShapeNamePlural[6] = "edges";
+		occtShapeNamePlural[7] = "vertices";
 
 		TopAbs_ShapeEnum occtShapeType = rkShape.ShapeType();
 		std::stringstream ssCurrentIndent;
@@ -254,7 +236,10 @@ namespace TopoLogicCore
 
 		for (int i = occtShapeType + 1; i < 8; ++i)
 		{
-			ssCurrentResult << currentIndent << "Number of " << occtShapeNamePlural[i] << " = " << numberOfSubentities[i] << std::endl;
+			if(numberOfSubentities[i] > 0)
+			{
+				ssCurrentResult << currentIndent << "Number of " << occtShapeNamePlural[i] << " = " << numberOfSubentities[i] << std::endl;
+			}
 		}
 		ssCurrentResult << currentIndent << "================" << std::endl;
 
@@ -868,6 +853,7 @@ namespace TopoLogicCore
 			}
 		}
 
+		occtCellsBuilder.MakeContainers();
 		const TopoDS_Shape& occtBooleanResult = occtCellsBuilder.Shape();
 		Topology* pTopology = Topology::ByOcctShape(occtBooleanResult);
 		return pTopology;
@@ -906,7 +892,7 @@ namespace TopoLogicCore
 	void Topology::AddUnionInternalStructure(const TopoDS_Shape& rkOcctShape, BOPCol_ListOfShape& rUnionArguments)
 	{
 		TopAbs_ShapeEnum occtShapeType = rkOcctShape.ShapeType();
-		std::unique_ptr<Topology> pTopology = Topology::ByOcctShape2(rkOcctShape);
+		Topology* pTopology = Topology::ByOcctShape(rkOcctShape);
 		std::list<Face*> faces;
 		// Cell complex -> faces not part of the envelope
 		// Cell -> inner shells
@@ -917,7 +903,7 @@ namespace TopoLogicCore
 		// Vertex --> n/a
 		if (occtShapeType == TopAbs_COMPOUND)
 		{
-			Cluster* pCluster = Topology::Downcast<Cluster>(pTopology.get());
+			Cluster* pCluster = Topology::Downcast<Cluster>(pTopology);
 			std::list<Topology*> immediateMembers;
 			pCluster->ImmediateMembers(immediateMembers);
 			for (std::list<Topology*>::const_iterator kIterator = immediateMembers.begin();
@@ -929,7 +915,7 @@ namespace TopoLogicCore
 			}
 		} else if (occtShapeType == TopAbs_COMPSOLID)
 		{
-			CellComplex* pCellComplex = Topology::Downcast<CellComplex>(pTopology.get());
+			CellComplex* pCellComplex = Topology::Downcast<CellComplex>(pTopology);
 			pCellComplex->InternalFaces(faces);
 			for (std::list<Face*>::iterator kFaceIterator = faces.begin();
 				kFaceIterator != faces.end();
@@ -941,7 +927,7 @@ namespace TopoLogicCore
 		}
 		else if (occtShapeType == TopAbs_SOLID)
 		{
-			Cell* pCell = Topology::Downcast<Cell>(pTopology.get());
+			Cell* pCell = Topology::Downcast<Cell>(pTopology);
 			std::list<Shell*> shells;
 			pCell->InnerShells(shells);
 			for (std::list<Shell*>::iterator kShellIterator = shells.begin();

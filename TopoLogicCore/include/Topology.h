@@ -310,14 +310,6 @@ namespace TopoLogicCore
 		/// </summary>
 		/// <param name="rkOcctShape"></param>
 		/// <returns></returns>
-		static std::unique_ptr<Topology> ByOcctShape2(const TopoDS_Shape& rkOcctShape);
-
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="rkOcctShape"></param>
-		/// <returns></returns>
 		static TopoDS_CompSolid MakeCompSolid(const TopoDS_Shape& rkOcctShape);
 
 		/// <summary>
