@@ -42,6 +42,9 @@ namespace TopoLogicCore
 		TOPOLOGY_CLUSTER = 7
 	};
 
+	class Vertex;
+	class Context;
+
 	/// <summary>
 	/// A Topology is an abstract superclass that constructors, properties and methods used by other subclasses that extend it.
 	/// </summary>
@@ -50,9 +53,84 @@ namespace TopoLogicCore
 	public:
 		typedef std::map<std::string, Attribute*> AttributeMap;
 		typedef std::map<std::string, Attribute*>::iterator AttributeMapIterator;
+		typedef std::map<std::string, Attribute*>::const_iterator AttributeMapConstIterator;
 
 	public:
 		virtual ~Topology();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="pGeometry"></param>
+		/// <returns></returns>
+		Topology* ByGeometry(Handle(Geom_Geometry) pGeometry);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpkContext"></param>
+		/// <returns></returns>
+		Topology* ByContext(Context const * const kpkContext);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkVertexCoordinates"></param>
+		/// <param name="rkVertexIndices"></param>
+		/// <returns></returns>
+		Topology* ByVertexIndex(const std::list<std::array<double, 3>>& rkVertexCoordinates, const std::list<std::list<int>>& rkVertexIndices);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkVertices"></param>
+		/// <param name="rkVertexIndices"></param>
+		/// <returns></returns>
+		Topology* ByVertexIndex(const std::list<Vertex*>& rkVertices, const std::list<std::list<int>>& rkVertexIndices);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpTopology"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API Topology* AddContent(Topology * const kpTopology);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpTopology"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API Topology* RemoveContent(Topology * const kpTopology);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpContext"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API Topology* AddContext(Context * const kpContext);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpContext"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API Topology* RemoveContext(Context * const kpContext);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpTopology"></param>
+		/// <param name="rkSharedTopologies"></param>
+		TOPOLOGIC_API void SharedTopologies(Topology * const kpTopology, std::list<Topology*>& rkSharedTopologies) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpTopology"></param>
+		/// <param name="kMaxLevels"></param>
+		/// <param name="kMaxPaths"></param>
+		/// <param name="rkPaths"></param>
+		TOPOLOGIC_API void PathsTo(Topology * const kpTopology, const int kMaxLevels, const int kMaxPaths, std::list<std::list<TopologicalQuery*>>& rkPaths) const;
 
 		/// <summary>
 		/// 
@@ -170,36 +248,36 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		std::list<Topology*>& Members()
+		std::list<Topology*>& Contents()
 		{
-			return m_members;
+			return m_contents;
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		const std::list<Topology*>& Members() const
+		const std::list<Topology*>& Contents() const
 		{
-			return m_members;
+			return m_contents;
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		std::list<Topology*>& MembersOf()
+		std::list<Context*>& Contexts()
 		{
-			return m_membersOf;
+			return m_contexts;
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		const std::list<Topology*>& MembersOf() const
+		const std::list<Context*>& Contexts() const
 		{
-			return m_membersOf;
+			return m_contexts;
 		}
 
 		/// <summary>
@@ -235,18 +313,6 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		TOPOLOGIC_API bool Locked() const;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="kLocked"></param>
-		TOPOLOGIC_API void Locked(const bool kLocked);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
 		virtual TopoDS_Shape* GetOcctShape() const = 0;
 
 		virtual TopologyType GetType() const = 0;
@@ -256,6 +322,18 @@ namespace TopoLogicCore
 		/// </summary>
 		/// <param name="rImmediateMembers">The immediate members</param>
 		TOPOLOGIC_API void ImmediateMembers(std::list<Topology*>& rImmediateMembers) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		TOPOLOGIC_API AttributeMap& Attributes() { return m_attributeMap; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		TOPOLOGIC_API const AttributeMap& Attributes() const { return m_attributeMap; }
 
 	protected:
 		Topology(const int kDimensionality);
@@ -297,10 +375,8 @@ namespace TopoLogicCore
 		static void AddUnionInternalStructure(const TopoDS_Shape& rkOcctShape, BOPCol_ListOfShape& rUnionArguments);
 
 		AttributeMap m_attributeMap;
-		std::list<Topology*> m_members;
-		std::list<Topology*> m_membersOf;
-		bool m_isLocked;
-		int m_modelingPriority;
+		std::list<Topology*> m_contents;
+		std::list<Context*> m_contexts;
 		int m_dimensionality;
 	};
 }

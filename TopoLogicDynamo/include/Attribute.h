@@ -8,8 +8,10 @@ namespace TopoLogic
 	{
 	public:
 		
+	public protected:
+		Attribute(TopoLogicCore::Attribute * const kpCoreAttribute);
+
 	protected:
-		Attribute();
 		~Attribute();
 
 		TopoLogicCore::Attribute* m_pCoreAttribute;

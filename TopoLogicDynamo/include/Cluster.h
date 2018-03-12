@@ -88,7 +88,7 @@ namespace TopoLogic
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpCoreCell"></param>
+		/// <param name="kpCoreCluster"></param>
 		Cluster(TopoLogicCore::Cluster* const kpCoreCluster);
 
 		/// <summary>

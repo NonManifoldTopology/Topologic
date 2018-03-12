@@ -95,11 +95,11 @@ namespace TopoLogic
 		{
 			return Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoCurves);
 		}
-		catch (std::exception& e)
+		catch (std::exception&)
 		{
 			return pDynamoCurves;
 		}
-		catch (Exception^ e)
+		catch (Exception^)
 		{
 			return pDynamoCurves;
 		}

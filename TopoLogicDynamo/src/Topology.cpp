@@ -10,7 +10,8 @@
 #include <Wire.h>
 #include <Edge.h>
 #include <Vertex.h>
-#include <TopoLogicCore/include/Topology.h>
+#include <Attribute.h>
+#include <Context.h>
 
 #include <TopoDS_Shape.hxx>
 
@@ -22,17 +23,44 @@ namespace TopoLogic
 		return pCoreTopology->Dimensionality();
 	}
 
-	bool Topology::Locked::get()
+	Topology^ Topology::ByGeometry(Autodesk::DesignScript::Geometry::Geometry^ geometry)
 	{
-		TopoLogicCore::Topology* pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
-		return pCoreTopology->Locked();
+		throw gcnew System::NotImplementedException();
+		// TODO: insert return statement here
 	}
 
-	Topology^ Topology::SetLocked(bool value)
+	Topology^ Topology::ByContext()
+	{
+		throw gcnew System::NotImplementedException();
+		// TODO: insert return statement here
+	}
+
+	Topology^ Topology::ByVertexIndex(List<array<double, 3>^>^ vertexCoordinates, List<List<int>^>^ vertexIndices)
+	{
+		throw gcnew System::NotImplementedException();
+		// TODO: insert return statement here
+	}
+
+	Topology^ Topology::ByVertexIndex(List<Vertex^>^ vertexCoordinates, List<List<int>^>^ vertexIndices)
+	{
+		throw gcnew System::NotImplementedException();
+		// TODO: insert return statement here
+	}
+
+	Dictionary<String^, Attribute^>^ Topology::Attributes::get()
 	{
 		TopoLogicCore::Topology* pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
-		pCoreTopology->Locked(value);
-		return this;
+		const TopoLogicCore::Topology::AttributeMap& rkCoreAttributes = pCoreTopology->Attributes();
+
+		Dictionary<String^, Attribute^>^ pAttributes = gcnew Dictionary<String^, Attribute^>();
+		for (TopoLogicCore::Topology::AttributeMap::const_iterator rkCoreAttributeIterator = rkCoreAttributes.cbegin();
+			rkCoreAttributeIterator != rkCoreAttributes.cend();
+			rkCoreAttributeIterator++)
+		{
+			pAttributes->Add(gcnew String(rkCoreAttributeIterator->first.c_str()), gcnew Attribute(rkCoreAttributeIterator->second));
+		}
+
+		return pAttributes;
 	}
 
 	bool Topology::SaveToBRep(String^ path)
@@ -83,16 +111,94 @@ namespace TopoLogic
 
 	}
 
-	List<Topology^>^ Topology::MemberOf()
+	List<Topology^>^ Topology::Contents()
 	{
-		throw gcnew System::NotImplementedException();
-		// TODO: insert return statement here
+		TopoLogicCore::Topology* pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
+		const std::list<TopoLogicCore::Topology*>& rkCoreContents = pCoreTopology->Contents();
+
+		List<Topology^>^ pTopologies = gcnew List<Topology^>();
+
+		for (std::list<TopoLogicCore::Topology*>::const_iterator rkCoreContentIterator = rkCoreContents.cbegin();
+			rkCoreContentIterator != rkCoreContents.cend();
+			rkCoreContentIterator++)
+		{
+			pTopologies->Add(Topology::ByCoreTopology(*rkCoreContentIterator));
+		}
+
+		return pTopologies;
 	}
 
-	List<Topology^>^ Topology::Members()
+	List<Context^>^ Topology::Contexts()
 	{
-		throw gcnew System::NotImplementedException();
-		// TODO: insert return statement here
+		TopoLogicCore::Topology* pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
+		const std::list<TopoLogicCore::Context*>& rkCoreContexts = pCoreTopology->Contexts();
+
+		List<Context^>^ pContexts = gcnew List<Context^>();
+
+		for (std::list<TopoLogicCore::Context*>::const_iterator rkCoreContextIterator = rkCoreContexts.cbegin();
+			rkCoreContextIterator != rkCoreContexts.cend();
+			rkCoreContextIterator++)
+		{
+			pContexts->Add(gcnew Context(*rkCoreContextIterator));
+		}
+
+		return pContexts;
+	}
+
+	Topology^ Topology::AddContent(Topology^ topology)
+	{
+		TopoLogicCore::Topology* pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
+		pCoreTopology->AddContent(TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topology->GetCoreTopologicalQuery()));
+		return this;
+	}
+
+	Topology^ Topology::RemoveContent(Topology^ topology)
+	{
+		TopoLogicCore::Topology* pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
+		pCoreTopology->RemoveContent(TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topology->GetCoreTopologicalQuery()));
+		return this;
+	}
+
+	Topology^ Topology::AddContext(Context^ context)
+	{
+		TopoLogicCore::Topology* pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
+		pCoreTopology->AddContext(TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Context>(context->GetCoreTopologicalQuery()));
+		return this;
+	}
+
+	Topology^ Topology::RemoveContext(Context^ context)
+	{
+		TopoLogicCore::Topology* pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
+		pCoreTopology->RemoveContext(TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Context>(context->GetCoreTopologicalQuery()));
+		return this;
+	}
+
+	List<Topology^>^ Topology::SharedTopologies(Topology^ topology)
+	{
+		TopoLogicCore::Topology* pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
+		std::list<TopoLogicCore::Topology*> coreSharedTopologies;
+		pCoreTopology->SharedTopologies(TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topology->GetCoreTopologicalQuery()), coreSharedTopologies);
+		List<Topology^>^ pSharedTopologies = gcnew List<Topology^>();
+		for (std::list<TopoLogicCore::Topology*>::const_iterator kCoreSharedTopologyIterator = coreSharedTopologies.begin();
+			kCoreSharedTopologyIterator != coreSharedTopologies.end();
+			kCoreSharedTopologyIterator++)
+		{
+			pSharedTopologies->Add(Topology::ByCoreTopology(*kCoreSharedTopologyIterator));
+		}
+		return pSharedTopologies;
+	}
+
+	List<List<Topology^>^>^ Topology::PathsTo(Topology^ topology, int maxLevel, int maxPaths)
+	{
+		TopoLogicCore::Topology* pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
+		std::list<std::list<TopoLogicCore::TopologicalQuery*>> corePaths;
+		pCoreTopology->PathsTo(
+			TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topology->GetCoreTopologicalQuery()), 
+			maxLevel,
+			maxPaths,
+			corePaths);
+
+		throw gcnew NotImplementedException();
 	}
 
 	Dictionary<String^, Object^>^ Topology::BooleanImages(Topology^ topology)

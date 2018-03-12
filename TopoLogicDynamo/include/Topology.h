@@ -9,12 +9,45 @@ using namespace Autodesk::DesignScript::Runtime;
 
 namespace TopoLogic
 {
+	ref class Vertex;
+	ref class Attribute;
+	ref class Context;
+
 	/// <summary>
 	/// A Topology is an abstract superclass that constructors, properties and methods used by other subclasses that extend it.
 	/// </summary>
 	public ref class Topology abstract : public TopologicalQuery
 	{
 	public:
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="geometry"></param>
+		/// <returns></returns>
+		Topology^ ByGeometry(Autodesk::DesignScript::Geometry::Geometry^ geometry);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		Topology^ ByContext();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="vertexCoordinates"></param>
+		/// <param name="vertexIndices"></param>
+		/// <returns></returns>
+		Topology^ ByVertexIndex(List<array<double, 3>^>^ vertexCoordinates, List<List<int>^>^ vertexIndices);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="vertexCoordinates"></param>
+		/// <param name="vertexIndices"></param>
+		/// <returns></returns>
+		Topology^ ByVertexIndex(List<Vertex^>^ vertexCoordinates, List<List<int>^>^ vertexIndices);
+
 		/// <summary>
 		/// Returns the dimensionality of the topological entity.
 		/// </summary>
@@ -42,32 +75,68 @@ namespace TopoLogic
 		}
 
 		/// <summary>
-		/// Returns the locked flag of this topological entity
+		/// 
 		/// </summary>
-		/// <returns name="bool">The locked flag of this topological entity</returns>
-		property bool Locked
+		property Dictionary<String^, Attribute^>^ Attributes
 		{
-			bool get();
+			Dictionary<String^, Attribute^>^ get();
 		}
-
-		/// <summary>
-		/// Set the topology's locked flag
-		/// </summary>
-		/// <param name="value"></param>
-		/// <returns name="Topology">The original topology with the new locked flag</returns>
-		Topology^ SetLocked(bool value);
 
 		/// <summary>
 		/// Returns the topological entities containing the input topology as a non-constituent member
 		/// </summary>
 		/// <returns name="Topology[]">The topological entities containing the input topology as a non-constituent member</returns>
-		List<Topology^>^ MemberOf();
+		List<Topology^>^ Contents();
 
 		/// <summary>
 		/// Returns the non-constituent members of the input topological entity.
 		/// </summary>
-		/// <returns name="Topology[]">The non-constituent members of the input topological entity</returns>
-		List<Topology^>^ Members();
+		/// <returns name="Context[]">The non-constituent members of the input topological entity</returns>
+		List<Context^>^ Contexts();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="topology"></param>
+		/// <returns></returns>
+		Topology^ AddContent(Topology^ topology);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="topology"></param>
+		/// <returns></returns>
+		Topology^ RemoveContent(Topology^ topology);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="context"></param>
+		/// <returns></returns>
+		Topology^ AddContext(Context^ context);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="context"></param>
+		/// <returns></returns>
+		Topology^ RemoveContext(Context^ context);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="topology"></param>
+		/// <returns></returns>
+		List<Topology^>^ SharedTopologies(Topology^ topology);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="topology"></param>
+		/// <param name="maxLevel"></param>
+		/// <param name="maxPaths"></param>
+		/// <returns name="Topology[][]"></returns>
+		List<List<Topology^>^>^ PathsTo(Topology^ topology, int maxLevel, int maxPaths);
 
 		/// <summary>
 		/// 
@@ -159,7 +228,6 @@ namespace TopoLogic
 		/// <summary>
 		/// Print the topological information of the input entity.
 		/// </summary>
-		/// <param name="topology">A topological entity</param>
 		/// <returns name="String">The topological information of the input entity</returns>
 		String^ Analyze();
 

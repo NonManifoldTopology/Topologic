@@ -40,6 +40,7 @@
 #include <ShapeFix_Shape.hxx>
 
 #include <array>
+#include <algorithm>
 
 namespace TopoLogicCore
 {
@@ -55,8 +56,6 @@ namespace TopoLogicCore
 
 	Topology::Topology(const int kDimensionality)
 		: m_dimensionality(kDimensionality)
-		, m_isLocked(false)
-		, m_modelingPriority(5)
 	{
 
 	}
@@ -112,7 +111,6 @@ namespace TopoLogicCore
 
 	Topology::~Topology()
 	{
-
 		for (AttributeMapIterator attributeMapIterator = m_attributeMap.begin();
 			attributeMapIterator != m_attributeMap.end();
 			attributeMapIterator++)
@@ -120,23 +118,64 @@ namespace TopoLogicCore
 			delete attributeMapIterator->second;
 		}
 		m_attributeMap.clear();
+	}
 
-		for (std::list<Topology*>::iterator memberIterator = m_members.begin();
-			memberIterator != m_members.end();
-			memberIterator++)
+	Topology* Topology::ByGeometry(Handle(Geom_Geometry) pGeometry)
+	{
+		return nullptr;
+	}
+
+	Topology* Topology::ByContext(Context const * const kpkContext)
+	{
+		return nullptr;
+	}
+
+	Topology* Topology::ByVertexIndex(const std::list<std::array<double, 3>>& rkVertexCoordinates, const std::list<std::list<int>>& rkVertexIndices)
+	{
+		return nullptr;
+	}
+
+	Topology* Topology::ByVertexIndex(const std::list<Vertex*>& rkVertices, const std::list<std::list<int>>& rkVertexIndices)
+	{
+		return nullptr;
+	}
+
+	Topology* Topology::AddContent(Topology * const kpTopology)
+	{
+		if(std::find(m_contents.begin(), m_contents.end(), kpTopology) != m_contents.end())
 		{
-			delete *memberIterator;
+			m_contents.push_back(kpTopology);
 		}
-		m_members.clear();
+		return this;
+	}
 
+	Topology* Topology::RemoveContent(Topology * const kpTopology)
+	{
+		m_contents.remove(kpTopology);
+		return this;
+	}
 
-		for (std::list<Topology*>::iterator memberOfIterator = m_membersOf.begin();
-			memberOfIterator != m_membersOf.end();
-			memberOfIterator++)
+	Topology* Topology::AddContext(Context * const kpContext)
+	{
+		if (std::find(m_contexts.begin(), m_contexts.end(), kpContext) != m_contexts.end())
 		{
-			delete *memberOfIterator;
+			m_contexts.push_back(kpContext);
 		}
-		m_membersOf.clear();
+		return this;
+	}
+
+	Topology* Topology::RemoveContext(Context * const kpContext)
+	{
+		m_contexts.remove(kpContext);
+		return this;
+	}
+
+	void Topology::SharedTopologies(Topology * const kpTopology, std::list<Topology*>& rkSharedTopologies) const
+	{
+	}
+
+	void Topology::PathsTo(Topology * const kpTopology, const int kMaxLevels, const int kMaxPaths, std::list<std::list<TopologicalQuery*>>& rkPaths) const
+	{
 	}
 
 	bool Topology::SaveToBrep(const std::string & rkPath) const
@@ -258,18 +297,6 @@ namespace TopoLogicCore
 	std::string Topology::Analyze()
 	{
 		return Analyze(*GetOcctShape(), 0);
-	}
-
-	bool Topology::Locked() const
-	{
-		// TODO: Or locked?
-		return GetOcctShape()->Locked();
-	}
-
-	void Topology::Locked(const bool kLocked)
-	{
-		// TODO: Or locked?
-		GetOcctShape()->Locked(kLocked);
 	}
 
 	void Topology::BooleanImages(
