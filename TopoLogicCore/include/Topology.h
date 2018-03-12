@@ -43,7 +43,7 @@ namespace TopoLogicCore
 	};
 
 	/// <summary>
-	/// A Topology is the abstract super class of Cluster, CellComplex, Cell, Shell, Face, Edge, and Vertex.
+	/// A Topology is an abstract superclass that constructors, properties and methods used by other subclasses that extend it.
 	/// </summary>
 	class Topology : public TopologicalQuery
 	{

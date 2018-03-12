@@ -12,7 +12,7 @@ namespace TopoLogic
 	ref class Topology;
 
 	/// <summary>
-	/// A Context defines the topological relationship between two topologies.
+	/// A Context defines a topological relationship between two otherwise independent Topologies.
 	/// </summary>
 	public ref class Context : public TopologicalQuery
 	{

@@ -8,7 +8,7 @@ using namespace System;
 
 namespace TopoLogic
 {
-	Aperture^ Aperture::ByTopologyContext(TopoLogic::Topology^ topology, Context ^ context)
+	Aperture^ Aperture::ByTopologyContext(TopoLogic::Topology^ topology, Context^ context)
 	{
 		TopoLogicCore::Aperture* pCoreAperture = TopoLogicCore::Aperture::ByTopologyContext(
 			TopoLogicCore::Topology::DowncastToTopology(topology->GetCoreTopologicalQuery()),
@@ -16,22 +16,15 @@ namespace TopoLogic
 			);
 		return gcnew Aperture(pCoreAperture);
 	}
-	double Aperture::FirstPathWeight()
-	{
-		TopoLogicCore::Aperture* pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
-		return pCoreAperture->FirstPathWeight();
-	}
 
-	double Aperture::SecondPathWeight()
+	Aperture^ Aperture::ByTopologyContextStatus(Topology^ topology, Context^ context, bool openStatus)
 	{
-		TopoLogicCore::Aperture* pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
-		return pCoreAperture->SecondPathWeight();
-	}
-
-	Topology^ Aperture::Topology()
-	{
-		TopoLogicCore::Aperture* pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
-		return Topology::ByCoreTopology(pCoreAperture->Topology());
+		TopoLogicCore::Aperture* pCoreAperture = TopoLogicCore::Aperture::ByTopologyContextStatus(
+			TopoLogicCore::Topology::DowncastToTopology(topology->GetCoreTopologicalQuery()),
+			TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Context>(context->GetCoreTopologicalQuery()),
+			openStatus
+		);
+		return gcnew Aperture(pCoreAperture);
 	}
 
 	bool Aperture::IsOpen()
@@ -40,34 +33,75 @@ namespace TopoLogic
 		return pCoreAperture->IsOpen();
 	}
 
-	List<TopoLogic::Topology^>^ Aperture::FirstPath()
+	bool Aperture::IsOpen(List<Topology^>^ topologies)
 	{
 		TopoLogicCore::Aperture* pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
-		std::list<TopoLogicCore::Topology*> coreFirstPath;
-		pCoreAperture->FirstPath(coreFirstPath);
-		List<TopoLogic::Topology^>^ pFirstPath = gcnew List<TopoLogic::Topology^>();
-		for (std::list<TopoLogicCore::Topology*>::const_iterator kCoreTopologyIterator = coreFirstPath.begin();
-			kCoreTopologyIterator != coreFirstPath.end();
-			kCoreTopologyIterator++)
+		std::list<TopoLogicCore::Topology*> coreTopologies;
+		for each (Topology^ pTopology in topologies)
 		{
-			pFirstPath->Add(Topology::ByCoreTopology(*kCoreTopologyIterator));
+			coreTopologies.push_back(TopoLogicCore::Topology::DowncastToTopology(pTopology->GetCoreTopologicalQuery()));
 		}
-		return pFirstPath;
+		return pCoreAperture->IsOpen(coreTopologies);
 	}
 
-	List<TopoLogic::Topology^>^ Aperture::SecondPath()
+	List<List<TopoLogic::Topology^>^>^ Aperture::Paths()
 	{
 		TopoLogicCore::Aperture* pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
-		std::list<TopoLogicCore::Topology*> coreSecondPath;
-		pCoreAperture->SecondPath(coreSecondPath);
-		List<TopoLogic::Topology^>^ pSecondPath = gcnew List<TopoLogic::Topology^>();
-		for (std::list<TopoLogicCore::Topology*>::const_iterator kCoreTopologyIterator = coreSecondPath.begin();
-			kCoreTopologyIterator != coreSecondPath.end();
-			kCoreTopologyIterator++)
+		std::list<std::list<TopoLogicCore::Topology*>> corePaths;
+		pCoreAperture->Paths(corePaths);
+		List<List<TopoLogic::Topology^>^>^ pPaths = gcnew List<List<TopoLogic::Topology^>^>();
+		for (std::list<std::list<TopoLogicCore::Topology*>>::const_iterator kCorePathIterator = corePaths.begin();
+			kCorePathIterator != corePaths.end();
+			kCorePathIterator++)
 		{
-			pSecondPath->Add(Topology::ByCoreTopology(*kCoreTopologyIterator));
+			List<Topology^>^ pPath = gcnew List<Topology^>();
+			for (std::list<TopoLogicCore::Topology*>::const_iterator kCoreTopologyIterator = kCorePathIterator->begin();
+				kCoreTopologyIterator != kCorePathIterator->end();
+				kCoreTopologyIterator++)
+			{
+				pPath->Add(Topology::ByCoreTopology(*kCoreTopologyIterator));
+			}
+			pPaths->Add(pPath);
 		}
-		return pSecondPath;
+		return pPaths;
+	}
+
+	Aperture^ TopoLogic::Aperture::Open()
+	{
+		TopoLogicCore::Aperture* pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
+		pCoreAperture->Open();
+		return this;
+	}
+
+	Aperture^ TopoLogic::Aperture::Open(List<Topology^>^ topologies)
+	{
+		TopoLogicCore::Aperture* pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
+		std::list<TopoLogicCore::Topology*> coreTopologies;
+		for each (Topology^ pTopology in topologies)
+		{
+			coreTopologies.push_back(TopoLogicCore::Topology::DowncastToTopology(pTopology->GetCoreTopologicalQuery()));
+		}
+		pCoreAperture->Open(coreTopologies);
+		return this;
+	}
+
+	Aperture^ TopoLogic::Aperture::Close()
+	{
+		TopoLogicCore::Aperture* pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
+		pCoreAperture->Close();
+		return this;
+	}
+
+	Aperture^ TopoLogic::Aperture::Close(List<Topology^>^ topologies)
+	{
+		TopoLogicCore::Aperture* pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
+		std::list<TopoLogicCore::Topology*> coreTopologies;
+		for each (Topology^ pTopology in topologies)
+		{
+			coreTopologies.push_back(TopoLogicCore::Topology::DowncastToTopology(pTopology->GetCoreTopologicalQuery()));
+		}
+		pCoreAperture->Close(coreTopologies);
+		return this;
 	}
 
 	Aperture::Aperture(TopoLogicCore::Aperture * const kpCoreAperture)
@@ -90,5 +124,12 @@ namespace TopoLogic
 		}
 
 		return m_pCoreAperture;
+	}
+
+	Object^ Aperture::Geometry::get()
+	{
+		TopoLogicCore::Aperture* pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
+		
+		throw gcnew NotImplementedException();
 	}
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <TopologicalQuery.h>
+#include <Topology.h>
 
 #include <TopoLogicCore/include/Aperture.h>
 
@@ -8,44 +8,33 @@ using namespace System::Collections::Generic;
 
 namespace TopoLogic
 {
-	ref class Topology;
 	ref class Context;
 
 	/// <summary>
 	/// <para>
-	/// An aperture controls connection paths between two topologies that share a common topology or between a
-	/// topology and the outside space.It can be uni - directional or bi - directional.For each path direction, 
-	/// it may allow a varying normalised degree of weights(i.e.between 0 and 1). 
-	/// A closed aperture has a path weight of 0 for both paths.A fully open aperture has a weight of 1.
+	/// An Aperture defines a connection path between two Topologies that share a common Topology or between a
+	/// Topology and the outside space. A connection path can be uni-directional or bi-directional.
 	/// </para>
 	/// </summary>
-	public ref class Aperture : public TopologicalQuery
+	public ref class Aperture : public Topology
 	{
+	public:
 		/// <summary>
 		/// Creates an aperture by a topology and a context.
 		/// </summary>
-		/// <param name="kpTopology"></param>
-		/// <param name="kpContext"></param>
+		/// <param name="topology"></param>
+		/// <param name="context"></param>
 		/// <returns></returns>
 		static Aperture^ ByTopologyContext(Topology^ topology, Context^ context);
 
 		/// <summary>
-		/// 
+		/// Creates an aperture by a topology, a context, and an open status.
 		/// </summary>
+		/// <param name="topology"></param>
+		/// <param name="context"></param>
+		/// <param name="openStatus"></param>
 		/// <returns></returns>
-		double FirstPathWeight();
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		double SecondPathWeight();
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		Topology^ Topology();
+		static Aperture^ ByTopologyContextStatus(Topology^ topology, Context^ context, bool openStatus);
 
 		/// <summary>
 		/// 
@@ -56,12 +45,49 @@ namespace TopoLogic
 		/// <summary>
 		/// 
 		/// </summary>
-		List<TopoLogic::Topology^>^ FirstPath();
+		/// <param name="topologies"></param>
+		/// <returns></returns>
+		bool IsOpen(List<Topology^>^ topologies);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		List<TopoLogic::Topology^>^ SecondPath();
+		List<List<TopoLogic::Topology^>^>^ Paths();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		Aperture^ Open();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="topologies"></param>
+		/// <returns></returns>
+		Aperture^ Open(List<Topology^>^ topologies);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		Aperture^ Close();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="topologies"></param>
+		/// <returns></returns>
+		Aperture^ Close(List<Topology^>^ topologies);
+
+		property Object^ Geometry
+		{
+			/// <summary>
+			/// 
+			/// </summary>
+			/// <returns></returns>
+			virtual Object^ get() override;
+		}
 
 	public protected:
 		Aperture(TopoLogicCore::Aperture* const kpCoreAperture);

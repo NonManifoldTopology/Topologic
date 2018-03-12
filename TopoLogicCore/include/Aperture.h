@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Utilities.h"
-#include "TopologicalQuery.h"
+#include "Topology.h"
 
 #include <list>
 #include <memory>
@@ -9,20 +9,17 @@
 namespace TopoLogicCore
 {
 	class Context;
-	class Topology;
 
 	/// <summary>
 	/// <para>
-	/// An aperture controls connection paths between two topologies that share a common topology or between a
-	/// topology and the outside space.It can be uni - directional or bi - directional.For each path direction, 
-	/// it may allow a varying normalised degree of weights(i.e.between 0 and 1). 
-	/// A closed aperture has a path weight of 0 for both paths.A fully open aperture has a weight of 1.
+	/// An Aperture defines a connection path between two Topologies that share a common Topology or between a
+	/// Topology and the outside space. A connection path can be uni-directional or bi-directional.
 	/// </para>
 	/// </summary>
-	class Aperture : public TopologicalQuery
+	class Aperture : public Topology
 	{
 	public:
-		Aperture(TopoLogicCore::Topology* const kpTopology, Context * const kpContext);
+		Aperture(TopoLogicCore::Topology* const kpTopology, Context * const kpContext, const bool kOpenStatus);
 		~Aperture();
 
 		/// <summary>
@@ -34,22 +31,13 @@ namespace TopoLogicCore
 		static TOPOLOGIC_API Aperture* ByTopologyContext(TopoLogicCore::Topology* const kpTopology, Context * const kpContext);
 
 		/// <summary>
-		/// 
+		/// Creates an aperture by a topology and a context.
 		/// </summary>
+		/// <param name="kpTopology"></param>
+		/// <param name="kpContext"></param>
+		/// <param name="kOpenStatus"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API double FirstPathWeight() const { return m_firstPathWeight; }
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		TOPOLOGIC_API double SecondPathWeight() const { return m_secondPathWeight; }
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		TOPOLOGIC_API Topology* Topology() const { return m_pTopology; }
+		static TOPOLOGIC_API Aperture* ByTopologyContextStatus(TopoLogicCore::Topology* const kpTopology, Context * const kpContext, const bool kOpenStatus);
 
 		/// <summary>
 		/// 
@@ -60,18 +48,53 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="rFirstPath"></param>
-		TOPOLOGIC_API void FirstPath(std::list<TopoLogicCore::Topology*>& rFirstPath) const;
+		/// <param name="rkTopologies"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API bool IsOpen(const std::list<TopoLogicCore::Topology*>& rkTopologies) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="rSecondPath"></param>
-		TOPOLOGIC_API void SecondPath(std::list<TopoLogicCore::Topology*>& rSecondPath) const;
+		/// <param name="rPaths"></param>
+		TOPOLOGIC_API void Paths(std::list<std::list<TopoLogicCore::Topology*>>& rPaths) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		TOPOLOGIC_API void Open();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkTopologies"></param>
+		TOPOLOGIC_API void Open(const std::list<TopoLogicCore::Topology*>& rkTopologies);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		TOPOLOGIC_API void Close();
+		
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkTopologies"></param>
+		TOPOLOGIC_API void Close(const std::list<TopoLogicCore::Topology*>& rkTopologies);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rOcctGeometries"></param>
+		virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual TopoDS_Shape* GetOcctShape() const;
+
+		virtual TopologyType GetType() const { return TOPOLOGY_VERTEX; }
 
 	protected:
-		TopoLogicCore::Topology* m_pTopology;
-		double m_firstPathWeight;
-		double m_secondPathWeight;
+		Topology* m_pTopology;
 	};
 }
