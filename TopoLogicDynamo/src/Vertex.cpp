@@ -18,7 +18,7 @@ namespace TopoLogic
 	List<Edge^>^ Vertex::Edges()
 	{
 		std::list<TopoLogicCore::Edge*> coreEdges;
-		TopoLogicCore::Vertex* pCoreVertex = TopoLogicCore::Topology::Downcast<TopoLogicCore::Vertex>(GetCoreTopology());
+		TopoLogicCore::Vertex* pCoreVertex = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Vertex>(GetCoreTopologicalQuery());
 		pCoreVertex->Edges(coreEdges);
 
 		List<Edge^>^ pEdges = gcnew List<Edge^>();
@@ -36,7 +36,7 @@ namespace TopoLogic
 		return pEdges;
 	}
 
-	TopoLogicCore::Topology* Vertex::GetCoreTopology()
+	TopoLogicCore::TopologicalQuery* Vertex::GetCoreTopologicalQuery()
 	{
 		assert(m_pCoreVertex != nullptr && "Vertex::m_pCoreVertex is null.");
 		if (m_pCoreVertex == nullptr)
@@ -63,7 +63,11 @@ namespace TopoLogic
 
 	Autodesk::DesignScript::Geometry::Point^ Vertex::Point()
 	{
-		gp_Pnt occtPoint = BRep_Tool::Pnt(TopoDS::Vertex(*GetCoreTopology()->GetOcctShape()));
+		gp_Pnt occtPoint = BRep_Tool::Pnt(
+			TopoDS::Vertex(
+				*TopoLogicCore::Topology::DowncastToTopology(GetCoreTopologicalQuery())->GetOcctShape()
+			)
+		);
 		return Autodesk::DesignScript::Geometry::Point::ByCoordinates(occtPoint.X(), occtPoint.Y(), occtPoint.Z());
 	}
 

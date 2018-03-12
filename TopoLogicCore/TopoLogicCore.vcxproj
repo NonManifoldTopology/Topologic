@@ -150,23 +150,28 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\Aperture.h" />
     <ClInclude Include="include\Attribute.h" />
     <ClInclude Include="include\Cell.h" />
     <ClInclude Include="include\CellComplex.h" />
     <ClInclude Include="include\Cluster.h" />
+    <ClInclude Include="include\Context.h" />
     <ClInclude Include="include\Edge.h" />
     <ClInclude Include="include\Face.h" />
     <ClInclude Include="include\GlobalCluster.h" />
     <ClInclude Include="include\Shell.h" />
+    <ClInclude Include="include\TopologicalQuery.h" />
     <ClInclude Include="include\Topology.h" />
     <ClInclude Include="include\Utilities.h" />
     <ClInclude Include="include\Vertex.h" />
     <ClInclude Include="include\Wire.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Aperture.cpp" />
     <ClCompile Include="src\Cell.cpp" />
     <ClCompile Include="src\CellComplex.cpp" />
     <ClCompile Include="src\Cluster.cpp" />
+    <ClCompile Include="src\Context.cpp" />
     <ClCompile Include="src\Edge.cpp" />
     <ClCompile Include="src\Face.cpp" />
     <ClCompile Include="src\GlobalCluster.cpp" />

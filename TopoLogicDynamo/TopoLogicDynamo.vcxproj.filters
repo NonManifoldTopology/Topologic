@@ -11,6 +11,9 @@
     <ClInclude Include="include\Face.h" />
     <ClInclude Include="include\Shell.h" />
     <ClInclude Include="include\Wire.h" />
+    <ClInclude Include="include\Aperture.h" />
+    <ClInclude Include="include\Context.h" />
+    <ClInclude Include="include\TopologicalQuery.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
@@ -23,5 +26,7 @@
     <ClCompile Include="src\Face.cpp" />
     <ClCompile Include="src\Shell.cpp" />
     <ClCompile Include="src\Wire.cpp" />
+    <ClCompile Include="src\Context.cpp" />
+    <ClCompile Include="src\Aperture.cpp" />
   </ItemGroup>
 </Project>

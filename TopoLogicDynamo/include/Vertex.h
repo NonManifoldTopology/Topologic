@@ -41,7 +41,7 @@ namespace TopoLogic
 
 		Autodesk::DesignScript::Geometry::Point^ Point();
 
-		virtual TopoLogicCore::Topology* GetCoreTopology() override;
+		virtual TopoLogicCore::TopologicalQuery* GetCoreTopologicalQuery() override;
 
 	protected:
 		virtual ~Vertex();

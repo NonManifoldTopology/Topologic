@@ -18,35 +18,41 @@ namespace TopoLogic
 {
 	int Topology::Dimensionality::get()
 	{
-		return GetCoreTopology()->Dimensionality();
+		TopoLogicCore::Topology* pCoreTopology = TopoLogicCore::Topology::DowncastToTopology(GetCoreTopologicalQuery());
+		return pCoreTopology->Dimensionality();
 	}
 
 	bool Topology::Locked::get()
 	{
-		return GetCoreTopology()->Locked();
+		TopoLogicCore::Topology* pCoreTopology = TopoLogicCore::Topology::DowncastToTopology(GetCoreTopologicalQuery());
+		return pCoreTopology->Locked();
 	}
 
 	Topology^ Topology::SetLocked(bool value)
 	{
-		GetCoreTopology()->Locked(value);
+		TopoLogicCore::Topology* pCoreTopology = TopoLogicCore::Topology::DowncastToTopology(GetCoreTopologicalQuery());
+		pCoreTopology->Locked(value);
 		return this;
 	}
 
 	bool Topology::SaveToBRep(String^ path)
 	{
+		TopoLogicCore::Topology* pCoreTopology = TopoLogicCore::Topology::DowncastToTopology(GetCoreTopologicalQuery());
 		std::string cppPath = msclr::interop::marshal_as<std::string>(path);
-		return GetCoreTopology()->SaveToBrep(cppPath);
+		return pCoreTopology->SaveToBrep(cppPath);
 	}
 
 	bool Topology::LoadFromBRep(String^ path)
 	{
+		TopoLogicCore::Topology* pCoreTopology = TopoLogicCore::Topology::DowncastToTopology(GetCoreTopologicalQuery());
 		std::string cppPath = msclr::interop::marshal_as<std::string>(path);
-		return GetCoreTopology()->LoadFromBrep(cppPath);
+		return pCoreTopology->LoadFromBrep(cppPath);
 	}
 
 	String^ Topology::Analyze()
 	{
-		return gcnew String(GetCoreTopology()->Analyze().c_str());
+		TopoLogicCore::Topology* pCoreTopology = TopoLogicCore::Topology::DowncastToTopology(GetCoreTopologicalQuery());
+		return gcnew String(pCoreTopology->Analyze().c_str());
 	}
 
 	Topology^ Topology::ByCoreTopology(TopoLogicCore::Topology * const kpCoreTopology)
@@ -91,8 +97,13 @@ namespace TopoLogic
 
 	Dictionary<String^, Object^>^ Topology::BooleanImages(Topology^ topology)
 	{
-		TopoLogicCore::Topology* pCoreTopologyA = GetCoreTopology();
-		TopoLogicCore::Topology* pCoreTopologyB = topology->GetCoreTopology();
+		TopoLogicCore::Topology* pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
+		if (pCoreTopology == nullptr)
+		{
+			throw gcnew Exception("Not a topology");
+		}
+		TopoLogicCore::Topology* pCoreTopologyA = TopoLogicCore::Topology::DowncastToTopology(GetCoreTopologicalQuery());
+		TopoLogicCore::Topology* pCoreTopologyB = TopoLogicCore::Topology::DowncastToTopology(topology->GetCoreTopologicalQuery());
 
 		std::list<TopoLogicCore::Topology*> coreArgumentsInArguments;
 		std::list<TopoLogicCore::Topology*> coreArgumentsInTools;
@@ -158,8 +169,8 @@ namespace TopoLogic
 
 	Topology^ Topology::Difference(Topology^ topology)
 	{
-		TopoLogicCore::Topology* pCoreTopologyA = GetCoreTopology();
-		TopoLogicCore::Topology* pCoreTopologyB = topology->GetCoreTopology();
+		TopoLogicCore::Topology* pCoreTopologyA = TopoLogicCore::Topology::DowncastToTopology(GetCoreTopologicalQuery());
+		TopoLogicCore::Topology* pCoreTopologyB = TopoLogicCore::Topology::DowncastToTopology(topology->GetCoreTopologicalQuery());
 
 		try{
 			TopoLogicCore::Topology* pDifferenceCoreTopology = pCoreTopologyA->Difference(pCoreTopologyB);
@@ -173,8 +184,8 @@ namespace TopoLogic
 
 	Topology^ Topology::Impose(Topology^ topology)
 	{
-		TopoLogicCore::Topology* pCoreTopologyA = GetCoreTopology();
-		TopoLogicCore::Topology* pCoreTopologyB = topology->GetCoreTopology();
+		TopoLogicCore::Topology* pCoreTopologyA = TopoLogicCore::Topology::DowncastToTopology(GetCoreTopologicalQuery());
+		TopoLogicCore::Topology* pCoreTopologyB = TopoLogicCore::Topology::DowncastToTopology(topology->GetCoreTopologicalQuery());
 
 		try{
 			TopoLogicCore::Topology* pImposeCoreTopology = pCoreTopologyA->Impose(pCoreTopologyB); 
@@ -188,8 +199,8 @@ namespace TopoLogic
 
 	Topology^ Topology::Imprint(Topology^ topology)
 	{
-		TopoLogicCore::Topology* pCoreTopologyA = GetCoreTopology();
-		TopoLogicCore::Topology* pCoreTopologyB = topology->GetCoreTopology();
+		TopoLogicCore::Topology* pCoreTopologyA = TopoLogicCore::Topology::DowncastToTopology(GetCoreTopologicalQuery());
+		TopoLogicCore::Topology* pCoreTopologyB = TopoLogicCore::Topology::DowncastToTopology(topology->GetCoreTopologicalQuery());
 
 		try{
 			TopoLogicCore::Topology* pImprintCoreTopology = pCoreTopologyA->Imprint(pCoreTopologyB);
@@ -203,8 +214,8 @@ namespace TopoLogic
 
 	Topology^ Topology::Intersection(Topology^ topology)
 	{
-		TopoLogicCore::Topology* pCoreTopologyA = GetCoreTopology();
-		TopoLogicCore::Topology* pCoreTopologyB = topology->GetCoreTopology();
+		TopoLogicCore::Topology* pCoreTopologyA = TopoLogicCore::Topology::DowncastToTopology(GetCoreTopologicalQuery());
+		TopoLogicCore::Topology* pCoreTopologyB = TopoLogicCore::Topology::DowncastToTopology(topology->GetCoreTopologicalQuery());
 
 		try {
 			TopoLogicCore::Topology* pIntersectionCoreTopology = pCoreTopologyA->Intersection(pCoreTopologyB);
@@ -218,8 +229,8 @@ namespace TopoLogic
 	
 	Topology^ Topology::Union(Topology^ topology)
 	{
-		TopoLogicCore::Topology* pCoreTopologyA = GetCoreTopology();
-		TopoLogicCore::Topology* pCoreTopologyB = topology->GetCoreTopology();
+		TopoLogicCore::Topology* pCoreTopologyA = TopoLogicCore::Topology::DowncastToTopology(GetCoreTopologicalQuery());
+		TopoLogicCore::Topology* pCoreTopologyB = TopoLogicCore::Topology::DowncastToTopology(topology->GetCoreTopologicalQuery());
 
 		try{
 			TopoLogicCore::Topology* pUnionCoreTopology = pCoreTopologyA->Union(pCoreTopologyB);
@@ -233,8 +244,8 @@ namespace TopoLogic
 
 	Topology^ Topology::Merge(Topology^ topology)
 	{
-		TopoLogicCore::Topology* pCoreTopologyA = GetCoreTopology();
-		TopoLogicCore::Topology* pCoreTopologyB = topology->GetCoreTopology();
+		TopoLogicCore::Topology* pCoreTopologyA = TopoLogicCore::Topology::DowncastToTopology(GetCoreTopologicalQuery());
+		TopoLogicCore::Topology* pCoreTopologyB = TopoLogicCore::Topology::DowncastToTopology(topology->GetCoreTopologicalQuery());
 
 		try{
 			TopoLogicCore::Topology* pMergeCoreTopology = pCoreTopologyA->Merge(pCoreTopologyB);
@@ -248,8 +259,8 @@ namespace TopoLogic
 
 	Topology^ Topology::Slice(Topology^ topology)
 	{
-		TopoLogicCore::Topology* pCoreTopologyA = GetCoreTopology();
-		TopoLogicCore::Topology* pCoreTopologyB = topology->GetCoreTopology();
+		TopoLogicCore::Topology* pCoreTopologyA = TopoLogicCore::Topology::DowncastToTopology(GetCoreTopologicalQuery());
+		TopoLogicCore::Topology* pCoreTopologyB = TopoLogicCore::Topology::DowncastToTopology(topology->GetCoreTopologicalQuery());
 
 		try{
 			TopoLogicCore::Topology* pSliceCoreTopology = pCoreTopologyA->Slice(pCoreTopologyB);
@@ -263,8 +274,8 @@ namespace TopoLogic
 
 	Topology^ Topology::XOR(Topology^ topology)
 	{
-		TopoLogicCore::Topology* pCoreTopologyA = GetCoreTopology();
-		TopoLogicCore::Topology* pCoreTopologyB = topology->GetCoreTopology();
+		TopoLogicCore::Topology* pCoreTopologyA = TopoLogicCore::Topology::DowncastToTopology(GetCoreTopologicalQuery());
+		TopoLogicCore::Topology* pCoreTopologyB = TopoLogicCore::Topology::DowncastToTopology(topology->GetCoreTopologicalQuery());
 
 		try{
 			TopoLogicCore::Topology* pSliceCoreTopology = pCoreTopologyA->XOR(pCoreTopologyB);
@@ -278,7 +289,7 @@ namespace TopoLogic
 
 	List<Topology^>^ Topology::ImmediateMembers()
 	{
-		TopoLogicCore::Topology* pCoreTopology = GetCoreTopology();
+		TopoLogicCore::Topology* pCoreTopology = TopoLogicCore::Topology::DowncastToTopology(GetCoreTopologicalQuery());
 
 		std::list<TopoLogicCore::Topology*> coreTopologies;
 		pCoreTopology->ImmediateMembers(coreTopologies);

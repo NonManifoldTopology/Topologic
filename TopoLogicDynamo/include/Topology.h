@@ -1,5 +1,6 @@
 #pragma once
 
+#include <TopologicalQuery.h>
 #include <TopoLogicCore/include/Topology.h>
 
 using namespace System;
@@ -9,9 +10,9 @@ using namespace Autodesk::DesignScript::Runtime;
 namespace TopoLogic
 {
 	/// <summary>
-	/// The abstract base class for all topological entities in the library.
+	/// A Topology is the abstract super class of Cluster, CellComplex, Cell, Shell, Face, Edge, and Vertex.
 	/// </summary>
-	public ref class Topology abstract
+	public ref class Topology abstract : public TopologicalQuery
 	{
 	public:
 		/// <summary>
@@ -24,15 +25,15 @@ namespace TopoLogic
 		}
 
 		/// <summary>
-		/// Creates the host geometry counterpart of the topological entity. The mapping is as follows. 
-		/// - Vertex: Point;
-		/// - Edge: either a Curve or its subclasses, other than Polycurve or its subclasses; 
-		/// - Wire: PolyCurve or Polygon; 
-		/// - Face: Surface or NurbsSurface;
-		/// - Shell: PolySurface; 
-		/// - Cell: either a Solid or its subclasses; 
-		/// - CellComplex: a list of Solids; 
-		/// - Cluster: a list of topological entities without a constituent parent.
+		/// <para/>Creates the host geometry counterpart of the topological entity. The mapping is as follows. 
+		/// <para/>- Vertex: Point;
+		/// <para/>- Edge: either a Curve or its subclasses, other than Polycurve or its subclasses; 
+		/// <para/>- Wire: PolyCurve or Polygon; 
+		/// <para/>- Face: Surface or NurbsSurface;
+		/// <para/>- Shell: PolySurface; 
+		/// <para/>- Cell: either a Solid or its subclasses; 
+		/// <para/>- CellComplex: a list of Solids; 
+		/// <para/>- Cluster: a list of topological entities without a constituent parent.
 		/// </summary>
 		/// <returns name="Geometry">The host geometry counterpart of the topological entity</returns>
 		property Object^ Geometry
@@ -170,8 +171,6 @@ namespace TopoLogic
 
 	public protected:
 		static Topology^ ByCoreTopology(TopoLogicCore::Topology * const kpCoreTopology);
-
-		virtual TopoLogicCore::Topology* GetCoreTopology() = 0;
 
 	protected:
 		Topology();

@@ -11,7 +11,7 @@ namespace TopoLogic
 		std::list<TopoLogicCore::Cell*> coreCells;
 		for each(Cell^ pCell in cells)
 		{
-			coreCells.push_back(TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(pCell->GetCoreTopology()));
+			coreCells.push_back(TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(pCell->GetCoreTopologicalQuery()));
 		}
 		TopoLogicCore::CellComplex* pCoreCellComplex = TopoLogicCore::CellComplex::ByCells(coreCells);
 		CellComplex^ pCellComplex = gcnew CellComplex(pCoreCellComplex);
@@ -20,7 +20,7 @@ namespace TopoLogic
 
 	List<Cell^>^ CellComplex::Cells()
 	{
-		TopoLogicCore::CellComplex* pCoreCellComplex = TopoLogicCore::Topology::Downcast<TopoLogicCore::CellComplex>(GetCoreTopology());
+		TopoLogicCore::CellComplex* pCoreCellComplex = TopoLogicCore::Topology::Downcast<TopoLogicCore::CellComplex>(GetCoreTopologicalQuery());
 
 		std::list<TopoLogicCore::Cell*> coreCells;
 		pCoreCellComplex->Cells(coreCells);
@@ -39,7 +39,7 @@ namespace TopoLogic
 
 	List<Face^>^ CellComplex::Faces()
 	{
-		TopoLogicCore::CellComplex* pCoreCellComplex = TopoLogicCore::Topology::Downcast<TopoLogicCore::CellComplex>(GetCoreTopology());
+		TopoLogicCore::CellComplex* pCoreCellComplex = TopoLogicCore::Topology::Downcast<TopoLogicCore::CellComplex>(GetCoreTopologicalQuery());
 
 		std::list<TopoLogicCore::Face*> coreFaces;
 		pCoreCellComplex->Faces(coreFaces);
@@ -58,14 +58,14 @@ namespace TopoLogic
 
 	Cell^ CellComplex::Envelope()
 	{
-		TopoLogicCore::CellComplex* pCoreCellComplex = TopoLogicCore::Topology::Downcast<TopoLogicCore::CellComplex>(GetCoreTopology());
+		TopoLogicCore::CellComplex* pCoreCellComplex = TopoLogicCore::Topology::Downcast<TopoLogicCore::CellComplex>(GetCoreTopologicalQuery());
 		TopoLogicCore::Cell* pCoreEnvelope = pCoreCellComplex->Envelope();
 		return gcnew Cell(pCoreEnvelope);
 	}
 
 	List<Face^>^ CellComplex::InternalFaces()
 	{
-		TopoLogicCore::CellComplex* pCoreCellComplex = TopoLogicCore::Topology::Downcast<TopoLogicCore::CellComplex>(GetCoreTopology());
+		TopoLogicCore::CellComplex* pCoreCellComplex = TopoLogicCore::Topology::Downcast<TopoLogicCore::CellComplex>(GetCoreTopologicalQuery());
 
 		std::list<TopoLogicCore::Face*> coreInternalFaces;
 		pCoreCellComplex->InternalFaces(coreInternalFaces);
@@ -84,7 +84,7 @@ namespace TopoLogic
 
 	bool CellComplex::IsClosed::get()
 	{
-		TopoLogicCore::CellComplex* pCoreCellComplex = TopoLogicCore::Topology::Downcast<TopoLogicCore::CellComplex>(GetCoreTopology());
+		TopoLogicCore::CellComplex* pCoreCellComplex = TopoLogicCore::Topology::Downcast<TopoLogicCore::CellComplex>(GetCoreTopologicalQuery());
 		return pCoreCellComplex->IsClosed();
 	}
 
@@ -106,7 +106,7 @@ namespace TopoLogic
 
 	}
 
-	TopoLogicCore::Topology* CellComplex::GetCoreTopology()
+	TopoLogicCore::TopologicalQuery* CellComplex::GetCoreTopologicalQuery()
 	{
 		assert(m_pCoreCellComplex != nullptr && "CellComplex::m_pCoreCellComplex is null.");
 		if (m_pCoreCellComplex == nullptr)

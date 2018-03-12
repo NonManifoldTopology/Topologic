@@ -580,7 +580,7 @@ namespace TopoLogicCore
 		BOPCol_ListOfShape occtCellsBuildersBufferA;
 		if (GetType() == TOPOLOGY_CELLCOMPLEX)
 		{
-			CellComplex* pCellComplex = Topology::Downcast<CellComplex>(this);
+			CellComplex* pCellComplex = TopologicalQuery::Downcast<CellComplex>(this);
 			std::list<Cell*> cells;
 			pCellComplex->Cells(cells);
 			for (std::list<Cell*>::const_iterator kCellIterator = cells.begin();
@@ -608,7 +608,7 @@ namespace TopoLogicCore
 		BOPCol_ListOfShape occtCellsBuildersBufferB;
 		if (kpkOtherTopology->GetType() == TOPOLOGY_CELLCOMPLEX)
 		{
-			CellComplex const * const kpkCellComplex = Topology::Downcast<CellComplex const>(kpkOtherTopology);
+			CellComplex const * const kpkCellComplex = TopologicalQuery::Downcast<CellComplex const>(kpkOtherTopology);
 			std::list<Cell*> cells;
 			kpkCellComplex->Cells(cells);
 			for (std::list<Cell*>::const_iterator kCellIterator = cells.begin();
@@ -1079,5 +1079,16 @@ namespace TopoLogicCore
 		{
 			rImmediateMembers.push_back(Topology::ByOcctShape(*kIterator));
 		}
+	}
+	
+	Topology* Topology::DowncastToTopology(TopologicalQuery* pTopologicalQuery, const bool kRaiseExceptionOnFalse)
+	{
+		Topology* pTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(pTopologicalQuery);
+		if (kRaiseExceptionOnFalse && pTopology == nullptr)
+		{
+			throw std::exception("Not a topology");
+		}
+
+		return pTopology;
 	}
 }

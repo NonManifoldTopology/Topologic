@@ -25,7 +25,7 @@ namespace TopoLogic
 
 	Cell^ Cell::ByShell(Shell^ shell)
 	{
-		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Cell::ByShell(TopoLogicCore::Topology::Downcast<TopoLogicCore::Shell>(shell->GetCoreTopology()));
+		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Cell::ByShell(TopoLogicCore::Topology::Downcast<TopoLogicCore::Shell>(shell->GetCoreTopologicalQuery()));
 		return gcnew Cell(pCoreCell);
 	}
 
@@ -34,7 +34,7 @@ namespace TopoLogic
 		std::vector<TopoLogicCore::Vertex*> coreVertices;
 		for each(Vertex^ pVertex in vertices)
 		{
-			coreVertices.push_back(TopoLogicCore::Topology::Downcast<TopoLogicCore::Vertex>(pVertex->GetCoreTopology()));
+			coreVertices.push_back(TopoLogicCore::Topology::Downcast<TopoLogicCore::Vertex>(pVertex->GetCoreTopologicalQuery()));
 		}
 
 		std::list<std::list<int>> coreFaceIndices;
@@ -54,7 +54,7 @@ namespace TopoLogic
 
 	CellComplex^ Cell::CellComplex()
 	{
-		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopology());
+		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopologicalQuery());
 
 		TopoLogicCore::CellComplex* pCoreCellComplex = pCoreCell->CellComplex();
 		TopoLogic::CellComplex^ pCellComplex = nullptr;
@@ -69,7 +69,7 @@ namespace TopoLogic
 
 	List<Shell^>^ Cell::Shells()
 	{
-		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopology());
+		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopologicalQuery());
 
 		std::list<TopoLogicCore::Shell*> coreShells;
 		pCoreCell->Shells(coreShells);
@@ -88,7 +88,7 @@ namespace TopoLogic
 
 	List<Face^>^ Cell::Faces()
 	{
-		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopology());
+		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopologicalQuery());
 
 		std::list<TopoLogicCore::Face*> coreFaces;
 		pCoreCell->Faces(coreFaces);
@@ -107,7 +107,7 @@ namespace TopoLogic
 
 	List<Wire^>^ Cell::Wires()
 	{
-		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopology());
+		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopologicalQuery());
 
 		std::list<TopoLogicCore::Wire*> coreWires;
 		pCoreCell->Wires(coreWires);
@@ -126,7 +126,7 @@ namespace TopoLogic
 
 	List<Edge^>^ Cell::Edges()
 	{
-		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopology());
+		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopologicalQuery());
 
 		std::list<TopoLogicCore::Edge*> coreEdges;
 		pCoreCell->Edges(coreEdges);
@@ -145,7 +145,7 @@ namespace TopoLogic
 
 	List<Vertex^>^ Cell::Vertices()
 	{
-		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopology());
+		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopologicalQuery());
 
 		std::list<TopoLogicCore::Vertex*> coreVertices;
 		pCoreCell->Vertices(coreVertices);
@@ -164,7 +164,7 @@ namespace TopoLogic
 
 	List<Cell^>^ Cell::AdjacentCells(Cell^ cell)
 	{
-		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(cell->GetCoreTopology());
+		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(cell->GetCoreTopologicalQuery());
 
 		std::list<TopoLogicCore::Cell*> coreAdjacentCells;
 		pCoreCell->AdjacentCells(coreAdjacentCells);
@@ -183,8 +183,8 @@ namespace TopoLogic
 
 	List<Face^>^ Cell::SharedFaces(Cell^ cell)
 	{
-		TopoLogicCore::Cell* pCoreCell1 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopology());
-		TopoLogicCore::Cell* pCoreCell2 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(cell->GetCoreTopology());
+		TopoLogicCore::Cell* pCoreCell1 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopologicalQuery());
+		TopoLogicCore::Cell* pCoreCell2 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(cell->GetCoreTopologicalQuery());
 
 		std::list<TopoLogicCore::Face*> sharedFaces;
 		pCoreCell1->SharedFaces(pCoreCell2, sharedFaces);
@@ -203,8 +203,8 @@ namespace TopoLogic
 
 	List<Edge^>^ Cell::SharedEdges(Cell^ cell)
 	{
-		TopoLogicCore::Cell* pCoreCell1 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopology());
-		TopoLogicCore::Cell* pCoreCell2 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(cell->GetCoreTopology());
+		TopoLogicCore::Cell* pCoreCell1 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopologicalQuery());
+		TopoLogicCore::Cell* pCoreCell2 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(cell->GetCoreTopologicalQuery());
 
 		std::list<TopoLogicCore::Edge*> sharedEdges;
 		pCoreCell1->SharedEdges(pCoreCell2, sharedEdges);
@@ -223,8 +223,8 @@ namespace TopoLogic
 
 	List<Vertex^>^ Cell::SharedVertices(Cell^ cell)
 	{
-		TopoLogicCore::Cell* pCoreCell1 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopology());
-		TopoLogicCore::Cell* pCoreCell2 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(cell->GetCoreTopology());
+		TopoLogicCore::Cell* pCoreCell1 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopologicalQuery());
+		TopoLogicCore::Cell* pCoreCell2 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(cell->GetCoreTopologicalQuery());
 
 		std::list<TopoLogicCore::Vertex*> sharedVertices;
 		pCoreCell1->SharedVertices(pCoreCell2, sharedVertices);
@@ -279,7 +279,7 @@ namespace TopoLogic
 		return pDynamoGeometry;
 	}
 
-	TopoLogicCore::Topology* Cell::GetCoreTopology()
+	TopoLogicCore::TopologicalQuery* Cell::GetCoreTopologicalQuery()
 	{
 		assert(m_pCoreCell != nullptr && "Cell::m_pCoreCell is null.");
 		if (m_pCoreCell == nullptr)
@@ -342,7 +342,7 @@ namespace TopoLogic
 		std::list<TopoLogicCore::Face*> coreFaces;
 		for each(Face^ pFace in faces)
 		{
-			coreFaces.push_back(TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(pFace->GetCoreTopology()));
+			coreFaces.push_back(TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(pFace->GetCoreTopologicalQuery()));
 		}
 
 		m_pCoreCell = TopoLogicCore::Cell::ByFaces(coreFaces);

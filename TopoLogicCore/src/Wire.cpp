@@ -19,19 +19,6 @@ namespace TopoLogicCore
 {
 	void Wire::Edges(std::list<Edge*>& rEdges) const
 	{
-		int initialEdgeSize = (int)rEdges.size();
-		BRepTools_WireExplorer occtWireExplorer;
-		for (occtWireExplorer.Init(TopoDS::Wire(*GetOcctShape())); occtWireExplorer.More(); occtWireExplorer.Next())
-		{
-			rEdges.push_back(new Edge(occtWireExplorer.Current()));
-		}
-
-		if ((int)rEdges.size() > initialEdgeSize)
-			return;
-
-		// PATCH: 24/10/2017
-		// If pEdges is still empty, e.g. due to defects (what defects?), try again with TopExp_Explorer
-
 		TopTools_MapOfShape occtEdges;
 		TopExp_Explorer occtExplorer;
 		for (occtExplorer.Init(*GetOcctShape(), TopAbs_EDGE); occtExplorer.More(); occtExplorer.Next())

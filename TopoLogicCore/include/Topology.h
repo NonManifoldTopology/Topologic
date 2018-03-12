@@ -2,6 +2,7 @@
 
 #include "Attribute.h"
 #include "Utilities.h"
+#include "TopologicalQuery.h"
 
 #include <BOPCol_ListOfShape.hxx>
 #include <BOPAlgo_CellsBuilder.hxx>
@@ -42,9 +43,9 @@ namespace TopoLogicCore
 	};
 
 	/// <summary>
-	/// The base class for all topology classes in TopoLogic.
+	/// A Topology is the abstract super class of Cluster, CellComplex, Cell, Shell, Face, Edge, and Vertex.
 	/// </summary>
-	class Topology
+	class Topology : public TopologicalQuery
 	{
 	public:
 		typedef std::map<std::string, Attribute*> AttributeMap;
@@ -92,23 +93,6 @@ namespace TopoLogicCore
 			BOPCol_ListOfShape& kOcctArgumentImagesInTools,
 			BOPCol_ListOfShape& kOcctToolsImagesInArguments,
 			BOPCol_ListOfShape& kOcctToolsImagesInTools);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="kpkOtherTopology"></param>
-		/// <param name="kOcctArgumentImagesInArguments"></param>
-		/// <param name="kOcctArgumentImagesInTools"></param>
-		/// <param name="kOcctToolsImagesInArguments"></param>
-		/// <param name="kOcctToolsImagesInTools"></param>
-		/*static void BooleanImages(
-			const BOPCol_ListOfShape& rkOcctArgumentA,
-			const BOPCol_ListOfShape& rkOcctArgumentB,
-			BOPAlgo_CellsBuilder& rOcctCellsBuilder,
-			BOPCol_ListOfShape& kOcctArgumentImagesInArguments,
-			BOPCol_ListOfShape& kOcctArgumentImagesInTools,
-			BOPCol_ListOfShape& kOcctToolsImagesInArguments,
-			BOPCol_ListOfShape& kOcctToolsImagesInTools);*/
 
 		/// <summary>
 		/// 
@@ -267,33 +251,19 @@ namespace TopoLogicCore
 
 		virtual TopologyType GetType() const = 0;
 
-		template <typename T>
-		static T* Downcast(Topology *const kpTopology)
-		{
-			T* pSubclassTopology = dynamic_cast<T*>(kpTopology);
-			if (pSubclassTopology == nullptr)
-			{
-				throw std::exception("Failed downcasting topology");
-			}
-			return pSubclassTopology;
-		}
-
-		template <typename T>
-		static T const * Downcast(Topology const *const kpTopology)
-		{
-			T const * pSubclassTopology = dynamic_cast<T const *>(kpTopology);
-			if (pSubclassTopology == nullptr)
-			{
-				throw std::exception("Failed downcasting topology");
-			}
-			return pSubclassTopology;
-		}
-
 		/// <summary>
 		/// Returns all sub-entities that have no other parents than this topology, i.e. do not belong to other entities.
 		/// </summary>
 		/// <param name="rImmediateMembers">The immediate members</param>
 		TOPOLOGIC_API void ImmediateMembers(std::list<Topology*>& rImmediateMembers) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="pTopologicalQuery"></param>
+		/// <param name="kRaiseExceptionOnFalse"></param>
+		/// <returns></returns>
+		static TOPOLOGIC_API Topology* DowncastToTopology(TopologicalQuery* pTopologicalQuery, const bool kRaiseExceptionOnFalse = true);
 
 	protected:
 		Topology(const int kDimensionality);

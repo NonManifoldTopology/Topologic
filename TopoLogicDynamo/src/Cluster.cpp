@@ -17,7 +17,11 @@ namespace TopoLogic
 		std::list<TopoLogicCore::Topology*> coreTopologies;
 		for each(Topology^ pTopology in topology)
 		{
-			coreTopologies.push_back(pTopology->GetCoreTopology());
+			TopoLogicCore::Topology* pCoreTopology = TopoLogicCore::Topology::DowncastToTopology(pTopology->GetCoreTopologicalQuery());
+			if(pCoreTopology != nullptr)
+			{
+				coreTopologies.push_back(pCoreTopology);
+			}
 		}
 		
 		return gcnew Cluster(TopoLogicCore::Cluster::ByTopology(coreTopologies));
@@ -25,8 +29,10 @@ namespace TopoLogic
 
 	Cluster^ Cluster::Add(Topology^ topology)
 	{
-		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(GetCoreTopology());
-		if (!pCoreCluster->Add(topology->GetCoreTopology()))
+		TopoLogicCore::Topology* pCoreTopology = TopoLogicCore::Topology::DowncastToTopology(topology->GetCoreTopologicalQuery());
+		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(GetCoreTopologicalQuery());
+
+		if (!pCoreCluster->Add(pCoreTopology))
 		{
 			throw gcnew Exception("Cluster::Add(): fails to add topology");
 		}
@@ -35,8 +41,9 @@ namespace TopoLogic
 
 	Cluster^ Cluster::Remove(Topology^ topology)
 	{
-		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(GetCoreTopology());
-		if(!pCoreCluster->Remove(topology->GetCoreTopology()))
+		TopoLogicCore::Topology* pCoreTopology = TopoLogicCore::Topology::DowncastToTopology(topology->GetCoreTopologicalQuery());
+		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(GetCoreTopologicalQuery());
+		if (!pCoreCluster->Remove(pCoreTopology))
 		{
 			throw gcnew Exception("Cluster::Remove(): fails to remove topology");
 		}
@@ -45,7 +52,7 @@ namespace TopoLogic
 
 	Object^ Cluster::Geometry::get()
 	{
-		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(GetCoreTopology());
+		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(GetCoreTopologicalQuery());
 		std::list<TopoLogicCore::Topology*> immediateCoreMembers;
 		pCoreCluster->ImmediateMembers(immediateCoreMembers);
 
@@ -67,7 +74,7 @@ namespace TopoLogic
 
 	}
 
-	TopoLogicCore::Topology* Cluster::GetCoreTopology()
+	TopoLogicCore::TopologicalQuery* Cluster::GetCoreTopologicalQuery()
 	{
 		assert(m_pCoreCluster != nullptr && "Cluster::m_pCoreCluster is null.");
 		if (m_pCoreCluster == nullptr)
@@ -86,7 +93,7 @@ namespace TopoLogic
 
 	List<Shell^>^ Cluster::Shells()
 	{
-		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(GetCoreTopology());
+		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(GetCoreTopologicalQuery());
 
 		std::list<TopoLogicCore::Shell*> coreShells;
 		pCoreCluster->Shells(coreShells);
@@ -105,7 +112,7 @@ namespace TopoLogic
 
 	List<Face^>^ Cluster::Faces()
 	{
-		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(GetCoreTopology());
+		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(GetCoreTopologicalQuery());
 
 		std::list<TopoLogicCore::Face*> coreFaces;
 		pCoreCluster->Faces(coreFaces);
@@ -124,7 +131,7 @@ namespace TopoLogic
 
 	List<Wire^>^ Cluster::Wires()
 	{
-		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(GetCoreTopology());
+		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(GetCoreTopologicalQuery());
 
 		std::list<TopoLogicCore::Wire*> coreWires;
 		pCoreCluster->Wires(coreWires);
@@ -143,7 +150,7 @@ namespace TopoLogic
 
 	List<Edge^>^ Cluster::Edges()
 	{
-		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(GetCoreTopology());
+		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(GetCoreTopologicalQuery());
 
 		std::list<TopoLogicCore::Edge*> coreEdges;
 		pCoreCluster->Edges(coreEdges);
@@ -162,7 +169,7 @@ namespace TopoLogic
 
 	List<Vertex^>^ Cluster::Vertices()
 	{
-		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(GetCoreTopology());
+		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(GetCoreTopologicalQuery());
 
 		std::list<TopoLogicCore::Vertex*> coreVertices;
 		pCoreCluster->Vertices(coreVertices);
@@ -181,7 +188,7 @@ namespace TopoLogic
 
 	List<Cell^>^ Cluster::Cells()
 	{
-		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(GetCoreTopology());
+		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(GetCoreTopologicalQuery());
 
 		std::list<TopoLogicCore::Cell*> coreCells;
 		pCoreCluster->Cells(coreCells);

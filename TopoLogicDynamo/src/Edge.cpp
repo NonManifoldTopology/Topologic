@@ -21,19 +21,19 @@ namespace TopoLogic
 {
 	Vertex^ Edge::StartVertex()
 	{
-		TopoLogicCore::Edge* pCoreEdge = TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(GetCoreTopology());
+		TopoLogicCore::Edge* pCoreEdge = TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(GetCoreTopologicalQuery());
 		return gcnew Vertex(pCoreEdge->StartVertex());
 	}
 
 	Vertex^ Edge::EndVertex()
 	{
-		TopoLogicCore::Edge* pCoreEdge = TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(GetCoreTopology());
+		TopoLogicCore::Edge* pCoreEdge = TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(GetCoreTopologicalQuery());
 		return gcnew Vertex(pCoreEdge->EndVertex());
 	}
 
 	List<Wire^>^ Edge::Wires()
 	{
-		TopoLogicCore::Edge* pCoreEdge = TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(GetCoreTopology());
+		TopoLogicCore::Edge* pCoreEdge = TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(GetCoreTopologicalQuery());
 		std::list<TopoLogicCore::Wire*> coreWires;
 		pCoreEdge->Wires(coreWires);
 
@@ -62,7 +62,7 @@ namespace TopoLogic
 		std::list<TopoLogicCore::Vertex*> pCoreVertices;
 		for each(Vertex^ pVertex in vertices)
 		{
-			pCoreVertices.push_back(TopoLogicCore::Topology::Downcast<TopoLogicCore::Vertex>(pVertex->GetCoreTopology()));
+			pCoreVertices.push_back(TopoLogicCore::Topology::Downcast<TopoLogicCore::Vertex>(pVertex->GetCoreTopologicalQuery()));
 		}
 		TopoLogicCore::Edge* pCoreEdge = TopoLogicCore::Edge::ByVertices(pCoreVertices);
 		return gcnew Edge(pCoreEdge);
@@ -70,8 +70,8 @@ namespace TopoLogic
 
 	Vertex^ Edge::SharedVertex(Edge^ edge)
 	{
-		TopoLogicCore::Edge* pCoreEdge1 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(GetCoreTopology());
-		TopoLogicCore::Edge* pCoreEdge2 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(edge->GetCoreTopology());
+		TopoLogicCore::Edge* pCoreEdge1 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(GetCoreTopologicalQuery());
+		TopoLogicCore::Edge* pCoreEdge2 = TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(edge->GetCoreTopologicalQuery());
 		TopoLogicCore::Vertex* pCoreVertex = pCoreEdge1->SharedVertex(pCoreEdge2);
 
 		return gcnew Vertex(pCoreVertex);
@@ -80,7 +80,7 @@ namespace TopoLogic
 	Autodesk::DesignScript::Geometry::Curve^ Edge::Curve()
 	{
 		double u0 = 0.0, u1 = 0.0;
-		Handle(Geom_Curve) pOcctCurve = BRep_Tool::Curve(TopoDS::Edge(*GetCoreTopology()->GetOcctShape()), u0, u1);
+		Handle(Geom_Curve) pOcctCurve = BRep_Tool::Curve(TopoDS::Edge(*TopoLogicCore::Topology::DowncastToTopology(GetCoreTopologicalQuery())->GetOcctShape()), u0, u1);
 
 		return Curve(pOcctCurve, u0, u1);
 	}
@@ -204,7 +204,7 @@ namespace TopoLogic
 		// The default is a line:
 		// Handle(Geom_Line) pOcctLine = Handle_Geom_Line::DownCast(pOcctCurve);
 
-		TopoLogicCore::Edge* pCoreEdge = TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(GetCoreTopology());
+		TopoLogicCore::Edge* pCoreEdge = TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(GetCoreTopologicalQuery());
 		Vertex^ pStartVertex = gcnew Vertex(pCoreEdge->StartVertex());
 		Vertex^ pEndVertex = gcnew Vertex(pCoreEdge->EndVertex());
 
@@ -214,7 +214,7 @@ namespace TopoLogic
 		);
 	}
 
-	TopoLogicCore::Topology* Edge::GetCoreTopology()
+	TopoLogicCore::TopologicalQuery* Edge::GetCoreTopologicalQuery()
 	{
 		assert(m_pCoreEdge != nullptr && "Edge::m_pCoreEdge is null.");
 		if (m_pCoreEdge == nullptr)
@@ -356,8 +356,8 @@ namespace TopoLogic
 	void Edge::Init(Autodesk::DesignScript::Geometry::Line^ pDynamoLine)
 	{
 		std::list<TopoLogicCore::Vertex*> coreVertices;
-		coreVertices.push_back(TopoLogicCore::Topology::Downcast<TopoLogicCore::Vertex>((gcnew Vertex(pDynamoLine->StartPoint))->GetCoreTopology()));
-		coreVertices.push_back(TopoLogicCore::Topology::Downcast<TopoLogicCore::Vertex>((gcnew Vertex(pDynamoLine->EndPoint))->GetCoreTopology()));
+		coreVertices.push_back(TopoLogicCore::Topology::Downcast<TopoLogicCore::Vertex>((gcnew Vertex(pDynamoLine->StartPoint))->GetCoreTopologicalQuery()));
+		coreVertices.push_back(TopoLogicCore::Topology::Downcast<TopoLogicCore::Vertex>((gcnew Vertex(pDynamoLine->EndPoint))->GetCoreTopologicalQuery()));
 		m_pCoreEdge = TopoLogicCore::Edge::ByVertices(coreVertices);
 	}
 }

@@ -13,6 +13,9 @@
     <ClInclude Include="include\Wire.h" />
     <ClInclude Include="include\Utilities.h" />
     <ClInclude Include="include\GlobalCluster.h" />
+    <ClInclude Include="include\TopologicalQuery.h" />
+    <ClInclude Include="include\Context.h" />
+    <ClInclude Include="include\Aperture.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
@@ -25,5 +28,7 @@
     <ClCompile Include="src\Shell.cpp" />
     <ClCompile Include="src\Wire.cpp" />
     <ClCompile Include="src\GlobalCluster.cpp" />
+    <ClCompile Include="src\Context.cpp" />
+    <ClCompile Include="src\Aperture.cpp" />
   </ItemGroup>
 </Project>

@@ -9,7 +9,7 @@ namespace TopoLogic
 {
 	List<Edge^>^ Wire::Edges()
 	{
-		TopoLogicCore::Wire* pCoreWire = TopoLogicCore::Topology::Downcast<TopoLogicCore::Wire>(GetCoreTopology());
+		TopoLogicCore::Wire* pCoreWire = TopoLogicCore::Topology::Downcast<TopoLogicCore::Wire>(GetCoreTopologicalQuery());
 		std::list<TopoLogicCore::Edge*> pCoreEdgeList;
 		pCoreWire->Edges(pCoreEdgeList);
 		List<Edge^>^ pEdges = gcnew List<Edge^>();
@@ -28,7 +28,7 @@ namespace TopoLogic
 
 	List<Face^>^ Wire::Faces()
 	{
-		TopoLogicCore::Wire* pCoreWire = TopoLogicCore::Topology::Downcast<TopoLogicCore::Wire>(GetCoreTopology());
+		TopoLogicCore::Wire* pCoreWire = TopoLogicCore::Topology::Downcast<TopoLogicCore::Wire>(GetCoreTopologicalQuery());
 		std::list<TopoLogicCore::Face*> pCoreFaceList;
 		pCoreWire->Faces(pCoreFaceList);
 		List<Face^>^ pFaces = gcnew List<Face^>();
@@ -47,12 +47,12 @@ namespace TopoLogic
 
 	bool Wire::IsClosed()
 	{
-		return TopoLogicCore::Topology::Downcast<TopoLogicCore::Wire>(GetCoreTopology())->IsClosed();
+		return TopoLogicCore::Topology::Downcast<TopoLogicCore::Wire>(GetCoreTopologicalQuery())->IsClosed();
 	}
 
 	List<Vertex^>^ Wire::Vertices()
 	{
-		TopoLogicCore::Wire* pCoreWire = TopoLogicCore::Topology::Downcast<TopoLogicCore::Wire>(GetCoreTopology());
+		TopoLogicCore::Wire* pCoreWire = TopoLogicCore::Topology::Downcast<TopoLogicCore::Wire>(GetCoreTopologicalQuery());
 		std::list<TopoLogicCore::Vertex*> pCoreVertexList;
 		pCoreWire->Vertices(pCoreVertexList);
 		List<Vertex^>^ pVertices = gcnew List<Vertex^>();
@@ -97,11 +97,11 @@ namespace TopoLogic
 		}
 		catch (std::exception& e)
 		{
-			throw gcnew Exception(gcnew String(e.what()));
+			return pDynamoCurves;
 		}
 		catch (Exception^ e)
 		{
-			throw gcnew Exception(e->Message);
+			return pDynamoCurves;
 		}
 		catch (...)
 		{
@@ -109,7 +109,7 @@ namespace TopoLogic
 		}
 	}
 
-	TopoLogicCore::Topology* Wire::GetCoreTopology()
+	TopoLogicCore::TopologicalQuery* Wire::GetCoreTopologicalQuery()
 	{
 		assert(m_pCoreWire != nullptr && "Wire::m_pCoreWire is null.");
 		if (m_pCoreWire == nullptr)
@@ -134,7 +134,7 @@ namespace TopoLogic
 		std::list<TopoLogicCore::Edge*> coreEdges;
 		for each(Edge^ pEdge in pEdges)
 		{
-			coreEdges.push_back(TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(pEdge->GetCoreTopology()));
+			coreEdges.push_back(TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(pEdge->GetCoreTopologicalQuery()));
 		}
 
 		m_pCoreWire = TopoLogicCore::Wire::ByEdges(coreEdges);
@@ -150,7 +150,7 @@ namespace TopoLogic
 		for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoCurve in pDynamoCurves)
 		{
 			Edge^ pEdge = gcnew Edge(pDynamoCurve);
-			coreEdges.push_back(TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(pEdge->GetCoreTopology()));
+			coreEdges.push_back(TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(pEdge->GetCoreTopologicalQuery()));
 		}
 
 		m_pCoreWire = TopoLogicCore::Wire::ByEdges(coreEdges);

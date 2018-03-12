@@ -139,7 +139,7 @@ namespace TopoLogic
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		virtual TopoLogicCore::Topology* GetCoreTopology() override;
+		virtual TopoLogicCore::TopologicalQuery* GetCoreTopologicalQuery() override;
 
 	protected:
 		virtual ~Cell();
