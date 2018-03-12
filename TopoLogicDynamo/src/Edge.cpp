@@ -80,7 +80,7 @@ namespace TopoLogic
 	Autodesk::DesignScript::Geometry::Curve^ Edge::Curve()
 	{
 		double u0 = 0.0, u1 = 0.0;
-		Handle(Geom_Curve) pOcctCurve = BRep_Tool::Curve(TopoDS::Edge(*TopoLogicCore::Topology::DowncastToTopology(GetCoreTopologicalQuery())->GetOcctShape()), u0, u1);
+		Handle(Geom_Curve) pOcctCurve = BRep_Tool::Curve(TopoDS::Edge(*TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery())->GetOcctShape()), u0, u1);
 
 		return Curve(pOcctCurve, u0, u1);
 	}

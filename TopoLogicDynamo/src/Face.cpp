@@ -504,7 +504,7 @@ namespace TopoLogic
 			{
 				if (pDynamoSurface == nullptr)
 				{
-					if (TopoLogicCore::Topology::DowncastToTopology(pWire->GetCoreTopologicalQuery())->GetOcctShape()->IsSame(rkOcctOuterWire))
+					if (TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(pWire->GetCoreTopologicalQuery())->GetOcctShape()->IsSame(rkOcctOuterWire))
 					{
 						List<Edge^>^ pOuterEdges = pWire->Edges();
 						List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoOuterCurves = gcnew List<Autodesk::DesignScript::Geometry::Curve^>();
@@ -591,7 +591,7 @@ namespace TopoLogic
 
 	Autodesk::DesignScript::Geometry::Mesh^ Face::TriangulatedMesh()
 	{
-		TopoDS_Face occtFace = TopoDS::Face(*TopoLogicCore::Topology::DowncastToTopology(GetCoreTopologicalQuery())->GetOcctShape());
+		TopoDS_Face occtFace = TopoDS::Face(*TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery())->GetOcctShape());
 		BRepMesh_IncrementalMesh occtMesh(occtFace, 0.1);
 		TopLoc_Location occtLocation;
 		Handle_Poly_Triangulation occtTriangulation = BRep_Tool::Triangulation(occtFace, occtLocation);

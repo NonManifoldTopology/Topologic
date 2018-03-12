@@ -1080,15 +1080,4 @@ namespace TopoLogicCore
 			rImmediateMembers.push_back(Topology::ByOcctShape(*kIterator));
 		}
 	}
-	
-	Topology* Topology::DowncastToTopology(TopologicalQuery* pTopologicalQuery, const bool kRaiseExceptionOnFalse)
-	{
-		Topology* pTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(pTopologicalQuery);
-		if (kRaiseExceptionOnFalse && pTopology == nullptr)
-		{
-			throw std::exception("Not a topology");
-		}
-
-		return pTopology;
-	}
 }

@@ -257,14 +257,6 @@ namespace TopoLogicCore
 		/// <param name="rImmediateMembers">The immediate members</param>
 		TOPOLOGIC_API void ImmediateMembers(std::list<Topology*>& rImmediateMembers) const;
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="pTopologicalQuery"></param>
-		/// <param name="kRaiseExceptionOnFalse"></param>
-		/// <returns></returns>
-		static TOPOLOGIC_API Topology* DowncastToTopology(TopologicalQuery* pTopologicalQuery, const bool kRaiseExceptionOnFalse = true);
-
 	protected:
 		Topology(const int kDimensionality);
 		

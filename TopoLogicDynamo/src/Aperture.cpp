@@ -11,7 +11,7 @@ namespace TopoLogic
 	Aperture^ Aperture::ByTopologyContext(TopoLogic::Topology^ topology, Context^ context)
 	{
 		TopoLogicCore::Aperture* pCoreAperture = TopoLogicCore::Aperture::ByTopologyContext(
-			TopoLogicCore::Topology::DowncastToTopology(topology->GetCoreTopologicalQuery()),
+			TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topology->GetCoreTopologicalQuery()),
 			TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Context>(context->GetCoreTopologicalQuery())
 			);
 		return gcnew Aperture(pCoreAperture);
@@ -20,7 +20,7 @@ namespace TopoLogic
 	Aperture^ Aperture::ByTopologyContextStatus(Topology^ topology, Context^ context, bool openStatus)
 	{
 		TopoLogicCore::Aperture* pCoreAperture = TopoLogicCore::Aperture::ByTopologyContextStatus(
-			TopoLogicCore::Topology::DowncastToTopology(topology->GetCoreTopologicalQuery()),
+			TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topology->GetCoreTopologicalQuery()),
 			TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Context>(context->GetCoreTopologicalQuery()),
 			openStatus
 		);
@@ -39,7 +39,7 @@ namespace TopoLogic
 		std::list<TopoLogicCore::Topology*> coreTopologies;
 		for each (Topology^ pTopology in topologies)
 		{
-			coreTopologies.push_back(TopoLogicCore::Topology::DowncastToTopology(pTopology->GetCoreTopologicalQuery()));
+			coreTopologies.push_back(TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(pTopology->GetCoreTopologicalQuery()));
 		}
 		return pCoreAperture->IsOpen(coreTopologies);
 	}
@@ -79,7 +79,7 @@ namespace TopoLogic
 		std::list<TopoLogicCore::Topology*> coreTopologies;
 		for each (Topology^ pTopology in topologies)
 		{
-			coreTopologies.push_back(TopoLogicCore::Topology::DowncastToTopology(pTopology->GetCoreTopologicalQuery()));
+			coreTopologies.push_back(TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(pTopology->GetCoreTopologicalQuery()));
 		}
 		pCoreAperture->Open(coreTopologies);
 		return this;
@@ -98,7 +98,7 @@ namespace TopoLogic
 		std::list<TopoLogicCore::Topology*> coreTopologies;
 		for each (Topology^ pTopology in topologies)
 		{
-			coreTopologies.push_back(TopoLogicCore::Topology::DowncastToTopology(pTopology->GetCoreTopologicalQuery()));
+			coreTopologies.push_back(TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(pTopology->GetCoreTopologicalQuery()));
 		}
 		pCoreAperture->Close(coreTopologies);
 		return this;

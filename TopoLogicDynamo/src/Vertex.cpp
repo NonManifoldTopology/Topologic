@@ -65,7 +65,7 @@ namespace TopoLogic
 	{
 		gp_Pnt occtPoint = BRep_Tool::Pnt(
 			TopoDS::Vertex(
-				*TopoLogicCore::Topology::DowncastToTopology(GetCoreTopologicalQuery())->GetOcctShape()
+				*TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery())->GetOcctShape()
 			)
 		);
 		return Autodesk::DesignScript::Geometry::Point::ByCoordinates(occtPoint.X(), occtPoint.Y(), occtPoint.Z());
