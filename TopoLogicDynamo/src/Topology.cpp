@@ -262,14 +262,14 @@ namespace TopoLogic
 		}
 
 		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("ArgumentImagesInArguments", pArgumentsInArguments);
-		pDictionary->Add("ArgumentImagesInTools", pArgumentsInTools);
-		pDictionary->Add("ToolImagesInArguments", pToolsInArguments);
-		pDictionary->Add("ToolImagesInTools", pToolsInTools);
-		pDictionary->Add("GeometryArgumentImagesInArguments", pGeometryArgumentsInArguments);
-		pDictionary->Add("GeometryArgumentImagesInTools", pGeometryArgumentsInTools);
-		pDictionary->Add("GeometryToolImagesInArguments", pGeometryToolsInArguments);
-		pDictionary->Add("GeometryToolImagesInTools", pGeometryToolsInTools);
+		pDictionary->Add("A_A", pArgumentsInArguments);
+		pDictionary->Add("A_B", pArgumentsInTools);
+		pDictionary->Add("B_A", pToolsInArguments);
+		pDictionary->Add("B_B", pToolsInTools);
+		pDictionary->Add("Geometry A_A", pGeometryArgumentsInArguments);
+		pDictionary->Add("Geometry A_B", pGeometryArgumentsInTools);
+		pDictionary->Add("Geometry B_A", pGeometryToolsInArguments);
+		pDictionary->Add("Geometry B_B", pGeometryToolsInTools);
 		return pDictionary;
 	}
 

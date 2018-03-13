@@ -144,14 +144,14 @@ namespace TopoLogic
 		/// <param name="topology"></param>
 		/// <returns></returns>
 		[MultiReturn(gcnew array<String^> {
-			"ArgumentImagesInArguments",
-				"ArgumentImagesInTools",
-				"ToolImagesInArguments",
-				"ToolImagesInTools",
-				"GeometryArgumentImagesInArguments",
-				"GeometryArgumentImagesInTools",
-				"GeometryToolImagesInArguments",
-				"GeometryToolImagesInTools"
+			"A_A",
+				"A_B",
+				"B_A",
+				"B_B",
+				"Geometry A_A",
+				"Geometry A_B",
+				"Geometry B_A",
+				"Geometry B_B"
 		})]
 		Dictionary<String^, Object^>^ BooleanImages(Topology^ topology);
 

@@ -158,8 +158,7 @@ namespace TopoLogicCore
 		/// <param name="kOcctToolsImagesInArguments"></param>
 		/// <param name="kOcctToolsImagesInTools"></param>
 		void BooleanImages(
-			const BOPCol_ListOfShape& kOcctArguments,
-			const BOPCol_ListOfShape& kOcctTools,
+			Topology const * const kpkOtherTopology,
 			BOPAlgo_CellsBuilder& rOcctCellsBuilder,
 			BOPCol_ListOfShape& rOcctExclusivelyArgumentImages,
 			BOPCol_ListOfShape& rOcctExclusivelyToolImages,
