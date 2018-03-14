@@ -18,18 +18,6 @@ class TopoDS_Shape;
 
 namespace TopoLogicCore
 {
-	enum BooleanFlag
-	{
-		BOOLEAN_UNION,
-		BOOLEAN_DIFFERENCE,
-		BOOLEAN_INTERSECTION,
-		BOOLEAN_MERGE,
-		BOOLEAN_SLICE,
-		BOOLEAN_IMPOSE,
-		BOOLEAN_IMPRINT,
-		BOOLEAN_XOR
-	};
-
 	enum TopologyType
 	{
 		TOPOLOGY_VERTEX = 0,
@@ -366,18 +354,6 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkOtherTopology"></param>
-		/// <param name="kBooleanFlag"></param>
-		void BooleanOperation(
-			Topology const * const kpkOtherTopology,
-			const BooleanFlag kBooleanFlag,
-			BOPAlgo_CellsBuilder& rOcctCellsBuilder,
-			BOPCol_ListOfShape& rOcctCellsBuildersOperandsA,
-			BOPCol_ListOfShape& rOcctCellsBuildersOperandsB);
-
-		/// <summary>
-		/// 
-		/// </summary>
 		/// <param name="rkOcctShape"></param>
 		/// <param name="rUnionArguments"></param>
 		static void AddUnionInternalStructure(const TopoDS_Shape& rkOcctShape, BOPCol_ListOfShape& rUnionArguments);
@@ -392,6 +368,24 @@ namespace TopoLogicCore
 			BOPAlgo_CellsBuilder& rOcctCellsBuilder,
 			BOPCol_ListOfShape& rOcctCellsBuildersOperandsA,
 			BOPCol_ListOfShape& rOcctCellsBuildersOperandsB);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpkOtherTopology"></param>
+		/// <param name="kBooleanFlag"></param>
+		void BooleanOperation(
+			Topology const * const kpkOtherTopology,
+			BOPAlgo_CellsBuilder& rOcctCellsBuilder,
+			BOPCol_ListOfShape& rOcctCellsBuildersOperandsA,
+			BOPCol_ListOfShape& rOcctCellsBuildersOperandsB);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rOcctCellsBuilder"></param>
+		/// <returns></returns>
+		Topology* GetBooleanResult(BOPAlgo_CellsBuilder& rOcctCellsBuilder);
 
 		AttributeMap m_attributeMap;
 		std::list<Topology*> m_contents;
