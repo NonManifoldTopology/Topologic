@@ -171,15 +171,12 @@ namespace TopoLogicCore
 			BOPCol_ListOfShape& kOcctToolsImagesInArguments,
 			BOPCol_ListOfShape& kOcctToolsImagesInTools);
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="kpkOtherTopology"></param>
-		/// <param name="kBooleanFlag"></param>
-		/// <returns></returns>
-		TOPOLOGIC_API Topology* BooleanOperation(
-			Topology const * const kpkOtherTopology, 
-			const BooleanFlag kBooleanFlag);
+
+		TOPOLOGIC_API void BooleanParts(
+			Topology const * const kpkOtherTopology,
+			std::list<Topology*>& rSpaceBetween_A_A_and_B_A,
+			std::list<Topology*>& rSpaceBetween_B_A_and_A_B,
+			std::list<Topology*>& rSpaceBetween_A_B_and_B_B);
 
 		/// <summary>
 		/// 
@@ -369,9 +366,32 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="kpkOtherTopology"></param>
+		/// <param name="kBooleanFlag"></param>
+		void BooleanOperation(
+			Topology const * const kpkOtherTopology,
+			const BooleanFlag kBooleanFlag,
+			BOPAlgo_CellsBuilder& rOcctCellsBuilder,
+			BOPCol_ListOfShape& rOcctCellsBuildersOperandsA,
+			BOPCol_ListOfShape& rOcctCellsBuildersOperandsB);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="rkOcctShape"></param>
 		/// <param name="rUnionArguments"></param>
 		static void AddUnionInternalStructure(const TopoDS_Shape& rkOcctShape, BOPCol_ListOfShape& rUnionArguments);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpkOtherTopology"></param>
+		/// <param name="rOcctCellsBuilder"></param>
+		void AddBooleanOperands(
+			Topology const * const kpkOtherTopology, 
+			BOPAlgo_CellsBuilder& rOcctCellsBuilder,
+			BOPCol_ListOfShape& rOcctCellsBuildersOperandsA,
+			BOPCol_ListOfShape& rOcctCellsBuildersOperandsB);
 
 		AttributeMap m_attributeMap;
 		std::list<Topology*> m_contents;

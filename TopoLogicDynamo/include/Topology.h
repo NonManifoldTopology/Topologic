@@ -145,15 +145,25 @@ namespace TopoLogic
 		/// <returns></returns>
 		[MultiReturn(gcnew array<String^> {
 			"A_A",
-				"A_B",
-				"B_A",
-				"B_B",
-				"Geometry A_A",
-				"Geometry A_B",
-				"Geometry B_A",
-				"Geometry B_B"
+			"A_B",
+			"B_A",
+			"B_B",
+			"Geometry A_A",
+			"Geometry A_B",
+			"Geometry B_A",
+			"Geometry B_B"
 		})]
 		Dictionary<String^, Object^>^ BooleanImages(Topology^ topology);
+
+		[MultiReturn(gcnew array<String^> {
+			"Space between A_A and A_B",
+			"Space between A_B and B_A",
+			"Space between B_A and B_B",
+			"Geometry A_A and A_B",
+			"Geometry A_B and B_A",
+			"Geometry B_A and B_B"
+		})]
+		Dictionary<String^, Object^>^ BooleanParts(Topology^ topology);
 
 		/// <summary>
 		/// Perform the Difference operation between the first and second topological entities.
