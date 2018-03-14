@@ -177,16 +177,13 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="DynamoCore">
-      <HintPath>..\..\Software development\TopoLogic\TopoLogic\output\x64\Debug\DynamoCore.dll</HintPath>
-      <Private>false</Private>
+      <HintPath>..\references\Dynamo\DynamoCore.dll</HintPath>
     </Reference>
     <Reference Include="DynamoServices">
-      <HintPath>..\..\Software development\TopoLogic\TopoLogic\output\x64\Debug\DynamoServices.dll</HintPath>
-      <Private>false</Private>
+      <HintPath>..\references\Dynamo\DynamoServices.dll</HintPath>
     </Reference>
     <Reference Include="ProtoGeometry">
-      <HintPath>..\..\Software development\TopoLogic\TopoLogic\output\x64\Debug\ProtoGeometry.dll</HintPath>
-      <Private>false</Private>
+      <HintPath>..\references\Dynamo\ProtoGeometry.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
