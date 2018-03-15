@@ -156,12 +156,12 @@ namespace TopoLogic
 		Dictionary<String^, Object^>^ BooleanImages(Topology^ topology);
 
 		[MultiReturn(gcnew array<String^> {
-			"Space between A_A and A_B",
-			"Space between A_B and B_A",
-			"Space between B_A and B_B",
-			"Geometry A_A and A_B",
-			"Geometry A_B and B_A",
-			"Geometry B_A and B_B"
+			"Parts between A_A and B_A",
+			"Parts between B_A and A_B",
+			"Parts between A_B and B_B",
+			"Parts geometry between A_A and B_A",
+			"Parts geometry between B_A and A_B",
+			"Parts geometry between A_B and B_B"
 		})]
 		Dictionary<String^, Object^>^ BooleanParts(Topology^ topology);
 

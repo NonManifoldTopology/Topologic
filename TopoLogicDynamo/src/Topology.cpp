@@ -284,51 +284,51 @@ namespace TopoLogic
 		TopoLogicCore::Topology* pCoreTopologyA = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
 		TopoLogicCore::Topology* pCoreTopologyB = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topology->GetCoreTopologicalQuery());
 
-		std::list<TopoLogicCore::Topology*> coreSpace_A_A_and_B_A;
-		std::list<TopoLogicCore::Topology*> coreSpace_B_A_and_A_B;
-		std::list<TopoLogicCore::Topology*> coreSpace_A_B_and_B_B;
-		pCoreTopologyA->BooleanParts(pCoreTopologyB, coreSpace_A_A_and_B_A, coreSpace_B_A_and_A_B, coreSpace_A_B_and_B_B);
+		std::list<TopoLogicCore::Topology*> coreParts_A_A_and_B_A;
+		std::list<TopoLogicCore::Topology*> coreParts_B_A_and_A_B;
+		std::list<TopoLogicCore::Topology*> coreParts_A_B_and_B_B;
+		pCoreTopologyA->BooleanParts(pCoreTopologyB, coreParts_A_A_and_B_A, coreParts_B_A_and_A_B, coreParts_A_B_and_B_B);
 
-		List<Topology^>^ pArgumentsInArguments = gcnew List<Topology^>();
-		List<Object^>^ pGeometryArgumentsInArguments = gcnew List<Object^>();
-		for (std::list<TopoLogicCore::Topology*>::const_iterator kCoreTopology = coreSpace_A_A_and_B_A.begin();
-			kCoreTopology != coreSpace_A_A_and_B_A.end();
+		List<Topology^>^ pParts_A_A_and_B_A = gcnew List<Topology^>();
+		List<Object^>^ pGeometryParts_A_A_and_B_A = gcnew List<Object^>();
+		for (std::list<TopoLogicCore::Topology*>::const_iterator kCoreTopology = coreParts_A_A_and_B_A.begin();
+			kCoreTopology != coreParts_A_A_and_B_A.end();
 			kCoreTopology++)
 		{
 			Topology^ pTopology = Topology::ByCoreTopology(*kCoreTopology);
-			pArgumentsInArguments->Add(pTopology);
-			pGeometryArgumentsInArguments->Add(pTopology->Geometry);
+			pParts_A_A_and_B_A->Add(pTopology);
+			pGeometryParts_A_A_and_B_A->Add(pTopology->Geometry);
 		}
 
-		List<Topology^>^ pArgumentsInTools = gcnew List<Topology^>();
-		List<Object^>^ pGeometryArgumentsInTools = gcnew List<Object^>();
-		for (std::list<TopoLogicCore::Topology*>::const_iterator kCoreTopology = coreSpace_B_A_and_A_B.begin();
-			kCoreTopology != coreSpace_B_A_and_A_B.end();
+		List<Topology^>^ pParts_B_A_and_A_B = gcnew List<Topology^>();
+		List<Object^>^ pGeometryParts_B_A_and_A_B = gcnew List<Object^>();
+		for (std::list<TopoLogicCore::Topology*>::const_iterator kCoreTopology = coreParts_B_A_and_A_B.begin();
+			kCoreTopology != coreParts_B_A_and_A_B.end();
 			kCoreTopology++)
 		{
 			Topology^ pTopology = Topology::ByCoreTopology(*kCoreTopology);
-			pArgumentsInTools->Add(pTopology);
-			pGeometryArgumentsInTools->Add(pTopology->Geometry);
+			pParts_B_A_and_A_B->Add(pTopology);
+			pGeometryParts_B_A_and_A_B->Add(pTopology->Geometry);
 		}
 
-		List<Topology^>^ pToolsInArguments = gcnew List<Topology^>();
-		List<Object^>^ pGeometryToolsInArguments = gcnew List<Object^>();
-		for (std::list<TopoLogicCore::Topology*>::const_iterator kCoreTopology = coreSpace_A_B_and_B_B.begin();
-			kCoreTopology != coreSpace_A_B_and_B_B.end();
+		List<Topology^>^ pParts_A_B_and_B_B = gcnew List<Topology^>();
+		List<Object^>^ pGeometryParts_A_B_and_B_B = gcnew List<Object^>();
+		for (std::list<TopoLogicCore::Topology*>::const_iterator kCoreTopology = coreParts_A_B_and_B_B.begin();
+			kCoreTopology != coreParts_A_B_and_B_B.end();
 			kCoreTopology++)
 		{
 			Topology^ pTopology = Topology::ByCoreTopology(*kCoreTopology);
-			pToolsInArguments->Add(pTopology);
-			pGeometryToolsInArguments->Add(pTopology->Geometry);
+			pParts_A_B_and_B_B->Add(pTopology);
+			pGeometryParts_A_B_and_B_B->Add(pTopology->Geometry);
 		}
 
 		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
-		pDictionary->Add("Space between A_A and A_B", pArgumentsInArguments);
-		pDictionary->Add("Space between A_B and B_A", pArgumentsInTools);
-		pDictionary->Add("Space between B_A and B_B", pToolsInArguments);
-		pDictionary->Add("Geometry A_A and A_B", pGeometryArgumentsInArguments);
-		pDictionary->Add("Geometry A_B and B_A", pGeometryArgumentsInTools);
-		pDictionary->Add("Geometry B_A and B_B", pGeometryToolsInArguments);
+		pDictionary->Add("Parts between A_A and B_A", pParts_A_A_and_B_A);
+		pDictionary->Add("Parts between B_A and A_B", pParts_B_A_and_A_B);
+		pDictionary->Add("Parts between A_B and B_B", pParts_A_B_and_B_B);
+		pDictionary->Add("Parts geometry between A_A and B_A", pGeometryParts_A_A_and_B_A);
+		pDictionary->Add("Parts geometry between B_A and A_B", pGeometryParts_B_A_and_A_B);
+		pDictionary->Add("Parts geometry between A_B and B_B", pGeometryParts_A_B_and_B_B);
 		return pDictionary;
 	}
 	Topology^ Topology::Difference(Topology^ topology)
