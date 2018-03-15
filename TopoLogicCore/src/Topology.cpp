@@ -183,11 +183,13 @@ namespace TopoLogicCore
 		return BRepTools::Write(*GetOcctShape(), rkPath.c_str());;
 	}
 
-	bool Topology::LoadFromBrep(const std::string & rkPath) const
+	Topology* Topology::LoadFromBrep(const std::string & rkPath)
 	{
 		TopoDS_Shape occtShape;
 		BRep_Builder occtBRepBuilder;
-		return BRepTools::Read(occtShape, rkPath.c_str(), occtBRepBuilder);
+		bool returnValue = BRepTools::Read(occtShape, rkPath.c_str(), occtBRepBuilder);
+
+		return Topology::ByOcctShape(occtShape);
 	}
 
 	std::string Topology::Analyze(const TopoDS_Shape& rkShape, const int kLevel)
@@ -1157,22 +1159,14 @@ namespace TopoLogicCore
 				kCellIterator != cells.end();
 				kCellIterator++)
 			{
-				Handle(ShapeFix_Shape) sfs = new ShapeFix_Shape();
-				sfs->Init(*(*kCellIterator)->GetOcctShape());
-				sfs->SetPrecision(Precision::Confusion());
-				sfs->Perform();
-				rOcctCellsBuildersOperandsA.Append(sfs->Shape());
-				occtCellsBuildersArguments.Append(sfs->Shape());
+				rOcctCellsBuildersOperandsA.Append(*(*kCellIterator)->GetOcctShape());
+				occtCellsBuildersArguments.Append(*(*kCellIterator)->GetOcctShape());
 			}
 		}
 		else
 		{
-			Handle(ShapeFix_Shape) sfs = new ShapeFix_Shape();
-			sfs->Init(*GetOcctShape());
-			sfs->SetPrecision(Precision::Confusion());
-			sfs->Perform();
-			rOcctCellsBuildersOperandsA.Append(sfs->Shape());
-			occtCellsBuildersArguments.Append(sfs->Shape());
+			rOcctCellsBuildersOperandsA.Append(*GetOcctShape());
+			occtCellsBuildersArguments.Append(*GetOcctShape());
 		}
 
 		if (kpkOtherTopology->GetType() == TOPOLOGY_CELLCOMPLEX)
@@ -1184,22 +1178,14 @@ namespace TopoLogicCore
 				kCellIterator != cells.end();
 				kCellIterator++)
 			{
-				Handle(ShapeFix_Shape) sfs = new ShapeFix_Shape();
-				sfs->Init(*(*kCellIterator)->GetOcctShape());
-				sfs->SetPrecision(Precision::Confusion());
-				sfs->Perform();
-				rOcctCellsBuildersOperandsB.Append(sfs->Shape());
-				occtCellsBuildersArguments.Append(sfs->Shape());
+				rOcctCellsBuildersOperandsB.Append(*(*kCellIterator)->GetOcctShape());
+				occtCellsBuildersArguments.Append(*(*kCellIterator)->GetOcctShape());
 			}
 		}
 		else
 		{
-			Handle(ShapeFix_Shape) sfs = new ShapeFix_Shape();
-			sfs->Init(*kpkOtherTopology->GetOcctShape());
-			sfs->SetPrecision(Precision::Confusion());
-			sfs->Perform();
-			rOcctCellsBuildersOperandsB.Append(sfs->Shape());
-			occtCellsBuildersArguments.Append(sfs->Shape());
+			rOcctCellsBuildersOperandsB.Append(*kpkOtherTopology->GetOcctShape());
+			occtCellsBuildersArguments.Append(*kpkOtherTopology->GetOcctShape());
 		}
 
 		rOcctCellsBuilder.SetArguments(occtCellsBuildersArguments);

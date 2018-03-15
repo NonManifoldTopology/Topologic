@@ -255,6 +255,10 @@ namespace TopoLogic
 			if(pDynamoSurface != nullptr)
 			{
 				pDynamoSurfaces->Add(pDynamoSurface);
+			}
+			else
+			{
+				// We are getting a null geometry! This is possible when the face gives a Mesh (i.e. not a Surface) as its geometry representation.
 				hasFallbackVisualization = true;
 			}
 		}

@@ -49,16 +49,23 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="rkOcctShape"></param>
+		/// <returns></returns>
+		static Topology* ByOcctShape(const TopoDS_Shape& rkOcctShape);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="pGeometry"></param>
 		/// <returns></returns>
-		Topology* ByGeometry(Handle(Geom_Geometry) pGeometry);
+		static Topology* ByGeometry(Handle(Geom_Geometry) pGeometry);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpkContext"></param>
 		/// <returns></returns>
-		Topology* ByContext(Context const * const kpkContext);
+		static Topology* ByContext(Context const * const kpkContext);
 
 		/// <summary>
 		/// 
@@ -66,7 +73,7 @@ namespace TopoLogicCore
 		/// <param name="rkVertexCoordinates"></param>
 		/// <param name="rkVertexIndices"></param>
 		/// <returns></returns>
-		Topology* ByVertexIndex(const std::list<std::array<double, 3>>& rkVertexCoordinates, const std::list<std::list<int>>& rkVertexIndices);
+		static Topology* ByVertexIndex(const std::list<std::array<double, 3>>& rkVertexCoordinates, const std::list<std::list<int>>& rkVertexIndices);
 
 		/// <summary>
 		/// 
@@ -74,7 +81,7 @@ namespace TopoLogicCore
 		/// <param name="rkVertices"></param>
 		/// <param name="rkVertexIndices"></param>
 		/// <returns></returns>
-		Topology* ByVertexIndex(const std::list<Vertex*>& rkVertices, const std::list<std::list<int>>& rkVertexIndices);
+		static Topology* ByVertexIndex(const std::list<Vertex*>& rkVertices, const std::list<std::list<int>>& rkVertexIndices);
 
 		/// <summary>
 		/// 
@@ -276,7 +283,7 @@ namespace TopoLogicCore
 		/// </summary>
 		/// <param name="rkPath"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API bool LoadFromBrep(const std::string& rkPath) const;
+		static TOPOLOGIC_API Topology* LoadFromBrep(const std::string& rkPath);
 
 		/// <summary>
 		/// 
@@ -322,13 +329,6 @@ namespace TopoLogicCore
 	protected:
 		Topology(const int kDimensionality);
 		
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="rkOcctShape"></param>
-		/// <returns></returns>
-		static Topology* ByOcctShape(const TopoDS_Shape& rkOcctShape);
-
 		/// <summary>
 		/// 
 		/// </summary>

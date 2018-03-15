@@ -70,11 +70,12 @@ namespace TopoLogic
 		return pCoreTopology->SaveToBrep(cppPath);
 	}
 
-	bool Topology::LoadFromBRep(String^ path)
+	Topology^ Topology::LoadFromBRep(String^ path)
 	{
-		TopoLogicCore::Topology* pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
 		std::string cppPath = msclr::interop::marshal_as<std::string>(path);
-		return pCoreTopology->LoadFromBrep(cppPath);
+		TopoLogicCore::Topology* pCoreTopology = TopoLogicCore::Topology::LoadFromBrep(cppPath);
+		Topology^ pTopology = Topology::ByCoreTopology(pCoreTopology);
+		return pTopology;
 	}
 
 	String^ Topology::Analyze()

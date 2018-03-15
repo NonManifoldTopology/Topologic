@@ -192,28 +192,10 @@ namespace TopoLogicCore
 
 	Cell* Cell::ByFaces(const std::list<Face*>& rkFaces)
 	{
-		TopoDS_Shell occtShell;
-		BRep_Builder occtBuilder;
-		occtBuilder.MakeShell(occtShell);
-		for(std::list<Face*>::const_iterator kFaceIterator = rkFaces.begin();
-			kFaceIterator != rkFaces.end();
-			kFaceIterator++)
-		{
-			Face* pFace = *kFaceIterator;
-			try {
-				occtBuilder.Add(occtShell, *pFace->GetOcctShape());
-			}
-			catch (TopoDS_FrozenShape&)
-			{
-				throw std::exception("The cell is not free and cannot be modified.");
-			}
-			catch (TopoDS_UnCompatibleShapes&)
-			{
-				throw std::exception("The cell and face are not compatible.");
-			}
-		}
-
-		return ByShell(new Shell(occtShell));
+		Shell* pShell = Shell::ByFaces(rkFaces);
+		Cell* pCell = ByShell(pShell);
+		delete pShell;
+		return pCell;
 	}
 
 	Cell* Cell::ByShell(Shell const * const kpkShells)

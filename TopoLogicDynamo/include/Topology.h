@@ -232,8 +232,8 @@ namespace TopoLogic
 		/// Load a topological entity from a BRep file.
 		/// </summary>
 		/// <param name="path">The path to the BRep file</param>
-		/// <returns name="bool">True if the BRep file is succesffully loaded, otherwise false</returns>
-		bool LoadFromBRep(String^ path);
+		/// <returns name="Topology">The loaded topology</returns>
+		static Topology^ LoadFromBRep(String^ path);
 
 		/// <summary>
 		/// Print the topological information of the input entity.
