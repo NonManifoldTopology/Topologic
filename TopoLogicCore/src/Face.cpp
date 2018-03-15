@@ -11,7 +11,9 @@
 #include <BRep_Tool.hxx>
 #include <BRepTools_WireExplorer.hxx>
 #include <BSplCLib.hxx>
+#include <BRepGProp.hxx>
 #include <Geom_BSplineSurface.hxx>
+#include <GProp_GProps.hxx>
 #include <ShapeAnalysis.hxx>
 #include <ShapeFix_Face.hxx>
 #include <StdFail_NotDone.hxx>
@@ -157,6 +159,13 @@ namespace TopoLogicCore
 	{
 		throw std::exception("Not implemented yet");
 		return false;
+	}
+
+	double Face::Area() const
+	{
+		GProp_GProps occtShapeProperties;
+		BRepGProp::SurfaceProperties(*GetOcctShape(), occtShapeProperties);
+		return occtShapeProperties.Mass();
 	}
 
 	Face* Face::ByClosedWire(Wire const * const kpkWire)

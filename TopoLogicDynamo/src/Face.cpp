@@ -107,6 +107,12 @@ namespace TopoLogic
 		// TODO: insert return statement here
 	}
 
+	double Face::Area()
+	{
+		TopoLogicCore::Face* pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(GetCoreTopologicalQuery());
+		return pCoreFace->Area();
+	}
+
 	Face^ Face::ByClosedWire(Wire^ wire)
 	{
 		return gcnew Face(wire);

@@ -94,6 +94,11 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		TOPOLOGIC_API double Area() const;
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="kpkWire"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API static Face* ByClosedWire(Wire const * const kpkWire);

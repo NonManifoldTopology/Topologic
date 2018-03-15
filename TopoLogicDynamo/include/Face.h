@@ -75,6 +75,12 @@ namespace TopoLogic {
 		Face^ ApplyApertures(List<Face^>^ apertures);
 
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		double Area();
+
+		/// <summary>
 		/// A factory method that creates a face by a closed wire.
 		/// </summary>
 		/// <param name="wire">A closed wire. Must be (and internally verified if it is) a Dynamo polygon or a TopoLogic wire.</param>

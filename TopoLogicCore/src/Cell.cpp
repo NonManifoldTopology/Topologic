@@ -15,7 +15,9 @@
 #include <BRepBuilderAPI_MakeSolid.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepClass3d.hxx>
+#include <BRepGProp.hxx>
 #include <BRepPrimAPI_MakeBox.hxx>
+#include <GProp_GProps.hxx>
 #include <ShapeFix_Solid.hxx>
 #include <StdFail_NotDone.hxx>
 #include <TopExp.hxx>
@@ -188,6 +190,13 @@ namespace TopoLogicCore
 				rWires.push_back(new Wire(TopoDS::Wire(occtCurrent)));
 			}
 		}
+	}
+
+	double Cell::Volume() const
+	{
+		GProp_GProps occtShapeProperties;
+		BRepGProp::VolumeProperties(*GetOcctShape(), occtShapeProperties);
+		return occtShapeProperties.Mass();
 	}
 
 	Cell* Cell::ByFaces(const std::list<Face*>& rkFaces)

@@ -72,6 +72,11 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		TOPOLOGIC_API double Volume() const;
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="rkFaces"></param>
 		/// <returns></returns>
 		static TOPOLOGIC_API Cell* ByFaces(const std::list<Face*>& rkFaces);

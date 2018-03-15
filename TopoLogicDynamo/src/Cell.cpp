@@ -241,6 +241,12 @@ namespace TopoLogic
 		return pSharedVertices;
 	}
 
+	double Cell::Volume()
+	{
+		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopologicalQuery());
+		return pCoreCell->Volume();
+	}
+
 	Object^ Cell::Geometry::get()
 	{
 		List<Autodesk::DesignScript::Geometry::Surface^>^ pDynamoSurfaces = gcnew List<Autodesk::DesignScript::Geometry::Surface^>();

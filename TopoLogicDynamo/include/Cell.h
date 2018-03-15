@@ -107,6 +107,12 @@ namespace TopoLogic
 		/// <returns></returns>
 		List<Vertex^>^ SharedVertices(Cell^ cell);
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		double Volume();
+
 		property Object^ Geometry
 		{
 			/// <summary>
