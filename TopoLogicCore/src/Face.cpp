@@ -6,6 +6,7 @@
 #include <Vertex.h>
 #include <Wire.h>
 
+#include <BRep_Builder.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepAlgoAPI_Section.hxx>
 #include <BRep_Tool.hxx>
@@ -369,9 +370,55 @@ namespace TopoLogicCore
 		}
 	}
 
-	Wire* Face::OuterWire() const
+	Wire* Face::OuterBoundary() const
 	{
-		return new Wire(ShapeAnalysis::OuterWire(TopoDS::Face(*GetOcctShape())));
+		// ShapeAnalysis::OuterWire seems to return a copy, so implement ourselves
+		BRep_Builder occtBuilder;
+		TopoDS_Face& rkFace = TopoDS::Face(*GetOcctShape());
+		TopoDS_Iterator occtExplorer(rkFace, Standard_False);
+		while (occtExplorer.More())
+		{
+			if (occtExplorer.Value().ShapeType() != TopAbs_WIRE)
+				continue;
+			const TopoDS_Wire& rkWire = TopoDS::Wire(occtExplorer.Value());
+			occtExplorer.Next();
+			if (!occtExplorer.More())
+			{
+				return new Wire(rkWire);
+			}
+
+			TopoDS_Face occtFaceCopy = TopoDS::Face(rkFace.EmptyCopied());
+			occtBuilder.Add(occtFaceCopy, rkWire);
+			if (ShapeAnalysis::IsOuterBound(occtFaceCopy))
+			{
+				return new Wire(rkWire);
+			}
+		}
+
+		// No outer wire is found, invalid face?
+		throw std::exception("No outer wire is found, invalid face?");
+	}
+
+	void Face::InnerBoundaries(std::list<Wire*>& rInnerBoundaries) const
+	{
+		// Algorithm based on ShapeAnalysis::OuterWire()
+		BRep_Builder occtBuilder;
+		TopoDS_Face& rkFace = TopoDS::Face(*GetOcctShape());
+		TopoDS_Iterator occtExplorer(rkFace, Standard_False);
+		while (occtExplorer.More())
+		{
+			if (occtExplorer.Value().ShapeType() != TopAbs_WIRE)
+				continue;
+			const TopoDS_Wire& rkWire = TopoDS::Wire(occtExplorer.Value());
+			occtExplorer.Next();
+			
+			TopoDS_Face occtFaceCopy = TopoDS::Face(rkFace.EmptyCopied());
+			occtBuilder.Add(occtFaceCopy, rkWire);
+			if (!ShapeAnalysis::IsOuterBound(occtFaceCopy))
+			{
+				rInnerBoundaries.push_back(new Wire(rkWire));
+			}
+		}
 	}
 
 	void Face::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const

@@ -163,11 +163,19 @@ namespace TopoLogicCore
 		/// <param name="rVertices"></param>
 		void TOPOLOGIC_API SharedVertices(Face const * const kpkAnotherFace, std::list<Vertex*>& rVertices) const;
 
+
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		TOPOLOGIC_API Wire* OuterWire() const;
+		TOPOLOGIC_API Wire* OuterBoundary() const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rInnerBoundaries"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API void InnerBoundaries(std::list<Wire*>& rInnerBoundaries) const;
 
 		/// <summary>
 		/// 
