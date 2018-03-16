@@ -82,7 +82,6 @@ namespace TopoLogic
 		/// </summary>
 		/// <returns></returns>
 		List<Cell^>^ Cells();
-			
 
 	public protected:
 		/// <summary>

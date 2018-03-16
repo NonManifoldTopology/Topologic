@@ -1085,7 +1085,7 @@ namespace TopoLogicCore
 		} else if (occtShapeType == TopAbs_COMPSOLID)
 		{
 			CellComplex* pCellComplex = Topology::Downcast<CellComplex>(pTopology);
-			pCellComplex->InternalFaces(faces);
+			pCellComplex->InnerBoundaries(faces);
 			for (std::list<Face*>::iterator kFaceIterator = faces.begin();
 				kFaceIterator != faces.end();
 				kFaceIterator++)
@@ -1098,7 +1098,7 @@ namespace TopoLogicCore
 		{
 			Cell* pCell = Topology::Downcast<Cell>(pTopology);
 			std::list<Shell*> shells;
-			pCell->InnerShells(shells);
+			pCell->InnerBoundaries(shells);
 			for (std::list<Shell*>::iterator kShellIterator = shells.begin();
 				kShellIterator != shells.end();
 				kShellIterator++)

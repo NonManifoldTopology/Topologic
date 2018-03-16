@@ -14,6 +14,7 @@
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepBuilderAPI_MakeSolid.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
+#include <BRepCheck_Shell.hxx>
 #include <BRepClass3d.hxx>
 #include <BRepGProp.hxx>
 #include <BRepPrimAPI_MakeBox.hxx>
@@ -345,6 +346,43 @@ namespace TopoLogicCore
 		}
 	}
 
+	Shell* Cell::OuterBoundary() const
+	{
+		TopoDS_Shell occtOuterShell = BRepClass3d::OuterShell(TopoDS::Solid(*GetOcctShape()));
+		return new Shell(occtOuterShell);
+	}
+
+	void Cell::InnerBoundaries(std::list<Shell*>& rShells) const
+	{
+		TopTools_MapOfShape occtShells;
+		TopExp_Explorer occtExplorer;
+		for (occtExplorer.Init(*GetOcctShape(), TopAbs_SHELL); occtExplorer.More(); occtExplorer.Next())
+		{
+			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
+			if (!occtShells.Contains(occtCurrent))
+			{
+				TopAbs_Orientation occtOrientation;
+				TopoDS_Iterator occtIterator;
+
+				occtIterator.Initialize(occtCurrent);
+				if (occtIterator.More()) {
+					const TopoDS_Shape& rkMember = occtIterator.Value();
+					occtOrientation = rkMember.Orientation();
+					if (occtOrientation == TopAbs_INTERNAL)
+					{
+						// Only include an internal shell if it is closed
+						const TopoDS_Shell& rkShell = TopoDS::Shell(occtCurrent);
+						if (BRepCheck_Shell(rkShell).Closed())
+						{
+							occtShells.Add(occtCurrent);
+							rShells.push_back(new Shell(rkShell));
+						}
+					}
+				}
+			}
+		}
+	}
+
 	TopoDS_Shape* Cell::GetOcctShape() const
 	{
 		assert(m_pOcctSolid != nullptr && "Cell::m_pOcctSolid is null.");
@@ -367,41 +405,6 @@ namespace TopoLogicCore
 		{
 			Face* pFace = *kFaceIterator;
 			rOcctGeometries.push_back(pFace->Surface());
-		}
-	}
-
-	void Cell::InnerShells(std::list<Shell*>& rShells) const
-	{
-		TopTools_MapOfShape occtShells;
-		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(*GetOcctShape(), TopAbs_SHELL); occtExplorer.More(); occtExplorer.Next())
-		{
-			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-			if (!occtShells.Contains(occtCurrent))
-			{
-				bool isInternal = false;
-				TopAbs_Orientation occtOrientation;
-				TopoDS_Iterator occtIterator;
-				
-				occtIterator.Initialize(occtCurrent);
-				if (occtIterator.More()) {
-					const TopoDS_Shape& rkMember = occtIterator.Value();
-					occtOrientation = rkMember.Orientation();
-					isInternal = (occtOrientation == TopAbs_INTERNAL);
-				}
-
-				if(isInternal)
-				{
-					occtShells.Add(occtCurrent);
-				}
-			}
-		}
-
-		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtShells.cbegin();
-			kOcctShapeIterator != occtShells.cend();
-			kOcctShapeIterator++)
-		{
-			rShells.push_back(new Shell(TopoDS::Shell(*kOcctShapeIterator)));
 		}
 	}
 

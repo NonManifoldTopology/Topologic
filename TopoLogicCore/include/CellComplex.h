@@ -8,8 +8,12 @@
 
 namespace TopoLogicCore
 {
-	class Face;
 	class Cell;
+	class Vertex;
+	class Edge;
+	class Wire;
+	class Face;
+	class Shell;
 
 	/// <summary>
 	/// 
@@ -36,6 +40,29 @@ namespace TopoLogicCore
 		/// </summary>
 		/// <param name="rCells"></param>
 		TOPOLOGIC_API void Faces(std::list<Face*>& rFaces) const;
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rShells"></param>
+		TOPOLOGIC_API void Shells(std::list<Shell*>& rShells) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rEdges"></param>
+		TOPOLOGIC_API void Edges(std::list<Edge*>& rEdges) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rVertices"></param>
+		TOPOLOGIC_API void Vertices(std::list<Vertex*>& rVertices) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rWires"></param>
+		TOPOLOGIC_API void Wires(std::list<Wire*>& rWires) const;
 
 		/// <summary>
 		/// 
@@ -54,14 +81,14 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		TOPOLOGIC_API Cell* Envelope() const;
+		TOPOLOGIC_API Cell* OuterBoundary() const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkInternalFaces"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API void InternalFaces(std::list<Face*>& rInternalFaces) const;
+		TOPOLOGIC_API void InnerBoundaries(std::list<Face*>& rInternalFaces) const;
 
 		/// <summary>
 		/// 

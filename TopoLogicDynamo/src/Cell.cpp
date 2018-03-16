@@ -241,6 +241,30 @@ namespace TopoLogic
 		return pSharedVertices;
 	}
 
+	Shell^ Cell::OuterBoundary()
+	{
+		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopologicalQuery());
+		return gcnew Shell(pCoreCell->OuterBoundary());
+	}
+
+	List<Shell^>^ Cell::InnerBoundaries()
+	{
+		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopologicalQuery());
+		std::list<TopoLogicCore::Shell*> coreInnerShells;
+		pCoreCell->InnerBoundaries(coreInnerShells);
+
+		List<Shell^>^ pInnerShells = gcnew List<Shell^>();
+		for (std::list<TopoLogicCore::Shell*>::const_iterator kShellIterator = coreInnerShells.begin();
+			kShellIterator != coreInnerShells.end();
+			kShellIterator++)
+		{
+			Shell^ pShell = gcnew Shell(*kShellIterator);
+			pInnerShells->Add(pShell);
+		}
+
+		return pInnerShells;
+	}
+
 	double Cell::Volume()
 	{
 		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopologicalQuery());

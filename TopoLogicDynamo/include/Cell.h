@@ -110,6 +110,18 @@ namespace TopoLogic
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <returns name="Shell"></returns>
+		Shell^ OuterBoundary();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns name="Shell[]"></returns>
+		List<Shell^>^ InnerBoundaries();
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <returns></returns>
 		double Volume();
 

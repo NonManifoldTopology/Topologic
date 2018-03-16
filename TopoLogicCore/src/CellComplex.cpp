@@ -2,6 +2,10 @@
 #include <GlobalCluster.h>
 #include <Face.h>
 #include <Cell.h>
+#include <Vertex.h>
+#include <Edge.h>
+#include <Wire.h>
+#include <Shell.h>
 
 #include <BRep_Builder.hxx>
 #include <Geom_Surface.hxx>
@@ -61,6 +65,90 @@ namespace TopoLogicCore
 		}
 	}
 
+	void CellComplex::Shells(std::list<Shell*>& rShells) const
+	{
+		TopTools_MapOfShape occtShells;
+		TopExp_Explorer occtExplorer;
+		for (occtExplorer.Init(*GetOcctShape(), TopAbs_SHELL); occtExplorer.More(); occtExplorer.Next())
+		{
+			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
+			if (!occtShells.Contains(occtCurrent))
+			{
+				occtShells.Add(occtCurrent);
+			}
+		}
+
+		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtShells.cbegin();
+			kOcctShapeIterator != occtShells.cend();
+			kOcctShapeIterator++)
+		{
+			rShells.push_back(new Shell(TopoDS::Shell(*kOcctShapeIterator)));
+		}
+	}
+
+	void CellComplex::Edges(std::list<Edge*>& rEdges) const
+	{
+		TopTools_MapOfShape occtEdges;
+		TopExp_Explorer occtExplorer;
+		for (occtExplorer.Init(*GetOcctShape(), TopAbs_EDGE); occtExplorer.More(); occtExplorer.Next())
+		{
+			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
+			if (!occtEdges.Contains(occtCurrent))
+			{
+				occtEdges.Add(occtCurrent);
+			}
+		}
+
+		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtEdges.cbegin();
+			kOcctShapeIterator != occtEdges.cend();
+			kOcctShapeIterator++)
+		{
+			rEdges.push_back(new Edge(TopoDS::Edge(*kOcctShapeIterator)));
+		}
+	}
+
+	void CellComplex::Vertices(std::list<Vertex*>& rVertices) const
+	{
+		TopTools_MapOfShape occtVertices;
+		TopExp_Explorer occtExplorer;
+		for (occtExplorer.Init(*GetOcctShape(), TopAbs_VERTEX); occtExplorer.More(); occtExplorer.Next())
+		{
+			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
+			if (!occtVertices.Contains(occtCurrent))
+			{
+				occtVertices.Add(occtCurrent);
+			}
+		}
+
+		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtVertices.cbegin();
+			kOcctShapeIterator != occtVertices.cend();
+			kOcctShapeIterator++)
+		{
+			rVertices.push_back(new Vertex(TopoDS::Vertex(*kOcctShapeIterator)));
+		}
+	}
+
+	void CellComplex::Wires(std::list<Wire*>& rWires) const
+	{
+		TopTools_MapOfShape occtWires;
+		TopExp_Explorer occtExplorer;
+		for (occtExplorer.Init(*GetOcctShape(), TopAbs_WIRE); occtExplorer.More(); occtExplorer.Next())
+		{
+			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
+			if (!occtWires.Contains(occtCurrent))
+			{
+				occtWires.Add(occtCurrent);
+			}
+		}
+
+		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtWires.cbegin();
+			kOcctShapeIterator != occtWires.cend();
+			kOcctShapeIterator++)
+		{
+			rWires.push_back(new Wire(TopoDS::Wire(*kOcctShapeIterator)));
+		}
+	}
+
 	bool CellComplex::IsClosed() const
 	{
 		throw std::exception("Not implemented yet");
@@ -110,7 +198,7 @@ namespace TopoLogicCore
 		return pMergeCellComplex;
 	}
 
-	Cell* CellComplex::Envelope() const
+	Cell* CellComplex::OuterBoundary() const
 	{
 		BOPCol_ListOfShape occtCellsBuildersArguments;
 		std::list<Cell*> cells;
@@ -163,9 +251,9 @@ namespace TopoLogicCore
 		return nullptr;
 	}
 
-	void CellComplex::InternalFaces(std::list<Face*>& rInternalFaces) const
+	void CellComplex::InnerBoundaries(std::list<Face*>& rInternalFaces) const
 	{
-		Cell* pEnvelopeCell = Envelope();
+		Cell* pEnvelopeCell = OuterBoundary();
 
 		std::list<Face*> envelopeFaces;
 		pEnvelopeCell->Faces(envelopeFaces);

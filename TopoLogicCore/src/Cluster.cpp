@@ -7,7 +7,6 @@
 #include <Wire.h>
 #include <Face.h>
 #include <Shell.h>
-#include <CellComplex.h>
 
 #include <TopoDS_Builder.hxx>
 #include <TopoDS_UnCompatibleShapes.hxx>

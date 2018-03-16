@@ -130,6 +130,19 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <returns></returns>
+		TOPOLOGIC_API Shell* OuterBoundary() const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rShells"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API void InnerBoundaries(std::list<Shell*>& rShells) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
 		virtual TopoDS_Shape* GetOcctShape() const;
 		
 		/// <summary>
@@ -139,8 +152,6 @@ namespace TopoLogicCore
 		virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const;
 
 		virtual TopologyType GetType() const { return TOPOLOGY_CELL; }
-
-		void InnerShells(std::list<Shell*>& rShells) const;
 
 	protected:
 		/// <summary>

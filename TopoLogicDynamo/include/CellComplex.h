@@ -6,7 +6,11 @@
 
 namespace TopoLogic
 {
+	ref class Vertex;
+	ref class Edge;
+	ref class Wire;
 	ref class Face;
+	ref class Shell;
 	ref class Cell;
 
 	public ref class CellComplex : Topology
@@ -35,13 +39,38 @@ namespace TopoLogic
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		Cell^ Envelope();
+		List<Shell^>^ Shells();
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		List<Face^>^ InternalFaces();
+		List<Wire^>^ Wires();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		List<Edge^>^ Edges();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		List<Vertex^>^ Vertices();
+
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		Cell^ OuterBoundary();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		List<Face^>^ InnerBoundaries();
 
 		property bool IsClosed {
 			/// <summary>

@@ -1,6 +1,12 @@
 #include "CellComplex.h"
+
+#include <Vertex.h>
+#include <Edge.h>
+#include <Wire.h>
 #include <Face.h>
+#include <Shell.h>
 #include <Cell.h>
+#include <CellComplex.h>
 
 #include <assert.h>
 
@@ -56,19 +62,95 @@ namespace TopoLogic
 		return pFaces;
 	}
 
-	Cell^ CellComplex::Envelope()
+	List<Shell^>^ CellComplex::Shells()
 	{
 		TopoLogicCore::CellComplex* pCoreCellComplex = TopoLogicCore::Topology::Downcast<TopoLogicCore::CellComplex>(GetCoreTopologicalQuery());
-		TopoLogicCore::Cell* pCoreEnvelope = pCoreCellComplex->Envelope();
+
+		std::list<TopoLogicCore::Shell*> coreShells;
+		pCoreCellComplex->Shells(coreShells);
+
+		List<Shell^>^ pShells = gcnew List<Shell^>();
+		for (std::list<TopoLogicCore::Shell*>::const_iterator kShellIterator = coreShells.begin();
+			kShellIterator != coreShells.end();
+			kShellIterator++)
+		{
+			Shell^ pShell = gcnew Shell(*kShellIterator);
+			pShells->Add(pShell);
+		}
+
+		return pShells;
+	}
+
+	List<Wire^>^ CellComplex::Wires()
+	{
+		TopoLogicCore::CellComplex* pCoreCellComplex = TopoLogicCore::Topology::Downcast<TopoLogicCore::CellComplex>(GetCoreTopologicalQuery());
+
+		std::list<TopoLogicCore::Wire*> coreWires;
+		pCoreCellComplex->Wires(coreWires);
+
+		List<Wire^>^ pWires = gcnew List<Wire^>();
+		for (std::list<TopoLogicCore::Wire*>::const_iterator kWireIterator = coreWires.begin();
+			kWireIterator != coreWires.end();
+			kWireIterator++)
+		{
+			Wire^ pWire = gcnew Wire(*kWireIterator);
+			pWires->Add(pWire);
+		}
+
+		return pWires;
+	}
+
+	List<Edge^>^ CellComplex::Edges()
+	{
+		TopoLogicCore::CellComplex* pCoreCellComplex = TopoLogicCore::Topology::Downcast<TopoLogicCore::CellComplex>(GetCoreTopologicalQuery());
+
+		std::list<TopoLogicCore::Edge*> coreEdges;
+		pCoreCellComplex->Edges(coreEdges);
+
+		List<Edge^>^ pEdges = gcnew List<Edge^>();
+		for (std::list<TopoLogicCore::Edge*>::const_iterator kEdgeIterator = coreEdges.begin();
+			kEdgeIterator != coreEdges.end();
+			kEdgeIterator++)
+		{
+			Edge^ pEdge = gcnew Edge(*kEdgeIterator);
+			pEdges->Add(pEdge);
+		}
+
+		return pEdges;
+	}
+
+	List<Vertex^>^ CellComplex::Vertices()
+	{
+		TopoLogicCore::CellComplex* pCoreCellComplex = TopoLogicCore::Topology::Downcast<TopoLogicCore::CellComplex>(GetCoreTopologicalQuery());
+
+		std::list<TopoLogicCore::Vertex*> coreVertices;
+		pCoreCellComplex->Vertices(coreVertices);
+
+		List<Vertex^>^ pVertices = gcnew List<Vertex^>();
+		for (std::list<TopoLogicCore::Vertex*>::const_iterator kVertexIterator = coreVertices.begin();
+			kVertexIterator != coreVertices.end();
+			kVertexIterator++)
+		{
+			Vertex^ pVertex = gcnew Vertex(*kVertexIterator);
+			pVertices->Add(pVertex);
+		}
+
+		return pVertices;
+	}
+
+	Cell^ CellComplex::OuterBoundary()
+	{
+		TopoLogicCore::CellComplex* pCoreCellComplex = TopoLogicCore::Topology::Downcast<TopoLogicCore::CellComplex>(GetCoreTopologicalQuery());
+		TopoLogicCore::Cell* pCoreEnvelope = pCoreCellComplex->OuterBoundary();
 		return gcnew Cell(pCoreEnvelope);
 	}
 
-	List<Face^>^ CellComplex::InternalFaces()
+	List<Face^>^ CellComplex::InnerBoundaries()
 	{
 		TopoLogicCore::CellComplex* pCoreCellComplex = TopoLogicCore::Topology::Downcast<TopoLogicCore::CellComplex>(GetCoreTopologicalQuery());
 
 		std::list<TopoLogicCore::Face*> coreInternalFaces;
-		pCoreCellComplex->InternalFaces(coreInternalFaces);
+		pCoreCellComplex->InnerBoundaries(coreInternalFaces);
 
 		List<Face^>^ pInternalFaces = gcnew List<Face^>();
 		for (std::list<TopoLogicCore::Face*>::const_iterator kInternalFaceIterator = coreInternalFaces.begin();
