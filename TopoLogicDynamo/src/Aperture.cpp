@@ -3,6 +3,7 @@
 #include <Context.h>
 
 #include <assert.h>
+#include <array>
 
 using namespace System;
 
@@ -35,12 +36,18 @@ namespace TopoLogic
 
 	bool Aperture::IsOpen(List<Topology^>^ topologies)
 	{
-		TopoLogicCore::Aperture* pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
-		std::list<TopoLogicCore::Topology*> coreTopologies;
-		for each (Topology^ pTopology in topologies)
+		if (topologies->Count != 2)
 		{
-			coreTopologies.push_back(TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(pTopology->GetCoreTopologicalQuery()));
+			throw gcnew Exception("The input list must contain exactly 2 elements.");
 		}
+
+		TopoLogicCore::Aperture* pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
+		std::array<TopoLogicCore::Topology*, 2> coreTopologies
+		{
+			TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topologies[0]->GetCoreTopologicalQuery()),
+			TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topologies[1]->GetCoreTopologicalQuery()),
+		};
+
 		return pCoreAperture->IsOpen(coreTopologies);
 	}
 
@@ -75,12 +82,17 @@ namespace TopoLogic
 
 	Aperture^ TopoLogic::Aperture::Open(List<Topology^>^ topologies)
 	{
-		TopoLogicCore::Aperture* pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
-		std::list<TopoLogicCore::Topology*> coreTopologies;
-		for each (Topology^ pTopology in topologies)
+		if (topologies->Count != 2)
 		{
-			coreTopologies.push_back(TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(pTopology->GetCoreTopologicalQuery()));
+			throw gcnew Exception("The input list must contain exactly 2 elements.");
 		}
+
+		TopoLogicCore::Aperture* pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
+		std::array<TopoLogicCore::Topology*, 2> coreTopologies
+		{
+			TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topologies[0]->GetCoreTopologicalQuery()),
+			TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topologies[1]->GetCoreTopologicalQuery()),
+		};
 		pCoreAperture->Open(coreTopologies);
 		return this;
 	}
@@ -94,12 +106,17 @@ namespace TopoLogic
 
 	Aperture^ TopoLogic::Aperture::Close(List<Topology^>^ topologies)
 	{
-		TopoLogicCore::Aperture* pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
-		std::list<TopoLogicCore::Topology*> coreTopologies;
-		for each (Topology^ pTopology in topologies)
+		if (topologies->Count != 2)
 		{
-			coreTopologies.push_back(TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(pTopology->GetCoreTopologicalQuery()));
+			throw gcnew Exception("The input list must contain exactly 2 elements.");
 		}
+
+		TopoLogicCore::Aperture* pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
+		std::array<TopoLogicCore::Topology*, 2> coreTopologies
+		{
+			TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topologies[0]->GetCoreTopologicalQuery()),
+			TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topologies[1]->GetCoreTopologicalQuery()),
+		};
 		pCoreAperture->Close(coreTopologies);
 		return this;
 	}

@@ -35,10 +35,10 @@ namespace TopoLogicCore
 		TopTools_IndexedDataMapOfShapeListOfShape edgeToWireMap;
 		TopExp::MapShapesAndUniqueAncestors(*GlobalCluster::GetInstance().GetCluster()->GetOcctShape(), TopAbs_EDGE, TopAbs_WIRE, edgeToWireMap);
 
-		const TopTools_ListOfShape& rkOCCTWires = edgeToWireMap.FindFromKey(*m_pOcctEdge);
+		const TopTools_ListOfShape& rkOcctWires = edgeToWireMap.FindFromKey(*m_pOcctEdge);
 
-		for (TopTools_ListOfShape::const_iterator kIterator = rkOCCTWires.cbegin();
-			kIterator != rkOCCTWires.cend();
+		for (TopTools_ListOfShape::const_iterator kIterator = rkOcctWires.cbegin();
+			kIterator != rkOcctWires.cend();
 			kIterator++)
 		{
 			if (kIterator->ShapeType() == TopAbs_WIRE)

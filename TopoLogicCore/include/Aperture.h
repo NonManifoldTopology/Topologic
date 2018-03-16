@@ -10,11 +10,47 @@ namespace TopoLogicCore
 {
 	class Context;
 
+	class TopologyPairKey
+	{
+	public:
+		TopologyPairKey(const TopoDS_Shape& rkOcctShape1, const TopoDS_Shape& rkOcctShape2)
+			: m_rkOcctShape1(rkOcctShape1)
+			, m_rkOcctShape2(rkOcctShape2)
+		{
+
+		}
+
+		~TopologyPairKey()
+		{
+
+		}
+
+		bool operator < (const TopologyPairKey& rkAnotherKey) const 
+		{ 
+			return this < &rkAnotherKey;
+		}
+
+		const TopoDS_Shape& GetTopology1() const { return m_rkOcctShape1; }
+		const TopoDS_Shape& GetTopology2() const { return m_rkOcctShape2; }
+
+	protected:
+		const TopoDS_Shape& m_rkOcctShape1;
+		const TopoDS_Shape& m_rkOcctShape2;
+	};
+
+	struct ApertureStatus
+	{
+		bool isOpen;
+	};
+
 	/// <summary>
 	/// <para>
 	/// An Aperture defines a connection path between two Topologies that share a common Topology or between a
 	/// Topology and the outside space. A connection path can be uni-directional or bi-directional.
 	/// </para>
+	/// <para>An aperture can be:</para>
+	/// <para>- An edge: for adjacent faces</para>
+	/// <para>- A face: for adjacent cells or cell complexes</para>
 	/// </summary>
 	class Aperture : public Topology
 	{
@@ -43,14 +79,20 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		TOPOLOGIC_API bool IsOpen() const;
+		Topology* Topology() const;
 
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <returns></returns>
+		TOPOLOGIC_API bool IsOpen() const;
+
+		/// <summary>
+		/// Checks if the topologies are adjacent.
+		/// </summary>
 		/// <param name="rkTopologies"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API bool IsOpen(const std::list<TopoLogicCore::Topology*>& rkTopologies) const;
+		TOPOLOGIC_API bool IsOpen(const std::array<TopoLogicCore::Topology*, 2>& rkTopologies) const;
 
 		/// <summary>
 		/// 
@@ -67,7 +109,7 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <param name="rkTopologies"></param>
-		TOPOLOGIC_API void Open(const std::list<TopoLogicCore::Topology*>& rkTopologies);
+		TOPOLOGIC_API void Open(const std::array<TopoLogicCore::Topology*, 2>& rkTopologies);
 
 		/// <summary>
 		/// 
@@ -75,10 +117,10 @@ namespace TopoLogicCore
 		TOPOLOGIC_API void Close();
 		
 		/// <summary>
-		/// 
+		/// Checks if the topologies are adjacent.
 		/// </summary>
 		/// <param name="rkTopologies"></param>
-		TOPOLOGIC_API void Close(const std::list<TopoLogicCore::Topology*>& rkTopologies);
+		TOPOLOGIC_API void Close(const std::array<TopoLogicCore::Topology*, 2>& rkTopologies);
 
 		/// <summary>
 		/// 
@@ -92,9 +134,34 @@ namespace TopoLogicCore
 		/// <returns></returns>
 		virtual TopoDS_Shape* GetOcctShape() const;
 
-		virtual TopologyType GetType() const { return TOPOLOGY_VERTEX; }
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual TopologyType GetType() const;
 
 	protected:
-		Topology* m_pTopology;
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkTopologies"></param>
+		void CheckQueryInputValidity(const std::array<TopoLogicCore::Topology*, 2>& rkTopologies) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		std::map<TopologyPairKey, ApertureStatus>::const_iterator FindStatus(const std::array<TopoLogicCore::Topology*, 2>& rkTopologies, const bool kRaiseExceptionIfNotFound) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		std::map<TopologyPairKey, ApertureStatus>::iterator FindStatus(const std::array<TopoLogicCore::Topology*, 2>& rkTopologies, const bool kRaiseExceptionIfNotFound);
+
+		void InitialisePairwiseStatuses(const bool kOpenStatus);
+
+		std::map<TopologyPairKey, ApertureStatus> m_apertureStatuses;
+		TopoLogicCore::Topology* m_pTopology;
 	};
 }

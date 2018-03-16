@@ -326,6 +326,12 @@ namespace TopoLogicCore
 		/// <returns></returns>
 		TOPOLOGIC_API const AttributeMap& Attributes() const { return m_attributeMap; }
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		std::string GetTypeAsString() const;
+
 	protected:
 		Topology(const int kDimensionality);
 		

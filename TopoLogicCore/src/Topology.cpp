@@ -54,6 +54,29 @@ namespace TopoLogicCore
 		}
 	}
 
+	std::string Topology::GetTypeAsString() const
+	{
+		switch (GetType())
+		{
+		case TOPOLOGY_CLUSTER:
+			return std::string("Cluster");
+		case TOPOLOGY_CELLCOMPLEX:
+			return std::string("CellComplex");
+		case TOPOLOGY_CELL:
+			return std::string("Cell");
+		case TOPOLOGY_SHELL:
+			return std::string("Shell");
+		case TOPOLOGY_FACE:
+			return std::string("Face");
+		case TOPOLOGY_WIRE:
+			return std::string("Wire");
+		case TOPOLOGY_EDGE:
+			return std::string("Edge");
+		default: // case TOPOLOGY_VERTEX:
+			return std::string("Vertex");
+		}
+	}
+
 	Topology::Topology(const int kDimensionality)
 		: m_dimensionality(kDimensionality)
 	{
