@@ -170,10 +170,28 @@ namespace TopoLogic
 		return pSharedVertices;
 	}
 
-	Wire^ Face::OuterWire()
+	Wire^ Face::OuterBoundary()
 	{
 		TopoLogicCore::Face* pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(GetCoreTopologicalQuery());
-		return gcnew Wire(pCoreFace->OuterWire());
+		return gcnew Wire(pCoreFace->OuterBoundary());
+	}
+
+	List<Wire^>^ Face::InnerBoundaries()
+	{
+		TopoLogicCore::Face* pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(GetCoreTopologicalQuery());
+		std::list<TopoLogicCore::Wire*> pCoreWires;
+		pCoreFace->InnerBoundaries(pCoreWires);
+
+		List<Wire^>^ pInnerBoundaries = gcnew List<Wire^>();
+		for (std::list<TopoLogicCore::Wire*>::const_iterator kWireIterator = pCoreWires.begin();
+			kWireIterator != pCoreWires.end();
+			kWireIterator++)
+		{
+			TopoLogicCore::Wire* pCoreWire = *kWireIterator;
+			Wire^ pWire = gcnew Wire(pCoreWire);
+			pInnerBoundaries->Add(pWire);
+		}
+		return pInnerBoundaries;
 	}
 
 	List<Vertex^>^ Face::Vertices()

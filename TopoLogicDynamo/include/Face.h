@@ -126,7 +126,13 @@ namespace TopoLogic {
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		Wire^ OuterWire();
+		Wire^ OuterBoundary();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns name="Wire[]"></returns>
+		List<Wire^>^ InnerBoundaries();
 
 		property Object^ Geometry
 		{
