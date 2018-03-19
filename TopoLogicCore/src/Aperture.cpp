@@ -26,14 +26,17 @@ namespace TopoLogicCore
 
 	bool Aperture::IsOpen(const std::array<TopoLogicCore::Topology*, 2>& rkTopologies) const
 	{
-		AperturePath topologyPair(*rkTopologies[0]->GetOcctShape(), *rkTopologies[1]->GetOcctShape());
-		std::list<AperturePath>::const_iterator kTopologyPairIterator = std::find(m_occtAperturePaths.begin(), m_occtAperturePaths.end(), topologyPair);
+		AperturePath aperturePath(
+			rkTopologies[0] == nullptr? TopoDS_Shape() : *rkTopologies[0]->GetOcctShape(), 
+			rkTopologies[1] == nullptr? TopoDS_Shape() : *rkTopologies[1]->GetOcctShape()
+		);
+		std::list<AperturePath>::const_iterator kTopologyPairIterator = 
+			std::find(m_occtAperturePaths.begin(), m_occtAperturePaths.end(), aperturePath);
 		return kTopologyPairIterator != m_occtAperturePaths.end();
 	}
 
 	void Aperture::Open()
 	{
-		throw std::exception("Not taking into account a null");
 		TopAbs_ShapeEnum occtContextTopologyType = m_pMainContext->Topology()->GetOcctShape()->ShapeType();
 		TopAbs_ShapeEnum occtParentTopologyType = TopAbs_SHAPE;
 		if (occtContextTopologyType == TopAbs_VERTEX)
@@ -70,28 +73,42 @@ namespace TopoLogicCore
 
 		const TopTools_ListOfShape& rkOcctParentTopologies = apertureToTopologyMap.FindFromKey(*Topology()->GetOcctShape());
 
-		for (TopTools_ListOfShape::const_iterator kOcctParentIterator1 = rkOcctParentTopologies.begin();
-			kOcctParentIterator1 != rkOcctParentTopologies.end();
-			kOcctParentIterator1++)
+		if (rkOcctParentTopologies.IsEmpty())
 		{
-			for (TopTools_ListOfShape::const_iterator kOcctParentIterator2 = rkOcctParentTopologies.begin();
-				kOcctParentIterator2 != rkOcctParentTopologies.end();
-				kOcctParentIterator2++)
+			m_occtAperturePaths.push_back(AperturePath(TopoDS_Shape(), TopoDS_Shape()));
+		}
+		else if (rkOcctParentTopologies.Size() == 1)
+		{
+			TopTools_ListOfShape::const_iterator kOcctParentIterator = rkOcctParentTopologies.begin();
+			m_occtAperturePaths.push_back(AperturePath(TopoDS_Shape(), *kOcctParentIterator));
+			m_occtAperturePaths.push_back(AperturePath(*kOcctParentIterator, TopoDS_Shape()));
+		}else
+		{
+			for (TopTools_ListOfShape::const_iterator kOcctParentIterator1 = rkOcctParentTopologies.begin();
+				kOcctParentIterator1 != rkOcctParentTopologies.end();
+				kOcctParentIterator1++)
 			{
-				if (kOcctParentIterator1 == kOcctParentIterator2)
+				for (TopTools_ListOfShape::const_iterator kOcctParentIterator2 = rkOcctParentTopologies.begin();
+					kOcctParentIterator2 != rkOcctParentTopologies.end();
+					kOcctParentIterator2++)
 				{
-					continue;
-				}
+					if (kOcctParentIterator1 == kOcctParentIterator2)
+					{
+						continue;
+					}
 
-				m_occtAperturePaths.push_back(AperturePath(*kOcctParentIterator1, *kOcctParentIterator2));
+					m_occtAperturePaths.push_back(AperturePath(*kOcctParentIterator1, *kOcctParentIterator2));
+				}
 			}
 		}
 	}
 
 	void Aperture::Open(const std::array<TopoLogicCore::Topology*, 2>& rkTopologies)
 	{
-		throw std::exception("Not taking into account a null");
-		AperturePath aperturePath(*rkTopologies[0]->GetOcctShape(), *rkTopologies[1]->GetOcctShape());
+		AperturePath aperturePath(
+			rkTopologies[0] == nullptr ? TopoDS_Shape() : *rkTopologies[0]->GetOcctShape(),
+			rkTopologies[1] == nullptr ? TopoDS_Shape() : *rkTopologies[1]->GetOcctShape()
+		);
 		std::list<AperturePath>::const_iterator kTopologyPairIterator = std::find(m_occtAperturePaths.begin(), m_occtAperturePaths.end(), aperturePath);
 		if (kTopologyPairIterator == m_occtAperturePaths.end())
 		{
@@ -106,9 +123,11 @@ namespace TopoLogicCore
 
 	void Aperture::Close(const std::array<TopoLogicCore::Topology*, 2>& rkTopologies)
 	{
-		throw std::exception("Not taking into account a null");
-		AperturePath topologyPair(*rkTopologies[0]->GetOcctShape(), *rkTopologies[1]->GetOcctShape());
-		m_occtAperturePaths.remove(topologyPair);
+		AperturePath aperturePath(
+			rkTopologies[0] == nullptr ? TopoDS_Shape() : *rkTopologies[0]->GetOcctShape(),
+			rkTopologies[1] == nullptr ? TopoDS_Shape() : *rkTopologies[1]->GetOcctShape()
+		);
+		m_occtAperturePaths.remove(aperturePath);
 	}
 
 	void Aperture::Paths(std::list<std::list<TopoLogicCore::Topology*>>& rPaths) const
@@ -141,13 +160,18 @@ namespace TopoLogicCore
 
 	Topology* Aperture::Topology() const
 	{
+		assert(m_pTopology != nullptr && "The underlying topology is null.");
+		if (m_pTopology == nullptr)
+		{
+			throw std::exception("The underlying topology is null.");
+		}
 		return m_pTopology;
 	}
 
 	Aperture::Aperture(TopoLogicCore::Topology* const kpTopology, Context* const kpContext, const bool kOpenStatus)
 		: TopoLogicCore::Topology(kpTopology->Dimensionality())
 		, m_pMainContext(kpContext)
-		, m_pTopology(nullptr)
+		, m_pTopology(kpTopology)
 	{
 		if (kpTopology == nullptr)
 		{
@@ -158,7 +182,6 @@ namespace TopoLogicCore
 			throw std::exception("A null context is passed.");
 		}
 
-		m_pTopology = kpTopology;
 		AddContext(kpContext);
 
 		if (kOpenStatus)

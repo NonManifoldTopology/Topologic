@@ -85,6 +85,10 @@ namespace TopoLogicCore
 
 	Topology* Topology::ByOcctShape(const TopoDS_Shape& rkOcctShape)
 	{
+		if (rkOcctShape.TShape().IsNull())
+		{
+			return nullptr;
+		}
 		TopAbs_ShapeEnum occtShapeType = rkOcctShape.ShapeType();
 		switch (occtShapeType)
 		{
