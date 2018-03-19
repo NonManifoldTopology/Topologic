@@ -16,6 +16,7 @@
     <ClInclude Include="include\TopologicalQuery.h" />
     <ClInclude Include="include\Context.h" />
     <ClInclude Include="include\Aperture.h" />
+    <ClInclude Include="include\AperturePath.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
@@ -30,5 +31,6 @@
     <ClCompile Include="src\GlobalCluster.cpp" />
     <ClCompile Include="src\Context.cpp" />
     <ClCompile Include="src\Aperture.cpp" />
+    <ClCompile Include="src\AperturePath.cpp" />
   </ItemGroup>
 </Project>

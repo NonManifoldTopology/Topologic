@@ -21,73 +21,106 @@ namespace TopoLogicCore
 
 	bool Aperture::IsOpen() const
 	{
-		for (std::map<TopologyPairKey, ApertureStatus>::const_iterator kApertureStatusIterator = m_apertureStatuses.begin();
-			kApertureStatusIterator != m_apertureStatuses.end();
-			kApertureStatusIterator++)
-		{
-			if (kApertureStatusIterator->second.isOpen)
-			{
-				return true;
-			}
-		}
-
-		return false;
+		return !m_occtAperturePaths.empty();
 	}
 
 	bool Aperture::IsOpen(const std::array<TopoLogicCore::Topology*, 2>& rkTopologies) const
 	{
-		CheckQueryInputValidity(rkTopologies);
-		const ApertureStatus& rkApertureStatus = FindStatus(rkTopologies, true)->second;
-		return rkApertureStatus.isOpen;
+		AperturePath topologyPair(*rkTopologies[0]->GetOcctShape(), *rkTopologies[1]->GetOcctShape());
+		std::list<AperturePath>::const_iterator kTopologyPairIterator = std::find(m_occtAperturePaths.begin(), m_occtAperturePaths.end(), topologyPair);
+		return kTopologyPairIterator != m_occtAperturePaths.end();
 	}
 
 	void Aperture::Open()
 	{
-		for (std::map<TopologyPairKey, ApertureStatus>::iterator apertureStatusIterator = m_apertureStatuses.begin();
-			apertureStatusIterator != m_apertureStatuses.end();
-			apertureStatusIterator++)
+		throw std::exception("Not taking into account a null");
+		TopAbs_ShapeEnum occtContextTopologyType = m_pMainContext->Topology()->GetOcctShape()->ShapeType();
+		TopAbs_ShapeEnum occtParentTopologyType = TopAbs_SHAPE;
+		if (occtContextTopologyType == TopAbs_VERTEX)
 		{
-			apertureStatusIterator->second.isOpen = true;
+			occtContextTopologyType = TopAbs_EDGE;
+		}
+		else if (occtContextTopologyType == TopAbs_EDGE)
+		{
+			occtParentTopologyType = TopAbs_WIRE;
+		}
+		else if (occtContextTopologyType == TopAbs_WIRE)
+		{
+			occtParentTopologyType = TopAbs_FACE;
+		}
+		else if (occtContextTopologyType == TopAbs_FACE)
+		{
+			occtParentTopologyType = TopAbs_SHELL;
+		}
+		else if (occtContextTopologyType == TopAbs_SHELL)
+		{
+			occtParentTopologyType = TopAbs_SOLID;
+		}
+		else if (occtContextTopologyType == TopAbs_SOLID)
+		{
+			occtParentTopologyType = TopAbs_COMPSOLID;
+		}
+		else
+		{
+			throw std::exception("Invalid topology");
+		}
+
+		TopTools_IndexedDataMapOfShapeListOfShape apertureToTopologyMap;
+		TopExp::MapShapesAndUniqueAncestors(*GlobalCluster::GetInstance().GetCluster()->GetOcctShape(), occtContextTopologyType, occtParentTopologyType, apertureToTopologyMap);
+
+		const TopTools_ListOfShape& rkOcctParentTopologies = apertureToTopologyMap.FindFromKey(*Topology()->GetOcctShape());
+
+		for (TopTools_ListOfShape::const_iterator kOcctParentIterator1 = rkOcctParentTopologies.begin();
+			kOcctParentIterator1 != rkOcctParentTopologies.end();
+			kOcctParentIterator1++)
+		{
+			for (TopTools_ListOfShape::const_iterator kOcctParentIterator2 = rkOcctParentTopologies.begin();
+				kOcctParentIterator2 != rkOcctParentTopologies.end();
+				kOcctParentIterator2++)
+			{
+				if (kOcctParentIterator1 == kOcctParentIterator2)
+				{
+					continue;
+				}
+
+				m_occtAperturePaths.push_back(AperturePath(*kOcctParentIterator1, *kOcctParentIterator2));
+			}
 		}
 	}
 
 	void Aperture::Open(const std::array<TopoLogicCore::Topology*, 2>& rkTopologies)
 	{
-		CheckQueryInputValidity(rkTopologies);
-		ApertureStatus& rkApertureStatus = FindStatus(rkTopologies, true)->second;
-		rkApertureStatus.isOpen = true;
+		throw std::exception("Not taking into account a null");
+		AperturePath aperturePath(*rkTopologies[0]->GetOcctShape(), *rkTopologies[1]->GetOcctShape());
+		std::list<AperturePath>::const_iterator kTopologyPairIterator = std::find(m_occtAperturePaths.begin(), m_occtAperturePaths.end(), aperturePath);
+		if (kTopologyPairIterator == m_occtAperturePaths.end())
+		{
+			m_occtAperturePaths.push_back(aperturePath);
+		}
 	}
 
 	void Aperture::Close()
 	{
-		for (std::map<TopologyPairKey, ApertureStatus>::iterator apertureStatusIterator = m_apertureStatuses.begin();
-			apertureStatusIterator != m_apertureStatuses.end();
-			apertureStatusIterator++)
-		{
-			apertureStatusIterator->second.isOpen = false;
-		}
+		m_occtAperturePaths.clear();
 	}
 
 	void Aperture::Close(const std::array<TopoLogicCore::Topology*, 2>& rkTopologies)
 	{
-		CheckQueryInputValidity(rkTopologies);
-		ApertureStatus& rkApertureStatus = FindStatus(rkTopologies, true)->second;
-		rkApertureStatus.isOpen = false;
+		throw std::exception("Not taking into account a null");
+		AperturePath topologyPair(*rkTopologies[0]->GetOcctShape(), *rkTopologies[1]->GetOcctShape());
+		m_occtAperturePaths.remove(topologyPair);
 	}
 
 	void Aperture::Paths(std::list<std::list<TopoLogicCore::Topology*>>& rPaths) const
 	{
-		for (std::map<TopologyPairKey, ApertureStatus>::const_iterator kApertureStatusIterator = m_apertureStatuses.begin();
-			kApertureStatusIterator != m_apertureStatuses.end();
-			kApertureStatusIterator++)
+		for (std::list<AperturePath>::const_iterator kAperturePathIterator = m_occtAperturePaths.begin();
+			kAperturePathIterator != m_occtAperturePaths.end();
+			kAperturePathIterator++)
 		{
-			if (kApertureStatusIterator->second.isOpen)
-			{
-				std::list<TopoLogicCore::Topology*> path;
-				path.push_back(Topology::ByOcctShape(kApertureStatusIterator->first.GetTopology1()));
-				path.push_back(Topology::ByOcctShape(kApertureStatusIterator->first.GetTopology2()));
-				rPaths.push_back(path);
-			}
+			std::list<TopoLogicCore::Topology*> path;
+			path.push_back(Topology::ByOcctShape(kAperturePathIterator->GetTopology1()));
+			path.push_back(Topology::ByOcctShape(kAperturePathIterator->GetTopology2()));
+			rPaths.push_back(path);
 		}
 	}
 
@@ -111,108 +144,9 @@ namespace TopoLogicCore
 		return m_pTopology;
 	}
 
-	void Aperture::CheckQueryInputValidity(const std::array<TopoLogicCore::Topology*, 2>& rkTopologies) const
-	{
-		TopologyType apertureType = GetType();
-		if (GetType() == TOPOLOGY_EDGE)
-		{
-			if (rkTopologies[0] != nullptr && rkTopologies[0]->GetType() != TOPOLOGY_FACE)
-			{
-				std::stringstream ssException;
-				ssException << "The aperture is an edge, but the first topology is a " <<
-					rkTopologies[0]->GetTypeAsString() << "; it must be a face.";
-			}
-			
-			if(rkTopologies[1] != nullptr && rkTopologies[1]->GetType() != TOPOLOGY_FACE)
-			{
-				std::stringstream ssException;
-				ssException << "The aperture is an edge, but the second topology is a " <<
-					rkTopologies[1]->GetTypeAsString() << "; it must be a face.";
-			}
-		}else if (GetType() == TOPOLOGY_FACE)
-		{
-			if (rkTopologies[0] != nullptr && rkTopologies[0]->GetType() != TOPOLOGY_CELL)
-			{
-				std::stringstream ssException;
-				ssException << "The aperture is a face, but the first topology is a " <<
-					rkTopologies[0]->GetTypeAsString() << "; it must be a cell.";
-			}
-
-			if (rkTopologies[1] != nullptr && rkTopologies[1]->GetType() != TOPOLOGY_CELL)
-			{
-				std::stringstream ssException;
-				ssException << "The aperture is a face, but the second topology is a " <<
-					rkTopologies[1]->GetTypeAsString() << "; it must be a cell.";
-			}
-		}
-	}
-
-	std::map<TopologyPairKey, ApertureStatus>::const_iterator Aperture::FindStatus(const std::array<TopoLogicCore::Topology*, 2>& rkTopologies, const bool kRaiseExceptionIfNotFound) const
-	{
-		std::map<TopologyPairKey, ApertureStatus>::const_iterator kApertureStatusIterator = 
-			m_apertureStatuses.find(TopologyPairKey(*rkTopologies[0]->GetOcctShape(), *rkTopologies[1]->GetOcctShape()));
-		if (kApertureStatusIterator == m_apertureStatuses.end() && kRaiseExceptionIfNotFound)
-		{
-			throw std::exception("The aperture does not border the two topologies.");
-		}
-
-		return kApertureStatusIterator;
-	}
-
-	std::map<TopologyPairKey, ApertureStatus>::iterator Aperture::FindStatus(const std::array<TopoLogicCore::Topology*, 2>& rkTopologies, const bool kRaiseExceptionIfNotFound)
-	{
-		std::map<TopologyPairKey, ApertureStatus>::iterator apertureStatusIterator =
-			m_apertureStatuses.find(TopologyPairKey(*rkTopologies[0]->GetOcctShape(), *rkTopologies[1]->GetOcctShape()));
-		if (apertureStatusIterator == m_apertureStatuses.end() && kRaiseExceptionIfNotFound)
-		{
-			throw std::exception("The aperture does not border the two topologies.");
-		}
-
-		return apertureStatusIterator;
-	}
-
-	void Aperture::InitialisePairwiseStatuses(const bool kOpenStatus)
-	{
-		TopAbs_ShapeEnum occtTopologyType = Topology()->GetOcctShape()->ShapeType();
-		TopAbs_ShapeEnum occtParentTopologyType = TopAbs_SHAPE;
-		if (occtTopologyType == TopAbs_FACE)
-		{
-			occtParentTopologyType = TopAbs_SOLID;
-		}
-		else if (occtTopologyType == TopAbs_EDGE)
-		{
-			occtParentTopologyType = TopAbs_FACE;
-		}else
-		{
-			throw std::exception("Invalid topology");
-		}
-
-		TopTools_IndexedDataMapOfShapeListOfShape apertureToTopologyMap;
-		TopExp::MapShapesAndUniqueAncestors(*GlobalCluster::GetInstance().GetCluster()->GetOcctShape(), occtTopologyType, occtParentTopologyType, apertureToTopologyMap);
-
-		const TopTools_ListOfShape& rkOcctParentTopologies = apertureToTopologyMap.FindFromKey(*Topology()->GetOcctShape());
-
-		for(TopTools_ListOfShape::const_iterator kOcctParentIterator1 = rkOcctParentTopologies.begin();
-			kOcctParentIterator1 != rkOcctParentTopologies.end();
-			kOcctParentIterator1++)
-		{
-			for (TopTools_ListOfShape::const_iterator kOcctParentIterator2 = rkOcctParentTopologies.begin();
-				kOcctParentIterator2 != rkOcctParentTopologies.end();
-				kOcctParentIterator2++)
-			{
-				if (kOcctParentIterator1 == kOcctParentIterator2)
-				{
-					continue;
-				}
-				ApertureStatus apertureStatus; 
-				apertureStatus.isOpen = kOpenStatus;
-				m_apertureStatuses.insert(std::make_pair(TopologyPairKey(*kOcctParentIterator1, *kOcctParentIterator2), apertureStatus));
-			}
-		}
-	}
-
 	Aperture::Aperture(TopoLogicCore::Topology* const kpTopology, Context* const kpContext, const bool kOpenStatus)
 		: TopoLogicCore::Topology(kpTopology->Dimensionality())
+		, m_pMainContext(kpContext)
 		, m_pTopology(nullptr)
 	{
 		if (kpTopology == nullptr)
@@ -224,42 +158,13 @@ namespace TopoLogicCore
 			throw std::exception("A null context is passed.");
 		}
 
-		// Check validity
-		TopologyType topologyType = kpTopology->GetType();
-		TopologyType contextType = kpContext->Topology()->GetType();
-		if (topologyType == TOPOLOGY_FACE)
-		{
-			if (contextType != TOPOLOGY_FACE)
-			{
-				std::stringstream ssException;
-				ssException << "The topology is a " << kpTopology->GetTypeAsString() <<
-					"but the context is a " << kpContext->Topology()->GetTypeAsString() << 
-					"; it must be a face too.";
-				throw std::exception(ssException.str().c_str());
-			}
-		}
-		else if (topologyType == TOPOLOGY_EDGE)
-		{
-			if (contextType != TOPOLOGY_EDGE)
-			{
-				std::stringstream ssException;
-				ssException << "The topology is an " << kpTopology->GetTypeAsString() <<
-					"but the context is a " << kpContext->Topology()->GetTypeAsString() <<
-					"; it must be an edge too.";
-				throw std::exception(ssException.str().c_str());
-			}
-		}
-		else
-		{
-			std::stringstream ssException;
-			ssException << "The topology is a " << kpTopology->GetTypeAsString() << "; it must either be an edge or a face.";
-			throw std::exception(ssException.str().c_str());
-		}
-
 		m_pTopology = kpTopology;
 		AddContext(kpContext);
 
-		InitialisePairwiseStatuses(kOpenStatus);
+		if (kOpenStatus)
+		{
+			Open();
+		}
 	}
 
 	Aperture::~Aperture()

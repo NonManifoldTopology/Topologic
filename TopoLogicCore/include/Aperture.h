@@ -2,6 +2,7 @@
 
 #include "Utilities.h"
 #include "Topology.h"
+#include "AperturePath.h"
 
 #include <list>
 #include <memory>
@@ -10,47 +11,11 @@ namespace TopoLogicCore
 {
 	class Context;
 
-	class TopologyPairKey
-	{
-	public:
-		TopologyPairKey(const TopoDS_Shape& rkOcctShape1, const TopoDS_Shape& rkOcctShape2)
-			: m_rkOcctShape1(rkOcctShape1)
-			, m_rkOcctShape2(rkOcctShape2)
-		{
-
-		}
-
-		~TopologyPairKey()
-		{
-
-		}
-
-		bool operator < (const TopologyPairKey& rkAnotherKey) const 
-		{ 
-			return this < &rkAnotherKey;
-		}
-
-		const TopoDS_Shape& GetTopology1() const { return m_rkOcctShape1; }
-		const TopoDS_Shape& GetTopology2() const { return m_rkOcctShape2; }
-
-	protected:
-		const TopoDS_Shape& m_rkOcctShape1;
-		const TopoDS_Shape& m_rkOcctShape2;
-	};
-
-	struct ApertureStatus
-	{
-		bool isOpen;
-	};
-
 	/// <summary>
 	/// <para>
 	/// An Aperture defines a connection path between two Topologies that share a common Topology or between a
 	/// Topology and the outside space. A connection path can be uni-directional or bi-directional.
 	/// </para>
-	/// <para>An aperture can be:</para>
-	/// <para>- An edge: for adjacent faces</para>
-	/// <para>- A face: for adjacent cells or cell complexes</para>
 	/// </summary>
 	class Aperture : public Topology
 	{
@@ -141,27 +106,8 @@ namespace TopoLogicCore
 		virtual TopologyType GetType() const;
 
 	protected:
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="rkTopologies"></param>
-		void CheckQueryInputValidity(const std::array<TopoLogicCore::Topology*, 2>& rkTopologies) const;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		std::map<TopologyPairKey, ApertureStatus>::const_iterator FindStatus(const std::array<TopoLogicCore::Topology*, 2>& rkTopologies, const bool kRaiseExceptionIfNotFound) const;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		std::map<TopologyPairKey, ApertureStatus>::iterator FindStatus(const std::array<TopoLogicCore::Topology*, 2>& rkTopologies, const bool kRaiseExceptionIfNotFound);
-
-		void InitialisePairwiseStatuses(const bool kOpenStatus);
-
-		std::map<TopologyPairKey, ApertureStatus> m_apertureStatuses;
+		std::list<AperturePath> m_occtAperturePaths;
+		Context* m_pMainContext; // the primary context passed in the constructor is stored here
 		TopoLogicCore::Topology* m_pTopology;
 	};
 }
