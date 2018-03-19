@@ -6,6 +6,17 @@ namespace TopoLogicCore
 {
 	bool DoesShape1ContainShape2(const TopoDS_Shape& rkShape1, const TopoDS_Shape& rkShape2)
 	{
+		// An empty shape means a void.
+		if (rkShape1.TShape().IsNull() || rkShape2.TShape().IsNull())
+		{
+			if (rkShape1.TShape().IsNull() && rkShape2.TShape().IsNull())
+			{
+				return true;
+			}
+
+			return false;
+		}
+
 		TopExp_Explorer occtExplorer;
 		for (occtExplorer.Init(rkShape1, rkShape2.ShapeType()); occtExplorer.More(); occtExplorer.Next())
 		{
