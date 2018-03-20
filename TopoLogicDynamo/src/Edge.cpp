@@ -210,12 +210,16 @@ namespace TopoLogic
 		// Handle(Geom_Line) pOcctLine = Handle_Geom_Line::DownCast(pOcctCurve);
 
 		TopoLogicCore::Edge* pCoreEdge = TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(GetCoreTopologicalQuery());
-		Vertex^ pStartVertex = gcnew Vertex(pCoreEdge->StartVertex());
-		Vertex^ pEndVertex = gcnew Vertex(pCoreEdge->EndVertex());
+		List<Vertex^>^ pVertices = Vertices();
+
+		if (pVertices->Count != 2)
+		{
+			throw gcnew Exception("The edge does not have exactly 2 vertices");
+		}
 
 		return Autodesk::DesignScript::Geometry::Line::ByStartPointEndPoint(
-			safe_cast<Autodesk::DesignScript::Geometry::Point^>(pStartVertex->Geometry),
-			safe_cast<Autodesk::DesignScript::Geometry::Point^>(pEndVertex->Geometry)
+			safe_cast<Autodesk::DesignScript::Geometry::Point^>(pVertices[0]->Geometry),
+			safe_cast<Autodesk::DesignScript::Geometry::Point^>(pVertices[1]->Geometry)
 		);
 	}
 
