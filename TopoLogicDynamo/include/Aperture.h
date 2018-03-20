@@ -22,62 +22,63 @@ namespace TopoLogic
 		/// <summary>
 		/// Creates an aperture by a topology and a context.
 		/// </summary>
-		/// <param name="topology"></param>
-		/// <param name="context"></param>
-		/// <returns></returns>
+		/// <param name="topology">A topology</param>
+		/// <param name="context">A context</param>
+		/// <returns name="Aperture">An aperture</returns>
 		static Aperture^ ByTopologyContext(Topology^ topology, Context^ context);
 
 		/// <summary>
 		/// Creates an aperture by a topology, a context, and an open status.
 		/// </summary>
-		/// <param name="topology"></param>
-		/// <param name="context"></param>
-		/// <param name="openStatus"></param>
-		/// <returns></returns>
+		/// <param name="topology">A topology</param>
+		/// <param name="context">A context</param>
+		/// <param name="openStatus">An open status</param>
+		/// <returns name="Aperture">An aperture</returns>
 		static Aperture^ ByTopologyContextStatus(Topology^ topology, Context^ context, bool openStatus);
 
 		/// <summary>
-		/// 
+		/// Checks if any aperture path is open.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>bool</returns>
 		bool IsOpen();
 
 		/// <summary>
-		/// 
+		/// Checks if the aperture path from the first to the second topologies is open.
 		/// </summary>
-		/// <param name="topologies"></param>
-		/// <returns></returns>
+		/// <param name="Topology[]">A list of exactly two topologies</param>
+		/// <returns>bool</returns>
 		bool IsOpen(List<Topology^>^ topologies);
 
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <returns name="Topology[][]"></returns>
 		List<List<TopoLogic::Topology^>^>^ Paths();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="Aperture"></returns>
 		Aperture^ Open();
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="topologies"></param>
-		/// <returns></returns>
+		/// <returns name="Aperture"></returns>
 		Aperture^ Open(List<Topology^>^ topologies);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="Aperture"></returns>
 		Aperture^ Close();
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="topologies"></param>
-		/// <returns></returns>
+		/// <returns name="Aperture"></returns>
 		Aperture^ Close(List<Topology^>^ topologies);
 
 		property Object^ Geometry
@@ -85,7 +86,7 @@ namespace TopoLogic
 			/// <summary>
 			/// 
 			/// </summary>
-			/// <returns></returns>
+			/// <returns name="Geometry"></returns>
 			virtual Object^ get() override;
 		}
 

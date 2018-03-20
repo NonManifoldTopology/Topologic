@@ -184,7 +184,7 @@ namespace TopoLogicCore
 
 	Topology* Topology::AddContext(Context * const kpContext)
 	{
-		if (std::find(m_contexts.begin(), m_contexts.end(), kpContext) != m_contexts.end())
+		if (std::find(m_contexts.begin(), m_contexts.end(), kpContext) == m_contexts.end())
 		{
 			m_contexts.push_back(kpContext);
 		}

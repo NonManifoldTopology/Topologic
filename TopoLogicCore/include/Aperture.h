@@ -47,7 +47,7 @@ namespace TopoLogicCore
 		Topology* Topology() const;
 
 		/// <summary>
-		/// 
+		/// Checks if any aperture path is open.
 		/// </summary>
 		/// <returns></returns>
 		TOPOLOGIC_API bool IsOpen() const;
@@ -60,7 +60,7 @@ namespace TopoLogicCore
 		TOPOLOGIC_API bool IsOpen(const std::array<TopoLogicCore::Topology*, 2>& rkTopologies) const;
 
 		/// <summary>
-		/// 
+		/// Returns all open aperture paths
 		/// </summary>
 		/// <param name="rPaths"></param>
 		TOPOLOGIC_API void Paths(std::list<std::list<TopoLogicCore::Topology*>>& rPaths) const;
