@@ -31,14 +31,8 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
-		TOPOLOGIC_API Vertex* StartVertex() const;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		TOPOLOGIC_API Vertex* EndVertex() const;
+		/// <param name="rVertices"></param>
+		TOPOLOGIC_API void Vertices(std::list<Vertex*>& rVertices) const;
 
 		/// <summary>
 		/// 

@@ -38,13 +38,7 @@ namespace TopoLogic {
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		Vertex^ StartVertex();
-
-		/// <summary>
-		/// Returns the end vertex of an edge.
-		/// </summary>
-		/// <returns>The end vertex of the edge</returns>
-		Vertex^ EndVertex();
+		List<Vertex^>^ Vertices();
 
 		/// <summary>
 		/// Gets the list of wires incident to this edge.

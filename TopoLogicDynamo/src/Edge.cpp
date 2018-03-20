@@ -19,16 +19,23 @@
 
 namespace TopoLogic
 {
-	Vertex^ Edge::StartVertex()
+	List<Vertex^>^ Edge::Vertices()
 	{
 		TopoLogicCore::Edge* pCoreEdge = TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(GetCoreTopologicalQuery());
-		return gcnew Vertex(pCoreEdge->StartVertex());
-	}
+		std::list<TopoLogicCore::Vertex*> coreVertices;
+		pCoreEdge->Vertices(coreVertices);
 
-	Vertex^ Edge::EndVertex()
-	{
-		TopoLogicCore::Edge* pCoreEdge = TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(GetCoreTopologicalQuery());
-		return gcnew Vertex(pCoreEdge->EndVertex());
+		List<Vertex^>^ pVertices = gcnew List<Vertex^>();
+		for (std::list<TopoLogicCore::Vertex*>::iterator coreVertexIterator = coreVertices.begin();
+			coreVertexIterator != coreVertices.end();
+			coreVertexIterator++)
+		{
+			TopoLogicCore::Vertex* pCoreVertex = *coreVertexIterator;
+			Vertex^ pVertex = gcnew Vertex(pCoreVertex);
+			pVertices->Add(pVertex);
+		}
+
+		return pVertices;
 	}
 
 	List<Wire^>^ Edge::Wires()
@@ -38,7 +45,6 @@ namespace TopoLogic
 		pCoreEdge->Wires(coreWires);
 
 		List<Wire^>^ pWires = gcnew List<Wire^>();
-		List<Object^>^ pDynamoPolycurves = gcnew List<Object^>();
 		for(std::list<TopoLogicCore::Wire*>::iterator coreWireIterator = coreWires.begin();
 			coreWireIterator != coreWires.end();
 			coreWireIterator++)
@@ -46,7 +52,6 @@ namespace TopoLogic
 			TopoLogicCore::Wire* pCoreWire = *coreWireIterator;
 			Wire^ pWire = gcnew Wire(pCoreWire);
 			pWires->Add(pWire);
-			pDynamoPolycurves->Add(pWire->Geometry);
 		}
 		
 		return pWires;

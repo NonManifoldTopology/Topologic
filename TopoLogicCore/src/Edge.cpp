@@ -18,16 +18,11 @@
 
 namespace TopoLogicCore
 {
-	Vertex* Edge::StartVertex() const
+	void Edge::Vertices(std::list<Vertex*>& rVertices) const
 	{
 		ShapeAnalysis_Edge shapeAnalysisEdge;
-		return new Vertex(shapeAnalysisEdge.FirstVertex(TopoDS::Edge(*GetOcctShape())));
-	}
-
-	Vertex* Edge::EndVertex() const
-	{
-		ShapeAnalysis_Edge shapeAnalysisEdge;
-		return new Vertex(shapeAnalysisEdge.LastVertex(TopoDS::Edge(*GetOcctShape())));
+		rVertices.push_back(new Vertex(shapeAnalysisEdge.FirstVertex(TopoDS::Edge(*GetOcctShape()))));
+		rVertices.push_back(new Vertex(shapeAnalysisEdge.LastVertex(TopoDS::Edge(*GetOcctShape()))));
 	}
 
 	void Edge::Wires(std::list<Wire*>& rWires) const
