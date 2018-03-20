@@ -79,6 +79,7 @@ namespace TopoLogicCore
 
 	Topology::Topology(const int kDimensionality)
 		: m_dimensionality(kDimensionality)
+		, m_isInGlobalCluster(false)
 	{
 
 	}

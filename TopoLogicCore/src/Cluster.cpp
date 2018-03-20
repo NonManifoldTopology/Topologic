@@ -46,13 +46,21 @@ namespace TopoLogicCore
 			kTopologyIterator != rkTopologies.end();
 			kTopologyIterator++)
 		{
-			pCluster->Add(*kTopologyIterator);
+			pCluster->AddTopology(*kTopologyIterator);
 		}
 		return pCluster;
 	}
 
-	bool Cluster::Add(Topology const * const kpkTopology)
+	bool Cluster::AddTopology(Topology const * const kpkTopology, const bool kCheckIfInside)
 	{
+		if (kCheckIfInside)
+		{
+			if (IsInside(kpkTopology))
+			{
+				return false;
+			}
+		}
+
 		// If this cluster is not the global cluster, it must have been inside the global cluster.
 		// (Added during initialisation.) The free flag is therefore at this point false.
 		// To add a new member to this cluster, unfreeze it first/set the flag to true.
@@ -85,7 +93,7 @@ namespace TopoLogicCore
 		return returnValue;
 	}
 
-	bool Cluster::Remove(Topology const * const kpkTopology)
+	bool Cluster::RemoveTopology(Topology const * const kpkTopology)
 	{
 		// If this cluster is not the global cluster, it must have been inside the global cluster.
 		// (Added during initialisation.) The free flag is therefore at this point false.
@@ -312,6 +320,23 @@ namespace TopoLogicCore
 		{
 			rCellComplexes.push_back(new CellComplex(TopoDS::CompSolid(*kOcctShapeIterator)));
 		}
+	}
+
+	bool Cluster::IsInside(Topology const * const kpkTopology) const
+	{
+		const TopoDS_Shape& rkOcctAddedShape = *kpkTopology->GetOcctShape();
+		TopTools_MapOfShape occtShapes;
+		TopExp_Explorer occtExplorer;
+		for (occtExplorer.Init(*GetOcctShape(), rkOcctAddedShape.ShapeType()); occtExplorer.More(); occtExplorer.Next())
+		{
+			const TopoDS_Shape& rkOcctCurrent = occtExplorer.Current();
+			if (rkOcctAddedShape.IsSame(rkOcctCurrent))
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 }

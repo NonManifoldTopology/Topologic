@@ -48,14 +48,14 @@ namespace TopoLogicCore
 		/// <param name="kpCluster"></param>
 		/// <param name="kpkTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API bool Add(Topology const * const kpkTopology);
+		TOPOLOGIC_API bool AddTopology(Topology const * const kpkTopology, const bool kCheckIfInside = false);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpkTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API bool Remove(Topology const * const kpkTopology);
+		TOPOLOGIC_API bool RemoveTopology(Topology const * const kpkTopology);
 
 		/// <summary>
 		/// 
@@ -116,6 +116,13 @@ namespace TopoLogicCore
 		virtual TopologyType GetType() const { return TOPOLOGY_CLUSTER; }
 
 	protected:
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpkTopology"></param>
+		/// <returns></returns>
+		bool IsInside(Topology const * const kpkTopology) const;
+
 		/// <summary>
 		/// The underlying OCCT compound.
 		/// </summary>

@@ -332,6 +332,16 @@ namespace TopoLogicCore
 		/// <returns></returns>
 		std::string GetTypeAsString() const;
 
+		void SetInGlobalCluster(const bool kInGlobalCluster)
+		{
+			m_isInGlobalCluster = kInGlobalCluster;
+		}
+
+		bool GetInGlobalCluster() const
+		{
+			return m_isInGlobalCluster;
+		}
+
 	protected:
 		Topology(const int kDimensionality);
 		
@@ -397,5 +407,6 @@ namespace TopoLogicCore
 		std::list<Topology*> m_contents;
 		std::list<Context*> m_contexts;
 		int m_dimensionality;
+		bool m_isInGlobalCluster;
 	};
 }

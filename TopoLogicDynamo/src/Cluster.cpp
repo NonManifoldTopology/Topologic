@@ -27,23 +27,23 @@ namespace TopoLogic
 		return gcnew Cluster(TopoLogicCore::Cluster::ByTopology(coreTopologies));
 	}
 
-	Cluster^ Cluster::Add(Topology^ topology)
+	Cluster^ Cluster::AddTopology(Topology^ topology)
 	{
 		TopoLogicCore::Topology* pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topology->GetCoreTopologicalQuery());
 		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(GetCoreTopologicalQuery());
 
-		if (!pCoreCluster->Add(pCoreTopology))
+		if (!pCoreCluster->AddTopology(pCoreTopology))
 		{
 			throw gcnew Exception("Cluster::Add(): fails to add topology");
 		}
 		return this;
 	}
 
-	Cluster^ Cluster::Remove(Topology^ topology)
+	Cluster^ Cluster::RemoveTopology(Topology^ topology)
 	{
 		TopoLogicCore::Topology* pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topology->GetCoreTopologicalQuery());
 		TopoLogicCore::Cluster* pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(GetCoreTopologicalQuery());
-		if (!pCoreCluster->Remove(pCoreTopology))
+		if (!pCoreCluster->RemoveTopology(pCoreTopology))
 		{
 			throw gcnew Exception("Cluster::Remove(): fails to remove topology");
 		}

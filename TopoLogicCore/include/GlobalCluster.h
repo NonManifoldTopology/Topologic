@@ -18,7 +18,7 @@ namespace TopoLogicCore
 		/// </summary>
 		/// <param name="kpkTopology"></param>
 		/// <returns></returns>
-		bool Add(Topology const * const kpkTopology);
+		bool Add(Topology * const kpTopology);
 
 		/// <summary>
 		/// 

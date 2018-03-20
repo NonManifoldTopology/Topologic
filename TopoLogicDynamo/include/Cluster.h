@@ -29,14 +29,14 @@ namespace TopoLogic
 		/// </summary>
 		/// <param name="topology"></param>
 		/// <returns></returns>
-		Cluster^ Add(Topology^ topology);
+		Cluster^ AddTopology(Topology^ topology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="topology"></param>
 		/// <returns></returns>
-		Cluster^ Remove(Topology^ topology);
+		Cluster^ RemoveTopology(Topology^ topology);
 
 		property Object^ Geometry
 		{

@@ -4,14 +4,21 @@
 
 namespace TopoLogicCore
 {
-	bool GlobalCluster::Add(Topology const * const kpkTopology)
+	bool GlobalCluster::Add(Topology * const kpTopology)
 	{
-		return GetCluster()->Add(kpkTopology);
+		bool returnValue = GetCluster()->AddTopology(kpTopology, true);
+		kpTopology->SetInGlobalCluster(returnValue);
+
+		std::string strAnalyze = GetCluster()->Analyze();
+		return returnValue;
 	}
 
 	bool GlobalCluster::Remove(Topology * kpkTopology)
 	{
-		return GetCluster()->Remove(kpkTopology);
+		if (!kpkTopology->GetInGlobalCluster())
+			return false;
+
+		return GetCluster()->RemoveTopology(kpkTopology);
 	}
 
 	Cluster* GlobalCluster::GetCluster() const
