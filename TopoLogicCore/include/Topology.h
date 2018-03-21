@@ -337,19 +337,9 @@ namespace TopoLogicCore
 			m_isInGlobalCluster = kInGlobalCluster;
 		}
 
-		bool GetInGlobalCluster() const
+		bool IsInGlobalCluster() const
 		{
 			return m_isInGlobalCluster;
-		}
-
-		void SetUsedToBuildAnotherEntity(const bool kIsUsedToBuildAnotherEntity)
-		{
-			m_isUsedToBuildAnotherEntity = kIsUsedToBuildAnotherEntity;
-		}
-
-		bool GetUsedToBuildAnotherEntity(const bool kIsUsedToBuildAnotherEntity) const
-		{
-			return m_isUsedToBuildAnotherEntity;
 		}
 
 		/// <summary>
@@ -438,7 +428,7 @@ namespace TopoLogicCore
 		int m_dimensionality;
 		bool m_isInGlobalCluster;
 
-		bool m_isUsedToBuildAnotherEntity;
+		std::list<Topology*> m_ingredientTo;
 	};
 
 	template <class Subclass>
