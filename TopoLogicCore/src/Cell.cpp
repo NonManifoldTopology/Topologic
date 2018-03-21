@@ -115,6 +115,13 @@ namespace TopoLogicCore
 		Shell* pShell = Shell::ByFaces(rkFaces);
 		Cell* pCell = ByShell(pShell);
 		delete pShell;
+		for (std::list<Face*>::const_iterator kFaceIterator = rkFaces.begin();
+			kFaceIterator != rkFaces.end();
+			kFaceIterator++)
+		{
+			Face* pFace = *kFaceIterator;
+			pFace->AddIngredientTo(pCell);
+		}
 		return pCell;
 	}
 
@@ -181,7 +188,17 @@ namespace TopoLogicCore
 			BRepBuilderAPI_MakeFace occtMakeFace(*pOcctWire);
 			faces.push_back(new Face(occtMakeFace));
 		}
-		return ByFaces(faces);
+		Cell* pCell = ByFaces(faces);
+
+		// Only add the vertices; the faces are dealt with in ByFaces()
+		for (std::vector<Vertex*>::const_iterator kVertexIterator = rkVertices.begin();
+			kVertexIterator != rkVertices.end();
+			kVertexIterator++)
+		{
+			Vertex* pVertex = *kVertexIterator;
+			pVertex->AddIngredientTo(pCell);
+		}
+		return pCell;
 	}
 
 	void Cell::SharedEdges(Cell const * const kpkAnotherCell, std::list<Edge*>& rEdges) const

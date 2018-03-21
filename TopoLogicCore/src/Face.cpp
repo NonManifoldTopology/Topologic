@@ -94,12 +94,14 @@ namespace TopoLogicCore
 		return occtShapeProperties.Mass();
 	}
 
-	Face* Face::ByClosedWire(Wire const * const kpkWire)
+	Face* Face::ByClosedWire(Wire * const kpWire)
 	{
 		BRepBuilderAPI_MakeFace occtMakeFace;
 		try {
-			occtMakeFace = BRepBuilderAPI_MakeFace(TopoDS::Wire(*kpkWire->GetOcctShape()));
-			return new Face(occtMakeFace);
+			occtMakeFace = BRepBuilderAPI_MakeFace(TopoDS::Wire(*kpWire->GetOcctShape()));
+			Face* pFace = new Face(occtMakeFace);
+			kpWire->AddIngredientTo(pFace);
+			return pFace;
 		}
 		catch (StdFail_NotDone&)
 		{
@@ -109,7 +111,16 @@ namespace TopoLogicCore
 
 	Face* Face::ByEdges(const std::list<Edge*>& rkEdges)
 	{
-		return ByClosedWire(Wire::ByEdges(rkEdges));
+		Face* pFace = ByClosedWire(Wire::ByEdges(rkEdges));
+		for (std::list<Edge*>::const_iterator kEdgeIterator = rkEdges.begin();
+			kEdgeIterator != rkEdges.end();
+			kEdgeIterator++)
+		{
+			Edge* pEdge = *kEdgeIterator;
+			pEdge->AddIngredientTo(pFace);
+		}
+
+		return pFace;
 	}
 
 	Face* Face::BySurface(Handle(Geom_Surface) pOcctSurface)
@@ -137,7 +148,7 @@ namespace TopoLogicCore
 		const bool kIsUPeriodic, 
 		const bool kIsVPeriodic, 
 		const bool kIsRational,
-		Wire const * const kpkOuterWire,
+		Wire * const kpOuterWire,
 		const std::list<Wire*>& rkInnerWires)
 	{
 		BRepBuilderAPI_MakeFace occtMakeFace;
@@ -151,9 +162,9 @@ namespace TopoLogicCore
 				rkOcctVMultiplicities, 
 				kUDegree, kVDegree, 
 				kIsUPeriodic, kIsVPeriodic);
-			if (kpkOuterWire != nullptr)
+			if (kpOuterWire != nullptr)
 			{
-				occtMakeFace = BRepBuilderAPI_MakeFace(pOcctBSplineSurface, TopoDS::Wire(kpkOuterWire->GetOcctShape()->Reversed()), true);
+				occtMakeFace = BRepBuilderAPI_MakeFace(pOcctBSplineSurface, TopoDS::Wire(kpOuterWire->GetOcctShape()->Reversed()), true);
 			}
 			else
 			{
@@ -244,7 +255,18 @@ namespace TopoLogicCore
 			occtMakeFace.Add(TopoDS::Wire(*(*kInnerWireIterator)->GetOcctShape()));
 		}
 
-		return new Face(occtMakeFace);
+		Face* pFace = new Face(occtMakeFace);
+
+		for (std::list<Wire*>::const_iterator kInnerWireIterator = rkInnerWires.begin();
+			kInnerWireIterator != rkInnerWires.end();
+			kInnerWireIterator++)
+		{
+			Wire* pWire = *kInnerWireIterator;
+			pWire->AddIngredientTo(pFace);
+		}
+
+		kpOuterWire->AddIngredientTo(pFace);
+		return pFace;
 	}
 
 	void Face::SharedEdges(Face const * const kpkAnotherFace, std::list<Edge*>& rEdges) const

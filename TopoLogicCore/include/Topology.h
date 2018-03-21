@@ -296,8 +296,8 @@ namespace TopoLogicCore
 		/// </summary>
 		/// <returns></returns>
 		int Dimensionality() const
-		{ 
-			return m_dimensionality; 
+		{
+			return m_dimensionality;
 		}
 
 		/// <summary>
@@ -358,9 +358,46 @@ namespace TopoLogicCore
 		template <class Subclass>
 		void DownwardNavigation(std::list<Subclass*>& rMembers) const;
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpTopology"></param>
+		void AddIngredientTo(Topology * const kpTopology);
+
+		/// <summary>
+		/// Used when deleted
+		/// </summary>
+		/// <param name="kpTopology"></param>
+		void RemoveIngredientTo(Topology * const kpTopology);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpTopology"></param>
+		/// <returns></returns>
+		bool IsIngredientTo(Topology * const kpTopology) const;
+		
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		bool IsIngredient() const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpTopology"></param>
+		/*void AddIngredient(Topology * const kpTopology);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpTopology"></param>
+		void RemoveIngredient(Topology * const kpTopology);*/
+
 	protected:
 		Topology(const int kDimensionality);
-		
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -399,7 +436,7 @@ namespace TopoLogicCore
 		/// <param name="kpkOtherTopology"></param>
 		/// <param name="rOcctCellsBuilder"></param>
 		void AddBooleanOperands(
-			Topology const * const kpkOtherTopology, 
+			Topology const * const kpkOtherTopology,
 			BOPAlgo_CellsBuilder& rOcctCellsBuilder,
 			BOPCol_ListOfShape& rOcctCellsBuildersOperandsA,
 			BOPCol_ListOfShape& rOcctCellsBuildersOperandsB);
@@ -429,6 +466,7 @@ namespace TopoLogicCore
 		bool m_isInGlobalCluster;
 
 		std::list<Topology*> m_ingredientTo;
+		std::list<Topology*> m_ingredients;
 	};
 
 	template <class Subclass>

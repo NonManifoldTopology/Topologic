@@ -94,6 +94,14 @@ namespace TopoLogicCore
 		{
 			throw std::exception("CellComplex::ByCells(): Merge operation is not giving a cell complex");
 		}
+
+		for (std::list<Cell*>::const_iterator kCellIterator = rkCells.begin();
+			kCellIterator != rkCells.end();
+			kCellIterator++)
+		{
+			Cell* pCell = *kCellIterator;
+			pCell->AddIngredientTo(pMergeCellComplex);
+		}
 		return pMergeCellComplex;
 	}
 

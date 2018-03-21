@@ -18,7 +18,9 @@ namespace TopoLogicCore
 		if (!kpkTopology->IsInGlobalCluster())
 			return false;
 
-		return GetCluster()->RemoveTopology(kpkTopology);
+		bool returnValue = GetCluster()->RemoveTopology(kpkTopology);
+		kpkTopology->SetInGlobalCluster(false);
+		return returnValue;
 	}
 
 	Cluster* GlobalCluster::GetCluster() const

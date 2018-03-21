@@ -79,6 +79,7 @@ namespace TopoLogicCore
 		// - 3 --> BSpline
 
 		int numberOfVertices = (int) rkVertices.size();
+		Edge* pEdge = nullptr;
 		if (numberOfVertices < 2)
 		{
 			throw std::exception("Too few vertices to create an edge.");
@@ -89,25 +90,37 @@ namespace TopoLogicCore
 			Vertex* pVertex2 = *(++rkVertices.begin());
 			BRepBuilderAPI_MakeEdge occtMakeEdge(TopoDS::Vertex(*pVertex1->GetOcctShape()),
 				TopoDS::Vertex(*pVertex2->GetOcctShape()));
-			return new Edge(occtMakeEdge.Edge());
+			pEdge = new Edge(occtMakeEdge.Edge());
+		}else
+		{
+			// else more than 2 vertices
+			Handle(TColgp_HArray1OfPnt) pOcctPoints = new TColgp_HArray1OfPnt(1, numberOfVertices);
+			int i = 1;
+			for(std::list<Vertex*>::const_iterator kVertexIterator = rkVertices.begin();
+				kVertexIterator != rkVertices.end();
+				kVertexIterator++)
+			{
+				Vertex* pVertex = *kVertexIterator;
+				pOcctPoints->SetValue(i, pVertex->Point()->Pnt());
+				++i;
+			}
+			GeomAPI_Interpolate occtInterpolate(pOcctPoints, false, Precision::Confusion());
+			occtInterpolate.Perform();
+			Handle(Geom_Curve) pOcctCurveOnTargetSurface = occtInterpolate.Curve();
+
+			pEdge = new Edge(BRepBuilderAPI_MakeEdge(pOcctCurveOnTargetSurface));
 		}
 
-		// else more than 2 vertices
-		Handle(TColgp_HArray1OfPnt) pOcctPoints = new TColgp_HArray1OfPnt(1, numberOfVertices);
-		int i = 1;
-		for(std::list<Vertex*>::const_iterator kVertexIterator = rkVertices.begin();
+		// Register the ingredients
+		for (std::list<Vertex*>::const_iterator kVertexIterator = rkVertices.begin();
 			kVertexIterator != rkVertices.end();
 			kVertexIterator++)
 		{
 			Vertex* pVertex = *kVertexIterator;
-			pOcctPoints->SetValue(i, pVertex->Point()->Pnt());
-			++i;
+			pVertex->AddIngredientTo(pEdge);
 		}
-		GeomAPI_Interpolate occtInterpolate(pOcctPoints, false, Precision::Confusion());
-		occtInterpolate.Perform();
-		Handle(Geom_Curve) pOcctCurveOnTargetSurface = occtInterpolate.Curve();
 
-		return new Edge(BRepBuilderAPI_MakeEdge(pOcctCurveOnTargetSurface));
+		return pEdge;
 	}
 
 	Vertex* Edge::SharedVertex(Edge const * const kpkAnotherEdge) const

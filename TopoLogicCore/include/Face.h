@@ -80,9 +80,9 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkWire"></param>
+		/// <param name="kpWire"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API static Face* ByClosedWire(Wire const * const kpkWire);
+		TOPOLOGIC_API static Face* ByClosedWire(Wire * const kpWire);
 
 		/// <summary>
 		/// 
@@ -112,7 +112,7 @@ namespace TopoLogicCore
 		/// <param name="kIsUPeriodic"></param>
 		/// <param name="kIsVPeriodic"></param>
 		/// <param name="kIsRational"></param>
-		/// <param name="kpkOuterWire"></param>
+		/// <param name="kpOuterWire"></param>
 		/// <param name="rkInnerWires"></param>
 		/// <returns></returns>
 		static TOPOLOGIC_API Face* BySurface(
@@ -127,7 +127,7 @@ namespace TopoLogicCore
 			const bool kIsUPeriodic,
 			const bool kIsVPeriodic,
 			const bool kIsRational,
-			Wire const * const kpkOuterWire,
+			Wire * const kpOuterWire,
 			const std::list<Wire*>& rkInnerWires);
 
 		/// <summary>

@@ -53,7 +53,16 @@ namespace TopoLogicCore
 		occtMakeWire.Add(occtEdges);
 
 		try {
-			return new Wire(occtMakeWire);
+			Wire* pWire = new Wire(occtMakeWire);
+			for (std::list<Edge*>::const_iterator kEdgeIterator = rkEdges.begin();
+				kEdgeIterator != rkEdges.end();
+				kEdgeIterator++)
+			{
+				Edge* pEdge = *kEdgeIterator;
+				pEdge->AddIngredientTo(pWire);
+			}
+
+			return pWire;
 		}
 		catch (StdFail_NotDone&)
 		{
@@ -111,10 +120,7 @@ namespace TopoLogicCore
 		: Topology(1)
 		, m_pOcctWire(nullptr)
 	{
-		ShapeFix_Wire occtFixWire;
-		occtFixWire.Load(rkOcctWire);
-		occtFixWire.Perform();
-		m_pOcctWire = new TopoDS_Wire(occtFixWire.Wire());
+		m_pOcctWire = new TopoDS_Wire(rkOcctWire);
 		GlobalCluster::GetInstance().Add(this);
 	}
 

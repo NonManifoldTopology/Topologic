@@ -66,7 +66,16 @@ namespace TopoLogicCore
 		}
 
 		occtSewing.Perform();
-		return new Shell(TopoDS::Shell(occtSewing.SewedShape()));
+		Shell* pShell = new Shell(TopoDS::Shell(occtSewing.SewedShape()));
+		for (std::list<Face*>::const_iterator kFaceIterator = rkFaces.begin();
+			kFaceIterator != rkFaces.end();
+			kFaceIterator++)
+		{
+			Face* pFace = *kFaceIterator;
+			pFace->AddIngredientTo(pShell);
+		}
+
+		return pShell;
 	}
 
 	Shell* Shell::ByVerticesFaceIndices(const std::vector<Vertex*>& rkVertices, const std::list<std::list<int>>& rkFaceIndices)
@@ -101,11 +110,21 @@ namespace TopoLogicCore
 				TopoDS::Vertex(*rkVertices[*rkVertexIndices.begin()]->GetOcctShape())
 			));
 
-			TopoDS_Wire* pOcctWire = new TopoDS_Wire(occtMakeWire);
-			BRepBuilderAPI_MakeFace occtMakeFace(*pOcctWire);
+			TopoDS_Wire pOcctWire(occtMakeWire);
+			BRepBuilderAPI_MakeFace occtMakeFace(pOcctWire);
 			faces.push_back(new Face(occtMakeFace));
 		}
-		return ByFaces(faces);
+		Shell* pShell = ByFaces(faces);
+
+		// Only add the vertices; the faces are dealt with in ByFaces()
+		for (std::vector<Vertex*>::const_iterator kVertexIterator = rkVertices.begin();
+			kVertexIterator != rkVertices.end();
+			kVertexIterator++)
+		{
+			Vertex* pVertex = *kVertexIterator;
+			pVertex->AddIngredientTo(pShell);
+		}
+		return pShell;
 	}
 
 	TopoDS_Shape* Shell::GetOcctShape() const

@@ -140,6 +140,16 @@ namespace TopoLogicCore
 
 	Topology::~Topology()
 	{
+		// Clear ingredients information
+		for (std::list<Topology*>::const_iterator kTopologyIterator = m_ingredientTo.begin();
+			kTopologyIterator != m_ingredientTo.end();
+			kTopologyIterator++)
+		{
+			Topology* pTopology = *kTopologyIterator;
+			pTopology->m_ingredients.remove(this);
+		}
+		m_ingredientTo.clear();
+
 		for (AttributeMapIterator attributeMapIterator = m_attributeMap.begin();
 			attributeMapIterator != m_attributeMap.end();
 			attributeMapIterator++)
@@ -1395,4 +1405,45 @@ namespace TopoLogicCore
 			rImmediateMembers.push_back(Topology::ByOcctShape(*kIterator));
 		}
 	}
+
+	void Topology::AddIngredientTo(Topology * const kpTopology)
+	{
+		if(!IsIngredientTo(kpTopology))
+		{
+			m_ingredientTo.push_back(kpTopology);
+			kpTopology->m_ingredients.push_back(this);
+
+			GlobalCluster::GetInstance().Remove(this);
+		}
+	}
+
+	void Topology::RemoveIngredientTo(Topology * const kpTopology)
+	{
+		m_ingredientTo.remove(kpTopology);
+		kpTopology->m_ingredients.remove(this);
+		if (m_ingredientTo.empty())
+		{
+			GlobalCluster::GetInstance().Add(this);
+		}
+	}
+
+	bool Topology::IsIngredientTo(Topology * const kpTopology) const
+	{
+		return std::find(m_ingredientTo.begin(), m_ingredientTo.end(), kpTopology) != m_ingredientTo.end();
+	}
+
+	bool Topology::IsIngredient() const
+	{
+		return !m_ingredientTo.empty();
+	}
+
+	/*void Topology::AddIngredient(Topology * const kpTopology)
+	{
+		m_ingredients.push_back(kpTopology);
+	}
+
+	void Topology::RemoveIngredient(Topology * const kpTopology)
+	{
+		m_ingredients.remove(kpTopology);
+	}*/
 }
