@@ -7,6 +7,7 @@
 #include <Wire.h>
 #include <Edge.h>
 #include <Vertex.h>
+#include <GlobalCluster.h>
 
 #include <TopoDS_Vertex.hxx>
 #include <TopoDS_Edge.hxx>

@@ -72,14 +72,6 @@ namespace TopoLogic
 		/// <returns></returns>
 		List<Face^>^ InnerBoundaries();
 
-		property bool IsClosed {
-			/// <summary>
-			/// 
-			/// </summary>
-			/// <returns></returns>
-			bool get();
-		}
-
 		property Object^ Geometry
 		{
 			/// <summary>

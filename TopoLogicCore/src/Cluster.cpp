@@ -177,149 +177,37 @@ namespace TopoLogicCore
 
 	void Cluster::Shells(std::list<Shell*>& rShells) const
 	{
-		TopTools_MapOfShape occtShells;
-		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(*GetOcctShape(), TopAbs_SHELL); occtExplorer.More(); occtExplorer.Next())
-		{
-			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-			if (!occtShells.Contains(occtCurrent))
-			{
-				occtShells.Add(occtCurrent);
-			}
-		}
-
-		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtShells.cbegin();
-			kOcctShapeIterator != occtShells.cend();
-			kOcctShapeIterator++)
-		{
-			rShells.push_back(new Shell(TopoDS::Shell(*kOcctShapeIterator)));
-		}
+		DownwardNavigation(rShells);
 	}
 
 	void Cluster::Edges(std::list<Edge*>& rEdges) const
 	{
-		TopTools_MapOfShape occtEdges;
-		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(*GetOcctShape(), TopAbs_EDGE); occtExplorer.More(); occtExplorer.Next())
-		{
-			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-			if (!occtEdges.Contains(occtCurrent))
-			{
-				occtEdges.Add(occtCurrent);
-			}
-		}
-
-		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtEdges.cbegin();
-			kOcctShapeIterator != occtEdges.cend();
-			kOcctShapeIterator++)
-		{
-			rEdges.push_back(new Edge(TopoDS::Edge(*kOcctShapeIterator)));
-		}
+		DownwardNavigation(rEdges);
 	}
 
 	void Cluster::Faces(std::list<Face*>& rFaces) const
 	{
-		TopTools_MapOfShape occtFaces;
-		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(*GetOcctShape(), TopAbs_FACE); occtExplorer.More(); occtExplorer.Next())
-		{
-			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-			if (!occtFaces.Contains(occtCurrent))
-			{
-				occtFaces.Add(occtCurrent);
-			}
-		}
-
-		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtFaces.cbegin();
-			kOcctShapeIterator != occtFaces.cend();
-			kOcctShapeIterator++)
-		{
-			rFaces.push_back(new Face(TopoDS::Face(*kOcctShapeIterator)));
-		}
+		DownwardNavigation(rFaces);
 	}
 
 	void Cluster::Vertices(std::list<Vertex*>& rVertices) const
 	{
-		TopTools_MapOfShape occtVertices;
-		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(*GetOcctShape(), TopAbs_VERTEX); occtExplorer.More(); occtExplorer.Next())
-		{
-			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-			if (!occtVertices.Contains(occtCurrent))
-			{
-				occtVertices.Add(occtCurrent);
-			}
-		}
-
-		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtVertices.cbegin();
-			kOcctShapeIterator != occtVertices.cend();
-			kOcctShapeIterator++)
-		{
-			rVertices.push_back(new Vertex(TopoDS::Vertex(*kOcctShapeIterator)));
-		}
+		DownwardNavigation(rVertices);
 	}
 
 	void Cluster::Wires(std::list<Wire*>& rWires) const
 	{
-		TopTools_MapOfShape occtWires;
-		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(*GetOcctShape(), TopAbs_WIRE); occtExplorer.More(); occtExplorer.Next())
-		{
-			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-			if (!occtWires.Contains(occtCurrent))
-			{
-				occtWires.Add(occtCurrent);
-			}
-		}
-
-		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtWires.cbegin();
-			kOcctShapeIterator != occtWires.cend();
-			kOcctShapeIterator++)
-		{
-			rWires.push_back(new Wire(TopoDS::Wire(*kOcctShapeIterator)));
-		}
+		DownwardNavigation(rWires);
 	}
 
 	void Cluster::Cells(std::list<Cell*>& rCells) const
 	{
-		TopExp_Explorer occtExplorer;
-		TopTools_MapOfShape occtCells;
-		for (occtExplorer.Init(*GetOcctShape(), TopAbs_SOLID); occtExplorer.More(); occtExplorer.Next())
-		{
-			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-			if (!occtCells.Contains(occtCurrent))
-			{
-				occtCells.Add(occtCurrent);
-			}
-		}
-
-		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtCells.cbegin();
-			kOcctShapeIterator != occtCells.cend();
-			kOcctShapeIterator++)
-		{
-			rCells.push_back(new Cell(TopoDS::Solid(*kOcctShapeIterator)));
-		}
+		DownwardNavigation(rCells);
 	}
 
 	void Cluster::CellComplexes(std::list<CellComplex*>& rCellComplexes) const
 	{
-		TopExp_Explorer occtExplorer;
-		TopTools_MapOfShape occtCellComplexes;
-		for (occtExplorer.Init(*GetOcctShape(), TopAbs_COMPSOLID); occtExplorer.More(); occtExplorer.Next())
-		{
-			const TopoDS_Shape& rkOcctCurrent = occtExplorer.Current();
-			if (!occtCellComplexes.Contains(rkOcctCurrent))
-			{
-				occtCellComplexes.Add(rkOcctCurrent);
-			}
-		}
-
-		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtCellComplexes.cbegin();
-			kOcctShapeIterator != occtCellComplexes.cend();
-			kOcctShapeIterator++)
-		{
-			rCellComplexes.push_back(new CellComplex(TopoDS::CompSolid(*kOcctShapeIterator)));
-		}
+		DownwardNavigation(rCellComplexes);
 	}
 
 	bool Cluster::IsInside(Topology const * const kpkTopology) const

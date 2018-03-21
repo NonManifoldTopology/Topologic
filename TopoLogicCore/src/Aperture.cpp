@@ -68,10 +68,11 @@ namespace TopoLogicCore
 			throw std::exception("Invalid topology");
 		}
 
+		m_occtAperturePaths.clear();
 		TopTools_IndexedDataMapOfShapeListOfShape apertureToTopologyMap;
 		TopExp::MapShapesAndUniqueAncestors(*GlobalCluster::GetInstance().GetCluster()->GetOcctShape(), occtContextTopologyType, occtParentTopologyType, apertureToTopologyMap);
 
-		const TopTools_ListOfShape& rkOcctParentTopologies = apertureToTopologyMap.FindFromKey(*Topology()->GetOcctShape());
+		const TopTools_ListOfShape& rkOcctParentTopologies = apertureToTopologyMap.FindFromKey(*m_pMainContext->Topology()->GetOcctShape());
 
 		if (rkOcctParentTopologies.IsEmpty())
 		{

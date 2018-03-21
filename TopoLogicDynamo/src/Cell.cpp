@@ -52,19 +52,23 @@ namespace TopoLogic
 		return pCell;
 	}
 
-	CellComplex^ Cell::CellComplex()
+	List<CellComplex^>^ Cell::CellComplexes()
 	{
 		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopologicalQuery());
 
-		TopoLogicCore::CellComplex* pCoreCellComplex = pCoreCell->CellComplex();
-		TopoLogic::CellComplex^ pCellComplex = nullptr;
-		
-		if(pCoreCellComplex != nullptr)
+		std::list<TopoLogicCore::CellComplex*> coreCellComplexes;
+		pCoreCell->CellComplexes(coreCellComplexes);
+
+		List<CellComplex^>^ pCellComplexes = gcnew List<CellComplex^>();
+		for (std::list<TopoLogicCore::CellComplex*>::const_iterator kCellComplexIterator = coreCellComplexes.begin();
+			kCellComplexIterator != coreCellComplexes.end();
+			kCellComplexIterator++)
 		{
-			pCellComplex = gcnew TopoLogic::CellComplex(pCoreCellComplex);
+			CellComplex^ pCellComplex = gcnew CellComplex(*kCellComplexIterator);
+			pCellComplexes->Add(pCellComplex);
 		}
 
-		return pCellComplex;
+		return pCellComplexes;
 	}
 
 	List<Shell^>^ Cell::Shells()

@@ -19,41 +19,12 @@ namespace TopoLogicCore
 {
 	void Wire::Edges(std::list<Edge*>& rEdges) const
 	{
-		TopTools_MapOfShape occtEdges;
-		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(*GetOcctShape(), TopAbs_EDGE); occtExplorer.More(); occtExplorer.Next())
-		{
-			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-			if (!occtEdges.Contains(occtCurrent))
-			{
-				occtEdges.Add(occtCurrent);
-			}
-		}
-
-		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtEdges.cbegin();
-			kOcctShapeIterator != occtEdges.cend();
-			kOcctShapeIterator++)
-		{
-			rEdges.push_back(new Edge(TopoDS::Edge(*kOcctShapeIterator)));
-		}
+		DownwardNavigation(rEdges);
 	}
 
 	void Wire::Faces(std::list<Face*>& rFaces) const
 	{
-		TopTools_IndexedDataMapOfShapeListOfShape occtWireToFacesMap;
-		TopExp::MapShapesAndUniqueAncestors(*GlobalCluster::GetInstance().GetCluster()->GetOcctShape(), TopAbs_WIRE, TopAbs_FACE, occtWireToFacesMap);
-
-		const TopTools_ListOfShape& rkOcctFaces = occtWireToFacesMap.FindFromKey(*GetOcctShape());
-
-		for (TopTools_ListOfShape::const_iterator kIterator = rkOcctFaces.cbegin();
-			kIterator != rkOcctFaces.cend();
-			kIterator++)
-		{
-			if (kIterator->ShapeType() == TopAbs_FACE)
-			{
-				rFaces.push_back(new Face(TopoDS::Face(*kIterator)));
-			}
-		}
+		UpwardNavigation(rFaces);
 	}
 
 	bool Wire::IsClosed() const
@@ -65,11 +36,7 @@ namespace TopoLogicCore
 
 	void Wire::Vertices(std::list<Vertex*>& rVertices) const
 	{
-		BRepTools_WireExplorer occtWireExplorer;
-		for (occtWireExplorer.Init(TopoDS::Wire(*GetOcctShape())); occtWireExplorer.More(); occtWireExplorer.Next())
-		{
-			rVertices.push_back(new Vertex(occtWireExplorer.CurrentVertex()));
-		}
+		DownwardNavigation(rVertices);
 	}
 
 	Wire* Wire::ByEdges(const std::list<Edge*>& rkEdges)
@@ -93,11 +60,6 @@ namespace TopoLogicCore
 			throw new std::exception(GetOcctMakeWireErrorMessage(occtMakeWire).c_str());
 		}
 	}
-
-	/*Wire * Wire::ByPolyCurve(TopoDS_Wire const * const kpkWire)
-	{
-		return nullptr;
-	}*/
 
 	void Wire::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
 	{

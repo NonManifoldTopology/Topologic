@@ -45,12 +45,6 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="rFaces"></param>
-		TOPOLOGIC_API void Apertures(std::list<Face*>& rFaces) const;
-
-		/// <summary>
-		/// 
-		/// </summary>
 		/// <param name="rCells"></param>
 		TOPOLOGIC_API void Cells(std::list<Cell*>& rCells) const;
 
@@ -59,12 +53,6 @@ namespace TopoLogicCore
 		/// </summary>
 		/// <param name="rEdges"></param>
 		TOPOLOGIC_API void Edges(std::list<Edge*>& rEdges) const;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		TOPOLOGIC_API bool IsApplied() const;
 
 		/// <summary>
 		/// 
@@ -83,13 +71,6 @@ namespace TopoLogicCore
 		/// </summary>
 		/// <param name="rWires"></param>
 		TOPOLOGIC_API void Wires(std::list<Wire*>& rWires) const;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="rkApertures"></param>
-		/// <returns></returns>
-		TOPOLOGIC_API bool ApplyApertures(const std::list<Face*>& rkApertures) const;
 
 		/// <summary>
 		/// 

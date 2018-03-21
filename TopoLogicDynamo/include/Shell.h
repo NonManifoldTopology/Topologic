@@ -19,7 +19,7 @@ namespace TopoLogic
 		/// Gets the cell bounded by this shell.
 		/// </summary>
 		/// <returns>The cell bounded by this shell</returns>
-		Cell^ Cell();
+		List<Cell^>^ Cells();
 
 		/// <summary>
 		/// Gets the list of faces constituent to this face. 

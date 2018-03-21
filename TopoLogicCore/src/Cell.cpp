@@ -73,124 +73,34 @@ namespace TopoLogicCore
 		}
 	}
 
-	CellComplex* Cell::CellComplex() const
+	void Cell::CellComplexes(std::list<TopoLogicCore::CellComplex*>& rCellComplexes) const
 	{
-		TopTools_IndexedDataMapOfShapeListOfShape occtCellToCellComplexMap;
-		TopExp::MapShapesAndUniqueAncestors(*GlobalCluster::GetInstance().GetCluster()->GetOcctShape(), TopAbs_SOLID, TopAbs_COMPSOLID, occtCellToCellComplexMap);
-
-		const TopTools_ListOfShape& rkOcctCompSolids = occtCellToCellComplexMap.FindFromKey(*GetOcctShape());
-		assert(rkOcctCompSolids.Size() < 2 && "There are more than 2 cell complexes containing this cell.");
-
-		for (TopTools_ListOfShape::const_iterator kIterator = rkOcctCompSolids.cbegin();
-			kIterator != rkOcctCompSolids.cend();
-			kIterator++)
-		{
-			if (kIterator->ShapeType() == TopAbs_COMPSOLID)
-			{
-				return new TopoLogicCore::CellComplex(TopoDS::CompSolid(*kIterator));
-			}
-		}
-
-		return nullptr;
+		UpwardNavigation(rCellComplexes);
 	}
 
 	void Cell::Shells(std::list<Shell*>& rShells) const
 	{
-		TopTools_MapOfShape occtShells;
-		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(*GetOcctShape(), TopAbs_SHELL); occtExplorer.More(); occtExplorer.Next())
-		{
-			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-			if (!occtShells.Contains(occtCurrent))
-			{
-				occtShells.Add(occtCurrent);
-			}
-		}
-
-		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtShells.cbegin();
-			kOcctShapeIterator != occtShells.cend();
-			kOcctShapeIterator++)
-		{
-			rShells.push_back(new Shell(TopoDS::Shell(*kOcctShapeIterator)));
-		}
+		DownwardNavigation(rShells);
 	}
 
 	void Cell::Edges(std::list<Edge*>& rEdges) const
 	{
-		TopTools_MapOfShape occtEdges;
-		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(*GetOcctShape(), TopAbs_EDGE); occtExplorer.More(); occtExplorer.Next())
-		{
-			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-			if (!occtEdges.Contains(occtCurrent))
-			{
-				occtEdges.Add(occtCurrent);
-			}
-		}
-
-		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtEdges.cbegin();
-			kOcctShapeIterator != occtEdges.cend();
-			kOcctShapeIterator++)
-		{
-			rEdges.push_back(new Edge(TopoDS::Edge(*kOcctShapeIterator)));
-		}
+		DownwardNavigation(rEdges);
 	}
 
 	void Cell::Faces(std::list<Face*>& rFaces) const
 	{
-		TopTools_MapOfShape occtFaces;
-		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(*GetOcctShape(), TopAbs_FACE); occtExplorer.More(); occtExplorer.Next())
-		{
-			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-			if (!occtFaces.Contains(occtCurrent))
-			{
-				occtFaces.Add(occtCurrent);
-			}
-		}
-
-		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtFaces.cbegin();
-			kOcctShapeIterator != occtFaces.cend();
-			kOcctShapeIterator++)
-		{
-			rFaces.push_back(new Face(TopoDS::Face(*kOcctShapeIterator)));
-		}
+		DownwardNavigation(rFaces);
 	}
 
 	void Cell::Vertices(std::list<Vertex*>& rVertices) const
 	{
-		TopTools_MapOfShape occtVertices;
-		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(*GetOcctShape(), TopAbs_VERTEX); occtExplorer.More(); occtExplorer.Next())
-		{
-			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-			if (!occtVertices.Contains(occtCurrent))
-			{
-				occtVertices.Add(occtCurrent);
-			}
-		}
-
-		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtVertices.cbegin();
-			kOcctShapeIterator != occtVertices.cend();
-			kOcctShapeIterator++)
-		{
-			rVertices.push_back(new Vertex(TopoDS::Vertex(*kOcctShapeIterator)));
-		}
+		DownwardNavigation(rVertices);
 	}
 
 	void Cell::Wires(std::list<Wire*>& rWires) const
 	{
-		TopTools_MapOfShape occtWires;
-		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(*GetOcctShape(), TopAbs_WIRE); occtExplorer.More(); occtExplorer.Next())
-		{
-			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-			if (!occtWires.Contains(occtCurrent))
-			{
-				occtWires.Add(occtCurrent);
-				rWires.push_back(new Wire(TopoDS::Wire(occtCurrent)));
-			}
-		}
+		DownwardNavigation(rWires);
 	}
 
 	double Cell::Volume() const

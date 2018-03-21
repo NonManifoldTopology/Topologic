@@ -342,6 +342,32 @@ namespace TopoLogicCore
 			return m_isInGlobalCluster;
 		}
 
+		void SetUsedToBuildAnotherEntity(const bool kIsUsedToBuildAnotherEntity)
+		{
+			m_isUsedToBuildAnotherEntity = kIsUsedToBuildAnotherEntity;
+		}
+
+		bool GetUsedToBuildAnotherEntity(const bool kIsUsedToBuildAnotherEntity) const
+		{
+			return m_isUsedToBuildAnotherEntity;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kOcctShapeType"></param>
+		/// <param name="rAncestors"></param>
+		template <class Subclass>
+		void UpwardNavigation(std::list<Subclass*>& rAncestors) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kOcctShapeType"></param>
+		/// <param name="rMembers"></param>
+		template <class Subclass>
+		void DownwardNavigation(std::list<Subclass*>& rMembers) const;
+
 	protected:
 		Topology(const int kDimensionality);
 		
@@ -373,6 +399,9 @@ namespace TopoLogicCore
 		/// <param name="rkOcctShape"></param>
 		/// <param name="rUnionArguments"></param>
 		static void AddUnionInternalStructure(const TopoDS_Shape& rkOcctShape, BOPCol_ListOfShape& rUnionArguments);
+
+		template <class Subclass>
+		static TopAbs_ShapeEnum CheckOcctShapeType();
 
 		/// <summary>
 		/// 
@@ -408,5 +437,92 @@ namespace TopoLogicCore
 		std::list<Context*> m_contexts;
 		int m_dimensionality;
 		bool m_isInGlobalCluster;
+
+		bool m_isUsedToBuildAnotherEntity;
 	};
+
+	template <class Subclass>
+	void Topology::UpwardNavigation(std::list<Subclass*>& rAncestors) const
+	{
+		static_assert(std::is_base_of<Topology, Subclass>::value, "Subclass not derived from Topology");
+		
+		TopAbs_ShapeEnum occtShapeType = CheckOcctShapeType<Subclass>();
+
+		TopTools_IndexedDataMapOfShapeListOfShape occtShapeMap;
+		TopExp::MapShapesAndUniqueAncestors(
+			*GlobalCluster::GetInstance().GetCluster()->GetOcctShape(),
+			GetOcctShape()->ShapeType(),
+			occtShapeType,
+			occtShapeMap);
+
+		const TopTools_ListOfShape& rkOcctAncestors = occtShapeMap.FindFromKey(*GetOcctShape());
+
+		for (TopTools_ListOfShape::const_iterator kIterator = rkOcctAncestors.cbegin();
+			kIterator != rkOcctAncestors.cend();
+			kIterator++)
+		{
+			if (kIterator->ShapeType() == occtShapeType)
+			{
+				rAncestors.push_back(Downcast<Subclass>(ByOcctShape(*kIterator)));
+			}
+		}
+	}
+
+	template <class Subclass>
+	void Topology::DownwardNavigation(std::list<Subclass*>& rMembers) const
+	{
+		static_assert(std::is_base_of<Topology, Subclass>::value, "Subclass not derived from Topology");
+
+		TopAbs_ShapeEnum occtShapeType = CheckOcctShapeType<Subclass>();
+		TopTools_MapOfShape occtShapes;
+		TopExp_Explorer occtExplorer;
+		for (occtExplorer.Init(*GetOcctShape(), occtShapeType); occtExplorer.More(); occtExplorer.Next())
+		{
+			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
+			if (!occtShapes.Contains(occtCurrent))
+			{
+				occtShapes.Add(occtCurrent);
+				rMembers.push_back(Downcast<Subclass>(ByOcctShape(occtCurrent)));
+			}
+		}
+	}
+
+	template <class Subclass>
+	static TopAbs_ShapeEnum Topology::CheckOcctShapeType()
+	{
+		if (std::is_same<Subclass, Vertex>::value)
+		{
+			return TopAbs_VERTEX;
+		} 
+		else if (std::is_same<Subclass, Edge>::value)
+		{
+			return TopAbs_EDGE;
+		}
+		else if (std::is_same<Subclass, Wire>::value)
+		{
+			return TopAbs_WIRE;
+		}
+		else if (std::is_same<Subclass, Face>::value)
+		{
+			return TopAbs_FACE;
+		}
+		else if (std::is_same<Subclass, Shell>::value)
+		{
+			return TopAbs_SHELL;
+		}
+		else if (std::is_same<Subclass, Cell>::value)
+		{
+			return TopAbs_SOLID;
+		}
+		else if (std::is_same<Subclass, CellComplex>::value)
+		{
+			return TopAbs_COMPSOLID;
+		}
+		else if (std::is_same<Subclass, Cluster>::value)
+		{
+			return TopAbs_COMPOUND;
+		}
+		
+		throw std::exception("Other subclasses are invalid.");
+	}
 }

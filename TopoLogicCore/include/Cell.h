@@ -30,14 +30,14 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="rcells"></param>
-		TOPOLOGIC_API void AdjacentCells(std::list<Cell*>& rcells) const;
+		/// <param name="rCells"></param>
+		TOPOLOGIC_API void AdjacentCells(std::list<Cell*>& rCells) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
-		TOPOLOGIC_API CellComplex* CellComplex() const;
+		/// <param name="rCellComplexes"></param>
+		TOPOLOGIC_API void CellComplexes(std::list<CellComplex*>& rCellComplexes) const;
 
 		/// <summary>
 		/// 

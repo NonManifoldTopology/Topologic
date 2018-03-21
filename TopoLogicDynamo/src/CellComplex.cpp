@@ -164,12 +164,6 @@ namespace TopoLogic
 		return pInternalFaces;
 	}
 
-	bool CellComplex::IsClosed::get()
-	{
-		TopoLogicCore::CellComplex* pCoreCellComplex = TopoLogicCore::Topology::Downcast<TopoLogicCore::CellComplex>(GetCoreTopologicalQuery());
-		return pCoreCellComplex->IsClosed();
-	}
-
 	Object^ CellComplex::Geometry::get()
 	{
 		List<Cell^>^ pCells = Cells();

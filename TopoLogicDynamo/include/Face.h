@@ -24,24 +24,10 @@ namespace TopoLogic {
 		List<Face^>^ AdjacentFaces();
 
 		/// <summary>
-		/// Gets the list of aperture wires of this face.
-		/// </summary>
-		/// <returns>The apertures of this face</returns>
-		List<Face^>^ Apertures();
-
-		/// <summary>
 		/// Gets the list of cells incident to this face.
 		/// </summary>
 		/// <returns>The cells incident to this face</returns>
 		List<Cell^>^ Cells();
-
-		/// <summary>
-		/// Returns true if the apertures are applied and false otherwise.
-		/// </summary>
-		/// <returns>True if the apertures are applied and false otherwise</returns>
-		property bool IsApplied {
-			bool get();
-		}
 
 		/// <summary>
 		/// Gets the list of shells incident to this face.
@@ -66,13 +52,6 @@ namespace TopoLogic {
 		/// </summary>
 		/// <returns>The wires consituent to this face</returns>
 		List<Wire^>^ Wires();
-
-		/// <summary>
-		/// Call this method to apply apertures.
-		/// </summary>
-		/// <param name="apertures"></param>
-		/// <returns></returns>
-		Face^ ApplyApertures(List<Face^>^ apertures);
 
 		/// <summary>
 		/// 

@@ -27,21 +27,7 @@ namespace TopoLogicCore
 
 	void Edge::Wires(std::list<Wire*>& rWires) const
 	{
-		TopTools_IndexedDataMapOfShapeListOfShape edgeToWireMap;
-		TopExp::MapShapesAndUniqueAncestors(*GlobalCluster::GetInstance().GetCluster()->GetOcctShape(), TopAbs_EDGE, TopAbs_WIRE, edgeToWireMap);
-
-		const TopTools_ListOfShape& rkOcctWires = edgeToWireMap.FindFromKey(*m_pOcctEdge);
-
-		for (TopTools_ListOfShape::const_iterator kIterator = rkOcctWires.cbegin();
-			kIterator != rkOcctWires.cend();
-			kIterator++)
-		{
-			if (kIterator->ShapeType() == TopAbs_WIRE)
-			{
-				const TopoDS_Wire& rkOcctWire = TopoDS::Wire(*kIterator);
-				rWires.push_back(new Wire(rkOcctWire));
-			}
-		}
+		UpwardNavigation(rWires);
 	}
 
 	Edge* Edge::ByCurve(

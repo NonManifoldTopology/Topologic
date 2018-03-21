@@ -9,10 +9,22 @@
 
 namespace TopoLogic
 {
-	Cell^ Shell::Cell()
+	List<Cell^>^ Shell::Cells()
 	{
 		TopoLogicCore::Shell* pCoreShell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Shell>(GetCoreTopologicalQuery());
-		return gcnew TopoLogic::Cell(pCoreShell->Cell());
+		std::list<TopoLogicCore::Cell*> coreCells;
+		pCoreShell->Cells(coreCells);
+
+		List<TopoLogic::Cell^>^ pCells = gcnew List<TopoLogic::Cell^>();
+		for (std::list<TopoLogicCore::Cell*>::const_iterator kCoreCellIterator = coreCells.begin();
+			kCoreCellIterator != coreCells.end();
+			kCoreCellIterator++)
+		{
+			Cell^ pCell = gcnew Cell(*kCoreCellIterator);
+			pCells->Add(pCell);
+		}
+
+		return pCells;
 	}
 
 	List<Face^>^ Shell::Faces()

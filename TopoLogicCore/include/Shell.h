@@ -32,8 +32,8 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
-		TOPOLOGIC_API Cell* Cell() const;
+		/// <param name="rCells"></param>
+		TOPOLOGIC_API void Cells(std::list<Cell*>& rCells) const;
 
 		/// <summary>
 		/// 

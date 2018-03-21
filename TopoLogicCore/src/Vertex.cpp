@@ -34,21 +34,7 @@ namespace TopoLogicCore
 
 	void Vertex::Edges(std::list<Edge*>& rEdges)
 	{
-		TopTools_IndexedDataMapOfShapeListOfShape occtVertexToEdgesMap;
-		TopExp::MapShapesAndUniqueAncestors(*GlobalCluster::GetInstance().GetCluster()->GetOcctShape(), TopAbs_VERTEX, TopAbs_EDGE, occtVertexToEdgesMap);
-
-		const TopTools_ListOfShape& rkOcctEdges = occtVertexToEdgesMap.FindFromKey(*GetOcctShape());
-
-		for (TopTools_ListOfShape::const_iterator kIterator = rkOcctEdges.cbegin();
-			kIterator != rkOcctEdges.cend();
-			kIterator++)
-		{
-			if (kIterator->ShapeType() == TopAbs_EDGE)
-			{
-				const TopoDS_Edge& rkOcctEdge = TopoDS::Edge(*kIterator);
-				rEdges.push_back(new Edge(rkOcctEdge));
-			}
-		}
+		UpwardNavigation(rEdges);
 	}
 
 	void Vertex::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const

@@ -67,12 +67,6 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
-		TOPOLOGIC_API  bool IsClosed() const;
-
-		/// <summary>
-		/// 
-		/// </summary>
 		/// <param name="rkCells"></param>
 		/// <returns></returns>
 		static TOPOLOGIC_API CellComplex* ByCells(const std::list<Cell*>& rkCells);

@@ -47,7 +47,7 @@ namespace TopoLogic
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		CellComplex^ CellComplex();
+		List<CellComplex^>^ CellComplexes();
 
 		/// <summary>
 		/// 

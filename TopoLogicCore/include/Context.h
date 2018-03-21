@@ -32,7 +32,7 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <returns>The associated topology</returns>
-		TOPOLOGIC_API Topology* Topology() const { return m_pTopology.get(); }
+		TOPOLOGIC_API Topology* Topology() const { return m_pTopology; }
 
 		/// <summary>
 		/// Returns the U parameter.
@@ -53,7 +53,7 @@ namespace TopoLogicCore
 		TOPOLOGIC_API double W() const { return m_w; }
 
 	protected:
-		std::unique_ptr<TopoLogicCore::Topology> m_pTopology;
+		TopoLogicCore::Topology* m_pTopology;
 		double m_u;
 		double m_v;
 		double m_w;

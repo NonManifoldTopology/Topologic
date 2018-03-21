@@ -24,90 +24,24 @@
 
 namespace TopoLogicCore
 {
-	Cell* Shell::Cell() const
+	void Shell::Cells(std::list<Cell*>& rCells) const
 	{
-		TopTools_IndexedDataMapOfShapeListOfShape occtShellToCellsMap;
-		TopExp::MapShapesAndUniqueAncestors(*GlobalCluster::GetInstance().GetCluster()->GetOcctShape(), TopAbs_SHELL, TopAbs_SOLID, occtShellToCellsMap);
-
-		const TopTools_ListOfShape& rkOcctCells = occtShellToCellsMap.FindFromKey(*GetOcctShape());
-
-		assert(rkOcctCells.Size() < 2);
-
-		for (TopTools_ListOfShape::const_iterator kIterator = rkOcctCells.cbegin();
-			kIterator != rkOcctCells.cend();
-			kIterator++)
-		{
-			if (kIterator->ShapeType() == TopAbs_SOLID)
-			{
-				const TopoDS_Solid& rkOcctSolid = TopoDS::Solid(*kIterator);
-				return new TopoLogicCore::Cell(rkOcctSolid);
-			}
-		}
-
-		return nullptr;
+		UpwardNavigation(rCells);
 	}
 
 	void Shell::Edges(std::list<Edge*>& rEdges) const
 	{
-		TopTools_MapOfShape occtEdges;
-		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(*GetOcctShape(), TopAbs_EDGE); occtExplorer.More(); occtExplorer.Next())
-		{
-			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-			if (!occtEdges.Contains(occtCurrent))
-			{
-				occtEdges.Add(occtCurrent);
-			}
-		}
-
-		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtEdges.cbegin();
-			kOcctShapeIterator != occtEdges.cend();
-			kOcctShapeIterator++)
-		{
-			rEdges.push_back(new Edge(TopoDS::Edge(*kOcctShapeIterator)));
-		}
+		DownwardNavigation(rEdges);
 	}
 
-	TOPOLOGIC_API void Shell::Wires(std::list<Wire*>& rWires) const
+	void Shell::Wires(std::list<Wire*>& rWires) const
 	{
-		TopTools_MapOfShape occtWires;
-		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(*GetOcctShape(), TopAbs_WIRE); occtExplorer.More(); occtExplorer.Next())
-		{
-			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-			if (!occtWires.Contains(occtCurrent))
-			{
-				occtWires.Add(occtCurrent);
-			}
-		}
-
-		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtWires.cbegin();
-			kOcctShapeIterator != occtWires.cend();
-			kOcctShapeIterator++)
-		{
-			rWires.push_back(new Wire(TopoDS::Wire(*kOcctShapeIterator)));
-		}
+		DownwardNavigation(rWires);
 	}
 
 	void Shell::Faces(std::list<Face*>& rFaces) const
 	{
-		TopTools_MapOfShape occtFaces;
-		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(*GetOcctShape(), TopAbs_FACE); occtExplorer.More(); occtExplorer.Next())
-		{
-			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-			if (!occtFaces.Contains(occtCurrent))
-			{
-				occtFaces.Add(occtCurrent);
-			}
-		}
-
-		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtFaces.cbegin();
-			kOcctShapeIterator != occtFaces.cend();
-			kOcctShapeIterator++)
-		{
-			rFaces.push_back(new Face(TopoDS::Face(*kOcctShapeIterator)));
-		}
+		DownwardNavigation(rFaces);
 	}
 
 	bool Shell::IsClosed() const
@@ -117,23 +51,7 @@ namespace TopoLogicCore
 
 	void Shell::Vertices(std::list<Vertex*>& rVertices) const
 	{
-		TopTools_MapOfShape occtVertices;
-		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(*GetOcctShape(), TopAbs_VERTEX); occtExplorer.More(); occtExplorer.Next())
-		{
-			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-			if (!occtVertices.Contains(occtCurrent))
-			{
-				occtVertices.Add(occtCurrent);
-			}
-		}
-
-		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtVertices.cbegin();
-			kOcctShapeIterator != occtVertices.cend();
-			kOcctShapeIterator++)
-		{
-			rVertices.push_back(new Vertex(TopoDS::Vertex(*kOcctShapeIterator)));
-		}
+		DownwardNavigation(rVertices);
 	}
 
 	Shell* Shell::ByFaces(const std::list<Face*>& rkFaces)
@@ -150,11 +68,6 @@ namespace TopoLogicCore
 		occtSewing.Perform();
 		return new Shell(TopoDS::Shell(occtSewing.SewedShape()));
 	}
-
-	/*Shell * Shell::ByPolySurface(TopoDS_Shell const * const kpkOcctShell)
-	{
-		return nullptr;
-	}*/
 
 	Shell* Shell::ByVerticesFaceIndices(const std::vector<Vertex*>& rkVertices, const std::list<std::list<int>>& rkFaceIndices)
 	{

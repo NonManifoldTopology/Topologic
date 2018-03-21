@@ -62,104 +62,29 @@ namespace TopoLogicCore
 		}
 	}
 
-	void Face::Apertures(std::list<Face*>& rFaces) const
-	{
-		throw std::exception("Not implemented yet");
-	}
-
 	void Face::Cells(std::list<Cell*>& rCells) const
 	{
-		TopTools_IndexedDataMapOfShapeListOfShape occtFaceToCellssMap;
-		TopExp::MapShapesAndUniqueAncestors(*GlobalCluster::GetInstance().GetCluster()->GetOcctShape(), TopAbs_FACE, TopAbs_SOLID, occtFaceToCellssMap);
-
-		const TopTools_ListOfShape& rkOcctCells = occtFaceToCellssMap.FindFromKey(*GetOcctShape());
-
-		for (TopTools_ListOfShape::const_iterator kIterator = rkOcctCells.cbegin();
-			kIterator != rkOcctCells.cend();
-			kIterator++)
-		{
-			if (kIterator->ShapeType() == TopAbs_SOLID)
-			{
-				const TopoDS_Solid& rkOcctSolid = TopoDS::Solid(*kIterator);
-				rCells.push_back(new Cell(rkOcctSolid));
-			}
-		}
+		UpwardNavigation(rCells);
 	}
 
 	void Face::Edges(std::list<Edge*>& rEdges) const
 	{
-		TopTools_MapOfShape occtEdges;
-		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(*GetOcctShape(), TopAbs_EDGE); occtExplorer.More(); occtExplorer.Next())
-		{
-			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-			if (!occtEdges.Contains(occtCurrent))
-			{
-				occtEdges.Add(occtCurrent);
-				rEdges.push_back(new Edge(TopoDS::Edge(occtCurrent)));
-			}
-		}
-	}
-
-	bool Face::IsApplied() const
-	{
-		throw std::exception("Not implemented yet");
-		return false;
+		DownwardNavigation(rEdges);
 	}
 
 	void Face::Shells(std::list<Shell*>& rShells) const
 	{
-		TopTools_IndexedDataMapOfShapeListOfShape occtFaceToShellsMap;
-		TopExp::MapShapesAndUniqueAncestors(*GlobalCluster::GetInstance().GetCluster()->GetOcctShape(), TopAbs_FACE, TopAbs_SHELL, occtFaceToShellsMap);
-
-		const TopTools_ListOfShape& rkOcctShells = occtFaceToShellsMap.FindFromKey(*GetOcctShape());
-
-		for (TopTools_ListOfShape::const_iterator kIterator = rkOcctShells.cbegin();
-			kIterator != rkOcctShells.cend();
-			kIterator++)
-		{
-			if (kIterator->ShapeType() == TopAbs_SHELL)
-			{
-				const TopoDS_Shell& pOcctShell = TopoDS::Shell(*kIterator);
-				rShells.push_back(new Shell(pOcctShell));
-			}
-		}
+		UpwardNavigation(rShells);
 	}
 
 	void Face::Vertices(std::list<Vertex*>& rVertices) const
 	{
-		TopTools_MapOfShape occtVertices;
-		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(*GetOcctShape(), TopAbs_VERTEX); occtExplorer.More(); occtExplorer.Next())
-		{
-			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-			if (!occtVertices.Contains(occtCurrent))
-			{
-				occtVertices.Add(occtCurrent);
-				rVertices.push_back(new Vertex(TopoDS::Vertex(occtCurrent)));
-			}
-		}
+		DownwardNavigation(rVertices);
 	}
 
 	void Face::Wires(std::list<Wire*>& rWires) const
 	{
-		TopExp_Explorer occtExplorer;
-		TopTools_MapOfShape occtWires;
-		for (occtExplorer.Init(*GetOcctShape(), TopAbs_WIRE); occtExplorer.More(); occtExplorer.Next())
-		{
-			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-			if (!occtWires.Contains(occtCurrent))
-			{
-				occtWires.Add(occtCurrent);
-				rWires.push_back(new Wire(TopoDS::Wire(occtCurrent)));
-			}
-		}
-	}
-
-	bool Face::ApplyApertures(const std::list<Face*>& rkApertures) const
-	{
-		throw std::exception("Not implemented yet");
-		return false;
+		DownwardNavigation(rWires);
 	}
 
 	double Face::Area() const

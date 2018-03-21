@@ -54,12 +54,6 @@ namespace TopoLogic
 		return pAdjacentFaces;
 	}
 
-	List<Face^>^ Face::Apertures()
-	{
-		throw gcnew System::NotImplementedException();
-		// TODO: insert return statement here
-	}
-
 	List<Cell^>^ Face::Cells()
 	{
 		TopoLogicCore::Face* pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(GetCoreTopologicalQuery());
@@ -99,12 +93,6 @@ namespace TopoLogic
 		}
 
 		return pShells;
-	}
-
-	Face^ Face::ApplyApertures(List<Face^>^ apertures)
-	{
-		throw gcnew System::NotImplementedException();
-		// TODO: insert return statement here
 	}
 
 	double Face::Area()
@@ -248,12 +236,6 @@ namespace TopoLogic
 		}
 
 		return pWires;
-	}
-
-	bool Face::IsApplied::get()
-	{
-		throw gcnew System::NotImplementedException();
-		// TODO: insert return statement here
 	}
 
 	Object^ Face::Geometry::get()
