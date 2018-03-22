@@ -77,6 +77,11 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		TOPOLOGIC_API Vertex* CenterOfMass() const;
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="rkFaces"></param>
 		/// <returns></returns>
 		static TOPOLOGIC_API Cell* ByFaces(const std::list<Face*>& rkFaces);

@@ -27,7 +27,8 @@ namespace TopoLogicCore
 		TOPOLOGY_SHELL = 4,
 		TOPOLOGY_CELL = 5,
 		TOPOLOGY_CELLCOMPLEX = 6,
-		TOPOLOGY_CLUSTER = 7
+		TOPOLOGY_CLUSTER = 7,
+		TOPOLOGY_APERTURE = 8
 	};
 
 	class Vertex;

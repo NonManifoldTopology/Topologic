@@ -18,7 +18,7 @@ namespace TopoLogic
 		return gcnew Aperture(pCoreAperture);
 	}
 
-	Aperture^ Aperture::ByTopologyContextStatus(Topology^ topology, Context^ context, bool openStatus)
+	Aperture^ Aperture::ByTopologyContextStatus(TopoLogic::Topology^ topology, Context^ context, bool openStatus)
 	{
 		TopoLogicCore::Aperture* pCoreAperture = TopoLogicCore::Aperture::ByTopologyContextStatus(
 			TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topology->GetCoreTopologicalQuery()),
@@ -28,13 +28,20 @@ namespace TopoLogic
 		return gcnew Aperture(pCoreAperture);
 	}
 
+	TopoLogic::Topology^ Aperture::Topology()
+	{
+		TopoLogicCore::Aperture* pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
+		TopoLogicCore::Topology* pCoreTopology = pCoreAperture->Topology();
+		return Topology::ByCoreTopology(pCoreTopology);
+	}
+
 	bool Aperture::IsOpen()
 	{
 		TopoLogicCore::Aperture* pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
 		return pCoreAperture->IsOpen();
 	}
 
-	bool Aperture::IsOpen(List<Topology^>^ topologies)
+	bool Aperture::IsOpen(List<TopoLogic::Topology^>^ topologies)
 	{
 		if (topologies->Count != 2)
 		{
@@ -61,12 +68,19 @@ namespace TopoLogic
 			kCorePathIterator != corePaths.end();
 			kCorePathIterator++)
 		{
-			List<Topology^>^ pPath = gcnew List<Topology^>();
+			List<TopoLogic::Topology^>^ pPath = gcnew List<TopoLogic::Topology^>();
 			for (std::list<TopoLogicCore::Topology*>::const_iterator kCoreTopologyIterator = kCorePathIterator->begin();
 				kCoreTopologyIterator != kCorePathIterator->end();
 				kCoreTopologyIterator++)
 			{
-				pPath->Add(Topology::ByCoreTopology(*kCoreTopologyIterator));
+				TopoLogicCore::Topology* pCoreTopology = *kCoreTopologyIterator;
+				if (pCoreTopology == nullptr)
+				{
+					pPath->Add(nullptr);
+				}else
+				{
+					pPath->Add(Topology::ByCoreTopology(pCoreTopology));
+				}
 			}
 			pPaths->Add(pPath);
 		}
@@ -80,7 +94,7 @@ namespace TopoLogic
 		return this;
 	}
 
-	Aperture^ TopoLogic::Aperture::Open(List<Topology^>^ topologies)
+	Aperture^ TopoLogic::Aperture::Open(List<TopoLogic::Topology^>^ topologies)
 	{
 		if (topologies->Count != 2)
 		{
@@ -104,7 +118,7 @@ namespace TopoLogic
 		return this;
 	}
 
-	Aperture^ TopoLogic::Aperture::Close(List<Topology^>^ topologies)
+	Aperture^ TopoLogic::Aperture::Close(List<TopoLogic::Topology^>^ topologies)
 	{
 		if (topologies->Count != 2)
 		{

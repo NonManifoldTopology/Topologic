@@ -156,7 +156,7 @@ namespace TopoLogicCore
 
 	TopologyType Aperture::GetType() const
 	{
-		return Topology()->GetType();
+		return TOPOLOGY_APERTURE;
 	}
 
 	Topology* Aperture::Topology() const
@@ -184,6 +184,7 @@ namespace TopoLogicCore
 		}
 
 		AddContext(kpContext);
+		m_pMainContext->Topology()->AddContent(this);
 
 		if (kOpenStatus)
 		{

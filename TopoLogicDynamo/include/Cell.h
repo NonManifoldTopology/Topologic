@@ -125,6 +125,12 @@ namespace TopoLogic
 		/// <returns></returns>
 		double Volume();
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		Vertex^ CenterOfMass();
+
 		property Object^ Geometry
 		{
 			/// <summary>

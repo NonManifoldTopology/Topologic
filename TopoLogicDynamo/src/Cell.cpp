@@ -275,6 +275,13 @@ namespace TopoLogic
 		return pCoreCell->Volume();
 	}
 
+	Vertex^ Cell::CenterOfMass()
+	{
+		TopoLogicCore::Cell* pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopologicalQuery());
+		TopoLogicCore::Vertex* pCoreCenterOfMass = pCoreCell->CenterOfMass();
+		return gcnew Vertex(pCoreCenterOfMass);
+	}
+
 	Object^ Cell::Geometry::get()
 	{
 		List<Autodesk::DesignScript::Geometry::Surface^>^ pDynamoSurfaces = gcnew List<Autodesk::DesignScript::Geometry::Surface^>();

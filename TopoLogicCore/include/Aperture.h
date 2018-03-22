@@ -44,7 +44,7 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		Topology* Topology() const;
+		TOPOLOGIC_API Topology* Topology() const;
 
 		/// <summary>
 		/// Checks if any aperture path is open.

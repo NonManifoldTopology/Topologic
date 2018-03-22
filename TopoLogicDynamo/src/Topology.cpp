@@ -10,6 +10,7 @@
 #include <Wire.h>
 #include <Edge.h>
 #include <Vertex.h>
+#include <Aperture.h>
 #include <Attribute.h>
 #include <Context.h>
 
@@ -86,17 +87,17 @@ namespace TopoLogic
 
 	Topology^ Topology::ByCoreTopology(TopoLogicCore::Topology * const kpCoreTopology)
 	{
-		TopAbs_ShapeEnum occtShapeType = kpCoreTopology->GetOcctShape()->ShapeType();
-		switch (occtShapeType)
+		switch (kpCoreTopology->GetType())
 		{
-		case TopAbs_COMPOUND: return gcnew Cluster(TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(kpCoreTopology));
-		case TopAbs_COMPSOLID: return gcnew CellComplex(TopoLogicCore::Topology::Downcast<TopoLogicCore::CellComplex>(kpCoreTopology));
-		case TopAbs_SOLID: return gcnew Cell(TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(kpCoreTopology));
-		case TopAbs_SHELL: return gcnew Shell(TopoLogicCore::Topology::Downcast<TopoLogicCore::Shell>(kpCoreTopology));
-		case TopAbs_FACE: return gcnew Face(TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(kpCoreTopology));
-		case TopAbs_WIRE: return gcnew Wire(TopoLogicCore::Topology::Downcast<TopoLogicCore::Wire>(kpCoreTopology));
-		case TopAbs_EDGE: return gcnew Edge(TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(kpCoreTopology));
-		case TopAbs_VERTEX: return gcnew Vertex(TopoLogicCore::Topology::Downcast<TopoLogicCore::Vertex>(kpCoreTopology));
+		case TopoLogicCore::TOPOLOGY_CLUSTER: return gcnew Cluster(TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(kpCoreTopology));
+		case TopoLogicCore::TOPOLOGY_CELLCOMPLEX: return gcnew CellComplex(TopoLogicCore::Topology::Downcast<TopoLogicCore::CellComplex>(kpCoreTopology));
+		case TopoLogicCore::TOPOLOGY_CELL: return gcnew Cell(TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(kpCoreTopology));
+		case TopoLogicCore::TOPOLOGY_SHELL: return gcnew Shell(TopoLogicCore::Topology::Downcast<TopoLogicCore::Shell>(kpCoreTopology));
+		case TopoLogicCore::TOPOLOGY_FACE: return gcnew Face(TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(kpCoreTopology));
+		case TopoLogicCore::TOPOLOGY_WIRE: return gcnew Wire(TopoLogicCore::Topology::Downcast<TopoLogicCore::Wire>(kpCoreTopology));
+		case TopoLogicCore::TOPOLOGY_EDGE: return gcnew Edge(TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(kpCoreTopology));
+		case TopoLogicCore::TOPOLOGY_VERTEX: return gcnew Vertex(TopoLogicCore::Topology::Downcast<TopoLogicCore::Vertex>(kpCoreTopology));
+		case TopoLogicCore::TOPOLOGY_APERTURE: return gcnew Aperture(TopoLogicCore::Topology::Downcast<TopoLogicCore::Aperture>(kpCoreTopology));
 		default:
 			throw std::exception("Topology::ByCoreTopology: unknown topology.");
 		}

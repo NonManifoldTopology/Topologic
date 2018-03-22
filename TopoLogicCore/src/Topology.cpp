@@ -7,6 +7,7 @@
 #include <Wire.h>
 #include <Edge.h>
 #include <Vertex.h>
+#include <Context.h>
 #include <GlobalCluster.h>
 
 #include <TopoDS_Vertex.hxx>
@@ -181,7 +182,7 @@ namespace TopoLogicCore
 
 	Topology* Topology::AddContent(Topology * const kpTopology)
 	{
-		if(std::find(m_contents.begin(), m_contents.end(), kpTopology) != m_contents.end())
+		if(std::find(m_contents.begin(), m_contents.end(), kpTopology) == m_contents.end())
 		{
 			m_contents.push_back(kpTopology);
 		}

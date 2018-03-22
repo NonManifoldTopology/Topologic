@@ -110,6 +110,13 @@ namespace TopoLogicCore
 		return occtShapeProperties.Mass();
 	}
 
+	Vertex* Cell::CenterOfMass() const
+	{
+		GProp_GProps occtShapeProperties;
+		BRepGProp::VolumeProperties(*GetOcctShape(), occtShapeProperties);
+		return Vertex::ByPoint(new Geom_CartesianPoint(occtShapeProperties.CentreOfMass()));
+	}
+
 	Cell* Cell::ByFaces(const std::list<Face*>& rkFaces)
 	{
 		Shell* pShell = Shell::ByFaces(rkFaces);
