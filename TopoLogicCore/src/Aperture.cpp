@@ -3,6 +3,7 @@
 #include <GlobalCluster.h>
 
 #include <TopExp.hxx>
+#include <TopExp_Explorer.hxx>
 
 #include <assert.h>
 #include <array>
@@ -104,11 +105,62 @@ namespace TopoLogicCore
 		}
 	}
 
+	TopoDS_Shape FindSubentityAdjacentAndHigherDimensionalTo(const TopoDS_Shape& rkShape1, const TopoDS_Shape& rkShape2)
+	{
+		TopAbs_ShapeEnum occtShape2Type = rkShape2.ShapeType();
+		TopAbs_ShapeEnum occtTypeToSearch = TopAbs_SHAPE;
+		if (occtShape2Type == TopAbs_VERTEX)
+		{
+			occtTypeToSearch = TopAbs_EDGE;
+		}
+		else if (occtShape2Type == TopAbs_EDGE)
+		{
+			occtTypeToSearch = TopAbs_WIRE;
+		}
+		else if (occtShape2Type == TopAbs_WIRE)
+		{
+			occtTypeToSearch = TopAbs_FACE;
+		}
+		else if (occtShape2Type == TopAbs_FACE)
+		{
+			occtTypeToSearch = TopAbs_SHELL;
+		}
+		else if (occtShape2Type == TopAbs_SHELL)
+		{
+			occtTypeToSearch = TopAbs_SOLID;
+		}
+		else if (occtShape2Type == TopAbs_SOLID)
+		{
+			occtTypeToSearch = TopAbs_COMPSOLID;
+		}
+		else
+		{
+			throw std::exception("Invalid topology");
+		}
+
+		TopExp_Explorer occtExplorer;
+		for (occtExplorer.Init(rkShape1, occtTypeToSearch); occtExplorer.More(); occtExplorer.Next())
+		{
+			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
+			TopExp_Explorer occtCurrentExplorer;
+			for (occtCurrentExplorer.Init(occtCurrent, occtShape2Type); occtCurrentExplorer.More(); occtCurrentExplorer.Next())
+			{
+				const TopoDS_Shape& occtCurrentChild = occtCurrentExplorer.Current();
+				if (!occtCurrentChild.IsSame(rkShape2))
+				{
+					return occtCurrent;
+				}
+			}
+		}
+
+		return TopoDS_Shape(); // empty
+	}
+
 	void Aperture::Open(const std::array<TopoLogicCore::Topology*, 2>& rkTopologies)
 	{
 		AperturePath aperturePath(
-			rkTopologies[0] == nullptr ? TopoDS_Shape() : *rkTopologies[0]->GetOcctShape(),
-			rkTopologies[1] == nullptr ? TopoDS_Shape() : *rkTopologies[1]->GetOcctShape()
+			rkTopologies[0] == nullptr ? TopoDS_Shape() : FindSubentityAdjacentAndHigherDimensionalTo(*rkTopologies[0]->GetOcctShape(), *m_pMainContext->Topology()->GetOcctShape()),
+			rkTopologies[1] == nullptr ? TopoDS_Shape() : FindSubentityAdjacentAndHigherDimensionalTo(*rkTopologies[1]->GetOcctShape(), *m_pMainContext->Topology()->GetOcctShape())
 		);
 		std::list<AperturePath>::const_iterator kTopologyPairIterator = std::find(m_occtAperturePaths.begin(), m_occtAperturePaths.end(), aperturePath);
 		if (kTopologyPairIterator == m_occtAperturePaths.end())
@@ -128,7 +180,16 @@ namespace TopoLogicCore
 			rkTopologies[0] == nullptr ? TopoDS_Shape() : *rkTopologies[0]->GetOcctShape(),
 			rkTopologies[1] == nullptr ? TopoDS_Shape() : *rkTopologies[1]->GetOcctShape()
 		);
-		m_occtAperturePaths.remove(aperturePath);
+		for (std::list<AperturePath>::const_iterator kAperturePathIterator = m_occtAperturePaths.begin();
+			kAperturePathIterator != m_occtAperturePaths.end();
+			kAperturePathIterator++)
+		{
+			if (*kAperturePathIterator == aperturePath)
+			{
+				m_occtAperturePaths.erase(kAperturePathIterator);
+				break;
+			}
+		}
 	}
 
 	void Aperture::Paths(std::list<std::list<TopoLogicCore::Topology*>>& rPaths) const
