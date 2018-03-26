@@ -74,6 +74,17 @@ namespace TopoLogic
 		/// <param name="faceIndices">A list of face indices. Every element must be within the range of the vertices argument.</param>
 		/// <returns>The created shell</returns>
 		static Shell^ ByVerticesFaceIndices(List<Vertex^>^ vertices, List<List<int>^>^ faceIndices);
+		
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="face"></param>
+		/// <param name="iteration"></param>
+		/// <param name="numUPanels"></param>
+		/// <param name="numVPanels"></param>
+		/// <param name="tolerance"></param>
+		/// <returns></returns>
+		static Shell^ ByFacePlanarization(Face^ face, int iteration, int numUPanels, int numVPanels, double tolerance);
 
 		property Object^ Geometry
 		{

@@ -91,6 +91,22 @@ namespace TopoLogicCore
 		/// <param name="rOcctGeometries"></param>
 		virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const;
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rFace"></param>
+		/// <param name="kIteration"></param>
+		/// <param name="kNumUPanels"></param>
+		/// <param name="kNumVPanels"></param>
+		/// <param name="kTolerance"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API static Shell* ByFacePlanarization(
+			Face& rFace,
+			const int kIteration,
+			const int kNumUPanels,
+			const int kNumVPanels,
+			const double kTolerance);
+
 		virtual TopologyType GetType() const { return TOPOLOGY_SHELL; }
 
 	protected:

@@ -142,6 +142,18 @@ namespace TopoLogic
 		return gcnew Shell(TopoLogicCore::Shell::ByVerticesFaceIndices(coreVertices, coreFaceIndices));
 	}
 
+	Shell^ Shell::ByFacePlanarization(Face^ face, int iteration, int numUPanels, int numVPanels, double tolerance)
+	{
+		TopoLogicCore::Shell* pCoreTopology = TopoLogicCore::Shell::ByFacePlanarization(
+			*TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Face>(face->GetCoreTopologicalQuery()),
+			iteration,
+			numUPanels,
+			numVPanels,
+			tolerance
+		);
+		return gcnew Shell(pCoreTopology); //TODO: replace Topology with shared_ptr
+	}
+
 	bool Shell::IsClosed::get()
 	{
 		TopoLogicCore::Shell* pCoreShell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Shell>(GetCoreTopologicalQuery());

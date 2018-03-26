@@ -31,6 +31,7 @@ namespace TopoLogicCore
 		TOPOLOGY_APERTURE = 8
 	};
 
+	class Face;
 	class Vertex;
 	class Context;
 
@@ -384,11 +385,11 @@ namespace TopoLogicCore
 		/// <returns></returns>
 		bool IsIngredient() const;
 
-		/// <summary>
+		/*/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpTopology"></param>
-		/*void AddIngredient(Topology * const kpTopology);
+		void AddIngredient(Topology * const kpTopology);
 
 		/// <summary>
 		/// 
