@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 namespace TopoLogicCore
 {
 	/// <summary>
@@ -28,6 +30,28 @@ namespace TopoLogicCore
 				throw std::exception("Failed downcasting topology");
 			}
 			return kpSubclassTopology;
+		}
+
+		template <typename T>
+		static std::shared_ptr<T> Downcast(std::shared_ptr<TopologicalQuery>& rTopologicalQuery)
+		{
+			std::shared_ptr<T> pSubclassTopology = std::dynamic_pointer_cast<T>(kpTopologicalQuery);
+			if (pSubclassTopology == nullptr)
+			{
+				throw std::exception("Failed downcasting a topological query");
+			}
+			return pSubclassTopology;
+		}
+
+		template <typename T>
+		static const std::shared_ptr<T> Downcast(const std::shared_ptr<TopologicalQuery>& rkTopologicalQuery)
+		{
+			const std::shared_ptr<T> kSubclassTopology = std::dynamic_pointer_cast<T>(rkTopologicalQuery);
+			if (kSubclassTopology == nullptr)
+			{
+				throw std::exception("Failed downcasting topology");
+			}
+			return kSubclassTopology;
 		}
 
 		virtual ~TopologicalQuery() {};

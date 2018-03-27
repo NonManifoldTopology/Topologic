@@ -38,12 +38,12 @@ namespace TopoLogicCore
 	/// <summary>
 	/// A Topology is an abstract superclass that constructors, properties and methods used by other subclasses that extend it.
 	/// </summary>
-	class Topology : public TopologicalQuery
+	class Topology : public TopologicalQuery, public std::enable_shared_from_this<Topology>
 	{
 	public:
-		typedef std::map<std::string, Attribute*> AttributeMap;
-		typedef std::map<std::string, Attribute*>::iterator AttributeMapIterator;
-		typedef std::map<std::string, Attribute*>::const_iterator AttributeMapConstIterator;
+		typedef std::map<std::string, std::shared_ptr<Attribute>> AttributeMap;
+		typedef AttributeMap::iterator AttributeMapIterator;
+		typedef AttributeMap::const_iterator AttributeMapConstIterator;
 
 	public:
 		virtual ~Topology();
@@ -53,7 +53,7 @@ namespace TopoLogicCore
 		/// </summary>
 		/// <param name="rkOcctShape"></param>
 		/// <returns></returns>
-		static Topology* ByOcctShape(const TopoDS_Shape& rkOcctShape);
+		static std::shared_ptr<Topology> ByOcctShape(const TopoDS_Shape& rkOcctShape);
 
 		/// <summary>
 		/// 
@@ -88,30 +88,30 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpTopology"></param>
+		/// <param name="rkTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology* AddContent(Topology * const kpTopology);
+		TOPOLOGIC_API Topology* AddContent(const std::shared_ptr<Topology>& rkTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpTopology"></param>
+		/// <param name="rkTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology* RemoveContent(Topology * const kpTopology);
+		TOPOLOGIC_API Topology* RemoveContent(const std::shared_ptr<Topology>& rkTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpContext"></param>
+		/// <param name="rkContext"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology* AddContext(Context * const kpContext);
+		TOPOLOGIC_API Topology* AddContext(const std::shared_ptr<Context>& rkContext);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpContext"></param>
+		/// <param name="rkContext"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology* RemoveContext(Context * const kpContext);
+		TOPOLOGIC_API Topology* RemoveContext(const std::shared_ptr<Context>& rkContext);
 
 		/// <summary>
 		/// 
@@ -140,10 +140,10 @@ namespace TopoLogicCore
 		/// <returns></returns>
 		TOPOLOGIC_API void BooleanImages(
 			Topology const * const kpkOtherTopology,
-			std::list<Topology*>& kArgumentImagesInArguments,
-			std::list<Topology*>& kArgumentImagesInTools,
-			std::list<Topology*>& kToolsImagesInArguments,
-			std::list<Topology*>& kToolsImagesInTools);
+			std::list<std::shared_ptr<Topology>>& kArgumentImagesInArguments,
+			std::list<std::shared_ptr<Topology>>& kArgumentImagesInTools,
+			std::list<std::shared_ptr<Topology>>& kToolsImagesInArguments,
+			std::list<std::shared_ptr<Topology>>& kToolsImagesInTools);
 
 		/// <summary>
 		/// Does not perform cells builder.
@@ -171,65 +171,65 @@ namespace TopoLogicCore
 
 		TOPOLOGIC_API void BooleanParts(
 			Topology const * const kpkOtherTopology,
-			std::list<Topology*>& rSpaceBetween_A_A_and_B_A,
-			std::list<Topology*>& rSpaceBetween_B_A_and_A_B,
-			std::list<Topology*>& rSpaceBetween_A_B_and_B_B);
+			std::list<std::shared_ptr<Topology>>& rSpaceBetween_A_A_and_B_A,
+			std::list<std::shared_ptr<Topology>>& rSpaceBetween_B_A_and_A_B,
+			std::list<std::shared_ptr<Topology>>& rSpaceBetween_A_B_and_B_B);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpkOtherTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology* Difference(Topology const * const kpkOtherTopology);
+		TOPOLOGIC_API std::shared_ptr<Topology> Difference(const std::shared_ptr<Topology>& kpOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpkOtherTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology* Impose(Topology const * const kpkOtherTopology);
+		TOPOLOGIC_API std::shared_ptr<Topology> Impose(const std::shared_ptr<Topology>& kpOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpkOtherTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology* Imprint(Topology const * const kpkOtherTopology);
+		TOPOLOGIC_API std::shared_ptr<Topology> Imprint(const std::shared_ptr<Topology>& kpOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpkOtherTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology* Intersection(Topology const * const kpkOtherTopology);
+		TOPOLOGIC_API std::shared_ptr<Topology> Intersection(const std::shared_ptr<Topology>& kpOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpkOtherTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology* Merge(Topology const * const kpkOtherTopology);
+		TOPOLOGIC_API std::shared_ptr<Topology> Merge(const std::shared_ptr<Topology>& kpOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpkOtherTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology* Slice(Topology const * const kpkOtherTopology);
+		TOPOLOGIC_API std::shared_ptr<Topology> Slice(const std::shared_ptr<Topology>& kpOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpkOtherTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology* Union(Topology const * const kpkOtherTopology);
+		TOPOLOGIC_API std::shared_ptr<Topology> Union(const std::shared_ptr<Topology>& kpOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpkOtherTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology* XOR(Topology const * const kpkOtherTopology);
+		TOPOLOGIC_API std::shared_ptr<Topology> XOR(const std::shared_ptr<Topology>& kpOtherTopology);
 
 		/// <summary>
 		/// 
@@ -241,7 +241,7 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		std::list<Topology*>& Contents()
+		std::list<std::shared_ptr<Topology>>& Contents()
 		{
 			return m_contents;
 		}
@@ -250,7 +250,7 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		const std::list<Topology*>& Contents() const
+		const std::list<std::shared_ptr<Topology>>& Contents() const
 		{
 			return m_contents;
 		}
@@ -259,7 +259,7 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		std::list<Context*>& Contexts()
+		std::list<std::shared_ptr<Context>>& Contexts()
 		{
 			return m_contexts;
 		}
@@ -268,7 +268,7 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		const std::list<Context*>& Contexts() const
+		const std::list<std::shared_ptr<Context>>& Contexts() const
 		{
 			return m_contexts;
 		}
@@ -285,7 +285,7 @@ namespace TopoLogicCore
 		/// </summary>
 		/// <param name="rkPath"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API Topology* LoadFromBrep(const std::string& rkPath);
+		static TOPOLOGIC_API std::shared_ptr<Topology> LoadFromBrep(const std::string& rkPath);
 
 		/// <summary>
 		/// 
@@ -306,7 +306,7 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		virtual TopoDS_Shape* GetOcctShape() const = 0;
+		virtual std::shared_ptr<TopoDS_Shape> GetOcctShape() const = 0;
 
 		virtual TopologyType GetType() const = 0;
 
@@ -314,7 +314,7 @@ namespace TopoLogicCore
 		/// Returns all sub-entities that have no other parents than this topology, i.e. do not belong to other entities.
 		/// </summary>
 		/// <param name="rImmediateMembers">The immediate members</param>
-		TOPOLOGIC_API void ImmediateMembers(std::list<Topology*>& rImmediateMembers) const;
+		TOPOLOGIC_API void ImmediateMembers(std::list<std::shared_ptr<Topology>>& rImmediateMembers) const;
 
 		/// <summary>
 		/// 
@@ -350,7 +350,7 @@ namespace TopoLogicCore
 		/// <param name="kOcctShapeType"></param>
 		/// <param name="rAncestors"></param>
 		template <class Subclass>
-		void UpwardNavigation(std::list<Subclass*>& rAncestors) const;
+		void UpwardNavigation(std::list<std::shared_ptr<Subclass>>& rAncestors) const;
 
 		/// <summary>
 		/// 
@@ -358,26 +358,26 @@ namespace TopoLogicCore
 		/// <param name="kOcctShapeType"></param>
 		/// <param name="rMembers"></param>
 		template <class Subclass>
-		void DownwardNavigation(std::list<Subclass*>& rMembers) const;
+		void DownwardNavigation(std::list<std::shared_ptr<Subclass>>& rMembers) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpTopology"></param>
-		void AddIngredientTo(Topology * const kpTopology);
+		void AddIngredientTo(const std::shared_ptr<Topology>& kpTopology);
 
 		/// <summary>
 		/// Used when deleted
 		/// </summary>
 		/// <param name="kpTopology"></param>
-		void RemoveIngredientTo(Topology * const kpTopology);
+		void RemoveIngredientTo(const std::shared_ptr<Topology>& kpTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpTopology"></param>
 		/// <returns></returns>
-		bool IsIngredientTo(Topology * const kpTopology) const;
+		bool IsIngredientTo(const std::shared_ptr<Topology>& kpTopology) const;
 		
 		/// <summary>
 		/// 
@@ -435,10 +435,10 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkOtherTopology"></param>
+		/// <param name="kpOtherTopology"></param>
 		/// <param name="rOcctCellsBuilder"></param>
 		void AddBooleanOperands(
-			Topology const * const kpkOtherTopology,
+			const std::shared_ptr<Topology>& kpOtherTopology,
 			BOPAlgo_CellsBuilder& rOcctCellsBuilder,
 			BOPCol_ListOfShape& rOcctCellsBuildersOperandsA,
 			BOPCol_ListOfShape& rOcctCellsBuildersOperandsB);
@@ -446,10 +446,10 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkOtherTopology"></param>
+		/// <param name="kpOtherTopology"></param>
 		/// <param name="kBooleanFlag"></param>
 		void BooleanOperation(
-			Topology const * const kpkOtherTopology,
+			const std::shared_ptr<Topology>& kpOtherTopology,
 			BOPAlgo_CellsBuilder& rOcctCellsBuilder,
 			BOPCol_ListOfShape& rOcctCellsBuildersOperandsA,
 			BOPCol_ListOfShape& rOcctCellsBuildersOperandsB);
@@ -459,20 +459,23 @@ namespace TopoLogicCore
 		/// </summary>
 		/// <param name="rOcctCellsBuilder"></param>
 		/// <returns></returns>
-		Topology* GetBooleanResult(BOPAlgo_CellsBuilder& rOcctCellsBuilder);
+		std::shared_ptr<Topology> GetBooleanResult(BOPAlgo_CellsBuilder& rOcctCellsBuilder);
 
 		AttributeMap m_attributeMap;
-		std::list<Topology*> m_contents;
-		std::list<Context*> m_contexts;
 		int m_dimensionality;
 		bool m_isInGlobalCluster;
 
-		std::list<Topology*> m_ingredientTo;
-		std::list<Topology*> m_ingredients;
+		// TODO: may cause cyclic dependencies, may need weak_ptr
+		std::list<std::shared_ptr<Topology>> m_contents;
+		std::list<std::shared_ptr<Context>> m_contexts;
+
+		// TODO: may cause cyclic dependencies, may need weak_ptr
+		std::list<std::shared_ptr<Topology>> m_ingredientTo;
+		std::list<std::shared_ptr<Topology>> m_ingredients;
 	};
 
 	template <class Subclass>
-	void Topology::UpwardNavigation(std::list<Subclass*>& rAncestors) const
+	void Topology::UpwardNavigation(std::list<std::shared_ptr<Subclass>>& rAncestors) const
 	{
 		static_assert(std::is_base_of<Topology, Subclass>::value, "Subclass not derived from Topology");
 		
@@ -499,7 +502,7 @@ namespace TopoLogicCore
 	}
 
 	template <class Subclass>
-	void Topology::DownwardNavigation(std::list<Subclass*>& rMembers) const
+	void Topology::DownwardNavigation(std::list<std::shared_ptr<Subclass>>& rMembers) const
 	{
 		static_assert(std::is_base_of<Topology, Subclass>::value, "Subclass not derived from Topology");
 

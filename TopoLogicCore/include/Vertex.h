@@ -33,13 +33,13 @@ namespace TopoLogicCore
 		/// </summary>
 		/// <param name="pOcctPoint">An OCCT point</param>
 		/// <returns>The created TopoLogic vertex.</returns>
-		static TOPOLOGIC_API Vertex* ByPoint(Handle(Geom_Point) pOcctPoint);
+		static TOPOLOGIC_API std::shared_ptr<Vertex> ByPoint(Handle(Geom_Point) pOcctPoint);
 
 		/// <summary>
 		/// Returns the list of edges of which this vertex is a constituent member.
 		/// </summary>
 		/// <param name="rEdges">The edges containing this vertex as a constituent member</param>
-		void TOPOLOGIC_API Edges(std::list<Edge*>& rEdges);
+		void TOPOLOGIC_API Edges(std::list<std::shared_ptr<Edge>>& rEdges);
 
 		/// <summary>
 		/// Return the corresponding point of this vertex. The output list only contains one vertex.
@@ -52,7 +52,7 @@ namespace TopoLogicCore
 		/// Returns the underlying OCCT vertex.
 		/// </summary>
 		/// <returns>The underlying OCCT vertex</returns>
-		virtual TopoDS_Shape* GetOcctShape() const;
+		virtual std::shared_ptr<TopoDS_Shape> GetOcctShape() const;
 
 		/// <summary>
 		/// 
@@ -66,6 +66,6 @@ namespace TopoLogicCore
 		/// <summary>
 		/// The underlying OCCT vertex.
 		/// </summary>
-		TopoDS_Vertex* m_pOcctVertex;
+		std::shared_ptr<TopoDS_Vertex> m_pOcctVertex;
 	};
 }

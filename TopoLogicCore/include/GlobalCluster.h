@@ -23,15 +23,15 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkTopology"></param>
+		/// <param name="pTopology"></param>
 		/// <returns></returns>
-		bool Remove(Topology* kpkTopology);
+		bool Remove(Topology* pTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		Cluster* GetCluster() const;
+		std::shared_ptr<Cluster> GetCluster() const;
 
 	private:
 		GlobalCluster();
@@ -40,6 +40,6 @@ namespace TopoLogicCore
 
 		~GlobalCluster();
 
-		Cluster* m_pCluster;
+		std::shared_ptr<Cluster> m_pCluster;
 	};
 }

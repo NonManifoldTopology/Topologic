@@ -40,13 +40,13 @@ namespace TopoLogicCore
 		/// </summary>
 		/// <param name="rkTopologies"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API Cluster* ByTopology(const std::list<Topology*>& rkTopologies);
+		static TOPOLOGIC_API std::shared_ptr<Cluster> ByTopology(const std::list<std::shared_ptr<Topology>>& rkTopologies);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpCluster"></param>
 		/// <param name="kpkTopology"></param>
+		/// <param name="kCheckIfInside"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API bool AddTopology(Topology const * const kpkTopology, const bool kCheckIfInside = false);
 
@@ -60,7 +60,7 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		virtual TopoDS_Shape* GetOcctShape() const;
+		virtual std::shared_ptr<TopoDS_Shape> GetOcctShape() const;
 
 		/// <summary>
 		/// 
@@ -68,50 +68,47 @@ namespace TopoLogicCore
 		/// <param name="rOcctGeometries"></param>
 		virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const;
 
-
-
-
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rShells"></param>
-		TOPOLOGIC_API void Shells(std::list<Shell*>& rShells) const;
+		TOPOLOGIC_API void Shells(std::list<std::shared_ptr<Shell>>& rShells) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rEdges"></param>
-		TOPOLOGIC_API void Edges(std::list<Edge*>& rEdges) const;
+		TOPOLOGIC_API void Edges(std::list<std::shared_ptr<Edge>>& rEdges) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rFaces"></param>
-		TOPOLOGIC_API void Faces(std::list<Face*>& rFaces) const;
+		TOPOLOGIC_API void Faces(std::list<std::shared_ptr<Face>>& rFaces) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rVertices"></param>
-		TOPOLOGIC_API void Vertices(std::list<Vertex*>& rVertices) const;
+		TOPOLOGIC_API void Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rWires"></param>
-		TOPOLOGIC_API void Wires(std::list<Wire*>& rWires) const;
+		TOPOLOGIC_API void Wires(std::list<std::shared_ptr<Wire>>& rWires) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rCells"></param>
-		TOPOLOGIC_API void Cells(std::list<Cell*>& rCells) const;
+		TOPOLOGIC_API void Cells(std::list<std::shared_ptr<Cell>>& rCells) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rCells"></param>
-		TOPOLOGIC_API void CellComplexes(std::list<CellComplex*>& rCellComplexes) const;
+		TOPOLOGIC_API void CellComplexes(std::list<std::shared_ptr<CellComplex>>& rCellComplexes) const;
 
 		virtual TopologyType GetType() const { return TOPOLOGY_CLUSTER; }
 
@@ -126,7 +123,7 @@ namespace TopoLogicCore
 		/// <summary>
 		/// The underlying OCCT compound.
 		/// </summary>
-		TopoDS_Compound* m_pOcctCompound;
+		std::shared_ptr<TopoDS_Compound> m_pOcctCompound;
 
 		TopoDS_Builder m_occtBuilder;
 	};

@@ -39,18 +39,19 @@
 
 namespace TopoLogicCore
 {
-	Cluster* Cluster::ByTopology(const std::list<Topology*>& rkTopologies)
+	std::shared_ptr<Cluster> Cluster::ByTopology(const std::list<std::shared_ptr<Topology>>& rkTopologies)
 	{
-		Cluster* pCluster = new Cluster(true);
-		for(std::list<Topology*>::const_iterator kTopologyIterator = rkTopologies.begin();
+		std::shared_ptr<Cluster> pCluster = std::make_shared<Cluster>(true);
+		for(std::list<std::shared_ptr<Topology>>::const_iterator kTopologyIterator = rkTopologies.begin();
 			kTopologyIterator != rkTopologies.end();
 			kTopologyIterator++)
 		{
-			pCluster->AddTopology(*kTopologyIterator);
+			pCluster->AddTopology((*kTopologyIterator).get());
 		}
 		return pCluster;
 	}
 
+	// Use raw pointer because 1) called from the individual instance, 2) does not need a smart pointer
 	bool Cluster::AddTopology(Topology const * const kpkTopology, const bool kCheckIfInside)
 	{
 		if (kCheckIfInside)
@@ -64,7 +65,7 @@ namespace TopoLogicCore
 		// If this cluster is not the global cluster, it must have been inside the global cluster.
 		// (Added during initialisation.) The free flag is therefore at this point false.
 		// To add a new member to this cluster, unfreeze it first/set the flag to true.
-		Cluster* pGlobalCluster = GlobalCluster::GetInstance().GetCluster();
+		std::shared_ptr<Cluster> pGlobalCluster = GlobalCluster::GetInstance().GetCluster();
 		if (GetOcctShape()->IsNotEqual(*pGlobalCluster->GetOcctShape()))
 		{
 			GetOcctShape()->Free(true);
@@ -98,7 +99,7 @@ namespace TopoLogicCore
 		// If this cluster is not the global cluster, it must have been inside the global cluster.
 		// (Added during initialisation.) The free flag is therefore at this point false.
 		// To remove a new member to this cluster, unfreeze it first/set the flag to true.
-		Cluster* pGlobalCluster = GlobalCluster::GetInstance().GetCluster();
+		std::shared_ptr<Cluster> pGlobalCluster = GlobalCluster::GetInstance().GetCluster();
 		if (GetOcctShape()->IsNotEqual(*pGlobalCluster->GetOcctShape()))
 		{
 			GetOcctShape()->Free(true);
@@ -125,7 +126,7 @@ namespace TopoLogicCore
 		}
 	}
 
-	TopoDS_Shape* Cluster::GetOcctShape() const
+	std::shared_ptr<TopoDS_Shape> Cluster::GetOcctShape() const
 	{
 		assert(m_pOcctCompound != nullptr && "Cluster::m_pOcctCompound is null.");
 		if (m_pOcctCompound == nullptr)
@@ -169,43 +170,39 @@ namespace TopoLogicCore
 	Cluster::~Cluster()
 	{
 		GlobalCluster::GetInstance().Remove(this);
-		delete m_pOcctCompound;
 	}
 
-
-
-
-	void Cluster::Shells(std::list<Shell*>& rShells) const
+	void Cluster::Shells(std::list<std::shared_ptr<Shell>>& rShells) const
 	{
 		DownwardNavigation(rShells);
 	}
 
-	void Cluster::Edges(std::list<Edge*>& rEdges) const
+	void Cluster::Edges(std::list<std::shared_ptr<Edge>>& rEdges) const
 	{
 		DownwardNavigation(rEdges);
 	}
 
-	void Cluster::Faces(std::list<Face*>& rFaces) const
+	void Cluster::Faces(std::list<std::shared_ptr<Face>>& rFaces) const
 	{
 		DownwardNavigation(rFaces);
 	}
 
-	void Cluster::Vertices(std::list<Vertex*>& rVertices) const
+	void Cluster::Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const
 	{
 		DownwardNavigation(rVertices);
 	}
 
-	void Cluster::Wires(std::list<Wire*>& rWires) const
+	void Cluster::Wires(std::list<std::shared_ptr<Wire>>& rWires) const
 	{
 		DownwardNavigation(rWires);
 	}
 
-	void Cluster::Cells(std::list<Cell*>& rCells) const
+	void Cluster::Cells(std::list<std::shared_ptr<Cell>>& rCells) const
 	{
 		DownwardNavigation(rCells);
 	}
 
-	void Cluster::CellComplexes(std::list<CellComplex*>& rCellComplexes) const
+	void Cluster::CellComplexes(std::list<std::shared_ptr<CellComplex>>& rCellComplexes) const
 	{
 		DownwardNavigation(rCellComplexes);
 	}
@@ -226,5 +223,4 @@ namespace TopoLogicCore
 
 		return false;
 	}
-
 }

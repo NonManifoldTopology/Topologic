@@ -31,22 +31,22 @@
 
 namespace TopoLogicCore
 {
-	void Shell::Cells(std::list<Cell*>& rCells) const
+	void Shell::Cells(std::list<std::shared_ptr<Cell>>& rCells) const
 	{
 		UpwardNavigation(rCells);
 	}
 
-	void Shell::Edges(std::list<Edge*>& rEdges) const
+	void Shell::Edges(std::list<std::shared_ptr<Edge>>& rEdges) const
 	{
 		DownwardNavigation(rEdges);
 	}
 
-	void Shell::Wires(std::list<Wire*>& rWires) const
+	void Shell::Wires(std::list<std::shared_ptr<Wire>>& rWires) const
 	{
 		DownwardNavigation(rWires);
 	}
 
-	void Shell::Faces(std::list<Face*>& rFaces) const
+	void Shell::Faces(std::list<std::shared_ptr<Face>>& rFaces) const
 	{
 		DownwardNavigation(rFaces);
 	}
@@ -56,38 +56,38 @@ namespace TopoLogicCore
 		return (BRepCheck_Shell(TopoDS::Shell(*GetOcctShape())).Closed() == BRepCheck_NoError);
 	}
 
-	void Shell::Vertices(std::list<Vertex*>& rVertices) const
+	void Shell::Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const
 	{
 		DownwardNavigation(rVertices);
 	}
 
-	Shell* Shell::ByFaces(const std::list<Face*>& rkFaces)
+	std::shared_ptr<Shell> Shell::ByFaces(const std::list<std::shared_ptr<Face>>& rkFaces)
 	{
 		BRepBuilderAPI_Sewing occtSewing;
-		for(std::list<Face*>::const_iterator kFaceIterator = rkFaces.begin();
+		for(std::list<std::shared_ptr<Face>>::const_iterator kFaceIterator = rkFaces.begin();
 			kFaceIterator != rkFaces.end();
 			kFaceIterator++)
 		{
-			Face* pFace = *kFaceIterator;
-			occtSewing.Add(*pFace->GetOcctShape());
+			const std::shared_ptr<Face>& kpFace = *kFaceIterator;
+			occtSewing.Add(*kpFace->GetOcctShape());
 		}
 
 		occtSewing.Perform();
-		Shell* pShell = new Shell(TopoDS::Shell(occtSewing.SewedShape()));
-		for (std::list<Face*>::const_iterator kFaceIterator = rkFaces.begin();
+		std::shared_ptr<Shell> pShell = std::make_shared<Shell>(TopoDS::Shell(occtSewing.SewedShape()));
+		for (std::list<std::shared_ptr<Face>>::const_iterator kFaceIterator = rkFaces.begin();
 			kFaceIterator != rkFaces.end();
 			kFaceIterator++)
 		{
-			Face* pFace = *kFaceIterator;
-			pFace->AddIngredientTo(pShell);
+			const std::shared_ptr<Face>& kpFace = *kFaceIterator;
+			kpFace->AddIngredientTo(pShell);
 		}
 
 		return pShell;
 	}
 
-	Shell* Shell::ByVerticesFaceIndices(const std::vector<Vertex*>& rkVertices, const std::list<std::list<int>>& rkFaceIndices)
+	std::shared_ptr<Shell> Shell::ByVerticesFaceIndices(const std::vector<std::shared_ptr<Vertex>>& rkVertices, const std::list<std::list<int>>& rkFaceIndices)
 	{
-		std::list<Face*> faces;
+		std::list<std::shared_ptr<Face>> faces;
 		for(std::list<std::list<int>>::const_iterator kFaceIndexIterator = rkFaceIndices.begin();
 			kFaceIndexIterator != rkFaceIndices.end();
 			kFaceIndexIterator++)
@@ -119,23 +119,23 @@ namespace TopoLogicCore
 
 			TopoDS_Wire pOcctWire(occtMakeWire);
 			BRepBuilderAPI_MakeFace occtMakeFace(pOcctWire);
-			faces.push_back(new Face(occtMakeFace));
+			faces.push_back(std::make_shared<Face>(occtMakeFace));
 		}
-		Shell* pShell = ByFaces(faces);
+		std::shared_ptr<Shell> pShell = ByFaces(faces);
 
 		// Only add the vertices; the faces are dealt with in ByFaces()
-		for (std::vector<Vertex*>::const_iterator kVertexIterator = rkVertices.begin();
+		for (std::vector<std::shared_ptr<Vertex>>::const_iterator kVertexIterator = rkVertices.begin();
 			kVertexIterator != rkVertices.end();
 			kVertexIterator++)
 		{
-			Vertex* pVertex = *kVertexIterator;
-			pVertex->AddIngredientTo(pShell);
+			const std::shared_ptr<Vertex>& kpVertex = *kVertexIterator;
+			kpVertex->AddIngredientTo(pShell);
 		}
 		return pShell;
 	}
 
-	Shell* Shell::ByFacePlanarization(
-		Face& rFace,
+	std::shared_ptr<Shell> Shell::ByFacePlanarization(
+		const std::shared_ptr<Face>& kpFace,
 		const int kIteration,
 		const int kNumUPanels,
 		const int kNumVPanels,
@@ -253,7 +253,7 @@ namespace TopoLogicCore
 		//}
 
 		// Subdivide the face in the UV space and find the points
-		Handle(Geom_Surface) pOcctSurface = rFace.Surface();
+		Handle(Geom_Surface) pOcctSurface = kpFace->Surface();
 		double uMin = 0.0, uMax = 0.0, vMin = 0.0, vMax = 0.0;
 		pOcctSurface->Bounds(uMin, uMax, vMin, vMax);
 		double uRange = uMax - uMin;
@@ -428,10 +428,10 @@ namespace TopoLogicCore
 		// Reconstruct the edges
 
 		// Reconstruct the shape
-		return new Shell(TopoDS::Shell(occtSewing.SewedShape()));
+		return std::make_shared<Shell>(TopoDS::Shell(occtSewing.SewedShape()));
 	}
 
-	TopoDS_Shape* Shell::GetOcctShape() const
+	std::shared_ptr<TopoDS_Shape> Shell::GetOcctShape() const
 	{
 		assert(m_pOcctShell != nullptr && "Shell::m_pOcctShell is null.");
 		if (m_pOcctShell == nullptr)
@@ -445,14 +445,14 @@ namespace TopoLogicCore
 	void Shell::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
 	{
 		// Returns a list of faces
-		std::list<Face*> faces;
+		std::list<std::shared_ptr<Face>> faces;
 		Faces(faces);
-		for (std::list<Face*>::const_iterator kFaceIterator = faces.begin();
+		for (std::list<std::shared_ptr<Face>>::const_iterator kFaceIterator = faces.begin();
 			kFaceIterator != faces.end();
 			kFaceIterator++)
 		{
-			Face* pFace = *kFaceIterator;
-			rOcctGeometries.push_back(pFace->Surface());
+			const std::shared_ptr<Face>& kpFace = *kFaceIterator;
+			rOcctGeometries.push_back(kpFace->Surface());
 		}
 	}
 
@@ -462,13 +462,12 @@ namespace TopoLogicCore
 	{
 		ShapeFix_Shell occtShapeFixShell(rkOcctShell);
 		occtShapeFixShell.Perform();
-		m_pOcctShell = new TopoDS_Shell(occtShapeFixShell.Shell());
+		m_pOcctShell = std::make_shared<TopoDS_Shell>(occtShapeFixShell.Shell());
 		GlobalCluster::GetInstance().Add(this);
 	}
 
 	Shell::~Shell()
 	{
 		GlobalCluster::GetInstance().Remove(this);
-		delete m_pOcctShell;
 	}
 }

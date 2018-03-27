@@ -16,7 +16,7 @@ namespace TopoLogicCore
 {
 	Vertex::Vertex(const TopoDS_Vertex& rkOcctVertex)
 		: Topology(0)
-		, m_pOcctVertex(new TopoDS_Vertex(rkOcctVertex))
+		, m_pOcctVertex(std::make_shared<TopoDS_Vertex>(rkOcctVertex))
 	{
 		GlobalCluster::GetInstance().Add(this);
 	}
@@ -24,15 +24,14 @@ namespace TopoLogicCore
 	Vertex::~Vertex()
 	{
 		GlobalCluster::GetInstance().Remove(this);
-		delete m_pOcctVertex;
 	}
 
-	Vertex* Vertex::ByPoint(Handle(Geom_Point) pOcctPoint)
+	std::shared_ptr<Vertex> Vertex::ByPoint(Handle(Geom_Point) pOcctPoint)
 	{
-		return new Vertex(BRepBuilderAPI_MakeVertex(pOcctPoint->Pnt()));
+		return std::make_shared<Vertex>(BRepBuilderAPI_MakeVertex(pOcctPoint->Pnt()));
 	}
 
-	void Vertex::Edges(std::list<Edge*>& rEdges)
+	void Vertex::Edges(std::list<std::shared_ptr<Edge>>& rEdges)
 	{
 		UpwardNavigation(rEdges);
 	}
@@ -42,7 +41,7 @@ namespace TopoLogicCore
 		rOcctGeometries.push_back(Point());
 	}
 
-	TopoDS_Shape* Vertex::GetOcctShape() const
+	std::shared_ptr<TopoDS_Shape> Vertex::GetOcctShape() const
 	{
 		assert(m_pOcctVertex != nullptr && "Vertex::m_pOcctVertex is null.");
 		if (m_pOcctVertex == nullptr)

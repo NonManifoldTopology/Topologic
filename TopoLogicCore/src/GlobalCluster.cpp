@@ -13,17 +13,17 @@ namespace TopoLogicCore
 		return returnValue;
 	}
 
-	bool GlobalCluster::Remove(Topology * kpkTopology)
+	bool GlobalCluster::Remove(Topology* pTopology)
 	{
-		if (!kpkTopology->IsInGlobalCluster())
+		if (!pTopology->IsInGlobalCluster())
 			return false;
 
-		bool returnValue = GetCluster()->RemoveTopology(kpkTopology);
-		kpkTopology->SetInGlobalCluster(false);
+		bool returnValue = GetCluster()->RemoveTopology(pTopology);
+		pTopology->SetInGlobalCluster(false);
 		return returnValue;
 	}
 
-	Cluster* GlobalCluster::GetCluster() const
+	std::shared_ptr<Cluster> GlobalCluster::GetCluster() const
 	{
 		assert(m_pCluster != nullptr && "GlobalCluster::m_pCluster is null.");
 		if (m_pCluster == nullptr)
@@ -41,6 +41,6 @@ namespace TopoLogicCore
 
 	GlobalCluster::~GlobalCluster()
 	{
-		delete m_pCluster;
+
 	}
 }

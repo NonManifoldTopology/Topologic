@@ -33,31 +33,31 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <param name="rCells"></param>
-		TOPOLOGIC_API void Cells(std::list<Cell*>& rCells) const;
+		TOPOLOGIC_API void Cells(std::list<std::shared_ptr<Cell>>& rCells) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rEdges"></param>
-		TOPOLOGIC_API void Edges(std::list<Edge*>& rEdges) const;
+		TOPOLOGIC_API void Edges(std::list<std::shared_ptr<Edge>>& rEdges) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rWires"></param>
-		TOPOLOGIC_API void Wires(std::list<Wire*>& rWires) const;
+		TOPOLOGIC_API void Wires(std::list<std::shared_ptr<Wire>>& rWires) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rFaces"></param>
-		TOPOLOGIC_API void Faces(std::list<Face*>& rFaces) const;
+		TOPOLOGIC_API void Faces(std::list<std::shared_ptr<Face>>& rFaces) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rVertices"></param>
-		TOPOLOGIC_API void Vertices(std::list<Vertex*>& rVertices) const;
+		TOPOLOGIC_API void Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const;
 
 		/// <summary>
 		/// 
@@ -70,7 +70,7 @@ namespace TopoLogicCore
 		/// </summary>
 		/// <param name="rkFaces"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API Shell* ByFaces(const std::list<Face*>& rkFaces);
+		static TOPOLOGIC_API std::shared_ptr<Shell> ByFaces(const std::list<std::shared_ptr<Face>>& rkFaces);
 
 		/// <summary>
 		/// 
@@ -78,12 +78,12 @@ namespace TopoLogicCore
 		/// <param name="rkVertices"></param>
 		/// <param name="rkFaceIndices"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API Shell* ByVerticesFaceIndices(const std::vector<Vertex*>& rkVertices, const std::list<std::list<int>>& rkFaceIndices);
+		static TOPOLOGIC_API std::shared_ptr<Shell> ByVerticesFaceIndices(const std::vector<std::shared_ptr<Vertex>>& rkVertices, const std::list<std::list<int>>& rkFaceIndices);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		virtual TopoDS_Shape* GetOcctShape() const;
+		virtual std::shared_ptr<TopoDS_Shape> GetOcctShape() const;
 
 		/// <summary>
 		/// 
@@ -94,14 +94,14 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="rFace"></param>
+		/// <param name="kpFace"></param>
 		/// <param name="kIteration"></param>
 		/// <param name="kNumUPanels"></param>
 		/// <param name="kNumVPanels"></param>
 		/// <param name="kTolerance"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API static Shell* ByFacePlanarization(
-			Face& rFace,
+		TOPOLOGIC_API static std::shared_ptr<Shell> ByFacePlanarization(
+			const std::shared_ptr<Face>& kpFace,
 			const int kIteration,
 			const int kNumUPanels,
 			const int kNumVPanels,
@@ -113,6 +113,6 @@ namespace TopoLogicCore
 		/// <summary>
 		/// The underlying OCCT shell.
 		/// </summary>
-		TopoDS_Shell* m_pOcctShell;
+		std::shared_ptr<TopoDS_Shell> m_pOcctShell;
 	};
 }

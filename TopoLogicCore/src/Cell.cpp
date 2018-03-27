@@ -34,7 +34,7 @@
 
 namespace TopoLogicCore
 {
-	void Cell::AdjacentCells(std::list<Cell*>& rcells) const
+	void Cell::AdjacentCells(std::list<std::shared_ptr<Cell>>& rcells) const
 	{
 		// Iterate through the faces and find the incident cells which are not this cell.
 		TopTools_IndexedDataMapOfShapeListOfShape occtFaceSolidMap;
@@ -52,7 +52,7 @@ namespace TopoLogicCore
 			}
 		}
 
-		TopoDS_Shape* pOcctSolid = GetOcctShape();
+		std::shared_ptr<TopoDS_Shape> pOcctSolid = GetOcctShape();
 		for (TopTools_MapOfShape::const_iterator kOcctFaceIterator = occtFaces.cbegin();
 			kOcctFaceIterator != occtFaces.cend();
 			kOcctFaceIterator++)
@@ -67,38 +67,38 @@ namespace TopoLogicCore
 				const TopoDS_Shape& rkIncidentCell = *kOcctCellIterator;
 				if (!pOcctSolid->IsSame(rkIncidentCell))
 				{
-					rcells.push_back(new Cell(TopoDS::Solid(rkIncidentCell)));
+					rcells.push_back(std::make_shared<Cell>(TopoDS::Solid(rkIncidentCell)));
 				}
 			}
 		}
 	}
 
-	void Cell::CellComplexes(std::list<TopoLogicCore::CellComplex*>& rCellComplexes) const
+	void Cell::CellComplexes(std::list<std::shared_ptr<TopoLogicCore::CellComplex>>& rCellComplexes) const
 	{
 		UpwardNavigation(rCellComplexes);
 	}
 
-	void Cell::Shells(std::list<Shell*>& rShells) const
+	void Cell::Shells(std::list<std::shared_ptr<Shell>>& rShells) const
 	{
 		DownwardNavigation(rShells);
 	}
 
-	void Cell::Edges(std::list<Edge*>& rEdges) const
+	void Cell::Edges(std::list<std::shared_ptr<Edge>>& rEdges) const
 	{
 		DownwardNavigation(rEdges);
 	}
 
-	void Cell::Faces(std::list<Face*>& rFaces) const
+	void Cell::Faces(std::list<std::shared_ptr<Face>>& rFaces) const
 	{
 		DownwardNavigation(rFaces);
 	}
 
-	void Cell::Vertices(std::list<Vertex*>& rVertices) const
+	void Cell::Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const
 	{
 		DownwardNavigation(rVertices);
 	}
 
-	void Cell::Wires(std::list<Wire*>& rWires) const
+	void Cell::Wires(std::list<std::shared_ptr<Wire>>& rWires) const
 	{
 		DownwardNavigation(rWires);
 	}
@@ -110,43 +110,42 @@ namespace TopoLogicCore
 		return occtShapeProperties.Mass();
 	}
 
-	Vertex* Cell::CenterOfMass() const
+	std::shared_ptr<Vertex> Cell::CenterOfMass() const
 	{
 		GProp_GProps occtShapeProperties;
 		BRepGProp::VolumeProperties(*GetOcctShape(), occtShapeProperties);
 		return Vertex::ByPoint(new Geom_CartesianPoint(occtShapeProperties.CentreOfMass()));
 	}
 
-	Cell* Cell::ByFaces(const std::list<Face*>& rkFaces)
+	std::shared_ptr<Cell> Cell::ByFaces(const std::list<std::shared_ptr<Face>>& rkFaces)
 	{
-		Shell* pShell = Shell::ByFaces(rkFaces);
-		Cell* pCell = ByShell(pShell);
-		delete pShell;
-		for (std::list<Face*>::const_iterator kFaceIterator = rkFaces.begin();
+		std::shared_ptr<Shell> pShell = Shell::ByFaces(rkFaces);
+		std::shared_ptr<Cell> pCell = ByShell(pShell);
+		for (std::list<std::shared_ptr<Face>>::const_iterator kFaceIterator = rkFaces.begin();
 			kFaceIterator != rkFaces.end();
 			kFaceIterator++)
 		{
-			Face* pFace = *kFaceIterator;
-			pFace->AddIngredientTo(pCell);
+			const std::shared_ptr<Face>& kpFace = *kFaceIterator;
+			kpFace->AddIngredientTo(pCell);
 		}
 		return pCell;
 	}
 
-	Cell* Cell::ByShell(Shell const * const kpkShells)
+	std::shared_ptr<Cell> Cell::ByShell(const std::shared_ptr<Shell>& kpShells)
 	{
 		BRepBuilderAPI_MakeSolid occtMakeSolid;
 		try {
-			occtMakeSolid = BRepBuilderAPI_MakeSolid(TopoDS::Shell(*kpkShells->GetOcctShape()));
+			occtMakeSolid = BRepBuilderAPI_MakeSolid(TopoDS::Shell(*kpShells->GetOcctShape()));
 		}
 		catch (StdFail_NotDone&)
 		{
 			throw std::exception("The solid was not built.");
 		}
 
-		return new Cell(occtMakeSolid);
+		return std::make_shared<Cell>(occtMakeSolid);
 	}
 
-	Cell* Cell::ByCuboid(Handle(Geom_CartesianPoint) pOcctCentroid, const double kXDimension, const double kYDimension, const double kZDimension)
+	std::shared_ptr<Cell> Cell::ByCuboid(Handle(Geom_CartesianPoint) pOcctCentroid, const double kXDimension, const double kYDimension, const double kZDimension)
 	{
 		gp_Pnt occtLowCorner(
 			pOcctCentroid->X() - kXDimension / 2.0,
@@ -156,12 +155,12 @@ namespace TopoLogicCore
 		BRepPrimAPI_MakeBox occtMakeBox(occtLowCorner, kXDimension, kYDimension, kZDimension);
 		occtMakeBox.Build();
 
-		return new Cell(occtMakeBox.Solid());
+		return std::make_shared<Cell>(occtMakeBox.Solid());
 	}
 
-	Cell* Cell::ByVerticesFaceIndices(const std::vector<Vertex*>& rkVertices, const std::list<std::list<int>>& rkFaceIndices)
+	std::shared_ptr<Cell> Cell::ByVerticesFaceIndices(const std::vector<std::shared_ptr<Vertex>>& rkVertices, const std::list<std::list<int>>& rkFaceIndices)
 	{
-		std::list<Face*> faces;
+		std::list<std::shared_ptr<Face>> faces;
 		for (std::list<std::list<int>>::const_iterator kFaceIndexIterator = rkFaceIndices.begin();
 			kFaceIndexIterator != rkFaceIndices.end();
 			kFaceIndexIterator++)
@@ -193,17 +192,17 @@ namespace TopoLogicCore
 
 			TopoDS_Wire* pOcctWire = new TopoDS_Wire(occtMakeWire);
 			BRepBuilderAPI_MakeFace occtMakeFace(*pOcctWire);
-			faces.push_back(new Face(occtMakeFace));
+			faces.push_back(std::make_shared<Face>(occtMakeFace));
 		}
-		Cell* pCell = ByFaces(faces);
+		std::shared_ptr<Cell> pCell = ByFaces(faces);
 
 		// Only add the vertices; the faces are dealt with in ByFaces()
-		for (std::vector<Vertex*>::const_iterator kVertexIterator = rkVertices.begin();
+		for (std::vector<std::shared_ptr<Vertex>>::const_iterator kVertexIterator = rkVertices.begin();
 			kVertexIterator != rkVertices.end();
 			kVertexIterator++)
 		{
-			Vertex* pVertex = *kVertexIterator;
-			pVertex->AddIngredientTo(pCell);
+			const std::shared_ptr<Vertex>& kpVertex = *kVertexIterator;
+			kpVertex->AddIngredientTo(pCell);
 		}
 		return pCell;
 	}
@@ -317,7 +316,7 @@ namespace TopoLogicCore
 		}
 	}
 
-	TopoDS_Shape* Cell::GetOcctShape() const
+	std::shared_ptr<TopoDS_Shape> Cell::GetOcctShape() const
 	{
 		assert(m_pOcctSolid != nullptr && "Cell::m_pOcctSolid is null.");
 		if (m_pOcctSolid == nullptr)
@@ -331,14 +330,14 @@ namespace TopoLogicCore
 	void Cell::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
 	{
 		// Returns a list of faces
-		std::list<Face*> faces;
+		std::list<std::shared_ptr<Face>> faces;
 		Faces(faces);
-		for (std::list<Face*>::const_iterator kFaceIterator = faces.begin();
+		for (std::list<std::shared_ptr<Face>>::const_iterator kFaceIterator = faces.begin();
 			kFaceIterator != faces.end();
 			kFaceIterator++)
 		{
-			Face* pFace = *kFaceIterator;
-			rOcctGeometries.push_back(pFace->Surface());
+			const std::shared_ptr<Face>& kpFace = *kFaceIterator;
+			rOcctGeometries.push_back(kpFace->Surface());
 		}
 	}
 
@@ -348,13 +347,12 @@ namespace TopoLogicCore
 	{
 		ShapeFix_Solid occtShapeFixSolid(rkOcctSolid);
 		occtShapeFixSolid.Perform(Handle(Message_ProgressIndicator)());
-		m_pOcctSolid = new TopoDS_Solid(TopoDS::Solid(occtShapeFixSolid.Solid()));
+		m_pOcctSolid = std::make_shared<TopoDS_Solid>(TopoDS::Solid(occtShapeFixSolid.Solid()));
 		GlobalCluster::GetInstance().Add(this);
 	}
 
 	Cell::~Cell()
 	{
 		GlobalCluster::GetInstance().Remove(this);
-		delete m_pOcctSolid;
 	}
 }

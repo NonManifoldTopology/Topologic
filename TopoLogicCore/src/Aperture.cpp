@@ -10,14 +10,14 @@
 
 namespace TopoLogicCore
 {
-	Aperture* Aperture::ByTopologyContext(TopoLogicCore::Topology* const kpTopology, Context* const kpContext)
+	std::shared_ptr<Aperture> Aperture::ByTopologyContext(const std::shared_ptr<TopoLogicCore::Topology>& kpTopology, const std::shared_ptr<Context>& kpContext)
 	{
-		return new Aperture(kpTopology, kpContext, false);
+		return std::make_shared<Aperture>(kpTopology, kpContext, false);
 	}
 
-	Aperture* Aperture::ByTopologyContextStatus(TopoLogicCore::Topology * const kpTopology, Context * const kpContext, const bool kOpenStatus)
+	std::shared_ptr<Aperture> Aperture::ByTopologyContextStatus(const std::shared_ptr<TopoLogicCore::Topology>& kpTopology, const std::shared_ptr<Context>& kpContext, const bool kOpenStatus)
 	{
-		return new Aperture(kpTopology, kpContext, kOpenStatus);
+		return std::make_shared<Aperture>(kpTopology, kpContext, kOpenStatus);
 	}
 
 	bool Aperture::IsOpen() const
@@ -25,7 +25,7 @@ namespace TopoLogicCore
 		return !m_occtAperturePaths.empty();
 	}
 
-	bool Aperture::IsOpen(const std::array<TopoLogicCore::Topology*, 2>& rkTopologies) const
+	bool Aperture::IsOpen(const std::array<std::shared_ptr<TopoLogicCore::Topology>, 2>& rkTopologies) const
 	{
 		AperturePath aperturePath(
 			rkTopologies[0] == nullptr? TopoDS_Shape() : *rkTopologies[0]->GetOcctShape(), 
@@ -156,7 +156,7 @@ namespace TopoLogicCore
 		return TopoDS_Shape(); // empty
 	}
 
-	void Aperture::Open(const std::array<TopoLogicCore::Topology*, 2>& rkTopologies)
+	void Aperture::Open(const std::array<std::shared_ptr<TopoLogicCore::Topology>, 2>& rkTopologies)
 	{
 		AperturePath aperturePath(
 			rkTopologies[0] == nullptr ? TopoDS_Shape() : FindSubentityAdjacentAndHigherDimensionalTo(*rkTopologies[0]->GetOcctShape(), *m_pMainContext->Topology()->GetOcctShape()),
@@ -174,7 +174,7 @@ namespace TopoLogicCore
 		m_occtAperturePaths.clear();
 	}
 
-	void Aperture::Close(const std::array<TopoLogicCore::Topology*, 2>& rkTopologies)
+	void Aperture::Close(const std::array<std::shared_ptr<TopoLogicCore::Topology>, 2>& rkTopologies)
 	{
 		AperturePath aperturePath(
 			rkTopologies[0] == nullptr ? TopoDS_Shape() : *rkTopologies[0]->GetOcctShape(),
@@ -192,13 +192,13 @@ namespace TopoLogicCore
 		}
 	}
 
-	void Aperture::Paths(std::list<std::list<TopoLogicCore::Topology*>>& rPaths) const
+	void Aperture::Paths(std::list<std::list<std::shared_ptr<TopoLogicCore::Topology>>>& rPaths) const
 	{
 		for (std::list<AperturePath>::const_iterator kAperturePathIterator = m_occtAperturePaths.begin();
 			kAperturePathIterator != m_occtAperturePaths.end();
 			kAperturePathIterator++)
 		{
-			std::list<TopoLogicCore::Topology*> path;
+			std::list<std::shared_ptr<TopoLogicCore::Topology>> path;
 			path.push_back(Topology::ByOcctShape(kAperturePathIterator->GetTopology1()));
 			path.push_back(Topology::ByOcctShape(kAperturePathIterator->GetTopology2()));
 			rPaths.push_back(path);
@@ -210,7 +210,7 @@ namespace TopoLogicCore
 		Topology()->Geometry(rOcctGeometries);
 	}
 
-	TopoDS_Shape* Aperture::GetOcctShape() const
+	std::shared_ptr<TopoDS_Shape> Aperture::GetOcctShape() const
 	{
 		return Topology()->GetOcctShape();
 	}
@@ -220,7 +220,7 @@ namespace TopoLogicCore
 		return TOPOLOGY_APERTURE;
 	}
 
-	Topology* Aperture::Topology() const
+	std::shared_ptr<Topology> Aperture::Topology() const
 	{
 		assert(m_pTopology != nullptr && "The underlying topology is null.");
 		if (m_pTopology == nullptr)
@@ -230,7 +230,7 @@ namespace TopoLogicCore
 		return m_pTopology;
 	}
 
-	Aperture::Aperture(TopoLogicCore::Topology* const kpTopology, Context* const kpContext, const bool kOpenStatus)
+	Aperture::Aperture(const std::shared_ptr<TopoLogicCore::Topology>& kpTopology, const std::shared_ptr<Context>& kpContext, const bool kOpenStatus)
 		: TopoLogicCore::Topology(kpTopology->Dimensionality())
 		, m_pMainContext(kpContext)
 		, m_pTopology(kpTopology)
@@ -245,7 +245,7 @@ namespace TopoLogicCore
 		}
 
 		AddContext(kpContext);
-		m_pMainContext->Topology()->AddContent(this);
+		m_pMainContext->Topology()->AddContent(shared_from_this());
 
 		if (kOpenStatus)
 		{

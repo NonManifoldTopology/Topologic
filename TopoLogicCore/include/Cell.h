@@ -31,43 +31,43 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <param name="rCells"></param>
-		TOPOLOGIC_API void AdjacentCells(std::list<Cell*>& rCells) const;
+		TOPOLOGIC_API void AdjacentCells(std::list<std::shared_ptr<Cell>>& rCells) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rCellComplexes"></param>
-		TOPOLOGIC_API void CellComplexes(std::list<CellComplex*>& rCellComplexes) const;
+		TOPOLOGIC_API void CellComplexes(std::list<std::shared_ptr<CellComplex>>& rCellComplexes) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rShells"></param>
-		TOPOLOGIC_API void Shells(std::list<Shell*>& rShells) const;
+		TOPOLOGIC_API void Shells(std::list<std::shared_ptr<Shell>>& rShells) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rEdges"></param>
-		TOPOLOGIC_API void Edges(std::list<Edge*>& rEdges) const;
+		TOPOLOGIC_API void Edges(std::list<std::shared_ptr<Edge>>& rEdges) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rFaces"></param>
-		TOPOLOGIC_API void Faces(std::list<Face*>& rFaces) const;
+		TOPOLOGIC_API void Faces(std::list<std::shared_ptr<Face>>& rFaces) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rVertices"></param>
-		TOPOLOGIC_API void Vertices(std::list<Vertex*>& rVertices) const;
+		TOPOLOGIC_API void Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rWires"></param>
-		TOPOLOGIC_API void Wires(std::list<Wire*>& rWires) const;
+		TOPOLOGIC_API void Wires(std::list<std::shared_ptr<Wire>>& rWires) const;
 
 		/// <summary>
 		/// 
@@ -77,21 +77,21 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		TOPOLOGIC_API Vertex* CenterOfMass() const;
+		TOPOLOGIC_API std::shared_ptr<Vertex> CenterOfMass() const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkFaces"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API Cell* ByFaces(const std::list<Face*>& rkFaces);
+		static TOPOLOGIC_API std::shared_ptr<Cell> ByFaces(const std::list<std::shared_ptr<Face>>& rkFaces);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkShells"></param>
+		/// <param name="rkSHell"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API Cell* ByShell(Shell const * const kpkShells);
+		static TOPOLOGIC_API std::shared_ptr<Cell> ByShell(const std::shared_ptr<Shell>& rkShell);
 
 		/// <summary>
 		/// 
@@ -101,7 +101,7 @@ namespace TopoLogicCore
 		/// <param name="kYDimension"></param>
 		/// <param name="kZDimension"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API Cell* ByCuboid(Handle(Geom_CartesianPoint) pOcctCentroid, const double kXDimension, const double kYDimension, const double kZDimension);
+		static TOPOLOGIC_API std::shared_ptr<Cell> ByCuboid(Handle(Geom_CartesianPoint) pOcctCentroid, const double kXDimension, const double kYDimension, const double kZDimension);
 
 		/// <summary>
 		/// 
@@ -109,7 +109,7 @@ namespace TopoLogicCore
 		/// <param name="rkVertices"></param>
 		/// <param name="rkFaceIndices"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API Cell* ByVerticesFaceIndices(const std::vector<Vertex*>& rkVertices, const std::list<std::list<int>>& rkFaceIndices);
+		static TOPOLOGIC_API std::shared_ptr<Cell> ByVerticesFaceIndices(const std::vector<std::shared_ptr<Vertex>>& rkVertices, const std::list<std::list<int>>& rkFaceIndices);
 
 		/// <summary>
 		/// 
@@ -148,7 +148,7 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		virtual TopoDS_Shape* GetOcctShape() const;
+		virtual std::shared_ptr<TopoDS_Shape> GetOcctShape() const;
 		
 		/// <summary>
 		/// 
@@ -162,6 +162,6 @@ namespace TopoLogicCore
 		/// <summary>
 		/// The underlying OCCT cell.
 		/// </summary>
-		TopoDS_Solid* m_pOcctSolid;
+		std::shared_ptr<TopoDS_Solid> m_pOcctSolid;
 	};
 }

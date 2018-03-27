@@ -18,19 +18,19 @@
 
 namespace TopoLogicCore
 {
-	void Edge::Vertices(std::list<Vertex*>& rVertices) const
+	void Edge::Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const
 	{
 		ShapeAnalysis_Edge shapeAnalysisEdge;
-		rVertices.push_back(new Vertex(shapeAnalysisEdge.FirstVertex(TopoDS::Edge(*GetOcctShape()))));
-		rVertices.push_back(new Vertex(shapeAnalysisEdge.LastVertex(TopoDS::Edge(*GetOcctShape()))));
+		rVertices.push_back(std::make_shared<Vertex>(shapeAnalysisEdge.FirstVertex(TopoDS::Edge(*GetOcctShape()))));
+		rVertices.push_back(std::make_shared<Vertex>(shapeAnalysisEdge.LastVertex(TopoDS::Edge(*GetOcctShape()))));
 	}
 
-	void Edge::Wires(std::list<Wire*>& rWires) const
+	void Edge::Wires(std::list<std::shared_ptr<Wire>>& rWires) const
 	{
 		UpwardNavigation(rWires);
 	}
 
-	Edge* Edge::ByCurve(
+	std::shared_ptr<Edge> Edge::ByCurve(
 		const TColgp_Array1OfPnt &rkOcctPoles,
 		const TColStd_Array1OfReal &rkOcctWeights,
 		const TColStd_Array1OfReal &rkOcctKnots,
@@ -58,7 +58,7 @@ namespace TopoLogicCore
 		return ByCurve(pOcctBSplineCurve);
 	}
 
-	Edge* Edge::ByCurve(Handle(Geom_Curve) pOcctCurve, const double rkParameter1, const double rkParameter2)
+	std::shared_ptr<Edge> Edge::ByCurve(Handle(Geom_Curve) pOcctCurve, const double rkParameter1, const double rkParameter2)
 	{
 		const double kOcctFirstParameter = pOcctCurve->FirstParameter();
 		const double kOcctLastParameter = pOcctCurve->LastParameter();
@@ -68,10 +68,10 @@ namespace TopoLogicCore
 		const double kOcctParameter1 = kOcctFirstParameter + rkParameter1 * kOcctDeltaParameter;
 		const double kOcctParameter2 = kOcctFirstParameter + rkParameter2 * kOcctDeltaParameter;
 
-		return new Edge(BRepBuilderAPI_MakeEdge(pOcctCurve, kOcctParameter1, kOcctParameter2));
+		return std::make_shared<Edge>(BRepBuilderAPI_MakeEdge(pOcctCurve, kOcctParameter1, kOcctParameter2));
 	}
 
-	Edge* Edge::ByVertices(const std::list<Vertex*>& rkVertices)
+	std::shared_ptr<Edge> Edge::ByVertices(const std::list<std::shared_ptr<Vertex>>& rkVertices)
 	{
 		// Cases:
 		// - 0 or 1 vertex --> invalid
@@ -79,28 +79,28 @@ namespace TopoLogicCore
 		// - 3 --> BSpline
 
 		int numberOfVertices = (int) rkVertices.size();
-		Edge* pEdge = nullptr;
+		std::shared_ptr<Edge> pEdge = nullptr;
 		if (numberOfVertices < 2)
 		{
 			throw std::exception("Too few vertices to create an edge.");
 		}
 		else if (numberOfVertices == 2) // a line
 		{
-			Vertex* pVertex1 = *(rkVertices.begin());
-			Vertex* pVertex2 = *(++rkVertices.begin());
-			BRepBuilderAPI_MakeEdge occtMakeEdge(TopoDS::Vertex(*pVertex1->GetOcctShape()),
-				TopoDS::Vertex(*pVertex2->GetOcctShape()));
-			pEdge = new Edge(occtMakeEdge.Edge());
+			const std::shared_ptr<Vertex>& rkVertex1 = *(rkVertices.begin());
+			const std::shared_ptr<Vertex>& rkVertex2 = *(++rkVertices.begin());
+			BRepBuilderAPI_MakeEdge occtMakeEdge(TopoDS::Vertex(*rkVertex1->GetOcctShape()),
+				TopoDS::Vertex(*rkVertex2->GetOcctShape()));
+			pEdge = std::make_shared<Edge>(occtMakeEdge.Edge());
 		}else
 		{
 			// else more than 2 vertices
 			Handle(TColgp_HArray1OfPnt) pOcctPoints = new TColgp_HArray1OfPnt(1, numberOfVertices);
 			int i = 1;
-			for(std::list<Vertex*>::const_iterator kVertexIterator = rkVertices.begin();
+			for(std::list<std::shared_ptr<Vertex>>::const_iterator kVertexIterator = rkVertices.begin();
 				kVertexIterator != rkVertices.end();
 				kVertexIterator++)
 			{
-				Vertex* pVertex = *kVertexIterator;
+				const std::shared_ptr<Vertex>& pVertex = *kVertexIterator;
 				pOcctPoints->SetValue(i, pVertex->Point()->Pnt());
 				++i;
 			}
@@ -108,27 +108,27 @@ namespace TopoLogicCore
 			occtInterpolate.Perform();
 			Handle(Geom_Curve) pOcctCurveOnTargetSurface = occtInterpolate.Curve();
 
-			pEdge = new Edge(BRepBuilderAPI_MakeEdge(pOcctCurveOnTargetSurface));
+			pEdge = std::make_shared<Edge>(BRepBuilderAPI_MakeEdge(pOcctCurveOnTargetSurface));
 		}
 
 		// Register the ingredients
-		for (std::list<Vertex*>::const_iterator kVertexIterator = rkVertices.begin();
+		for (std::list<std::shared_ptr<Vertex>>::const_iterator kVertexIterator = rkVertices.begin();
 			kVertexIterator != rkVertices.end();
 			kVertexIterator++)
 		{
-			Vertex* pVertex = *kVertexIterator;
-			pVertex->AddIngredientTo(pEdge);
+			const std::shared_ptr<Vertex>& kpVertex = *kVertexIterator;
+			kpVertex->AddIngredientTo(pEdge);
 		}
 
 		return pEdge;
 	}
 
-	Vertex* Edge::SharedVertex(Edge const * const kpkAnotherEdge) const
+	std::shared_ptr<Vertex> Edge::SharedVertex(Edge const * const kpkAnotherEdge) const
 	{
 		TopoDS_Vertex occtSharedVertex;
 		bool result = TopExp::CommonVertex(*m_pOcctEdge, TopoDS::Edge(*kpkAnotherEdge->GetOcctShape()), occtSharedVertex);
 
-		return new Vertex(occtSharedVertex);
+		return std::make_shared<Vertex>(occtSharedVertex);
 	}
 
 	void Edge::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
@@ -136,7 +136,7 @@ namespace TopoLogicCore
 		rOcctGeometries.push_back(Curve());
 	}
 
-	TopoDS_Shape* Edge::GetOcctShape() const
+	std::shared_ptr<TopoDS_Shape> Edge::GetOcctShape() const
 	{
 		assert(m_pOcctEdge != nullptr && "Edge::m_pOcctEdge is null.");
 		if (m_pOcctEdge == nullptr)
@@ -156,7 +156,7 @@ namespace TopoLogicCore
 
 	Edge::Edge(const TopoDS_Edge& rkOcctEdge)
 		: Topology(1)
-		, m_pOcctEdge(new TopoDS_Edge(rkOcctEdge))
+		, m_pOcctEdge(std::make_shared<TopoDS_Edge>(rkOcctEdge))
 	{
 		GlobalCluster::GetInstance().Add(this);
 	}
@@ -164,6 +164,5 @@ namespace TopoLogicCore
 	Edge::~Edge()
 	{
 		GlobalCluster::GetInstance().Remove(this);
-		delete m_pOcctEdge;
 	}
 }

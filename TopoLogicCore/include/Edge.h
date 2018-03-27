@@ -32,13 +32,13 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <param name="rVertices"></param>
-		TOPOLOGIC_API void Vertices(std::list<Vertex*>& rVertices) const;
+		TOPOLOGIC_API void Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rWires"></param>
-		TOPOLOGIC_API void Wires(std::list<Wire*>& rWires) const;
+		TOPOLOGIC_API void Wires(std::list<std::shared_ptr<Wire>>& rWires) const;
 
 		/// <summary>
 		/// 
@@ -51,7 +51,7 @@ namespace TopoLogicCore
 		/// <param name="kIsPeriodic"></param>
 		/// <param name="kIsRational"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API Edge* ByCurve(
+		static TOPOLOGIC_API std::shared_ptr<Edge> ByCurve(
 			const TColgp_Array1OfPnt& rkOcctPoles, 
 			const TColStd_Array1OfReal& rkOcctWeights, 
 			const TColStd_Array1OfReal& rkOcctKnots, 
@@ -67,21 +67,21 @@ namespace TopoLogicCore
 		/// <param name="rkParameter1">The first parameter, ranging between 0 and 1.</param>
 		/// <param name="rkParameter2">The second parameter, ranging between 0 and 1. Must be larger than rkParameter1, otherwise they will be swapped.</param>
 		/// <returns></returns>
-		static TOPOLOGIC_API Edge* ByCurve(Handle(Geom_Curve) pOcctCurve, const double rkParameter1 = 0.0, const double rkParameter2 = 1.0);
+		static TOPOLOGIC_API std::shared_ptr<Edge> ByCurve(Handle(Geom_Curve) pOcctCurve, const double rkParameter1 = 0.0, const double rkParameter2 = 1.0);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkVertices"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API Edge* ByVertices(const std::list<Vertex*>& rkVertices);
+		static TOPOLOGIC_API std::shared_ptr<Edge> ByVertices(const std::list<std::shared_ptr<Vertex>>& rkVertices);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpkAnotherEdge"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Vertex* SharedVertex(Edge const * const kpkAnotherEdge) const;
+		TOPOLOGIC_API std::shared_ptr<Vertex> SharedVertex(Edge const * const kpkAnotherEdge) const;
 
 		/// <summary>
 		/// 
@@ -92,7 +92,7 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		virtual TopoDS_Shape* GetOcctShape() const;
+		virtual std::shared_ptr<TopoDS_Shape> GetOcctShape() const;
 
 		/// <summary>
 		/// 
@@ -106,6 +106,6 @@ namespace TopoLogicCore
 		/// <summary>
 		/// The underlying OCCT edge.
 		/// </summary>
-		TopoDS_Edge* m_pOcctEdge;
+		std::shared_ptr<TopoDS_Edge> m_pOcctEdge;
 	};
 }

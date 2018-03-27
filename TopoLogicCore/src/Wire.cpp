@@ -17,12 +17,12 @@
 
 namespace TopoLogicCore
 {
-	void Wire::Edges(std::list<Edge*>& rEdges) const
+	void Wire::Edges(std::list<std::shared_ptr<Edge>>& rEdges) const
 	{
 		DownwardNavigation(rEdges);
 	}
 
-	void Wire::Faces(std::list<Face*>& rFaces) const
+	void Wire::Faces(std::list<std::shared_ptr<Face>>& rFaces) const
 	{
 		UpwardNavigation(rFaces);
 	}
@@ -34,15 +34,15 @@ namespace TopoLogicCore
 		return shapeAnalysisWire.CheckClosed();
 	}
 
-	void Wire::Vertices(std::list<Vertex*>& rVertices) const
+	void Wire::Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const
 	{
 		DownwardNavigation(rVertices);
 	}
 
-	Wire* Wire::ByEdges(const std::list<Edge*>& rkEdges)
+	std::shared_ptr<Wire> Wire::ByEdges(const std::list<std::shared_ptr<Edge>>& rkEdges)
 	{
 		TopTools_ListOfShape occtEdges;
-		for(std::list<Edge*>::const_iterator kEdgeIterator = rkEdges.begin();
+		for(std::list<std::shared_ptr<Edge>>::const_iterator kEdgeIterator = rkEdges.begin();
 			kEdgeIterator != rkEdges.end();
 			kEdgeIterator++)
 		{
@@ -53,13 +53,13 @@ namespace TopoLogicCore
 		occtMakeWire.Add(occtEdges);
 
 		try {
-			Wire* pWire = new Wire(occtMakeWire);
-			for (std::list<Edge*>::const_iterator kEdgeIterator = rkEdges.begin();
+			std::shared_ptr<Wire> pWire = std::make_shared<Wire>(occtMakeWire);
+			for (std::list<std::shared_ptr<Edge>>::const_iterator kEdgeIterator = rkEdges.begin();
 				kEdgeIterator != rkEdges.end();
 				kEdgeIterator++)
 			{
-				Edge* pEdge = *kEdgeIterator;
-				pEdge->AddIngredientTo(pWire);
+				const std::shared_ptr<Edge>& pkEdge = *kEdgeIterator;
+				pkEdge->AddIngredientTo(pWire);
 			}
 
 			return pWire;
@@ -73,10 +73,10 @@ namespace TopoLogicCore
 	void Wire::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
 	{
 		// Returns a list of curves
-		std::list<Edge*> edges;
+		std::list<std::shared_ptr<Edge>> edges;
 		Edges(edges);
 
-		for (std::list<Edge*>::const_iterator kEdgeIterator = edges.begin();
+		for (std::list<std::shared_ptr<Edge>>::const_iterator kEdgeIterator = edges.begin();
 			kEdgeIterator != edges.end();
 			kEdgeIterator++)
 		{
@@ -84,7 +84,7 @@ namespace TopoLogicCore
 		}
 	}
 
-	TopoDS_Shape* Wire::GetOcctShape() const
+	std::shared_ptr<TopoDS_Shape> Wire::GetOcctShape() const
 	{
 		assert(m_pOcctWire != nullptr && "Wire::m_pOcctWire is null.");
 		if (m_pOcctWire == nullptr)
@@ -120,13 +120,12 @@ namespace TopoLogicCore
 		: Topology(1)
 		, m_pOcctWire(nullptr)
 	{
-		m_pOcctWire = new TopoDS_Wire(rkOcctWire);
+		m_pOcctWire = std::make_shared<TopoDS_Wire>(rkOcctWire);
 		GlobalCluster::GetInstance().Add(this);
 	}
 
 	Wire::~Wire()
 	{
 		GlobalCluster::GetInstance().Remove(this);
-		delete m_pOcctWire;
 	}
 }

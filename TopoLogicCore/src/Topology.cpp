@@ -86,7 +86,7 @@ namespace TopoLogicCore
 
 	}
 
-	Topology* Topology::ByOcctShape(const TopoDS_Shape& rkOcctShape)
+	std::shared_ptr<Topology> Topology::ByOcctShape(const TopoDS_Shape& rkOcctShape)
 	{
 		if (rkOcctShape.TShape().IsNull())
 		{
@@ -95,14 +95,14 @@ namespace TopoLogicCore
 		TopAbs_ShapeEnum occtShapeType = rkOcctShape.ShapeType();
 		switch (occtShapeType)
 		{
-		case TopAbs_COMPOUND: return new Cluster(TopoDS::Compound(rkOcctShape));
-		case TopAbs_COMPSOLID: return new CellComplex(TopoDS::CompSolid(rkOcctShape));
-		case TopAbs_SOLID: return new Cell(TopoDS::Solid(rkOcctShape));
-		case TopAbs_SHELL: return new Shell(TopoDS::Shell(rkOcctShape));
-		case TopAbs_FACE: return new Face(TopoDS::Face(rkOcctShape));
-		case TopAbs_WIRE: return new Wire(TopoDS::Wire(rkOcctShape));
-		case TopAbs_EDGE: return new Edge(TopoDS::Edge(rkOcctShape));
-		case TopAbs_VERTEX: return new Vertex(TopoDS::Vertex(rkOcctShape));
+		case TopAbs_COMPOUND: return std::make_shared<Cluster>(TopoDS::Compound(rkOcctShape));
+		case TopAbs_COMPSOLID: return std::make_shared<CellComplex>(TopoDS::CompSolid(rkOcctShape));
+		case TopAbs_SOLID: return std::make_shared<Cell>(TopoDS::Solid(rkOcctShape));
+		case TopAbs_SHELL: return std::make_shared<Shell>(TopoDS::Shell(rkOcctShape));
+		case TopAbs_FACE: return std::make_shared<Face>(TopoDS::Face(rkOcctShape));
+		case TopAbs_WIRE: return std::make_shared<Wire>(TopoDS::Wire(rkOcctShape));
+		case TopAbs_EDGE: return std::make_shared<Edge>(TopoDS::Edge(rkOcctShape));
+		case TopAbs_VERTEX: return std::make_shared<Vertex>(TopoDS::Vertex(rkOcctShape));
 		default:
 			throw std::exception("Topology::ByOcctShape: unknown topology.");
 		}
@@ -142,21 +142,24 @@ namespace TopoLogicCore
 	Topology::~Topology()
 	{
 		// Clear ingredients information
-		for (std::list<Topology*>::const_iterator kTopologyIterator = m_ingredientTo.begin();
+		/*for (std::list<Topology*>::const_iterator kTopologyIterator = m_ingredientTo.begin();
 			kTopologyIterator != m_ingredientTo.end();
 			kTopologyIterator++)
 		{
 			Topology* pTopology = *kTopologyIterator;
 			pTopology->m_ingredients.remove(this);
-		}
+		}*/
 		m_ingredientTo.clear();
+		m_ingredients.clear();
+		m_contents.clear();
+		m_contexts.clear();
 
-		for (AttributeMapIterator attributeMapIterator = m_attributeMap.begin();
+		/*for (AttributeMapIterator attributeMapIterator = m_attributeMap.begin();
 			attributeMapIterator != m_attributeMap.end();
 			attributeMapIterator++)
 		{
 			delete attributeMapIterator->second;
-		}
+		}*/
 		m_attributeMap.clear();
 	}
 
@@ -180,33 +183,33 @@ namespace TopoLogicCore
 		return nullptr;
 	}
 
-	Topology* Topology::AddContent(Topology * const kpTopology)
+	Topology* Topology::AddContent(const std::shared_ptr<Topology>& rkTopology)
 	{
-		if(std::find(m_contents.begin(), m_contents.end(), kpTopology) == m_contents.end())
+		if(std::find(m_contents.begin(), m_contents.end(), rkTopology) == m_contents.end())
 		{
-			m_contents.push_back(kpTopology);
+			m_contents.push_back(rkTopology);
 		}
 		return this;
 	}
 
-	Topology* Topology::RemoveContent(Topology * const kpTopology)
+	Topology* Topology::RemoveContent(const std::shared_ptr<Topology>& rkTopology)
 	{
-		m_contents.remove(kpTopology);
+		m_contents.remove(rkTopology);
 		return this;
 	}
 
-	Topology* Topology::AddContext(Context * const kpContext)
+	Topology* Topology::AddContext(const std::shared_ptr<Context>& rkContext)
 	{
-		if (std::find(m_contexts.begin(), m_contexts.end(), kpContext) == m_contexts.end())
+		if (std::find(m_contexts.begin(), m_contexts.end(), rkContext) == m_contexts.end())
 		{
-			m_contexts.push_back(kpContext);
+			m_contexts.push_back(rkContext);
 		}
 		return this;
 	}
 
-	Topology* Topology::RemoveContext(Context * const kpContext)
+	Topology* Topology::RemoveContext(const std::shared_ptr<Context>& rkContext)
 	{
-		m_contexts.remove(kpContext);
+		m_contexts.remove(rkContext);
 		return this;
 	}
 
@@ -223,7 +226,7 @@ namespace TopoLogicCore
 		return BRepTools::Write(*GetOcctShape(), rkPath.c_str());;
 	}
 
-	Topology* Topology::LoadFromBrep(const std::string & rkPath)
+	std::shared_ptr<Topology> Topology::LoadFromBrep(const std::string & rkPath)
 	{
 		TopoDS_Shape occtShape;
 		BRep_Builder occtBRepBuilder;
@@ -341,11 +344,11 @@ namespace TopoLogicCore
 	}
 
 	void Topology::BooleanImages(
-		Topology const * const kpkOtherTopology,
-		std::list<Topology*>& kArgumentImagesInArguments, 
-		std::list<Topology*>& kArgumentImagesInTools, 
-		std::list<Topology*>& kToolsImagesInArguments, 
-		std::list<Topology*>& kToolsImagesInTools)
+		Topology const * const kpOtherTopology,
+		std::list<std::shared_ptr<Topology>>& kArgumentImagesInArguments,
+		std::list<std::shared_ptr<Topology>>& kArgumentImagesInTools,
+		std::list<std::shared_ptr<Topology>>& kToolsImagesInArguments,
+		std::list<std::shared_ptr<Topology>>& kToolsImagesInTools)
 	{
 		BOPCol_ListOfShape occtArgumentImagesInArguments;
 		BOPCol_ListOfShape occtArgumentImagesInTools;
@@ -360,7 +363,7 @@ namespace TopoLogicCore
 ;
 		BOPAlgo_CellsBuilder occtCellsBuilder;
 		BooleanImages(
-			kpkOtherTopology,
+			kpOtherTopology,
 			occtCellsBuilder,
 			occtExclusivelyArgumentImages,
 			occtExclusivelyToolImages,
@@ -400,7 +403,7 @@ namespace TopoLogicCore
 	}
 
 	void Topology::BooleanImages(
-		Topology const * const kpkOtherTopology,
+		Topology const * const kpOtherTopology,
 		BOPAlgo_CellsBuilder& rOcctCellsBuilder,
 		BOPCol_ListOfShape& rOcctExclusivelyArgumentImages,
 		BOPCol_ListOfShape& rOcctExclusivelyToolImages,
@@ -418,9 +421,9 @@ namespace TopoLogicCore
 		if (GetType() == TOPOLOGY_CELLCOMPLEX)
 		{
 			CellComplex* pCellComplex = TopologicalQuery::Downcast<CellComplex>(this);
-			std::list<Cell*> cells;
+			std::list<std::shared_ptr<Cell>> cells;
 			pCellComplex->Cells(cells);
-			for (std::list<Cell*>::const_iterator kCellIterator = cells.begin();
+			for (std::list<std::shared_ptr<Cell>>::const_iterator kCellIterator = cells.begin();
 				kCellIterator != cells.end();
 				kCellIterator++)
 			{
@@ -443,12 +446,12 @@ namespace TopoLogicCore
 		}
 
 		BOPCol_ListOfShape occtCellsBuildersOperandsB;
-		if (kpkOtherTopology->GetType() == TOPOLOGY_CELLCOMPLEX)
+		if (kpOtherTopology->GetType() == TOPOLOGY_CELLCOMPLEX)
 		{
-			CellComplex const * const kpkCellComplex = TopologicalQuery::Downcast<CellComplex const>(kpkOtherTopology);
-			std::list<Cell*> cells;
+			CellComplex const * const kpkCellComplex = TopologicalQuery::Downcast<CellComplex const>(kpOtherTopology);
+			std::list<std::shared_ptr<Cell>> cells;
 			kpkCellComplex->Cells(cells);
-			for (std::list<Cell*>::const_iterator kCellIterator = cells.begin();
+			for (std::list<std::shared_ptr<Cell>>::const_iterator kCellIterator = cells.begin();
 				kCellIterator != cells.end();
 				kCellIterator++)
 			{
@@ -463,7 +466,7 @@ namespace TopoLogicCore
 		else
 		{
 			Handle(ShapeFix_Shape) sfs = new ShapeFix_Shape();
-			sfs->Init(*kpkOtherTopology->GetOcctShape());
+			sfs->Init(*kpOtherTopology->GetOcctShape());
 			sfs->SetPrecision(Precision::Confusion());
 			sfs->Perform();
 			occtCellsBuildersOperandsB.Append(sfs->Shape());
@@ -487,7 +490,7 @@ namespace TopoLogicCore
 		int size = rkImages.Size();
 
 		const TopoDS_Shape& rkParts = rOcctCellsBuilder.GetAllParts();
-		Topology* pTopologyParts = Topology::ByOcctShape(rkParts);
+		std::shared_ptr<Topology> pTopologyParts = Topology::ByOcctShape(rkParts);
 		std::string strParts = pTopologyParts->Analyze();
 
 		// 3. Classify the images: exclusively from argument, exclusively from tools, or shared.
@@ -702,19 +705,19 @@ namespace TopoLogicCore
 	}
 
 	void Topology::BooleanParts(
-		Topology const * const kpkOtherTopology,
-		std::list<Topology*>& rSpaceBetween_A_A_and_B_A,
-		std::list<Topology*>& rSpaceBetween_B_A_and_A_B,
-		std::list<Topology*>& rSpaceBetween_A_B_and_B_B)
+		Topology const * const kpOtherTopology,
+		std::list<std::shared_ptr<Topology>>& rSpaceBetween_A_A_and_B_A,
+		std::list<std::shared_ptr<Topology>>& rSpaceBetween_B_A_and_A_B,
+		std::list<std::shared_ptr<Topology>>& rSpaceBetween_A_B_and_B_B)
 	{
 		BOPCol_ListOfShape occtCellsBuildersArguments;
 		BOPCol_ListOfShape occtCellsBuildersOperandsA;
 		if (GetType() == TOPOLOGY_CELLCOMPLEX)
 		{
 			CellComplex* pCellComplex = TopologicalQuery::Downcast<CellComplex>(this);
-			std::list<Cell*> cells;
+			std::list<std::shared_ptr<Cell>> cells;
 			pCellComplex->Cells(cells);
-			for (std::list<Cell*>::const_iterator kCellIterator = cells.begin();
+			for (std::list<std::shared_ptr<Cell>>::const_iterator kCellIterator = cells.begin();
 				kCellIterator != cells.end();
 				kCellIterator++)
 			{
@@ -737,12 +740,12 @@ namespace TopoLogicCore
 		}
 
 		BOPCol_ListOfShape occtCellsBuildersOperandsB;
-		if (kpkOtherTopology->GetType() == TOPOLOGY_CELLCOMPLEX)
+		if (kpOtherTopology->GetType() == TOPOLOGY_CELLCOMPLEX)
 		{
-			CellComplex const * const kpkCellComplex = TopologicalQuery::Downcast<CellComplex const>(kpkOtherTopology);
-			std::list<Cell*> cells;
+			CellComplex const * const kpkCellComplex = TopologicalQuery::Downcast<CellComplex const>(kpOtherTopology);
+			std::list<std::shared_ptr<Cell>> cells;
 			kpkCellComplex->Cells(cells);
-			for (std::list<Cell*>::const_iterator kCellIterator = cells.begin();
+			for (std::list<std::shared_ptr<Cell>>::const_iterator kCellIterator = cells.begin();
 				kCellIterator != cells.end();
 				kCellIterator++)
 			{
@@ -757,7 +760,7 @@ namespace TopoLogicCore
 		else
 		{
 			Handle(ShapeFix_Shape) sfs = new ShapeFix_Shape();
-			sfs->Init(*kpkOtherTopology->GetOcctShape());
+			sfs->Init(*kpOtherTopology->GetOcctShape());
 			sfs->SetPrecision(Precision::Confusion());
 			sfs->Perform();
 			occtCellsBuildersOperandsB.Append(sfs->Shape());
@@ -803,7 +806,7 @@ namespace TopoLogicCore
 			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
 			occtCellsBuilder.MakeContainers();
 			const TopoDS_Shape& occtBooleanResult = occtCellsBuilder.Shape();
-			Topology* pTopology = Topology::ByOcctShape(occtBooleanResult);
+			std::shared_ptr<Topology> pTopology = Topology::ByOcctShape(occtBooleanResult);
 			rSpaceBetween_A_A_and_B_A.push_back(pTopology);
 		}
 
@@ -824,7 +827,7 @@ namespace TopoLogicCore
 				occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
 				occtCellsBuilder.MakeContainers();
 				const TopoDS_Shape& occtBooleanResult = occtCellsBuilder.Shape();
-				Topology* pTopology = Topology::ByOcctShape(occtBooleanResult);
+				std::shared_ptr<Topology> pTopology = Topology::ByOcctShape(occtBooleanResult);
 				rSpaceBetween_B_A_and_A_B.push_back(pTopology);
 			}
 		}
@@ -848,19 +851,19 @@ namespace TopoLogicCore
 			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
 			occtCellsBuilder.MakeContainers();
 			const TopoDS_Shape& occtBooleanResult = occtCellsBuilder.Shape();
-			Topology* pTopology = Topology::ByOcctShape(occtBooleanResult);
+			std::shared_ptr<Topology> pTopology = Topology::ByOcctShape(occtBooleanResult);
 			rSpaceBetween_A_B_and_B_B.push_back(pTopology);
 		}
 	}
 
 	void Topology::BooleanOperation(
-		Topology const * const kpkOtherTopology,
+		const std::shared_ptr<Topology>& kpOtherTopology,
 		BOPAlgo_CellsBuilder& rOcctCellsBuilder,
 		BOPCol_ListOfShape& rOcctCellsBuildersOperandsA,
 		BOPCol_ListOfShape& rOcctCellsBuildersOperandsB)
 	{
 		// Buffer lists are currently provided for cell complexes to be processed per cells.
-		AddBooleanOperands(kpkOtherTopology, rOcctCellsBuilder, rOcctCellsBuildersOperandsA, rOcctCellsBuildersOperandsB);
+		AddBooleanOperands(kpOtherTopology, rOcctCellsBuilder, rOcctCellsBuildersOperandsA, rOcctCellsBuildersOperandsB);
 
 		// Split the arguments and tools
 		rOcctCellsBuilder.Perform();
@@ -873,21 +876,21 @@ namespace TopoLogicCore
 		}
 	}
 
-	Topology* Topology::GetBooleanResult(BOPAlgo_CellsBuilder& rOcctCellsBuilder)
+	std::shared_ptr<Topology> Topology::GetBooleanResult(BOPAlgo_CellsBuilder& rOcctCellsBuilder)
 	{
 		rOcctCellsBuilder.MakeContainers();
 		const TopoDS_Shape& occtBooleanResult = rOcctCellsBuilder.Shape();
-		Topology* pTopology = Topology::ByOcctShape(occtBooleanResult);
+		std::shared_ptr<Topology> pTopology = Topology::ByOcctShape(occtBooleanResult);
 		return pTopology;
 	}
 
-	Topology* Topology::Difference(Topology const * const kpkOtherTopology)
+	std::shared_ptr<Topology> Topology::Difference(const std::shared_ptr<Topology>& kpOtherTopology)
 	{
 		BOPCol_ListOfShape occtCellsBuildersOperandsA;
 		BOPCol_ListOfShape occtCellsBuildersOperandsB;
 		BOPAlgo_CellsBuilder occtCellsBuilder;
 
-		BooleanOperation(kpkOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB);
+		BooleanOperation(kpOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB);
 
 		BOPCol_ListOfShape occtListToTake;
 		BOPCol_ListOfShape occtListToAvoid;
@@ -911,13 +914,13 @@ namespace TopoLogicCore
 		return GetBooleanResult(occtCellsBuilder);
 	}
 
-	Topology* Topology::Impose(Topology const * const kpkOtherTopology)
+	std::shared_ptr<Topology> Topology::Impose(const std::shared_ptr<Topology>& kpOtherTopology)
 	{
 		BOPCol_ListOfShape occtCellsBuildersOperandsA;
 		BOPCol_ListOfShape occtCellsBuildersOperandsB;
 		BOPAlgo_CellsBuilder occtCellsBuilder;
 
-		BooleanOperation(kpkOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB);
+		BooleanOperation(kpOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB);
 
 		BOPCol_ListOfShape occtListToTake;
 		BOPCol_ListOfShape occtListToAvoid;
@@ -954,13 +957,13 @@ namespace TopoLogicCore
 		return GetBooleanResult(occtCellsBuilder);
 	}
 
-	Topology* Topology::Imprint(Topology const * const kpkOtherTopology)
+	std::shared_ptr<Topology> Topology::Imprint(const std::shared_ptr<Topology>& kpOtherTopology)
 	{
 		BOPCol_ListOfShape occtCellsBuildersOperandsA;
 		BOPCol_ListOfShape occtCellsBuildersOperandsB;
 		BOPAlgo_CellsBuilder occtCellsBuilder;
 
-		BooleanOperation(kpkOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB);
+		BooleanOperation(kpOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB);
 
 		BOPCol_ListOfShape occtListToTake;
 		BOPCol_ListOfShape occtListToAvoid;
@@ -994,13 +997,13 @@ namespace TopoLogicCore
 		return GetBooleanResult(occtCellsBuilder);
 	}
 
-	Topology* Topology::Intersection(Topology const * const kpkOtherTopology)
+	std::shared_ptr<Topology> Topology::Intersection(const std::shared_ptr<Topology>& kpOtherTopology)
 	{
 		BOPCol_ListOfShape occtCellsBuildersOperandsA;
 		BOPCol_ListOfShape occtCellsBuildersOperandsB;
 		BOPAlgo_CellsBuilder occtCellsBuilder;
 
-		BooleanOperation(kpkOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB);
+		BooleanOperation(kpOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB);
 
 		BOPCol_ListOfShape occtListToTake;
 		BOPCol_ListOfShape occtListToAvoid;
@@ -1024,13 +1027,13 @@ namespace TopoLogicCore
 		return GetBooleanResult(occtCellsBuilder);
 	}
 
-	Topology* Topology::Merge(Topology const * const kpkOtherTopology)
+	std::shared_ptr<Topology> Topology::Merge(const std::shared_ptr<Topology>& kpOtherTopology)
 	{
 		BOPCol_ListOfShape occtCellsBuildersOperandsA;
 		BOPCol_ListOfShape occtCellsBuildersOperandsB;
 		BOPAlgo_CellsBuilder occtCellsBuilder;
 
-		BooleanOperation(kpkOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB);
+		BooleanOperation(kpOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB);
 
 		BOPCol_ListOfShape occtListToTake;
 		BOPCol_ListOfShape occtListToAvoid;
@@ -1058,13 +1061,13 @@ namespace TopoLogicCore
 		return GetBooleanResult(occtCellsBuilder);
 	}
 
-	Topology* Topology::Slice(Topology const * const kpkOtherTopology)
+	std::shared_ptr<Topology> Topology::Slice(const std::shared_ptr<Topology>& kpOtherTopology)
 	{
 		BOPCol_ListOfShape occtCellsBuildersOperandsA;
 		BOPCol_ListOfShape occtCellsBuildersOperandsB;
 		BOPAlgo_CellsBuilder occtCellsBuilder;
 
-		BooleanOperation(kpkOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB);
+		BooleanOperation(kpOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB);
 
 		BOPCol_ListOfShape occtListToTake;
 		BOPCol_ListOfShape occtListToAvoid;
@@ -1101,8 +1104,8 @@ namespace TopoLogicCore
 	void Topology::AddUnionInternalStructure(const TopoDS_Shape& rkOcctShape, BOPCol_ListOfShape& rUnionArguments)
 	{
 		TopAbs_ShapeEnum occtShapeType = rkOcctShape.ShapeType();
-		Topology* pTopology = Topology::ByOcctShape(rkOcctShape);
-		std::list<Face*> faces;
+		std::shared_ptr<Topology> pTopology = Topology::ByOcctShape(rkOcctShape);
+		std::list<std::shared_ptr<Face>> faces;
 		// Cell complex -> faces not part of the envelope
 		// Cell -> inner shells
 		// Shell --> inner wires of the faces
@@ -1112,31 +1115,31 @@ namespace TopoLogicCore
 		// Vertex --> n/a
 		if (occtShapeType == TopAbs_COMPOUND)
 		{
-			Cluster* pCluster = Topology::Downcast<Cluster>(pTopology);
-			std::list<Topology*> immediateMembers;
+			std::shared_ptr<Cluster> pCluster = Topology::Downcast<Cluster>(pTopology);
+			std::list<std::shared_ptr<Topology>> immediateMembers;
 			pCluster->ImmediateMembers(immediateMembers);
-			for (std::list<Topology*>::const_iterator kIterator = immediateMembers.begin();
+			for (std::list<std::shared_ptr<Topology>>::const_iterator kIterator = immediateMembers.begin();
 				kIterator != immediateMembers.end();
 				kIterator++)
 			{
-				Topology* pTopology = *kIterator;
+				const std::shared_ptr<Topology>& pTopology = *kIterator;
 				AddUnionInternalStructure(*pTopology->GetOcctShape(), rUnionArguments);
 			}
 		} else if (occtShapeType == TopAbs_COMPSOLID)
 		{
-			CellComplex* pCellComplex = Topology::Downcast<CellComplex>(pTopology);
+			std::shared_ptr<CellComplex> pCellComplex = Topology::Downcast<CellComplex>(pTopology);
 			pCellComplex->InnerBoundaries(faces);
-			for (std::list<Face*>::iterator kFaceIterator = faces.begin();
+			for (std::list<std::shared_ptr<Face>>::iterator kFaceIterator = faces.begin();
 				kFaceIterator != faces.end();
 				kFaceIterator++)
 			{
-				Face* pInternalFace = *kFaceIterator;
-				rUnionArguments.Append(*pInternalFace->GetOcctShape());
+				const std::shared_ptr<Face>& kpInternalFace = *kFaceIterator;
+				rUnionArguments.Append(*kpInternalFace->GetOcctShape());
 			}
 		}
 		else if (occtShapeType == TopAbs_SOLID)
 		{
-			Cell* pCell = Topology::Downcast<Cell>(pTopology);
+			std::shared_ptr<Cell> pCell = Topology::Downcast<Cell>(pTopology);
 			std::list<Shell*> shells;
 			pCell->InnerBoundaries(shells);
 			for (std::list<Shell*>::iterator kShellIterator = shells.begin();
@@ -1183,7 +1186,7 @@ namespace TopoLogicCore
 	}
 
 	void Topology::AddBooleanOperands(
-		Topology const * const kpkOtherTopology, 
+		const std::shared_ptr<Topology>& kpOtherTopology,
 		BOPAlgo_CellsBuilder& rOcctCellsBuilder,
 		BOPCol_ListOfShape& rOcctCellsBuildersOperandsA,
 		BOPCol_ListOfShape& rOcctCellsBuildersOperandsB)
@@ -1193,9 +1196,9 @@ namespace TopoLogicCore
 		if (GetType() == TOPOLOGY_CELLCOMPLEX)
 		{
 			CellComplex* pCellComplex = TopologicalQuery::Downcast<CellComplex>(this);
-			std::list<Cell*> cells;
+			std::list<std::shared_ptr<Cell>> cells;
 			pCellComplex->Cells(cells);
-			for (std::list<Cell*>::const_iterator kCellIterator = cells.begin();
+			for (std::list<std::shared_ptr<Cell>>::const_iterator kCellIterator = cells.begin();
 				kCellIterator != cells.end();
 				kCellIterator++)
 			{
@@ -1209,12 +1212,12 @@ namespace TopoLogicCore
 			occtCellsBuildersArguments.Append(*GetOcctShape());
 		}
 
-		if (kpkOtherTopology->GetType() == TOPOLOGY_CELLCOMPLEX)
+		if (kpOtherTopology->GetType() == TOPOLOGY_CELLCOMPLEX)
 		{
-			CellComplex const * const kpkCellComplex = TopologicalQuery::Downcast<CellComplex const>(kpkOtherTopology);
-			std::list<Cell*> cells;
+			std::shared_ptr<CellComplex> kpkCellComplex = TopologicalQuery::Downcast<CellComplex>(kpOtherTopology);
+			std::list<std::shared_ptr<Cell>> cells;
 			kpkCellComplex->Cells(cells);
-			for (std::list<Cell*>::const_iterator kCellIterator = cells.begin();
+			for (std::list<std::shared_ptr<Cell>>::const_iterator kCellIterator = cells.begin();
 				kCellIterator != cells.end();
 				kCellIterator++)
 			{
@@ -1224,20 +1227,20 @@ namespace TopoLogicCore
 		}
 		else
 		{
-			rOcctCellsBuildersOperandsB.Append(*kpkOtherTopology->GetOcctShape());
-			occtCellsBuildersArguments.Append(*kpkOtherTopology->GetOcctShape());
+			rOcctCellsBuildersOperandsB.Append(*kpOtherTopology->GetOcctShape());
+			occtCellsBuildersArguments.Append(*kpOtherTopology->GetOcctShape());
 		}
 
 		rOcctCellsBuilder.SetArguments(occtCellsBuildersArguments);
 	}
 
-	Topology* Topology::Union(Topology const * const kpkOtherTopology)
+	std::shared_ptr<Topology> Topology::Union(const std::shared_ptr<Topology>& kpOtherTopology)
 	{
 		BOPCol_ListOfShape occtCellsBuildersOperandsA;
 		BOPCol_ListOfShape occtCellsBuildersOperandsB;
 		BOPAlgo_CellsBuilder occtCellsBuilder;
 
-		BooleanOperation(kpkOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB);
+		BooleanOperation(kpOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB);
 
 		BOPCol_ListOfShape occtListToTake;
 		BOPCol_ListOfShape occtListToAvoid;
@@ -1262,7 +1265,7 @@ namespace TopoLogicCore
 			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid, 1, true);
 		}
 
-		Topology* pTopology = GetBooleanResult(occtCellsBuilder);
+		std::shared_ptr<Topology> pTopology = GetBooleanResult(occtCellsBuilder);
 
 		BOPAlgo_CellsBuilder occtCellsBuilder2;
 		BOPCol_ListOfShape occtCellsBuildersArguments;
@@ -1270,7 +1273,7 @@ namespace TopoLogicCore
 
 		// Get the internal boundaries
 		AddUnionInternalStructure(*GetOcctShape(), occtCellsBuildersArguments);
-		AddUnionInternalStructure(*kpkOtherTopology->GetOcctShape(), occtCellsBuildersArguments);
+		AddUnionInternalStructure(*kpOtherTopology->GetOcctShape(), occtCellsBuildersArguments);
 		
 		if (occtCellsBuildersArguments.Size() < 2)
 		{
@@ -1288,17 +1291,17 @@ namespace TopoLogicCore
 		}
 		occtCellsBuilder2.AddAllToResult();
 		TopoDS_Shape occtUnionResult = occtCellsBuilder2.Shape();
-		Topology* pUnionTopology = Topology::ByOcctShape(occtUnionResult);
+		std::shared_ptr<Topology> pUnionTopology = Topology::ByOcctShape(occtUnionResult);
 		return pUnionTopology;
 	}
 
-	Topology* Topology::XOR(Topology const * const kpkOtherTopology)
+	std::shared_ptr<Topology> Topology::XOR(const std::shared_ptr<Topology>& kpOtherTopology)
 	{
 		BOPCol_ListOfShape occtCellsBuildersOperandsA;
 		BOPCol_ListOfShape occtCellsBuildersOperandsB;
 		BOPAlgo_CellsBuilder occtCellsBuilder;
 
-		BooleanOperation(kpkOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB);
+		BooleanOperation(kpOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB);
 
 		BOPCol_ListOfShape occtListToTake;
 		BOPCol_ListOfShape occtListToAvoid;
@@ -1395,7 +1398,7 @@ namespace TopoLogicCore
 		}
 	}
 
-	void Topology::ImmediateMembers(std::list<Topology*>& rImmediateMembers) const
+	void Topology::ImmediateMembers(std::list<std::shared_ptr<Topology>>& rImmediateMembers) const
 	{
 		BOPCol_ListOfShape occtListMembers;
 		Topology::ImmediateMembers(*GetOcctShape(), occtListMembers);
@@ -1407,28 +1410,28 @@ namespace TopoLogicCore
 		}
 	}
 
-	void Topology::AddIngredientTo(Topology * const kpTopology)
+	void Topology::AddIngredientTo(const std::shared_ptr<Topology>& kpTopology)
 	{
 		if(!IsIngredientTo(kpTopology))
 		{
 			m_ingredientTo.push_back(kpTopology);
-			kpTopology->m_ingredients.push_back(this);
+			kpTopology->m_ingredients.push_back(shared_from_this());
 
 			GlobalCluster::GetInstance().Remove(this);
 		}
 	}
 
-	void Topology::RemoveIngredientTo(Topology * const kpTopology)
+	void Topology::RemoveIngredientTo(const std::shared_ptr<Topology>& kpTopology)
 	{
 		m_ingredientTo.remove(kpTopology);
-		kpTopology->m_ingredients.remove(this);
+		kpTopology->m_ingredients.remove(shared_from_this());
 		if (m_ingredientTo.empty())
 		{
 			GlobalCluster::GetInstance().Add(this);
 		}
 	}
 
-	bool Topology::IsIngredientTo(Topology * const kpTopology) const
+	bool Topology::IsIngredientTo(const std::shared_ptr<Topology>& kpTopology) const
 	{
 		return std::find(m_ingredientTo.begin(), m_ingredientTo.end(), kpTopology) != m_ingredientTo.end();
 	}

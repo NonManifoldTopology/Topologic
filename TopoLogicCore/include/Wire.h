@@ -30,13 +30,13 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <param name="rEdges"></param>
-		void TOPOLOGIC_API Edges(std::list<Edge*>& rEdges) const;
+		void TOPOLOGIC_API Edges(std::list<std::shared_ptr<Edge>>& rEdges) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rFaces"></param>
-		void TOPOLOGIC_API Faces(std::list<Face*>& rFaces) const;
+		void TOPOLOGIC_API Faces(std::list<std::shared_ptr<Face>>& rFaces) const;
 
 		/// <summary>
 		/// 
@@ -48,14 +48,14 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <param name="rVertices"></param>
-		void TOPOLOGIC_API Vertices(std::list<Vertex*>& rVertices) const;
+		void TOPOLOGIC_API Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkEdges"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API Wire* ByEdges(const std::list<Edge*>& rkEdges);
+		static TOPOLOGIC_API std::shared_ptr<Wire> ByEdges(const std::list<std::shared_ptr<Edge>>& rkEdges);
 
 		/// <summary>
 		/// 
@@ -66,7 +66,7 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		virtual TopoDS_Shape* GetOcctShape() const;
+		virtual std::shared_ptr<TopoDS_Shape> GetOcctShape() const;
 
 		virtual TopologyType GetType() const { return TOPOLOGY_WIRE; }
 
@@ -81,6 +81,6 @@ namespace TopoLogicCore
 		/// <summary>
 		/// The underlying OCCT wire.
 		/// </summary>
-		TopoDS_Wire* m_pOcctWire;
+		std::shared_ptr<TopoDS_Wire> m_pOcctWire;
 	};
 }

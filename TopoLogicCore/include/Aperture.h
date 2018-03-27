@@ -20,7 +20,7 @@ namespace TopoLogicCore
 	class Aperture : public Topology
 	{
 	public:
-		Aperture(TopoLogicCore::Topology* const kpTopology, Context * const kpContext, const bool kOpenStatus);
+		Aperture(const std::shared_ptr<TopoLogicCore::Topology>& kpTopology, const std::shared_ptr<Context>& kpContext, const bool kOpenStatus);
 		~Aperture();
 
 		/// <summary>
@@ -29,7 +29,7 @@ namespace TopoLogicCore
 		/// <param name="kpTopology"></param>
 		/// <param name="kpContext"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API Aperture* ByTopologyContext(TopoLogicCore::Topology* const kpTopology, Context * const kpContext);
+		static TOPOLOGIC_API std::shared_ptr<Aperture> ByTopologyContext(const std::shared_ptr<TopoLogicCore::Topology>& kpTopology, const std::shared_ptr<Context>& kpContext);
 
 		/// <summary>
 		/// Creates an aperture by a topology and a context.
@@ -38,13 +38,13 @@ namespace TopoLogicCore
 		/// <param name="kpContext"></param>
 		/// <param name="kOpenStatus"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API Aperture* ByTopologyContextStatus(TopoLogicCore::Topology* const kpTopology, Context * const kpContext, const bool kOpenStatus);
+		static TOPOLOGIC_API std::shared_ptr<Aperture> ByTopologyContextStatus(const std::shared_ptr<TopoLogicCore::Topology>& kpTopology, const std::shared_ptr<Context>& kpContext, const bool kOpenStatus);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology* Topology() const;
+		TOPOLOGIC_API std::shared_ptr<Topology> Topology() const;
 
 		/// <summary>
 		/// Checks if any aperture path is open.
@@ -57,13 +57,13 @@ namespace TopoLogicCore
 		/// </summary>
 		/// <param name="rkTopologies"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API bool IsOpen(const std::array<TopoLogicCore::Topology*, 2>& rkTopologies) const;
+		TOPOLOGIC_API bool IsOpen(const std::array<std::shared_ptr<TopoLogicCore::Topology>, 2>& rkTopologies) const;
 
 		/// <summary>
 		/// Returns all open aperture paths
 		/// </summary>
 		/// <param name="rPaths"></param>
-		TOPOLOGIC_API void Paths(std::list<std::list<TopoLogicCore::Topology*>>& rPaths) const;
+		TOPOLOGIC_API void Paths(std::list<std::list<std::shared_ptr<TopoLogicCore::Topology>>>& rPaths) const;
 
 		/// <summary>
 		/// 
@@ -74,7 +74,7 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <param name="rkTopologies"></param>
-		TOPOLOGIC_API void Open(const std::array<TopoLogicCore::Topology*, 2>& rkTopologies);
+		TOPOLOGIC_API void Open(const std::array<std::shared_ptr<TopoLogicCore::Topology>, 2>& rkTopologies);
 
 		/// <summary>
 		/// 
@@ -85,7 +85,7 @@ namespace TopoLogicCore
 		/// Checks if the topologies are adjacent.
 		/// </summary>
 		/// <param name="rkTopologies"></param>
-		TOPOLOGIC_API void Close(const std::array<TopoLogicCore::Topology*, 2>& rkTopologies);
+		TOPOLOGIC_API void Close(const std::array<std::shared_ptr<TopoLogicCore::Topology>, 2>& rkTopologies);
 
 		/// <summary>
 		/// 
@@ -97,7 +97,7 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		virtual TopoDS_Shape* GetOcctShape() const;
+		virtual std::shared_ptr<TopoDS_Shape> GetOcctShape() const;
 
 		/// <summary>
 		/// 
@@ -107,7 +107,7 @@ namespace TopoLogicCore
 
 	protected:
 		std::list<AperturePath> m_occtAperturePaths;
-		Context* m_pMainContext; // the primary context passed in the constructor is stored here
-		TopoLogicCore::Topology* m_pTopology;
+		std::shared_ptr<Context> m_pMainContext; // the primary context passed in the constructor is stored here
+		std::shared_ptr<TopoLogicCore::Topology> m_pTopology;
 	};
 }
