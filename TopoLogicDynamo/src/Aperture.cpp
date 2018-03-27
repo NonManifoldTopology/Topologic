@@ -11,7 +11,7 @@ namespace TopoLogic
 {
 	Aperture^ Aperture::ByTopologyContext(TopoLogic::Topology^ topology, Context^ context)
 	{
-		TopoLogicCore::Aperture* pCoreAperture = TopoLogicCore::Aperture::ByTopologyContext(
+		std::shared_ptr<TopoLogicCore::Aperture> pCoreAperture = TopoLogicCore::Aperture::ByTopologyContext(
 			TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topology->GetCoreTopologicalQuery()),
 			TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Context>(context->GetCoreTopologicalQuery())
 			);
@@ -20,7 +20,7 @@ namespace TopoLogic
 
 	Aperture^ Aperture::ByTopologyContextStatus(TopoLogic::Topology^ topology, Context^ context, bool openStatus)
 	{
-		TopoLogicCore::Aperture* pCoreAperture = TopoLogicCore::Aperture::ByTopologyContextStatus(
+		std::shared_ptr<TopoLogicCore::Aperture> pCoreAperture = TopoLogicCore::Aperture::ByTopologyContextStatus(
 			TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topology->GetCoreTopologicalQuery()),
 			TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Context>(context->GetCoreTopologicalQuery()),
 			openStatus
@@ -30,14 +30,14 @@ namespace TopoLogic
 
 	TopoLogic::Topology^ Aperture::Topology()
 	{
-		TopoLogicCore::Aperture* pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
-		TopoLogicCore::Topology* pCoreTopology = pCoreAperture->Topology();
+		std::shared_ptr<TopoLogicCore::Aperture> pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = pCoreAperture->Topology();
 		return Topology::ByCoreTopology(pCoreTopology);
 	}
 
 	bool Aperture::IsOpen()
 	{
-		TopoLogicCore::Aperture* pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopoLogicCore::Aperture> pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
 		return pCoreAperture->IsOpen();
 	}
 
@@ -48,8 +48,8 @@ namespace TopoLogic
 			throw gcnew Exception("The input list must contain exactly 2 elements.");
 		}
 
-		TopoLogicCore::Aperture* pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
-		std::array<TopoLogicCore::Topology*, 2> coreTopologies
+		std::shared_ptr<TopoLogicCore::Aperture> pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
+		std::array<std::shared_ptr<TopoLogicCore::Topology>, 2> coreTopologies
 		{
 			TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topologies[0]->GetCoreTopologicalQuery()),
 			TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topologies[1]->GetCoreTopologicalQuery()),
@@ -60,26 +60,26 @@ namespace TopoLogic
 
 	List<List<TopoLogic::Topology^>^>^ Aperture::Paths()
 	{
-		TopoLogicCore::Aperture* pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
-		std::list<std::list<TopoLogicCore::Topology*>> corePaths;
+		std::shared_ptr<TopoLogicCore::Aperture> pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
+		std::list<std::list<std::shared_ptr<TopoLogicCore::Topology>>> corePaths;
 		pCoreAperture->Paths(corePaths);
 		List<List<TopoLogic::Topology^>^>^ pPaths = gcnew List<List<TopoLogic::Topology^>^>();
-		for (std::list<std::list<TopoLogicCore::Topology*>>::const_iterator kCorePathIterator = corePaths.begin();
+		for (std::list<std::list<std::shared_ptr<TopoLogicCore::Topology>>>::const_iterator kCorePathIterator = corePaths.begin();
 			kCorePathIterator != corePaths.end();
 			kCorePathIterator++)
 		{
 			List<TopoLogic::Topology^>^ pPath = gcnew List<TopoLogic::Topology^>();
-			for (std::list<TopoLogicCore::Topology*>::const_iterator kCoreTopologyIterator = kCorePathIterator->begin();
+			for (std::list<std::shared_ptr<TopoLogicCore::Topology>>::const_iterator kCoreTopologyIterator = kCorePathIterator->begin();
 				kCoreTopologyIterator != kCorePathIterator->end();
 				kCoreTopologyIterator++)
 			{
-				TopoLogicCore::Topology* pCoreTopology = *kCoreTopologyIterator;
-				if (pCoreTopology == nullptr)
+				const std::shared_ptr<TopoLogicCore::Topology>& kpCoreTopology = *kCoreTopologyIterator;
+				if (kpCoreTopology == nullptr)
 				{
 					pPath->Add(nullptr);
 				}else
 				{
-					pPath->Add(Topology::ByCoreTopology(pCoreTopology));
+					pPath->Add(Topology::ByCoreTopology(kpCoreTopology));
 				}
 			}
 			pPaths->Add(pPath);
@@ -89,7 +89,7 @@ namespace TopoLogic
 
 	Aperture^ TopoLogic::Aperture::Open()
 	{
-		TopoLogicCore::Aperture* pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopoLogicCore::Aperture> pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
 		pCoreAperture->Open();
 		return this;
 	}
@@ -101,8 +101,8 @@ namespace TopoLogic
 			throw gcnew Exception("The input list must contain exactly 2 elements.");
 		}
 
-		TopoLogicCore::Aperture* pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
-		std::array<TopoLogicCore::Topology*, 2> coreTopologies
+		std::shared_ptr<TopoLogicCore::Aperture> pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
+		std::array<std::shared_ptr<TopoLogicCore::Topology>, 2> coreTopologies
 		{
 			TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topologies[0]->GetCoreTopologicalQuery()),
 			TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topologies[1]->GetCoreTopologicalQuery()),
@@ -113,7 +113,7 @@ namespace TopoLogic
 
 	Aperture^ TopoLogic::Aperture::Close()
 	{
-		TopoLogicCore::Aperture* pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopoLogicCore::Aperture> pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
 		pCoreAperture->Close();
 		return this;
 	}
@@ -125,8 +125,8 @@ namespace TopoLogic
 			throw gcnew Exception("The input list must contain exactly 2 elements.");
 		}
 
-		TopoLogicCore::Aperture* pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
-		std::array<TopoLogicCore::Topology*, 2> coreTopologies
+		std::shared_ptr<TopoLogicCore::Aperture> pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
+		std::array<std::shared_ptr<TopoLogicCore::Topology>, 2> coreTopologies
 		{
 			TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topologies[0]->GetCoreTopologicalQuery()),
 			TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topologies[1]->GetCoreTopologicalQuery()),
@@ -135,8 +135,8 @@ namespace TopoLogic
 		return this;
 	}
 
-	Aperture::Aperture(TopoLogicCore::Aperture * const kpCoreAperture)
-		: m_pCoreAperture(kpCoreAperture)
+	Aperture::Aperture(const std::shared_ptr<TopoLogicCore::Aperture>& kpCoreAperture)
+		: m_pCoreAperture(new std::shared_ptr<TopoLogicCore::Aperture>(kpCoreAperture))
 	{
 
 	}
@@ -146,7 +146,7 @@ namespace TopoLogic
 		delete m_pCoreAperture;
 	}
 
-	TopoLogicCore::TopologicalQuery* Aperture::GetCoreTopologicalQuery()
+	std::shared_ptr<TopoLogicCore::TopologicalQuery> Aperture::GetCoreTopologicalQuery()
 	{
 		assert(m_pCoreAperture != nullptr && "Context::GetCoreTopologicalQuery() returns null.");
 		if (m_pCoreAperture == nullptr)
@@ -154,12 +154,12 @@ namespace TopoLogic
 			throw gcnew Exception("Context::GetCoreTopologicalQuery() returns null.");
 		}
 
-		return m_pCoreAperture;
+		return *m_pCoreAperture;
 	}
 
 	Object^ Aperture::Geometry::get()
 	{
-		TopoLogicCore::Aperture* pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopoLogicCore::Aperture> pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
 		
 		throw gcnew NotImplementedException();
 	}

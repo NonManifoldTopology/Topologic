@@ -85,13 +85,13 @@ namespace TopoLogic
 		/// <summary>
 		/// 
 		/// </summary>
-		CellComplex(TopoLogicCore::CellComplex* const kpCoreCellComplex);
+		CellComplex(const std::shared_ptr<TopoLogicCore::CellComplex>& kpCoreCellComplex);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		virtual TopoLogicCore::TopologicalQuery* GetCoreTopologicalQuery() override;
+		virtual std::shared_ptr<TopoLogicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
 
 	protected:
 		virtual ~CellComplex();
@@ -99,6 +99,6 @@ namespace TopoLogic
 		/// <summary>
 		/// 
 		/// </summary>
-		TopoLogicCore::CellComplex* m_pCoreCellComplex;
+		std::shared_ptr<TopoLogicCore::CellComplex>* m_pCoreCellComplex;
 	};
 }

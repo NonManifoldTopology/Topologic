@@ -97,13 +97,13 @@ namespace TopoLogic
 		}
 
 	public protected:
-		Aperture(TopoLogicCore::Aperture* const kpCoreAperture);
+		Aperture(const std::shared_ptr<TopoLogicCore::Aperture>& kpCoreAperture);
 
-		virtual TopoLogicCore::TopologicalQuery* GetCoreTopologicalQuery() override;
+		virtual std::shared_ptr<TopoLogicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
 
 	protected:
 		virtual ~Aperture();
 
-		TopoLogicCore::Aperture* m_pCoreAperture;
+		std::shared_ptr<TopoLogicCore::Aperture>* m_pCoreAperture;
 	};
 }

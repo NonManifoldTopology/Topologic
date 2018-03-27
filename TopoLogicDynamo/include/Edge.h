@@ -67,7 +67,7 @@ namespace TopoLogic {
 		/// 
 		/// </summary>
 		/// <param name="kpCoreEdge"></param>
-		Edge(TopoLogicCore::Edge* const kpCoreEdge);
+		Edge(const std::shared_ptr<TopoLogicCore::Edge>& kpCoreEdge);
 
 		/// <summary>
 		/// 
@@ -91,7 +91,7 @@ namespace TopoLogic {
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		virtual TopoLogicCore::TopologicalQuery* GetCoreTopologicalQuery() override;
+		virtual std::shared_ptr<TopoLogicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
 
 	protected:
 		virtual ~Edge();
@@ -116,6 +116,6 @@ namespace TopoLogic {
 		/// <summary>
 		/// 
 		/// </summary>
-		TopoLogicCore::Edge* m_pCoreEdge;
+		std::shared_ptr<TopoLogicCore::Edge>* m_pCoreEdge;
 	};
 }

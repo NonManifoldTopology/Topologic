@@ -248,7 +248,7 @@ namespace TopoLogic
 		List<Topology^>^ ImmediateMembers();
 
 	public protected:
-		static Topology^ ByCoreTopology(TopoLogicCore::Topology * const kpCoreTopology);
+		static Topology^ ByCoreTopology(const std::shared_ptr<TopoLogicCore::Topology>& kpCoreTopology);
 
 	protected:
 		Topology();

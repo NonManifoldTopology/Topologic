@@ -207,10 +207,10 @@ namespace TopoLogicCore
 		return pCell;
 	}
 
-	void Cell::SharedEdges(Cell const * const kpkAnotherCell, std::list<Edge*>& rEdges) const
+	void Cell::SharedEdges(const std::shared_ptr<Cell>& kpAnotherCell, std::list<std::shared_ptr<Edge>>& rEdges) const
 	{
 		// BRepAlgoAPI_Section only returns vertices and edges, so use it to get the shared edges.
-		const TopoDS_Shape& rkOcctShape = BRepAlgoAPI_Section(*GetOcctShape(), *kpkAnotherCell->GetOcctShape()).Shape();
+		const TopoDS_Shape& rkOcctShape = BRepAlgoAPI_Section(*GetOcctShape(), *kpAnotherCell->GetOcctShape()).Shape();
 
 		TopTools_MapOfShape occtEdges;
 		TopExp_Explorer occtExplorer;
@@ -227,14 +227,14 @@ namespace TopoLogicCore
 			kOcctShapeIterator != occtEdges.cend();
 			kOcctShapeIterator++)
 		{
-			rEdges.push_back(new Edge(TopoDS::Edge(*kOcctShapeIterator)));
+			rEdges.push_back(std::make_shared<Edge>(TopoDS::Edge(*kOcctShapeIterator)));
 		}
 	}
 
-	void Cell::SharedFaces(Cell const * const kpkAnotherCell, std::list<Face*>& rFaces) const
+	void Cell::SharedFaces(const std::shared_ptr<Cell>& kpAnotherCell, std::list<std::shared_ptr<Face>>& rFaces) const
 	{
 		// use BRepAlgoAPI_Common
-		const TopoDS_Shape& rkOcctShape = BRepAlgoAPI_Common(*GetOcctShape(), *kpkAnotherCell->GetOcctShape()).Shape();
+		const TopoDS_Shape& rkOcctShape = BRepAlgoAPI_Common(*GetOcctShape(), *kpAnotherCell->GetOcctShape()).Shape();
 
 		TopTools_MapOfShape occtFaces;
 		TopExp_Explorer occtExplorer;
@@ -251,14 +251,14 @@ namespace TopoLogicCore
 			kOcctShapeIterator != occtFaces.cend();
 			kOcctShapeIterator++)
 		{
-			rFaces.push_back(new Face(TopoDS::Face(*kOcctShapeIterator)));
+			rFaces.push_back(std::make_shared<Face>(TopoDS::Face(*kOcctShapeIterator)));
 		}
 	}
 
-	void Cell::SharedVertices(Cell const * const kpkAnotherCell, std::list<Vertex*>& rVertices) const
+	void Cell::SharedVertices(const std::shared_ptr<Cell>& kpAnotherCell, std::list<std::shared_ptr<Vertex>>& rVertices) const
 	{
 		// BRepAlgoAPI_Section only returns vertices and edges, so use it to get the shared vertices.
-		const TopoDS_Shape& rkOcctShape = BRepAlgoAPI_Section(*GetOcctShape(), *kpkAnotherCell->GetOcctShape()).Shape();
+		const TopoDS_Shape& rkOcctShape = BRepAlgoAPI_Section(*GetOcctShape(), *kpAnotherCell->GetOcctShape()).Shape();
 
 		TopTools_MapOfShape occtVertices;
 		TopExp_Explorer occtExplorer;
@@ -275,17 +275,17 @@ namespace TopoLogicCore
 			kOcctShapeIterator != occtVertices.cend();
 			kOcctShapeIterator++)
 		{
-			rVertices.push_back(new Vertex(TopoDS::Vertex(*kOcctShapeIterator)));
+			rVertices.push_back(std::make_shared<Vertex>(TopoDS::Vertex(*kOcctShapeIterator)));
 		}
 	}
 
-	Shell* Cell::OuterBoundary() const
+	std::shared_ptr<Shell> Cell::OuterBoundary() const
 	{
 		TopoDS_Shell occtOuterShell = BRepClass3d::OuterShell(TopoDS::Solid(*GetOcctShape()));
-		return new Shell(occtOuterShell);
+		return std::make_shared<Shell>(occtOuterShell);
 	}
 
-	void Cell::InnerBoundaries(std::list<Shell*>& rShells) const
+	void Cell::InnerBoundaries(std::list<std::shared_ptr<Shell>>& rShells) const
 	{
 		TopTools_MapOfShape occtShells;
 		TopExp_Explorer occtExplorer;
@@ -308,7 +308,7 @@ namespace TopoLogicCore
 						if (BRepCheck_Shell(rkShell).Closed())
 						{
 							occtShells.Add(occtCurrent);
-							rShells.push_back(new Shell(rkShell));
+							rShells.push_back(std::make_shared<Shell>(rkShell));
 						}
 					}
 				}
@@ -348,11 +348,11 @@ namespace TopoLogicCore
 		ShapeFix_Solid occtShapeFixSolid(rkOcctSolid);
 		occtShapeFixSolid.Perform(Handle(Message_ProgressIndicator)());
 		m_pOcctSolid = std::make_shared<TopoDS_Solid>(TopoDS::Solid(occtShapeFixSolid.Solid()));
-		GlobalCluster::GetInstance().Add(this);
+		GlobalCluster::GetInstance().Add(shared_from_this());
 	}
 
 	Cell::~Cell()
 	{
-		GlobalCluster::GetInstance().Remove(this);
+		GlobalCluster::GetInstance().Remove(shared_from_this());
 	}
 }

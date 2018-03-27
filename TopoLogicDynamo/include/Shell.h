@@ -100,13 +100,13 @@ namespace TopoLogic
 		/// 
 		/// </summary>
 		/// <param name="kpCoreShell"></param>
-		Shell(TopoLogicCore::Shell* const kpCoreShell);
+		Shell(const std::shared_ptr<TopoLogicCore::Shell>& kpCoreShell);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		virtual TopoLogicCore::TopologicalQuery* GetCoreTopologicalQuery() override;
+		virtual std::shared_ptr<TopoLogicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
 
 	protected:
 		virtual ~Shell();
@@ -114,6 +114,6 @@ namespace TopoLogic
 		/// <summary>
 		/// 
 		/// </summary>
-		TopoLogicCore::Shell* m_pCoreShell;
+		std::shared_ptr<TopoLogicCore::Shell>* m_pCoreShell;
 	};
 }

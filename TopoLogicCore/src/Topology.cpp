@@ -163,61 +163,61 @@ namespace TopoLogicCore
 		m_attributeMap.clear();
 	}
 
-	Topology* Topology::ByGeometry(Handle(Geom_Geometry) pGeometry)
+	std::shared_ptr<Topology> Topology::ByGeometry(Handle(Geom_Geometry) pGeometry)
 	{
 		return nullptr;
 	}
 
-	Topology* Topology::ByContext(Context const * const kpkContext)
+	std::shared_ptr<Topology> Topology::ByContext(const std::shared_ptr<Context>& kpContext)
 	{
 		return nullptr;
 	}
 
-	Topology* Topology::ByVertexIndex(const std::list<std::array<double, 3>>& rkVertexCoordinates, const std::list<std::list<int>>& rkVertexIndices)
+	std::shared_ptr<Topology> Topology::ByVertexIndex(const std::list<std::array<double, 3>>& rkVertexCoordinates, const std::list<std::list<int>>& rkVertexIndices)
 	{
 		return nullptr;
 	}
 
-	Topology* Topology::ByVertexIndex(const std::list<Vertex*>& rkVertices, const std::list<std::list<int>>& rkVertexIndices)
+	std::shared_ptr<Topology> Topology::ByVertexIndex(const std::list<std::shared_ptr<Vertex>>& rkVertices, const std::list<std::list<int>>& rkVertexIndices)
 	{
 		return nullptr;
 	}
 
-	Topology* Topology::AddContent(const std::shared_ptr<Topology>& rkTopology)
+	std::shared_ptr<Topology> Topology::AddContent(const std::shared_ptr<Topology>& rkTopology)
 	{
 		if(std::find(m_contents.begin(), m_contents.end(), rkTopology) == m_contents.end())
 		{
 			m_contents.push_back(rkTopology);
 		}
-		return this;
+		return shared_from_this();
 	}
 
-	Topology* Topology::RemoveContent(const std::shared_ptr<Topology>& rkTopology)
+	std::shared_ptr<Topology> Topology::RemoveContent(const std::shared_ptr<Topology>& rkTopology)
 	{
 		m_contents.remove(rkTopology);
-		return this;
+		return shared_from_this();
 	}
 
-	Topology* Topology::AddContext(const std::shared_ptr<Context>& rkContext)
+	std::shared_ptr<Topology> Topology::AddContext(const std::shared_ptr<Context>& rkContext)
 	{
 		if (std::find(m_contexts.begin(), m_contexts.end(), rkContext) == m_contexts.end())
 		{
 			m_contexts.push_back(rkContext);
 		}
-		return this;
+		return shared_from_this();
 	}
 
-	Topology* Topology::RemoveContext(const std::shared_ptr<Context>& rkContext)
+	std::shared_ptr<Topology> Topology::RemoveContext(const std::shared_ptr<Context>& rkContext)
 	{
 		m_contexts.remove(rkContext);
-		return this;
+		return shared_from_this();
 	}
 
-	void Topology::SharedTopologies(Topology * const kpTopology, std::list<Topology*>& rkSharedTopologies) const
+	void Topology::SharedTopologies(const std::shared_ptr<Topology>& kpTopology, std::list<std::shared_ptr<Topology>>& rkSharedTopologies) const
 	{
 	}
 
-	void Topology::PathsTo(Topology * const kpTopology, const int kMaxLevels, const int kMaxPaths, std::list<std::list<TopologicalQuery*>>& rkPaths) const
+	void Topology::PathsTo(const std::shared_ptr<Topology>& kpTopology, const int kMaxLevels, const int kMaxPaths, std::list<std::list<std::shared_ptr<TopologicalQuery>>>& rkPaths) const
 	{
 	}
 
@@ -344,7 +344,7 @@ namespace TopoLogicCore
 	}
 
 	void Topology::BooleanImages(
-		Topology const * const kpOtherTopology,
+		const std::shared_ptr<Topology>& kpOtherTopology,
 		std::list<std::shared_ptr<Topology>>& kArgumentImagesInArguments,
 		std::list<std::shared_ptr<Topology>>& kArgumentImagesInTools,
 		std::list<std::shared_ptr<Topology>>& kToolsImagesInArguments,
@@ -403,7 +403,7 @@ namespace TopoLogicCore
 	}
 
 	void Topology::BooleanImages(
-		Topology const * const kpOtherTopology,
+		const std::shared_ptr<Topology>& kpOtherTopology,
 		BOPAlgo_CellsBuilder& rOcctCellsBuilder,
 		BOPCol_ListOfShape& rOcctExclusivelyArgumentImages,
 		BOPCol_ListOfShape& rOcctExclusivelyToolImages,
@@ -448,9 +448,9 @@ namespace TopoLogicCore
 		BOPCol_ListOfShape occtCellsBuildersOperandsB;
 		if (kpOtherTopology->GetType() == TOPOLOGY_CELLCOMPLEX)
 		{
-			CellComplex const * const kpkCellComplex = TopologicalQuery::Downcast<CellComplex const>(kpOtherTopology);
+			std::shared_ptr<CellComplex> pCellComplex = TopologicalQuery::Downcast<CellComplex>(kpOtherTopology);
 			std::list<std::shared_ptr<Cell>> cells;
-			kpkCellComplex->Cells(cells);
+			pCellComplex->Cells(cells);
 			for (std::list<std::shared_ptr<Cell>>::const_iterator kCellIterator = cells.begin();
 				kCellIterator != cells.end();
 				kCellIterator++)
@@ -705,7 +705,7 @@ namespace TopoLogicCore
 	}
 
 	void Topology::BooleanParts(
-		Topology const * const kpOtherTopology,
+		const std::shared_ptr<Topology>& kpOtherTopology,
 		std::list<std::shared_ptr<Topology>>& rSpaceBetween_A_A_and_B_A,
 		std::list<std::shared_ptr<Topology>>& rSpaceBetween_B_A_and_A_B,
 		std::list<std::shared_ptr<Topology>>& rSpaceBetween_A_B_and_B_B)
@@ -742,9 +742,9 @@ namespace TopoLogicCore
 		BOPCol_ListOfShape occtCellsBuildersOperandsB;
 		if (kpOtherTopology->GetType() == TOPOLOGY_CELLCOMPLEX)
 		{
-			CellComplex const * const kpkCellComplex = TopologicalQuery::Downcast<CellComplex const>(kpOtherTopology);
+			std::shared_ptr<CellComplex> pCellComplex = TopologicalQuery::Downcast<CellComplex>(kpOtherTopology);
 			std::list<std::shared_ptr<Cell>> cells;
-			kpkCellComplex->Cells(cells);
+			pCellComplex->Cells(cells);
 			for (std::list<std::shared_ptr<Cell>>::const_iterator kCellIterator = cells.begin();
 				kCellIterator != cells.end();
 				kCellIterator++)
@@ -1140,14 +1140,14 @@ namespace TopoLogicCore
 		else if (occtShapeType == TopAbs_SOLID)
 		{
 			std::shared_ptr<Cell> pCell = Topology::Downcast<Cell>(pTopology);
-			std::list<Shell*> shells;
+			std::list<std::shared_ptr<Shell>> shells;
 			pCell->InnerBoundaries(shells);
-			for (std::list<Shell*>::iterator kShellIterator = shells.begin();
+			for (std::list<std::shared_ptr<Shell>>::iterator kShellIterator = shells.begin();
 				kShellIterator != shells.end();
 				kShellIterator++)
 			{
-				Shell* pInternalShell = *kShellIterator;
-				rUnionArguments.Append(*pInternalShell->GetOcctShape());
+				const std::shared_ptr<Shell>& kpInternalShell = *kShellIterator;
+				rUnionArguments.Append(*kpInternalShell->GetOcctShape());
 			}
 		}
 		else if (occtShapeType == TopAbs_SHELL)
@@ -1417,7 +1417,7 @@ namespace TopoLogicCore
 			m_ingredientTo.push_back(kpTopology);
 			kpTopology->m_ingredients.push_back(shared_from_this());
 
-			GlobalCluster::GetInstance().Remove(this);
+			GlobalCluster::GetInstance().Remove(shared_from_this());
 		}
 	}
 
@@ -1427,7 +1427,7 @@ namespace TopoLogicCore
 		kpTopology->m_ingredients.remove(shared_from_this());
 		if (m_ingredientTo.empty())
 		{
-			GlobalCluster::GetInstance().Add(this);
+			GlobalCluster::GetInstance().Add(shared_from_this());
 		}
 	}
 

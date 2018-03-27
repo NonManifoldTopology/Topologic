@@ -157,13 +157,13 @@ namespace TopoLogic
 		/// 
 		/// </summary>
 		/// <param name="kpCoreCell"></param>
-		Cell(TopoLogicCore::Cell* const kpCoreCell);
+		Cell(const std::shared_ptr<TopoLogicCore::Cell>& kpCoreCell);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		virtual TopoLogicCore::TopologicalQuery* GetCoreTopologicalQuery() override;
+		virtual std::shared_ptr<TopoLogicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
 
 	protected:
 		virtual ~Cell();
@@ -183,6 +183,6 @@ namespace TopoLogic
 		/// <summary>
 		/// 
 		/// </summary>
-		TopoLogicCore::Cell* m_pCoreCell;
+		std::shared_ptr<TopoLogicCore::Cell>* m_pCoreCell;
 	};
 }

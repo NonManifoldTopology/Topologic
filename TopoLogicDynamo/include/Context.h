@@ -52,13 +52,13 @@ namespace TopoLogic
 		double W();
 
 	public protected:
-		Context(TopoLogicCore::Context * const kpCoreContext);
+		Context(const std::shared_ptr<TopoLogicCore::Context>& kpCoreContext);
 
-		virtual TopoLogicCore::TopologicalQuery* GetCoreTopologicalQuery() override;
+		virtual std::shared_ptr<TopoLogicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
 
 	protected:
 		virtual ~Context();
 
-		TopoLogicCore::Context* m_pCoreContext;
+		std::shared_ptr<TopoLogicCore::Context>* m_pCoreContext;
 	};
 }

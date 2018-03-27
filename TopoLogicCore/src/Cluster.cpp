@@ -46,17 +46,17 @@ namespace TopoLogicCore
 			kTopologyIterator != rkTopologies.end();
 			kTopologyIterator++)
 		{
-			pCluster->AddTopology((*kTopologyIterator).get());
+			pCluster->AddTopology((*kTopologyIterator));
 		}
 		return pCluster;
 	}
 
 	// Use raw pointer because 1) called from the individual instance, 2) does not need a smart pointer
-	bool Cluster::AddTopology(Topology const * const kpkTopology, const bool kCheckIfInside)
+	bool Cluster::AddTopology(const std::shared_ptr<Topology>& kpTopology, const bool kCheckIfInside)
 	{
 		if (kCheckIfInside)
 		{
-			if (IsInside(kpkTopology))
+			if (IsInside(kpTopology))
 			{
 				return false;
 			}
@@ -74,7 +74,7 @@ namespace TopoLogicCore
 		// Do the addition
 		bool returnValue = true;
 		try {
-			m_occtBuilder.Add(*GetOcctShape(), *kpkTopology->GetOcctShape());
+			m_occtBuilder.Add(*GetOcctShape(), *kpTopology->GetOcctShape());
 		}
 		catch (TopoDS_UnCompatibleShapes &)
 		{
@@ -94,7 +94,7 @@ namespace TopoLogicCore
 		return returnValue;
 	}
 
-	bool Cluster::RemoveTopology(Topology const * const kpkTopology)
+	bool Cluster::RemoveTopology(const std::shared_ptr<Topology>& kpTopology)
 	{
 		// If this cluster is not the global cluster, it must have been inside the global cluster.
 		// (Added during initialisation.) The free flag is therefore at this point false.
@@ -106,7 +106,7 @@ namespace TopoLogicCore
 		}
 
 		try {
-			m_occtBuilder.Remove(*GetOcctShape(), *kpkTopology->GetOcctShape());
+			m_occtBuilder.Remove(*GetOcctShape(), *kpTopology->GetOcctShape());
 
 			return true;
 		}
@@ -151,7 +151,7 @@ namespace TopoLogicCore
 
 		if (kAddToGlobalCluster)
 		{
-			GlobalCluster::GetInstance().Add(this);
+			GlobalCluster::GetInstance().Add(shared_from_this());
 		}
 	}
 
@@ -163,13 +163,13 @@ namespace TopoLogicCore
 
 		if (kAddToGlobalCluster)
 		{
-			GlobalCluster::GetInstance().Add(this);
+			GlobalCluster::GetInstance().Add(shared_from_this());
 		}
 	}
 
 	Cluster::~Cluster()
 	{
-		GlobalCluster::GetInstance().Remove(this);
+		GlobalCluster::GetInstance().Remove(shared_from_this());
 	}
 
 	void Cluster::Shells(std::list<std::shared_ptr<Shell>>& rShells) const
@@ -207,9 +207,9 @@ namespace TopoLogicCore
 		DownwardNavigation(rCellComplexes);
 	}
 
-	bool Cluster::IsInside(Topology const * const kpkTopology) const
+	bool Cluster::IsInside(const std::shared_ptr<Topology>& kpTopology) const
 	{
-		const TopoDS_Shape& rkOcctAddedShape = *kpkTopology->GetOcctShape();
+		const TopoDS_Shape& rkOcctAddedShape = *kpTopology->GetOcctShape();
 		TopTools_MapOfShape occtShapes;
 		TopExp_Explorer occtExplorer;
 		for (occtExplorer.Init(*GetOcctShape(), rkOcctAddedShape.ShapeType()); occtExplorer.More(); occtExplorer.Next())

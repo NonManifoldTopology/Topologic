@@ -346,7 +346,7 @@ namespace TopoLogicCore
 		throw std::exception("No outer wire is found, invalid face?");
 	}
 
-	void Face::InnerBoundaries(std::list<Wire*>& rInnerBoundaries) const
+	void Face::InnerBoundaries(std::list<std::shared_ptr<Wire>>& rInnerBoundaries) const
 	{
 		// Algorithm based on ShapeAnalysis::OuterWire()
 		BRep_Builder occtBuilder;
@@ -363,7 +363,7 @@ namespace TopoLogicCore
 			occtBuilder.Add(occtFaceCopy, rkWire);
 			if (!ShapeAnalysis::IsOuterBound(occtFaceCopy))
 			{
-				rInnerBoundaries.push_back(new Wire(rkWire));
+				rInnerBoundaries.push_back(std::make_shared<Wire>(rkWire));
 			}
 		}
 	}
@@ -391,12 +391,12 @@ namespace TopoLogicCore
 		ShapeFix_Face occtShapeFix(rkOcctFace);
 		occtShapeFix.Perform();
 		m_pOcctFace = std::make_shared<TopoDS_Face>(occtShapeFix.Face());
-		GlobalCluster::GetInstance().Add(this);
+		GlobalCluster::GetInstance().Add(shared_from_this());
 	}
 
 	Face::~Face()
 	{
-		GlobalCluster::GetInstance().Remove(this);
+		GlobalCluster::GetInstance().Remove(shared_from_this());
 	}
 
 	Handle(Geom_Surface) Face::Surface() const

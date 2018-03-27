@@ -16,16 +16,16 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkTopology"></param>
+		/// <param name="kpTopology"></param>
 		/// <returns></returns>
-		bool Add(Topology * const kpTopology);
+		bool Add(const std::shared_ptr<Topology>& kpTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="pTopology"></param>
+		/// <param name="kpTopology"></param>
 		/// <returns></returns>
-		bool Remove(Topology* pTopology);
+		bool Remove(const std::shared_ptr<Topology>& kpTopology);
 
 		/// <summary>
 		/// 

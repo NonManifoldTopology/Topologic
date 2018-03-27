@@ -60,14 +60,14 @@ namespace TopoLogicCore
 		/// </summary>
 		/// <param name="pGeometry"></param>
 		/// <returns></returns>
-		static Topology* ByGeometry(Handle(Geom_Geometry) pGeometry);
+		static std::shared_ptr<Topology> ByGeometry(Handle(Geom_Geometry) pGeometry);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkContext"></param>
+		/// <param name="kpContext"></param>
 		/// <returns></returns>
-		static Topology* ByContext(Context const * const kpkContext);
+		static std::shared_ptr<Topology> ByContext(const std::shared_ptr<Context>& kpContext);
 
 		/// <summary>
 		/// 
@@ -75,7 +75,7 @@ namespace TopoLogicCore
 		/// <param name="rkVertexCoordinates"></param>
 		/// <param name="rkVertexIndices"></param>
 		/// <returns></returns>
-		static Topology* ByVertexIndex(const std::list<std::array<double, 3>>& rkVertexCoordinates, const std::list<std::list<int>>& rkVertexIndices);
+		static std::shared_ptr<Topology> ByVertexIndex(const std::list<std::array<double, 3>>& rkVertexCoordinates, const std::list<std::list<int>>& rkVertexIndices);
 
 		/// <summary>
 		/// 
@@ -83,42 +83,42 @@ namespace TopoLogicCore
 		/// <param name="rkVertices"></param>
 		/// <param name="rkVertexIndices"></param>
 		/// <returns></returns>
-		static Topology* ByVertexIndex(const std::list<Vertex*>& rkVertices, const std::list<std::list<int>>& rkVertexIndices);
+		static std::shared_ptr<Topology> ByVertexIndex(const std::list<std::shared_ptr<Vertex>>& rkVertices, const std::list<std::list<int>>& rkVertexIndices);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology* AddContent(const std::shared_ptr<Topology>& rkTopology);
+		TOPOLOGIC_API std::shared_ptr<Topology> AddContent(const std::shared_ptr<Topology>& rkTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology* RemoveContent(const std::shared_ptr<Topology>& rkTopology);
+		TOPOLOGIC_API std::shared_ptr<Topology> RemoveContent(const std::shared_ptr<Topology>& rkTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkContext"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology* AddContext(const std::shared_ptr<Context>& rkContext);
+		TOPOLOGIC_API std::shared_ptr<Topology> AddContext(const std::shared_ptr<Context>& rkContext);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkContext"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology* RemoveContext(const std::shared_ptr<Context>& rkContext);
+		TOPOLOGIC_API std::shared_ptr<Topology> RemoveContext(const std::shared_ptr<Context>& rkContext);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpTopology"></param>
 		/// <param name="rkSharedTopologies"></param>
-		TOPOLOGIC_API void SharedTopologies(Topology * const kpTopology, std::list<Topology*>& rkSharedTopologies) const;
+		TOPOLOGIC_API void SharedTopologies(const std::shared_ptr<Topology>& kpTopology, std::list<std::shared_ptr<Topology>>& rkSharedTopologies) const;
 
 		/// <summary>
 		/// 
@@ -127,19 +127,19 @@ namespace TopoLogicCore
 		/// <param name="kMaxLevels"></param>
 		/// <param name="kMaxPaths"></param>
 		/// <param name="rkPaths"></param>
-		TOPOLOGIC_API void PathsTo(Topology * const kpTopology, const int kMaxLevels, const int kMaxPaths, std::list<std::list<TopologicalQuery*>>& rkPaths) const;
+		TOPOLOGIC_API void PathsTo(const std::shared_ptr<Topology>& kpTopology, const int kMaxLevels, const int kMaxPaths, std::list<std::list<std::shared_ptr<TopologicalQuery>>>& rkPaths) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkOtherTopology"></param>
+		/// <param name="kpOtherTopology"></param>
 		/// <param name="kArgumentImagesInArguments"></param>
 		/// <param name="kArgumentImagesInTools"></param>
 		/// <param name="kToolsImagesInArguments"></param>
 		/// <param name="kToolsImagesInTools"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API void BooleanImages(
-			Topology const * const kpkOtherTopology,
+			const std::shared_ptr<Topology>& kpOtherTopology,
 			std::list<std::shared_ptr<Topology>>& kArgumentImagesInArguments,
 			std::list<std::shared_ptr<Topology>>& kArgumentImagesInTools,
 			std::list<std::shared_ptr<Topology>>& kToolsImagesInArguments,
@@ -148,14 +148,14 @@ namespace TopoLogicCore
 		/// <summary>
 		/// Does not perform cells builder.
 		/// </summary>
-		/// <param name="kpkOtherTopology"></param>
+		/// <param name="kpOtherTopology"></param>
 		/// <param name="rOcctCellsBuilder"></param>
 		/// <param name="kOcctArgumentImagesInArguments"></param>
 		/// <param name="kOcctArgumentImagesInTools"></param>
 		/// <param name="kOcctToolsImagesInArguments"></param>
 		/// <param name="kOcctToolsImagesInTools"></param>
 		void BooleanImages(
-			Topology const * const kpkOtherTopology,
+			const std::shared_ptr<Topology>& kpOtherTopology,
 			BOPAlgo_CellsBuilder& rOcctCellsBuilder,
 			BOPCol_ListOfShape& rOcctExclusivelyArgumentImages,
 			BOPCol_ListOfShape& rOcctExclusivelyToolImages,
@@ -170,7 +170,7 @@ namespace TopoLogicCore
 
 
 		TOPOLOGIC_API void BooleanParts(
-			Topology const * const kpkOtherTopology,
+			const std::shared_ptr<Topology>& kpOtherTopology,
 			std::list<std::shared_ptr<Topology>>& rSpaceBetween_A_A_and_B_A,
 			std::list<std::shared_ptr<Topology>>& rSpaceBetween_B_A_and_A_B,
 			std::list<std::shared_ptr<Topology>>& rSpaceBetween_A_B_and_B_B);

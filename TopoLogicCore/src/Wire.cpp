@@ -121,11 +121,11 @@ namespace TopoLogicCore
 		, m_pOcctWire(nullptr)
 	{
 		m_pOcctWire = std::make_shared<TopoDS_Wire>(rkOcctWire);
-		GlobalCluster::GetInstance().Add(this);
+		GlobalCluster::GetInstance().Add(shared_from_this());
 	}
 
 	Wire::~Wire()
 	{
-		GlobalCluster::GetInstance().Remove(this);
+		GlobalCluster::GetInstance().Remove(shared_from_this());
 	}
 }

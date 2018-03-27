@@ -4,7 +4,7 @@
 
 namespace TopoLogicCore
 {
-	bool GlobalCluster::Add(Topology * const kpTopology)
+	bool GlobalCluster::Add(const std::shared_ptr<Topology>& kpTopology)
 	{
 		bool returnValue = GetCluster()->AddTopology(kpTopology, true);
 		kpTopology->SetInGlobalCluster(returnValue);
@@ -13,13 +13,13 @@ namespace TopoLogicCore
 		return returnValue;
 	}
 
-	bool GlobalCluster::Remove(Topology* pTopology)
+	bool GlobalCluster::Remove(const std::shared_ptr<Topology>& kpTopology)
 	{
-		if (!pTopology->IsInGlobalCluster())
+		if (!kpTopology->IsInGlobalCluster())
 			return false;
 
-		bool returnValue = GetCluster()->RemoveTopology(pTopology);
-		pTopology->SetInGlobalCluster(false);
+		bool returnValue = GetCluster()->RemoveTopology(kpTopology);
+		kpTopology->SetInGlobalCluster(false);
 		return returnValue;
 	}
 

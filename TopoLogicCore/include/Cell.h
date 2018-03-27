@@ -114,36 +114,36 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkAnotherCell"></param>
+		/// <param name="kpAnotherCell"></param>
 		/// <param name="rEdges"></param>
-		TOPOLOGIC_API void SharedEdges(Cell const * const kpkAnotherCell, std::list<Edge*>& rEdges) const;
+		TOPOLOGIC_API void SharedEdges(const std::shared_ptr<Cell>& kpAnotherCell, std::list<std::shared_ptr<Edge>>& rEdges) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkAnotherCell"></param>
+		/// <param name="kpAnotherCell"></param>
 		/// <param name="rFaces"></param>
-		TOPOLOGIC_API void SharedFaces(Cell const * const kpkAnotherCell, std::list<Face*>& rFaces) const;
+		TOPOLOGIC_API void SharedFaces(const std::shared_ptr<Cell>& kpAnotherCell, std::list<std::shared_ptr<Face>>& rFaces) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkAnotherCell"></param>
+		/// <param name="kpAnotherCell"></param>
 		/// <param name="rVertices"></param>
-		TOPOLOGIC_API void SharedVertices(Cell const * const kpkAnotherCell, std::list<Vertex*>& rVertices) const;
+		TOPOLOGIC_API void SharedVertices(const std::shared_ptr<Cell>& kpkAnotherCell, std::list<std::shared_ptr<Vertex>>& rVertices) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		TOPOLOGIC_API Shell* OuterBoundary() const;
+		TOPOLOGIC_API std::shared_ptr<Shell> OuterBoundary() const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rShells"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API void InnerBoundaries(std::list<Shell*>& rShells) const;
+		TOPOLOGIC_API void InnerBoundaries(std::list<std::shared_ptr<Shell>>& rShells) const;
 
 		/// <summary>
 		/// 

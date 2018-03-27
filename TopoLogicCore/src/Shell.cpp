@@ -463,11 +463,11 @@ namespace TopoLogicCore
 		ShapeFix_Shell occtShapeFixShell(rkOcctShell);
 		occtShapeFixShell.Perform();
 		m_pOcctShell = std::make_shared<TopoDS_Shell>(occtShapeFixShell.Shell());
-		GlobalCluster::GetInstance().Add(this);
+		GlobalCluster::GetInstance().Add(shared_from_this());
 	}
 
 	Shell::~Shell()
 	{
-		GlobalCluster::GetInstance().Remove(this);
+		GlobalCluster::GetInstance().Remove(shared_from_this());
 	}
 }

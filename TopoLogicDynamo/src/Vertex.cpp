@@ -17,18 +17,18 @@ namespace TopoLogic
 
 	List<Edge^>^ Vertex::Edges()
 	{
-		std::list<TopoLogicCore::Edge*> coreEdges;
-		TopoLogicCore::Vertex* pCoreVertex = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Vertex>(GetCoreTopologicalQuery());
+		std::list<std::shared_ptr<TopoLogicCore::Edge>> coreEdges;
+		std::shared_ptr<TopoLogicCore::Vertex> pCoreVertex = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Vertex>(GetCoreTopologicalQuery());
 		pCoreVertex->Edges(coreEdges);
 
 		List<Edge^>^ pEdges = gcnew List<Edge^>();
 		List<Object^>^ pDynamoCurves = gcnew List<Object^>();
-		for (std::list<TopoLogicCore::Edge*>::iterator coreEdgeIterator = coreEdges.begin();
+		for (std::list<std::shared_ptr<TopoLogicCore::Edge>>::iterator coreEdgeIterator = coreEdges.begin();
 			coreEdgeIterator != coreEdges.end();
 			coreEdgeIterator++)
 		{
-			TopoLogicCore::Edge* pCoreEdge = *coreEdgeIterator;
-			Edge^ pEdge = gcnew Edge(pCoreEdge);
+			const std::shared_ptr<TopoLogicCore::Edge>& kpCoreEdge = *coreEdgeIterator;
+			Edge^ pEdge = gcnew Edge(kpCoreEdge);
 			pEdges->Add(pEdge);
 			pDynamoCurves->Add(pEdge->Geometry);
 		}
@@ -36,7 +36,7 @@ namespace TopoLogic
 		return pEdges;
 	}
 
-	TopoLogicCore::TopologicalQuery* Vertex::GetCoreTopologicalQuery()
+	std::shared_ptr<TopoLogicCore::TopologicalQuery> Vertex::GetCoreTopologicalQuery()
 	{
 		assert(m_pCoreVertex != nullptr && "Vertex::m_pCoreVertex is null.");
 		if (m_pCoreVertex == nullptr)
@@ -44,19 +44,18 @@ namespace TopoLogic
 			throw gcnew Exception("Vertex::m_pCoreVertex is null.");
 		}
 
-		return m_pCoreVertex;
+		return *m_pCoreVertex;
 	}
 
-	Vertex::Vertex(TopoLogicCore::Vertex * const kpCoreVertex)
+	Vertex::Vertex(const std::shared_ptr<TopoLogicCore::Vertex>& kpCoreVertex)
 		: Topology()
-		, m_pCoreVertex(kpCoreVertex)
+		, m_pCoreVertex(new std::shared_ptr<TopoLogicCore::Vertex>(kpCoreVertex))
 	{
 
 	}
 
 	Vertex::Vertex(Autodesk::DesignScript::Geometry::Point^ pDynamoPoint)
-		: Topology()
-		, m_pCoreVertex(TopoLogicCore::Vertex::ByPoint(new Geom_CartesianPoint(gp_Pnt(pDynamoPoint->X, pDynamoPoint->Y, pDynamoPoint->Z))))
+		: Vertex(TopoLogicCore::Vertex::ByPoint(new Geom_CartesianPoint(gp_Pnt(pDynamoPoint->X, pDynamoPoint->Y, pDynamoPoint->Z))))
 	{
 
 	}

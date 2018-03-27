@@ -65,7 +65,7 @@ namespace TopoLogic {
 		/// 
 		/// </summary>
 		/// <param name="kpCoreWire"></param>
-		Wire(TopoLogicCore::Wire* const kpCoreWire);
+		Wire(const std::shared_ptr<TopoLogicCore::Wire>& kpCoreWire);
 
 		/// <summary>
 		/// 
@@ -83,7 +83,7 @@ namespace TopoLogic {
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		virtual TopoLogicCore::TopologicalQuery* GetCoreTopologicalQuery() override;
+		virtual std::shared_ptr<TopoLogicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
 
 	protected:
 		virtual ~Wire();
@@ -91,6 +91,6 @@ namespace TopoLogic {
 		/// <summary>
 		/// 
 		/// </summary>
-		TopoLogicCore::Wire* m_pCoreWire;
+		std::shared_ptr<TopoLogicCore::Wire>* m_pCoreWire;
 	};
 }

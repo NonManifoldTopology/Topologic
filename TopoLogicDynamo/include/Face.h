@@ -127,7 +127,7 @@ namespace TopoLogic {
 		/// 
 		/// </summary>
 		/// <param name="kpCoreFace"></param>
-		Face(TopoLogicCore::Face* const kpCoreFace);
+		Face(const std::shared_ptr<TopoLogicCore::Face>& kpCoreFace);
 
 		/// <summary>
 		/// 
@@ -157,7 +157,7 @@ namespace TopoLogic {
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		virtual TopoLogicCore::TopologicalQuery* GetCoreTopologicalQuery() override;
+		virtual std::shared_ptr<TopoLogicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
 
 	protected:
 		virtual ~Face();
@@ -174,6 +174,6 @@ namespace TopoLogic {
 		/// <summary>
 		/// 
 		/// </summary>
-		TopoLogicCore::Face* m_pCoreFace;
+		std::shared_ptr<TopoLogicCore::Face>* m_pCoreFace;
 	};
 }

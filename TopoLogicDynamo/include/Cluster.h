@@ -88,13 +88,13 @@ namespace TopoLogic
 		/// 
 		/// </summary>
 		/// <param name="kpCoreCluster"></param>
-		Cluster(TopoLogicCore::Cluster* const kpCoreCluster);
+		Cluster(const std::shared_ptr<TopoLogicCore::Cluster>& kpCoreCluster);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		virtual TopoLogicCore::TopologicalQuery* GetCoreTopologicalQuery() override;
+		virtual std::shared_ptr<TopoLogicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
 
 
 	protected:
@@ -103,6 +103,6 @@ namespace TopoLogic
 		/// <summary>
 		/// 
 		/// </summary>
-		TopoLogicCore::Cluster* m_pCoreCluster;
+		std::shared_ptr<TopoLogicCore::Cluster>* m_pCoreCluster;
 	};
 }

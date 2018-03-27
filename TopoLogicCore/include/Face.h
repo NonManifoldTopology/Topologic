@@ -156,7 +156,7 @@ namespace TopoLogicCore
 		/// </summary>
 		/// <param name="rInnerBoundaries"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API void InnerBoundaries(std::list<Wire*>& rInnerBoundaries) const;
+		TOPOLOGIC_API void InnerBoundaries(std::list<std::shared_ptr<Wire>>& rInnerBoundaries) const;
 
 		/// <summary>
 		/// 

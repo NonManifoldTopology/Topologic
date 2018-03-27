@@ -123,10 +123,10 @@ namespace TopoLogicCore
 		return pEdge;
 	}
 
-	std::shared_ptr<Vertex> Edge::SharedVertex(Edge const * const kpkAnotherEdge) const
+	std::shared_ptr<Vertex> Edge::SharedVertex(const std::shared_ptr<Edge>& kpAnotherEdge) const
 	{
 		TopoDS_Vertex occtSharedVertex;
-		bool result = TopExp::CommonVertex(*m_pOcctEdge, TopoDS::Edge(*kpkAnotherEdge->GetOcctShape()), occtSharedVertex);
+		bool result = TopExp::CommonVertex(*m_pOcctEdge, TopoDS::Edge(*kpAnotherEdge->GetOcctShape()), occtSharedVertex);
 
 		return std::make_shared<Vertex>(occtSharedVertex);
 	}
@@ -158,11 +158,11 @@ namespace TopoLogicCore
 		: Topology(1)
 		, m_pOcctEdge(std::make_shared<TopoDS_Edge>(rkOcctEdge))
 	{
-		GlobalCluster::GetInstance().Add(this);
+		GlobalCluster::GetInstance().Add(shared_from_this());
 	}
 
 	Edge::~Edge()
 	{
-		GlobalCluster::GetInstance().Remove(this);
+		GlobalCluster::GetInstance().Remove(shared_from_this());
 	}
 }

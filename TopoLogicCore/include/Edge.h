@@ -79,9 +79,9 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkAnotherEdge"></param>
+		/// <param name="kpAnotherEdge"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API std::shared_ptr<Vertex> SharedVertex(Edge const * const kpkAnotherEdge) const;
+		TOPOLOGIC_API std::shared_ptr<Vertex> SharedVertex(const std::shared_ptr<Edge>& kpAnotherEdge) const;
 
 		/// <summary>
 		/// 

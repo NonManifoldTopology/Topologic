@@ -2,6 +2,8 @@
 
 #include <TopoLogicCore/include/Attribute.h>
 
+#include <memory>
+
 namespace TopoLogic
 {
 	public ref class Attribute
@@ -9,11 +11,11 @@ namespace TopoLogic
 	public:
 		
 	public protected:
-		Attribute(TopoLogicCore::Attribute * const kpCoreAttribute);
+		Attribute(const std::shared_ptr<TopoLogicCore::Attribute>& kpCoreAttribute);
 
 	protected:
 		~Attribute();
 
-		TopoLogicCore::Attribute* m_pCoreAttribute;
+		std::shared_ptr<TopoLogicCore::Attribute>* m_pCoreAttribute;
 	};
 }

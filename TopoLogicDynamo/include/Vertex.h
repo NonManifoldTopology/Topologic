@@ -36,12 +36,12 @@ namespace TopoLogic
 		}
 
 	public protected:
-		Vertex(TopoLogicCore::Vertex* const kpCoreVertex);
+		Vertex(const std::shared_ptr<TopoLogicCore::Vertex>& kpCoreVertex);
 		Vertex(Autodesk::DesignScript::Geometry::Point^ pDynamoPoint);
 
 		Autodesk::DesignScript::Geometry::Point^ Point();
 
-		virtual TopoLogicCore::TopologicalQuery* GetCoreTopologicalQuery() override;
+		virtual std::shared_ptr<TopoLogicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
 
 	protected:
 		virtual ~Vertex();
@@ -49,6 +49,6 @@ namespace TopoLogic
 		/// <summary>
 		/// 
 		/// </summary>
-		TopoLogicCore::Vertex* m_pCoreVertex;
+		std::shared_ptr<TopoLogicCore::Vertex>* m_pCoreVertex;
 	};
 }

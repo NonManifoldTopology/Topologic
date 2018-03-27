@@ -15,7 +15,7 @@ namespace TopoLogicCore
 	class Context : public TopologicalQuery
 	{
 	public:
-		Context(TopoLogicCore::Topology * const kpTopology, const double kU, const double kV, const double kW);
+		Context(const std::shared_ptr<TopoLogicCore::Topology>& kpTopology, const double kU, const double kV, const double kW);
 		virtual ~Context();
 
 		/// <summary>
@@ -26,7 +26,7 @@ namespace TopoLogicCore
 		/// <param name="kV">The v parameter</param>
 		/// <param name="kW">The w parameter</param>
 		/// <returns>A context</returns>
-		static TOPOLOGIC_API Context* ByTopologyParameters(Topology * const kpTopology, const double kU, const double kV, const double kW);
+		static TOPOLOGIC_API std::shared_ptr<Context> ByTopologyParameters(const std::shared_ptr<TopoLogicCore::Topology>& kpTopology, const double kU, const double kV, const double kW);
 
 		/// <summary>
 		/// 
