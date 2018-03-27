@@ -18,12 +18,12 @@ namespace TopoLogicCore
 		: Topology(0)
 		, m_pOcctVertex(std::make_shared<TopoDS_Vertex>(rkOcctVertex))
 	{
-		GlobalCluster::GetInstance().Add(shared_from_this());
+		GlobalCluster::GetInstance().Add(this);
 	}
 
 	Vertex::~Vertex()
 	{
-		GlobalCluster::GetInstance().Remove(shared_from_this());
+		GlobalCluster::GetInstance().Remove(this);
 	}
 
 	std::shared_ptr<Vertex> Vertex::ByPoint(Handle(Geom_Point) pOcctPoint)

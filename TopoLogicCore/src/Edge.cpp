@@ -158,11 +158,11 @@ namespace TopoLogicCore
 		: Topology(1)
 		, m_pOcctEdge(std::make_shared<TopoDS_Edge>(rkOcctEdge))
 	{
-		GlobalCluster::GetInstance().Add(shared_from_this());
+		GlobalCluster::GetInstance().Add(this);
 	}
 
 	Edge::~Edge()
 	{
-		GlobalCluster::GetInstance().Remove(shared_from_this());
+		GlobalCluster::GetInstance().Remove(this);
 	}
 }

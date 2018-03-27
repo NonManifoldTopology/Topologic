@@ -32,7 +32,7 @@ namespace TopoLogic
 		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topology->GetCoreTopologicalQuery());
 		std::shared_ptr<TopoLogicCore::Cluster> pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(GetCoreTopologicalQuery());
 
-		if (!pCoreCluster->AddTopology(pCoreTopology))
+		if (!pCoreCluster->AddTopology(pCoreTopology.get()))
 		{
 			throw gcnew Exception("Cluster::Add(): fails to add topology");
 		}
@@ -43,7 +43,7 @@ namespace TopoLogic
 	{
 		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topology->GetCoreTopologicalQuery());
 		std::shared_ptr<TopoLogicCore::Cluster> pCoreCluster = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(GetCoreTopologicalQuery());
-		if (!pCoreCluster->RemoveTopology(pCoreTopology))
+		if (!pCoreCluster->RemoveTopology(pCoreTopology.get()))
 		{
 			throw gcnew Exception("Cluster::Remove(): fails to remove topology");
 		}

@@ -348,11 +348,11 @@ namespace TopoLogicCore
 		ShapeFix_Solid occtShapeFixSolid(rkOcctSolid);
 		occtShapeFixSolid.Perform(Handle(Message_ProgressIndicator)());
 		m_pOcctSolid = std::make_shared<TopoDS_Solid>(TopoDS::Solid(occtShapeFixSolid.Solid()));
-		GlobalCluster::GetInstance().Add(shared_from_this());
+		GlobalCluster::GetInstance().Add(this);
 	}
 
 	Cell::~Cell()
 	{
-		GlobalCluster::GetInstance().Remove(shared_from_this());
+		GlobalCluster::GetInstance().Remove(this);
 	}
 }

@@ -48,14 +48,14 @@ namespace TopoLogicCore
 		/// <param name="kpTopology"></param>
 		/// <param name="kCheckIfInside"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API bool AddTopology(const std::shared_ptr<Topology>& kpTopology, const bool kCheckIfInside = false);
+		TOPOLOGIC_API bool AddTopology(Topology const * const kpkTopology, const bool kCheckIfInside = false);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpkTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API bool RemoveTopology(const std::shared_ptr<Topology>& kpTopology);
+		TOPOLOGIC_API bool RemoveTopology(Topology const * const kpkTopologyy);
 
 		/// <summary>
 		/// 
@@ -116,9 +116,9 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpTopology"></param>
+		/// <param name="kpkTopology"></param>
 		/// <returns></returns>
-		bool IsInside(const std::shared_ptr<Topology>& kpTopology) const;
+		bool IsInside(Topology const * const kpkTopology) const;
 
 		/// <summary>
 		/// The underlying OCCT compound.

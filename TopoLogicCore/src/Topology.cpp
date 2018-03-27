@@ -1417,7 +1417,7 @@ namespace TopoLogicCore
 			m_ingredientTo.push_back(kpTopology);
 			kpTopology->m_ingredients.push_back(shared_from_this());
 
-			GlobalCluster::GetInstance().Remove(shared_from_this());
+			GlobalCluster::GetInstance().Remove(this);
 		}
 	}
 
@@ -1427,7 +1427,7 @@ namespace TopoLogicCore
 		kpTopology->m_ingredients.remove(shared_from_this());
 		if (m_ingredientTo.empty())
 		{
-			GlobalCluster::GetInstance().Add(shared_from_this());
+			GlobalCluster::GetInstance().Add(this);
 		}
 	}
 

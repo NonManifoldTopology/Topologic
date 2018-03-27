@@ -220,11 +220,11 @@ namespace TopoLogicCore
 		: Topology(3)
 		, m_pOcctCompSolid(std::make_shared<TopoDS_CompSolid>(rkOcctCompSolid))
 	{
-		GlobalCluster::GetInstance().Add(shared_from_this());
+		GlobalCluster::GetInstance().Add(this);
 	}
 
 	CellComplex::~CellComplex()
 	{
-		GlobalCluster::GetInstance().Remove(shared_from_this());
+		GlobalCluster::GetInstance().Remove(this);
 	}
 }

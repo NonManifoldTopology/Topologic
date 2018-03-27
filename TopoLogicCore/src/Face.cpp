@@ -391,12 +391,12 @@ namespace TopoLogicCore
 		ShapeFix_Face occtShapeFix(rkOcctFace);
 		occtShapeFix.Perform();
 		m_pOcctFace = std::make_shared<TopoDS_Face>(occtShapeFix.Face());
-		GlobalCluster::GetInstance().Add(shared_from_this());
+		GlobalCluster::GetInstance().Add(this);
 	}
 
 	Face::~Face()
 	{
-		GlobalCluster::GetInstance().Remove(shared_from_this());
+		GlobalCluster::GetInstance().Remove(this);
 	}
 
 	Handle(Geom_Surface) Face::Surface() const
