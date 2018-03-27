@@ -41,6 +41,11 @@ namespace TopoLogicCore
 {
 	std::shared_ptr<Cluster> Cluster::ByTopology(const std::list<std::shared_ptr<Topology>>& rkTopologies)
 	{
+		if (rkTopologies.empty())
+		{
+			throw std::exception("No topology is passed.");
+		}
+
 		std::shared_ptr<Cluster> pCluster = std::make_shared<Cluster>(true);
 		for(std::list<std::shared_ptr<Topology>>::const_iterator kTopologyIterator = rkTopologies.begin();
 			kTopologyIterator != rkTopologies.end();

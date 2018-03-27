@@ -119,6 +119,11 @@ namespace TopoLogicCore
 
 	std::shared_ptr<Cell> Cell::ByFaces(const std::list<std::shared_ptr<Face>>& rkFaces)
 	{
+		if (rkFaces.empty())
+		{
+			throw std::exception("No face is passed.");
+		}
+
 		std::shared_ptr<Shell> pShell = Shell::ByFaces(rkFaces);
 		std::shared_ptr<Cell> pCell = ByShell(pShell);
 		for (std::list<std::shared_ptr<Face>>::const_iterator kFaceIterator = rkFaces.begin();
@@ -160,6 +165,11 @@ namespace TopoLogicCore
 
 	std::shared_ptr<Cell> Cell::ByVerticesFaceIndices(const std::vector<std::shared_ptr<Vertex>>& rkVertices, const std::list<std::list<int>>& rkFaceIndices)
 	{
+		if (rkVertices.empty())
+		{
+			throw std::exception("No vertex is passed.");
+		}
+
 		std::list<std::shared_ptr<Face>> faces;
 		for (std::list<std::list<int>>::const_iterator kFaceIndexIterator = rkFaceIndices.begin();
 			kFaceIndexIterator != rkFaceIndices.end();

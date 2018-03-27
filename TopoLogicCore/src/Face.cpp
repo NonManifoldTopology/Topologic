@@ -111,6 +111,11 @@ namespace TopoLogicCore
 
 	std::shared_ptr<Face> Face::ByEdges(const std::list<std::shared_ptr<Edge>>& rkEdges)
 	{
+		if (rkEdges.size())
+		{
+			throw std::exception("No edge is passed.");
+		}
+
 		std::shared_ptr<Face> pFace = ByClosedWire(Wire::ByEdges(rkEdges));
 		for (std::list<std::shared_ptr<Edge>>::const_iterator kEdgeIterator = rkEdges.begin();
 			kEdgeIterator != rkEdges.end();
@@ -265,7 +270,10 @@ namespace TopoLogicCore
 			pkWire->AddIngredientTo(pFace);
 		}
 
-		kpOuterWire->AddIngredientTo(pFace);
+		if(kpOuterWire != nullptr)
+		{
+			kpOuterWire->AddIngredientTo(pFace);
+		}
 		return pFace;
 	}
 

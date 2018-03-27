@@ -55,6 +55,11 @@ namespace TopoLogicCore
 
 	std::shared_ptr<CellComplex> CellComplex::ByCells(const std::list<std::shared_ptr<Cell>>& rkCells)
 	{
+		if (rkCells.empty())
+		{
+			throw std::exception("No cell is passed.");
+		}
+
 		TopoDS_CompSolid occtCompSolid;
 		BRep_Builder occtBuilder;
 		occtBuilder.MakeCompSolid(occtCompSolid);

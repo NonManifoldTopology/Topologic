@@ -41,6 +41,11 @@ namespace TopoLogicCore
 
 	std::shared_ptr<Wire> Wire::ByEdges(const std::list<std::shared_ptr<Edge>>& rkEdges)
 	{
+		if (rkEdges.empty())
+		{
+			throw std::exception("No edge is passed.");
+		}
+
 		TopTools_ListOfShape occtEdges;
 		for(std::list<std::shared_ptr<Edge>>::const_iterator kEdgeIterator = rkEdges.begin();
 			kEdgeIterator != rkEdges.end();

@@ -63,6 +63,11 @@ namespace TopoLogicCore
 
 	std::shared_ptr<Shell> Shell::ByFaces(const std::list<std::shared_ptr<Face>>& rkFaces)
 	{
+		if (rkFaces.size())
+		{
+			throw std::exception("No face is passed.");
+		}
+
 		BRepBuilderAPI_Sewing occtSewing;
 		for(std::list<std::shared_ptr<Face>>::const_iterator kFaceIterator = rkFaces.begin();
 			kFaceIterator != rkFaces.end();
