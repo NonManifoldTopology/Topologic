@@ -54,7 +54,8 @@ namespace TopoLogicCore
 
 	bool Shell::IsClosed() const
 	{
-		return (BRepCheck_Shell(TopoDS::Shell(*GetOcctShape())).Closed() == BRepCheck_NoError);
+		BRepCheck_Shell occtBrepCheckShell(TopoDS::Shell(*GetOcctShape()));
+		return (occtBrepCheckShell.Closed() == BRepCheck_NoError);
 	}
 
 	void Shell::Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const
@@ -266,6 +267,18 @@ namespace TopoLogicCore
 		double vRange = vMax - vMin;
 		double dU = uRange / (double)kNumUPanels;
 		double dV = vRange / (double)kNumVPanels;
+		bool isUClosed = pOcctSurface->IsUClosed();
+		int numUPoints = kNumUPanels;
+		if (!isUClosed)
+		{
+			numUPoints += 1;
+		}
+		bool isVClosed = pOcctSurface->IsVClosed();
+		int numVPoints = kNumVPanels;
+		if (!isVClosed)
+		{
+			numVPoints += 1;
+		}
 
 		std::vector<double> uSubdivision;
 		uSubdivision.push_back(uMin);
@@ -286,16 +299,26 @@ namespace TopoLogicCore
 		vSubdivision.push_back(vMax);
 
 		// Initialise ShapeOp matrix
-		int numOfPoints = (kNumUPanels + 1)* (kNumVPanels + 1);
+		int numOfPoints = numUPoints * numVPoints;
 		ShapeOp::Matrix3X shapeOpMatrix(3, numOfPoints); //column major
 		int i = 0;
+		std::vector<double>::const_iterator endUIterator = uSubdivision.end();
+		if (isUClosed) 
+		{
+			endUIterator--;
+		}
+		std::vector<double>::const_iterator endVIterator = vSubdivision.end();
+		if (isVClosed)
+		{
+			endVIterator--;
+		}
 		for (std::vector<double>::const_iterator uIterator = uSubdivision.begin();
-			uIterator != uSubdivision.end();
+			uIterator != endUIterator;
 			uIterator++)
 		{
 			const double& rkU = *uIterator;
 			for (std::vector<double>::const_iterator vIterator = vSubdivision.begin();
-				vIterator != vSubdivision.end();
+				vIterator != endVIterator;
 				vIterator++)
 			{
 				const double& rkV = *vIterator;
@@ -314,41 +337,56 @@ namespace TopoLogicCore
 		ShapeOp::Scalar weight = 1.0;
 
 		// Planarity constraint to the panels
+		// i and j are just used to iterate, the actual indices are the u and v variables.
 		for (int i = 0; i < kNumUPanels; ++i)
 		{
 			for (int j = 0; j < kNumVPanels; ++j)
 			{
+				// Default values
+				int minU = i;		int minV = j;
+				int maxU = i + 1;	int maxV = j + 1;
+				
+				// Border values
+				if (isUClosed && i == kNumUPanels - 1)
+				{
+					maxU = 0;
+				}
+				if (isVClosed && j == kNumVPanels - 1)
+				{
+					maxV = 0;
+				}
+
 				std::vector<int> vertexIDs;
-				vertexIDs.push_back(i * kNumVPanels + j);
-				vertexIDs.push_back(i * kNumVPanels + (j + 1));
-				vertexIDs.push_back((i + 1) * kNumVPanels + (j + 1));
-				vertexIDs.push_back((i + 1) * kNumVPanels + j);
+				vertexIDs.push_back(minU * kNumVPanels + minV);
+				vertexIDs.push_back(minU * kNumVPanels + maxV);
+				vertexIDs.push_back(maxU * kNumVPanels + maxV);
+				vertexIDs.push_back(maxU * kNumVPanels + maxV);
 				auto shapeOpConstraint = std::make_shared<ShapeOp::PlaneConstraint>(vertexIDs, weight, shapeOpSolver.getPoints());
 				shapeOpSolver.addConstraint(shapeOpConstraint);
 			}
 		}
 
-		// Closeness constraints to the vertices on the edge along the u-axis
-		for (int i = 0; i < kNumUPanels + 1; ++i)
+		// Closeness constraints to the vertices on the edges along the u-axis
+		for (int i = 0; i < numUPoints; ++i)
 		{
 			{
 				std::vector<int> vertexIDs;
-				vertexIDs.push_back(i * (kNumVPanels + 1));
+				vertexIDs.push_back(i * numVPoints);
 				auto shapeOpConstraint = std::make_shared<ShapeOp::ClosenessConstraint>(vertexIDs, weight, shapeOpSolver.getPoints());
 				shapeOpSolver.addConstraint(shapeOpConstraint);
 			}
 
+			if(!isVClosed)
 			{
 				std::vector<int> vertexIDs;
-				vertexIDs.push_back(i * (kNumVPanels + 1) + kNumVPanels);
+				vertexIDs.push_back((i + 1) * numVPoints - 1);
 				auto shapeOpConstraint = std::make_shared<ShapeOp::ClosenessConstraint>(vertexIDs, weight, shapeOpSolver.getPoints());
 				shapeOpSolver.addConstraint(shapeOpConstraint);
 			}
 		}
 
-
 		// Closeness constraints to the vertices on the edge along the v-axis
-		for (int j = 0; j < kNumVPanels + 1; ++j)
+		for (int j = 0; j < numVPoints; ++j)
 		{
 			{
 				std::vector<int> vertexIDs;
@@ -356,9 +394,11 @@ namespace TopoLogicCore
 				auto shapeOpConstraint = std::make_shared<ShapeOp::ClosenessConstraint>(vertexIDs, weight, shapeOpSolver.getPoints());
 				shapeOpSolver.addConstraint(shapeOpConstraint);
 			}
+
+			if(!isUClosed)
 			{
 				std::vector<int> vertexIDs;
-				vertexIDs.push_back(kNumUPanels * (kNumVPanels + 1) + j);
+				vertexIDs.push_back((numUPoints-1) * numVPoints + j);
 				auto shapeOpConstraint = std::make_shared<ShapeOp::ClosenessConstraint>(vertexIDs, weight, shapeOpSolver.getPoints());
 				shapeOpSolver.addConstraint(shapeOpConstraint);
 			}
@@ -370,7 +410,7 @@ namespace TopoLogicCore
 			for (int j = 1; j < kNumVPanels; ++j)
 			{
 				std::vector<int> vertexIDs;
-				vertexIDs.push_back(i * (kNumVPanels + 1) + j);
+				vertexIDs.push_back(i * numVPoints + j);
 				auto shapeOpConstraint = std::make_shared<ShapeOp::ClosenessConstraint>(vertexIDs, 0.1*weight, shapeOpSolver.getPoints());
 				shapeOpSolver.addConstraint(shapeOpConstraint);
 			}
@@ -390,16 +430,30 @@ namespace TopoLogicCore
 		{
 			for (int j = 0; j < kNumVPanels; ++j)
 			{
-				int index1 = i * (kNumVPanels + 1) + j;
+				// Default values
+				int minU = i;		int minV = j;
+				int maxU = i + 1;	int maxV = j + 1;
+
+				// Border values
+				if (isUClosed && i == kNumUPanels - 1)
+				{
+					maxU = 0;
+				}
+				if (isVClosed && j == kNumVPanels - 1)
+				{
+					maxV = 0;
+				}
+
+				int index1 = minU * numVPoints + minV;
 				Handle(Geom_Point) pOcctPoint1 = new Geom_CartesianPoint(rkShapeOpResult(0, index1), rkShapeOpResult(1, index1), rkShapeOpResult(2, index1));
 
-				int index2 = i * (kNumVPanels + 1) + (j + 1);
+				int index2 = minU * numVPoints + maxV;
 				Handle(Geom_Point) pOcctPoint2 = new Geom_CartesianPoint(rkShapeOpResult(0, index2), rkShapeOpResult(1, index2), rkShapeOpResult(2, index2));
 
-				int index3 = (i + 1) * (kNumVPanels + 1) + (j + 1);
+				int index3 = maxU * numVPoints + maxV;
 				Handle(Geom_Point) pOcctPoint3 = new Geom_CartesianPoint(rkShapeOpResult(0, index3), rkShapeOpResult(1, index3), rkShapeOpResult(2, index3));
 
-				int index4 = (i + 1) * (kNumVPanels + 1) + j;
+				int index4 = maxU * numVPoints + minV;
 				Handle(Geom_Point) pOcctPoint4 = new Geom_CartesianPoint(rkShapeOpResult(0, index4), rkShapeOpResult(1, index4), rkShapeOpResult(2, index4));
 
 				BRepBuilderAPI_MakeVertex occtMakeVertex1(pOcctPoint1->Pnt());

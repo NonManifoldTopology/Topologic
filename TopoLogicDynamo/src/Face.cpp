@@ -425,7 +425,13 @@ namespace TopoLogic
 			List<Wire^>^ pWires = Wires();
 			for each(Wire^ pWire in pWires)
 			{
-				pDynamoEdgeLoops->Add(safe_cast<Autodesk::DesignScript::Geometry::PolyCurve^>(pWire->Geometry));
+				try{
+					pDynamoEdgeLoops->Add(safe_cast<Autodesk::DesignScript::Geometry::PolyCurve^>(pWire->Geometry));
+				}
+				catch (Exception^ e)
+				{
+
+				}
 			}
 
 			try {
