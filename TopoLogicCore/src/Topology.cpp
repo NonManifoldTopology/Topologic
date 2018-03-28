@@ -1342,59 +1342,10 @@ namespace TopoLogicCore
 
 	void Topology::ImmediateMembers(const TopoDS_Shape& rkShape, BOPCol_ListOfShape& rImmediateMembers)
 	{
-		TopAbs_ShapeEnum occtShapeEnum[8] =
+		TopoDS_Iterator occtShapeIterator(rkShape);
+		for (; occtShapeIterator.More(); occtShapeIterator.Next())
 		{
-			TopAbs_COMPOUND,
-			TopAbs_COMPSOLID,
-			TopAbs_SOLID,
-			TopAbs_SHELL,
-			TopAbs_FACE,
-			TopAbs_WIRE,
-			TopAbs_EDGE,
-			TopAbs_VERTEX
-		};
-
-		TopAbs_ShapeEnum occtShapeType = rkShape.ShapeType();
-		for (int typeIndex = occtShapeType; typeIndex < 8; ++typeIndex)
-		{
-			// Get all children of this type
-			TopExp_Explorer occtExplorer;
-			for (occtExplorer.Init(rkShape, occtShapeEnum[typeIndex]); occtExplorer.More(); occtExplorer.Next())
-			{
-				bool hasAnotherParent = false;
-				const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-				if (occtCurrent.IsSame(rkShape))
-				{
-					continue;
-				}
-
-				// Check if there is any parent other than this topology.
-				// Stop checking if any other parent is found.
-				for (int parentTypeIndex = occtShapeType; parentTypeIndex < typeIndex && !hasAnotherParent; ++parentTypeIndex)
-				{
-					TopTools_IndexedDataMapOfShapeListOfShape occtParentsMap;
-					TopExp::MapShapesAndUniqueAncestors(rkShape, occtShapeEnum[typeIndex], occtShapeEnum[parentTypeIndex], occtParentsMap);
-
-					const TopTools_ListOfShape& rkOcctParents = occtParentsMap.FindFromKey(occtCurrent);
-
-					for (TopTools_ListOfShape::const_iterator kParentIterator = rkOcctParents.cbegin();
-						kParentIterator != rkOcctParents.cend();
-						kParentIterator++)
-					{
-						const TopoDS_Shape& rkOcctParent = *kParentIterator;
-						if (rkOcctParent.ShapeType() != occtShapeType ||
-							(rkOcctParent.ShapeType() == occtShapeType && !rkOcctParent.IsSame(rkShape)))
-						{
-							hasAnotherParent = true;
-						}
-					}
-				}
-
-				if (!hasAnotherParent)
-				{
-					rImmediateMembers.Append(occtCurrent);
-				}
-			}
+			rImmediateMembers.Append(occtShapeIterator.Value());
 		}
 	}
 
