@@ -9,7 +9,6 @@ namespace TopoLogicCore
 		bool returnValue = GetCluster()->AddTopology(kpTopology, true);
 		kpTopology->SetInGlobalCluster(returnValue);
 
-		std::string strAnalyze = GetCluster()->Analyze();
 		return returnValue;
 	}
 
