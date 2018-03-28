@@ -68,6 +68,13 @@ namespace TopoLogic
 		static Shell^ ByPolysurface(Autodesk::DesignScript::Geometry::PolySurface^ polysurface);
 
 		/// <summary>
+		/// Creates a shell by lofting through a set of wires.
+		/// </summary>
+		/// <param name="Wire[]">A set of wires</param>
+		/// <returns>The created shell</returns>
+		static Shell^ ByLoft(List<Wire^>^ wires);
+
+		/// <summary>
 		/// Creates a shell by a list of vertices and a list of face indices.
 		/// </summary>
 		/// <param name="vertices">A list of vertices.</param>

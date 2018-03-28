@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TopoLogicCore", "TopoLogicC
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TopoLogicDynamo", "TopoLogicDynamo\TopoLogicDynamo.vcxproj", "{21993835-4EC5-4CC3-BCDA-47F6209CD349}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TopoLogicGeometry", "TopoLogicGeometry\TopoLogicGeometry.vcxproj", "{0084D244-82F9-431F-B64D-7C8FCA4FD4A7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +39,16 @@ Global
 		{21993835-4EC5-4CC3-BCDA-47F6209CD349}.Release|x64.Build.0 = Release|x64
 		{21993835-4EC5-4CC3-BCDA-47F6209CD349}.Release|x86.ActiveCfg = Release|Win32
 		{21993835-4EC5-4CC3-BCDA-47F6209CD349}.Release|x86.Build.0 = Release|Win32
+		{0084D244-82F9-431F-B64D-7C8FCA4FD4A7}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{0084D244-82F9-431F-B64D-7C8FCA4FD4A7}.Debug|x64.ActiveCfg = Debug|x64
+		{0084D244-82F9-431F-B64D-7C8FCA4FD4A7}.Debug|x64.Build.0 = Debug|x64
+		{0084D244-82F9-431F-B64D-7C8FCA4FD4A7}.Debug|x86.ActiveCfg = Debug|Win32
+		{0084D244-82F9-431F-B64D-7C8FCA4FD4A7}.Debug|x86.Build.0 = Debug|Win32
+		{0084D244-82F9-431F-B64D-7C8FCA4FD4A7}.Release|Any CPU.ActiveCfg = Release|Win32
+		{0084D244-82F9-431F-B64D-7C8FCA4FD4A7}.Release|x64.ActiveCfg = Release|x64
+		{0084D244-82F9-431F-B64D-7C8FCA4FD4A7}.Release|x64.Build.0 = Release|x64
+		{0084D244-82F9-431F-B64D-7C8FCA4FD4A7}.Release|x86.ActiveCfg = Release|Win32
+		{0084D244-82F9-431F-B64D-7C8FCA4FD4A7}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

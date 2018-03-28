@@ -120,6 +120,18 @@ namespace TopoLogic
 		return ByFaces(pFaces);
 	}
 
+	Shell^ Shell::ByLoft(List<Wire^>^ wires)
+	{
+		std::list<std::shared_ptr<TopoLogicCore::Wire>> coreWires;
+		for each(Wire^ pWire in wires)
+		{
+			coreWires.push_back(TopoLogicCore::Topology::Downcast<TopoLogicCore::Wire>(pWire->GetCoreTopologicalQuery()));
+		}
+
+		std::shared_ptr<TopoLogicCore::Shell> pCoreShell = TopoLogicCore::Shell::ByLoft(coreWires);
+		return gcnew Shell(pCoreShell);
+	}
+
 	Shell^ Shell::ByVerticesFaceIndices(List<Vertex^>^ vertices, List<List<int>^>^ faceIndices)
 	{
 		std::vector<std::shared_ptr<TopoLogicCore::Vertex>> coreVertices;

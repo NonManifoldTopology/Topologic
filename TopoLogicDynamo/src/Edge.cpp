@@ -179,7 +179,12 @@ namespace TopoLogic
 		Handle(Geom_Circle) pOcctCircle = Handle_Geom_Circle::DownCast(pOcctCurve);
 		if (!pOcctCircle.IsNull())
 		{
-			throw gcnew NotImplementedException("Feature not yet implemented");
+			const gp_Ax2& rkOcctPosition = pOcctCircle->Position();
+			return Autodesk::DesignScript::Geometry::Circle::ByCenterPointRadiusNormal(
+				Autodesk::DesignScript::Geometry::Point::ByCoordinates(rkOcctPosition.Location().X(), rkOcctPosition.Location().Y(), rkOcctPosition.Location().Z()),
+				pOcctCircle->Radius(),
+				Autodesk::DesignScript::Geometry::Vector::ByCoordinates(rkOcctPosition.Direction().X(), rkOcctPosition.Direction().Y(), rkOcctPosition.Direction().Z())
+			);
 		}
 
 		Handle(Geom_Ellipse) pOcctEllipse = Handle_Geom_Ellipse::DownCast(pOcctCurve);
@@ -251,7 +256,7 @@ namespace TopoLogic
 		}
 		else if (curve->GetType() == Autodesk::DesignScript::Geometry::Circle::typeid)
 		{
-			throw gcnew System::NotImplementedException("Feature not yet implemented.");
+			Init(safe_cast<Autodesk::DesignScript::Geometry::Circle^>(curve));
 		}
 		else if (curve->GetType() == Autodesk::DesignScript::Geometry::Ellipse::typeid)
 		{
@@ -360,6 +365,24 @@ namespace TopoLogic
 			isPeriodic,
 			isRational
 			));
+	}
+
+	void Edge::Init(Autodesk::DesignScript::Geometry::Circle^ pDynamoCircle)
+	{
+		Autodesk::DesignScript::Geometry::Point^ pDynamoCenterPoint = pDynamoCircle->CenterPoint;
+		double radius = pDynamoCircle->Radius;
+		Autodesk::DesignScript::Geometry::Vector^ pDynamoNormal = pDynamoCircle->Normal;
+		pDynamoNormal = pDynamoNormal->Normalized();
+
+		Handle(Geom_Circle) pOcctCircle = new Geom_Circle(
+			gp_Ax2(
+				gp_Pnt(pDynamoCenterPoint->X, pDynamoCenterPoint->Y, pDynamoCenterPoint->Z),
+				gp_Dir(pDynamoNormal->X, pDynamoNormal->Y, pDynamoNormal->Z)),
+			radius
+			);
+
+		m_pCoreEdge = new std::shared_ptr<TopoLogicCore::Edge>(
+			TopoLogicCore::Edge::ByCurve(pOcctCircle));
 	}
 
 	void Edge::Init(Autodesk::DesignScript::Geometry::Line^ pDynamoLine)

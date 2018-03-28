@@ -12,6 +12,7 @@
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepBuilderAPI_Sewing.hxx>
 #include <BRepCheck_Shell.hxx>
+#include <BRepOffsetAPI_ThruSections.hxx>
 #include <Geom_Surface.hxx>
 #include <ShapeFix_ShapeTolerance.hxx>
 #include <ShapeFix_Shell.hxx>
@@ -63,7 +64,7 @@ namespace TopoLogicCore
 
 	std::shared_ptr<Shell> Shell::ByFaces(const std::list<std::shared_ptr<Face>>& rkFaces)
 	{
-		if (rkFaces.size())
+		if (rkFaces.empty())
 		{
 			throw std::exception("No face is passed.");
 		}
@@ -434,6 +435,18 @@ namespace TopoLogicCore
 
 		// Reconstruct the shape
 		return std::make_shared<Shell>(TopoDS::Shell(occtSewing.SewedShape()));
+	}
+
+	std::shared_ptr<Shell> Shell::ByLoft(const std::list<std::shared_ptr<Wire>>& rkWires)
+	{
+		BRepOffsetAPI_ThruSections occtLoft;
+		std::for_each(rkWires.begin(), rkWires.end(),
+			[&occtLoft](const std::shared_ptr<Wire>& kpWire)
+		{
+			occtLoft.AddWire(TopoDS::Wire(*kpWire->GetOcctShape()));
+		});
+		occtLoft.Build();
+		return std::make_shared<Shell>(TopoDS::Shell(occtLoft.Shape()));
 	}
 
 	std::shared_ptr<TopoDS_Shape> Shell::GetOcctShape() const

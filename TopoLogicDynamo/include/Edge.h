@@ -110,6 +110,12 @@ namespace TopoLogic {
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="pDynamoCircle"></param>
+		void Init(Autodesk::DesignScript::Geometry::Circle^ pDynamoCircle);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="pDynamoLine"></param>
 		void Init(Autodesk::DesignScript::Geometry::Line^ pDynamoLine);
 

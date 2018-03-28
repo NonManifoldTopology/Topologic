@@ -96,17 +96,15 @@ namespace TopoLogicCore
 
 	std::shared_ptr<Face> Face::ByClosedWire(const std::shared_ptr<Wire>& pkWire)
 	{
-		BRepBuilderAPI_MakeFace occtMakeFace;
-		try {
-			occtMakeFace = BRepBuilderAPI_MakeFace(TopoDS::Wire(*pkWire->GetOcctShape()));
-			std::shared_ptr<Face> pFace = std::make_shared<Face>(occtMakeFace);
-			pkWire->AddIngredientTo(pFace);
-			return pFace;
-		}
-		catch (StdFail_NotDone&)
+		BRepBuilderAPI_MakeFace occtMakeFace(TopoDS::Wire(*pkWire->GetOcctShape()));
+		if (occtMakeFace.Error() != BRepBuilderAPI_FaceDone)
 		{
 			throw new std::exception(GetOcctMakeFaceErrorMessage(occtMakeFace).c_str());
 		}
+
+		std::shared_ptr<Face> pFace = std::make_shared<Face>(occtMakeFace);
+		pkWire->AddIngredientTo(pFace);
+		return pFace;
 	}
 
 	std::shared_ptr<Face> Face::ByEdges(const std::list<std::shared_ptr<Edge>>& rkEdges)
@@ -396,10 +394,16 @@ namespace TopoLogicCore
 		: Topology(2)
 		, m_pOcctFace(nullptr)
 	{
-		ShapeFix_Face occtShapeFix(rkOcctFace);
-		occtShapeFix.Perform();
-		m_pOcctFace = std::make_shared<TopoDS_Face>(occtShapeFix.Face());
-		GlobalCluster::GetInstance().Add(this);
+		try{
+			ShapeFix_Face occtShapeFix(rkOcctFace);
+			occtShapeFix.Perform();
+			m_pOcctFace = std::make_shared<TopoDS_Face>(occtShapeFix.Face());
+			GlobalCluster::GetInstance().Add(this);
+		}
+		catch (...)
+		{
+			throw std::exception("");
+		}
 	}
 
 	Face::~Face()
