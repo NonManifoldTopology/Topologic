@@ -154,14 +154,15 @@ namespace TopoLogic
 		return gcnew Shell(TopoLogicCore::Shell::ByVerticesFaceIndices(coreVertices, coreFaceIndices));
 	}
 
-	Shell^ Shell::ByFacePlanarization(Face^ face, int iteration, int numUPanels, int numVPanels, double tolerance)
+	Shell^ Shell::ByFacePlanarization(Face^ face, int iteration, int numUPanels, int numVPanels, double tolerance, bool isCapped)
 	{
 		std::shared_ptr<TopoLogicCore::Shell> pCoreTopology = TopoLogicCore::Shell::ByFacePlanarization(
 			TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Face>(face->GetCoreTopologicalQuery()),
 			iteration,
 			numUPanels,
 			numVPanels,
-			tolerance
+			tolerance,
+			isCapped
 		);
 		return gcnew Shell(pCoreTopology);
 	}

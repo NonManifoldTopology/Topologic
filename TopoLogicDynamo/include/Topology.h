@@ -24,21 +24,13 @@ namespace TopoLogic
 		/// </summary>
 		/// <param name="geometry"></param>
 		/// <returns></returns>
-		Topology^ ByGeometry(Autodesk::DesignScript::Geometry::Geometry^ geometry);
+		static Topology^ ByGeometry(Autodesk::DesignScript::Geometry::Geometry^ geometry);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		Topology^ ByContext();
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="vertexCoordinates"></param>
-		/// <param name="vertexIndices"></param>
-		/// <returns></returns>
-		Topology^ ByVertexIndex(List<array<double, 3>^>^ vertexCoordinates, List<List<int>^>^ vertexIndices);
+		static Topology^ ByContext();
 
 		/// <summary>
 		/// 
@@ -46,7 +38,15 @@ namespace TopoLogic
 		/// <param name="vertexCoordinates"></param>
 		/// <param name="vertexIndices"></param>
 		/// <returns></returns>
-		Topology^ ByVertexIndex(List<Vertex^>^ vertexCoordinates, List<List<int>^>^ vertexIndices);
+		static Topology^ ByVertexIndex(List<array<double, 3>^>^ vertexCoordinates, List<List<int>^>^ vertexIndices);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="vertexCoordinates"></param>
+		/// <param name="vertexIndices"></param>
+		/// <returns></returns>
+		static Topology^ ByVertexIndex(List<Vertex^>^ vertexCoordinates, List<List<int>^>^ vertexIndices);
 
 		/// <summary>
 		/// Returns the dimensionality of the topological entity.

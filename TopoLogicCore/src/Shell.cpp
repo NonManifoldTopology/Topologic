@@ -146,7 +146,8 @@ namespace TopoLogicCore
 		const int kIteration,
 		const int kNumUPanels,
 		const int kNumVPanels,
-		const double kTolerance)
+		const double kTolerance,
+		const bool isCapped)
 	{
 		// Check if the topology is a face, a shell, a cell, or a cell complex.
 		//if (!(rTopology.GetType() == TOPOLOGY_FACE ||
@@ -425,6 +426,9 @@ namespace TopoLogicCore
 		const ShapeOp::Matrix3X& rkShapeOpResult = shapeOpSolver.getPoints();
 
 		// Create faces from rkShapeOpResult
+		TopTools_ListOfShape borderEdges[4]; // 0 = uMin, 1 = uMax, 2 = vMin, 3 = vMax
+		                                   // Use array for iteration
+
 		BRepBuilderAPI_Sewing occtSewing;
 		for (int i = 0; i < kNumUPanels; ++i)
 		{
@@ -466,24 +470,78 @@ namespace TopoLogicCore
 				BRepBuilderAPI_MakeEdge occtMakeEdge34(occtMakeVertex3.Vertex(), occtMakeVertex4.Vertex());
 				BRepBuilderAPI_MakeEdge occtMakeEdge41(occtMakeVertex4.Vertex(), occtMakeVertex1.Vertex());
 
+				const TopoDS_Shape& rkEdge12 = occtMakeEdge12.Shape();
+				const TopoDS_Shape& rkEdge23 = occtMakeEdge23.Shape();
+				const TopoDS_Shape& rkEdge34 = occtMakeEdge34.Shape();
+				const TopoDS_Shape& rkEdge41 = occtMakeEdge41.Shape();
+
 				TopTools_ListOfShape occtEdges;
-				occtEdges.Append(occtMakeEdge12.Shape());
-				occtEdges.Append(occtMakeEdge23.Shape());
-				occtEdges.Append(occtMakeEdge34.Shape());
-				occtEdges.Append(occtMakeEdge41.Shape());
+				occtEdges.Append(rkEdge12);
+				occtEdges.Append(rkEdge23);
+				occtEdges.Append(rkEdge34);
+				occtEdges.Append(rkEdge41);
 
 				BRepBuilderAPI_MakeWire occtMakeWire;
 				occtMakeWire.Add(occtEdges);
 
-				const TopoDS_Wire& wire = occtMakeWire.Wire();
+				const TopoDS_Wire& rkPanelWire = occtMakeWire.Wire();
 				ShapeFix_ShapeTolerance occtShapeTolerance;
-				occtShapeTolerance.SetTolerance(wire, kTolerance, TopAbs_WIRE);
-				BRepBuilderAPI_MakeFace occtMakeFace(wire);
+				occtShapeTolerance.SetTolerance(rkPanelWire, kTolerance, TopAbs_WIRE);
+				BRepBuilderAPI_MakeFace occtMakeFace(rkPanelWire);
 				occtSewing.Add(occtMakeFace.Face());
+
+				if(isCapped)
+				{
+					if (!isUClosed && j == 0) // Use j == 0 to do this only once
+					{
+						if (i == 0) // Store the edge rkEdge12 to uMin edges 
+						{
+							borderEdges[0].Append(rkEdge12);
+						}
+						else if (i == kNumUPanels - 1) // Store the edge rkEdge34 to uMax edges 
+						{
+							borderEdges[1].Append(rkEdge34);
+						}
+					}
+
+					if (!isVClosed)
+					{
+						if (j == 0) // Store the edge rkEdge41 to vMin edges 
+						{
+							borderEdges[2].Append(rkEdge41);
+						}
+						else if (j == kNumVPanels - 1) // Store the edge rkEdge23 to vMax edges 
+						{
+							borderEdges[3].Append(rkEdge23);
+						}
+					}
+				}
+			}
+		}
+
+		if(isCapped)
+		{
+			for (int i = 0; i < 4; ++i)
+			{
+				if(!borderEdges[i].IsEmpty())
+				{
+					// Make wire from the edges.
+					BRepBuilderAPI_MakeWire occtMakeWire;
+					occtMakeWire.Add(borderEdges[i]);
+
+					const TopoDS_Wire& rkOuterWire = occtMakeWire.Wire();
+					ShapeFix_ShapeTolerance occtShapeTolerance;
+					occtShapeTolerance.SetTolerance(rkOuterWire, kTolerance, TopAbs_WIRE);
+					BRepBuilderAPI_MakeFace occtMakeFace(TopoDS::Wire(occtMakeWire.Shape()));
+					occtSewing.Add(occtMakeFace.Face());
+				}
 			}
 		}
 
 		occtSewing.Perform();
+
+
+		// Construct the hole wires
 
 		// Reconstruct the edges
 

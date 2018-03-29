@@ -106,13 +106,15 @@ namespace TopoLogicCore
 		/// <param name="kNumUPanels"></param>
 		/// <param name="kNumVPanels"></param>
 		/// <param name="kTolerance"></param>
+		/// <param name="isCapped"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API static std::shared_ptr<Shell> ByFacePlanarization(
 			const std::shared_ptr<Face>& kpFace,
 			const int kIteration,
 			const int kNumUPanels,
 			const int kNumVPanels,
-			const double kTolerance);
+			const double kTolerance,
+			const bool isCapped);
 
 		virtual TopologyType GetType() const { return TOPOLOGY_SHELL; }
 

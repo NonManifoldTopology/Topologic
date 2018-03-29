@@ -90,8 +90,9 @@ namespace TopoLogic
 		/// <param name="numUPanels"></param>
 		/// <param name="numVPanels"></param>
 		/// <param name="tolerance"></param>
+		/// <param name="isCapped">Cap the holes if the surface is closed either in the u- or v-direction but open on the other</param>
 		/// <returns></returns>
-		static Shell^ ByFacePlanarization(Face^ face, int iteration, int numUPanels, int numVPanels, double tolerance);
+		static Shell^ ByFacePlanarization(Face^ face, int iteration, int numUPanels, int numVPanels, double tolerance, bool isCapped);
 
 		property Object^ Geometry
 		{
