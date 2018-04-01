@@ -16,6 +16,7 @@
 #include <Geom_BSplineSurface.hxx>
 #include <GProp_GProps.hxx>
 #include <ShapeAnalysis.hxx>
+#include <ShapeAnalysis_Surface.hxx>
 #include <ShapeFix_Face.hxx>
 #include <StdFail_NotDone.hxx>
 #include <TopExp.hxx>
@@ -372,6 +373,14 @@ namespace TopoLogicCore
 				rInnerBoundaries.push_back(std::make_shared<Wire>(rkWire));
 			}
 		}
+	}
+
+	void Face::UVParameterAtPoint(const std::shared_ptr<Vertex>& kpVertex, double & rU, double & rV) const
+	{
+		ShapeAnalysis_Surface occtSurfaceAnalysis(Surface());
+		gp_Pnt2d occtUV = occtSurfaceAnalysis.ValueOfUV(kpVertex->Point()->Pnt(), Precision::Confusion());
+		rU = occtUV.X();
+		rV = occtUV.Y();
 	}
 
 	void Face::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const

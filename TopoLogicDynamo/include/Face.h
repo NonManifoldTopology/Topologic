@@ -113,6 +113,13 @@ namespace TopoLogic {
 		/// <returns name="Wire[]"></returns>
 		List<Wire^>^ InnerBoundaries();
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="vertex"></param>
+		/// <returns></returns>
+		Autodesk::DesignScript::Geometry::UV^ UVParameterAtPoint(Vertex^ vertex);
+
 		property Object^ Geometry
 		{
 			/// <summary>

@@ -99,7 +99,7 @@ namespace TopoLogicCore
 		virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const;
 
 		/// <summary>
-		/// 
+		/// Note: TopoLogic UV values are normalized (from 0 and 1), but OCCT's values are not normalized.
 		/// </summary>
 		/// <param name="kpFace"></param>
 		/// <param name="kIteration"></param>
@@ -115,6 +115,25 @@ namespace TopoLogicCore
 			const int kNumVPanels,
 			const double kTolerance,
 			const bool isCapped);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpFace"></param>
+		/// <param name="kIteration"></param>
+		/// <param name="rkUValues"></param>
+		/// <param name="rkVValues"></param>
+		/// <param name="kTolerance"></param>
+		/// <param name="isCapped"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API static std::shared_ptr<Shell> ByFacePlanarization(
+			const std::shared_ptr<Face>& kpFace,
+			const int kIteration,
+			const std::list<double>& rkUValues,
+			const std::list<double>& rkVValues,
+			const double kTolerance,
+			const bool isCapped);
+
 
 		virtual TopologyType GetType() const { return TOPOLOGY_SHELL; }
 

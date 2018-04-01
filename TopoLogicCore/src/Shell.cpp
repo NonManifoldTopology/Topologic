@@ -149,6 +149,49 @@ namespace TopoLogicCore
 		const double kTolerance,
 		const bool isCapped)
 	{
+		if (kNumUPanels < 1)
+		{
+			std::string errorMessage = std::string("The number of u-panels must be larger than 0.");
+			throw std::exception(errorMessage.c_str());
+		}
+		if (kNumVPanels < 1)
+		{
+			std::string errorMessage = std::string("The number of v-panels must be larger than 0.");
+			throw std::exception(errorMessage.c_str());
+		}
+
+		double dU = 1.0 / (double)kNumUPanels;
+		double dV = 1.0 / (double)kNumVPanels;
+		
+		std::list<double> uValues;
+		for (int i = 0; i < kNumUPanels + 1; ++i) // kNumUPanels + 1 because it is the vertices being processed
+		{
+			double u = (double)i * dU;
+			if (u < 0.0) u = 0.0;
+			else if (u > 1.0) u = 1.0;
+			uValues.push_back(u);
+		}
+
+		std::list<double> vValues;
+		for (int i = 0; i < kNumVPanels + 1; ++i)  // kNumVPanels + 1 because it is the vertices being processed
+		{
+			double v = (double)i * dV;
+			if (v < 0.0) v = 0.0;
+			else if (v > 1.0) v = 1.0;
+			vValues.push_back(v);
+		}
+
+		return ByFacePlanarization(kpFace, kIteration, uValues, vValues, kTolerance, isCapped);
+	}
+
+	std::shared_ptr<Shell> Shell::ByFacePlanarization(
+		const std::shared_ptr<Face>& kpFace, 
+		const int kIteration, 
+		const std::list<double>& rkUValues, 
+		const std::list<double>& rkVValues, 
+		const double kTolerance, 
+		const bool isCapped)
+	{
 		// Check if the topology is a face, a shell, a cell, or a cell complex.
 		//if (!(rTopology.GetType() == TOPOLOGY_FACE ||
 		//	rTopology.GetType() == TOPOLOGY_SHELL ||
@@ -175,20 +218,20 @@ namespace TopoLogicCore
 
 		bool isParent = false;
 		for (TopTools_ListOfShape::const_iterator kParentIterator = rOcctParents.cbegin();
-			kParentIterator != rOcctParents.cend() && !isParent;
-			kParentIterator++)
+		kParentIterator != rOcctParents.cend() && !isParent;
+		kParentIterator++)
 		{
-			const TopoDS_Shape& rOcctParent = *kParentIterator;
-			if (rOcctParent.IsSame(*pOcctTopology))
-			{
-				isParent = true;
-			}
+		const TopoDS_Shape& rOcctParent = *kParentIterator;
+		if (rOcctParent.IsSame(*pOcctTopology))
+		{
+		isParent = true;
+		}
 		}
 
 		if (!isParent)
 		{
-			std::string errorMessage = std::string("The topology is not a parent of the face.");
-			throw std::exception(errorMessage.c_str());
+		std::string errorMessage = std::string("The topology is not a parent of the face.");
+		throw std::exception(errorMessage.c_str());
 		}*/
 
 		// Check that kIteration, kNumUPanels, and kNumVPanels are 1 or more.
@@ -197,17 +240,17 @@ namespace TopoLogicCore
 			std::string errorMessage = std::string("The number of iteration must be larger than 0.");
 			throw std::exception(errorMessage.c_str());
 		}
-		if (kNumUPanels < 1)
+		if (rkUValues.empty())
 		{
 			std::string errorMessage = std::string("The number of u-panels must be larger than 0.");
 			throw std::exception(errorMessage.c_str());
 		}
-		if (kNumVPanels < 1)
+		if (rkVValues.empty())
 		{
 			std::string errorMessage = std::string("The number of v-panels must be larger than 0.");
 			throw std::exception(errorMessage.c_str());
 		}
-		if (kNumVPanels <= 0.0)
+		if (kTolerance <= 0.0)
 		{
 			std::string errorMessage = std::string("The tolerance must have a positive value");
 			throw std::exception(errorMessage.c_str());
@@ -262,63 +305,75 @@ namespace TopoLogicCore
 
 		// Subdivide the face in the UV space and find the points
 		Handle(Geom_Surface) pOcctSurface = kpFace->Surface();
-		double uMin = 0.0, uMax = 0.0, vMin = 0.0, vMax = 0.0;
-		pOcctSurface->Bounds(uMin, uMax, vMin, vMax);
-		double uRange = uMax - uMin;
-		double vRange = vMax - vMin;
-		double dU = uRange / (double)kNumUPanels;
-		double dV = vRange / (double)kNumVPanels;
+		double occtUMin = 0.0, occtUMax = 0.0, occtVMin = 0.0, occtVMax = 0.0;
+		pOcctSurface->Bounds(occtUMin, occtUMax, occtVMin, occtVMax);
+		double occtURange = occtUMax - occtUMin;
+		double occtVRange = occtVMax - occtVMin;
+		int numUPanels = (int) rkUValues.size() - 1;
+		int numVPanels = (int) rkVValues.size() - 1;
 		bool isUClosed = pOcctSurface->IsUClosed();
-		int numUPoints = kNumUPanels;
+		int numUPoints = numUPanels;
 		if (!isUClosed)
 		{
 			numUPoints += 1;
 		}
 		bool isVClosed = pOcctSurface->IsVClosed();
-		int numVPoints = kNumVPanels;
+		int numVPoints = numVPanels;
 		if (!isVClosed)
 		{
 			numVPoints += 1;
 		}
 
-		std::vector<double> uSubdivision;
-		uSubdivision.push_back(uMin);
-		for (int i = 1; i < kNumUPanels; ++i) // 1 to kNumUPanels - 1 because 1) it is the vertices being processed,
-											  //                              2) uMin and uMax already added
+		// Compute OCCT's non-normalized UV values
+		std::list<double> occtUValues;
+		std::for_each(rkUValues.begin(), rkUValues.end(), 
+			[&](const double kU)
 		{
-			uSubdivision.push_back(uMin + dU * i);
-		}
-		uSubdivision.push_back(uMax);
-
-		std::vector<double> vSubdivision;
-		vSubdivision.push_back(vMin);
-		for (int i = 1; i < kNumVPanels; ++i) // 1 to kNumVPanels - 1 because 1) it is the vertices being processed,
-											  //                              2) vMin and vMax already added
+			double occtU = occtUMin + occtURange * kU;
+			if (occtU < occtUMin) {
+				occtU = occtUMin;
+			}
+			else if (occtU > occtUMax)
+			{
+				occtU = occtUMax;
+			}
+			occtUValues.push_back(occtU);
+		});
+		std::list<double> occtVValues;
+		std::for_each(rkVValues.begin(), rkVValues.end(),
+			[&](const double kV)
 		{
-			vSubdivision.push_back(vMin + dV * i);
-		}
-		vSubdivision.push_back(vMax);
+			double occtV = occtVMin + occtVRange * kV;
+			if (occtV < occtVMin) {
+				occtV = occtVMin;
+			}
+			else if (occtV > occtVMax)
+			{
+				occtV = occtVMax;
+			}
+			occtVValues.push_back(occtV);
+		});
 
 		// Initialise ShapeOp matrix
 		int numOfPoints = numUPoints * numVPoints;
 		ShapeOp::Matrix3X shapeOpMatrix(3, numOfPoints); //column major
 		int i = 0;
-		std::vector<double>::const_iterator endUIterator = uSubdivision.end();
-		if (isUClosed) 
+		std::list<double>::const_iterator endUIterator = occtUValues.end();
+		if (isUClosed)
 		{
 			endUIterator--;
 		}
-		std::vector<double>::const_iterator endVIterator = vSubdivision.end();
+		std::list<double>::const_iterator endVIterator = occtVValues.end();
 		if (isVClosed)
 		{
 			endVIterator--;
 		}
-		for (std::vector<double>::const_iterator uIterator = uSubdivision.begin();
+		for (std::list<double>::const_iterator uIterator = occtUValues.begin();
 			uIterator != endUIterator;
 			uIterator++)
 		{
 			const double& rkU = *uIterator;
-			for (std::vector<double>::const_iterator vIterator = vSubdivision.begin();
+			for (std::list<double>::const_iterator vIterator = occtVValues.begin();
 				vIterator != endVIterator;
 				vIterator++)
 			{
@@ -339,29 +394,29 @@ namespace TopoLogicCore
 
 		// Planarity constraint to the panels
 		// i and j are just used to iterate, the actual indices are the u and v variables.
-		for (int i = 0; i < kNumUPanels; ++i)
+		for (int i = 0; i < numUPanels; ++i)
 		{
-			for (int j = 0; j < kNumVPanels; ++j)
+			for (int j = 0; j < numVPanels; ++j)
 			{
 				// Default values
 				int minU = i;		int minV = j;
 				int maxU = i + 1;	int maxV = j + 1;
-				
+
 				// Border values
-				if (isUClosed && i == kNumUPanels - 1)
+				if (isUClosed && i == numUPanels - 1)
 				{
 					maxU = 0;
 				}
-				if (isVClosed && j == kNumVPanels - 1)
+				if (isVClosed && j == numVPanels - 1)
 				{
 					maxV = 0;
 				}
 
 				std::vector<int> vertexIDs;
-				vertexIDs.push_back(minU * kNumVPanels + minV);
-				vertexIDs.push_back(minU * kNumVPanels + maxV);
-				vertexIDs.push_back(maxU * kNumVPanels + maxV);
-				vertexIDs.push_back(maxU * kNumVPanels + maxV);
+				vertexIDs.push_back(minU * numVPanels + minV);
+				vertexIDs.push_back(minU * numVPanels + maxV);
+				vertexIDs.push_back(maxU * numVPanels + maxV);
+				vertexIDs.push_back(maxU * numVPanels + maxV);
 				auto shapeOpConstraint = std::make_shared<ShapeOp::PlaneConstraint>(vertexIDs, weight, shapeOpSolver.getPoints());
 				shapeOpSolver.addConstraint(shapeOpConstraint);
 			}
@@ -377,7 +432,7 @@ namespace TopoLogicCore
 				shapeOpSolver.addConstraint(shapeOpConstraint);
 			}
 
-			if(!isVClosed)
+			if (!isVClosed)
 			{
 				std::vector<int> vertexIDs;
 				vertexIDs.push_back((i + 1) * numVPoints - 1);
@@ -396,19 +451,19 @@ namespace TopoLogicCore
 				shapeOpSolver.addConstraint(shapeOpConstraint);
 			}
 
-			if(!isUClosed)
+			if (!isUClosed)
 			{
 				std::vector<int> vertexIDs;
-				vertexIDs.push_back((numUPoints-1) * numVPoints + j);
+				vertexIDs.push_back((numUPoints - 1) * numVPoints + j);
 				auto shapeOpConstraint = std::make_shared<ShapeOp::ClosenessConstraint>(vertexIDs, weight, shapeOpSolver.getPoints());
 				shapeOpSolver.addConstraint(shapeOpConstraint);
 			}
 		}
 
 		// Closeness constraints to the vertices not on the surface's edges
-		for (int i = 1; i < kNumUPanels; ++i)
+		for (int i = 1; i < numUPanels; ++i)
 		{
-			for (int j = 1; j < kNumVPanels; ++j)
+			for (int j = 1; j < numVPanels; ++j)
 			{
 				std::vector<int> vertexIDs;
 				vertexIDs.push_back(i * numVPoints + j);
@@ -427,23 +482,23 @@ namespace TopoLogicCore
 
 		// Create faces from rkShapeOpResult
 		TopTools_ListOfShape borderEdges[4]; // 0 = uMin, 1 = uMax, 2 = vMin, 3 = vMax
-		                                   // Use array for iteration
+											 // Use array for iteration
 
 		BRepBuilderAPI_Sewing occtSewing;
-		for (int i = 0; i < kNumUPanels; ++i)
+		for (int i = 0; i < numUPanels; ++i)
 		{
-			for (int j = 0; j < kNumVPanels; ++j)
+			for (int j = 0; j < numVPanels; ++j)
 			{
 				// Default values
 				int minU = i;		int minV = j;
 				int maxU = i + 1;	int maxV = j + 1;
 
 				// Border values
-				if (isUClosed && i == kNumUPanels - 1)
+				if (isUClosed && i == numUPanels - 1)
 				{
 					maxU = 0;
 				}
-				if (isVClosed && j == kNumVPanels - 1)
+				if (isVClosed && j == numVPanels - 1)
 				{
 					maxV = 0;
 				}
@@ -490,7 +545,7 @@ namespace TopoLogicCore
 				BRepBuilderAPI_MakeFace occtMakeFace(rkPanelWire);
 				occtSewing.Add(occtMakeFace.Face());
 
-				if(isCapped)
+				if (isCapped)
 				{
 					if (!isUClosed && j == 0) // Use j == 0 to do this only once
 					{
@@ -498,7 +553,7 @@ namespace TopoLogicCore
 						{
 							borderEdges[0].Append(rkEdge12);
 						}
-						else if (i == kNumUPanels - 1) // Store the edge rkEdge34 to uMax edges 
+						else if (i == numUPanels - 1) // Store the edge rkEdge34 to uMax edges 
 						{
 							borderEdges[1].Append(rkEdge34);
 						}
@@ -510,7 +565,7 @@ namespace TopoLogicCore
 						{
 							borderEdges[2].Append(rkEdge41);
 						}
-						else if (j == kNumVPanels - 1) // Store the edge rkEdge23 to vMax edges 
+						else if (j == numVPanels - 1) // Store the edge rkEdge23 to vMax edges 
 						{
 							borderEdges[3].Append(rkEdge23);
 						}
@@ -519,11 +574,11 @@ namespace TopoLogicCore
 			}
 		}
 
-		if(isCapped)
+		if (isCapped)
 		{
 			for (int i = 0; i < 4; ++i)
 			{
-				if(!borderEdges[i].IsEmpty())
+				if (!borderEdges[i].IsEmpty())
 				{
 					// Make wire from the edges.
 					BRepBuilderAPI_MakeWire occtMakeWire;

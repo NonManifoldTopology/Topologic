@@ -182,6 +182,18 @@ namespace TopoLogic
 		return pInnerBoundaries;
 	}
 
+	Autodesk::DesignScript::Geometry::UV^ Face::UVParameterAtPoint(Vertex^ vertex)
+	{
+		std::shared_ptr<TopoLogicCore::Face> pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(GetCoreTopologicalQuery());
+		double u = 0.0, v = 0.0;
+		pCoreFace->UVParameterAtPoint(
+			TopoLogicCore::Topology::Downcast<TopoLogicCore::Vertex>(vertex->GetCoreTopologicalQuery()),
+			u,v
+		);
+
+		return Autodesk::DesignScript::Geometry::UV::ByCoordinates(u, v);
+	}
+
 	List<Vertex^>^ Face::Vertices()
 	{
 		std::shared_ptr<TopoLogicCore::Face> pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(GetCoreTopologicalQuery());

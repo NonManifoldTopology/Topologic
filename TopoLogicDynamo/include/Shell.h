@@ -94,6 +94,18 @@ namespace TopoLogic
 		/// <returns></returns>
 		static Shell^ ByFacePlanarization(Face^ face, int iteration, int numUPanels, int numVPanels, double tolerance, bool isCapped);
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="face"></param>
+		/// <param name="iteration"></param>
+		/// <param name="uValues"></param>
+		/// <param name="vValues"></param>
+		/// <param name="tolerance"></param>
+		/// <param name="isCapped"></param>
+		/// <returns></returns>
+		static Shell^ ByFacePlanarization(Face^ face, int iteration, List<double>^ uValues, List<double>^ vValues, double tolerance, bool isCapped);
+
 		property Object^ Geometry
 		{
 			/// <summary>
