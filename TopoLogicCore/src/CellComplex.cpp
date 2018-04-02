@@ -19,6 +19,9 @@
 #include <BOPTools_AlgoTools.hxx>
 #include <IntTools_Context.hxx>
 
+#include <BOPAlgo_MakerVolume.hxx>
+#include <algorithm>
+
 #include <assert.h>
 
 namespace TopoLogicCore
@@ -64,22 +67,41 @@ namespace TopoLogicCore
 		BRep_Builder occtBuilder;
 		occtBuilder.MakeCompSolid(occtCompSolid);
 
-		std::shared_ptr<Topology> pMergeTopology = std::make_shared<CellComplex>(occtCompSolid);
-		for (std::list<std::shared_ptr<Cell>>::const_iterator rkCellIterator = rkCells.begin(); rkCellIterator != rkCells.end(); rkCellIterator++)
+		std::list<std::shared_ptr<Cell>>::const_iterator rkCellIterator = rkCells.begin();
+		if (rkCells.size() == 1)
 		{
-			pMergeTopology = pMergeTopology->Merge(*rkCellIterator);
-		}
-
-		TopExp_Explorer occtExplorer;
-		TopTools_MapOfShape occtCells;
-		for (occtExplorer.Init(*pMergeTopology->GetOcctShape(), TopAbs_SOLID); occtExplorer.More(); occtExplorer.Next())
-		{
-			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-			if (!occtCells.Contains(occtCurrent))
+			// Return a cell complex with only that cells
+			try {
+				occtBuilder.Add(occtCompSolid, *(*rkCellIterator)->GetOcctShape());
+			}
+			catch (TopoDS_FrozenShape&)
 			{
-				occtCells.Add(occtCurrent);
+				throw std::exception("The cell is not free and cannot be modified.");
+			}
+			catch (TopoDS_UnCompatibleShapes&)
+			{
+				throw std::exception("The cell and face are not compatible.");
+			}
+		}
+		else
+		{
+			// Merge the first cell with the rest.
+			std::list<std::shared_ptr<Topology>> topologies;
+			// Start from the second.
+			rkCellIterator++;
+			for (;rkCellIterator != rkCells.end(); rkCellIterator++)
+			{
+				topologies.push_back(*rkCellIterator);
+			}
+			std::shared_ptr<Cluster> otherCellsAsCluster = Cluster::ByTopology(topologies);
+			std::shared_ptr<Topology> pMergeTopology = (*rkCells.begin())->Merge(otherCellsAsCluster);
+
+			std::list<std::shared_ptr<Cell>> cells;
+			pMergeTopology->DownwardNavigation(cells);
+			for (const std::shared_ptr<Cell>& kpCell : cells)
+			{
 				try {
-					occtBuilder.Add(occtCompSolid, occtCurrent);
+					occtBuilder.Add(occtCompSolid, *kpCell->GetOcctShape());
 				}
 				catch (TopoDS_FrozenShape&)
 				{
@@ -104,9 +126,61 @@ namespace TopoLogicCore
 			kCellIterator++)
 		{
 			const std::shared_ptr<Cell>& kpCell = *kCellIterator;
-			kpCell->AddIngredientTo(pMergeTopology);
+			kpCell->AddIngredientTo(pMergeCellComplex);
 		}
 		return pMergeCellComplex;
+	}
+
+	std::shared_ptr<CellComplex> CellComplex::ByFaces(const std::list<std::shared_ptr<Face>>& rkFaces)
+	{
+		BOPAlgo_MakerVolume occtMakerVolume;
+		BOPCol_ListOfShape occtShapes;
+		for (const std::shared_ptr<Face>& kpFace: rkFaces)
+		{
+			occtShapes.Append(*kpFace->GetOcctShape().get());
+		}
+		bool isParallel = false; /* parallel or single mode (the default value is FALSE)*/
+		bool doesIntersection = true; /* intersect or not the arguments (the default value is TRUE)*/
+		double tolerance = 0.0; /* fuzzy option (default value is 0)*/
+								  //
+		occtMakerVolume.SetArguments(occtShapes);
+		occtMakerVolume.SetRunParallel(isParallel);
+		occtMakerVolume.SetIntersect(doesIntersection);
+		occtMakerVolume.SetFuzzyValue(tolerance);
+		//
+		occtMakerVolume.Perform(); //perform the operation
+		if (occtMakerVolume.HasErrors()) { //check error status
+			throw std::exception("Cannot create a cell complex from the cells.");
+		}
+
+		//
+		const TopoDS_Shape& rkOcctResult = occtMakerVolume.Shape();
+
+		std::list<std::shared_ptr<Cell>> cells;
+		// The result is either:
+		// - A solid
+		if (rkOcctResult.ShapeType() == TopAbs_SOLID)
+		{
+			// Create a cell complex with only this
+			cells.push_back(TopologicalQuery::Downcast<Cell>(Cell::ByOcctShape(rkOcctResult)));
+		}
+		// - A compound, collect the solids
+		else if (rkOcctResult.ShapeType() == TopAbs_COMPOUND)
+		{
+			TopTools_MapOfShape occtShapes;
+			TopExp_Explorer occtExplorer;
+			for (occtExplorer.Init(rkOcctResult, TopAbs_SOLID); occtExplorer.More(); occtExplorer.Next())
+			{
+				const TopoDS_Shape& occtCurrent = occtExplorer.Current();
+				if (!occtShapes.Contains(occtCurrent))
+				{
+					occtShapes.Add(occtCurrent);
+					cells.push_back(Downcast<Cell>(ByOcctShape(occtCurrent)));
+				}
+			}
+		}
+
+		return ByCells(cells);
 	}
 
 	std::shared_ptr<Cell> CellComplex::OuterBoundary() const

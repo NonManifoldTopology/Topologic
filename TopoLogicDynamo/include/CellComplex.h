@@ -26,6 +26,13 @@ namespace TopoLogic
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="cells"></param>
+		/// <returns></returns>
+		static CellComplex^ ByFaces(List<Face^>^ faces);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <returns></returns>
 		List<Cell^>^ Cells();
 

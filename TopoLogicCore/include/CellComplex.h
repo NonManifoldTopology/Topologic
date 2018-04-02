@@ -74,6 +74,13 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="rkFaces"></param>
+		/// <returns></returns>
+		static TOPOLOGIC_API std::shared_ptr<CellComplex> ByFaces(const std::list<std::shared_ptr<Face>>& rkFaces);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <returns></returns>
 		TOPOLOGIC_API std::shared_ptr<Cell> OuterBoundary() const;
 

@@ -24,6 +24,18 @@ namespace TopoLogic
 		return pCellComplex;
 	}
 
+	CellComplex^ CellComplex::ByFaces(List<Face^>^ faces)
+	{
+		std::list<std::shared_ptr<TopoLogicCore::Face>> coreFaces;
+		for each(Face^ pFace in faces)
+		{
+			coreFaces.push_back(TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(pFace->GetCoreTopologicalQuery()));
+		}
+		std::shared_ptr<TopoLogicCore::CellComplex> pCoreCellComplex = TopoLogicCore::CellComplex::ByFaces(coreFaces);
+		CellComplex^ pCellComplex = gcnew CellComplex(pCoreCellComplex);
+		return pCellComplex;
+	}
+
 	List<Cell^>^ CellComplex::Cells()
 	{
 		std::shared_ptr<TopoLogicCore::CellComplex> pCoreCellComplex = TopoLogicCore::Topology::Downcast<TopoLogicCore::CellComplex>(GetCoreTopologicalQuery());
