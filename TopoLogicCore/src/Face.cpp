@@ -375,12 +375,29 @@ namespace TopoLogicCore
 		}
 	}
 
-	void Face::UVParameterAtPoint(const std::shared_ptr<Vertex>& kpVertex, double & rU, double & rV) const
+	void Face::UVParameterAtPoint(const std::shared_ptr<Vertex>& kpVertex, double& rU, double& rV) const
 	{
-		ShapeAnalysis_Surface occtSurfaceAnalysis(Surface());
+		Handle(Geom_Surface) pOcctSurface = Surface();
+		ShapeAnalysis_Surface occtSurfaceAnalysis(pOcctSurface);
 		gp_Pnt2d occtUV = occtSurfaceAnalysis.ValueOfUV(kpVertex->Point()->Pnt(), Precision::Confusion());
-		rU = occtUV.X();
-		rV = occtUV.Y();
+
+		// Non-normalized UV
+		double occtU = occtUV.X();
+		double occtV = occtUV.Y();
+
+		Face::NormalizeUV(pOcctSurface, occtU, occtV, rU, rV);
+	}
+
+	std::shared_ptr<Vertex> Face::PointAtParameter(const double kU, const double kV) const
+	{
+		Handle(Geom_Surface) pOcctSurface = Surface();
+		double occtU = 0.0, occtV = 0.0;
+		Face::NonNormalizeUV(pOcctSurface, kU, kV, occtU, occtV);
+
+		ShapeAnalysis_Surface occtSurfaceAnalysis(Surface());
+		gp_Pnt occtPoint = occtSurfaceAnalysis.Value(occtU, occtV);
+
+		return Vertex::ByPoint(new Geom_CartesianPoint(occtPoint));
 	}
 
 	void Face::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
@@ -448,5 +465,31 @@ namespace TopoLogicCore
 		default: // i.e. BRepBuilderAPI_FaceDone 
 			return std::string("A face was successfully created.");
 		}
+	}
+
+	void Face::NormalizeUV(Handle(Geom_Surface) pOcctSurface, const double kNonNormalizedU, const double kNonNormalizedV, double& rNormalizedU, double& rNormalizedV)
+	{
+		double occtUMin = 0.0, occtUMax = 0.0, occtVMin = 0.0, occtVMax = 0.0;
+		pOcctSurface->Bounds(occtUMin, occtUMax, occtVMin, occtVMax);
+		double occtDU = occtUMax - occtUMin;
+		double occtDV = occtVMax - occtVMin;
+		if (occtDU <= 0.0 || occtDV <= 0.0)
+		{
+			throw std::exception("Negative range");
+		}
+
+		rNormalizedU = (kNonNormalizedU - occtUMin) / occtDU;
+		rNormalizedV = (kNonNormalizedV - occtVMin) / occtDV;
+	}
+
+	void Face::NonNormalizeUV(Handle(Geom_Surface) pOcctSurface, const double kNormalizedU, const double kNormalizedV, double& rNonNormalizedU, double& rNonNormalizedV)
+	{
+		double occtUMin = 0.0, occtUMax = 0.0, occtVMin = 0.0, occtVMax = 0.0;
+		pOcctSurface->Bounds(occtUMin, occtUMax, occtVMin, occtVMax);
+		double occtDU = occtUMax - occtUMin;
+		double occtDV = occtVMax - occtVMin;
+
+		rNonNormalizedU = occtUMin + kNormalizedU * occtDU;
+		rNonNormalizedV = occtVMin + kNormalizedV * occtDV;
 	}
 }

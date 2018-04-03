@@ -120,6 +120,13 @@ namespace TopoLogic {
 		/// <returns></returns>
 		Autodesk::DesignScript::Geometry::UV^ UVParameterAtPoint(Vertex^ vertex);
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="uv"></param>
+		/// <returns></returns>
+		Vertex^ PointAtParameter(Autodesk::DesignScript::Geometry::UV^ uv);
+
 		property Object^ Geometry
 		{
 			/// <summary>

@@ -373,11 +373,16 @@ namespace TopoLogic
 		double radius = pDynamoCircle->Radius;
 		Autodesk::DesignScript::Geometry::Vector^ pDynamoNormal = pDynamoCircle->Normal;
 		pDynamoNormal = pDynamoNormal->Normalized();
+		Autodesk::DesignScript::Geometry::CoordinateSystem^ pDynamoCoordinateSystem = pDynamoCircle->ContextCoordinateSystem;
+		Autodesk::DesignScript::Geometry::Vector^ pDynamoXAxis = pDynamoCoordinateSystem->XAxis;
+		pDynamoXAxis = pDynamoXAxis->Normalized();
 
 		Handle(Geom_Circle) pOcctCircle = new Geom_Circle(
 			gp_Ax2(
 				gp_Pnt(pDynamoCenterPoint->X, pDynamoCenterPoint->Y, pDynamoCenterPoint->Z),
-				gp_Dir(pDynamoNormal->X, pDynamoNormal->Y, pDynamoNormal->Z)),
+				gp_Dir(pDynamoNormal->X, pDynamoNormal->Y, pDynamoNormal->Z),
+				gp_Dir(pDynamoXAxis->X, pDynamoXAxis->Y, pDynamoXAxis->Z)
+				),
 			radius
 			);
 

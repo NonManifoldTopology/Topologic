@@ -607,11 +607,10 @@ namespace TopoLogicCore
 	std::shared_ptr<Shell> Shell::ByLoft(const std::list<std::shared_ptr<Wire>>& rkWires)
 	{
 		BRepOffsetAPI_ThruSections occtLoft;
-		std::for_each(rkWires.begin(), rkWires.end(),
-			[&occtLoft](const std::shared_ptr<Wire>& kpWire)
+		for(const std::shared_ptr<Wire>& kpWire : rkWires)
 		{
 			occtLoft.AddWire(TopoDS::Wire(*kpWire->GetOcctShape()));
-		});
+		};
 		occtLoft.Build();
 		return std::make_shared<Shell>(TopoDS::Shell(occtLoft.Shape()));
 	}

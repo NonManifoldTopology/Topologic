@@ -159,13 +159,21 @@ namespace TopoLogicCore
 		TOPOLOGIC_API void InnerBoundaries(std::list<std::shared_ptr<Wire>>& rInnerBoundaries) const;
 
 		/// <summary>
-		/// 
+		/// Note: TopoLogic UV values are normalized (from 0 and 1), but OCCT's values are not normalized.
 		/// </summary>
 		/// <param name="kpVertex"></param>
 		/// <param name="rU"></param>
 		/// <param name="rV"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API void UVParameterAtPoint(const std::shared_ptr<Vertex>& kpVertex, double& rU, double &rV) const;
+
+		/// <summary>
+		/// Note: TopoLogic UV values are normalized (from 0 and 1), but OCCT's values are not normalized.
+		/// </summary>
+		/// <param name="kU"></param>
+		/// <param name="kV"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API std::shared_ptr<Vertex> PointAtParameter(const double kU, const double kV) const;
 
 		/// <summary>
 		/// 
@@ -193,6 +201,26 @@ namespace TopoLogicCore
 		/// <param name="rkOcctMakeFace">An instantiation of OCCT's BRepBuilderAPI_MakeFace</param>
 		/// <returns>The error messsages</returns>
 		static std::string GetOcctMakeFaceErrorMessage(const BRepBuilderAPI_MakeFace& rkOcctMakeFace);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="pOcctSurface"></param>
+		/// <param name="kNonNormalizedU"></param>
+		/// <param name="kNonNormalizedV"></param>
+		/// <param name="rNormalizedU"></param>
+		/// <param name="rNormalizedV"></param>
+		static void NormalizeUV(Handle(Geom_Surface) pOcctSurface, const double kNonNormalizedU, const double kNonNormalizedV, double& rNormalizedU, double& rNormalizedV);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="pOcctSurface"></param>
+		/// <param name="kNormalizedU"></param>
+		/// <param name="kNormalizedV"></param>
+		/// <param name="rNonNormalizedU"></param>
+		/// <param name="rNonNormalizedV"></param>
+		static void NonNormalizeUV(Handle(Geom_Surface) pOcctSurface, const double kNormalizedU, const double kNormalizedV, double& rNonNormalizedU, double& rNonNormalizedV);
 
 		/// <summary>
 		/// The underlying OCCT face.

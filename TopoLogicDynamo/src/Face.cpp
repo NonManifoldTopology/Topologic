@@ -194,6 +194,14 @@ namespace TopoLogic
 		return Autodesk::DesignScript::Geometry::UV::ByCoordinates(u, v);
 	}
 
+	Vertex^ Face::PointAtParameter(Autodesk::DesignScript::Geometry::UV^ uv)
+	{
+		std::shared_ptr<TopoLogicCore::Face> pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopoLogicCore::Vertex> pCoreVertex = pCoreFace->PointAtParameter(uv->U, uv->V);
+
+		return safe_cast<Vertex^>(Topology::ByCoreTopology(pCoreVertex));
+	}
+
 	List<Vertex^>^ Face::Vertices()
 	{
 		std::shared_ptr<TopoLogicCore::Face> pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(GetCoreTopologicalQuery());
@@ -440,7 +448,7 @@ namespace TopoLogic
 				try{
 					pDynamoEdgeLoops->Add(safe_cast<Autodesk::DesignScript::Geometry::PolyCurve^>(pWire->Geometry));
 				}
-				catch (Exception^ e)
+				catch (Exception^)
 				{
 
 				}
