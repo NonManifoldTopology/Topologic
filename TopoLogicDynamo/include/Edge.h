@@ -53,6 +53,20 @@ namespace TopoLogic {
 		/// <returns>the shared vertex of an edge</returns>
 		Vertex^ SharedVertex(Edge^ edge);
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="vertex"></param>
+		/// <returns></returns>
+		double ParameterAtPoint(Vertex^ vertex);
+
+		/// <summary>
+		/// Returns the point at the input parameter
+		/// </summary>
+		/// <param name="parameter">The input parameter</param>
+		/// <returns name="Vertex">The sample point</returns>
+		Vertex^ PointAtParameter(double parameter);
+
 		property Object^ Geometry
 		{
 			/// <summary>

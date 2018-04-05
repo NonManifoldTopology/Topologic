@@ -90,6 +90,19 @@ namespace TopoLogic
 		return Curve(pOcctCurve, u0, u1);
 	}
 
+	double Edge::ParameterAtPoint(Vertex^ vertex)
+	{
+		std::shared_ptr<TopoLogicCore::Edge> pCoreEdge = TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(GetCoreTopologicalQuery());
+		return pCoreEdge->ParameterAtPoint(TopoLogicCore::Topology::Downcast<TopoLogicCore::Vertex>(vertex->GetCoreTopologicalQuery()));
+	}
+
+	Vertex^ Edge::PointAtParameter(double parameter)
+	{
+		std::shared_ptr<TopoLogicCore::Edge> pCoreEdge = TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopoLogicCore::Vertex> pCoreVertex = pCoreEdge->PointAtParameter(parameter);
+		return gcnew Vertex(pCoreVertex);
+	}
+
 	Object^ Edge::Geometry::get()
 	{
 		return Curve();

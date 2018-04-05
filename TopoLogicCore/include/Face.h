@@ -178,6 +178,13 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="kpWire"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API std::shared_ptr<Face> Trim(const std::shared_ptr<Wire>& kpWire) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="rOcctGeometries"></param>
 		virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const;
 

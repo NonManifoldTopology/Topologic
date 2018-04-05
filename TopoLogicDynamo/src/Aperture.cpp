@@ -159,8 +159,6 @@ namespace TopoLogic
 
 	Object^ Aperture::Geometry::get()
 	{
-		std::shared_ptr<TopoLogicCore::Aperture> pCoreAperture = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Aperture>(GetCoreTopologicalQuery());
-		
-		throw gcnew NotImplementedException();
+		return Topology()->Geometry;
 	}
 }

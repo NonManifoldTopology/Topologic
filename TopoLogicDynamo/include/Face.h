@@ -127,6 +127,13 @@ namespace TopoLogic {
 		/// <returns></returns>
 		Vertex^ PointAtParameter(Autodesk::DesignScript::Geometry::UV^ uv);
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="wire"></param>
+		/// <returns></returns>
+		Face^ Trim(Wire^ wire);
+
 		property Object^ Geometry
 		{
 			/// <summary>

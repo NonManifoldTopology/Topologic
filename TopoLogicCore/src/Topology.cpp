@@ -183,34 +183,30 @@ namespace TopoLogicCore
 		return nullptr;
 	}
 
-	std::shared_ptr<Topology> Topology::AddContent(const std::shared_ptr<Topology>& rkTopology)
+	void Topology::AddContent(const std::shared_ptr<Topology>& rkTopology)
 	{
 		if(std::find(m_contents.begin(), m_contents.end(), rkTopology) == m_contents.end())
 		{
 			m_contents.push_back(rkTopology);
 		}
-		return shared_from_this();
 	}
 
-	std::shared_ptr<Topology> Topology::RemoveContent(const std::shared_ptr<Topology>& rkTopology)
+	void Topology::RemoveContent(const std::shared_ptr<Topology>& rkTopology)
 	{
 		m_contents.remove(rkTopology);
-		return shared_from_this();
 	}
 
-	std::shared_ptr<Topology> Topology::AddContext(const std::shared_ptr<Context>& rkContext)
+	void Topology::AddContext(const std::shared_ptr<Context>& rkContext)
 	{
 		if (std::find(m_contexts.begin(), m_contexts.end(), rkContext) == m_contexts.end())
 		{
 			m_contexts.push_back(rkContext);
 		}
-		return shared_from_this();
 	}
 
-	std::shared_ptr<Topology> Topology::RemoveContext(const std::shared_ptr<Context>& rkContext)
+	void Topology::RemoveContext(const std::shared_ptr<Context>& rkContext)
 	{
 		m_contexts.remove(rkContext);
-		return shared_from_this();
 	}
 
 	void Topology::SharedTopologies(const std::shared_ptr<Topology>& kpTopology, std::list<std::shared_ptr<Topology>>& rkSharedTopologies) const

@@ -202,6 +202,15 @@ namespace TopoLogic
 		return safe_cast<Vertex^>(Topology::ByCoreTopology(pCoreVertex));
 	}
 
+	Face^ Face::Trim(Wire^ wire)
+	{
+		std::shared_ptr<TopoLogicCore::Face> pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopoLogicCore::Wire> pCoreWire = TopoLogicCore::Topology::Downcast<TopoLogicCore::Wire>(wire->GetCoreTopologicalQuery());
+
+		std::shared_ptr<TopoLogicCore::Face> pTrimmedFace = pCoreFace->Trim(pCoreWire);
+		return safe_cast<Face^>(Topology::ByCoreTopology(pTrimmedFace));
+	}
+
 	List<Vertex^>^ Face::Vertices()
 	{
 		std::shared_ptr<TopoLogicCore::Face> pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(GetCoreTopologicalQuery());

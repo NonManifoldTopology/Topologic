@@ -12,12 +12,16 @@ namespace TopoLogicCore
 {
 	std::shared_ptr<Aperture> Aperture::ByTopologyContext(const std::shared_ptr<TopoLogicCore::Topology>& kpTopology, const std::shared_ptr<Context>& kpContext)
 	{
-		return std::make_shared<Aperture>(kpTopology, kpContext, false);
+		std::shared_ptr<Aperture> pAperture = std::make_shared<Aperture>(kpTopology, kpContext, false);
+		pAperture->m_pMainContext->Topology()->AddContent(pAperture);
+		return pAperture;
 	}
 
 	std::shared_ptr<Aperture> Aperture::ByTopologyContextStatus(const std::shared_ptr<TopoLogicCore::Topology>& kpTopology, const std::shared_ptr<Context>& kpContext, const bool kOpenStatus)
 	{
-		return std::make_shared<Aperture>(kpTopology, kpContext, kOpenStatus);
+		std::shared_ptr<Aperture> pAperture = std::make_shared<Aperture>(kpTopology, kpContext, kOpenStatus);
+		pAperture->m_pMainContext->Topology()->AddContent(pAperture);
+		return pAperture;
 	}
 
 	bool Aperture::IsOpen() const
@@ -245,7 +249,6 @@ namespace TopoLogicCore
 		}
 
 		AddContext(kpContext);
-		m_pMainContext->Topology()->AddContent(shared_from_this());
 
 		if (kOpenStatus)
 		{

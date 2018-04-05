@@ -90,28 +90,28 @@ namespace TopoLogicCore
 		/// </summary>
 		/// <param name="rkTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API std::shared_ptr<Topology> AddContent(const std::shared_ptr<Topology>& rkTopology);
+		TOPOLOGIC_API void AddContent(const std::shared_ptr<Topology>& rkTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API std::shared_ptr<Topology> RemoveContent(const std::shared_ptr<Topology>& rkTopology);
+		TOPOLOGIC_API void RemoveContent(const std::shared_ptr<Topology>& rkTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkContext"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API std::shared_ptr<Topology> AddContext(const std::shared_ptr<Context>& rkContext);
+		TOPOLOGIC_API void AddContext(const std::shared_ptr<Context>& rkContext);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkContext"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API std::shared_ptr<Topology> RemoveContext(const std::shared_ptr<Context>& rkContext);
+		TOPOLOGIC_API void RemoveContext(const std::shared_ptr<Context>& rkContext);
 
 		/// <summary>
 		/// 

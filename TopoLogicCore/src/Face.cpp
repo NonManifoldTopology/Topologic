@@ -374,6 +374,15 @@ namespace TopoLogicCore
 		return Vertex::ByPoint(new Geom_CartesianPoint(occtPoint));
 	}
 
+	std::shared_ptr<Face> Face::Trim(const std::shared_ptr<Wire>& kpWire) const
+	{
+		Handle(Geom_Surface) pOcctSurface = Surface();
+		const TopoDS_Wire& rkWire = TopoDS::Wire(*kpWire->GetOcctShape());
+
+		BRepBuilderAPI_MakeFace occtTrimMakeFace(pOcctSurface, rkWire);
+		return TopologicalQuery::Downcast<Face>(Topology::ByOcctShape(occtTrimMakeFace.Shape()));
+	}
+
 	void Face::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
 	{
 		rOcctGeometries.push_back(Surface());

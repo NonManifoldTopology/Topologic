@@ -86,6 +86,20 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="kpVertex"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API double ParameterAtPoint(const std::shared_ptr<Vertex>& kpVertex) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kParameter"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API std::shared_ptr<Vertex> PointAtParameter(const double kParameter) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="rOcctGeometries"></param>
 		virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const;
 
@@ -103,6 +117,23 @@ namespace TopoLogicCore
 		virtual TopologyType GetType() const { return TOPOLOGY_EDGE; }
 
 	protected:
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="pOcctCurve"></param>
+		/// <param name="kNonNormalizedParameter"></param>
+		/// <returns></returns>
+		static double NormalizeParameter(Handle(Geom_Curve) pOcctCurve, const double kNonNormalizedParameter);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="pOcctCurve"></param>
+		/// <param name="kNormalizedParameter"></param>
+		/// <returns></returns>
+		static double NonNormalizeParameter(Handle(Geom_Curve) pOcctCurve, const double kNormalizedParameter);
+
+
 		/// <summary>
 		/// The underlying OCCT edge.
 		/// </summary>

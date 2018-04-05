@@ -6,8 +6,10 @@
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRep_Tool.hxx>
 #include <Geom_BSplineCurve.hxx>
+#include <Geom_CartesianPoint.hxx>
 #include <Geom_Point.hxx>
 #include <GeomAPI_Interpolate.hxx>
+#include <GeomLib_Tool.hxx>
 #include <gp_Lin.hxx>
 #include <Precision.hxx>
 #include <ShapeAnalysis_Edge.hxx>
@@ -131,6 +133,33 @@ namespace TopoLogicCore
 		return std::make_shared<Vertex>(occtSharedVertex);
 	}
 
+	double Edge::ParameterAtPoint(const std::shared_ptr<Vertex>& kpVertex) const
+	{
+		Handle(Geom_Curve) pOcctCurve = Curve();
+		Handle(Geom_Point) pOcctPoint = kpVertex->Point();
+
+		double parameter = 0.0;
+		bool isOnCurve = GeomLib_Tool::Parameter(pOcctCurve, pOcctPoint->Pnt(), Precision::Confusion(), parameter);
+		if (!isOnCurve)
+		{
+			throw std::exception("Point not on curve");
+		}
+
+		// Parameter may be non-normalized, so normalize it
+		return NormalizeParameter(pOcctCurve, parameter);
+	}
+
+	std::shared_ptr<Vertex> Edge::PointAtParameter(const double kParameter) const
+	{
+		Handle(Geom_Curve) pOcctCurve = Curve();
+
+		// Parameter is normalized, so non-normalize it
+		double nonNormalizedParameter = NonNormalizeParameter(pOcctCurve, kParameter);
+		gp_Pnt occtPoint = pOcctCurve->Value(nonNormalizedParameter);
+		
+		return Vertex::ByPoint(new Geom_CartesianPoint(occtPoint));
+	}
+
 	void Edge::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
 	{
 		rOcctGeometries.push_back(Curve());
@@ -152,6 +181,28 @@ namespace TopoLogicCore
 		// TODO: do these parameters need to be stored?
 		double u0 = 0.0, u1 = 0.0;
 		return BRep_Tool::Curve(TopoDS::Edge(*GetOcctShape()), u0, u1);
+	}
+
+	double Edge::NormalizeParameter(Handle(Geom_Curve) pOcctCurve, const double kNonNormalizedParameter)
+	{
+		double occtMinParameter = pOcctCurve->FirstParameter();
+		double occtMaxParameter = pOcctCurve->LastParameter();
+		double occtDParameter = occtMaxParameter - occtMinParameter;
+		if (occtDParameter <= 0.0)
+		{
+			throw std::exception("Negative range");
+		}
+
+		return (kNonNormalizedParameter - occtMinParameter) / occtDParameter;
+	}
+
+	double Edge::NonNormalizeParameter(Handle(Geom_Curve) pOcctCurve, const double kNormalizedParameter)
+	{
+		double occtMinParameter = pOcctCurve->FirstParameter();
+		double occtMaxParameter = pOcctCurve->LastParameter();
+		double occtDParameter = occtMaxParameter - occtMinParameter;
+
+		return occtMinParameter + kNormalizedParameter * occtDParameter;
 	}
 
 	Edge::Edge(const TopoDS_Edge& rkOcctEdge)
