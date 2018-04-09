@@ -106,7 +106,8 @@ namespace TopoLogicCore
 		/// <param name="kNumUPanels"></param>
 		/// <param name="kNumVPanels"></param>
 		/// <param name="kTolerance"></param>
-		/// <param name="isCapped"></param>
+		/// <param name="kCapBottom"></param>
+		/// <param name="kCapTop"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API static std::shared_ptr<Shell> ByFacePlanarization(
 			const std::shared_ptr<Face>& kpFace,
@@ -114,7 +115,12 @@ namespace TopoLogicCore
 			const int kNumUPanels,
 			const int kNumVPanels,
 			const double kTolerance,
-			const bool isCapped);
+			const bool kCapBottom,
+			const bool kCapTop,
+			std::list<std::shared_ptr<Vertex>>& vertices,
+			std::list<std::shared_ptr<Edge>>& edges,
+			std::list<std::shared_ptr<Wire>>& wires,
+			std::list<std::shared_ptr<Face>>& faces);
 
 		/// <summary>
 		/// 
@@ -124,7 +130,8 @@ namespace TopoLogicCore
 		/// <param name="rkUValues"></param>
 		/// <param name="rkVValues"></param>
 		/// <param name="kTolerance"></param>
-		/// <param name="isCapped"></param>
+		/// <param name="kCapBottom"></param>
+		/// <param name="kCapTop"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API static std::shared_ptr<Shell> ByFacePlanarization(
 			const std::shared_ptr<Face>& kpFace,
@@ -132,7 +139,12 @@ namespace TopoLogicCore
 			const std::list<double>& rkUValues,
 			const std::list<double>& rkVValues,
 			const double kTolerance,
-			const bool isCapped);
+			const bool kCapBottom,
+			const bool kCapTop,
+			std::list<std::shared_ptr<Vertex>>& vertices,
+			std::list<std::shared_ptr<Edge>>& edges,
+			std::list<std::shared_ptr<Wire>>& wires,
+			std::list<std::shared_ptr<Face>>& faces);
 
 
 		virtual TopologyType GetType() const { return TOPOLOGY_SHELL; }

@@ -5,7 +5,9 @@
 #include <Edge.h>
 #include <Wire.h>
 #include <Face.h>
+#include <Aperture.h>
 
+#include <BOPAlgo_Splitter.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
@@ -13,7 +15,10 @@
 #include <BRepBuilderAPI_Sewing.hxx>
 #include <BRepCheck_Shell.hxx>
 #include <BRepOffsetAPI_ThruSections.hxx>
+#include <BRep_Tool.hxx>
 #include <Geom_Surface.hxx>
+#include <ShapeAnalysis.hxx>
+#include <ShapeAnalysis_Surface.hxx>
 #include <ShapeFix_ShapeTolerance.hxx>
 #include <ShapeFix_Shell.hxx>
 #include <TopExp.hxx>
@@ -22,6 +27,11 @@
 #include <TopoDS_Solid.hxx>
 #include <TopoDS_Wire.hxx>
 #include <TopTools_MapOfShape.hxx>
+
+#include <GeomAPI_ProjectPointOnSurf.hxx>
+#include <Geom_Circle.hxx>
+#include <BRepAlgoAPI_Common.hxx>
+#include <BRepCheck_Wire.hxx>
 
 // ShapeOp
 #include <Constraint.h>
@@ -147,7 +157,12 @@ namespace TopoLogicCore
 		const int kNumUPanels,
 		const int kNumVPanels,
 		const double kTolerance,
-		const bool isCapped)
+		const bool kCapBottom,
+		const bool kCapTop,
+		std::list<std::shared_ptr<Vertex>>& vertices,
+		std::list<std::shared_ptr<Edge>>& edges,
+		std::list<std::shared_ptr<Wire>>& wires,
+		std::list<std::shared_ptr<Face>>& faces)
 	{
 		if (kNumUPanels < 1)
 		{
@@ -181,7 +196,7 @@ namespace TopoLogicCore
 			vValues.push_back(v);
 		}
 
-		return ByFacePlanarization(kpFace, kIteration, uValues, vValues, kTolerance, isCapped);
+		return ByFacePlanarization(kpFace, kIteration, uValues, vValues, kTolerance, kCapBottom, kCapTop, vertices, edges, wires, faces);
 	}
 
 	std::shared_ptr<Shell> Shell::ByFacePlanarization(
@@ -189,51 +204,14 @@ namespace TopoLogicCore
 		const int kIteration, 
 		const std::list<double>& rkUValues, 
 		const std::list<double>& rkVValues, 
-		const double kTolerance, 
-		const bool isCapped)
+		const double kTolerance,
+		const bool kCapBottom,
+		const bool kCapTop,
+		std::list<std::shared_ptr<Vertex>>& vertices,
+		std::list<std::shared_ptr<Edge>>& edges,
+		std::list<std::shared_ptr<Wire>>& wires,
+		std::list<std::shared_ptr<Face>>& faces)
 	{
-		// Check if the topology is a face, a shell, a cell, or a cell complex.
-		//if (!(rTopology.GetType() == TOPOLOGY_FACE ||
-		//	rTopology.GetType() == TOPOLOGY_SHELL ||
-		//	rTopology.GetType() == TOPOLOGY_CELL ||
-		//	rTopology.GetType() == TOPOLOGY_CELLCOMPLEX))
-		//{
-		//	std::string errorMessage = std::string("The topology is a ") + rTopology.GetTypeAsString() + std::string(". It needs to be a face, a shell, a cell, or a cell complex.");
-		//	throw std::exception(errorMessage.c_str());
-		//}
-
-		//// If the topology is a face, it has to be the same as the second argument.
-		//if (rTopology.GetType() == TOPOLOGY_FACE && rTopology.GetOcctShape()->IsSame(*rFace.GetOcctShape()))
-		//{
-		//	std::string errorMessage = std::string("Faces in the first and second arguments need to be the same");
-		//	throw std::exception(errorMessage.c_str());
-		//}
-
-		// Check if rFace part of rTopology
-		/*TopTools_IndexedDataMapOfShapeListOfShape occtParentsMap;
-		TopoDS_Shape* pOcctTopology = rTopology.GetOcctShape();
-		TopoDS_Shape* pOcctFace = rFace.GetOcctShape();
-		TopExp::MapShapesAndUniqueAncestors(*pOcctTopology, TopAbs_FACE, pOcctTopology->ShapeType(), occtParentsMap);
-		const TopTools_ListOfShape& rOcctParents = occtParentsMap.FindFromKey(*pOcctFace);
-
-		bool isParent = false;
-		for (TopTools_ListOfShape::const_iterator kParentIterator = rOcctParents.cbegin();
-		kParentIterator != rOcctParents.cend() && !isParent;
-		kParentIterator++)
-		{
-		const TopoDS_Shape& rOcctParent = *kParentIterator;
-		if (rOcctParent.IsSame(*pOcctTopology))
-		{
-		isParent = true;
-		}
-		}
-
-		if (!isParent)
-		{
-		std::string errorMessage = std::string("The topology is not a parent of the face.");
-		throw std::exception(errorMessage.c_str());
-		}*/
-
 		// Check that kIteration, kNumUPanels, and kNumVPanels are 1 or more.
 		if (kIteration < 1)
 		{
@@ -256,57 +234,10 @@ namespace TopoLogicCore
 			throw std::exception(errorMessage.c_str());
 		}
 
-		//// Get the list of topology's faces that are neither:
-		//// - The input face
-		//// - The input face's neighbour
-		//BOPCol_ListOfShape occtUnaffectedFaces;
-		//BOPCol_DataMapOfShapeListOfShape occtMapNeighbouringFacesEdges;
-		//TopExp_Explorer occtExplorer;
-		//for (occtExplorer.Init(*pOcctTopology, TopAbs_FACE); occtExplorer.More(); occtExplorer.Next())
-		//{
-		//	const TopoDS_Shape& rkCurrentFace = occtExplorer.Current();
-		//	if (pOcctFace->IsSame(rkCurrentFace))
-		//	{
-		//		continue;
-		//	}
-
-		//	// Check if adjacent
-		//	TopExp_Explorer occtExplorer1;
-		//	bool isAdjacent = false;
-		//	for (occtExplorer1.Init(*pOcctFace, TopAbs_EDGE); occtExplorer1.More() && !isAdjacent; occtExplorer1.Next())
-		//	{
-		//		const TopoDS_Shape& rkOcctEdge1 = occtExplorer1.Current();
-		//		TopExp_Explorer occtExplorer2;
-		//		for (occtExplorer2.Init(rkCurrentFace, TopAbs_EDGE); occtExplorer2.More() && !isAdjacent; occtExplorer2.Next())
-		//		{
-		//			const TopoDS_Shape& rkOcctEdge2 = occtExplorer2.Current();
-
-		//			// Contains is called as the two faces may be adjacent through more than edges.
-		//			if (rkOcctEdge1.IsSame(rkOcctEdge2))
-		//			{
-		//				// Find the shared edges
-		//				try {
-		//					BOPCol_ListOfShape& rOcctEdges = occtMapNeighbouringFacesEdges.ChangeFind(rkCurrentFace);
-		//					rOcctEdges.Append(rkOcctEdge2);
-		//				}
-		//				catch (Standard_NoSuchObject&)
-		//				{
-		//					BOPCol_ListOfShape occtEdges;
-		//					occtEdges.Append(rkOcctEdge1);
-		//					occtMapNeighbouringFacesEdges.Bind(rkCurrentFace, occtEdges);
-		//				}
-		//			}
-		//		}
-		//	}
-
-		//	// Otherwise
-		//	occtUnaffectedFaces.Append(rkCurrentFace);
-		//}
-
 		// Subdivide the face in the UV space and find the points
 		Handle(Geom_Surface) pOcctSurface = kpFace->Surface();
 		double occtUMin = 0.0, occtUMax = 0.0, occtVMin = 0.0, occtVMax = 0.0;
-		pOcctSurface->Bounds(occtUMin, occtUMax, occtVMin, occtVMax);
+		ShapeAnalysis::GetFaceUVBounds(TopoDS::Face(*kpFace->GetOcctShape()), occtUMin, occtUMax, occtVMin, occtVMax);
 		double occtURange = occtUMax - occtUMin;
 		double occtVRange = occtVMax - occtVMin;
 		int numUPanels = (int) rkUValues.size() - 1;
@@ -325,11 +256,12 @@ namespace TopoLogicCore
 		}
 
 		// Compute OCCT's non-normalized UV values
+		// At the same time, get the isolines
 		std::list<double> occtUValues;
-		std::for_each(rkUValues.begin(), rkUValues.end(), 
-			[&](const double kU)
+		BOPCol_ListOfShape occtIsolines;
+		for(double u : rkUValues)
 		{
-			double occtU = occtUMin + occtURange * kU;
+			double occtU = occtUMin + occtURange * u;
 			if (occtU < occtUMin) {
 				occtU = occtUMin;
 			}
@@ -338,12 +270,11 @@ namespace TopoLogicCore
 				occtU = occtUMax;
 			}
 			occtUValues.push_back(occtU);
-		});
+		};
 		std::list<double> occtVValues;
-		std::for_each(rkVValues.begin(), rkVValues.end(),
-			[&](const double kV)
+		for(double v : rkVValues)
 		{
-			double occtV = occtVMin + occtVRange * kV;
+			double occtV = occtVMin + occtVRange * v;
 			if (occtV < occtVMin) {
 				occtV = occtVMin;
 			}
@@ -352,7 +283,7 @@ namespace TopoLogicCore
 				occtV = occtVMax;
 			}
 			occtVValues.push_back(occtV);
-		});
+		};
 
 		// Initialise ShapeOp matrix
 		int numOfPoints = numUPoints * numVPoints;
@@ -368,6 +299,7 @@ namespace TopoLogicCore
 		{
 			endVIterator--;
 		}
+
 		for (std::list<double>::const_iterator uIterator = occtUValues.begin();
 			uIterator != endUIterator;
 			uIterator++)
@@ -384,6 +316,119 @@ namespace TopoLogicCore
 				shapeOpMatrix(2, i) = occtPoint.Z();
 
 				++i;
+			}
+		}
+
+		// Create panels
+		struct Panel
+		{
+			std::shared_ptr<Face> face;
+			double panelUMin;
+			double panelUMax;
+			double panelVMin;
+			double panelVMax;
+
+			double contextUMin;
+			double contextUMax;
+			double contextVMin;
+			double contextVMax;
+
+			void NormalizeUV(const double kU, const double kV, double& rNormalizedU, double& rNormalizedV) const
+			{
+				rNormalizedU = (kU - contextUMin) / (contextUMax - contextUMin);
+				rNormalizedV = (kV - contextVMin) / (contextVMax - contextVMin);
+			}
+
+			int i;
+			int j;
+		};
+
+		std::list<Panel> panels;
+		
+		std::list<std::shared_ptr<Topology>>& rContents = kpFace->Contents();
+		for (const std::shared_ptr<Topology>& rkContent : rContents)
+		{
+			if (rkContent->GetType() != TOPOLOGY_APERTURE)
+			{
+				continue;
+			}
+
+			std::shared_ptr<Aperture> aperture = TopologicalQuery::Downcast<Aperture>(rkContent);
+
+			if (aperture->Topology()->GetType() != TOPOLOGY_FACE)
+			{
+				continue;
+			}
+
+			std::shared_ptr<Face> apertureFace = TopologicalQuery::Downcast<Face>(aperture->Topology());
+			double occtApertureUMin = 0.0, occtApertureUMax = 0.0, occtApertureVMin = 0.0, occtApertureVMax = 0.0;
+			ShapeAnalysis::GetFaceUVBounds(TopoDS::Face(*apertureFace->GetOcctShape()), occtApertureUMin, occtApertureUMax, occtApertureVMin, occtApertureVMax);
+			std::shared_ptr<Wire> apertureWire = apertureFace->OuterBoundary();
+			Handle(Geom_Surface) apertureSurface = apertureFace->Surface();
+			endUIterator = occtUValues.end();
+			endUIterator--;
+			endVIterator = occtVValues.end();
+			endVIterator--;
+			int i = 0;
+			for (std::list<double>::const_iterator uIterator = occtUValues.begin();
+				uIterator != endUIterator;
+				uIterator++, ++i)
+			{
+				const double& rkUMin = *uIterator;
+				std::list<double>::const_iterator uIterator2 = uIterator;
+				uIterator2++;
+				const double& rkUMax = *uIterator2;
+				
+				int j = 0;
+				for (std::list<double>::const_iterator vIterator = occtVValues.begin();
+					vIterator != endVIterator;
+					vIterator++, ++j)
+				{
+					const double& rkVMin = *vIterator;
+					std::list<double>::const_iterator vIterator2 = vIterator;
+					vIterator2++;
+					const double& rkVMax = *vIterator2;
+
+					double occtUPatchMin = rkUMin < occtApertureUMin ? occtApertureUMin : rkUMin;
+					double occtUPatchMax = rkUMax > occtApertureUMax ? occtApertureUMax : rkUMax;
+					double occtVPatchMin = rkVMin < occtApertureVMin ? occtApertureVMin : rkVMin;
+					double occtVPatchMax = rkVMax > occtApertureVMax ? occtApertureVMax : rkVMax;
+
+					occtUPatchMin += 0.001;
+					occtUPatchMax -= 0.001;
+					occtVPatchMin += 0.001;
+					occtVPatchMax -= 0.001;
+
+					if (occtUPatchMin > occtApertureUMax ||
+						occtUPatchMax < occtApertureUMin ||
+						occtVPatchMin > occtApertureVMax ||
+						occtVPatchMax < occtApertureVMin)
+					{
+						continue;
+					}
+
+					// Only get panels which overlap with the apertures
+					BRepBuilderAPI_MakeFace occtMakeFace(apertureSurface, occtUPatchMin, occtUPatchMax, occtVPatchMin, occtVPatchMax, Precision::Confusion());
+					
+					// TODO: Process the wire of the aperture here.
+
+					Panel panel;
+					panel.face = TopologicalQuery::Downcast<Face>(Topology::ByOcctShape(occtMakeFace.Shape()));
+					panel.panelUMin = occtUPatchMin;
+					panel.panelUMax = occtUPatchMax;
+					panel.panelVMin = occtVPatchMin;
+					panel.panelVMax = occtVPatchMax;
+					panel.contextUMin = rkUMin;
+					panel.contextUMax = rkUMax;
+					panel.contextVMin = rkVMin;
+					panel.contextVMax = rkVMax;
+					panel.i = i;
+					panel.j = j;
+
+					panels.push_back(panel);
+
+					//faces.push_back(panel.face);
+				}
 			}
 		}
 
@@ -503,15 +548,19 @@ namespace TopoLogicCore
 					maxV = 0;
 				}
 
+				// (0,0)
 				int index1 = minU * numVPoints + minV;
 				Handle(Geom_Point) pOcctPoint1 = new Geom_CartesianPoint(rkShapeOpResult(0, index1), rkShapeOpResult(1, index1), rkShapeOpResult(2, index1));
 
+				// (0,1)
 				int index2 = minU * numVPoints + maxV;
 				Handle(Geom_Point) pOcctPoint2 = new Geom_CartesianPoint(rkShapeOpResult(0, index2), rkShapeOpResult(1, index2), rkShapeOpResult(2, index2));
 
+				// (1,1)
 				int index3 = maxU * numVPoints + maxV;
 				Handle(Geom_Point) pOcctPoint3 = new Geom_CartesianPoint(rkShapeOpResult(0, index3), rkShapeOpResult(1, index3), rkShapeOpResult(2, index3));
 
+				// (1,0)
 				int index4 = maxU * numVPoints + minV;
 				Handle(Geom_Point) pOcctPoint4 = new Geom_CartesianPoint(rkShapeOpResult(0, index4), rkShapeOpResult(1, index4), rkShapeOpResult(2, index4));
 
@@ -520,10 +569,20 @@ namespace TopoLogicCore
 				BRepBuilderAPI_MakeVertex occtMakeVertex3(pOcctPoint3->Pnt());
 				BRepBuilderAPI_MakeVertex occtMakeVertex4(pOcctPoint4->Pnt());
 
-				BRepBuilderAPI_MakeEdge occtMakeEdge12(occtMakeVertex1.Vertex(), occtMakeVertex2.Vertex());
-				BRepBuilderAPI_MakeEdge occtMakeEdge23(occtMakeVertex2.Vertex(), occtMakeVertex3.Vertex());
-				BRepBuilderAPI_MakeEdge occtMakeEdge34(occtMakeVertex3.Vertex(), occtMakeVertex4.Vertex());
-				BRepBuilderAPI_MakeEdge occtMakeEdge41(occtMakeVertex4.Vertex(), occtMakeVertex1.Vertex());
+				const TopoDS_Vertex& rkOcctVertex1 = occtMakeVertex1.Vertex();
+				const TopoDS_Vertex& rkOcctVertex2 = occtMakeVertex2.Vertex();
+				const TopoDS_Vertex& rkOcctVertex3 = occtMakeVertex3.Vertex();
+				const TopoDS_Vertex& rkOcctVertex4 = occtMakeVertex4.Vertex();
+
+				std::shared_ptr<Vertex> pVertex1 = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex1));
+				std::shared_ptr<Vertex> pVertex2 = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex2));
+				std::shared_ptr<Vertex> pVertex3 = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex3));
+				std::shared_ptr<Vertex> pVertex4 = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex4));
+
+				BRepBuilderAPI_MakeEdge occtMakeEdge12(rkOcctVertex1, rkOcctVertex2);
+				BRepBuilderAPI_MakeEdge occtMakeEdge23(rkOcctVertex2, rkOcctVertex3);
+				BRepBuilderAPI_MakeEdge occtMakeEdge34(rkOcctVertex3, rkOcctVertex4);
+				BRepBuilderAPI_MakeEdge occtMakeEdge41(rkOcctVertex4, rkOcctVertex1);
 
 				const TopoDS_Shape& rkEdge12 = occtMakeEdge12.Shape();
 				const TopoDS_Shape& rkEdge23 = occtMakeEdge23.Shape();
@@ -531,10 +590,10 @@ namespace TopoLogicCore
 				const TopoDS_Shape& rkEdge41 = occtMakeEdge41.Shape();
 
 				TopTools_ListOfShape occtEdges;
-				occtEdges.Append(rkEdge12);
-				occtEdges.Append(rkEdge23);
 				occtEdges.Append(rkEdge34);
 				occtEdges.Append(rkEdge41);
+				occtEdges.Append(rkEdge12);
+				occtEdges.Append(rkEdge23);
 
 				BRepBuilderAPI_MakeWire occtMakeWire;
 				occtMakeWire.Add(occtEdges);
@@ -543,17 +602,194 @@ namespace TopoLogicCore
 				ShapeFix_ShapeTolerance occtShapeTolerance;
 				occtShapeTolerance.SetTolerance(rkPanelWire, kTolerance, TopAbs_WIRE);
 				BRepBuilderAPI_MakeFace occtMakeFace(rkPanelWire);
-				occtSewing.Add(occtMakeFace.Face());
+				const TopoDS_Face& rkOcctPanelFace = occtMakeFace.Face();
+				occtSewing.Add(rkOcctPanelFace);
 
-				if (isCapped)
+				ShapeAnalysis_Surface occtSurfaceAnalysis(BRep_Tool::Surface(rkOcctPanelFace));
+				std::shared_ptr<Face> pPanelFace = TopologicalQuery::Downcast<Face>(Topology::ByOcctShape(rkOcctPanelFace));
+				
+				// Don't use this; use the actual corners instead.
+				//double occtPlanarContextUMin = 0.0, occtPlanarContextUMax = 0.0, occtPlanarContextVMin = 0.0, occtPlanarContextVMax = 0.0;
+				//ShapeAnalysis::GetFaceUVBounds(TopoDS::Face(*pPanelFace->GetOcctShape()), occtPlanarContextUMin, occtPlanarContextUMax, occtPlanarContextVMin, occtPlanarContextVMax);
+
+				// (0,0)
+				gp_Pnt2d occtUV1 = occtSurfaceAnalysis.ValueOfUV(pVertex1->Point()->Pnt(), Precision::Confusion());
+				double panelPoint1U = occtUV1.X(), panelPoint1V = occtUV1.Y();
+				//double panelPoint1U = 0.0, panelPoint1V = 0.0;
+				//pPanelFace->UVParameterAtPoint(pVertex1, panelPoint1U, panelPoint1V);
+
+				// (0,1)
+				gp_Pnt2d occtUV2 = occtSurfaceAnalysis.ValueOfUV(pVertex2->Point()->Pnt(), Precision::Confusion());
+				double panelPoint2U = occtUV2.X(), panelPoint2V = occtUV2.Y();
+				/*double panelPoint2U = 0.0, panelPoint2V = 0.0;
+				pPanelFace->UVParameterAtPoint(pVertex2, panelPoint2U, panelPoint2V);*/
+
+				// (1,1)
+				gp_Pnt2d occtUV3 = occtSurfaceAnalysis.ValueOfUV(pVertex3->Point()->Pnt(), Precision::Confusion());
+				double panelPoint3U = occtUV3.X(), panelPoint3V = occtUV3.Y();
+				/*double panelPoint3U = 0.0, panelPoint3V = 0.0;
+				pPanelFace->UVParameterAtPoint(pVertex3, panelPoint3U, panelPoint3V);*/
+
+				// (1,0)
+				gp_Pnt2d occtUV4 = occtSurfaceAnalysis.ValueOfUV(pVertex4->Point()->Pnt(), Precision::Confusion());
+				double panelPoint4U = occtUV4.X(), panelPoint4V = occtUV4.Y();
+				/*double panelPoint4U = 0.0, panelPoint4V = 0.0;
+				pPanelFace->UVParameterAtPoint(pVertex4, panelPoint4U, panelPoint4V);*/
+				
+				//Compute deltas
+				double deltaPanelBottomU = panelPoint4U - panelPoint1U;
+				double deltaPanelBottomV = panelPoint4V - panelPoint1V;
+
+				double deltaPanelTopU = panelPoint3U - panelPoint2U;
+				double deltaPanelTopV = panelPoint3V - panelPoint2V;
+
+
+				Handle(Geom_Surface) pOcctPanelSurface = pPanelFace->Surface();
+				// Iterate through the aperture panels, identify those inside the face panel
+
+				for (const Panel& rkPanel : panels)
+				{
+					if (rkPanel.i == minU && rkPanel.j == minV)
+					{
+						// Bilinear interpolations
+
+						double apertureNormalizedUMin = 0.0;
+						double apertureNormalizedUMax = 0.0;
+						double apertureNormalizedVMin = 0.0;
+						double apertureNormalizedVMax = 0.0;
+						rkPanel.NormalizeUV(rkPanel.panelUMin, rkPanel.panelVMin, apertureNormalizedUMin, apertureNormalizedVMin);
+						rkPanel.NormalizeUV(rkPanel.panelUMax, rkPanel.panelVMax, apertureNormalizedUMax, apertureNormalizedVMax);
+
+						double aperturePoint1U = apertureNormalizedUMin;
+						double aperturePoint1V = apertureNormalizedVMin;
+						double aperturePoint2U = apertureNormalizedUMin;
+						double aperturePoint2V = apertureNormalizedVMax;
+						double aperturePoint3U = apertureNormalizedUMax;
+						double aperturePoint3V = apertureNormalizedVMax;
+						double aperturePoint4U = apertureNormalizedUMax;
+						double aperturePoint4V = apertureNormalizedVMin;
+						
+						// Bottom = interpolate between panel points 1 and 4
+						// Top = interpolate between panel points 2 and 3
+
+						//==========================================
+						// 
+						// Aperture point 1 
+						// 1st steps only involve aperturePoint1U
+						double mappedAperturePoint1UBottom = panelPoint1U + aperturePoint1U * deltaPanelBottomU;
+						double mappedAperturePoint1VBottom = panelPoint1V + aperturePoint1U * deltaPanelBottomV;
+						double mappedAperturePoint1UTop = panelPoint2U + aperturePoint1U * deltaPanelTopU;
+						double mappedAperturePoint1VTop = panelPoint2V + aperturePoint1U * deltaPanelTopV;
+						
+						double deltaMappedAperturePoint1U = mappedAperturePoint1UTop - mappedAperturePoint1UBottom;
+						double deltaMappedAperturePoint1V = mappedAperturePoint1VTop - mappedAperturePoint1VBottom;
+
+						// 2nd step uses aperturePoint1V
+						double mappedAperturePoint1U = mappedAperturePoint1UBottom + aperturePoint1V * deltaMappedAperturePoint1U;
+						double mappedAperturePoint1V = mappedAperturePoint1VBottom + aperturePoint1V * deltaMappedAperturePoint1V;
+						//gp_Pnt occtMappedAperturePoint1 = pOcctPanelSurface->Value(panelPoint1U, panelPoint1V);
+						gp_Pnt occtMappedAperturePoint1 = pOcctPanelSurface->Value(mappedAperturePoint1U, mappedAperturePoint1V);
+						//
+						//==========================================
+
+						//==========================================
+						// 
+						// Aperture point 2
+						// 1st steps only involve aperturePoint2U
+						double mappedAperturePoint2UBottom = panelPoint1U + aperturePoint2U * deltaPanelBottomU;
+						double mappedAperturePoint2VBottom = panelPoint1V + aperturePoint2U * deltaPanelBottomV;
+						double mappedAperturePoint2UTop = panelPoint2U + aperturePoint2U * deltaPanelTopU;
+						double mappedAperturePoint2VTop = panelPoint2V + aperturePoint2U * deltaPanelTopV;
+
+						double deltaMappedAperturePoint2U = mappedAperturePoint2UTop - mappedAperturePoint2UBottom;
+						double deltaMappedAperturePoint2V = mappedAperturePoint2VTop - mappedAperturePoint2VBottom;
+
+						// 2nd step uses aperturePoint2V
+						double mappedAperturePoint2U = mappedAperturePoint2UBottom + aperturePoint2V * deltaMappedAperturePoint2U;
+						double mappedAperturePoint2V = mappedAperturePoint2VBottom + aperturePoint2V * deltaMappedAperturePoint2V;
+						//gp_Pnt occtMappedAperturePoint2 = pOcctPanelSurface->Value(panelPoint2U, panelPoint2V);
+						gp_Pnt occtMappedAperturePoint2 = pOcctPanelSurface->Value(mappedAperturePoint2U, mappedAperturePoint2V);
+						//
+						//==========================================
+
+						//==========================================
+						// 
+						// Aperture point 3
+						// 1st steps only involve aperturePoint3U
+						double mappedAperturePoint3UBottom = panelPoint1U + aperturePoint3U * deltaPanelBottomU;
+						double mappedAperturePoint3VBottom = panelPoint1V + aperturePoint3U * deltaPanelBottomV;
+						double mappedAperturePoint3UTop = panelPoint2U + aperturePoint3U * deltaPanelTopU;
+						double mappedAperturePoint3VTop = panelPoint2V + aperturePoint3U * deltaPanelTopV;
+
+						double deltaMappedAperturePoint3U = mappedAperturePoint3UTop - mappedAperturePoint3UBottom;
+						double deltaMappedAperturePoint3V = mappedAperturePoint3VTop - mappedAperturePoint3VBottom;
+
+						// 2nd step uses aperturePoint3V
+						double mappedAperturePoint3U = mappedAperturePoint3UBottom + aperturePoint3V * deltaMappedAperturePoint3U;
+						double mappedAperturePoint3V = mappedAperturePoint3VBottom + aperturePoint3V * deltaMappedAperturePoint3V;
+						//gp_Pnt occtMappedAperturePoint3 = pOcctPanelSurface->Value(panelPoint3U, panelPoint3V);
+						gp_Pnt occtMappedAperturePoint3 = pOcctPanelSurface->Value(mappedAperturePoint3U, mappedAperturePoint3V);
+						//
+						//==========================================
+
+						//==========================================
+						// 
+						// Aperture point 4
+						// 1st steps only involve aperturePoint4U
+						double mappedAperturePoint4UBottom = panelPoint1U + aperturePoint4U * deltaPanelBottomU;
+						double mappedAperturePoint4VBottom = panelPoint1V + aperturePoint4U * deltaPanelBottomV;
+						double mappedAperturePoint4UTop = panelPoint2U + aperturePoint4U * deltaPanelTopU;
+						double mappedAperturePoint4VTop = panelPoint2V + aperturePoint4U * deltaPanelTopV;
+
+						double deltaMappedAperturePoint4U = mappedAperturePoint4UTop - mappedAperturePoint4UBottom;
+						double deltaMappedAperturePoint4V = mappedAperturePoint4VTop - mappedAperturePoint4VBottom;
+
+						// 2nd step uses aperturePoint3V
+						double mappedAperturePoint4U = mappedAperturePoint4UBottom + aperturePoint4V * deltaMappedAperturePoint4U;
+						double mappedAperturePoint4V = mappedAperturePoint4VBottom + aperturePoint4V * deltaMappedAperturePoint4V;
+						//gp_Pnt occtMappedAperturePoint4 = pOcctPanelSurface->Value(panelPoint4U, panelPoint4V);
+						gp_Pnt occtMappedAperturePoint4 = pOcctPanelSurface->Value(mappedAperturePoint4U, mappedAperturePoint4V);
+						//
+						//==========================================
+
+						BRepBuilderAPI_MakeEdge occtMappedApertureEdge1(occtMappedAperturePoint1, occtMappedAperturePoint2);
+						BRepBuilderAPI_MakeEdge occtMappedApertureEdge2(occtMappedAperturePoint2, occtMappedAperturePoint3);
+						BRepBuilderAPI_MakeEdge occtMappedApertureEdge3(occtMappedAperturePoint3, occtMappedAperturePoint4);
+						BRepBuilderAPI_MakeEdge occtMappedApertureEdge4(occtMappedAperturePoint4, occtMappedAperturePoint1);
+
+						TopTools_ListOfShape occtMappedApertureEdges;
+						occtMappedApertureEdges.Append(occtMappedApertureEdge1.Shape());
+						occtMappedApertureEdges.Append(occtMappedApertureEdge2.Shape());
+						occtMappedApertureEdges.Append(occtMappedApertureEdge3.Shape());
+						occtMappedApertureEdges.Append(occtMappedApertureEdge4.Shape());
+
+						BRepBuilderAPI_MakeWire occtMappedApertureMakeWire;
+						occtMappedApertureMakeWire.Add(occtMappedApertureEdges);
+
+						TopoDS_Wire occtMappedApertureWire = occtMappedApertureMakeWire.Wire();
+						BRepBuilderAPI_MakeFace occtMappedApertureMakeFace(
+							pOcctPanelSurface,
+							occtMappedApertureWire,
+							kTolerance
+						);
+						std::shared_ptr<Face> mappedAperturePanel = TopologicalQuery::Downcast<Face>(Topology::ByOcctShape(TopoDS::Face(occtMappedApertureMakeFace.Shape())));
+
+						//faces.push_back(pPanelFace); // only those used to map the aperture
+
+						faces.push_back(mappedAperturePanel);
+					}
+				}
+				//faces.push_back(pPanelFace); // all aperture panels
+
+				if (kCapBottom || kCapTop)
 				{
 					if (!isUClosed && j == 0) // Use j == 0 to do this only once
 					{
-						if (i == 0) // Store the edge rkEdge12 to uMin edges 
+						if (kCapBottom && i == 0) // Store the edge rkEdge12 to uMin edges 
 						{
 							borderEdges[0].Append(rkEdge12);
 						}
-						else if (i == numUPanels - 1) // Store the edge rkEdge34 to uMax edges 
+						else if (kCapTop && i == numUPanels - 1) // Store the edge rkEdge34 to uMax edges 
 						{
 							borderEdges[1].Append(rkEdge34);
 						}
@@ -561,11 +797,11 @@ namespace TopoLogicCore
 
 					if (!isVClosed)
 					{
-						if (j == 0) // Store the edge rkEdge41 to vMin edges 
+						if (kCapBottom && j == 0) // Store the edge rkEdge41 to vMin edges 
 						{
 							borderEdges[2].Append(rkEdge41);
 						}
-						else if (j == numVPanels - 1) // Store the edge rkEdge23 to vMax edges 
+						else if (kCapTop && j == numVPanels - 1) // Store the edge rkEdge23 to vMax edges 
 						{
 							borderEdges[3].Append(rkEdge23);
 						}
@@ -574,7 +810,8 @@ namespace TopoLogicCore
 			}
 		}
 
-		if (isCapped)
+		// These are the caps, no need to introduce apertures.
+		if (kCapBottom || kCapTop)
 		{
 			for (int i = 0; i < 4; ++i)
 			{
@@ -588,17 +825,13 @@ namespace TopoLogicCore
 					ShapeFix_ShapeTolerance occtShapeTolerance;
 					occtShapeTolerance.SetTolerance(rkOuterWire, kTolerance, TopAbs_WIRE);
 					BRepBuilderAPI_MakeFace occtMakeFace(TopoDS::Wire(occtMakeWire.Shape()));
-					occtSewing.Add(occtMakeFace.Face());
+					const TopoDS_Face& rkOcctFace = occtMakeFace.Face();
+					occtSewing.Add(rkOcctFace);
 				}
 			}
 		}
 
 		occtSewing.Perform();
-
-
-		// Construct the hole wires
-
-		// Reconstruct the edges
 
 		// Reconstruct the shape
 		return std::make_shared<Shell>(TopoDS::Shell(occtSewing.SewedShape()));

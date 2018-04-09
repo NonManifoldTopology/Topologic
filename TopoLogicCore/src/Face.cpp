@@ -359,14 +359,14 @@ namespace TopoLogicCore
 		double occtU = occtUV.X();
 		double occtV = occtUV.Y();
 
-		Face::NormalizeUV(pOcctSurface, occtU, occtV, rU, rV);
+		NormalizeUV(occtU, occtV, rU, rV);
 	}
 
 	std::shared_ptr<Vertex> Face::PointAtParameter(const double kU, const double kV) const
 	{
 		Handle(Geom_Surface) pOcctSurface = Surface();
 		double occtU = 0.0, occtV = 0.0;
-		Face::NonNormalizeUV(pOcctSurface, kU, kV, occtU, occtV);
+		NonNormalizeUV(kU, kV, occtU, occtV);
 
 		ShapeAnalysis_Surface occtSurfaceAnalysis(Surface());
 		gp_Pnt occtPoint = occtSurfaceAnalysis.Value(occtU, occtV);
@@ -450,10 +450,10 @@ namespace TopoLogicCore
 		}
 	}
 
-	void Face::NormalizeUV(Handle(Geom_Surface) pOcctSurface, const double kNonNormalizedU, const double kNonNormalizedV, double& rNormalizedU, double& rNormalizedV)
+	void Face::NormalizeUV(const double kNonNormalizedU, const double kNonNormalizedV, double& rNormalizedU, double& rNormalizedV) const
 	{
 		double occtUMin = 0.0, occtUMax = 0.0, occtVMin = 0.0, occtVMax = 0.0;
-		pOcctSurface->Bounds(occtUMin, occtUMax, occtVMin, occtVMax);
+		ShapeAnalysis::GetFaceUVBounds(TopoDS::Face(*GetOcctShape()), occtUMin, occtUMax, occtVMin, occtVMax);
 		double occtDU = occtUMax - occtUMin;
 		double occtDV = occtVMax - occtVMin;
 		if (occtDU <= 0.0 || occtDV <= 0.0)
@@ -465,10 +465,10 @@ namespace TopoLogicCore
 		rNormalizedV = (kNonNormalizedV - occtVMin) / occtDV;
 	}
 
-	void Face::NonNormalizeUV(Handle(Geom_Surface) pOcctSurface, const double kNormalizedU, const double kNormalizedV, double& rNonNormalizedU, double& rNonNormalizedV)
+	void Face::NonNormalizeUV(const double kNormalizedU, const double kNormalizedV, double& rNonNormalizedU, double& rNonNormalizedV) const
 	{
 		double occtUMin = 0.0, occtUMax = 0.0, occtVMin = 0.0, occtVMax = 0.0;
-		pOcctSurface->Bounds(occtUMin, occtUMax, occtVMin, occtVMax);
+		ShapeAnalysis::GetFaceUVBounds(TopoDS::Face(*GetOcctShape()), occtUMin, occtUMax, occtVMin, occtVMax);
 		double occtDU = occtUMax - occtUMin;
 		double occtDV = occtVMax - occtVMin;
 

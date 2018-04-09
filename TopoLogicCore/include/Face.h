@@ -212,22 +212,20 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="pOcctSurface"></param>
 		/// <param name="kNonNormalizedU"></param>
 		/// <param name="kNonNormalizedV"></param>
 		/// <param name="rNormalizedU"></param>
 		/// <param name="rNormalizedV"></param>
-		static void NormalizeUV(Handle(Geom_Surface) pOcctSurface, const double kNonNormalizedU, const double kNonNormalizedV, double& rNormalizedU, double& rNormalizedV);
+		void NormalizeUV(const double kNonNormalizedU, const double kNonNormalizedV, double& rNormalizedU, double& rNormalizedV) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="pOcctSurface"></param>
 		/// <param name="kNormalizedU"></param>
 		/// <param name="kNormalizedV"></param>
 		/// <param name="rNonNormalizedU"></param>
 		/// <param name="rNonNormalizedV"></param>
-		static void NonNormalizeUV(Handle(Geom_Surface) pOcctSurface, const double kNormalizedU, const double kNormalizedV, double& rNonNormalizedU, double& rNonNormalizedV);
+		void NonNormalizeUV(const double kNormalizedU, const double kNormalizedV, double& rNonNormalizedU, double& rNonNormalizedV) const;
 
 		/// <summary>
 		/// The underlying OCCT face.

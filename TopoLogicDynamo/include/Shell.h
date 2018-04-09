@@ -4,6 +4,7 @@
 
 #include <TopoLogicCore/include/Shell.h>
 
+using namespace Autodesk::DesignScript::Runtime;
 namespace TopoLogic
 {
 	ref class Vertex;
@@ -90,9 +91,10 @@ namespace TopoLogic
 		/// <param name="numUPanels"></param>
 		/// <param name="numVPanels"></param>
 		/// <param name="tolerance"></param>
-		/// <param name="isCapped">Cap the holes if the surface is closed either in the u- or v-direction but open on the other</param>
+		/// <param name="capBottom">Cap the holes if the surface is closed either in the minimum u- or v-direction but open on the other</param>
+		/// <param name="capTop">Cap the holes if the surface is closed either in the maximum u- or v-direction but open on the other</param>
 		/// <returns></returns>
-		static Shell^ ByFacePlanarization(Face^ face, int iteration, int numUPanels, int numVPanels, double tolerance, bool isCapped);
+		static List<Face^>^ ByFacePlanarization(Face^ face, int iteration, int numUPanels, int numVPanels, double tolerance, bool capBottom, bool capTop);
 
 		/// <summary>
 		/// 
@@ -102,9 +104,11 @@ namespace TopoLogic
 		/// <param name="uValues"></param>
 		/// <param name="vValues"></param>
 		/// <param name="tolerance"></param>
-		/// <param name="isCapped"></param>
+		/// <param name="capBottom">Cap the holes if the surface is closed either in the minimum u- or v-direction but open on the other</param>
+		/// <param name="capTop">Cap the holes if the surface is closed either in the maximum u- or v-direction but open on the other</param>
 		/// <returns></returns>
-		static Shell^ ByFacePlanarization(Face^ face, int iteration, List<double>^ uValues, List<double>^ vValues, double tolerance, bool isCapped);
+		[MultiReturn(gcnew array<String^> { "Vertices", "Edges", "Wires", "Faces", "Shell" })]
+		static Dictionary<String^, Object^>^ ByFacePlanarization(Face^ face, int iteration, List<double>^ uValues, List<double>^ vValues, double tolerance, bool capBottom, bool capTop);
 
 		property Object^ Geometry
 		{
