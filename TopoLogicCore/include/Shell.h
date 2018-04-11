@@ -116,11 +116,7 @@ namespace TopoLogicCore
 			const int kNumVPanels,
 			const double kTolerance,
 			const bool kCapBottom,
-			const bool kCapTop,
-			std::list<std::shared_ptr<Vertex>>& vertices,
-			std::list<std::shared_ptr<Edge>>& edges,
-			std::list<std::shared_ptr<Wire>>& wires,
-			std::list<std::shared_ptr<Face>>& faces);
+			const bool kCapTop);
 
 		/// <summary>
 		/// 
@@ -140,11 +136,7 @@ namespace TopoLogicCore
 			const std::list<double>& rkVValues,
 			const double kTolerance,
 			const bool kCapBottom,
-			const bool kCapTop,
-			std::list<std::shared_ptr<Vertex>>& vertices,
-			std::list<std::shared_ptr<Edge>>& edges,
-			std::list<std::shared_ptr<Wire>>& wires,
-			std::list<std::shared_ptr<Face>>& faces);
+			const bool kCapTop);
 
 
 		virtual TopologyType GetType() const { return TOPOLOGY_SHELL; }
