@@ -94,7 +94,7 @@ namespace TopoLogic
 		/// <param name="capBottom">Cap the holes if the surface is closed either in the minimum u- or v-direction but open on the other</param>
 		/// <param name="capTop">Cap the holes if the surface is closed either in the maximum u- or v-direction but open on the other</param>
 		/// <returns></returns>
-		static Shell^ ByFacePlanarization(Face^ face, int iteration, int numUPanels, int numVPanels, double tolerance, bool capBottom, bool capTop);
+		static List<Face^>^ ByFacePlanarization(Face^ face, int iteration, int numUPanels, int numVPanels, double tolerance, bool capBottom, bool capTop);
 
 		/// <summary>
 		/// 
@@ -107,7 +107,8 @@ namespace TopoLogic
 		/// <param name="capBottom">Cap the holes if the surface is closed either in the minimum u- or v-direction but open on the other</param>
 		/// <param name="capTop">Cap the holes if the surface is closed either in the maximum u- or v-direction but open on the other</param>
 		/// <returns></returns>
-		static Shell^ ByFacePlanarization(Face^ face, int iteration, List<double>^ uValues, List<double>^ vValues, double tolerance, bool capBottom, bool capTop);
+		[MultiReturn(gcnew array<String^> { "Vertices", "Edges", "Wires", "Faces", "Shell" })]
+		static Dictionary<String^, Object^>^ ByFacePlanarization(Face^ face, int iteration, List<double>^ uValues, List<double>^ vValues, double tolerance, bool capBottom, bool capTop);
 
 		property Object^ Geometry
 		{

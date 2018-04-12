@@ -154,8 +154,12 @@ namespace TopoLogic
 		return gcnew Shell(TopoLogicCore::Shell::ByVerticesFaceIndices(coreVertices, coreFaceIndices));
 	}
 
-	Shell^ Shell::ByFacePlanarization(Face^ face, int iteration, int numUPanels, int numVPanels, double tolerance, bool capBottom, bool capTop)
+	List<Face^>^ Shell::ByFacePlanarization(Face^ face, int iteration, int numUPanels, int numVPanels, double tolerance, bool capBottom, bool capTop)
 	{
+		std::list<std::shared_ptr<TopoLogicCore::Vertex>> coreVertices;
+		std::list<std::shared_ptr<TopoLogicCore::Edge>> coreIsocurves;
+		std::list<std::shared_ptr<TopoLogicCore::Wire>> coreWires;
+		std::list<std::shared_ptr<TopoLogicCore::Face>> coreFaces;
 		std::shared_ptr<TopoLogicCore::Shell> pCoreTopology = TopoLogicCore::Shell::ByFacePlanarization(
 			TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Face>(face->GetCoreTopologicalQuery()),
 			iteration,
@@ -163,13 +167,33 @@ namespace TopoLogic
 			numVPanels,
 			tolerance,
 			capBottom,
-			capTop
+			capTop,
+			coreVertices,
+			coreIsocurves,
+			coreWires,
+			coreFaces
 		);
-		return gcnew Shell(pCoreTopology);
+		//return gcnew Shell(pCoreTopology);
+
+		List<Edge^>^ isoedges = gcnew List<Edge^>();
+		for (const std::shared_ptr<TopoLogicCore::Edge>& rkCoreEdge : coreIsocurves)
+		{
+			isoedges->Add(safe_cast<Edge^>(Topology::ByCoreTopology(rkCoreEdge)));
+		}
+		List<Face^>^ faces = gcnew List<Face^>();
+		for(const std::shared_ptr<TopoLogicCore::Face>& rkCoreFace : coreFaces)
+		{
+			faces->Add(safe_cast<Face^>(Topology::ByCoreTopology(rkCoreFace)));
+		}
+		return faces;
 	}
 
-	Shell^ Shell::ByFacePlanarization(Face ^ face, int iteration, List<double>^ uValues, List<double>^ vValues, double tolerance, bool capBottom, bool capTop)
+	Dictionary<String^, Object^>^ Shell::ByFacePlanarization(Face ^ face, int iteration, List<double>^ uValues, List<double>^ vValues, double tolerance, bool capBottom, bool capTop)
 	{
+		std::list<std::shared_ptr<TopoLogicCore::Vertex>> coreVertices;
+		std::list<std::shared_ptr<TopoLogicCore::Edge>> coreIsocurves;
+		std::list<std::shared_ptr<TopoLogicCore::Wire>> coreWires;
+		std::list<std::shared_ptr<TopoLogicCore::Face>> coreFaces;
 		std::list<double> coreUValues, coreVValues;
 		for each(double u in uValues)
 		{
@@ -188,10 +212,43 @@ namespace TopoLogic
 			coreVValues,
 			tolerance,
 			capBottom,
-			capTop
+			capTop,
+			coreVertices,
+			coreIsocurves,
+			coreWires,
+			coreFaces
 		);
 		Shell^ pShell = gcnew Shell(pCoreTopology);
-		return gcnew Shell(pCoreTopology);
+		//return gcnew Shell(pCoreTopology);
+
+		List<Vertex^>^ vertices = gcnew List<Vertex^>();
+		for (const std::shared_ptr<TopoLogicCore::Vertex>& rkCoreVertex : coreVertices)
+		{
+			vertices->Add(safe_cast<Vertex^>(Topology::ByCoreTopology(rkCoreVertex)));
+		}
+		List<Edge^>^ edges = gcnew List<Edge^>();
+		for (const std::shared_ptr<TopoLogicCore::Edge>& rkCoreEdge : coreIsocurves)
+		{
+			edges->Add(safe_cast<Edge^>(Topology::ByCoreTopology(rkCoreEdge)));
+		}
+		List<Wire^>^ wires = gcnew List<Wire^>();
+		for (const std::shared_ptr<TopoLogicCore::Wire>& rkCoreWire : coreWires)
+		{
+			wires->Add(safe_cast<Wire^>(Topology::ByCoreTopology(rkCoreWire)));
+		}
+		List<Face^>^ faces = gcnew List<Face^>();
+		for (const std::shared_ptr<TopoLogicCore::Face>& rkCoreFace : coreFaces)
+		{
+			faces->Add(safe_cast<Face^>(Topology::ByCoreTopology(rkCoreFace)));
+		}
+		Dictionary<String^, Object^>^ pDictionary = gcnew Dictionary<String^, Object^>();
+		pDictionary->Add("Vertices", vertices);
+		pDictionary->Add("Edges", edges);
+		pDictionary->Add("Wires", wires);
+		pDictionary->Add("Faces", faces);
+		pDictionary->Add("Shell", pShell);
+		return pDictionary;
+		//return faces;
 	}
 
 	bool Shell::IsClosed::get()
