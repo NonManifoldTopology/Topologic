@@ -21,6 +21,9 @@
 #include <GProp_GProps.hxx>
 #include <ShapeFix_Solid.hxx>
 #include <StdFail_NotDone.hxx>
+#include <TDataStd_Integer.hxx>
+#include <TDF_ChildIterator.hxx>
+#include <TNaming_NamedShape.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
@@ -136,18 +139,68 @@ namespace TopoLogicCore
 		return pCell;
 	}
 
-	std::shared_ptr<Cell> Cell::ByShell(const std::shared_ptr<Shell>& kpShells)
+	std::shared_ptr<Cell> Cell::ByShell(const std::shared_ptr<Shell>& kpShell)
 	{
 		BRepBuilderAPI_MakeSolid occtMakeSolid;
 		try {
-			occtMakeSolid = BRepBuilderAPI_MakeSolid(TopoDS::Shell(*kpShells->GetOcctShape()));
+			occtMakeSolid = BRepBuilderAPI_MakeSolid(TopoDS::Shell(*kpShell->GetOcctShape()));
 		}
 		catch (StdFail_NotDone&)
 		{
 			throw std::exception("The solid was not built.");
 		}
 
-		return std::make_shared<Cell>(occtMakeSolid);
+		std::shared_ptr<Cell> pCell = std::make_shared<Cell>(occtMakeSolid);
+		std::shared_ptr<Topology> pUpcastTopology = TopologicalQuery::Upcast<Topology>(pCell);
+		GlobalCluster::GetInstance().GetCluster()->AddChildLabel(pUpcastTopology, REL_CONSTITUENT);
+
+		// Do the labeling.
+		//for (TopExp_Explorer occtShapeExplorer(*kpShell->GetOcctShape(), TopAbs_FACE); occtShapeExplorer.More(); occtShapeExplorer.Next()) {
+		//for(const std::shared_ptr<Face>& kpOriginalFace : originalFaces)
+		for (TDF_ChildIterator occtShellLabelIterator(kpShell->GetOcctLabel()); occtShellLabelIterator.More(); occtShellLabelIterator.Next())
+		{
+			TDF_Label faceLabel = occtShellLabelIterator.Value();
+			Handle(TNaming_NamedShape) occtFaceAttribute;
+			bool result = faceLabel.FindAttribute(TNaming_NamedShape::GetID(), occtFaceAttribute);
+			TopoDS_Shape occtFace = occtFaceAttribute->Get();
+			std::shared_ptr<Topology> face = Topology::ByOcctShape(occtFace);
+			face->SetOcctLabel(faceLabel);
+			//TopoDS_Face& rOcctFace = TopoDS::Face(*kpOriginalFace->GetOcctShape());
+			if (occtMakeSolid.IsDeleted(occtFace))
+			{
+				continue;
+			}
+			/*bool hasDescendantFaces = occtMakeSolid.HasDescendants(TopoDS::Face(*kpOriginalFace->GetOcctShape()));
+			const TopTools_ListOfShape& rkOcctDescendantFaces = occtMakeSolid.DescendantFaces(TopoDS::Face(*kpOriginalFace->GetOcctShape()));*/
+			//copy the aperture information here
+
+			//std::shared_ptr<Topology> descendantFace = Topology::Upcast<Topology>(kpOriginalFace);
+			pCell->AddChildLabel(face, REL_CONSTITUENT);
+
+			// The children of the child, including the apertures, seem to be added automatically.
+
+
+			// get the aperture attribute of the original face
+			//for (TDF_ChildIterator occtLabelIterator(faceLabel); occtLabelIterator.More(); occtLabelIterator.Next())
+			//{
+			//	TDF_Label apertureLabel = occtLabelIterator.Value();
+			//	Handle(TNaming_NamedShape) occtApertureAttribute;
+			//	Handle(TDataStd_Integer) occtRelationshipType;
+			//	if (apertureLabel.FindAttribute(TNaming_NamedShape::GetID(), occtApertureAttribute) &&
+			//		apertureLabel.FindAttribute(TDataStd_Integer::GetID(), occtRelationshipType) &&
+			//		occtRelationshipType->Get() == REL_APERTURE)
+			//	{
+			//		// TODO check: is faceLabel == 
+			//		int nbApertures = faceLabel.NbChildren();
+			//		TopoDS_Shape occtAperture = occtApertureAttribute->Get();
+			//		std::shared_ptr<Topology> aperture = Topology::ByOcctShape(occtAperture);
+			//		face->AddChildLabel(aperture, REL_APERTURE);
+			//		int nbApertures2 = faceLabel.NbChildren();
+			//	}
+			//}
+		}
+
+		return pCell;
 	}
 
 	std::shared_ptr<Cell> Cell::ByCuboid(Handle(Geom_CartesianPoint) pOcctCentroid, const double kXDimension, const double kYDimension, const double kZDimension)

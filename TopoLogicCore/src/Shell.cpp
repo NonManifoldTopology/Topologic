@@ -735,7 +735,7 @@ namespace TopoLogicCore
 					polygons.push_back(polygon);
 
 					std::vector<N> indices = mapbox::earcut<N>(polygons);
-					int numberOfTriangles = indices.size() / 3;
+					int numberOfTriangles = (int)indices.size() / 3;
 					for (int i = 0; i < numberOfTriangles; ++i)
 					{
 						int index1 = i * 3;
