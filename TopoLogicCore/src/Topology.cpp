@@ -22,6 +22,7 @@
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <TopoDS.hxx>
 #include <TNaming_Builder.hxx>
+#include <TDF_ChildIterator.hxx>
 #include <TDataStd_Integer.hxx>
 #include <ShapeAnalysis_ShapeContents.hxx>
 
@@ -40,6 +41,8 @@
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopTools_MapOfShape.hxx>
+#include <TNaming_NamedShape.hxx>
+#include <TDataStd_Integer.hxx>
 
 #include <ShapeFix_Shape.hxx>
 
@@ -227,6 +230,32 @@ namespace TopoLogicCore
 
 	void Topology::PathsTo(const std::shared_ptr<Topology>& kpTopology, const int kMaxLevels, const int kMaxPaths, std::list<std::list<std::shared_ptr<TopologicalQuery>>>& rkPaths) const
 	{
+	}
+
+	void Topology::ContentsV2(std::list<std::shared_ptr<Topology>>& rContents) const
+	{
+		int numCheckedChilds = 0;
+
+		// Get the list of attribute shapes in the child labels in all levels, therefore no need to iterate hierarchically.
+		for (TDF_ChildIterator occtLabelIterator(GetOcctLabel(), true); occtLabelIterator.More(); occtLabelIterator.Next())
+		{
+			TDF_Label childLabel = occtLabelIterator.Value();
+			// Only care about those labels with aperture or other non-constituent relationships.
+			Handle(TNaming_NamedShape) occtApertureAttribute;
+			Handle(TDataStd_Integer) occtRelationshipType;
+			bool result1 = childLabel.FindAttribute(TNaming_NamedShape::GetID(), occtApertureAttribute);
+			bool result2 = childLabel.FindAttribute(TDataStd_Integer::GetID(), occtRelationshipType);
+			int result3 = occtRelationshipType->Get();
+			if (result1 &&
+				result2 &&
+				occtRelationshipType->Get() != REL_CONSTITUENT)
+			{
+				std::shared_ptr<Topology> pTopology = Topology::ByOcctShape(occtApertureAttribute->Get());
+				pTopology->SetOcctLabel(childLabel);
+				rContents.push_back(pTopology);
+			}
+			numCheckedChilds++;
+		}
 	}
 
 	bool Topology::SaveToBrep(const std::string & rkPath) const
@@ -888,8 +917,223 @@ namespace TopoLogicCore
 	{
 		rOcctCellsBuilder.MakeContainers();
 		const TopoDS_Shape& occtBooleanResult = rOcctCellsBuilder.Shape();
-		std::shared_ptr<Topology> pTopology = Topology::ByOcctShape(occtBooleanResult);
+		std::shared_ptr<Topology> pTopology = ManageBooleanLabels(rOcctCellsBuilder);
+		
 		return pTopology;
+	}
+
+	std::shared_ptr<Topology> Topology::ManageBooleanLabels(BOPAlgo_CellsBuilder& rOcctCellsBuilder)
+	{
+		// Add the output cluster to the root.
+		const TopoDS_Shape& rkBooleanResult = rOcctCellsBuilder.Shape();
+		std::shared_ptr<Topology> pBooleanResult = Topology::ByOcctShape(rkBooleanResult);
+		GlobalCluster::GetInstance().GetCluster()->AddChildLabel(pBooleanResult, REL_CONSTITUENT);
+
+		// For now, only map the faces and their apertures to the only cell complex in the output cluster.TopTools_MapOfShape occtShapes;
+		TopTools_MapOfShape occtCompSolids; 
+		TopExp_Explorer occtExplorer;
+		for (occtExplorer.Init(rOcctCellsBuilder.Shape(), TopAbs_COMPSOLID); occtExplorer.More(); occtExplorer.Next())
+		{
+			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
+			if (!occtCompSolids.Contains(occtCurrent))
+			{
+				occtCompSolids.Add(occtCurrent);
+			}
+		}
+		if (occtCompSolids.Size() == 0)
+		{
+			return pBooleanResult;
+		}
+
+		// Add the cell complex as the constituent child label to the cluster.
+		const TopoDS_Shape& rkCompSolid = *occtCompSolids.cbegin();
+		std::shared_ptr<Topology> pCellComplex = Topology::ByOcctShape(rkCompSolid);
+		pBooleanResult->AddChildLabel(pCellComplex, REL_CONSTITUENT);
+		
+		// Get the cell complex's faces. These are the output's faces.
+		TopTools_MapOfShape occtOutputCompSolidFaces;
+		for (occtExplorer.Init(rkCompSolid, TopAbs_FACE); occtExplorer.More(); occtExplorer.Next())
+		{
+			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
+			if (!occtOutputCompSolidFaces.Contains(occtCurrent))
+			{
+				occtOutputCompSolidFaces.Add(occtCurrent);
+			}
+		}
+
+		// Get the argument input faces
+		const BOPCol_ListOfShape& rkArguments = rOcctCellsBuilder.Arguments();
+		TopTools_MapOfShape occtArgumentFaces;
+		int mapping = 0;
+		for (BOPCol_ListIteratorOfListOfShape occtArgumentIterator(rkArguments);
+			occtArgumentIterator.More();
+			occtArgumentIterator.Next())
+		{
+			TopExp_Explorer occtExplorer;
+			//TopTools_ListOfShape modifiedArguments = rOcctCellsBuilder.Modified(occtArgumentIterator.Shape());
+			for (occtExplorer.Init(occtArgumentIterator.Value(), TopAbs_FACE); occtExplorer.More(); occtExplorer.Next())
+			{
+				const TopoDS_Shape& occtCurrent = occtExplorer.Current();
+				TopTools_ListOfShape modifiedArguments = rOcctCellsBuilder.Modified(occtCurrent);
+				if (!occtArgumentFaces.Contains(occtCurrent))
+				{
+					occtArgumentFaces.Add(occtCurrent);
+					
+					/*for (TopTools_ListIteratorOfListOfShape modifiedArgumentIterator(modifiedArguments);
+						modifiedArgumentIterator.More();
+						modifiedArgumentIterator.Next())
+					{
+						const TopoDS_Shape& occtCurrentModifiedArgument = modifiedArgumentIterator.Value();
+						bool isInOutput = false;
+						if (occtOutputCompSolidFaces.Contains(occtCurrentModifiedArgument))
+						{
+							isInOutput = true;
+							mapping++;
+						}
+					}*/
+				}
+			}
+		}
+
+		// Get the input face labels
+		for (TDF_ChildIterator occtLabelIterator(GetOcctLabel(), true); occtLabelIterator.More(); occtLabelIterator.Next())
+		{
+			TDF_Label childLabel = occtLabelIterator.Value();
+			Handle(TNaming_NamedShape) occtChildShape;
+			Handle(TDataStd_Integer) occtRelationshipType;
+			bool result1 = childLabel.FindAttribute(TNaming_NamedShape::GetID(), occtChildShape);
+			bool result2 = childLabel.FindAttribute(TDataStd_Integer::GetID(), occtRelationshipType);
+			int result3 = occtRelationshipType->Get();
+
+			// THIS DOES NOT WORK
+			bool result4 = occtArgumentFaces.Contains(occtChildShape->Get());
+			if (result1 &&
+				result2 &&
+				occtRelationshipType->Get() == REL_CONSTITUENT &&
+				result4)
+			{
+				// Add this label to 
+				std::shared_ptr<Topology> pArgumentTopology = Topology::ByOcctShape(occtChildShape->Get());
+				pCellComplex->AddChildLabel(pArgumentTopology, REL_CONSTITUENT);
+				//argumentTopologies.push_back(pArgumentTopology);
+			}
+		}
+
+
+		// Get the input face apertures
+		// Get mapping input -> output faces
+
+
+		//bool hasGenerated = rOcctCellsBuilder.HasGenerated();
+		//bool hasModified = rOcctCellsBuilder.HasModified();
+		//bool hasDeleted = rOcctCellsBuilder.HasDeleted();
+
+		//std::list<std::shared_ptr<Topology>> argumentTopologies;
+		//for (TDF_ChildIterator occtLabelIterator(GetOcctLabel(), true); occtLabelIterator.More(); occtLabelIterator.Next())
+		//{
+		//	TDF_Label childLabel = occtLabelIterator.Value();
+		//	Handle(TNaming_NamedShape) occtChildShape;
+		//	Handle(TDataStd_Integer) occtRelationshipType;
+		//	bool result1 = childLabel.FindAttribute(TNaming_NamedShape::GetID(), occtChildShape);
+		//	bool result2 = childLabel.FindAttribute(TDataStd_Integer::GetID(), occtRelationshipType);
+		//	int result3 = occtRelationshipType->Get();
+		//	bool result4 = occtArgumentFaces.Contains(occtChildShape->Get());
+		//	/*if (result1 &&
+		//		result2 &&
+		//		occtRelationshipType->Get() == REL_CONSTITUENT &&
+		//		result4)
+		//	{
+		//		std::shared_ptr<Topology> pArgumentTopology = Topology::ByOcctShape(occtChildShape->Get());
+		//		pArgumentTopology->SetOcctLabel(childLabel);
+		//		argumentTopologies.push_back(pArgumentTopology);
+		//	}*/
+
+		//	// Which face in the result evolves from this face from the input?
+		//	TopTools_ListOfShape modifiedArguments = rOcctCellsBuilder.Modified(occtChildShape->Get());
+		//	for (TopTools_ListIteratorOfListOfShape modifiedArgumentIterator(modifiedArguments);
+		//		modifiedArgumentIterator.More();
+		//		modifiedArgumentIterator.Next())
+		//	{
+		//		bool result4 = occtArgumentFaces.Contains(modifiedArgumentIterator.Value());
+		//		if (result1 &&
+		//			result2 &&
+		//			occtRelationshipType->Get() == REL_CONSTITUENT &&
+		//			result4)
+		//		{
+		//			std::shared_ptr<Topology> pArgumentTopology = Topology::ByOcctShape(modifiedArgumentIterator.Value());
+		//			pArgumentTopology->SetOcctLabel(childLabel);
+		//			argumentTopologies.push_back(pArgumentTopology);
+		//		}
+		//	}
+		//}
+
+		//// CHECK if arguments have apertures. Refer to this object's label. Iterate through all levels.
+		//int numApertures = 0;
+		//for(const std::shared_ptr<Topology>& rkArgumentTopology : argumentTopologies)
+		//{
+		//	for (TDF_ChildIterator occtLabelIterator(rkArgumentTopology->GetOcctLabel(), true); occtLabelIterator.More(); occtLabelIterator.Next())
+		//	{
+		//		TDF_Label childLabel = occtLabelIterator.Value();
+		//		Handle(TNaming_NamedShape) occtChildShape;
+		//		Handle(TDataStd_Integer) occtRelationshipType;
+		//		bool result1 = childLabel.FindAttribute(TNaming_NamedShape::GetID(), occtChildShape);
+		//		bool result2 = childLabel.FindAttribute(TDataStd_Integer::GetID(), occtRelationshipType);
+		//		int result3 = occtRelationshipType->Get();
+		//		if (result1 &&
+		//			result2 &&
+		//			occtRelationshipType->Get() != REL_CONSTITUENT)
+		//		{
+		//			std::shared_ptr<Topology> pArgumentTopology = Topology::ByOcctShape(occtChildShape->Get());
+		//			pArgumentTopology->SetOcctLabel(childLabel);
+		//			argumentTopologies.push_back(pArgumentTopology);
+		//			numApertures++;
+		//		}
+		//	}
+		//}
+
+		//for (TopTools_MapIteratorOfMapOfShape occtArgumentFaceIterator(occtArgumentFaces);
+		//	occtArgumentFaceIterator.More();
+		//	occtArgumentFaceIterator.Next())
+		//{
+		//	const TopoDS_Shape& occtArgumentFace = occtArgumentFaceIterator.Value();
+
+		//	// Only deal with faces which are not deleted.
+		//	if (rOcctCellsBuilder.IsDeleted(occtArgumentFace))
+		//	{
+		//		continue;
+		//	}
+
+		//	// TODO: Deal with modified faces
+
+		//	// Is this face part of the cell complex?
+		//	if (!occtCompSolidFaces.Contains(occtArgumentFace))
+		//	{
+		//		continue;
+		//	}
+
+		//	std::shared_ptr<Topology> argumentFace = Topology::ByOcctShape(occtArgumentFace);
+		//	pCellComplex->AddChildLabel(argumentFace, REL_CONSTITUENT);
+
+		//	for (TDF_ChildIterator occtLabelIterator(argumentFace->GetOcctLabel()); occtLabelIterator.More(); occtLabelIterator.Next())
+		//	{
+		//		TDF_Label apertureLabel = occtLabelIterator.Value();
+		//		Handle(TNaming_NamedShape) occtApertureAttribute;
+		//		Handle(TDataStd_Integer) occtRelationshipType;
+		//		bool result1 = apertureLabel.FindAttribute(TNaming_NamedShape::GetID(), occtApertureAttribute);
+		//		bool result2 = apertureLabel.FindAttribute(TDataStd_Integer::GetID(), occtRelationshipType);
+		//		int result3 = occtRelationshipType->Get();
+		//		if (result1 &&
+		//			result2 &&
+		//			occtRelationshipType->Get() == REL_APERTURE)
+		//		{
+		//			TopoDS_Shape occtAperture = occtApertureAttribute->Get();
+		//			std::shared_ptr<Topology> aperture = Topology::ByOcctShape(occtAperture);
+		//			argumentFace->AddChildLabel(aperture, REL_APERTURE);
+		//		}
+		//	}
+		//}
+
+		return pBooleanResult;
 	}
 
 	std::shared_ptr<Topology> Topology::Difference(const std::shared_ptr<Topology>& kpOtherTopology)
@@ -1106,7 +1350,10 @@ namespace TopoLogicCore
 			occtListToAvoid.Append(occtCellsBuildersOperandsB);
 			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
 		}
-		return GetBooleanResult(occtCellsBuilder);
+
+		std::shared_ptr<Topology> pResult = GetBooleanResult(occtCellsBuilder);
+
+		return pResult;
 	}
 
 	void Topology::AddUnionInternalStructure(const TopoDS_Shape& rkOcctShape, BOPCol_ListOfShape& rUnionArguments)
@@ -1240,6 +1487,64 @@ namespace TopoLogicCore
 		}
 
 		rOcctCellsBuilder.SetArguments(occtCellsBuildersArguments);
+
+		//const BOPCol_ListOfShape& rkArguments = rOcctCellsBuilder.Arguments();
+		TopTools_MapOfShape occtArgumentFaces;
+		/*for (BOPCol_ListIteratorOfListOfShape occtArgumentIterator(rkArguments);
+			occtArgumentIterator.More();
+			occtArgumentIterator.Next())
+		{*/
+			TopExp_Explorer occtExplorer;
+			//TopTools_ListOfShape modifiedArguments = rOcctCellsBuilder.Modified(occtArgumentIterator.Shape());
+			//for (occtExplorer.Init(occtArgumentIterator.Value(), TopAbs_FACE); occtExplorer.More(); occtExplorer.Next())
+			for (occtExplorer.Init(*GetOcctShape(), TopAbs_FACE); occtExplorer.More(); occtExplorer.Next())
+			{
+				const TopoDS_Shape& occtCurrent = occtExplorer.Current();
+				TopTools_ListOfShape modifiedArguments = rOcctCellsBuilder.Modified(occtCurrent);
+				if (!occtArgumentFaces.Contains(occtCurrent))
+				{
+					occtArgumentFaces.Add(occtCurrent);
+
+					/*for (TopTools_ListIteratorOfListOfShape modifiedArgumentIterator(modifiedArguments);
+					modifiedArgumentIterator.More();
+					modifiedArgumentIterator.Next())
+					{
+					const TopoDS_Shape& occtCurrentModifiedArgument = modifiedArgumentIterator.Value();
+					bool isInOutput = false;
+					if (occtOutputCompSolidFaces.Contains(occtCurrentModifiedArgument))
+					{
+					isInOutput = true;
+					mapping++;
+					}
+					}*/
+				}
+			}
+		//}
+
+		// Get the input face labels
+		//	int numChildren = GetOcctLabel().NbChildren();
+		//for (TDF_ChildIterator occtLabelIterator(GetOcctLabel(), true); occtLabelIterator.More(); occtLabelIterator.Next())
+		//{
+		//	TDF_Label childLabel = occtLabelIterator.Value();
+		//	Handle(TNaming_NamedShape) occtChildShape;
+		//	Handle(TDataStd_Integer) occtRelationshipType;
+		//	bool result1 = childLabel.FindAttribute(TNaming_NamedShape::GetID(), occtChildShape);
+		//	bool result2 = childLabel.FindAttribute(TDataStd_Integer::GetID(), occtRelationshipType);
+		//	int result3 = occtRelationshipType->Get();
+
+		//	// THIS DOES NOT WORK
+		//	bool result4 = occtArgumentFaces.Contains(occtChildShape->Get());
+		//	if (result1 &&
+		//		result2 &&
+		//		occtRelationshipType->Get() == REL_CONSTITUENT &&
+		//		result4)
+		//	{
+		//		// Add this label to 
+		//		/*std::shared_ptr<Topology> pArgumentTopology = Topology::ByOcctShape(occtChildShape->Get());
+		//		pCellComplex->AddChildLabel(pArgumentTopology, REL_CONSTITUENT);*/
+		//		//argumentTopologies.push_back(pArgumentTopology);
+		//	}
+		//}
 	}
 
 	std::shared_ptr<Topology> Topology::Union(const std::shared_ptr<Topology>& kpOtherTopology)
@@ -1365,7 +1670,27 @@ namespace TopoLogicCore
 			kIterator != occtListMembers.end();
 			kIterator++)
 		{
-			rImmediateMembers.push_back(Topology::ByOcctShape(*kIterator));
+			std::shared_ptr<Topology> pMemberTopology = Topology::ByOcctShape(*kIterator);
+
+			// Does this topology have a label in the hierachy under the topology? If yes, set the label.
+			for (TDF_ChildIterator occtLabelIterator(GetOcctLabel(), true); occtLabelIterator.More(); occtLabelIterator.Next())
+			{
+				TDF_Label childLabel = occtLabelIterator.Value();
+				Handle(TNaming_NamedShape) occtChildShape;
+				Handle(TDataStd_Integer) occtRelationshipType;
+				bool result1 = childLabel.FindAttribute(TNaming_NamedShape::GetID(), occtChildShape);
+				bool result2 = childLabel.FindAttribute(TDataStd_Integer::GetID(), occtRelationshipType);
+				int result3 = occtRelationshipType->Get();
+				if (result1 &&
+					result2 &&
+					occtRelationshipType->Get() == REL_CONSTITUENT &&
+					occtChildShape->Get().IsSame(*kIterator))
+				{
+					pMemberTopology->SetOcctLabel(childLabel);
+				}
+			}
+
+			rImmediateMembers.push_back(pMemberTopology);
 		}
 	}
 

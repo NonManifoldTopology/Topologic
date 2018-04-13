@@ -89,6 +89,12 @@ namespace TopoLogic
 		List<Topology^>^ Contents();
 
 		/// <summary>
+		/// Returns the topological entities containing the input topology as a non-constituent member
+		/// </summary>
+		/// <returns name="Topology[]">The topological entities containing the input topology as a non-constituent member</returns>
+		List<Topology^>^ ContentsV2();
+
+		/// <summary>
 		/// Returns the non-constituent members of the input topological entity.
 		/// </summary>
 		/// <returns name="Context[]">The non-constituent members of the input topological entity</returns>

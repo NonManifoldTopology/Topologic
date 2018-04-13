@@ -130,6 +130,24 @@ namespace TopoLogic
 		return pTopologies;
 	}
 
+	List<Topology^>^ Topology::ContentsV2()
+	{
+		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
+		std::list<std::shared_ptr<TopoLogicCore::Topology>> rkCoreContents;
+		pCoreTopology->ContentsV2(rkCoreContents);
+
+		List<Topology^>^ pTopologies = gcnew List<Topology^>();
+
+		for (std::list<std::shared_ptr<TopoLogicCore::Topology>>::const_iterator rkCoreContentIterator = rkCoreContents.cbegin();
+			rkCoreContentIterator != rkCoreContents.cend();
+			rkCoreContentIterator++)
+		{
+			pTopologies->Add(Topology::ByCoreTopology(*rkCoreContentIterator));
+		}
+
+		return pTopologies;
+	}
+
 	List<Context^>^ Topology::Contexts()
 	{
 		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());

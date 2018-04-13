@@ -285,6 +285,13 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="rContents"></param>
+		TOPOLOGIC_API void ContentsV2(std::list<std::shared_ptr<Topology>>& rContents) const;
+
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="rkPath"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API bool SaveToBrep(const std::string& rkPath) const;
@@ -494,6 +501,13 @@ namespace TopoLogicCore
 		/// <param name="rOcctCellsBuilder"></param>
 		/// <returns></returns>
 		std::shared_ptr<Topology> GetBooleanResult(BOPAlgo_CellsBuilder& rOcctCellsBuilder);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rOcctCellsBuilder"></param>
+		/// <returns></returns>
+		std::shared_ptr<Topology> ManageBooleanLabels(BOPAlgo_CellsBuilder& rOcctCellsBuilder);
 
 		AttributeMap m_attributeMap; // to be replaced by OCCT OCAF
 		TDF_Label m_occtLabel;

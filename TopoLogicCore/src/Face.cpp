@@ -404,9 +404,7 @@ namespace TopoLogicCore
 		, m_pOcctFace(nullptr)
 	{
 		try{
-			ShapeFix_Face occtShapeFix(rkOcctFace);
-			occtShapeFix.Perform();
-			m_pOcctFace = std::make_shared<TopoDS_Face>(occtShapeFix.Face());
+			m_pOcctFace = std::make_shared<TopoDS_Face>(rkOcctFace);
 			GlobalCluster::GetInstance().Add(this);
 		}
 		catch (...)
@@ -453,7 +451,9 @@ namespace TopoLogicCore
 	void Face::NormalizeUV(const double kNonNormalizedU, const double kNonNormalizedV, double& rNormalizedU, double& rNormalizedV) const
 	{
 		double occtUMin = 0.0, occtUMax = 0.0, occtVMin = 0.0, occtVMax = 0.0;
-		ShapeAnalysis::GetFaceUVBounds(TopoDS::Face(*GetOcctShape()), occtUMin, occtUMax, occtVMin, occtVMax);
+		ShapeFix_Face occtShapeFix(TopoDS::Face(*GetOcctShape()));
+		occtShapeFix.Perform();
+		ShapeAnalysis::GetFaceUVBounds(occtShapeFix.Face(), occtUMin, occtUMax, occtVMin, occtVMax);
 		double occtDU = occtUMax - occtUMin;
 		double occtDV = occtVMax - occtVMin;
 		if (occtDU <= 0.0 || occtDV <= 0.0)
@@ -468,7 +468,9 @@ namespace TopoLogicCore
 	void Face::NonNormalizeUV(const double kNormalizedU, const double kNormalizedV, double& rNonNormalizedU, double& rNonNormalizedV) const
 	{
 		double occtUMin = 0.0, occtUMax = 0.0, occtVMin = 0.0, occtVMax = 0.0;
-		ShapeAnalysis::GetFaceUVBounds(TopoDS::Face(*GetOcctShape()), occtUMin, occtUMax, occtVMin, occtVMax);
+		ShapeFix_Face occtShapeFix(TopoDS::Face(*GetOcctShape()));
+		occtShapeFix.Perform();
+		ShapeAnalysis::GetFaceUVBounds(occtShapeFix.Face(), occtUMin, occtUMax, occtVMin, occtVMax);
 		double occtDU = occtUMax - occtUMin;
 		double occtDV = occtVMax - occtVMin;
 

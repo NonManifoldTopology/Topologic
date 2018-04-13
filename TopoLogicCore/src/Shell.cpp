@@ -35,8 +35,10 @@
 #include <Geom2d_Line.hxx>
 #include <Geom2d_CartesianPoint.hxx>
 #include <BRepMesh_IncrementalMesh.hxx>
-#include <TopExp_Explorer.hxx>
 
+#include <TDataStd_Integer.hxx>
+#include <TDF_ChildIterator.hxx>
+#include <TNaming_NamedShape.hxx>
 // ShapeOp
 #include <Constraint.h>
 #include <Solver.h>
@@ -527,6 +529,7 @@ namespace TopoLogicCore
 		endVIterator = occtVValues.end();
 		endVIterator--;
 		i = 0;
+		BOPCol_ListOfShape panelFaces;
 		for (std::list<double>::const_iterator uIterator = occtUValues.begin();
 			uIterator != endUIterator;
 			uIterator++, ++i)
@@ -616,7 +619,13 @@ namespace TopoLogicCore
 				occtShapeTolerance.SetTolerance(rkPanelWire, kTolerance, TopAbs_WIRE);
 				BRepBuilderAPI_MakeFace occtMakeFace(rkPanelWire);
 				const TopoDS_Face& rkOcctPanelFace = occtMakeFace.Face();
+
+				//====================
+				// HERE
 				occtSewing.Add(rkOcctPanelFace);
+				panelFaces.Append(rkOcctPanelFace);
+				//====================
+
 				Handle(Geom_Surface) pOcctPanelSurface = BRep_Tool::Surface(rkOcctPanelFace);
 
 				//========================
@@ -814,6 +823,18 @@ namespace TopoLogicCore
 		// Iterate through the faces of the shell and attach them as labels of the shell's label.
 		std::list<std::shared_ptr<Face>> outputFaces;
 		pOutputShell->Faces(outputFaces);
+
+		TopTools_ListOfShape occtOutputFaces;
+		TopExp_Explorer occtExplorer;
+		for (occtExplorer.Init(*pOutputShell->GetOcctShape(), TopAbs_FACE); occtExplorer.More(); occtExplorer.Next())
+		{
+			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
+			if (!occtOutputFaces.Contains(occtCurrent))
+			{
+				occtOutputFaces.Append(occtCurrent);
+			}
+		}
+
 		int counter = 0;
 		for (TopTools_DataMapIteratorOfDataMapOfShapeListOfShape iterator(occtMapFacePanelToApertures);
 			iterator.More();
@@ -822,11 +843,17 @@ namespace TopoLogicCore
 			bool isModified = occtSewing.IsModifiedSubShape(iterator.Key());
 			if (isModified)
 			{
-				TopoDS_Shape occtModifiedShape = occtSewing.ModifiedSubShape(iterator.Key());
-				// Register the shapes to the shell.
+				// This is a panel face, which is added to the sewer object.
+				const TopoDS_Shape& rkKeyShape = iterator.Key();
+				bool isInList = panelFaces.Contains(rkKeyShape);
+
+				// This should be a face in the output shell
+				TopoDS_Shape occtModifiedShape = occtSewing.ModifiedSubShape(rkKeyShape);
 				std::shared_ptr<Topology> modifiedShape = Topology::ByOcctShape(occtModifiedShape);
+
 				pOutputShell->AddChildLabel(modifiedShape, REL_CONSTITUENT);
 
+				// The apertures of the modifiedShape are transferred to 
 				const BOPCol_ListOfShape& rkOcctApertures = iterator.Value();
 				for (BOPCol_ListIteratorOfListOfShape occtApertureIterator(rkOcctApertures);
 					occtApertureIterator.More();
@@ -882,9 +909,7 @@ namespace TopoLogicCore
 		: Topology(2)
 		, m_pOcctShell(nullptr)
 	{
-		ShapeFix_Shell occtShapeFixShell(rkOcctShell);
-		occtShapeFixShell.Perform();
-		m_pOcctShell = std::make_shared<TopoDS_Shell>(occtShapeFixShell.Shell());
+		m_pOcctShell = std::make_shared<TopoDS_Shell>(rkOcctShell);
 		GlobalCluster::GetInstance().Add(this);
 	}
 
