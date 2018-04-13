@@ -2,6 +2,8 @@
 
 #include "Cluster.h"
 
+#include <TDF_Data.hxx>
+
 namespace TopoLogicCore
 {
 	class GlobalCluster
@@ -41,5 +43,6 @@ namespace TopoLogicCore
 		~GlobalCluster();
 
 		std::shared_ptr<Cluster> m_pCluster;
+		Handle(TDF_Data) m_pOcctDocument;
 	};
 }

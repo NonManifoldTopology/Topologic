@@ -35,7 +35,9 @@ namespace TopoLogicCore
 
 	GlobalCluster::GlobalCluster()
 		: m_pCluster(new Cluster(false))
+		, m_pOcctDocument(new TDF_Data())
 	{
+		m_pCluster->SetOcctLabel(m_pOcctDocument->Root());
 	}
 
 	GlobalCluster::~GlobalCluster()

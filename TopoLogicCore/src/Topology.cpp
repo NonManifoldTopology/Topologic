@@ -21,6 +21,8 @@
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <TopoDS.hxx>
+#include <TNaming_Builder.hxx>
+#include <TDataStd_Integer.hxx>
 #include <ShapeAnalysis_ShapeContents.hxx>
 
 #include <BOPAlgo_Builder.hxx>
@@ -79,9 +81,19 @@ namespace TopoLogicCore
 		}
 	}
 
+	void Topology::AddChildLabel(std::shared_ptr<Topology>& pTopology, const TopologyRelationshipType kRelationshipType)
+	{
+		TDF_Label occtChildLabel = TDF_TagSource::NewChild(GetOcctLabel());
+		TNaming_Builder cellAttributeBuilder(occtChildLabel);
+		cellAttributeBuilder.Generated(*pTopology->GetOcctShape());
+		TDataStd_Integer::Set(occtChildLabel, kRelationshipType);
+		pTopology->SetOcctLabel(occtChildLabel);
+	}
+
 	Topology::Topology(const int kDimensionality)
 		: m_dimensionality(kDimensionality)
 		, m_isInGlobalCluster(false)
+		, m_occtLabel()
 	{
 
 	}

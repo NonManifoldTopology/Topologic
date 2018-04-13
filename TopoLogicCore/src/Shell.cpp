@@ -41,7 +41,10 @@
 #include <Constraint.h>
 #include <Solver.h>
 
+// Earcut
+#include <mapbox/earcut.hpp>
 
+#include <array>
 #include <assert.h>
 
 namespace TopoLogicCore
@@ -379,36 +382,7 @@ namespace TopoLogicCore
 			}
 		}
 
-		// Create panels
-		/*struct CurvedAperturePanel
-		{
-			std::shared_ptr<Face> face;
-			double panelUMin;
-			double panelUMax;
-			double panelVMin;
-			double panelVMax;
-
-			double contextUMin;
-			double contextUMax;
-			double contextVMin;
-			double contextVMax;
-
-			void NormalizeUV(const double kU, const double kV, double& rNormalizedU, double& rNormalizedV) const
-			{
-				rNormalizedU = (kU - contextUMin) / (contextUMax - contextUMin);
-				rNormalizedV = (kV - contextVMin) / (contextVMax - contextVMin);
-			}
-
-			int i;
-			int j;
-		};*/
-
-		// Iterate against the aperture
-		//std::list<CurvedAperturePanel> panels;
-		//
 		std::list<std::shared_ptr<Topology>>& rContents = kpFace->Contents();
-		//std::list<std::list<std::shared_ptr<Vertex>>> allApertureSampleVertices;
-		//std::list<std::list<std::shared_ptr<Vertex>>> allApertureSampleVertices;
 		std::list<std::list<Handle(Geom2d_CartesianPoint)>> allApertureSampleVerticesUV;
 		for (const std::shared_ptr<Topology>& rkContent : rContents)
 		{
@@ -436,92 +410,15 @@ namespace TopoLogicCore
 				{
 					double parameter = (double)i / (double)(numberOfSamples - 1);
 					std::shared_ptr<Vertex> apertureSampleVertex = kpEdge->PointAtParameter(parameter);
-					//apertureSampleVertices.push_back(apertureSampleVertex);
-					//vertices.push_back(apertureSampleVertex);
 
 					// Get the UV coordinate of the aperture sample vertex
 					double apertureSampleVertexU = 0.0, apertureSampleVertexV = 0.0;
 					kpFace->UVParameterAtPoint(apertureSampleVertex, apertureSampleVertexU, apertureSampleVertexV);
 					apertureSampleVerticesUV.push_back(new Geom2d_CartesianPoint(apertureSampleVertexU, apertureSampleVertexV));
-
-
-					/*std::shared_ptr<Vertex> mappedApertureVertex = kpFace->PointAtParameter(
-						apertureSampleVertexU,
-						apertureSampleVertexV);
-					vertices.push_back(mappedApertureVertex);*/
 				}
 			}
 			allApertureSampleVerticesUV.push_back(apertureSampleVerticesUV);
 
-			//double occtApertureUMin = 0.0, occtApertureUMax = 0.0, occtApertureVMin = 0.0, occtApertureVMax = 0.0;
-			//ShapeAnalysis::GetFaceUVBounds(TopoDS::Face(*apertureFace->GetOcctShape()), occtApertureUMin, occtApertureUMax, occtApertureVMin, occtApertureVMax);
-
-			//Handle(Geom_Surface) apertureSurface = apertureFace->Surface();
-
-			//// Iterate against the UV subdivision
-			//endUIterator = occtUValues.end();
-			//endUIterator--;
-			//endVIterator = occtVValues.end();
-			//endVIterator--;
-			//int i = 0;
-			//for (std::list<double>::const_iterator uIterator = occtUValues.begin();
-			//	uIterator != endUIterator;
-			//	uIterator++, ++i)
-			//{
-			//	const double& rkUMin = *uIterator;
-			//	std::list<double>::const_iterator uIterator2 = uIterator;
-			//	uIterator2++;
-			//	const double& rkUMax = *uIterator2;
-			//	
-			//	int j = 0;
-			//	for (std::list<double>::const_iterator vIterator = occtVValues.begin();
-			//		vIterator != endVIterator;
-			//		vIterator++, ++j)
-			//	{
-			//		const double& rkVMin = *vIterator;
-			//		std::list<double>::const_iterator vIterator2 = vIterator;
-			//		vIterator2++;
-			//		const double& rkVMax = *vIterator2;
-
-			//		double occtUPatchMin = rkUMin < occtApertureUMin ? occtApertureUMin : rkUMin;
-			//		double occtUPatchMax = rkUMax > occtApertureUMax ? occtApertureUMax : rkUMax;
-			//		double occtVPatchMin = rkVMin < occtApertureVMin ? occtApertureVMin : rkVMin;
-			//		double occtVPatchMax = rkVMax > occtApertureVMax ? occtApertureVMax : rkVMax;
-
-			//		occtUPatchMin += 0.001;
-			//		occtUPatchMax -= 0.001;
-			//		occtVPatchMin += 0.001;
-			//		occtVPatchMax -= 0.001;
-
-			//		if (occtUPatchMin > occtApertureUMax ||
-			//			occtUPatchMax < occtApertureUMin ||
-			//			occtVPatchMin > occtApertureVMax ||
-			//			occtVPatchMax < occtApertureVMin)
-			//		{
-			//			continue;
-			//		}
-
-			//		// Only get panels which overlap with the apertures
-			//		BRepBuilderAPI_MakeFace occtMakeFace(apertureSurface, occtUPatchMin, occtUPatchMax, occtVPatchMin, occtVPatchMax, Precision::Confusion());
-			//		
-			//		CurvedAperturePanel panel;
-			//		panel.face = TopologicalQuery::Downcast<Face>(Topology::ByOcctShape(occtMakeFace.Shape()));
-			//		panel.panelUMin = occtUPatchMin;
-			//		panel.panelUMax = occtUPatchMax;
-			//		panel.panelVMin = occtVPatchMin;
-			//		panel.panelVMax = occtVPatchMax;
-			//		panel.contextUMin = rkUMin;
-			//		panel.contextUMax = rkUMax;
-			//		panel.contextVMin = rkVMin;
-			//		panel.contextVMax = rkVMax;
-			//		panel.i = i;
-			//		panel.j = j;
-
-			//		panels.push_back(panel);
-
-			//		//faces.push_back(panel.face);
-			//	}
-			//}
 		}
 
 		// Solve ShapeOp, including applying constraints.
@@ -622,6 +519,8 @@ namespace TopoLogicCore
 		TopTools_ListOfShape borderEdges[4]; // 0 = uMin, 1 = uMax, 2 = vMin, 3 = vMax
 											 // Use array for iteration
 
+
+		TopTools_DataMapOfShapeListOfShape occtMapFacePanelToApertures;
 		BRepBuilderAPI_Sewing occtSewing;
 		endUIterator = occtUValues.end();
 		endUIterator--;
@@ -642,10 +541,6 @@ namespace TopoLogicCore
 				vIterator != endVIterator;
 				vIterator++, ++j)
 			{
-		/*for (int i = 0; i < numUPanels; ++i)
-		{
-			for (int j = 0; j < numVPanels; ++j)
-			{*/
 				double v = *vIterator;
 				std::list<double>::const_iterator nextVIterator = vIterator;
 				nextVIterator++;
@@ -724,36 +619,26 @@ namespace TopoLogicCore
 				occtSewing.Add(rkOcctPanelFace);
 				Handle(Geom_Surface) pOcctPanelSurface = BRep_Tool::Surface(rkOcctPanelFace);
 
+				//========================
+				// Map the apertures.
 				ShapeAnalysis_Surface occtSurfaceAnalysis(pOcctPanelSurface);
 				std::shared_ptr<Face> pPanelFace = TopologicalQuery::Downcast<Face>(Topology::ByOcctShape(rkOcctPanelFace));
 				
-				// Don't use this; use the actual corners instead.
-				//double occtPlanarContextUMin = 0.0, occtPlanarContextUMax = 0.0, occtPlanarContextVMin = 0.0, occtPlanarContextVMax = 0.0;
-				//ShapeAnalysis::GetFaceUVBounds(TopoDS::Face(*pPanelFace->GetOcctShape()), occtPlanarContextUMin, occtPlanarContextUMax, occtPlanarContextVMin, occtPlanarContextVMax);
-
 				// (0,0)
 				gp_Pnt2d occtUV1 = occtSurfaceAnalysis.ValueOfUV(pVertex1->Point()->Pnt(), Precision::Confusion());
 				double panelPoint1U = occtUV1.X(), panelPoint1V = occtUV1.Y();
-				//double panelPoint1U = 0.0, panelPoint1V = 0.0;
-				//pPanelFace->UVParameterAtPoint(pVertex1, panelPoint1U, panelPoint1V);
 
 				// (0,1)
 				gp_Pnt2d occtUV2 = occtSurfaceAnalysis.ValueOfUV(pVertex2->Point()->Pnt(), Precision::Confusion());
 				double panelPoint2U = occtUV2.X(), panelPoint2V = occtUV2.Y();
-				/*double panelPoint2U = 0.0, panelPoint2V = 0.0;
-				pPanelFace->UVParameterAtPoint(pVertex2, panelPoint2U, panelPoint2V);*/
 
 				// (1,1)
 				gp_Pnt2d occtUV3 = occtSurfaceAnalysis.ValueOfUV(pVertex3->Point()->Pnt(), Precision::Confusion());
 				double panelPoint3U = occtUV3.X(), panelPoint3V = occtUV3.Y();
-				/*double panelPoint3U = 0.0, panelPoint3V = 0.0;
-				pPanelFace->UVParameterAtPoint(pVertex3, panelPoint3U, panelPoint3V);*/
 
 				// (1,0)
 				gp_Pnt2d occtUV4 = occtSurfaceAnalysis.ValueOfUV(pVertex4->Point()->Pnt(), Precision::Confusion());
 				double panelPoint4U = occtUV4.X(), panelPoint4V = occtUV4.Y();
-				/*double panelPoint4U = 0.0, panelPoint4V = 0.0;
-				pPanelFace->UVParameterAtPoint(pVertex4, panelPoint4U, panelPoint4V);*/
 				
 				//Compute deltas
 				double deltaPanelBottomU = panelPoint4U - panelPoint1U;
@@ -761,142 +646,6 @@ namespace TopoLogicCore
 
 				double deltaPanelTopU = panelPoint3U - panelPoint2U;
 				double deltaPanelTopV = panelPoint3V - panelPoint2V;
-
-
-
-				//for (const CurvedAperturePanel& rkAperturePanel : panels)
-				//{
-				//	if (rkAperturePanel.i == minU && rkAperturePanel.j == minV)
-				//	{
-				//		// Bilinear interpolations
-
-				//		double apertureNormalizedUMin = 0.0;
-				//		double apertureNormalizedUMax = 0.0;
-				//		double apertureNormalizedVMin = 0.0;
-				//		double apertureNormalizedVMax = 0.0;
-				//		rkAperturePanel.NormalizeUV(rkAperturePanel.panelUMin, rkAperturePanel.panelVMin, apertureNormalizedUMin, apertureNormalizedVMin);
-				//		rkAperturePanel.NormalizeUV(rkAperturePanel.panelUMax, rkAperturePanel.panelVMax, apertureNormalizedUMax, apertureNormalizedVMax);
-
-				//		double aperturePoint1U = apertureNormalizedUMin;
-				//		double aperturePoint1V = apertureNormalizedVMin;
-				//		double aperturePoint2U = apertureNormalizedUMin;
-				//		double aperturePoint2V = apertureNormalizedVMax;
-				//		double aperturePoint3U = apertureNormalizedUMax;
-				//		double aperturePoint3V = apertureNormalizedVMax;
-				//		double aperturePoint4U = apertureNormalizedUMax;
-				//		double aperturePoint4V = apertureNormalizedVMin;
-				//		
-				//		// Bottom = interpolate between panel points 1 and 4
-				//		// Top = interpolate between panel points 2 and 3
-
-				//		//==========================================
-				//		// 
-				//		// Aperture point 1 
-				//		// 1st steps only involve aperturePoint1U
-				//		double mappedAperturePoint1UBottom = panelPoint1U + aperturePoint1U * deltaPanelBottomU;
-				//		double mappedAperturePoint1VBottom = panelPoint1V + aperturePoint1U * deltaPanelBottomV;
-				//		double mappedAperturePoint1UTop = panelPoint2U + aperturePoint1U * deltaPanelTopU;
-				//		double mappedAperturePoint1VTop = panelPoint2V + aperturePoint1U * deltaPanelTopV;
-				//		
-				//		double deltaMappedAperturePoint1U = mappedAperturePoint1UTop - mappedAperturePoint1UBottom;
-				//		double deltaMappedAperturePoint1V = mappedAperturePoint1VTop - mappedAperturePoint1VBottom;
-
-				//		// 2nd step uses aperturePoint1V
-				//		double mappedAperturePoint1U = mappedAperturePoint1UBottom + aperturePoint1V * deltaMappedAperturePoint1U;
-				//		double mappedAperturePoint1V = mappedAperturePoint1VBottom + aperturePoint1V * deltaMappedAperturePoint1V;
-				//		//gp_Pnt occtMappedAperturePoint1 = pOcctPanelSurface->Value(panelPoint1U, panelPoint1V);
-				//		gp_Pnt occtMappedAperturePoint1 = pOcctPanelSurface->Value(mappedAperturePoint1U, mappedAperturePoint1V);
-				//		//
-				//		//==========================================
-
-				//		//==========================================
-				//		// 
-				//		// Aperture point 2
-				//		// 1st steps only involve aperturePoint2U
-				//		double mappedAperturePoint2UBottom = panelPoint1U + aperturePoint2U * deltaPanelBottomU;
-				//		double mappedAperturePoint2VBottom = panelPoint1V + aperturePoint2U * deltaPanelBottomV;
-				//		double mappedAperturePoint2UTop = panelPoint2U + aperturePoint2U * deltaPanelTopU;
-				//		double mappedAperturePoint2VTop = panelPoint2V + aperturePoint2U * deltaPanelTopV;
-
-				//		double deltaMappedAperturePoint2U = mappedAperturePoint2UTop - mappedAperturePoint2UBottom;
-				//		double deltaMappedAperturePoint2V = mappedAperturePoint2VTop - mappedAperturePoint2VBottom;
-
-				//		// 2nd step uses aperturePoint2V
-				//		double mappedAperturePoint2U = mappedAperturePoint2UBottom + aperturePoint2V * deltaMappedAperturePoint2U;
-				//		double mappedAperturePoint2V = mappedAperturePoint2VBottom + aperturePoint2V * deltaMappedAperturePoint2V;
-				//		//gp_Pnt occtMappedAperturePoint2 = pOcctPanelSurface->Value(panelPoint2U, panelPoint2V);
-				//		gp_Pnt occtMappedAperturePoint2 = pOcctPanelSurface->Value(mappedAperturePoint2U, mappedAperturePoint2V);
-				//		//
-				//		//==========================================
-
-				//		//==========================================
-				//		// 
-				//		// Aperture point 3
-				//		// 1st steps only involve aperturePoint3U
-				//		double mappedAperturePoint3UBottom = panelPoint1U + aperturePoint3U * deltaPanelBottomU;
-				//		double mappedAperturePoint3VBottom = panelPoint1V + aperturePoint3U * deltaPanelBottomV;
-				//		double mappedAperturePoint3UTop = panelPoint2U + aperturePoint3U * deltaPanelTopU;
-				//		double mappedAperturePoint3VTop = panelPoint2V + aperturePoint3U * deltaPanelTopV;
-
-				//		double deltaMappedAperturePoint3U = mappedAperturePoint3UTop - mappedAperturePoint3UBottom;
-				//		double deltaMappedAperturePoint3V = mappedAperturePoint3VTop - mappedAperturePoint3VBottom;
-
-				//		// 2nd step uses aperturePoint3V
-				//		double mappedAperturePoint3U = mappedAperturePoint3UBottom + aperturePoint3V * deltaMappedAperturePoint3U;
-				//		double mappedAperturePoint3V = mappedAperturePoint3VBottom + aperturePoint3V * deltaMappedAperturePoint3V;
-				//		//gp_Pnt occtMappedAperturePoint3 = pOcctPanelSurface->Value(panelPoint3U, panelPoint3V);
-				//		gp_Pnt occtMappedAperturePoint3 = pOcctPanelSurface->Value(mappedAperturePoint3U, mappedAperturePoint3V);
-				//		//
-				//		//==========================================
-
-				//		//==========================================
-				//		// 
-				//		// Aperture point 4
-				//		// 1st steps only involve aperturePoint4U
-				//		double mappedAperturePoint4UBottom = panelPoint1U + aperturePoint4U * deltaPanelBottomU;
-				//		double mappedAperturePoint4VBottom = panelPoint1V + aperturePoint4U * deltaPanelBottomV;
-				//		double mappedAperturePoint4UTop = panelPoint2U + aperturePoint4U * deltaPanelTopU;
-				//		double mappedAperturePoint4VTop = panelPoint2V + aperturePoint4U * deltaPanelTopV;
-
-				//		double deltaMappedAperturePoint4U = mappedAperturePoint4UTop - mappedAperturePoint4UBottom;
-				//		double deltaMappedAperturePoint4V = mappedAperturePoint4VTop - mappedAperturePoint4VBottom;
-
-				//		// 2nd step uses aperturePoint3V
-				//		double mappedAperturePoint4U = mappedAperturePoint4UBottom + aperturePoint4V * deltaMappedAperturePoint4U;
-				//		double mappedAperturePoint4V = mappedAperturePoint4VBottom + aperturePoint4V * deltaMappedAperturePoint4V;
-				//		//gp_Pnt occtMappedAperturePoint4 = pOcctPanelSurface->Value(panelPoint4U, panelPoint4V);
-				//		gp_Pnt occtMappedAperturePoint4 = pOcctPanelSurface->Value(mappedAperturePoint4U, mappedAperturePoint4V);
-				//		//
-				//		//==========================================
-
-				//		BRepBuilderAPI_MakeEdge occtMappedApertureEdge1(occtMappedAperturePoint1, occtMappedAperturePoint2);
-				//		BRepBuilderAPI_MakeEdge occtMappedApertureEdge2(occtMappedAperturePoint2, occtMappedAperturePoint3);
-				//		BRepBuilderAPI_MakeEdge occtMappedApertureEdge3(occtMappedAperturePoint3, occtMappedAperturePoint4);
-				//		BRepBuilderAPI_MakeEdge occtMappedApertureEdge4(occtMappedAperturePoint4, occtMappedAperturePoint1);
-
-				//		TopTools_ListOfShape occtMappedApertureEdges;
-				//		occtMappedApertureEdges.Append(occtMappedApertureEdge1.Shape());
-				//		occtMappedApertureEdges.Append(occtMappedApertureEdge2.Shape());
-				//		occtMappedApertureEdges.Append(occtMappedApertureEdge3.Shape());
-				//		occtMappedApertureEdges.Append(occtMappedApertureEdge4.Shape());
-
-				//		BRepBuilderAPI_MakeWire occtMappedApertureMakeWire;
-				//		occtMappedApertureMakeWire.Add(occtMappedApertureEdges);
-
-				//		TopoDS_Wire occtMappedApertureWire = occtMappedApertureMakeWire.Wire();
-				//		BRepBuilderAPI_MakeFace occtMappedApertureMakeFace(
-				//			pOcctPanelSurface,
-				//			occtMappedApertureWire,
-				//			kTolerance
-				//		);
-				//		std::shared_ptr<Face> mappedAperturePanel = TopologicalQuery::Downcast<Face>(Topology::ByOcctShape(TopoDS::Face(occtMappedApertureMakeFace.Shape())));
-
-				//		//faces.push_back(pPanelFace); // only those used to map the aperture
-
-				//		faces.push_back(mappedAperturePanel);
-				//	}
-				//}
-				//faces.push_back(pPanelFace); // all panels
 
 				if (kCapBottom || kCapTop)
 				{
@@ -926,7 +675,6 @@ namespace TopoLogicCore
 				} // if (kCapBottom || kCapTop)
 
 
-				//==================
 				// Clip the apertures sample points UV against the wall panel's UV using Sutherland-Hodgman
 				std::list<Handle(Geom2d_Line)> clipPolygons;
 				clipPolygons.push_back(new Geom2d_Line(gp_Pnt2d(u, v), gp_Dir2d(nextU - u, 0)));
@@ -934,13 +682,28 @@ namespace TopoLogicCore
 				clipPolygons.push_back(new Geom2d_Line(gp_Pnt2d(nextU, nextV), gp_Dir2d(u - nextU, 0)));
 				clipPolygons.push_back(new Geom2d_Line(gp_Pnt2d(u, nextV), gp_Dir2d(0, v - nextV)));
 
+				BOPCol_ListOfShape aperturePanels;
+
+				using Coord = double;
+
+				// The index type. Defaults to uint32_t, but you can also pass uint16_t if you know that your
+				// data won't have more than 65536 vertices.
+				using N = uint32_t;
+
+				// Create array
+				using Point = std::array<Coord, 2>;
+
+				// Fill polygon structure with actual data. Any winding order works.
+				// The first polyline defines the main polygon.
+				std::vector<Point> polygon;
+
 				for (const std::list<Handle(Geom2d_CartesianPoint)>& rkApertureSampleVerticesUV : allApertureSampleVerticesUV)
 				{
 					// The result is in the original surface's UV
 					std::list<Handle(Geom2d_CartesianPoint)> clippedApertureSampleVerticesUVOriginalWall;
 					SutherlandHodgmanClipping(clipPolygons, rkApertureSampleVerticesUV, clippedApertureSampleVerticesUVOriginalWall);
 
-					std::list<TopoDS_Vertex> occtMappedApertureVertices;
+					//std::list<TopoDS_Vertex> occtMappedApertureVertices;
 					for (const Handle(Geom2d_CartesianPoint)& kpClippedApertureSampleVertexUVOriginalWall : clippedApertureSampleVerticesUVOriginalWall)
 					{
 						// normalised to the panel, use U and V
@@ -951,12 +714,6 @@ namespace TopoLogicCore
 						// Translate the clipped aperture sample vertices UV to the UV coordinate of pOcctPanelSurface,
 						// which now has its own UV coordinate.
 						// Use bilinear mapping.
-
-						//Testing with the original surface
-						/*std::shared_ptr<Vertex> mappedApertureVertex = kpFace->PointAtParameter(
-							kpClippedApertureSampleVertexUVOriginalWall->X(),
-							kpClippedApertureSampleVertexUVOriginalWall->Y());
-						vertices.push_back(mappedApertureVertex);*/
 
 						// The first step uses X
 						double mappedAperturePointUBottom = panelPoint1U + clippedApertureSampleVerticesUVPanel->X() * deltaPanelBottomU;
@@ -970,120 +727,57 @@ namespace TopoLogicCore
 						// 2nd step uses Y
 						double mappedAperturePointU = mappedAperturePointUBottom + clippedApertureSampleVerticesUVPanel->Y() * deltaMappedAperturePointU;
 						double mappedAperturePointV = mappedAperturePointVBottom + clippedApertureSampleVerticesUVPanel->Y() * deltaMappedAperturePointV;
-						//gp_Pnt occtMappedAperturePoint1 = pOcctPanelSurface->Value(panelPoint1U, panelPoint1V);
-						gp_Pnt occtMappedAperturePoint = pOcctPanelSurface->Value(mappedAperturePointU, mappedAperturePointV);
-						occtMappedApertureVertices.push_back(BRepBuilderAPI_MakeVertex(occtMappedAperturePoint));
+						polygon.push_back({ mappedAperturePointU, mappedAperturePointV});
 
-						/*std::shared_ptr<Vertex> mappedApertureVertex = Vertex::ByPoint(new Geom_CartesianPoint(occtMappedAperturePoint));
-						vertices.push_back(mappedApertureVertex);*/
 					}
 
-					if(!occtMappedApertureVertices.empty())
+					std::vector<std::vector<Point>> polygons;
+					polygons.push_back(polygon);
+
+					std::vector<N> indices = mapbox::earcut<N>(polygons);
+					int numberOfTriangles = indices.size() / 3;
+					for (int i = 0; i < numberOfTriangles; ++i)
 					{
-						std::list<TopoDS_Vertex>::const_iterator kEndVertexIterator = occtMappedApertureVertices.end();
-						kEndVertexIterator--;
+						int index1 = i * 3;
+						int index2 = i * 3 + 1;
+						int index3 = i * 3 + 2;
 
-						TopTools_ListOfShape occtMappedApertureEdges;
-						for (std::list<TopoDS_Vertex>::const_iterator kVertexIterator = occtMappedApertureVertices.begin();
-							kVertexIterator != kEndVertexIterator;
-							kVertexIterator++)
-						{
-							auto kNextVertexIterator = kVertexIterator;
-							kNextVertexIterator++;
+						Point p1 = polygon[indices[index1]];
+						gp_Pnt occtMappedAperturePoint1 = pOcctPanelSurface->Value(p1[0], p1[1]);
+						Point p2 = polygon[indices[index2]];
+						gp_Pnt occtMappedAperturePoint2 = pOcctPanelSurface->Value(p2[0], p2[1]);
+						Point p3 = polygon[indices[index3]];
+						gp_Pnt occtMappedAperturePoint3 = pOcctPanelSurface->Value(p3[0], p3[1]);
 
-							try{
-							occtMappedApertureEdges.Append(BRepBuilderAPI_MakeEdge(*kVertexIterator, *kNextVertexIterator));
-							}
-							catch(...){
+						BRepBuilderAPI_MakeVertex occtMakeVertex1(occtMappedAperturePoint1);
+						BRepBuilderAPI_MakeVertex occtMakeVertex2(occtMappedAperturePoint2);
+						BRepBuilderAPI_MakeVertex occtMakeVertex3(occtMappedAperturePoint3);
 
-							}
-						}
+						BRepBuilderAPI_MakeEdge occtMakeEdge12(occtMakeVertex1.Vertex(), occtMakeVertex2.Vertex());
+						BRepBuilderAPI_MakeEdge occtMakeEdge23(occtMakeVertex2.Vertex(), occtMakeVertex3.Vertex());
+						BRepBuilderAPI_MakeEdge occtMakeEdge31(occtMakeVertex3.Vertex(), occtMakeVertex1.Vertex());
+
 						try{
-							occtMappedApertureEdges.Append(BRepBuilderAPI_MakeEdge(occtMappedApertureVertices.front(), occtMappedApertureVertices.back()));
+							TopTools_ListOfShape occtMappedApertureEdges;
+							occtMappedApertureEdges.Append(occtMakeEdge12.Edge());
+							occtMappedApertureEdges.Append(occtMakeEdge23.Edge());
+							occtMappedApertureEdges.Append(occtMakeEdge31.Edge());
+
+							BRepBuilderAPI_MakeWire occtMakeMappedApertureWire;
+							occtMakeMappedApertureWire.Add(occtMappedApertureEdges);
+							BRepBuilderAPI_MakeFace occtMakeMappedApertureFace(pOcctPanelSurface, occtMakeMappedApertureWire.Wire());
+							std::shared_ptr<Face> mappedApertureFace = TopologicalQuery::Downcast<Face>(Topology::ByOcctShape(occtMakeMappedApertureFace.Face()));
+							faces.push_back(mappedApertureFace);
+							aperturePanels.Append(occtMakeMappedApertureFace.Shape());
 						}
-						catch (...) {
+						catch (...)
+						{
 
 						}
-
-						BRepBuilderAPI_MakeWire occtMakeMappedApertureWire;
-						occtMakeMappedApertureWire.Add(occtMappedApertureEdges);
-						TopoDS_Wire mappedApertureWire = occtMakeMappedApertureWire.Wire();
-						BRepBuilderAPI_MakeFace occtMakeMappedApertureFace(pOcctPanelSurface, mappedApertureWire);
-						std::shared_ptr<Face> mappedApertureFace = TopologicalQuery::Downcast<Face>(Topology::ByOcctShape(occtMakeMappedApertureFace.Face()));
-						faces.push_back(mappedApertureFace);
-
-						//BRepMesh_IncrementalMesh occtIncrementalMesh(occtMakeMappedApertureFace.Shape(), 0.01);
-						//occtIncrementalMesh.Perform();
-						//
-						//for (TopExp_Explorer occtExplorer(occtIncrementalMesh.Shape(), TopAbs_FACE); occtExplorer.More(); occtExplorer.Next()) 
-						//{
-						//	const TopoDS_Face& rkOcctFace = TopoDS::Face(occtExplorer.Current());
-						//	TopLoc_Location occtLocation;
-						//	// get the triangulation
-
-						//	Handle(Poly_Triangulation) occtTriangulation = BRep_Tool::Triangulation(rkOcctFace, occtLocation);
-
-						//	if (occtTriangulation.IsNull())
-						//	{
-						//		continue;
-						//	}
-
-						//	TColgp_Array1OfPnt occtPoints = occtTriangulation->Nodes();
-						//	Poly_Array1OfTriangle occtTriangles = occtTriangulation->Triangles();
-						//	for (Poly_Array1OfTriangle::const_iterator kTriangleIterator = occtTriangles.begin();
-						//		kTriangleIterator != occtTriangles.end();
-						//		kTriangleIterator++)
-						//	{
-						//		const Poly_Triangle& rkTriangle = *kTriangleIterator;
-
-						//		int index1 = 0, index2 = 0, index3 = 0;
-						//		rkTriangle.Get(index1, index2, index3);
-
-						//		gp_Pnt point1 = occtPoints(index1);
-						//		gp_Pnt point2 = occtPoints(index2);
-						//		gp_Pnt point3 = occtPoints(index3);
-
-						//		BRepBuilderAPI_MakeVertex occtMakeVertex1(point1);
-						//		BRepBuilderAPI_MakeVertex occtMakeVertex2(point2);
-						//		BRepBuilderAPI_MakeVertex occtMakeVertex3(point3);
-
-						//		BRepBuilderAPI_MakeEdge occtMakeEdge12(occtMakeVertex1.Vertex(), occtMakeVertex2.Vertex());
-						//		BRepBuilderAPI_MakeEdge occtMakeEdge23(occtMakeVertex2.Vertex(), occtMakeVertex3.Vertex());
-						//		BRepBuilderAPI_MakeEdge occtMakeEdge31(occtMakeVertex3.Vertex(), occtMakeVertex1.Vertex());
-
-						//		TopTools_ListOfShape occtEdges;
-						//		occtEdges.Append(occtMakeEdge12);
-						//		occtEdges.Append(occtMakeEdge23);
-						//		occtEdges.Append(occtMakeEdge31);
-
-						//		BRepBuilderAPI_MakeWire occtMakeWire;
-						//		occtMakeWire.Add(occtEdges);
-
-						//		BRepBuilderAPI_MakeFace occtMakeMappedTriangulatedApertureFace(occtMakeWire);
-						//		std::shared_ptr<Face> mappedTriangulatedApertureFace = TopologicalQuery::Downcast<Face>(Topology::ByOcctShape(occtMakeMappedTriangulatedApertureFace.Face()));
-						//		faces.push_back(mappedTriangulatedApertureFace);
-						//	}
-						//}
 					}
 				}
 
-
-
-
-
-
-				//// Iterate through all aperture sample points.
-				//// These will be the point to the subject polygons in the individual wall panel's UV space.
-				//for (const std::list<Handle(Geom2d_CartesianPoint)>& rkApertureSampleVerticesUV : allApertureSampleVerticesUV)
-				//{
-				//	for (const Handle(Geom2d_CartesianPoint)& kpApertureSampleVertexUV : rkApertureSampleVerticesUV)
-				//	{
-				//		
-				//	}
-				//}
-				//
-				//==================
-
+				occtMapFacePanelToApertures.Bind(rkOcctPanelFace, aperturePanels);
 			}
 		}
 
@@ -1111,7 +805,41 @@ namespace TopoLogicCore
 		occtSewing.Perform();
 
 		// Reconstruct the shape
-		return std::make_shared<Shell>(TopoDS::Shell(occtSewing.SewedShape()));
+		std::shared_ptr<Shell> pOutputShell = std::make_shared<Shell>(TopoDS::Shell(occtSewing.SewedShape()));
+
+		// Register the shapes to the OCCT documents.
+		std::shared_ptr<Topology> pUpcastTopology = TopologicalQuery::Upcast<Topology>(pOutputShell);
+		GlobalCluster::GetInstance().GetCluster()->AddChildLabel(pUpcastTopology, REL_CONSTITUENT);
+
+		// Iterate through the faces of the shell and attach them as labels of the shell's label.
+		std::list<std::shared_ptr<Face>> outputFaces;
+		pOutputShell->Faces(outputFaces);
+		int counter = 0;
+		for (TopTools_DataMapIteratorOfDataMapOfShapeListOfShape iterator(occtMapFacePanelToApertures);
+			iterator.More();
+			iterator.Next())
+		{
+			bool isModified = occtSewing.IsModifiedSubShape(iterator.Key());
+			if (isModified)
+			{
+				TopoDS_Shape occtModifiedShape = occtSewing.ModifiedSubShape(iterator.Key());
+				// Register the shapes to the shell.
+				std::shared_ptr<Topology> modifiedShape = Topology::ByOcctShape(occtModifiedShape);
+				pOutputShell->AddChildLabel(modifiedShape, REL_CONSTITUENT);
+
+				const BOPCol_ListOfShape& rkOcctApertures = iterator.Value();
+				for (BOPCol_ListIteratorOfListOfShape occtApertureIterator(rkOcctApertures);
+					occtApertureIterator.More();
+					occtApertureIterator.Next())
+				{
+					const TopoDS_Shape& rkOcctAperture = occtApertureIterator.Value();
+					std::shared_ptr<Topology> aperture = Topology::ByOcctShape(rkOcctAperture);
+					modifiedShape->AddChildLabel(aperture, REL_APERTURE);
+				}
+			}
+		}
+
+		return pOutputShell;
 	}
 
 	std::shared_ptr<Shell> Shell::ByLoft(const std::list<std::shared_ptr<Wire>>& rkWires)

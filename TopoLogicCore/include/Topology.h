@@ -8,7 +8,9 @@
 #include <BOPAlgo_CellsBuilder.hxx>
 #include <Standard_Handle.hxx>
 #include <Geom_Geometry.hxx>
+#include <Standard_GUID.hxx>
 #include <TopoDS_CompSolid.hxx>
+#include <TDF_Label.hxx>
 
 #include <list>
 #include <map>
@@ -29,6 +31,13 @@ namespace TopoLogicCore
 		TOPOLOGY_CELLCOMPLEX = 6,
 		TOPOLOGY_CLUSTER = 7,
 		TOPOLOGY_APERTURE = 8
+	};
+
+	enum TopologyRelationshipType
+	{
+		REL_CONSTITUENT = 0,
+		REL_APERTURE = 1,
+		REL_OTHER_NON_CONSTITUENT = 2
 	};
 
 	class Face;
@@ -397,6 +406,31 @@ namespace TopoLogicCore
 		/// <param name="kpTopology"></param>
 		void RemoveIngredient(Topology * const kpTopology);*/
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="pTopology"></param>
+		/// <param name="kRelationshipType"></param>
+		void AddChildLabel(std::shared_ptr<Topology>& pTopology, const TopologyRelationshipType kRelationshipType);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		TDF_Label& GetOcctLabel() { return m_occtLabel; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		const TDF_Label& GetOcctLabel() const { return m_occtLabel; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkOcctLabel"></param>
+		void SetOcctLabel(const TDF_Label& rkOcctLabel) { m_occtLabel = rkOcctLabel; }
+
 	protected:
 		Topology(const int kDimensionality);
 
@@ -461,7 +495,8 @@ namespace TopoLogicCore
 		/// <returns></returns>
 		std::shared_ptr<Topology> GetBooleanResult(BOPAlgo_CellsBuilder& rOcctCellsBuilder);
 
-		AttributeMap m_attributeMap;
+		AttributeMap m_attributeMap; // to be replaced by OCCT OCAF
+		TDF_Label m_occtLabel;
 		int m_dimensionality;
 		bool m_isInGlobalCluster;
 
