@@ -404,6 +404,10 @@ namespace TopoLogicCore
 		, m_pOcctFace(nullptr)
 	{
 		try{
+			/*ShapeFix_Face occtShapeFix(rkOcctFace);
+			occtShapeFix.Perform();
+			m_pOcctFace = std::make_shared<TopoDS_Face>(occtShapeFix.Face());*/
+
 			m_pOcctFace = std::make_shared<TopoDS_Face>(rkOcctFace);
 			GlobalCluster::GetInstance().Add(this);
 		}
