@@ -5,6 +5,7 @@
 #include "TopologicalQuery.h"
 
 #include <BOPCol_ListOfShape.hxx>
+#include <BOPCol_DataMapOfShapeShape.hxx>
 #include <BOPAlgo_CellsBuilder.hxx>
 #include <Standard_Handle.hxx>
 #include <Geom_Geometry.hxx>
@@ -482,7 +483,9 @@ namespace TopoLogicCore
 			const std::shared_ptr<Topology>& kpOtherTopology,
 			BOPAlgo_CellsBuilder& rOcctCellsBuilder,
 			BOPCol_ListOfShape& rOcctCellsBuildersOperandsA,
-			BOPCol_ListOfShape& rOcctCellsBuildersOperandsB);
+			BOPCol_ListOfShape& rOcctCellsBuildersOperandsB,
+			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceA,
+			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceB);
 
 		/// <summary>
 		/// 
@@ -493,21 +496,55 @@ namespace TopoLogicCore
 			const std::shared_ptr<Topology>& kpOtherTopology,
 			BOPAlgo_CellsBuilder& rOcctCellsBuilder,
 			BOPCol_ListOfShape& rOcctCellsBuildersOperandsA,
-			BOPCol_ListOfShape& rOcctCellsBuildersOperandsB);
+			BOPCol_ListOfShape& rOcctCellsBuildersOperandsB,
+			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceA,
+			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceB);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rOcctCellsBuilder"></param>
 		/// <returns></returns>
-		std::shared_ptr<Topology> GetBooleanResult(BOPAlgo_CellsBuilder& rOcctCellsBuilder);
+		std::shared_ptr<Topology> GetBooleanResult(
+			const std::shared_ptr<Topology>& kpOtherTopology,
+			BOPAlgo_CellsBuilder& rOcctCellsBuilder,
+			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceA,
+			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceB);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rOcctCellsBuilder"></param>
+		/// <param name="rOcctMapFaceToFixedFaceA"></param>
+		/// <param name="rOcctMapFaceToFixedFaceB"></param>
 		/// <returns></returns>
-		std::shared_ptr<Topology> ManageBooleanLabels(BOPAlgo_CellsBuilder& rOcctCellsBuilder);
+		std::shared_ptr<Topology> ManageBooleanLabels(
+			const std::shared_ptr<Topology>& kpOtherTopology,
+			BOPAlgo_CellsBuilder& rOcctCellsBuilder,
+			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceA,
+			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceB);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkOcctShape"></param>
+		/// <returns></returns>
+		TopoDS_Shape FixBooleanOperandCell(const TopoDS_Shape& rkOcctShape);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkOcctShape"></param>
+		/// <returns></returns>
+		TopoDS_Shape FixBooleanOperandShell(const TopoDS_Shape& rkOcctShape);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkOcctShape"></param>
+		/// <param name="rMapFaceToFixedFace"></param>
+		/// <returns></returns>
+		TopoDS_Shape FixBooleanOperandFace(const TopoDS_Shape& rkOcctShape, BOPCol_DataMapOfShapeShape& rMapFaceToFixedFace);
 
 		AttributeMap m_attributeMap; // to be replaced by OCCT OCAF
 		TDF_Label m_occtLabel;
