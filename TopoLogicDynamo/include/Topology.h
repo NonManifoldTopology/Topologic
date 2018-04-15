@@ -91,8 +91,10 @@ namespace TopoLogic
 		/// <summary>
 		/// Returns the topological entities containing the input topology as a non-constituent member
 		/// </summary>
+		/// <param name="allLevel"></param>
 		/// <returns name="Topology[]">The topological entities containing the input topology as a non-constituent member</returns>
-		List<Topology^>^ ContentsV2();
+		List<Topology^>^ ContentsV2(
+			[Autodesk::DesignScript::Runtime::DefaultArgument("true")] bool allLevel);
 
 		/// <summary>
 		/// Returns the non-constituent members of the input topological entity.

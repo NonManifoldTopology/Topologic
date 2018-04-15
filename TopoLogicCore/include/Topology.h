@@ -286,8 +286,10 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="kAllLevels"></param>
 		/// <param name="rContents"></param>
-		TOPOLOGIC_API void ContentsV2(std::list<std::shared_ptr<Topology>>& rContents) const;
+		/// <returns></returns>
+		TOPOLOGIC_API void ContentsV2(const bool kAllLevels, std::list<std::shared_ptr<Topology>>& rContents) const;
 
 
 		/// <summary>

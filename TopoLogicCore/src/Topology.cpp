@@ -233,12 +233,12 @@ namespace TopoLogicCore
 	{
 	}
 
-	void Topology::ContentsV2(std::list<std::shared_ptr<Topology>>& rContents) const
+	void Topology::ContentsV2(const bool kAllLevels, std::list<std::shared_ptr<Topology>>& rContents) const
 	{
 		int numCheckedChilds = 0;
 
 		// Get the list of attribute shapes in the child labels in all levels, therefore no need to iterate hierarchically.
-		for (TDF_ChildIterator occtLabelIterator(GetOcctLabel(), true); occtLabelIterator.More(); occtLabelIterator.Next())
+		for (TDF_ChildIterator occtLabelIterator(GetOcctLabel(), kAllLevels); occtLabelIterator.More(); occtLabelIterator.Next())
 		{
 			TDF_Label childLabel = occtLabelIterator.Value();
 			// Only care about those labels with aperture or other non-constituent relationships.
