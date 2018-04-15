@@ -12,6 +12,9 @@
 #include <Standard_GUID.hxx>
 #include <TopoDS_CompSolid.hxx>
 #include <TDF_Label.hxx>
+#include <TDF_ChildIterator.hxx>
+#include <TNaming_NamedShape.hxx>
+#include <TDataStd_Integer.hxx>
 
 #include <list>
 #include <map>
@@ -594,6 +597,37 @@ namespace TopoLogicCore
 	{
 		static_assert(std::is_base_of<Topology, Subclass>::value, "Subclass not derived from Topology");
 
+		// CHECK if t
+		int numChildren = 0;
+		if(!GetOcctLabel().IsNull())
+		{
+			for (TDF_ChildIterator occtLabelIterator(GetOcctLabel());
+				occtLabelIterator.More();
+				occtLabelIterator.Next())
+			{
+				TDF_Label childLabel = occtLabelIterator.Value();
+				Handle(TNaming_NamedShape) occtChildAttribute;
+				Handle(TDataStd_Integer) occtRelationshipType;
+				bool result1 = childLabel.FindAttribute(TNaming_NamedShape::GetID(), occtChildAttribute);
+				bool result2 = childLabel.FindAttribute(TDataStd_Integer::GetID(), occtRelationshipType);
+				bool result3 = occtRelationshipType->Get() == REL_CONSTITUENT; 
+				bool result4 = false;
+				TopExp_Explorer occtExplorer;
+				for (occtExplorer.Init(*GetOcctShape(), TopAbs_FACE); occtExplorer.More(); occtExplorer.Next())
+				{
+					if (occtExplorer.Current().IsSame(occtChildAttribute->Get()))
+					{
+						result4 = true;
+						break;
+					}
+				}
+				if (result1 && result2 && result3 /*&& result4*/)
+				{
+					numChildren++;
+				}
+			}
+		}
+
 		TopAbs_ShapeEnum occtShapeType = CheckOcctShapeType<Subclass>();
 		TopTools_MapOfShape occtShapes;
 		TopExp_Explorer occtExplorer;
@@ -603,7 +637,87 @@ namespace TopoLogicCore
 			if (!occtShapes.Contains(occtCurrent))
 			{
 				occtShapes.Add(occtCurrent);
-				rMembers.push_back(Downcast<Subclass>(ByOcctShape(occtCurrent)));
+				std::shared_ptr<Topology> pChildTopology = ByOcctShape(occtCurrent);
+				rMembers.push_back(Downcast<Subclass>(pChildTopology));
+				GlobalCluster::GetInstance().GetCluster()->AddChildLabel(pChildTopology, REL_CONSTITUENT);
+
+				// For now only attach constituent faces
+				if (GetOcctLabel().IsNull())
+				{
+					continue;
+				}
+
+
+				// CHECK if the child labels are part of this topology
+				/*bool isFound = false;
+				for (TDF_ChildIterator occtLabelIterator(GetOcctLabel());
+					occtLabelIterator.More();
+					occtLabelIterator.Next())
+				{
+					TDF_Label childLabel = occtLabelIterator.Value();
+					Handle(TNaming_NamedShape) occtChildAttribute;
+					Handle(TDataStd_Integer) occtRelationshipType;
+					bool result1 = childLabel.FindAttribute(TNaming_NamedShape::GetID(), occtChildAttribute);
+					bool result2 = childLabel.FindAttribute(TDataStd_Integer::GetID(), occtRelationshipType);
+					bool result3 = occtRelationshipType->Get() == REL_CONSTITUENT;
+					bool result4 = occtCurrent.IsSame(occtChildAttribute->Get());
+					if (result1 && result2 && result3 && result4)
+					{
+						isFound = true;
+					}
+				}*/
+
+
+				for (TDF_ChildIterator occtLabelIterator(GetOcctLabel()); 
+					occtLabelIterator.More(); 
+					occtLabelIterator.Next())
+				{
+					TDF_Label childLabel = occtLabelIterator.Value();
+					Handle(TNaming_NamedShape) occtChildAttribute;
+					Handle(TDataStd_Integer) occtRelationshipType;
+					bool result1 = childLabel.FindAttribute(TNaming_NamedShape::GetID(), occtChildAttribute);
+					bool result2 = childLabel.FindAttribute(TDataStd_Integer::GetID(), occtRelationshipType);
+					// Check if this is a child of the parent topology too
+					bool isFound = false;
+					TopExp_Explorer occtExplorer2;
+					for (occtExplorer2.Init(occtCurrent, TopAbs_FACE);
+						occtExplorer2.More();
+						occtExplorer2.Next())
+					{
+						const TopoDS_Shape& rkOcctCurrentChildShape = occtExplorer2.Current();
+						if (rkOcctCurrentChildShape.IsSame(occtChildAttribute->Get()))
+						{
+							isFound = true;
+							break;
+						}
+					}
+					if (result1 &&
+						result2 &&
+						isFound && // is face part of the child entity?
+						occtChildAttribute->Get().ShapeType() == TopAbs_FACE &&
+						occtRelationshipType->Get() == REL_CONSTITUENT)
+					{
+						std::shared_ptr<Topology> pGrandChildTopology = ByOcctShape(occtChildAttribute->Get());
+						pChildTopology->AddChildLabel(pGrandChildTopology, REL_CONSTITUENT);
+
+
+						for (TDF_ChildIterator occtChildLabelIterator(childLabel); occtChildLabelIterator.More(); occtChildLabelIterator.Next())
+						{
+							TDF_Label apertureLabel = occtChildLabelIterator.Value();
+							Handle(TNaming_NamedShape) occtApertureAttribute;
+							Handle(TDataStd_Integer) occtApertureRelationshipType;
+							bool result1 = apertureLabel.FindAttribute(TNaming_NamedShape::GetID(), occtApertureAttribute);
+							bool result2 = apertureLabel.FindAttribute(TDataStd_Integer::GetID(), occtRelationshipType);
+							if (result1 &&
+								result2 &&
+								occtRelationshipType->Get() == REL_APERTURE)
+							{
+								std::shared_ptr<Topology> pApertureTopology = ByOcctShape(occtApertureAttribute->Get());
+								pGrandChildTopology->AddChildLabel(pApertureTopology, REL_APERTURE);
+							}
+						}
+					}
+				}
 			}
 		}
 	}

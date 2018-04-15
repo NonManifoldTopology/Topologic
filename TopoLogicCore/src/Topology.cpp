@@ -1000,25 +1000,33 @@ namespace TopoLogicCore
 				!occtFixedFace.IsNull())
 			{
 				// Add this label to fixed face label to the cell complex
-				std::shared_ptr<Topology> pFixedFace = Topology::ByOcctShape(occtFixedFace);
-				pCellComplex->AddChildLabel(pFixedFace, REL_CONSTITUENT);
+				TopTools_ListOfShape occtModifiedFixedFaces = rOcctCellsBuilder.Modified(occtFixedFace);
 
-				// Transfer the apertures from the original face (if any) to the fixed face
-				for (TDF_ChildIterator occtFaceLabelIterator(childLabel); occtFaceLabelIterator.More(); occtFaceLabelIterator.Next())
+				for(TopTools_ListIteratorOfListOfShape occtModifiedFixedFaceIterator(occtModifiedFixedFaces);
+					occtModifiedFixedFaceIterator.More();
+					occtModifiedFixedFaceIterator.Next())
 				{
-					TDF_Label apertureLabel = occtFaceLabelIterator.Value();
-					Handle(TNaming_NamedShape) occtApertureShapeAttribute;
-					Handle(TDataStd_Integer) occtApertureRelationshipType;
-					bool result1 = apertureLabel.FindAttribute(TNaming_NamedShape::GetID(), occtApertureShapeAttribute);
-					bool result2 = apertureLabel.FindAttribute(TDataStd_Integer::GetID(), occtApertureRelationshipType);
-					int result3 = occtApertureRelationshipType->Get();
+					const TopoDS_Shape& rkOcctModifiedFixedFace = occtModifiedFixedFaceIterator.Value();
+					std::shared_ptr<Topology> pModifiedFixedFace = Topology::ByOcctShape(rkOcctModifiedFixedFace);
+					pCellComplex->AddChildLabel(pModifiedFixedFace, REL_CONSTITUENT);
 
-					if (result1 &&
-						result2 &&
-						occtApertureRelationshipType->Get() != REL_CONSTITUENT)
+					// Transfer the apertures from the original face (if any) to the fixed face
+					for (TDF_ChildIterator occtFaceLabelIterator(childLabel); occtFaceLabelIterator.More(); occtFaceLabelIterator.Next())
 					{
-						std::shared_ptr<Topology> pAperture = Topology::ByOcctShape(occtApertureShapeAttribute->Get());
-						pFixedFace->AddChildLabel(pAperture, (TopologyRelationshipType) occtApertureRelationshipType->Get());
+						TDF_Label apertureLabel = occtFaceLabelIterator.Value();
+						Handle(TNaming_NamedShape) occtApertureShapeAttribute;
+						Handle(TDataStd_Integer) occtApertureRelationshipType;
+						bool result1 = apertureLabel.FindAttribute(TNaming_NamedShape::GetID(), occtApertureShapeAttribute);
+						bool result2 = apertureLabel.FindAttribute(TDataStd_Integer::GetID(), occtApertureRelationshipType);
+						int result3 = occtApertureRelationshipType->Get();
+
+						if (result1 &&
+							result2 &&
+							occtApertureRelationshipType->Get() != REL_CONSTITUENT)
+						{
+							std::shared_ptr<Topology> pAperture = Topology::ByOcctShape(occtApertureShapeAttribute->Get());
+							pModifiedFixedFace->AddChildLabel(pAperture, (TopologyRelationshipType) occtApertureRelationshipType->Get());
+						}
 					}
 				}
 			}
