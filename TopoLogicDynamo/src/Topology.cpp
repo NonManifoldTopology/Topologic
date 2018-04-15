@@ -131,7 +131,7 @@ namespace TopoLogic
 	}
 
 	List<Topology^>^ Topology::ContentsV2(bool allLevel)
-	{0
+	{
 		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
 		std::list<std::shared_ptr<TopoLogicCore::Topology>> rkCoreContents;
 		pCoreTopology->ContentsV2(allLevel, rkCoreContents);
