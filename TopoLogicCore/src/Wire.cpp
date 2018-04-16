@@ -19,7 +19,15 @@ namespace TopoLogicCore
 {
 	void Wire::Edges(std::list<std::shared_ptr<Edge>>& rEdges) const
 	{
-		DownwardNavigation(rEdges);
+		//DownwardNavigation(rEdges);
+
+		// This query uses a specialised class BRepTools_WireExplorer 
+		BRepTools_WireExplorer occtWireExplorer(TopoDS::Wire(*GetOcctShape()));
+		for (; occtWireExplorer.More(); occtWireExplorer.Next())
+		{
+			const TopoDS_Edge& rkEdge = occtWireExplorer.Current();
+			rEdges.push_back(TopologicalQuery::Downcast<Edge>(Topology::ByOcctShape(rkEdge)));
+		}
 	}
 
 	void Wire::Faces(std::list<std::shared_ptr<Face>>& rFaces) const
@@ -36,7 +44,15 @@ namespace TopoLogicCore
 
 	void Wire::Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const
 	{
-		DownwardNavigation(rVertices);
+		//DownwardNavigation(rVertices);
+
+		// This query uses a specialised class BRepTools_WireExplorer 
+		BRepTools_WireExplorer occtWireExplorer(TopoDS::Wire(*GetOcctShape()));
+		for (; occtWireExplorer.More(); occtWireExplorer.Next())
+		{
+			const TopoDS_Vertex& rkVertex = occtWireExplorer.CurrentVertex();
+			rVertices.push_back(TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkVertex)));
+		}
 	}
 
 	std::shared_ptr<Wire> Wire::ByEdges(const std::list<std::shared_ptr<Edge>>& rkEdges)
