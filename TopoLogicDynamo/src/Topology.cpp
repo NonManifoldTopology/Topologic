@@ -42,10 +42,31 @@ namespace TopoLogic
 		// TODO: insert return statement here
 	}
 
-	Topology^ Topology::ByVertexIndex(List<Vertex^>^ vertexCoordinates, List<List<int>^>^ vertexIndices)
+	Topology^ Topology::ByVertexIndex(List<Vertex^>^ vertices, List<List<int>^>^ vertexIndices)
 	{
-		throw gcnew System::NotImplementedException();
-		// TODO: insert return statement here
+		std::vector<std::shared_ptr<TopoLogicCore::Vertex>> coreVertices;
+		for each(Vertex^ pVertex in vertices)
+		{
+			std::shared_ptr<TopoLogicCore::Vertex> pCoreVertex = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Vertex>(pVertex->GetCoreTopologicalQuery());
+			coreVertices.push_back(pCoreVertex);
+		}
+
+		std::list<std::list<int>> coreIndices;
+		for each(List<int>^ vertex1DIndices in vertexIndices)
+		{
+			std::list<int> coreVertex1DIndices;
+			for each(int vertexIndex in vertex1DIndices)
+			{
+				if (vertexIndex < 0)
+				{
+					throw gcnew Exception("The index list contains a negative index.");
+				}
+				coreVertex1DIndices.push_back(vertexIndex);
+			}
+			coreIndices.push_back(coreVertex1DIndices);
+		}
+		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = TopoLogicCore::Topology::ByVertexIndex(coreVertices, coreIndices);
+		return Topology::ByCoreTopology(pCoreTopology);
 	}
 
 	Dictionary<String^, Attribute^>^ Topology::Attributes::get()

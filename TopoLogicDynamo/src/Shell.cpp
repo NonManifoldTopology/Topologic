@@ -154,7 +154,7 @@ namespace TopoLogic
 		return gcnew Shell(TopoLogicCore::Shell::ByVerticesFaceIndices(coreVertices, coreFaceIndices));
 	}
 
-	List<Face^>^ Shell::ByFacePlanarization(Face^ face, int iteration, int numUPanels, int numVPanels, double tolerance, bool capBottom, bool capTop)
+	List<Face^>^ Shell::ByFacePlanarization(Face^ face, int iteration, int numEdgeSamples, int numUPanels, int numVPanels, double tolerance, bool capBottom, bool capTop)
 	{
 		std::list<std::shared_ptr<TopoLogicCore::Vertex>> coreVertices;
 		std::list<std::shared_ptr<TopoLogicCore::Edge>> coreIsocurves;
@@ -163,6 +163,7 @@ namespace TopoLogic
 		std::shared_ptr<TopoLogicCore::Shell> pCoreTopology = TopoLogicCore::Shell::ByFacePlanarization(
 			TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Face>(face->GetCoreTopologicalQuery()),
 			iteration,
+			numEdgeSamples,
 			numUPanels,
 			numVPanels,
 			tolerance,
@@ -188,7 +189,7 @@ namespace TopoLogic
 		return faces;
 	}
 
-	Dictionary<String^, Object^>^ Shell::ByFacePlanarization(Face ^ face, int iteration, List<double>^ uValues, List<double>^ vValues, double tolerance, bool capBottom, bool capTop)
+	Dictionary<String^, Object^>^ Shell::ByFacePlanarization(Face^ face, int iteration, int numEdgeSamples, List<double>^ uValues, List<double>^ vValues, double tolerance, bool capBottom, bool capTop)
 	{
 		std::list<std::shared_ptr<TopoLogicCore::Vertex>> coreVertices;
 		std::list<std::shared_ptr<TopoLogicCore::Edge>> coreIsocurves;
@@ -208,6 +209,7 @@ namespace TopoLogic
 		std::shared_ptr<TopoLogicCore::Shell> pCoreTopology = TopoLogicCore::Shell::ByFacePlanarization(
 			TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Face>(face->GetCoreTopologicalQuery()),
 			iteration,
+			numEdgeSamples,
 			coreUValues,
 			coreVValues,
 			tolerance,

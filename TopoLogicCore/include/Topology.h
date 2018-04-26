@@ -17,6 +17,7 @@
 #include <TDataStd_Integer.hxx>
 
 #include <list>
+#include <vector>
 #include <map>
 #include <memory>
 
@@ -96,7 +97,7 @@ namespace TopoLogicCore
 		/// <param name="rkVertices"></param>
 		/// <param name="rkVertexIndices"></param>
 		/// <returns></returns>
-		static std::shared_ptr<Topology> ByVertexIndex(const std::list<std::shared_ptr<Vertex>>& rkVertices, const std::list<std::list<int>>& rkVertexIndices);
+		static TOPOLOGIC_API std::shared_ptr<Topology> ByVertexIndex(const std::vector<std::shared_ptr<Vertex>>& rkVertices, const std::list<std::list<int>>& rkVertexIndices);
 
 		/// <summary>
 		/// 

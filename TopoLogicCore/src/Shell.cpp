@@ -113,6 +113,38 @@ namespace TopoLogicCore
 			kpFace->AddIngredientTo(pShell);
 		}
 
+		// HACK: add the v1 contents to the current shell faces.
+		std::shared_ptr<Topology> pUpcastShell = TopologicalQuery::Upcast<Topology>(pShell);
+		GlobalCluster::GetInstance().GetCluster()->AddChildLabel(pUpcastShell, REL_CONSTITUENT);
+
+		for (const std::shared_ptr<Face>& kShellFace : rkFaces)
+		{
+			const TopoDS_Shape& rkModifiedShape = occtSewing.Modified(*kShellFace->GetOcctShape());
+			std::shared_ptr<Topology> pChildTopology = Topology::ByOcctShape(rkModifiedShape);
+			pShell->AddChildLabel(pChildTopology, REL_CONSTITUENT);
+
+			// Map the aperture to the modifed shell faces.
+			std::list<std::shared_ptr<Topology>>& rContents = kShellFace->Contents();
+			for (const std::shared_ptr<Topology>& rkContent : rContents)
+			{
+				if (rkContent->GetType() != TOPOLOGY_APERTURE)
+				{
+					continue;
+				}
+
+				std::shared_ptr<Aperture> aperture = TopologicalQuery::Downcast<Aperture>(rkContent);
+
+				if (aperture->Topology()->GetType() != TOPOLOGY_FACE)
+				{
+					continue;
+				}
+
+				std::shared_ptr<Face> pApertureFace = TopologicalQuery::Downcast<Face>(aperture->Topology());
+				std::shared_ptr<Topology> pUpcastApertureFace = TopologicalQuery::Upcast<Topology>(pApertureFace);
+				pChildTopology->AddChildLabel(pUpcastApertureFace, REL_APERTURE);
+			}
+		}
+
 		return pShell;
 	}
 
@@ -168,6 +200,7 @@ namespace TopoLogicCore
 	std::shared_ptr<Shell> Shell::ByFacePlanarization(
 		const std::shared_ptr<Face>& kpFace,
 		const int kIteration,
+		const int kEdgeSamples,
 		const int kNumUPanels,
 		const int kNumVPanels,
 		const double kTolerance,
@@ -210,7 +243,7 @@ namespace TopoLogicCore
 			vValues.push_back(v);
 		}
 
-		return ByFacePlanarization(kpFace, kIteration, uValues, vValues, kTolerance, kCapBottom, kCapTop, vertices, edges, wires, faces);
+		return ByFacePlanarization(kpFace, kIteration, kEdgeSamples, uValues, vValues, kTolerance, kCapBottom, kCapTop, vertices, edges, wires, faces);
 	}
 
 	bool SutherlandHodgmanIsInside(const Handle(Geom2d_CartesianPoint)& kpPoint, const Handle(Geom2d_CartesianPoint)& kpLinePoint1, const Handle(Geom2d_CartesianPoint)& kpLinePoint2)
@@ -322,6 +355,7 @@ namespace TopoLogicCore
 	std::shared_ptr<Shell> Shell::ByFacePlanarization(
 		const std::shared_ptr<Face>& kpFace, 
 		const int kIteration, 
+		const int kEdgeSamples,
 		const std::list<double>& rkUValues, 
 		const std::list<double>& rkVValues, 
 		const double kTolerance,
@@ -336,6 +370,11 @@ namespace TopoLogicCore
 		if (kIteration < 1)
 		{
 			std::string errorMessage = std::string("The number of iteration must be larger than 0.");
+			throw std::exception(errorMessage.c_str());
+		}
+		if (kEdgeSamples < 2)
+		{
+			std::string errorMessage = std::string("The number of sample points on edges must be larger than 1.");
 			throw std::exception(errorMessage.c_str());
 		}
 		if (rkUValues.empty())
@@ -460,23 +499,19 @@ namespace TopoLogicCore
 			//wires.push_back(apertureWire);
 			std::list<std::shared_ptr<Edge>> apertureEdges;
 			apertureWire->Edges(apertureEdges);
-			int iii = 0;
+			
 			for (std::shared_ptr<Edge> e : apertureEdges)
 			{
 				edges.push_back(e);
-				iii++;
-				if (iii == 3)
-					break;
 			}
 			std::list<Handle(Geom2d_CartesianPoint)> apertureSampleVerticesUV;
 			for (const std::shared_ptr<Edge>& kpEdge : apertureEdges)
 			{
-				int numberOfSamples = 100;
 				// HACK: go backward
 				//for (int i = 0; i < numberOfSamples - 1; ++i)
-				for (int i = numberOfSamples - 2; i >= 0; --i)
+				for (int i = kEdgeSamples - 2; i >= 0; --i)
 				{
-					double parameter = (double)i / (double)(numberOfSamples - 1);
+					double parameter = (double)i / (double)(kEdgeSamples - 1);
 					std::shared_ptr<Vertex> apertureSampleVertex = kpEdge->PointAtParameter(parameter);
 					//edges.push_back(kpEdge);
 					//vertices.push_back(apertureSampleVertex);
@@ -651,11 +686,13 @@ namespace TopoLogicCore
 			uIterator++, ++i)
 		{
 			double wallU = *uIterator;
-			double offsetU = wallU + 0.001; // shrink
+			//double offsetU = wallU + 0.001; // shrink
+			double offsetU = wallU; // not shrink
 			std::list<double>::const_iterator nextUIterator = uIterator;
 			nextUIterator++;
 			double nextWallU = *nextUIterator;
-			double nextOffsetU = nextWallU - 0.001; // shrink
+			//double nextOffsetU = nextWallU - 0.001; // shrink
+			double nextOffsetU = nextWallU; // not shrink
 
 			int j = 0;
 			for (std::list<double>::const_iterator vIterator = occtVValues.begin();
@@ -663,11 +700,13 @@ namespace TopoLogicCore
 				vIterator++, ++j)
 			{
 				double wallV = *vIterator;
-				double offsetV = wallV + 0.001;
+				//double offsetV = wallV + 0.001;
+				double offsetV = wallV;
 				std::list<double>::const_iterator nextVIterator = vIterator;
 				nextVIterator++;
 				double nextWallV = *nextVIterator;
-				double nextOffsetV = nextWallV - 0.001;
+				//double nextOffsetV = nextWallV - 0.001;
+				double nextOffsetV = nextWallV;
 
 				// Default values
 				int minU = i;		int minV = j;
@@ -985,6 +1024,8 @@ namespace TopoLogicCore
 								// apertures before triangulation
 								const TopoDS_Wire& rkMappedApertureWire = occtMakeWire.Wire();
 								wires.push_back(TopologicalQuery::Downcast<Wire>(Topology::ByOcctShape(rkMappedApertureWire)));
+								BRepBuilderAPI_MakeFace occtMakeFace(pOcctPanelSurface, rkMappedApertureWire);
+								faces.push_back(TopologicalQuery::Downcast<Face>(Topology::ByOcctShape(occtMakeFace)));
 							}
 						}
 
@@ -1002,6 +1043,39 @@ namespace TopoLogicCore
 							gp_Pnt occtMappedAperturePoint2 = pOcctPanelSurface->Value(p2[0], p2[1]);
 							Point p3 = polygon[indices[index3]];
 							gp_Pnt occtMappedAperturePoint3 = pOcctPanelSurface->Value(p3[0], p3[1]);
+
+
+							//==============
+							//SCALE DOWN HERE
+							double sumX = occtMappedAperturePoint1.X() + occtMappedAperturePoint2.X() + occtMappedAperturePoint3.X();
+							double sumY = occtMappedAperturePoint1.Y() + occtMappedAperturePoint2.Y() + occtMappedAperturePoint3.Y();
+							double sumZ = occtMappedAperturePoint1.Z() + occtMappedAperturePoint2.Z() + occtMappedAperturePoint3.Z();
+
+							gp_Pnt faceCentroid(sumX / 3.0, sumY / 3.0, sumZ / 3.0);
+
+							double sqrtScaleFactor = 0.99;
+							
+							gp_Vec vector1(faceCentroid, occtMappedAperturePoint1);
+							gp_Vec vector2(faceCentroid, occtMappedAperturePoint2);
+							gp_Vec vector3(faceCentroid, occtMappedAperturePoint3);
+
+							vector1.Multiply(sqrtScaleFactor);
+							vector2.Multiply(sqrtScaleFactor);
+							vector3.Multiply(sqrtScaleFactor);
+
+							occtMappedAperturePoint1 = gp_Pnt(
+								faceCentroid.X() + vector1.X(),
+								faceCentroid.Y() + vector1.Y(), 
+								faceCentroid.Z() + vector1.Z());
+							occtMappedAperturePoint2 = gp_Pnt(
+								faceCentroid.X() + vector2.X(),
+								faceCentroid.Y() + vector2.Y(),
+								faceCentroid.Z() + vector2.Z());
+							occtMappedAperturePoint3 = gp_Pnt(
+								faceCentroid.X() + vector3.X(),
+								faceCentroid.Y() + vector3.Y(),
+								faceCentroid.Z() + vector3.Z());
+							//==========================
 
 							BRepBuilderAPI_MakeVertex occtMakeVertex1(occtMappedAperturePoint1);
 							BRepBuilderAPI_MakeVertex occtMakeVertex2(occtMappedAperturePoint2);
@@ -1023,7 +1097,7 @@ namespace TopoLogicCore
 								std::shared_ptr<Face> mappedApertureFace = TopologicalQuery::Downcast<Face>(Topology::ByOcctShape(occtMakeMappedApertureFace.Face()));
 								aperturePanels.Append(occtMakeMappedApertureFace.Shape());
 
-								faces.push_back(mappedApertureFace);
+								//faces.push_back(mappedApertureFace);
 							}
 							catch (...)
 							{

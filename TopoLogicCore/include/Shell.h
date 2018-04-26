@@ -112,6 +112,7 @@ namespace TopoLogicCore
 		TOPOLOGIC_API static std::shared_ptr<Shell> ByFacePlanarization(
 			const std::shared_ptr<Face>& kpFace,
 			const int kIteration,
+			const int kEdgeSamples,
 			const int kNumUPanels,
 			const int kNumVPanels,
 			const double kTolerance,
@@ -136,6 +137,7 @@ namespace TopoLogicCore
 		TOPOLOGIC_API static std::shared_ptr<Shell> ByFacePlanarization(
 			const std::shared_ptr<Face>& kpFace,
 			const int kIteration,
+			const int kEdgeSamples,
 			const std::list<double>& rkUValues,
 			const std::list<double>& rkVValues,
 			const double kTolerance,

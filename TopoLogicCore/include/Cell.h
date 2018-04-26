@@ -141,6 +141,14 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="kpVertex"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API bool DoesContain(const std::shared_ptr<Vertex>& kpVertex) const;
+
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="rShells"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API void InnerBoundaries(std::list<std::shared_ptr<Shell>>& rShells) const;

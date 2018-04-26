@@ -282,6 +282,13 @@ namespace TopoLogic
 		return gcnew Vertex(pCoreCenterOfMass);
 	}
 
+	bool Cell::DoesContain(Vertex ^ vertex)
+	{
+		std::shared_ptr<TopoLogicCore::Cell> pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopoLogicCore::Vertex> pCoreVertex = TopoLogicCore::Topology::Downcast<TopoLogicCore::Vertex>(vertex->GetCoreTopologicalQuery());
+		return pCoreCell->DoesContain(pCoreVertex);
+	}
+
 	Object^ Cell::Geometry::get()
 	{
 		List<Autodesk::DesignScript::Geometry::Surface^>^ pDynamoSurfaces = gcnew List<Autodesk::DesignScript::Geometry::Surface^>();

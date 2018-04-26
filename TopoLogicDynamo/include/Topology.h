@@ -46,7 +46,7 @@ namespace TopoLogic
 		/// <param name="vertexCoordinates"></param>
 		/// <param name="vertexIndices"></param>
 		/// <returns></returns>
-		static Topology^ ByVertexIndex(List<Vertex^>^ vertexCoordinates, List<List<int>^>^ vertexIndices);
+		static Topology^ ByVertexIndex(List<Vertex^>^ vertices, List<List<int>^>^ vertexIndices);
 
 		/// <summary>
 		/// Returns the dimensionality of the topological entity.

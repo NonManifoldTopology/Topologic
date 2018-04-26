@@ -44,6 +44,8 @@
 #include <TopTools_MapOfShape.hxx>
 #include <TNaming_NamedShape.hxx>
 #include <TDataStd_Integer.hxx>
+#include <BRepCheck_Wire.hxx>
+#include <BOPAlgo_MakerVolume.hxx>
 
 #include <ShapeFix_Shape.hxx>
 
@@ -194,9 +196,244 @@ namespace TopoLogicCore
 		return nullptr;
 	}
 
-	std::shared_ptr<Topology> Topology::ByVertexIndex(const std::list<std::shared_ptr<Vertex>>& rkVertices, const std::list<std::list<int>>& rkVertexIndices)
+	std::shared_ptr<Topology> Topology::ByVertexIndex(const std::vector<std::shared_ptr<Vertex>>& rkVertices, const std::list<std::list<int>>& rkVertexIndices)
 	{
-		return nullptr;
+		if (rkVertices.empty() || rkVertexIndices.empty())
+		{
+			return nullptr;
+		}
+		// Input: vertex[], int[][] indices
+
+		// - Topology[] = iterate through indices and create either a face(if > 2, planar), a wire (if > 2, non-planar), an edge(= 2), or a vertex.
+		TopTools_ListOfShape occtShapes;
+		for (const std::list<int>& rkVertex1DIndices : rkVertexIndices)
+		{
+			std::list<TopoDS_Vertex> occtVertices;
+			for (int vertexIndex : rkVertex1DIndices)
+			{
+				occtVertices.push_back(TopoDS::Vertex(*rkVertices[vertexIndex]->GetOcctShape()));
+			}
+
+			if (occtVertices.size() > 2)
+			{
+				// Create edges
+				TopTools_ListOfShape occtEdges;
+				std::list<TopoDS_Vertex>::const_iterator kEndVertexIterator = occtVertices.end();
+				kEndVertexIterator--;
+
+				for (std::list<TopoDS_Vertex>::const_iterator kVertexIterator = occtVertices.begin();
+					kVertexIterator != kEndVertexIterator;
+					kVertexIterator++)
+				{
+					std::list<TopoDS_Vertex>::const_iterator kNextVertexIterator = kVertexIterator;
+					kNextVertexIterator++;
+
+					BRepBuilderAPI_MakeEdge occtMakeEdge(TopoDS::Vertex(*kVertexIterator), TopoDS::Vertex(*kNextVertexIterator));
+					occtEdges.Append(occtMakeEdge);
+				}
+				// No need to connect the first and last vertices
+
+				// Creating a face
+				BRepBuilderAPI_MakeWire occtMakeWire;
+				occtMakeWire.Add(occtEdges);
+				if (occtMakeWire.Error() == BRepBuilderAPI_WireDone)
+				{
+					const TopoDS_Wire& rkocctWire = occtMakeWire.Wire();
+					
+					if(BRepCheck_Wire(rkocctWire).Closed() == BRepCheck_NoError)
+					{
+						// Try creating a face
+						BRepBuilderAPI_MakeFace occtMakeFace(rkocctWire);
+						if (occtMakeFace.Error() == BRepBuilderAPI_FaceDone)
+						{
+							// Add the face
+							occtShapes.Append(occtMakeFace.Face());
+						}
+						else
+						{
+							// Add the closed wire
+							occtShapes.Append(rkocctWire);
+						}
+					}
+					else
+					{
+						// Add the opem wire
+						occtShapes.Append(rkocctWire);
+					}
+				}
+				else
+				{
+					// Add the edges
+					occtShapes.Append(occtEdges);
+				}
+			}
+			else if (occtVertices.size() == 2)
+			{
+				// Try creating an edge
+				BRepBuilderAPI_MakeEdge occtMakeEdge(TopoDS::Vertex(occtVertices.front()), 
+					                                 TopoDS::Vertex(occtVertices.back()));
+				occtShapes.Append(occtMakeEdge);
+			}
+			else if (occtVertices.size() == 1)
+			{
+				// Insert the vertices
+				occtShapes.Append(occtVertices.front());
+			}
+		}
+
+		/*TopoDS_Compound compound;
+		TopoDS_Builder builder;
+		builder.MakeCompound(compound);
+		for (TopTools_ListOfShape::Iterator occtShapeIterator(occtShapes);
+			occtShapeIterator.More();
+			occtShapeIterator.Next())
+		{
+			TopoDS_Shape& rCurrentShape = occtShapeIterator.Value();
+			builder.Add(compound, rCurrentShape);
+		}
+
+		return Topology::ByOcctShape(compound);*/
+
+
+		// - Topology[] = Merge--> this divides implicitly intersecting topologies.
+		BOPAlgo_CellsBuilder occtCellsBuilder;
+		occtCellsBuilder.SetArguments(occtShapes);
+		try {
+			occtCellsBuilder.Perform();
+		}
+		catch (Standard_Failure& e)
+		{
+			const char* str = e.GetMessageString();
+			std::string stlStr(str);
+		}
+		catch (std::exception& e)
+		{
+			const char* str = e.what();
+			std::string stlStr(str);
+		}
+
+		if (occtCellsBuilder.HasErrors())
+		{
+			std::ostringstream errorStream;
+			occtCellsBuilder.DumpErrors(errorStream);
+			throw std::exception(errorStream.str().c_str());
+		}
+
+		BOPCol_ListOfShape occtListToTake;
+		BOPCol_ListOfShape occtListToAvoid;
+
+		for (BOPCol_ListOfShape::const_iterator kOcctShapeIterator = occtShapes.begin();
+			kOcctShapeIterator != occtShapes.end();
+			kOcctShapeIterator++)
+		{
+			occtListToTake.Clear();
+			occtListToAvoid.Clear();
+			occtListToTake.Append(*kOcctShapeIterator);
+			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
+		}
+
+		//return Topology::ByOcctShape(occtCellsBuilder.Shape());
+
+		// - Get Face[] from Topology[]
+		TopExp_Explorer occtExplorer;
+		BOPCol_ListOfShape occtFaces;
+		for (occtExplorer.Init(occtCellsBuilder.Shape(), TopAbs_FACE); occtExplorer.More(); occtExplorer.Next())
+		{
+			const TopoDS_Shape& rkOcctCurrent = occtExplorer.Current();
+			if (!occtFaces.Contains(rkOcctCurrent))
+			{
+				occtFaces.Append(rkOcctCurrent);
+			}
+		}
+
+		// - Topology = VolumeMaker(Face[])--> first result
+		BOPAlgo_MakerVolume occtVolumeMaker;
+		Standard_Boolean bRunParallel = Standard_False; /* parallel or single mode (the default value is FALSE)*/
+		Standard_Boolean bIntersect = Standard_True; /* intersect or not the arguments (the default value is TRUE)*/
+		Standard_Real aTol = 0.0; /* fuzzy option (default value is 0)*/
+								  //
+		occtVolumeMaker.SetArguments(occtFaces);
+		occtVolumeMaker.SetRunParallel(bRunParallel);
+		occtVolumeMaker.SetIntersect(bIntersect);
+		occtVolumeMaker.SetFuzzyValue(aTol);
+		//
+		occtVolumeMaker.Perform(); //perform the operation
+		if (occtVolumeMaker.HasErrors()) { //check error status
+			throw std::exception();
+		}
+
+		// - Get discarded faces from VolumeMaker--> second result
+		BOPCol_ListOfShape occtDiscardedFaces;
+		for (BOPCol_ListIteratorOfListOfShape occtFaceIterator(occtFaces);
+			occtFaceIterator.More();
+			occtFaceIterator.Next())
+		{
+			TopoDS_Shape& rCurrent = occtFaceIterator.Value();
+			if (occtVolumeMaker.IsDeleted(rCurrent))
+			{
+				occtDiscardedFaces.Append(rCurrent);
+			}
+		}
+
+		// - Get the rest from Topology[] --> third result
+		BOPCol_ListOfShape occtOtherShapes;
+		for (BOPCol_ListIteratorOfListOfShape occtShapeIterator(occtShapes);
+			occtShapeIterator.More();
+			occtShapeIterator.Next())
+		{
+			if (occtShapeIterator.Value().ShapeType() != TopAbs_FACE)
+			{
+				occtOtherShapes.Append(occtShapeIterator.Value());
+			}
+		}
+
+		// - Merge results #1 #2 #3
+		BOPCol_ListOfShape occtFinalArguments;
+		occtFinalArguments.Append(occtVolumeMaker.Shape());
+		occtFinalArguments.Append(occtDiscardedFaces);
+		occtFinalArguments.Append(occtOtherShapes);
+
+		if (occtFinalArguments.Size() == 1)
+		{
+			return Topology::ByOcctShape(occtVolumeMaker.Shape());
+		}
+		BOPAlgo_CellsBuilder occtCellsBuilder2;
+		occtCellsBuilder2.SetArguments(occtFinalArguments);
+		try {
+			occtCellsBuilder2.Perform();
+		}
+		catch (Standard_Failure& e)
+		{
+			const char* str = e.GetMessageString();
+			std::string stlStr(str);
+		}
+		catch (std::exception& e)
+		{
+			const char* str = e.what();
+			std::string stlStr(str);
+		}
+
+		if (occtCellsBuilder2.HasErrors())
+		{
+			std::ostringstream errorStream;
+			occtCellsBuilder2.DumpErrors(errorStream);
+			throw std::exception(errorStream.str().c_str());
+		}
+
+		BOPCol_ListOfShape occtListToTake2;
+		BOPCol_ListOfShape occtListToAvoid2;
+
+		for (BOPCol_ListOfShape::const_iterator kOcctShapeIterator = occtFinalArguments.begin();
+			kOcctShapeIterator != occtFinalArguments.end();
+			kOcctShapeIterator++)
+		{
+			occtListToTake2.Clear();
+			occtListToAvoid2.Clear();
+			occtListToTake2.Append(*kOcctShapeIterator);
+			occtCellsBuilder2.AddToResult(occtListToTake2, occtListToAvoid2);
+		}
+		
+		return Topology::ByOcctShape(occtCellsBuilder2.Shape());
 	}
 
 	void Topology::AddContent(const std::shared_ptr<Topology>& rkTopology)
@@ -235,10 +472,14 @@ namespace TopoLogicCore
 
 	void Topology::ContentsV2(const bool kAllLevels, std::list<std::shared_ptr<Topology>>& rContents) const
 	{
-		int numCheckedChilds = 0;
+		const TDF_Label& rkOcctLabel = GetOcctLabel();
+		if (rkOcctLabel.IsNull())
+		{
+			return;
+		}
 
 		// Get the list of attribute shapes in the child labels in all levels, therefore no need to iterate hierarchically.
-		for (TDF_ChildIterator occtLabelIterator(GetOcctLabel(), kAllLevels); occtLabelIterator.More(); occtLabelIterator.Next())
+		for (TDF_ChildIterator occtLabelIterator(rkOcctLabel, kAllLevels); occtLabelIterator.More(); occtLabelIterator.Next())
 		{
 			TDF_Label childLabel = occtLabelIterator.Value();
 			// Only care about those labels with aperture or other non-constituent relationships.
@@ -255,7 +496,6 @@ namespace TopoLogicCore
 				pTopology->SetOcctLabel(childLabel);
 				rContents.push_back(pTopology);
 			}
-			numCheckedChilds++;
 		}
 	}
 
@@ -1676,21 +1916,24 @@ namespace TopoLogicCore
 		{
 			std::shared_ptr<Topology> pMemberTopology = Topology::ByOcctShape(*kIterator);
 
-			// Does this topology have a label in the hierachy under the topology? If yes, set the label.
-			for (TDF_ChildIterator occtLabelIterator(GetOcctLabel(), true); occtLabelIterator.More(); occtLabelIterator.Next())
+			if (!GetOcctLabel().IsNull())
 			{
-				TDF_Label childLabel = occtLabelIterator.Value();
-				Handle(TNaming_NamedShape) occtChildShape;
-				Handle(TDataStd_Integer) occtRelationshipType;
-				bool result1 = childLabel.FindAttribute(TNaming_NamedShape::GetID(), occtChildShape);
-				bool result2 = childLabel.FindAttribute(TDataStd_Integer::GetID(), occtRelationshipType);
-				int result3 = occtRelationshipType->Get();
-				if (result1 &&
-					result2 &&
-					occtRelationshipType->Get() == REL_CONSTITUENT &&
-					occtChildShape->Get().IsSame(*kIterator))
+				// Does this topology have a label in the hierachy under the topology? If yes, set the label.
+				for (TDF_ChildIterator occtLabelIterator(GetOcctLabel(), true); occtLabelIterator.More(); occtLabelIterator.Next())
 				{
-					pMemberTopology->SetOcctLabel(childLabel);
+					TDF_Label childLabel = occtLabelIterator.Value();
+					Handle(TNaming_NamedShape) occtChildShape;
+					Handle(TDataStd_Integer) occtRelationshipType;
+					bool result1 = childLabel.FindAttribute(TNaming_NamedShape::GetID(), occtChildShape);
+					bool result2 = childLabel.FindAttribute(TDataStd_Integer::GetID(), occtRelationshipType);
+					int result3 = occtRelationshipType->Get();
+					if (result1 &&
+						result2 &&
+						occtRelationshipType->Get() == REL_CONSTITUENT &&
+						occtChildShape->Get().IsSame(*kIterator))
+					{
+						pMemberTopology->SetOcctLabel(childLabel);
+					}
 				}
 			}
 

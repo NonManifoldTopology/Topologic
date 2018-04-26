@@ -131,6 +131,8 @@ namespace TopoLogic
 		/// <returns></returns>
 		Vertex^ CenterOfMass();
 
+		bool DoesContain(Vertex^ vertex);
+
 		property Object^ Geometry
 		{
 			/// <summary>

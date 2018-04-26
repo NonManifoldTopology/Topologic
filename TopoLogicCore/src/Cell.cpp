@@ -16,6 +16,7 @@
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepCheck_Shell.hxx>
 #include <BRepClass3d.hxx>
+#include <BRepClass3d_SolidClassifier.hxx>
 #include <BRepGProp.hxx>
 #include <BRepPrimAPI_MakeBox.hxx>
 #include <GProp_GProps.hxx>
@@ -155,38 +156,43 @@ namespace TopoLogicCore
 		std::shared_ptr<Topology> pUpcastCell = TopologicalQuery::Upcast<Topology>(pCell);
 		GlobalCluster::GetInstance().GetCluster()->AddChildLabel(pUpcastCell, REL_CONSTITUENT);
 
-		// Do the labeling.
-		// Iterate through the shell's child labels.
-		for (TDF_ChildIterator occtShellLabelIterator(kpShell->GetOcctLabel()); occtShellLabelIterator.More(); occtShellLabelIterator.Next())
-		{
-			TDF_Label shellFaceLabel = occtShellLabelIterator.Value();
-			Handle(TNaming_NamedShape) occtFaceAttribute;
-			bool result = shellFaceLabel.FindAttribute(TNaming_NamedShape::GetID(), occtFaceAttribute);
-			TopoDS_Shape occtShellFace = occtFaceAttribute->Get();
-			if (occtMakeSolid.IsDeleted(occtShellFace))
-			{
-				continue;
-			}
-			
-			// Create a cell face from a shell face, they are essentially the same.
-			// Add this face to the cell
-			std::shared_ptr<Topology> cellFace = Topology::ByOcctShape(occtShellFace);
-			pCell->AddChildLabel(cellFace, REL_CONSTITUENT);
-			int numChildren = cellFace->GetOcctLabel().NbChildren();
+		// HACK: add the v1 contents to the current cell faces.
 
-			// Transfer the aperture attributes from the shell's face to the cell's face
-			for (TDF_ChildIterator occtLabelIterator(shellFaceLabel); occtLabelIterator.More(); occtLabelIterator.Next())
+		if (!kpShell->GetOcctLabel().IsNull())
+		{
+			// Do the labeling.
+			// Iterate through the shell's child labels.
+			for (TDF_ChildIterator occtShellLabelIterator(kpShell->GetOcctLabel()); occtShellLabelIterator.More(); occtShellLabelIterator.Next())
 			{
-				TDF_Label apertureLabel = occtLabelIterator.Value();
-				Handle(TNaming_NamedShape) occtApertureAttribute;
-				Handle(TDataStd_Integer) occtRelationshipType;
-				if (apertureLabel.FindAttribute(TNaming_NamedShape::GetID(), occtApertureAttribute) &&
-					apertureLabel.FindAttribute(TDataStd_Integer::GetID(), occtRelationshipType) &&
-					occtRelationshipType->Get() == REL_APERTURE)
+				TDF_Label shellFaceLabel = occtShellLabelIterator.Value();
+				Handle(TNaming_NamedShape) occtFaceAttribute;
+				bool result = shellFaceLabel.FindAttribute(TNaming_NamedShape::GetID(), occtFaceAttribute);
+				TopoDS_Shape occtShellFace = occtFaceAttribute->Get();
+				if (occtMakeSolid.IsDeleted(occtShellFace))
 				{
-					TopoDS_Shape occtAperture = occtApertureAttribute->Get();
-					std::shared_ptr<Topology> aperture = Topology::ByOcctShape(occtAperture);
-					cellFace->AddChildLabel(aperture, REL_APERTURE);
+					continue;
+				}
+
+				// Create a cell face from a shell face, they are essentially the same.
+				// Add this face to the cell
+				std::shared_ptr<Topology> cellFace = Topology::ByOcctShape(occtShellFace);
+				pCell->AddChildLabel(cellFace, REL_CONSTITUENT);
+				int numChildren = cellFace->GetOcctLabel().NbChildren();
+
+				// Transfer the aperture attributes from the shell's face to the cell's face
+				for (TDF_ChildIterator occtLabelIterator(shellFaceLabel); occtLabelIterator.More(); occtLabelIterator.Next())
+				{
+					TDF_Label apertureLabel = occtLabelIterator.Value();
+					Handle(TNaming_NamedShape) occtApertureAttribute;
+					Handle(TDataStd_Integer) occtRelationshipType;
+					if (apertureLabel.FindAttribute(TNaming_NamedShape::GetID(), occtApertureAttribute) &&
+						apertureLabel.FindAttribute(TDataStd_Integer::GetID(), occtRelationshipType) &&
+						occtRelationshipType->Get() == REL_APERTURE)
+					{
+						TopoDS_Shape occtAperture = occtApertureAttribute->Get();
+						std::shared_ptr<Topology> aperture = Topology::ByOcctShape(occtAperture);
+						cellFace->AddChildLabel(aperture, REL_APERTURE);
+					}
 				}
 			}
 		}
@@ -337,6 +343,13 @@ namespace TopoLogicCore
 	{
 		TopoDS_Shell occtOuterShell = BRepClass3d::OuterShell(TopoDS::Solid(*GetOcctShape()));
 		return std::make_shared<Shell>(occtOuterShell);
+	}
+
+	bool Cell::DoesContain(const std::shared_ptr<Vertex>& kpVertex) const
+	{
+		BRepClass3d_SolidClassifier occtSolidClassifier(*GetOcctShape(), kpVertex->Point()->Pnt(), Precision::Confusion());
+		TopAbs_State occtState = occtSolidClassifier.State();
+		return (occtState == TopAbs_IN || occtState == TopAbs_ON);
 	}
 
 	void Cell::InnerBoundaries(std::list<std::shared_ptr<Shell>>& rShells) const
