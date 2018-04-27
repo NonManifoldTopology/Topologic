@@ -71,15 +71,15 @@ namespace TopoLogicCore
 		// (Added during initialisation.) The free flag is therefore at this point false.
 		// To add a new member to this cluster, unfreeze it first/set the flag to true.
 		std::shared_ptr<Cluster> pGlobalCluster = GlobalCluster::GetInstance().GetCluster();
-		if (GetOcctShape()->IsNotEqual(*pGlobalCluster->GetOcctShape()))
+		if (GetOcctShape().IsNotEqual(pGlobalCluster->GetOcctShape()))
 		{
-			GetOcctShape()->Free(true);
+			GetOcctShape().Free(true);
 		}
 
 		// Do the addition
 		bool returnValue = true;
 		try {
-			m_occtBuilder.Add(*GetOcctShape(), *kpkTopology->GetOcctShape());
+			m_occtBuilder.Add(GetOcctShape(), kpkTopology->GetOcctShape());
 		}
 		catch (TopoDS_UnCompatibleShapes &)
 		{
@@ -91,9 +91,9 @@ namespace TopoLogicCore
 		}
 
 		// Then reset the free flag to false, i.e. freeze the cluster.
-		if (GetOcctShape()->IsNotEqual(*pGlobalCluster->GetOcctShape()))
+		if (GetOcctShape().IsNotEqual(pGlobalCluster->GetOcctShape()))
 		{
-			GetOcctShape()->Free(false);
+			GetOcctShape().Free(false);
 		}
 
 		return returnValue;
@@ -105,13 +105,13 @@ namespace TopoLogicCore
 		// (Added during initialisation.) The free flag is therefore at this point false.
 		// To remove a new member to this cluster, unfreeze it first/set the flag to true.
 		std::shared_ptr<Cluster> pGlobalCluster = GlobalCluster::GetInstance().GetCluster();
-		if (GetOcctShape()->IsNotEqual(*pGlobalCluster->GetOcctShape()))
+		if (GetOcctShape().IsNotEqual(pGlobalCluster->GetOcctShape()))
 		{
-			GetOcctShape()->Free(true);
+			GetOcctShape().Free(true);
 		}
 
 		try {
-			m_occtBuilder.Remove(*GetOcctShape(), *kpkTopology->GetOcctShape());
+			m_occtBuilder.Remove(GetOcctShape(), kpkTopology->GetOcctShape());
 
 			return true;
 		}
@@ -125,21 +125,42 @@ namespace TopoLogicCore
 		}
 
 		// Then reset the free flag to false, i.e. freeze the cluster.
-		if (GetOcctShape()->IsNotEqual(*pGlobalCluster->GetOcctShape()))
+		if (GetOcctShape().IsNotEqual(pGlobalCluster->GetOcctShape()))
 		{
-			GetOcctShape()->Free(false);
+			GetOcctShape().Free(false);
 		}
 	}
 
-	std::shared_ptr<TopoDS_Shape> Cluster::GetOcctShape() const
+	TopoDS_Shape& Cluster::GetOcctShape()
 	{
-		assert(m_pOcctCompound != nullptr && "Cluster::m_pOcctCompound is null.");
-		if (m_pOcctCompound == nullptr)
+		return GetOcctCompound();
+	}
+
+	const TopoDS_Shape& Cluster::GetOcctShape() const
+	{
+		return GetOcctCompound();
+	}
+
+	TopoDS_Compound& Cluster::GetOcctCompound()
+	{
+		assert(m_occtCompound.IsNull() && "Cluster::m_occtCompound is null.");
+		if (m_occtCompound.IsNull())
 		{
-			throw std::exception("Cluster::m_pOcctCompound is null.");
+			throw std::exception("Cluster::m_occtCompound is null.");
 		}
 
-		return m_pOcctCompound;
+		return m_occtCompound;
+	}
+
+	const TopoDS_Compound& Cluster::GetOcctCompound() const
+	{
+		assert(m_occtCompound.IsNull() && "Cluster::m_occtCompound is null.");
+		if (m_occtCompound.IsNull())
+		{
+			throw std::exception("Cluster::m_occtCompound is null.");
+		}
+
+		return m_occtCompound;
 	}
 
 	void Cluster::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
@@ -149,10 +170,10 @@ namespace TopoLogicCore
 
 	Cluster::Cluster(const bool kAddToGlobalCluster)
 		: Topology(3)
-		, m_pOcctCompound(new TopoDS_Compound())
+		, m_occtCompound(TopoDS_Compound())
 		, m_occtBuilder(TopoDS_Builder())
 	{
-		m_occtBuilder.MakeCompound(*m_pOcctCompound);
+		m_occtBuilder.MakeCompound(m_occtCompound);
 
 		if (kAddToGlobalCluster)
 		{
@@ -162,7 +183,7 @@ namespace TopoLogicCore
 
 	Cluster::Cluster(const TopoDS_Compound& rkOcctCompound, const bool kAddToGlobalCluster)
 		: Topology(3)
-		, m_pOcctCompound(new TopoDS_Compound(rkOcctCompound))
+		, m_occtCompound(rkOcctCompound)
 	{
 		// This constructor does not initialise the compound with MakeCompound.
 
@@ -214,10 +235,10 @@ namespace TopoLogicCore
 
 	bool Cluster::IsInside(Topology const * const kpkTopology) const
 	{
-		const TopoDS_Shape& rkOcctAddedShape = *kpkTopology->GetOcctShape();
+		const TopoDS_Shape& rkOcctAddedShape = kpkTopology->GetOcctShape();
 		TopTools_MapOfShape occtShapes;
 		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(*GetOcctShape(), rkOcctAddedShape.ShapeType()); occtExplorer.More(); occtExplorer.Next())
+		for (occtExplorer.Init(GetOcctShape(), rkOcctAddedShape.ShapeType()); occtExplorer.More(); occtExplorer.Next())
 		{
 			const TopoDS_Shape& rkOcctCurrent = occtExplorer.Current();
 			if (rkOcctAddedShape.IsSame(rkOcctCurrent))

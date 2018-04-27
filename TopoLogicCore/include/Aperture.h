@@ -97,7 +97,13 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		virtual std::shared_ptr<TopoDS_Shape> GetOcctShape() const;
+		virtual TopoDS_Shape& GetOcctShape();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual const TopoDS_Shape& GetOcctShape() const;
 
 		/// <summary>
 		/// 

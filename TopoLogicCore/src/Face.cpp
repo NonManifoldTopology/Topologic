@@ -6,7 +6,6 @@
 #include <Vertex.h>
 #include <Wire.h>
 
-#include <BRep_Builder.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepAlgoAPI_Section.hxx>
 #include <BRep_Tool.hxx>
@@ -31,13 +30,14 @@ namespace TopoLogicCore
 {
 	void Face::AdjacentFaces(std::list<std::shared_ptr<Face>>& rFaces) const
 	{
-		// Iterate through the edges and find the incident faces which are not this face.
+		// Get the map of edge->faces
 		TopTools_IndexedDataMapOfShapeListOfShape occtEdgeFaceMap;
-		TopExp::MapShapesAndUniqueAncestors(*GlobalCluster::GetInstance().GetCluster()->GetOcctShape(), TopAbs_EDGE, TopAbs_FACE, occtEdgeFaceMap);
+		TopExp::MapShapesAndUniqueAncestors(GlobalCluster::GetInstance().GetCluster()->GetOcctShape(), TopAbs_EDGE, TopAbs_FACE, occtEdgeFaceMap);
 
+		// Get the wires of this face
 		TopTools_MapOfShape occtWires;
 		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(*GetOcctShape(), TopAbs_WIRE); occtExplorer.More(); occtExplorer.Next())
+		for (occtExplorer.Init(GetOcctShape(), TopAbs_WIRE); occtExplorer.More(); occtExplorer.Next())
 		{
 			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
 			if (!occtWires.Contains(occtCurrent))
@@ -46,15 +46,15 @@ namespace TopoLogicCore
 			}
 		}
 
-		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtWires.cbegin();
-			kOcctShapeIterator != occtWires.cend();
-			kOcctShapeIterator++)
+		for(TopTools_MapIteratorOfMapOfShape kOcctMapIterator(occtWires);
+			kOcctMapIterator.More();
+			kOcctMapIterator.Next())
 		{
 			BRepTools_WireExplorer occtWireExplorer;
-			for (occtWireExplorer.Init(TopoDS::Wire(*kOcctShapeIterator)); occtWireExplorer.More(); occtWireExplorer.Next())
+			for (occtWireExplorer.Init(TopoDS::Wire(kOcctMapIterator.Value())); occtWireExplorer.More(); occtWireExplorer.Next())
 			{
 				TopoDS_Face occtFace;
-				bool faceFound = TopOpeBRepBuild_Tools::GetAdjacentFace(*GetOcctShape(), occtWireExplorer.Current(), occtEdgeFaceMap, occtFace);
+				bool faceFound = TopOpeBRepBuild_Tools::GetAdjacentFace(GetOcctShape(), occtWireExplorer.Current(), occtEdgeFaceMap, occtFace);
 				if (faceFound)
 				{
 					rFaces.push_back(std::make_shared<Face>(occtFace));
@@ -91,20 +91,20 @@ namespace TopoLogicCore
 	double Face::Area() const
 	{
 		GProp_GProps occtShapeProperties;
-		BRepGProp::SurfaceProperties(*GetOcctShape(), occtShapeProperties);
+		BRepGProp::SurfaceProperties(GetOcctShape(), occtShapeProperties);
 		return occtShapeProperties.Mass();
 	}
 
 	std::shared_ptr<Face> Face::ByClosedWire(const std::shared_ptr<Wire>& pkWire)
 	{
-		BRepBuilderAPI_MakeFace occtMakeFace(TopoDS::Wire(*pkWire->GetOcctShape()));
+		BRepBuilderAPI_MakeFace occtMakeFace(pkWire->GetOcctWire());
 		if (occtMakeFace.Error() != BRepBuilderAPI_FaceDone)
 		{
-			throw new std::exception(GetOcctMakeFaceErrorMessage(occtMakeFace).c_str());
+			Throw(occtMakeFace);
 		}
 
 		std::shared_ptr<Face> pFace = std::make_shared<Face>(occtMakeFace);
-		pkWire->AddIngredientTo(pFace);
+		//pkWire->AddIngredientTo(pFace);
 		return pFace;
 	}
 
@@ -114,15 +114,16 @@ namespace TopoLogicCore
 		{
 			throw std::exception("No edge is passed.");
 		}
-
-		std::shared_ptr<Face> pFace = ByClosedWire(Wire::ByEdges(rkEdges));
-		for (std::list<std::shared_ptr<Edge>>::const_iterator kEdgeIterator = rkEdges.begin();
+		
+		std::shared_ptr<Wire> pWire = Wire::ByEdges(rkEdges);
+		std::shared_ptr<Face> pFace = ByClosedWire(pWire);
+		/*for (std::list<std::shared_ptr<Edge>>::const_iterator kEdgeIterator = rkEdges.begin();
 			kEdgeIterator != rkEdges.end();
 			kEdgeIterator++)
 		{
 			const std::shared_ptr<Edge>& kpEdge = *kEdgeIterator;
 			kpEdge->AddIngredientTo(pFace);
-		}
+		}*/
 
 		return pFace;
 	}
@@ -132,12 +133,12 @@ namespace TopoLogicCore
 		BRepBuilderAPI_MakeFace occtMakeFace;
 		try {
 			occtMakeFace = BRepBuilderAPI_MakeFace(pOcctSurface, Precision::Confusion());
-			return std::make_shared<Face>(occtMakeFace);
 		}
 		catch (StdFail_NotDone&)
 		{
-			throw new std::exception(GetOcctMakeFaceErrorMessage(occtMakeFace).c_str());
+			Throw(occtMakeFace);
 		}
+		return std::make_shared<Face>(occtMakeFace);
 	}
 
 	std::shared_ptr<Face> Face::BySurface(
@@ -168,7 +169,7 @@ namespace TopoLogicCore
 				kIsUPeriodic, kIsVPeriodic);
 			if (kpOuterWire != nullptr)
 			{
-				occtMakeFace = BRepBuilderAPI_MakeFace(pOcctBSplineSurface, TopoDS::Wire(kpOuterWire->GetOcctShape()->Reversed()), true);
+				occtMakeFace = BRepBuilderAPI_MakeFace(pOcctBSplineSurface, TopoDS::Wire(kpOuterWire->GetOcctShape().Reversed()), true);
 			}
 			else
 			{
@@ -249,37 +250,35 @@ namespace TopoLogicCore
 		}
 		catch (const StdFail_NotDone&) // from BRepBuilderAPI_MakeEdge
 		{
-			throw std::exception(GetOcctMakeFaceErrorMessage(occtMakeFace).c_str());
+			Throw(occtMakeFace);
 		}
 
-		for (std::list<std::shared_ptr<Wire>>::const_iterator kInnerWireIterator = rkInnerWires.begin();
-			kInnerWireIterator != rkInnerWires.end();
-			kInnerWireIterator++)
+		for (const std::shared_ptr<Wire>& kInnerWire : rkInnerWires)
 		{
-			occtMakeFace.Add(TopoDS::Wire(*(*kInnerWireIterator)->GetOcctShape()));
+			occtMakeFace.Add(kInnerWire->GetOcctWire());
 		}
 
 		std::shared_ptr<Face> pFace = std::make_shared<Face>(occtMakeFace);
 
-		for (std::list<std::shared_ptr<Wire>>::const_iterator kInnerWireIterator = rkInnerWires.begin();
+		/*for (std::list<std::shared_ptr<Wire>>::const_iterator kInnerWireIterator = rkInnerWires.begin();
 			kInnerWireIterator != rkInnerWires.end();
 			kInnerWireIterator++)
 		{
 			const std::shared_ptr<Wire>& pkWire = *kInnerWireIterator;
 			pkWire->AddIngredientTo(pFace);
-		}
+		}*/
 
-		if(kpOuterWire != nullptr)
+		/*if(kpOuterWire != nullptr)
 		{
 			kpOuterWire->AddIngredientTo(pFace);
-		}
+		}*/
 		return pFace;
 	}
 
 	void Face::SharedEdges(const std::shared_ptr<Face>& kpAnotherFace, std::list<std::shared_ptr<Edge>>& rEdges) const
 	{
 		// BRepAlgoAPI_Section only returns vertices and edges, so use it to get the shared edges.
-		const TopoDS_Shape& rkOcctShape = BRepAlgoAPI_Section(*GetOcctShape(), *kpAnotherFace->GetOcctShape()).Shape();
+		const TopoDS_Shape& rkOcctShape = BRepAlgoAPI_Section(GetOcctShape(), kpAnotherFace->GetOcctShape()).Shape();
 
 		TopTools_MapOfShape occtEdges;
 		TopExp_Explorer occtExplorer;
@@ -292,22 +291,23 @@ namespace TopoLogicCore
 			}
 		}
 
-		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtEdges.cbegin();
-			kOcctShapeIterator != occtEdges.cend();
-			kOcctShapeIterator++)
+
+		for (TopTools_MapIteratorOfMapOfShape kOcctMapIterator(occtEdges);
+			kOcctMapIterator.More();
+			kOcctMapIterator.Next())
 		{
-			rEdges.push_back(std::make_shared<Edge>(TopoDS::Edge(*kOcctShapeIterator)));
+			rEdges.push_back(std::make_shared<Edge>(TopoDS::Edge(kOcctMapIterator.Value())));
 		}
 	}
 
 	void Face::SharedVertices(const std::shared_ptr<Face>& kpAnotherFace, std::list<std::shared_ptr<Vertex>>& rVertices) const
 	{
 		// BRepAlgoAPI_Section only returns vertices and edges, so use it to get the shared vertices.
-		const TopoDS_Shape& rkOcctShape = BRepAlgoAPI_Section(*GetOcctShape(), *kpAnotherFace->GetOcctShape()).Shape();
+		const TopoDS_Shape& rkOcctShape = BRepAlgoAPI_Section(GetOcctShape(), kpAnotherFace->GetOcctShape()).Shape();
 
 		TopTools_MapOfShape occtVertices;
 		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(*GetOcctShape(), TopAbs_VERTEX); occtExplorer.More(); occtExplorer.Next())
+		for (occtExplorer.Init(GetOcctShape(), TopAbs_VERTEX); occtExplorer.More(); occtExplorer.Next())
 		{
 			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
 			if (!occtVertices.Contains(occtCurrent))
@@ -316,23 +316,23 @@ namespace TopoLogicCore
 			}
 		}
 
-		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtVertices.cbegin();
-			kOcctShapeIterator != occtVertices.cend();
-			kOcctShapeIterator++)
+		for (TopTools_MapIteratorOfMapOfShape kOcctMapIterator(occtVertices);
+			kOcctMapIterator.More();
+			kOcctMapIterator.Next())
 		{
-			rVertices.push_back(std::make_shared<Vertex>(TopoDS::Vertex(*kOcctShapeIterator)));
+			rVertices.push_back(std::make_shared<Vertex>(TopoDS::Vertex(kOcctMapIterator.Value())));
 		}
 	}
 
 	std::shared_ptr<Wire> Face::OuterBoundary() const
 	{
-		TopoDS_Wire occtOuterWire = ShapeAnalysis::OuterWire(TopoDS::Face(*GetOcctShape()));
+		TopoDS_Wire occtOuterWire = ShapeAnalysis::OuterWire(GetOcctFace());
 		return std::make_shared<Wire>(occtOuterWire);
 	}
 
 	void Face::InnerBoundaries(std::list<std::shared_ptr<Wire>>& rInnerBoundaries) const
 	{
-		const TopoDS_Face& rkFace = TopoDS::Face(*GetOcctShape());
+		const TopoDS_Face& rkFace = GetOcctFace();
 		TopoDS_Wire occtOuterWire = ShapeAnalysis::OuterWire(rkFace);
 		TopoDS_Iterator occtExplorer(rkFace, Standard_False);
 		while (occtExplorer.More())
@@ -377,9 +377,13 @@ namespace TopoLogicCore
 	std::shared_ptr<Face> Face::Trim(const std::shared_ptr<Wire>& kpWire) const
 	{
 		Handle(Geom_Surface) pOcctSurface = Surface();
-		const TopoDS_Wire& rkWire = TopoDS::Wire(*kpWire->GetOcctShape());
+		const TopoDS_Wire& rkWire = kpWire->GetOcctWire();
 
 		BRepBuilderAPI_MakeFace occtTrimMakeFace(pOcctSurface, rkWire);
+		if (occtTrimMakeFace.Error() != BRepBuilderAPI_FaceDone)
+		{
+			Throw(occtTrimMakeFace);
+		}
 		return TopologicalQuery::Downcast<Face>(Topology::ByOcctShape(occtTrimMakeFace.Shape()));
 	}
 
@@ -388,27 +392,47 @@ namespace TopoLogicCore
 		rOcctGeometries.push_back(Surface());
 	}
 
-	std::shared_ptr<TopoDS_Shape> Face::GetOcctShape() const
+	TopoDS_Shape& Face::GetOcctShape()
 	{
-		assert(m_pOcctFace != nullptr && "Face::m_pOcctFace is null.");
-		if (m_pOcctFace == nullptr)
+		return GetOcctFace();
+	}
+
+	const TopoDS_Shape& Face::GetOcctShape() const
+	{
+		return GetOcctFace();
+	}
+
+	TopoDS_Face& Face::GetOcctFace()
+	{
+		assert(m_occtFace.IsNull() && "Face::m_occtFace is null.");
+		if (m_occtFace.IsNull())
 		{
-			throw std::exception("Face::m_pOcctFace is null.");
+			throw std::exception("Face::m_occtFace is null.");
 		}
 
-		return m_pOcctFace;
+		return m_occtFace;
+	}
+
+	const TopoDS_Face& Face::GetOcctFace() const
+	{
+		assert(m_occtFace.IsNull() && "Face::m_occtFace is null.");
+		if (m_occtFace.IsNull())
+		{
+			throw std::exception("Face::m_occtFace is null.");
+		}
+
+		return m_occtFace;
 	}
 
 	Face::Face(const TopoDS_Face& rkOcctFace)
 		: Topology(2)
-		, m_pOcctFace(nullptr)
+		, m_occtFace(rkOcctFace)
 	{
 		try{
 			/*ShapeFix_Face occtShapeFix(rkOcctFace);
 			occtShapeFix.Perform();
-			m_pOcctFace = std::make_shared<TopoDS_Face>(occtShapeFix.Face());*/
+			m_occtFace = std::make_shared<TopoDS_Face>(occtShapeFix.Face());*/
 
-			m_pOcctFace = std::make_shared<TopoDS_Face>(rkOcctFace);
 			GlobalCluster::GetInstance().Add(this);
 		}
 		catch (...)
@@ -424,11 +448,11 @@ namespace TopoLogicCore
 
 	Handle(Geom_Surface) Face::Surface() const
 	{
-		TopoDS_Face occtFace = TopoDS::Face(*GetOcctShape());
+		TopoDS_Face occtFace = GetOcctFace();
 		return BRep_Tool::Surface(occtFace);
 	}
 
-	std::string Face::GetOcctMakeFaceErrorMessage(const BRepBuilderAPI_MakeFace& rkOcctMakeFace)
+	void Face::Throw(const BRepBuilderAPI_MakeFace& rkOcctMakeFace)
 	{
 		// The error messages are based on those in the OCCT documentation.
 		// https://www.opencascade.com/doc/occt-7.2.0/refman/html/_b_rep_builder_a_p_i___face_error_8hxx.html#ac7a498a52546f7535a3f73f6bab1599a
@@ -436,26 +460,26 @@ namespace TopoLogicCore
 		switch (rkOcctMakeFace.Error())
 		{
 		case BRepBuilderAPI_NoFace:
-			return std::string("No initialization of the algorithm; only an empty constructor was used.");
+			throw std::exception("No initialization of the algorithm; only an empty constructor was used.");
 
 		case BRepBuilderAPI_NotPlanar:
-			return std::string("No surface was given and the wire was not planar.");
+			throw std::exception("No surface was given and the wire was not planar.");
 
 		case BRepBuilderAPI_CurveProjectionFailed:
-			return std::string("Curve projection failed.");
+			throw std::exception("Curve projection failed.");
 
 		case BRepBuilderAPI_ParametersOutOfRange:
-			return std::string("The parameters given to limit the surface are out of its bounds.");
+			throw std::exception("The parameters given to limit the surface are out of its bounds.");
 
 		default: // i.e. BRepBuilderAPI_FaceDone 
-			return std::string("A face was successfully created.");
+			throw std::exception("A face was successfully created.");
 		}
 	}
 
 	void Face::NormalizeUV(const double kNonNormalizedU, const double kNonNormalizedV, double& rNormalizedU, double& rNormalizedV) const
 	{
 		double occtUMin = 0.0, occtUMax = 0.0, occtVMin = 0.0, occtVMax = 0.0;
-		ShapeFix_Face occtShapeFix(TopoDS::Face(*GetOcctShape()));
+		ShapeFix_Face occtShapeFix(GetOcctFace());
 		occtShapeFix.Perform();
 		ShapeAnalysis::GetFaceUVBounds(occtShapeFix.Face(), occtUMin, occtUMax, occtVMin, occtVMax);
 		double occtDU = occtUMax - occtUMin;
@@ -472,7 +496,7 @@ namespace TopoLogicCore
 	void Face::NonNormalizeUV(const double kNormalizedU, const double kNormalizedV, double& rNonNormalizedU, double& rNonNormalizedV) const
 	{
 		double occtUMin = 0.0, occtUMax = 0.0, occtVMin = 0.0, occtVMax = 0.0;
-		ShapeFix_Face occtShapeFix(TopoDS::Face(*GetOcctShape()));
+		ShapeFix_Face occtShapeFix(GetOcctFace());
 		occtShapeFix.Perform();
 		ShapeAnalysis::GetFaceUVBounds(occtShapeFix.Face(), occtUMin, occtUMax, occtVMin, occtVMax);
 		double occtDU = occtUMax - occtUMin;

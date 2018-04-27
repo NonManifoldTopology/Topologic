@@ -7,7 +7,7 @@
 #include <Face.h>
 #include <Aperture.h>
 
-#include <BOPAlgo_Splitter.hxx>
+//#include <BOPAlgo_Splitter.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
@@ -78,7 +78,7 @@ namespace TopoLogicCore
 
 	bool Shell::IsClosed() const
 	{
-		BRepCheck_Shell occtBrepCheckShell(TopoDS::Shell(*GetOcctShape()));
+		BRepCheck_Shell occtBrepCheckShell(TopoDS::Shell(GetOcctShape()));
 		return (occtBrepCheckShell.Closed() == BRepCheck_NoError);
 	}
 
@@ -95,12 +95,9 @@ namespace TopoLogicCore
 		}
 
 		BRepBuilderAPI_Sewing occtSewing;
-		for(std::list<std::shared_ptr<Face>>::const_iterator kFaceIterator = rkFaces.begin();
-			kFaceIterator != rkFaces.end();
-			kFaceIterator++)
+		for(const std::shared_ptr<Face>& kpFace : rkFaces)
 		{
-			const std::shared_ptr<Face>& kpFace = *kFaceIterator;
-			occtSewing.Add(*kpFace->GetOcctShape());
+			occtSewing.Add(kpFace->GetOcctShape());
 		}
 
 		occtSewing.Perform();
@@ -119,7 +116,7 @@ namespace TopoLogicCore
 
 		for (const std::shared_ptr<Face>& kShellFace : rkFaces)
 		{
-			const TopoDS_Shape& rkModifiedShape = occtSewing.Modified(*kShellFace->GetOcctShape());
+			const TopoDS_Shape& rkModifiedShape = occtSewing.Modified(kShellFace->GetOcctShape());
 			std::shared_ptr<Topology> pChildTopology = Topology::ByOcctShape(rkModifiedShape);
 			pShell->AddChildLabel(pChildTopology, REL_CONSTITUENT);
 
@@ -151,12 +148,8 @@ namespace TopoLogicCore
 	std::shared_ptr<Shell> Shell::ByVerticesFaceIndices(const std::vector<std::shared_ptr<Vertex>>& rkVertices, const std::list<std::list<int>>& rkFaceIndices)
 	{
 		std::list<std::shared_ptr<Face>> faces;
-		for(std::list<std::list<int>>::const_iterator kFaceIndexIterator = rkFaceIndices.begin();
-			kFaceIndexIterator != rkFaceIndices.end();
-			kFaceIndexIterator++)
+		for(const std::list<int>& rkVertexIndices : rkFaceIndices)
 		{
-			const std::list<int>& rkVertexIndices = *kFaceIndexIterator;
-
 			BRepBuilderAPI_MakeWire occtMakeWire;
 
 			std::list<int>::const_iterator kSecondFromLastVertexIterator = --rkVertexIndices.end();
@@ -171,13 +164,13 @@ namespace TopoLogicCore
 				int nextVertexIndex = *kNextVertexIterator;
 
 				occtMakeWire.Add(BRepBuilderAPI_MakeEdge(
-					TopoDS::Vertex(*rkVertices[vertexIndex]->GetOcctShape()),
-					TopoDS::Vertex(*rkVertices[nextVertexIndex]->GetOcctShape())
+					TopoDS::Vertex(rkVertices[vertexIndex]->GetOcctShape()),
+					TopoDS::Vertex(rkVertices[nextVertexIndex]->GetOcctShape())
 				));
 			}
 			occtMakeWire.Add(BRepBuilderAPI_MakeEdge(
-				TopoDS::Vertex(*rkVertices[*--rkVertexIndices.end()]->GetOcctShape()),
-				TopoDS::Vertex(*rkVertices[*rkVertexIndices.begin()]->GetOcctShape())
+				rkVertices[*--rkVertexIndices.end()]->GetOcctVertex(),
+				rkVertices[*rkVertexIndices.begin()]->GetOcctVertex()
 			));
 
 			TopoDS_Wire pOcctWire(occtMakeWire);
@@ -187,13 +180,13 @@ namespace TopoLogicCore
 		std::shared_ptr<Shell> pShell = ByFaces(faces);
 
 		// Only add the vertices; the faces are dealt with in ByFaces()
-		for (std::vector<std::shared_ptr<Vertex>>::const_iterator kVertexIterator = rkVertices.begin();
+		/*for (std::vector<std::shared_ptr<Vertex>>::const_iterator kVertexIterator = rkVertices.begin();
 			kVertexIterator != rkVertices.end();
 			kVertexIterator++)
 		{
 			const std::shared_ptr<Vertex>& kpVertex = *kVertexIterator;
 			kpVertex->AddIngredientTo(pShell);
-		}
+		}*/
 		return pShell;
 	}
 
@@ -396,7 +389,7 @@ namespace TopoLogicCore
 		// Subdivide the face in the UV space and find the points
 		Handle(Geom_Surface) pOcctWallSurface = kpFace->Surface();
 		double occtUMin = 0.0, occtUMax = 0.0, occtVMin = 0.0, occtVMax = 0.0;
-		ShapeAnalysis::GetFaceUVBounds(TopoDS::Face(*kpFace->GetOcctShape()), occtUMin, occtUMax, occtVMin, occtVMax);
+		ShapeAnalysis::GetFaceUVBounds(kpFace->GetOcctFace(), occtUMin, occtUMax, occtVMin, occtVMax);
 		double occtURange = occtUMax - occtUMin;
 		double occtVRange = occtVMax - occtVMin;
 		int numUPanels = (int) rkUValues.size() - 1;
@@ -1148,7 +1141,7 @@ namespace TopoLogicCore
 
 		TopTools_ListOfShape occtOutputFaces;
 		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(*pOutputShell->GetOcctShape(), TopAbs_FACE); occtExplorer.More(); occtExplorer.Next())
+		for (occtExplorer.Init(pOutputShell->GetOcctShape(), TopAbs_FACE); occtExplorer.More(); occtExplorer.Next())
 		{
 			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
 			if (!occtOutputFaces.Contains(occtCurrent))
@@ -1196,21 +1189,42 @@ namespace TopoLogicCore
 		BRepOffsetAPI_ThruSections occtLoft;
 		for(const std::shared_ptr<Wire>& kpWire : rkWires)
 		{
-			occtLoft.AddWire(TopoDS::Wire(*kpWire->GetOcctShape()));
+			occtLoft.AddWire(kpWire->GetOcctWire());
 		};
 		occtLoft.Build();
 		return std::make_shared<Shell>(TopoDS::Shell(occtLoft.Shape()));
 	}
 
-	std::shared_ptr<TopoDS_Shape> Shell::GetOcctShape() const
+	TopoDS_Shape& Shell::GetOcctShape()
 	{
-		assert(m_pOcctShell != nullptr && "Shell::m_pOcctShell is null.");
-		if (m_pOcctShell == nullptr)
+		return GetOcctShell();
+	}
+
+	const TopoDS_Shape& Shell::GetOcctShape() const
+	{
+		return GetOcctShell();
+	}
+
+	TopoDS_Shell& Shell::GetOcctShell()
+	{
+		assert(m_occtShell.IsNull() && "Shell::m_occtShell is null.");
+		if (m_occtShell.IsNull())
 		{
-			throw std::exception("Shell::m_pOcctShell is null.");
+			throw std::exception("Shell::m_occtShell is null.");
 		}
 
-		return m_pOcctShell;
+		return m_occtShell;
+	}
+
+	const TopoDS_Shell& Shell::GetOcctShell() const
+	{
+		assert(m_occtShell.IsNull() && "Shell::m_occtShell is null.");
+		if (m_occtShell.IsNull())
+		{
+			throw std::exception("Shell::m_occtShell is null.");
+		}
+
+		return m_occtShell;
 	}
 
 	void Shell::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
@@ -1229,9 +1243,8 @@ namespace TopoLogicCore
 
 	Shell::Shell(const TopoDS_Shell& rkOcctShell)
 		: Topology(2)
-		, m_pOcctShell(nullptr)
+		, m_occtShell(rkOcctShell)
 	{
-		m_pOcctShell = std::make_shared<TopoDS_Shell>(rkOcctShell);
 		GlobalCluster::GetInstance().Add(this);
 	}
 

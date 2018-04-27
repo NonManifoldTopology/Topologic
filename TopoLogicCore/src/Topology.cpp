@@ -91,7 +91,7 @@ namespace TopoLogicCore
 	{
 		TDF_Label occtChildLabel = TDF_TagSource::NewChild(GetOcctLabel());
 		TNaming_Builder cellAttributeBuilder(occtChildLabel);
-		cellAttributeBuilder.Generated(*pTopology->GetOcctShape());
+		cellAttributeBuilder.Generated(pTopology->GetOcctShape());
 		TDataStd_Integer::Set(occtChildLabel, kRelationshipType);
 		pTopology->SetOcctLabel(occtChildLabel);
 	}
@@ -211,7 +211,7 @@ namespace TopoLogicCore
 			std::list<TopoDS_Vertex> occtVertices;
 			for (int vertexIndex : rkVertex1DIndices)
 			{
-				occtVertices.push_back(TopoDS::Vertex(*rkVertices[vertexIndex]->GetOcctShape()));
+				occtVertices.push_back(rkVertices[vertexIndex]->GetOcctVertex());
 			}
 
 			if (occtVertices.size() > 2)
@@ -501,7 +501,7 @@ namespace TopoLogicCore
 
 	bool Topology::SaveToBrep(const std::string & rkPath) const
 	{
-		return BRepTools::Write(*GetOcctShape(), rkPath.c_str());;
+		return BRepTools::Write(GetOcctShape(), rkPath.c_str());;
 	}
 
 	std::shared_ptr<Topology> Topology::LoadFromBrep(const std::string & rkPath)
@@ -618,7 +618,7 @@ namespace TopoLogicCore
 
 	std::string Topology::Analyze()
 	{
-		return Analyze(*GetOcctShape(), 0);
+		return Analyze(GetOcctShape(), 0);
 	}
 
 	void Topology::BooleanImages(
@@ -706,7 +706,7 @@ namespace TopoLogicCore
 				kCellIterator++)
 			{
 				Handle(ShapeFix_Shape) sfs = new ShapeFix_Shape();
-				sfs->Init(*(*kCellIterator)->GetOcctShape());
+				sfs->Init((*kCellIterator)->GetOcctShape());
 				sfs->SetPrecision(Precision::Confusion());
 				sfs->Perform();
 				occtCellsBuildersOperandsA.Append(sfs->Shape());
@@ -716,7 +716,7 @@ namespace TopoLogicCore
 		else
 		{
 			Handle(ShapeFix_Shape) sfs = new ShapeFix_Shape();
-			sfs->Init(*GetOcctShape());
+			sfs->Init(GetOcctShape());
 			sfs->SetPrecision(Precision::Confusion());
 			sfs->Perform();
 			occtCellsBuildersOperandsA.Append(sfs->Shape());
@@ -734,7 +734,7 @@ namespace TopoLogicCore
 				kCellIterator++)
 			{
 				Handle(ShapeFix_Shape) sfs = new ShapeFix_Shape();
-				sfs->Init(*(*kCellIterator)->GetOcctShape());
+				sfs->Init((*kCellIterator)->GetOcctShape());
 				sfs->SetPrecision(Precision::Confusion());
 				sfs->Perform();
 				occtCellsBuildersOperandsB.Append(sfs->Shape());
@@ -744,7 +744,7 @@ namespace TopoLogicCore
 		else
 		{
 			Handle(ShapeFix_Shape) sfs = new ShapeFix_Shape();
-			sfs->Init(*kpOtherTopology->GetOcctShape());
+			sfs->Init(kpOtherTopology->GetOcctShape());
 			sfs->SetPrecision(Precision::Confusion());
 			sfs->Perform();
 			occtCellsBuildersOperandsB.Append(sfs->Shape());
@@ -1000,7 +1000,7 @@ namespace TopoLogicCore
 				kCellIterator++)
 			{
 				Handle(ShapeFix_Shape) sfs = new ShapeFix_Shape();
-				sfs->Init(*(*kCellIterator)->GetOcctShape());
+				sfs->Init((*kCellIterator)->GetOcctShape());
 				sfs->SetPrecision(Precision::Confusion());
 				sfs->Perform();
 				occtCellsBuildersOperandsA.Append(sfs->Shape());
@@ -1010,7 +1010,7 @@ namespace TopoLogicCore
 		else
 		{
 			Handle(ShapeFix_Shape) sfs = new ShapeFix_Shape();
-			sfs->Init(*GetOcctShape());
+			sfs->Init(GetOcctShape());
 			sfs->SetPrecision(Precision::Confusion());
 			sfs->Perform();
 			occtCellsBuildersOperandsA.Append(sfs->Shape());
@@ -1028,7 +1028,7 @@ namespace TopoLogicCore
 				kCellIterator++)
 			{
 				Handle(ShapeFix_Shape) sfs = new ShapeFix_Shape();
-				sfs->Init(*(*kCellIterator)->GetOcctShape());
+				sfs->Init((*kCellIterator)->GetOcctShape());
 				sfs->SetPrecision(Precision::Confusion());
 				sfs->Perform();
 				occtCellsBuildersOperandsB.Append(sfs->Shape());
@@ -1038,7 +1038,7 @@ namespace TopoLogicCore
 		else
 		{
 			Handle(ShapeFix_Shape) sfs = new ShapeFix_Shape();
-			sfs->Init(*kpOtherTopology->GetOcctShape());
+			sfs->Init(kpOtherTopology->GetOcctShape());
 			sfs->SetPrecision(Precision::Confusion());
 			sfs->Perform();
 			occtCellsBuildersOperandsB.Append(sfs->Shape());
@@ -1555,7 +1555,7 @@ namespace TopoLogicCore
 				kIterator++)
 			{
 				const std::shared_ptr<Topology>& pTopology = *kIterator;
-				AddUnionInternalStructure(*pTopology->GetOcctShape(), rUnionArguments);
+				AddUnionInternalStructure(pTopology->GetOcctShape(), rUnionArguments);
 			}
 		} else if (occtShapeType == TopAbs_COMPSOLID)
 		{
@@ -1566,7 +1566,7 @@ namespace TopoLogicCore
 				kFaceIterator++)
 			{
 				const std::shared_ptr<Face>& kpInternalFace = *kFaceIterator;
-				rUnionArguments.Append(*kpInternalFace->GetOcctShape());
+				rUnionArguments.Append(kpInternalFace->GetOcctShape());
 			}
 		}
 		else if (occtShapeType == TopAbs_SOLID)
@@ -1579,7 +1579,7 @@ namespace TopoLogicCore
 				kShellIterator++)
 			{
 				const std::shared_ptr<Shell>& kpInternalShell = *kShellIterator;
-				rUnionArguments.Append(*kpInternalShell->GetOcctShape());
+				rUnionArguments.Append(kpInternalShell->GetOcctShape());
 			}
 		}
 		else if (occtShapeType == TopAbs_SHELL)
@@ -1734,17 +1734,17 @@ namespace TopoLogicCore
 				kCellIterator != cells.end();
 				kCellIterator++)
 			{
-				TopoDS_Shape occtNewShape = FixBooleanOperandFace(*(*kCellIterator)->GetOcctShape(), rOcctMapFaceToFixedFaceA);
-				occtNewShape = FixBooleanOperandShell(*(*kCellIterator)->GetOcctShape());
-				occtNewShape = FixBooleanOperandCell(*(*kCellIterator)->GetOcctShape());
-				rOcctCellsBuildersOperandsA.Append(*(*kCellIterator)->GetOcctShape());
-				occtCellsBuildersArguments.Append(*(*kCellIterator)->GetOcctShape());
+				TopoDS_Shape occtNewShape = FixBooleanOperandFace((*kCellIterator)->GetOcctShape(), rOcctMapFaceToFixedFaceA);
+				occtNewShape = FixBooleanOperandShell((*kCellIterator)->GetOcctShape());
+				occtNewShape = FixBooleanOperandCell((*kCellIterator)->GetOcctShape());
+				rOcctCellsBuildersOperandsA.Append((*kCellIterator)->GetOcctShape());
+				occtCellsBuildersArguments.Append((*kCellIterator)->GetOcctShape());
 			}
 		}
 		else
 		{
 			BOPCol_DataMapOfShapeShape occtMapFaceToFixedFace;
-			TopoDS_Shape occtNewShape = FixBooleanOperandFace(*GetOcctShape(), rOcctMapFaceToFixedFaceA);
+			TopoDS_Shape occtNewShape = FixBooleanOperandFace(GetOcctShape(), rOcctMapFaceToFixedFaceA);
 			occtNewShape = FixBooleanOperandShell(occtNewShape);
 			occtNewShape = FixBooleanOperandCell(occtNewShape);
 			rOcctCellsBuildersOperandsA.Append(occtNewShape);
@@ -1760,18 +1760,18 @@ namespace TopoLogicCore
 				kCellIterator != cells.end();
 				kCellIterator++)
 			{
-				TopoDS_Shape occtNewShape = FixBooleanOperandFace(*(*kCellIterator)->GetOcctShape(), rOcctMapFaceToFixedFaceB);
-				occtNewShape = FixBooleanOperandShell(*(*kCellIterator)->GetOcctShape());
-				occtNewShape = FixBooleanOperandCell(*(*kCellIterator)->GetOcctShape());
-				rOcctCellsBuildersOperandsB.Append(*(*kCellIterator)->GetOcctShape());
-				occtCellsBuildersArguments.Append(*(*kCellIterator)->GetOcctShape());
+				TopoDS_Shape occtNewShape = FixBooleanOperandFace((*kCellIterator)->GetOcctShape(), rOcctMapFaceToFixedFaceB);
+				occtNewShape = FixBooleanOperandShell((*kCellIterator)->GetOcctShape());
+				occtNewShape = FixBooleanOperandCell((*kCellIterator)->GetOcctShape());
+				rOcctCellsBuildersOperandsB.Append((*kCellIterator)->GetOcctShape());
+				occtCellsBuildersArguments.Append((*kCellIterator)->GetOcctShape());
 			}
 		}
 		else
 		{
-			TopoDS_Shape occtNewShape = FixBooleanOperandFace(*kpOtherTopology->GetOcctShape(), rOcctMapFaceToFixedFaceB);
-			occtNewShape = FixBooleanOperandShell(*kpOtherTopology->GetOcctShape());
-			occtNewShape = FixBooleanOperandCell(*kpOtherTopology->GetOcctShape());
+			TopoDS_Shape occtNewShape = FixBooleanOperandFace(kpOtherTopology->GetOcctShape(), rOcctMapFaceToFixedFaceB);
+			occtNewShape = FixBooleanOperandShell(kpOtherTopology->GetOcctShape());
+			occtNewShape = FixBooleanOperandCell(kpOtherTopology->GetOcctShape());
 			rOcctCellsBuildersOperandsB.Append(occtNewShape);
 			occtCellsBuildersArguments.Append(occtNewShape);
 		}
@@ -1820,11 +1820,11 @@ namespace TopoLogicCore
 
 		BOPAlgo_CellsBuilder occtCellsBuilder2;
 		BOPCol_ListOfShape occtCellsBuildersArguments;
-		occtCellsBuildersArguments.Append(*pTopology->GetOcctShape());
+		occtCellsBuildersArguments.Append(pTopology->GetOcctShape());
 
 		// Get the internal boundaries
-		AddUnionInternalStructure(*GetOcctShape(), occtCellsBuildersArguments);
-		AddUnionInternalStructure(*kpOtherTopology->GetOcctShape(), occtCellsBuildersArguments);
+		AddUnionInternalStructure(GetOcctShape(), occtCellsBuildersArguments);
+		AddUnionInternalStructure(kpOtherTopology->GetOcctShape(), occtCellsBuildersArguments);
 		
 		if (occtCellsBuildersArguments.Size() < 2)
 		{
@@ -1909,7 +1909,7 @@ namespace TopoLogicCore
 	void Topology::ImmediateMembers(std::list<std::shared_ptr<Topology>>& rImmediateMembers) const
 	{
 		BOPCol_ListOfShape occtListMembers;
-		Topology::ImmediateMembers(*GetOcctShape(), occtListMembers);
+		Topology::ImmediateMembers(GetOcctShape(), occtListMembers);
 		for (BOPCol_ListOfShape::const_iterator kIterator = occtListMembers.begin();
 			kIterator != occtListMembers.end();
 			kIterator++)

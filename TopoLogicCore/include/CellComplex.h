@@ -94,7 +94,26 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		virtual std::shared_ptr<TopoDS_Shape> GetOcctShape() const;
+		/// <returns></returns>
+		virtual TopoDS_Shape& GetOcctShape();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual const TopoDS_Shape& GetOcctShape() const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual TopoDS_CompSolid& GetOcctCompSolid();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual const TopoDS_CompSolid& GetOcctCompSolid() const;
 
 		/// <summary>
 		/// 
@@ -108,6 +127,6 @@ namespace TopoLogicCore
 		/// <summary>
 		/// The underlying OCCT cell complex.
 		/// </summary>
-		std::shared_ptr<TopoDS_CompSolid> m_pOcctCompSolid;
+		TopoDS_CompSolid m_pOcctCompSolid;
 	};
 }

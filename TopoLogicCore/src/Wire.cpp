@@ -19,14 +19,11 @@ namespace TopoLogicCore
 {
 	void Wire::Edges(std::list<std::shared_ptr<Edge>>& rEdges) const
 	{
-		//DownwardNavigation(rEdges);
-
 		// This query uses a specialised class BRepTools_WireExplorer 
-		BRepTools_WireExplorer occtWireExplorer(TopoDS::Wire(*GetOcctShape()));
-		for (; occtWireExplorer.More(); occtWireExplorer.Next())
+		for (BRepTools_WireExplorer occtWireExplorer(GetOcctWire()); occtWireExplorer.More(); occtWireExplorer.Next())
 		{
-			const TopoDS_Edge& rkEdge = occtWireExplorer.Current();
-			rEdges.push_back(TopologicalQuery::Downcast<Edge>(Topology::ByOcctShape(rkEdge)));
+			const TopoDS_Edge& rkOcctEdge = occtWireExplorer.Current();
+			rEdges.push_back(TopologicalQuery::Downcast<Edge>(Topology::ByOcctShape(rkOcctEdge)));
 		}
 	}
 
@@ -38,20 +35,16 @@ namespace TopoLogicCore
 	bool Wire::IsClosed() const
 	{
 		ShapeAnalysis_Wire shapeAnalysisWire;
-		shapeAnalysisWire.Load(TopoDS::Wire(*GetOcctShape()));
+		shapeAnalysisWire.Load(GetOcctWire());
 		return shapeAnalysisWire.CheckClosed();
 	}
 
 	void Wire::Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const
 	{
-		//DownwardNavigation(rVertices);
-
-		// This query uses a specialised class BRepTools_WireExplorer 
-		BRepTools_WireExplorer occtWireExplorer(TopoDS::Wire(*GetOcctShape()));
-		for (; occtWireExplorer.More(); occtWireExplorer.Next())
+		for(BRepTools_WireExplorer occtWireExplorer(GetOcctWire()); occtWireExplorer.More(); occtWireExplorer.Next())
 		{
-			const TopoDS_Vertex& rkVertex = occtWireExplorer.CurrentVertex();
-			rVertices.push_back(TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkVertex)));
+			const TopoDS_Vertex& rkOcctVertex = occtWireExplorer.CurrentVertex();
+			rVertices.push_back(TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex)));
 		}
 	}
 
@@ -63,11 +56,9 @@ namespace TopoLogicCore
 		}
 
 		TopTools_ListOfShape occtEdges;
-		for(std::list<std::shared_ptr<Edge>>::const_iterator kEdgeIterator = rkEdges.begin();
-			kEdgeIterator != rkEdges.end();
-			kEdgeIterator++)
+		for(const std::shared_ptr<Edge>& kpEdge : rkEdges)
 		{
-			occtEdges.Append(*(*kEdgeIterator)->GetOcctShape());
+			occtEdges.Append(kpEdge->GetOcctShape());
 		}
 
 		BRepBuilderAPI_MakeWire occtMakeWire;
@@ -75,19 +66,20 @@ namespace TopoLogicCore
 
 		try {
 			std::shared_ptr<Wire> pWire = std::make_shared<Wire>(occtMakeWire);
-			for (std::list<std::shared_ptr<Edge>>::const_iterator kEdgeIterator = rkEdges.begin();
+			/*for (std::list<std::shared_ptr<Edge>>::const_iterator kEdgeIterator = rkEdges.begin();
 				kEdgeIterator != rkEdges.end();
 				kEdgeIterator++)
 			{
 				const std::shared_ptr<Edge>& pkEdge = *kEdgeIterator;
 				pkEdge->AddIngredientTo(pWire);
-			}
+			}*/
 
 			return pWire;
 		}
 		catch (StdFail_NotDone&)
 		{
-			throw new std::exception(GetOcctMakeWireErrorMessage(occtMakeWire).c_str());
+			Throw(occtMakeWire);
+			return nullptr;
 		}
 	}
 
@@ -97,26 +89,45 @@ namespace TopoLogicCore
 		std::list<std::shared_ptr<Edge>> edges;
 		Edges(edges);
 
-		for (std::list<std::shared_ptr<Edge>>::const_iterator kEdgeIterator = edges.begin();
-			kEdgeIterator != edges.end();
-			kEdgeIterator++)
+		for (const std::shared_ptr<Edge>& kpEdge : edges)
 		{
-			rOcctGeometries.push_back((*kEdgeIterator)->Curve());
+			rOcctGeometries.push_back(kpEdge->Curve());
 		}
 	}
 
-	std::shared_ptr<TopoDS_Shape> Wire::GetOcctShape() const
+	TopoDS_Shape& Wire::GetOcctShape()
 	{
-		assert(m_pOcctWire != nullptr && "Wire::m_pOcctWire is null.");
-		if (m_pOcctWire == nullptr)
-		{
-			throw std::exception("Wire::m_pOcctWire is null.");
-		}
-
-		return m_pOcctWire;
+		return GetOcctWire();
 	}
 
-	std::string Wire::GetOcctMakeWireErrorMessage(const BRepBuilderAPI_MakeWire & rkOcctMakeWire)
+	const TopoDS_Shape& Wire::GetOcctShape() const
+	{
+		return GetOcctWire();
+	}
+
+	TopoDS_Wire& Wire::GetOcctWire()
+	{
+		assert(m_occtWire.IsNull() && "Wire::m_occtWire is null.");
+		if (m_occtWire.IsNull())
+		{
+			throw std::exception("Wire::m_occtWire is null.");
+		}
+
+		return m_occtWire;
+	}
+
+	const TopoDS_Wire& Wire::GetOcctWire() const
+	{
+		assert(m_occtWire.IsNull()  && "Wire::m_occtWire is null.");
+		if (m_occtWire.IsNull())
+		{
+			throw std::exception("Wire::m_occtWire is null.");
+		}
+
+		return m_occtWire;
+	}
+
+	void Wire::Throw(const BRepBuilderAPI_MakeWire & rkOcctMakeWire)
 	{
 		// The error messages are based on those in the OCCT documentation.
 		// https://www.opencascade.com/doc/occt-7.1.0/refman/html/_b_rep_builder_a_p_i___wire_error_8hxx.html
@@ -124,24 +135,23 @@ namespace TopoLogicCore
 		switch (rkOcctMakeWire.Error())
 		{
 		case BRepBuilderAPI_EmptyWire:
-			return std::string("No initialization of the algorithm. Only an empty constructor was used.");
+			throw std::exception("No initialization of the algorithm. Only an empty constructor was used.");
 
 		case BRepBuilderAPI_DisconnectedWire:
-			return std::string("The last edge which you attempted to add was not connected to the wire.");
+			throw std::exception("The last edge which you attempted to add was not connected to the wire.");
 
 		case BRepBuilderAPI_NonManifoldWire:
-			return std::string("The wire has some singularity.");
+			throw std::exception("The wire has some singularity.");
 
 		default: // i.e. BRepBuilderAPI_WireDone 
-			return std::string("A wire was successfully created.");
+			throw std::exception("A wire was successfully created.");
 		}
 	}
 
 	Wire::Wire(const TopoDS_Wire& rkOcctWire)
 		: Topology(1)
-		, m_pOcctWire(nullptr)
+		, m_occtWire(rkOcctWire)
 	{
-		m_pOcctWire = std::make_shared<TopoDS_Wire>(rkOcctWire);
 		GlobalCluster::GetInstance().Add(this);
 	}
 

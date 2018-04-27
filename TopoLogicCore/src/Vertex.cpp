@@ -5,10 +5,7 @@
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRep_Tool.hxx>
 #include <Geom_CartesianPoint.hxx>
-#include <TopExp.hxx>
-#include <TopoDS.hxx>
 #include <TopoDS_Vertex.hxx>
-#include <TopoDS_Edge.hxx>
 
 #include <assert.h>
 
@@ -16,7 +13,7 @@ namespace TopoLogicCore
 {
 	Vertex::Vertex(const TopoDS_Vertex& rkOcctVertex)
 		: Topology(0)
-		, m_pOcctVertex(std::make_shared<TopoDS_Vertex>(rkOcctVertex))
+		, m_occtVertex(rkOcctVertex)
 	{
 		GlobalCluster::GetInstance().Add(this);
 	}
@@ -41,19 +38,40 @@ namespace TopoLogicCore
 		rOcctGeometries.push_back(Point());
 	}
 
-	std::shared_ptr<TopoDS_Shape> Vertex::GetOcctShape() const
+	TopoDS_Shape& Vertex::GetOcctShape()
 	{
-		assert(m_pOcctVertex != nullptr && "Vertex::m_pOcctVertex is null.");
-		if (m_pOcctVertex == nullptr)
+		return GetOcctVertex();
+	}
+
+	const TopoDS_Shape& Vertex::GetOcctShape() const
+	{
+		return GetOcctVertex();
+	}
+
+	TopoDS_Vertex& Vertex::GetOcctVertex()
+	{
+		assert(m_occtVertex.IsNull() && "Vertex::m_occtVertex is null.");
+		if (m_occtVertex.IsNull())
 		{
-			throw std::exception("Vertex::m_pOcctVertex is null.");
+			throw std::exception("Vertex::m_occtVertex is null.");
 		}
 
-		return m_pOcctVertex;
+		return m_occtVertex;
+	}
+
+	const TopoDS_Vertex& Vertex::GetOcctVertex() const
+	{
+		assert(m_occtVertex.IsNull() && "Vertex::m_occtVertex is null.");
+		if (m_occtVertex.IsNull())
+		{
+			throw std::exception("Vertex::m_occtVertex is null.");
+		}
+
+		return m_occtVertex;
 	}
 
 	Handle(Geom_Point) Vertex::Point() const
 	{
-		return new Geom_CartesianPoint(BRep_Tool::Pnt(TopoDS::Vertex(*GetOcctShape())));
+		return new Geom_CartesianPoint(BRep_Tool::Pnt(GetOcctVertex()));
 	}
 }

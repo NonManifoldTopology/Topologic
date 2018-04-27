@@ -15,6 +15,8 @@
 #include <TDF_ChildIterator.hxx>
 #include <TNaming_NamedShape.hxx>
 #include <TDataStd_Integer.hxx>
+#include <TopExp.hxx>
+#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 
 #include <list>
 #include <vector>
@@ -329,7 +331,13 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		virtual std::shared_ptr<TopoDS_Shape> GetOcctShape() const = 0;
+		virtual TopoDS_Shape& GetOcctShape() = 0;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual const TopoDS_Shape& GetOcctShape() const = 0;
 
 		virtual TopologyType GetType() const = 0;
 
@@ -575,12 +583,12 @@ namespace TopoLogicCore
 
 		TopTools_IndexedDataMapOfShapeListOfShape occtShapeMap;
 		TopExp::MapShapesAndUniqueAncestors(
-			*GlobalCluster::GetInstance().GetCluster()->GetOcctShape(),
-			GetOcctShape()->ShapeType(),
+			GlobalCluster::GetInstance().GetCluster()->GetOcctShape(),
+			GetOcctShape().ShapeType(),
 			occtShapeType,
 			occtShapeMap);
 
-		const TopTools_ListOfShape& rkOcctAncestors = occtShapeMap.FindFromKey(*GetOcctShape());
+		const TopTools_ListOfShape& rkOcctAncestors = occtShapeMap.FindFromKey(GetOcctShape());
 
 		for (TopTools_ListOfShape::const_iterator kIterator = rkOcctAncestors.cbegin();
 			kIterator != rkOcctAncestors.cend();
@@ -614,7 +622,7 @@ namespace TopoLogicCore
 				bool result3 = occtRelationshipType->Get() == REL_CONSTITUENT; 
 				bool result4 = false;
 				TopExp_Explorer occtExplorer;
-				for (occtExplorer.Init(*GetOcctShape(), TopAbs_FACE); occtExplorer.More(); occtExplorer.Next())
+				for (occtExplorer.Init(GetOcctShape(), TopAbs_FACE); occtExplorer.More(); occtExplorer.Next())
 				{
 					if (occtExplorer.Current().IsSame(occtChildAttribute->Get()))
 					{
@@ -632,7 +640,7 @@ namespace TopoLogicCore
 		TopAbs_ShapeEnum occtShapeType = CheckOcctShapeType<Subclass>();
 		TopTools_MapOfShape occtShapes;
 		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(*GetOcctShape(), occtShapeType); occtExplorer.More(); occtExplorer.Next())
+		for (occtExplorer.Init(GetOcctShape(), occtShapeType); occtExplorer.More(); occtExplorer.Next())
 		{
 			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
 			if (!occtShapes.Contains(occtCurrent))
@@ -647,27 +655,6 @@ namespace TopoLogicCore
 				{
 					continue;
 				}
-
-
-				// CHECK if the child labels are part of this topology
-				/*bool isFound = false;
-				for (TDF_ChildIterator occtLabelIterator(GetOcctLabel());
-					occtLabelIterator.More();
-					occtLabelIterator.Next())
-				{
-					TDF_Label childLabel = occtLabelIterator.Value();
-					Handle(TNaming_NamedShape) occtChildAttribute;
-					Handle(TDataStd_Integer) occtRelationshipType;
-					bool result1 = childLabel.FindAttribute(TNaming_NamedShape::GetID(), occtChildAttribute);
-					bool result2 = childLabel.FindAttribute(TDataStd_Integer::GetID(), occtRelationshipType);
-					bool result3 = occtRelationshipType->Get() == REL_CONSTITUENT;
-					bool result4 = occtCurrent.IsSame(occtChildAttribute->Get());
-					if (result1 && result2 && result3 && result4)
-					{
-						isFound = true;
-					}
-				}*/
-
 
 				for (TDF_ChildIterator occtLabelIterator(GetOcctLabel()); 
 					occtLabelIterator.More(); 

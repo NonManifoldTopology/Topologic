@@ -90,7 +90,26 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		virtual std::shared_ptr<TopoDS_Shape> GetOcctShape() const;
+		/// <returns></returns>
+		virtual TopoDS_Shape& GetOcctShape();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual const TopoDS_Shape& GetOcctShape() const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual TopoDS_Shell& GetOcctShell();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual const TopoDS_Shell& GetOcctShell() const;
 
 		/// <summary>
 		/// 
@@ -155,6 +174,6 @@ namespace TopoLogicCore
 		/// <summary>
 		/// The underlying OCCT shell.
 		/// </summary>
-		std::shared_ptr<TopoDS_Shell> m_pOcctShell;
+		TopoDS_Shell m_occtShell;
 	};
 }

@@ -32,8 +32,8 @@ namespace TopoLogicCore
 	bool Aperture::IsOpen(const std::array<std::shared_ptr<TopoLogicCore::Topology>, 2>& rkTopologies) const
 	{
 		AperturePath aperturePath(
-			rkTopologies[0] == nullptr? TopoDS_Shape() : *rkTopologies[0]->GetOcctShape(), 
-			rkTopologies[1] == nullptr? TopoDS_Shape() : *rkTopologies[1]->GetOcctShape()
+			rkTopologies[0] == nullptr? TopoDS_Shape() : rkTopologies[0]->GetOcctShape(), 
+			rkTopologies[1] == nullptr? TopoDS_Shape() : rkTopologies[1]->GetOcctShape()
 		);
 		std::list<AperturePath>::const_iterator kTopologyPairIterator = 
 			std::find(m_occtAperturePaths.begin(), m_occtAperturePaths.end(), aperturePath);
@@ -42,7 +42,7 @@ namespace TopoLogicCore
 
 	void Aperture::Open()
 	{
-		TopAbs_ShapeEnum occtContextTopologyType = m_pMainContext->Topology()->GetOcctShape()->ShapeType();
+		TopAbs_ShapeEnum occtContextTopologyType = m_pMainContext->Topology()->GetOcctShape().ShapeType();
 		TopAbs_ShapeEnum occtParentTopologyType = TopAbs_SHAPE;
 		if (occtContextTopologyType == TopAbs_VERTEX)
 		{
@@ -75,9 +75,9 @@ namespace TopoLogicCore
 
 		m_occtAperturePaths.clear();
 		TopTools_IndexedDataMapOfShapeListOfShape apertureToTopologyMap;
-		TopExp::MapShapesAndUniqueAncestors(*GlobalCluster::GetInstance().GetCluster()->GetOcctShape(), occtContextTopologyType, occtParentTopologyType, apertureToTopologyMap);
+		TopExp::MapShapesAndUniqueAncestors(GlobalCluster::GetInstance().GetCluster()->GetOcctShape(), occtContextTopologyType, occtParentTopologyType, apertureToTopologyMap);
 
-		const TopTools_ListOfShape& rkOcctParentTopologies = apertureToTopologyMap.FindFromKey(*m_pMainContext->Topology()->GetOcctShape());
+		const TopTools_ListOfShape& rkOcctParentTopologies = apertureToTopologyMap.FindFromKey(m_pMainContext->Topology()->GetOcctShape());
 
 		if (rkOcctParentTopologies.IsEmpty())
 		{
@@ -90,20 +90,20 @@ namespace TopoLogicCore
 			m_occtAperturePaths.push_back(AperturePath(*kOcctParentIterator, TopoDS_Shape()));
 		}else
 		{
-			for (TopTools_ListOfShape::const_iterator kOcctParentIterator1 = rkOcctParentTopologies.begin();
-				kOcctParentIterator1 != rkOcctParentTopologies.end();
-				kOcctParentIterator1++)
+			for(TopTools_ListIteratorOfListOfShape kOcctParentIterator1(rkOcctParentTopologies);
+				kOcctParentIterator1.More();
+				kOcctParentIterator1.Next())
 			{
-				for (TopTools_ListOfShape::const_iterator kOcctParentIterator2 = rkOcctParentTopologies.begin();
-					kOcctParentIterator2 != rkOcctParentTopologies.end();
-					kOcctParentIterator2++)
+				for (TopTools_ListIteratorOfListOfShape kOcctParentIterator2(rkOcctParentTopologies);
+					kOcctParentIterator2.More();
+					kOcctParentIterator2.Next())
 				{
 					if (kOcctParentIterator1 == kOcctParentIterator2)
 					{
 						continue;
 					}
 
-					m_occtAperturePaths.push_back(AperturePath(*kOcctParentIterator1, *kOcctParentIterator2));
+					m_occtAperturePaths.push_back(AperturePath(kOcctParentIterator1.Value(), kOcctParentIterator2.Value()));
 				}
 			}
 		}
@@ -163,8 +163,16 @@ namespace TopoLogicCore
 	void Aperture::Open(const std::array<std::shared_ptr<TopoLogicCore::Topology>, 2>& rkTopologies)
 	{
 		AperturePath aperturePath(
-			rkTopologies[0] == nullptr ? TopoDS_Shape() : FindSubentityAdjacentAndHigherDimensionalTo(*rkTopologies[0]->GetOcctShape(), *m_pMainContext->Topology()->GetOcctShape()),
-			rkTopologies[1] == nullptr ? TopoDS_Shape() : FindSubentityAdjacentAndHigherDimensionalTo(*rkTopologies[1]->GetOcctShape(), *m_pMainContext->Topology()->GetOcctShape())
+			rkTopologies[0] == nullptr ? 
+				TopoDS_Shape() : 
+				FindSubentityAdjacentAndHigherDimensionalTo(
+					rkTopologies[0]->GetOcctShape(), 
+					m_pMainContext->Topology()->GetOcctShape()),
+			rkTopologies[1] == nullptr ? 
+				TopoDS_Shape() : 
+				FindSubentityAdjacentAndHigherDimensionalTo(
+					rkTopologies[1]->GetOcctShape(), 
+					m_pMainContext->Topology()->GetOcctShape())
 		);
 		std::list<AperturePath>::const_iterator kTopologyPairIterator = std::find(m_occtAperturePaths.begin(), m_occtAperturePaths.end(), aperturePath);
 		if (kTopologyPairIterator == m_occtAperturePaths.end())
@@ -181,8 +189,8 @@ namespace TopoLogicCore
 	void Aperture::Close(const std::array<std::shared_ptr<TopoLogicCore::Topology>, 2>& rkTopologies)
 	{
 		AperturePath aperturePath(
-			rkTopologies[0] == nullptr ? TopoDS_Shape() : *rkTopologies[0]->GetOcctShape(),
-			rkTopologies[1] == nullptr ? TopoDS_Shape() : *rkTopologies[1]->GetOcctShape()
+			rkTopologies[0] == nullptr ? TopoDS_Shape() : rkTopologies[0]->GetOcctShape(),
+			rkTopologies[1] == nullptr ? TopoDS_Shape() : rkTopologies[1]->GetOcctShape()
 		);
 		for (std::list<AperturePath>::const_iterator kAperturePathIterator = m_occtAperturePaths.begin();
 			kAperturePathIterator != m_occtAperturePaths.end();
@@ -214,7 +222,12 @@ namespace TopoLogicCore
 		Topology()->Geometry(rOcctGeometries);
 	}
 
-	std::shared_ptr<TopoDS_Shape> Aperture::GetOcctShape() const
+	TopoDS_Shape& Aperture::GetOcctShape()
+	{
+		return Topology()->GetOcctShape();
+	}
+
+	const TopoDS_Shape& Aperture::GetOcctShape() const
 	{
 		return Topology()->GetOcctShape();
 	}

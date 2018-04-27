@@ -11,6 +11,7 @@
 #include <TColgp_Array1OfPnt.hxx>
 #include <TColStd_Array1OfReal.hxx>
 #include <TColStd_Array1OfInteger.hxx>
+#include <BRepBuilderAPI_EdgeError.hxx>
 
 namespace TopoLogicCore
 {
@@ -106,7 +107,26 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		virtual std::shared_ptr<TopoDS_Shape> GetOcctShape() const;
+		/// <returns></returns>
+		virtual TopoDS_Shape& GetOcctShape();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual const TopoDS_Shape& GetOcctShape() const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual TopoDS_Edge& GetOcctEdge();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual const TopoDS_Edge& GetOcctEdge() const;
 
 		/// <summary>
 		/// 
@@ -133,10 +153,16 @@ namespace TopoLogicCore
 		/// <returns></returns>
 		static double NonNormalizeParameter(Handle(Geom_Curve) pOcctCurve, const double kNormalizedParameter);
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="occtEdgeError"></param>
+		static void Throw(const BRepBuilderAPI_EdgeError occtEdgeError);
+
 
 		/// <summary>
 		/// The underlying OCCT edge.
 		/// </summary>
-		std::shared_ptr<TopoDS_Edge> m_pOcctEdge;
+		TopoDS_Edge m_occtEdge;
 	};
 }

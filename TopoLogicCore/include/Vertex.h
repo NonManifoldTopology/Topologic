@@ -49,10 +49,28 @@ namespace TopoLogicCore
 		virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const;
 
 		/// <summary>
-		/// Returns the underlying OCCT vertex.
+		/// 
 		/// </summary>
-		/// <returns>The underlying OCCT vertex</returns>
-		virtual std::shared_ptr<TopoDS_Shape> GetOcctShape() const;
+		/// <returns></returns>
+		virtual TopoDS_Shape& GetOcctShape();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual const TopoDS_Shape& GetOcctShape() const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual TopoDS_Vertex& GetOcctVertex();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual const TopoDS_Vertex& GetOcctVertex() const;
 
 		/// <summary>
 		/// 
@@ -66,6 +84,6 @@ namespace TopoLogicCore
 		/// <summary>
 		/// The underlying OCCT vertex.
 		/// </summary>
-		std::shared_ptr<TopoDS_Vertex> m_pOcctVertex;
+		TopoDS_Vertex m_occtVertex;
 	};
 }

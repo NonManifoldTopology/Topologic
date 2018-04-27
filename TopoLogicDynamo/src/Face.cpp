@@ -396,7 +396,7 @@ namespace TopoLogic
 
 			// OCCT has arbitrary parameters. Dynamo's parameter ranges between 0 and 1.
 			// Order: First - Start - End - Last
-			TopoDS_Face occtFace = TopoDS::Face(*pCoreFace->GetOcctShape());
+			TopoDS_Face occtFace = TopoDS::Face(pCoreFace->GetOcctShape());
 			TopExp_Explorer ex(occtFace, TopAbs_EDGE);
 			for (; ex.More(); ex.Next()) {
 				ShapeFix_Edge occtShapeFix;
@@ -539,13 +539,13 @@ namespace TopoLogic
 			Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface = nullptr;
 
 			List<Autodesk::DesignScript::Geometry::PolyCurve^>^ pDynamoEdgeLoops = gcnew List<Autodesk::DesignScript::Geometry::PolyCurve^>();
-			const TopoDS_Wire& rkOcctOuterWire = ShapeAnalysis::OuterWire(TopoDS::Face(*pCoreFace->GetOcctShape()));
+			const TopoDS_Wire& rkOcctOuterWire = ShapeAnalysis::OuterWire(pCoreFace->GetOcctFace());
 
 			for each(Wire^ pWire in pWires)
 			{
 				if (pDynamoSurface == nullptr)
 				{
-					if (TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(pWire->GetCoreTopologicalQuery())->GetOcctShape()->IsSame(rkOcctOuterWire))
+					if (TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(pWire->GetCoreTopologicalQuery())->GetOcctShape().IsSame(rkOcctOuterWire))
 					{
 						List<Edge^>^ pOuterEdges = pWire->Edges();
 						List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoOuterCurves = gcnew List<Autodesk::DesignScript::Geometry::Curve^>();
@@ -632,7 +632,7 @@ namespace TopoLogic
 
 	Autodesk::DesignScript::Geometry::Mesh^ Face::TriangulatedMesh()
 	{
-		TopoDS_Face occtFace = TopoDS::Face(*TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery())->GetOcctShape());
+		TopoDS_Face occtFace = TopoDS::Face(TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery())->GetOcctShape());
 		BRepMesh_IncrementalMesh occtMesh(occtFace, 0.1);
 		TopLoc_Location occtLocation;
 		Handle_Poly_Triangulation occtTriangulation = BRep_Tool::Triangulation(occtFace, occtLocation);

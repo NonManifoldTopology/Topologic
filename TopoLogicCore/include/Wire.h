@@ -66,21 +66,39 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		virtual std::shared_ptr<TopoDS_Shape> GetOcctShape() const;
+		/// <returns></returns>
+		virtual TopoDS_Shape& GetOcctShape();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual const TopoDS_Shape& GetOcctShape() const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual TopoDS_Wire& GetOcctWire();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual const TopoDS_Wire& GetOcctWire() const;
 
 		virtual TopologyType GetType() const { return TOPOLOGY_WIRE; }
 
 	protected:
 		/// <summary>
-		/// Returns error messages when creating an edge using OCCT's BRepBuilderAPI_MakeWire.
+		/// 
 		/// </summary>
-		/// <param name="rkOcctMakeWire">An instantiation of OCCT's BRepBuilderAPI_MakeWire</param>
-		/// <returns>The error messsages</returns>
-		static std::string GetOcctMakeWireErrorMessage(const BRepBuilderAPI_MakeWire& rkOcctMakeWire);
+		/// <param name="rkOcctMakeWire"></param>
+		static void Throw(const BRepBuilderAPI_MakeWire& rkOcctMakeWire);
 
 		/// <summary>
 		/// The underlying OCCT wire.
 		/// </summary>
-		std::shared_ptr<TopoDS_Wire> m_pOcctWire;
+		TopoDS_Wire m_occtWire;
 	};
 }

@@ -191,7 +191,26 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		virtual std::shared_ptr<TopoDS_Shape> GetOcctShape() const;
+		/// <returns></returns>
+		virtual TopoDS_Shape& GetOcctShape();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual const TopoDS_Shape& GetOcctShape() const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual TopoDS_Face& GetOcctFace();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual const TopoDS_Face& GetOcctFace() const;
 
 		/// <summary>
 		/// 
@@ -203,11 +222,10 @@ namespace TopoLogicCore
 
 	protected:
 		/// <summary>
-		/// Returns error messages when creating a face using OCCT's BRepBuilderAPI_MakeFace.
+		/// 
 		/// </summary>
-		/// <param name="rkOcctMakeFace">An instantiation of OCCT's BRepBuilderAPI_MakeFace</param>
-		/// <returns>The error messsages</returns>
-		static std::string GetOcctMakeFaceErrorMessage(const BRepBuilderAPI_MakeFace& rkOcctMakeFace);
+		/// <param name="rkOcctMakeFace"></param>
+		static void Throw(const BRepBuilderAPI_MakeFace& rkOcctMakeFace);
 
 		/// <summary>
 		/// 
@@ -230,6 +248,6 @@ namespace TopoLogicCore
 		/// <summary>
 		/// The underlying OCCT face.
 		/// </summary>
-		std::shared_ptr<TopoDS_Face> m_pOcctFace;
+		TopoDS_Face m_occtFace;
 	};
 }

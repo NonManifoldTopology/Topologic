@@ -7,13 +7,11 @@
 #include <BRep_Tool.hxx>
 #include <Geom_BSplineCurve.hxx>
 #include <Geom_CartesianPoint.hxx>
-#include <Geom_Point.hxx>
 #include <GeomAPI_Interpolate.hxx>
 #include <GeomLib_Tool.hxx>
 #include <gp_Lin.hxx>
 #include <Precision.hxx>
 #include <ShapeAnalysis_Edge.hxx>
-#include <TopoDS.hxx>
 #include <TopExp.hxx>
 
 #include <assert.h>
@@ -22,9 +20,9 @@ namespace TopoLogicCore
 {
 	void Edge::Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const
 	{
-		ShapeAnalysis_Edge shapeAnalysisEdge;
-		rVertices.push_back(std::make_shared<Vertex>(shapeAnalysisEdge.FirstVertex(TopoDS::Edge(*GetOcctShape()))));
-		rVertices.push_back(std::make_shared<Vertex>(shapeAnalysisEdge.LastVertex(TopoDS::Edge(*GetOcctShape()))));
+		ShapeAnalysis_Edge occtShapeAnalysisEdge;
+		rVertices.push_back(std::make_shared<Vertex>(occtShapeAnalysisEdge.FirstVertex(GetOcctEdge())));
+		rVertices.push_back(std::make_shared<Vertex>(occtShapeAnalysisEdge.LastVertex(GetOcctEdge())));
 	}
 
 	void Edge::Wires(std::list<std::shared_ptr<Wire>>& rWires) const
@@ -37,9 +35,9 @@ namespace TopoLogicCore
 		const TColStd_Array1OfReal &rkOcctWeights,
 		const TColStd_Array1OfReal &rkOcctKnots,
 		const TColStd_Array1OfInteger &rkOcctMultiplicities,
-		const Standard_Integer kDegree,
-		const Standard_Boolean kIsPeriodic,
-		const Standard_Boolean kIsRational)
+		const int kDegree,
+		const bool kIsPeriodic,
+		const bool kIsRational)
 	{
 		BRepBuilderAPI_MakeEdge occtMakeEdge;
 		Handle(Geom_BSplineCurve) pOcctBSplineCurve = new Geom_BSplineCurve(
@@ -70,7 +68,13 @@ namespace TopoLogicCore
 		const double kOcctParameter1 = kOcctFirstParameter + rkParameter1 * kOcctDeltaParameter;
 		const double kOcctParameter2 = kOcctFirstParameter + rkParameter2 * kOcctDeltaParameter;
 
-		return std::make_shared<Edge>(BRepBuilderAPI_MakeEdge(pOcctCurve, kOcctParameter1, kOcctParameter2));
+		BRepBuilderAPI_MakeEdge occtMakeEdge(pOcctCurve, kOcctParameter1, kOcctParameter2);
+		if (occtMakeEdge.Error() != BRepBuilderAPI_EdgeDone)
+		{
+			Throw(occtMakeEdge.Error());
+		}
+
+		return std::make_shared<Edge>(occtMakeEdge);
 	}
 
 	std::shared_ptr<Edge> Edge::ByVertices(const std::list<std::shared_ptr<Vertex>>& rkVertices)
@@ -90,37 +94,55 @@ namespace TopoLogicCore
 		{
 			const std::shared_ptr<Vertex>& rkVertex1 = *(rkVertices.begin());
 			const std::shared_ptr<Vertex>& rkVertex2 = *(++rkVertices.begin());
-			BRepBuilderAPI_MakeEdge occtMakeEdge(TopoDS::Vertex(*rkVertex1->GetOcctShape()),
-				TopoDS::Vertex(*rkVertex2->GetOcctShape()));
+			BRepBuilderAPI_MakeEdge occtMakeEdge(
+				rkVertex1->GetOcctVertex(),
+				rkVertex2->GetOcctVertex());
 			pEdge = std::make_shared<Edge>(occtMakeEdge.Edge());
 		}else
 		{
 			// else more than 2 vertices
 			Handle(TColgp_HArray1OfPnt) pOcctPoints = new TColgp_HArray1OfPnt(1, numberOfVertices);
 			int i = 1;
-			for(std::list<std::shared_ptr<Vertex>>::const_iterator kVertexIterator = rkVertices.begin();
-				kVertexIterator != rkVertices.end();
-				kVertexIterator++)
+			for(const std::shared_ptr<Vertex>& kpVertex : rkVertices)
 			{
-				const std::shared_ptr<Vertex>& pVertex = *kVertexIterator;
-				pOcctPoints->SetValue(i, pVertex->Point()->Pnt());
+				pOcctPoints->SetValue(i, kpVertex->Point()->Pnt());
 				++i;
 			}
-			GeomAPI_Interpolate occtInterpolate(pOcctPoints, false, Precision::Confusion());
-			occtInterpolate.Perform();
-			Handle(Geom_Curve) pOcctCurveOnTargetSurface = occtInterpolate.Curve();
 
-			pEdge = std::make_shared<Edge>(BRepBuilderAPI_MakeEdge(pOcctCurveOnTargetSurface));
+			try {
+				GeomAPI_Interpolate occtInterpolate(pOcctPoints, false, Precision::Confusion());
+				occtInterpolate.Perform();
+				if (!occtInterpolate.IsDone())
+				{
+					throw std::exception("Line interpolation error in Edge::ByVertices()");
+				}
+				Handle(Geom_Curve) pOcctCurveOnTargetSurface = occtInterpolate.Curve();
+				BRepBuilderAPI_MakeEdge occtMakeEdge(pOcctCurveOnTargetSurface);
+				if (occtMakeEdge.Error() != BRepBuilderAPI_EdgeDone)
+				{
+					Throw(occtMakeEdge.Error());
+				}
+
+				pEdge = std::make_shared<Edge>(occtMakeEdge);
+			}
+			catch (Standard_ConstructionError e)
+			{
+				throw std::exception(e.GetMessageString());
+			}
+			catch (Standard_OutOfRange e)
+			{
+				throw std::exception(e.GetMessageString());
+			}
 		}
 
 		// Register the ingredients
-		for (std::list<std::shared_ptr<Vertex>>::const_iterator kVertexIterator = rkVertices.begin();
+		/*for (std::list<std::shared_ptr<Vertex>>::const_iterator kVertexIterator = rkVertices.begin();
 			kVertexIterator != rkVertices.end();
 			kVertexIterator++)
 		{
 			const std::shared_ptr<Vertex>& kpVertex = *kVertexIterator;
 			kpVertex->AddIngredientTo(pEdge);
-		}
+		}*/
 
 		return pEdge;
 	}
@@ -128,7 +150,11 @@ namespace TopoLogicCore
 	std::shared_ptr<Vertex> Edge::SharedVertex(const std::shared_ptr<Edge>& kpAnotherEdge) const
 	{
 		TopoDS_Vertex occtSharedVertex;
-		bool result = TopExp::CommonVertex(*m_pOcctEdge, TopoDS::Edge(*kpAnotherEdge->GetOcctShape()), occtSharedVertex);
+		bool hasSharedVertex = TopExp::CommonVertex(m_occtEdge, kpAnotherEdge->GetOcctEdge(), occtSharedVertex);
+		if (!hasSharedVertex)
+		{
+			throw std::exception("The two edges have no shared vertex");
+		}
 
 		return std::make_shared<Vertex>(occtSharedVertex);
 	}
@@ -138,15 +164,15 @@ namespace TopoLogicCore
 		Handle(Geom_Curve) pOcctCurve = Curve();
 		Handle(Geom_Point) pOcctPoint = kpVertex->Point();
 
-		double parameter = 0.0;
-		bool isOnCurve = GeomLib_Tool::Parameter(pOcctCurve, pOcctPoint->Pnt(), Precision::Confusion(), parameter);
+		double occtParameter = 0.0;
+		bool isOnCurve = GeomLib_Tool::Parameter(pOcctCurve, pOcctPoint->Pnt(), Precision::Confusion(), occtParameter);
 		if (!isOnCurve)
 		{
 			throw std::exception("Point not on curve");
 		}
 
 		// Parameter may be non-normalized, so normalize it
-		return NormalizeParameter(pOcctCurve, parameter);
+		return NormalizeParameter(pOcctCurve, occtParameter);
 	}
 
 	std::shared_ptr<Vertex> Edge::PointAtParameter(const double kParameter) const
@@ -154,8 +180,8 @@ namespace TopoLogicCore
 		Handle(Geom_Curve) pOcctCurve = Curve();
 
 		// Parameter is normalized, so non-normalize it
-		double nonNormalizedParameter = NonNormalizeParameter(pOcctCurve, kParameter);
-		gp_Pnt occtPoint = pOcctCurve->Value(nonNormalizedParameter);
+		double occtParameter = NonNormalizeParameter(pOcctCurve, kParameter);
+		gp_Pnt occtPoint = pOcctCurve->Value(occtParameter);
 		
 		return Vertex::ByPoint(new Geom_CartesianPoint(occtPoint));
 	}
@@ -165,22 +191,43 @@ namespace TopoLogicCore
 		rOcctGeometries.push_back(Curve());
 	}
 
-	std::shared_ptr<TopoDS_Shape> Edge::GetOcctShape() const
+	TopoDS_Shape& Edge::GetOcctShape()
 	{
-		assert(m_pOcctEdge != nullptr && "Edge::m_pOcctEdge is null.");
-		if (m_pOcctEdge == nullptr)
+		return GetOcctEdge();
+	}
+
+	const TopoDS_Shape& Edge::GetOcctShape() const
+	{
+		return GetOcctEdge();
+	}
+
+	TopoDS_Edge & Edge::GetOcctEdge()
+	{
+		assert(m_occtEdge.IsNull() && "Edge::m_occtEdge is null.");
+		if (m_occtEdge.IsNull())
 		{
-			throw std::exception("Edge::m_pOcctEdge is null.");
+			throw std::exception("Edge::m_occtEdge is null.");
 		}
 
-		return m_pOcctEdge;
+		return m_occtEdge;
+	}
+
+	const TopoDS_Edge & Edge::GetOcctEdge() const
+	{
+		assert(m_occtEdge.IsNull() && "Edge::m_occtEdge is null.");
+		if (m_occtEdge.IsNull())
+		{
+			throw std::exception("Edge::m_occtEdge is null.");
+		}
+
+		return m_occtEdge;
 	}
 
 	Handle(Geom_Curve) Edge::Curve() const
 	{
 		// TODO: do these parameters need to be stored?
 		double u0 = 0.0, u1 = 0.0;
-		return BRep_Tool::Curve(TopoDS::Edge(*GetOcctShape()), u0, u1);
+		return BRep_Tool::Curve(GetOcctEdge(), u0, u1);
 	}
 
 	double Edge::NormalizeParameter(Handle(Geom_Curve) pOcctCurve, const double kNonNormalizedParameter)
@@ -205,9 +252,33 @@ namespace TopoLogicCore
 		return occtMinParameter + kNormalizedParameter * occtDParameter;
 	}
 
+	void Edge::Throw(const BRepBuilderAPI_EdgeError occtEdgeError)
+	{
+		switch (occtEdgeError)
+		{
+		case BRepBuilderAPI_PointProjectionFailed:
+			throw std::exception("No parameters were given but the projection of the 3D points on the curve failed. This happens when the point distance to the curve is greater than the precision value.");
+			
+		case BRepBuilderAPI_ParameterOutOfRange:
+			throw std::exception("The given parameters are not in the parametric range.");
+
+		case BRepBuilderAPI_DifferentPointsOnClosedCurve:
+			throw std::exception("The two vertices or points are the extremities of a closed curve but have different locations.");
+
+		case BRepBuilderAPI_PointWithInfiniteParameter:
+			throw std::exception("A finite coordinate point was associated with an infinite parameter.");
+
+		case BRepBuilderAPI_DifferentsPointAndParameter:
+			throw std::exception("The distance between the 3D point and the point evaluated on the curve with the parameter is greater than the precision.");
+
+		default: //case BRepBuilderAPI_LineThroughIdenticPoints:
+			throw std::exception("Two identical points were given to define a line (construction of an edge without curve).");
+		}
+	}
+
 	Edge::Edge(const TopoDS_Edge& rkOcctEdge)
 		: Topology(1)
-		, m_pOcctEdge(std::make_shared<TopoDS_Edge>(rkOcctEdge))
+		, m_occtEdge(rkOcctEdge)
 	{
 		GlobalCluster::GetInstance().Add(this);
 	}

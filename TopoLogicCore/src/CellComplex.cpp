@@ -72,7 +72,7 @@ namespace TopoLogicCore
 		{
 			// Return a cell complex with only that cells
 			try {
-				occtBuilder.Add(occtCompSolid, *(*rkCellIterator)->GetOcctShape());
+				occtBuilder.Add(occtCompSolid, (*rkCellIterator)->GetOcctShape());
 			}
 			catch (TopoDS_FrozenShape&)
 			{
@@ -101,7 +101,7 @@ namespace TopoLogicCore
 			for (const std::shared_ptr<Cell>& kpCell : cells)
 			{
 				try {
-					occtBuilder.Add(occtCompSolid, *kpCell->GetOcctShape());
+					occtBuilder.Add(occtCompSolid, kpCell->GetOcctShape());
 				}
 				catch (TopoDS_FrozenShape&)
 				{
@@ -202,7 +202,7 @@ namespace TopoLogicCore
 		BOPCol_ListOfShape occtShapes;
 		for (const std::shared_ptr<Face>& kpFace: rkFaces)
 		{
-			occtShapes.Append(*kpFace->GetOcctShape().get());
+			occtShapes.Append(kpFace->GetOcctShape());
 		}
 		bool isParallel = false; /* parallel or single mode (the default value is FALSE)*/
 		bool doesIntersection = true; /* intersect or not the arguments (the default value is TRUE)*/
@@ -257,7 +257,7 @@ namespace TopoLogicCore
 			kCellIterator != cells.end();
 			kCellIterator++)
 		{
-			occtCellsBuildersArguments.Append(*(*kCellIterator)->GetOcctShape());
+			occtCellsBuildersArguments.Append((*kCellIterator)->GetOcctShape());
 		}
 
 		BOPAlgo_CellsBuilder occtCellsBuilder;
@@ -323,7 +323,7 @@ namespace TopoLogicCore
 				kEnvelopeFaceIterator++)
 			{
 				const std::shared_ptr<Face>& kpEnvelopeFace = *kEnvelopeFaceIterator;
-				if(BOPTools_AlgoTools::CheckSameGeom(TopoDS::Face(*kpFace->GetOcctShape()), TopoDS::Face(*kpEnvelopeFace->GetOcctShape()), pOcctIntToolsContext))
+				if(BOPTools_AlgoTools::CheckSameGeom(kpFace->GetOcctFace(), kpEnvelopeFace->GetOcctFace(), pOcctIntToolsContext))
 				{
 					isEnvelopeFace = true;
 				}
@@ -336,10 +336,31 @@ namespace TopoLogicCore
 		}
 	}
 
-	std::shared_ptr<TopoDS_Shape> CellComplex::GetOcctShape() const
+	TopoDS_Shape& CellComplex::GetOcctShape()
 	{
-		assert(m_pOcctCompSolid != nullptr && "CellComplex::m_pOcctCompSolid is null.");
-		if (m_pOcctCompSolid == nullptr)
+		return GetOcctCompSolid();
+	}
+
+	const TopoDS_Shape& CellComplex::GetOcctShape() const
+	{
+		return GetOcctCompSolid();
+	}
+
+	TopoDS_CompSolid& CellComplex::GetOcctCompSolid()
+	{
+		assert(m_pOcctCompSolid.IsNull() && "CellComplex::m_pOcctCompSolid is null.");
+		if (m_pOcctCompSolid.IsNull())
+		{
+			throw std::exception("CellComplex::m_pOcctCompSolid is null.");
+		}
+
+		return m_pOcctCompSolid;
+	}
+
+	const TopoDS_CompSolid& CellComplex::GetOcctCompSolid() const
+	{
+		assert(m_pOcctCompSolid.IsNull() && "CellComplex::m_pOcctCompSolid is null.");
+		if (m_pOcctCompSolid.IsNull())
 		{
 			throw std::exception("CellComplex::m_pOcctCompSolid is null.");
 		}
@@ -351,18 +372,15 @@ namespace TopoLogicCore
 	{
 		std::list<std::shared_ptr<Face>> faces;
 		Faces(faces);
-		for (std::list<std::shared_ptr<Face>>::const_iterator kFaceIterator = faces.begin();
-			kFaceIterator != faces.end();
-			kFaceIterator++)
+		for (const std::shared_ptr<Face>& kpFace : faces)
 		{
-			const std::shared_ptr<Face>& kpFace = *kFaceIterator;
 			rOcctGeometries.push_back(kpFace->Surface());
 		}
 	}
 
 	CellComplex::CellComplex(const TopoDS_CompSolid& rkOcctCompSolid)
 		: Topology(3)
-		, m_pOcctCompSolid(std::make_shared<TopoDS_CompSolid>(rkOcctCompSolid))
+		, m_pOcctCompSolid(rkOcctCompSolid)
 	{
 		GlobalCluster::GetInstance().Add(this);
 	}
