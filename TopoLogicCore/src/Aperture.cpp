@@ -192,6 +192,7 @@ namespace TopoLogicCore
 			rkTopologies[0] == nullptr ? TopoDS_Shape() : rkTopologies[0]->GetOcctShape(),
 			rkTopologies[1] == nullptr ? TopoDS_Shape() : rkTopologies[1]->GetOcctShape()
 		);
+
 		for (std::list<AperturePath>::const_iterator kAperturePathIterator = m_occtAperturePaths.begin();
 			kAperturePathIterator != m_occtAperturePaths.end();
 			kAperturePathIterator++)
@@ -206,13 +207,11 @@ namespace TopoLogicCore
 
 	void Aperture::Paths(std::list<std::list<std::shared_ptr<TopoLogicCore::Topology>>>& rPaths) const
 	{
-		for (std::list<AperturePath>::const_iterator kAperturePathIterator = m_occtAperturePaths.begin();
-			kAperturePathIterator != m_occtAperturePaths.end();
-			kAperturePathIterator++)
+		for(const AperturePath& rkAperturePath : m_occtAperturePaths)
 		{
 			std::list<std::shared_ptr<TopoLogicCore::Topology>> path;
-			path.push_back(Topology::ByOcctShape(kAperturePathIterator->GetTopology1()));
-			path.push_back(Topology::ByOcctShape(kAperturePathIterator->GetTopology2()));
+			path.push_back(Topology::ByOcctShape(rkAperturePath.GetTopology1()));
+			path.push_back(Topology::ByOcctShape(rkAperturePath.GetTopology2()));
 			rPaths.push_back(path);
 		}
 	}

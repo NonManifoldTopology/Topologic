@@ -145,9 +145,8 @@ namespace TopoLogicCore
 				result2 &&
 				occtRelationshipType->Get() == REL_CONSTITUENT)
 			{
-				TopExp_Explorer occtExplorer;
 				BOPCol_ListOfShape occtShapes;
-				for (occtExplorer.Init(occtCompSolid, TopAbs_FACE); occtExplorer.More(); occtExplorer.Next())
+				for (TopExp_Explorer occtExplorer(occtCompSolid, TopAbs_FACE); occtExplorer.More(); occtExplorer.Next())
 				{
 					const TopoDS_Shape& occtCurrent = occtExplorer.Current();
 					if (!occtShapes.Contains(occtCurrent))
@@ -184,14 +183,10 @@ namespace TopoLogicCore
 			}
 		}
 
-		for (std::list<std::shared_ptr<Cell>>::const_iterator kCellIterator = rkCells.begin();
-			kCellIterator != rkCells.end();
-			kCellIterator++)
+		/*for (const std::shared_ptr<Cell>& kpCell : rkCells)
 		{
-			const std::shared_ptr<Cell>& kpCell = *kCellIterator;
 			kpCell->AddIngredientTo(pMergeCellComplex);
-		}
-
+		}*/
 
 		return pMergeCellComplex;
 	}
@@ -233,8 +228,7 @@ namespace TopoLogicCore
 		else if (rkOcctResult.ShapeType() == TopAbs_COMPOUND)
 		{
 			TopTools_MapOfShape occtShapes;
-			TopExp_Explorer occtExplorer;
-			for (occtExplorer.Init(rkOcctResult, TopAbs_SOLID); occtExplorer.More(); occtExplorer.Next())
+			for (TopExp_Explorer occtExplorer(rkOcctResult, TopAbs_SOLID); occtExplorer.More(); occtExplorer.Next())
 			{
 				const TopoDS_Shape& occtCurrent = occtExplorer.Current();
 				if (!occtShapes.Contains(occtCurrent))
@@ -253,11 +247,9 @@ namespace TopoLogicCore
 		BOPCol_ListOfShape occtCellsBuildersArguments;
 		std::list<std::shared_ptr<Cell>> cells;
 		Cells(cells);
-		for (std::list<std::shared_ptr<Cell>>::const_iterator kCellIterator = cells.begin();
-			kCellIterator != cells.end();
-			kCellIterator++)
+		for (const std::shared_ptr<Cell>& kpCell : cells)
 		{
-			occtCellsBuildersArguments.Append((*kCellIterator)->GetOcctShape());
+			occtCellsBuildersArguments.Append(kpCell->GetOcctShape());
 		}
 
 		BOPAlgo_CellsBuilder occtCellsBuilder;
@@ -274,12 +266,12 @@ namespace TopoLogicCore
 
 		BOPCol_ListOfShape occtListToTake;
 		BOPCol_ListOfShape occtListToAvoid;
-		for (BOPCol_ListOfShape::const_iterator kShapeIterator = occtCellsBuildersArguments.begin();
-			kShapeIterator != occtCellsBuildersArguments.end();
-			kShapeIterator++)
+		for (BOPCol_ListIteratorOfListOfShape occtShapeIterator(occtCellsBuildersArguments);
+			occtShapeIterator.More();
+			occtShapeIterator.Next())
 		{
 			occtListToTake.Clear();
-			occtListToTake.Append(*kShapeIterator);
+			occtListToTake.Append(occtShapeIterator.Value());
 			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid, 1, true);
 		}
 
@@ -292,9 +284,7 @@ namespace TopoLogicCore
 		ssErrorMessage << "There can be only 0 or 1 envelope cell, but this cell complex has " << numberOfSolids << " cells.";
 		assert(numberOfSolids < 2 && ssErrorMessage.str().c_str());
 
-		TopExp_Explorer occtExplorer;
-		TopTools_MapOfShape occtCells;
-		for (occtExplorer.Init(occtEnvelopeShape, TopAbs_SOLID); occtExplorer.More(); occtExplorer.Next())
+		for (TopExp_Explorer occtExplorer(occtEnvelopeShape, TopAbs_SOLID); occtExplorer.More(); occtExplorer.Next())
 		{
 			return std::make_shared<Cell>(TopoDS::Solid(occtExplorer.Current()));
 		}
@@ -312,20 +302,15 @@ namespace TopoLogicCore
 		Faces(faces);
 
 		Handle(IntTools_Context) pOcctIntToolsContext = new IntTools_Context();
-		for (std::list<std::shared_ptr<Face>>::const_iterator kFaceIterator = faces.begin();
-			kFaceIterator != faces.end();
-			kFaceIterator++)
+		for (const std::shared_ptr<Face>& kpFace : faces)
 		{
-			const std::shared_ptr<Face>& kpFace = *kFaceIterator;
 			bool isEnvelopeFace = false;
-			for (std::list<std::shared_ptr<Face>>::const_iterator kEnvelopeFaceIterator = envelopeFaces.begin();
-				kEnvelopeFaceIterator != envelopeFaces.end() && !isEnvelopeFace;
-				kEnvelopeFaceIterator++)
+			for (const std::shared_ptr<Face>& kpEnvelopeFace : envelopeFaces)
 			{
-				const std::shared_ptr<Face>& kpEnvelopeFace = *kEnvelopeFaceIterator;
 				if(BOPTools_AlgoTools::CheckSameGeom(kpFace->GetOcctFace(), kpEnvelopeFace->GetOcctFace(), pOcctIntToolsContext))
 				{
 					isEnvelopeFace = true;
+					break;
 				}
 			}
 

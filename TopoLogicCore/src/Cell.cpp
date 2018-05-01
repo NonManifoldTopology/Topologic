@@ -47,8 +47,7 @@ namespace TopoLogicCore
 
 		// Find the constituent faces
 		TopTools_MapOfShape occtFaces;
-		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(GetOcctShape(), TopAbs_FACE); occtExplorer.More(); occtExplorer.Next())
+		for (TopExp_Explorer occtExplorer(GetOcctShape(), TopAbs_FACE); occtExplorer.More(); occtExplorer.Next())
 		{
 			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
 			if (!occtFaces.Contains(occtCurrent))
@@ -131,13 +130,10 @@ namespace TopoLogicCore
 
 		std::shared_ptr<Shell> pShell = Shell::ByFaces(rkFaces);
 		std::shared_ptr<Cell> pCell = ByShell(pShell);
-		for (std::list<std::shared_ptr<Face>>::const_iterator kFaceIterator = rkFaces.begin();
-			kFaceIterator != rkFaces.end();
-			kFaceIterator++)
+		/*for (const std::shared_ptr<Face>& kpFace : rkFaces)
 		{
-			const std::shared_ptr<Face>& kpFace = *kFaceIterator;
 			kpFace->AddIngredientTo(pCell);
-		}
+		}*/
 		return pCell;
 	}
 
@@ -221,12 +217,8 @@ namespace TopoLogicCore
 		}
 
 		std::list<std::shared_ptr<Face>> faces;
-		for (std::list<std::list<int>>::const_iterator kFaceIndexIterator = rkFaceIndices.begin();
-			kFaceIndexIterator != rkFaceIndices.end();
-			kFaceIndexIterator++)
+		for (const std::list<int>& rkVertexIndices : rkFaceIndices)
 		{
-			const std::list<int>& rkVertexIndices = *kFaceIndexIterator;
-
 			BRepBuilderAPI_MakeWire occtMakeWire;
 
 			std::list<int>::const_iterator kSecondFromLastVertexIterator = --rkVertexIndices.end();
@@ -273,8 +265,7 @@ namespace TopoLogicCore
 		const TopoDS_Shape& rkOcctShape = BRepAlgoAPI_Section(GetOcctShape(), kpAnotherCell->GetOcctShape()).Shape();
 
 		TopTools_MapOfShape occtEdges;
-		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(rkOcctShape, TopAbs_EDGE); occtExplorer.More(); occtExplorer.Next())
+		for (TopExp_Explorer occtExplorer(rkOcctShape, TopAbs_EDGE); occtExplorer.More(); occtExplorer.Next())
 		{
 			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
 			if (!occtEdges.Contains(occtCurrent))
@@ -283,11 +274,11 @@ namespace TopoLogicCore
 			}
 		}
 
-		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtEdges.cbegin();
-			kOcctShapeIterator != occtEdges.cend();
-			kOcctShapeIterator++)
+		for (TopTools_MapIteratorOfMapOfShape occtShapeIterator(occtEdges);
+			occtShapeIterator.More();
+			occtShapeIterator.Next())
 		{
-			rEdges.push_back(std::make_shared<Edge>(TopoDS::Edge(*kOcctShapeIterator)));
+			rEdges.push_back(std::make_shared<Edge>(TopoDS::Edge(occtShapeIterator.Value())));
 		}
 	}
 
@@ -297,8 +288,7 @@ namespace TopoLogicCore
 		const TopoDS_Shape& rkOcctShape = BRepAlgoAPI_Common(GetOcctShape(), kpAnotherCell->GetOcctShape()).Shape();
 
 		TopTools_MapOfShape occtFaces;
-		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(rkOcctShape, TopAbs_FACE); occtExplorer.More(); occtExplorer.Next())
+		for (TopExp_Explorer occtExplorer(rkOcctShape, TopAbs_FACE); occtExplorer.More(); occtExplorer.Next())
 		{
 			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
 			if (!occtFaces.Contains(occtCurrent))
@@ -307,11 +297,11 @@ namespace TopoLogicCore
 			}
 		}
 
-		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtFaces.cbegin();
-			kOcctShapeIterator != occtFaces.cend();
-			kOcctShapeIterator++)
+		for (TopTools_MapIteratorOfMapOfShape occtShapeIterator(occtFaces);
+			occtShapeIterator.More();
+			occtShapeIterator.Next())
 		{
-			rFaces.push_back(std::make_shared<Face>(TopoDS::Face(*kOcctShapeIterator)));
+			rFaces.push_back(std::make_shared<Face>(TopoDS::Face(occtShapeIterator.Value())));
 		}
 	}
 
@@ -321,8 +311,7 @@ namespace TopoLogicCore
 		const TopoDS_Shape& rkOcctShape = BRepAlgoAPI_Section(GetOcctShape(), kpAnotherCell->GetOcctShape()).Shape();
 
 		TopTools_MapOfShape occtVertices;
-		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(rkOcctShape, TopAbs_VERTEX); occtExplorer.More(); occtExplorer.Next())
+		for (TopExp_Explorer occtExplorer(rkOcctShape, TopAbs_VERTEX); occtExplorer.More(); occtExplorer.Next())
 		{
 			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
 			if (!occtVertices.Contains(occtCurrent))
@@ -331,11 +320,11 @@ namespace TopoLogicCore
 			}
 		}
 
-		for (TopTools_MapOfShape::const_iterator kOcctShapeIterator = occtVertices.cbegin();
-			kOcctShapeIterator != occtVertices.cend();
-			kOcctShapeIterator++)
+		for (TopTools_MapIteratorOfMapOfShape occtShapeIterator(occtVertices);
+			occtShapeIterator.More();
+			occtShapeIterator.Next())
 		{
-			rVertices.push_back(std::make_shared<Vertex>(TopoDS::Vertex(*kOcctShapeIterator)));
+			rVertices.push_back(std::make_shared<Vertex>(TopoDS::Vertex(occtShapeIterator.Value())));
 		}
 	}
 
@@ -355,8 +344,7 @@ namespace TopoLogicCore
 	void Cell::InnerBoundaries(std::list<std::shared_ptr<Shell>>& rShells) const
 	{
 		TopTools_MapOfShape occtShells;
-		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(GetOcctShape(), TopAbs_SHELL); occtExplorer.More(); occtExplorer.Next())
+		for (TopExp_Explorer occtExplorer(GetOcctShape(), TopAbs_SHELL); occtExplorer.More(); occtExplorer.Next())
 		{
 			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
 			if (!occtShells.Contains(occtCurrent))
@@ -420,11 +408,8 @@ namespace TopoLogicCore
 		// Returns a list of faces
 		std::list<std::shared_ptr<Face>> faces;
 		Faces(faces);
-		for (std::list<std::shared_ptr<Face>>::const_iterator kFaceIterator = faces.begin();
-			kFaceIterator != faces.end();
-			kFaceIterator++)
+		for (const std::shared_ptr<Face>& kpFace : faces)
 		{
-			const std::shared_ptr<Face>& kpFace = *kFaceIterator;
 			rOcctGeometries.push_back(kpFace->Surface());
 		}
 	}

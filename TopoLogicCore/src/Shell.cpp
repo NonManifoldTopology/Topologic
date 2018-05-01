@@ -102,13 +102,13 @@ namespace TopoLogicCore
 
 		occtSewing.Perform();
 		std::shared_ptr<Shell> pShell = std::make_shared<Shell>(TopoDS::Shell(occtSewing.SewedShape()));
-		for (std::list<std::shared_ptr<Face>>::const_iterator kFaceIterator = rkFaces.begin();
+		/*for (std::list<std::shared_ptr<Face>>::const_iterator kFaceIterator = rkFaces.begin();
 			kFaceIterator != rkFaces.end();
 			kFaceIterator++)
 		{
 			const std::shared_ptr<Face>& kpFace = *kFaceIterator;
 			kpFace->AddIngredientTo(pShell);
-		}
+		}*/
 
 		// HACK: add the v1 contents to the current shell faces.
 		std::shared_ptr<Topology> pUpcastShell = TopologicalQuery::Upcast<Topology>(pShell);
@@ -452,17 +452,11 @@ namespace TopoLogicCore
 			endVIterator--;
 		}
 
-		for (std::list<double>::const_iterator uIterator = occtUValues.begin();
-			uIterator != endUIterator;
-			uIterator++)
+		for (const double kU : occtUValues)
 		{
-			const double& rkU = *uIterator;
-			for (std::list<double>::const_iterator vIterator = occtVValues.begin();
-				vIterator != endVIterator;
-				vIterator++)
+			for (const double kV : occtVValues)
 			{
-				const double& rkV = *vIterator;
-				gp_Pnt occtPoint = pOcctWallSurface->Value(rkU, rkV);
+				gp_Pnt occtPoint = pOcctWallSurface->Value(kU, kV);
 				shapeOpMatrix(0, i) = occtPoint.X();
 				shapeOpMatrix(1, i) = occtPoint.Y();
 				shapeOpMatrix(2, i) = occtPoint.Z();
@@ -1140,8 +1134,7 @@ namespace TopoLogicCore
 		pOutputShell->Faces(outputFaces);
 
 		TopTools_ListOfShape occtOutputFaces;
-		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(pOutputShell->GetOcctShape(), TopAbs_FACE); occtExplorer.More(); occtExplorer.Next())
+		for (TopExp_Explorer occtExplorer(pOutputShell->GetOcctShape(), TopAbs_FACE); occtExplorer.More(); occtExplorer.Next())
 		{
 			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
 			if (!occtOutputFaces.Contains(occtCurrent))
@@ -1232,11 +1225,8 @@ namespace TopoLogicCore
 		// Returns a list of faces
 		std::list<std::shared_ptr<Face>> faces;
 		Faces(faces);
-		for (std::list<std::shared_ptr<Face>>::const_iterator kFaceIterator = faces.begin();
-			kFaceIterator != faces.end();
-			kFaceIterator++)
+		for (const std::shared_ptr<Face>& kpFace : faces)
 		{
-			const std::shared_ptr<Face>& kpFace = *kFaceIterator;
 			rOcctGeometries.push_back(kpFace->Surface());
 		}
 	}

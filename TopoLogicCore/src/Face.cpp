@@ -36,8 +36,7 @@ namespace TopoLogicCore
 
 		// Get the wires of this face
 		TopTools_MapOfShape occtWires;
-		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(GetOcctShape(), TopAbs_WIRE); occtExplorer.More(); occtExplorer.Next())
+		for (TopExp_Explorer occtExplorer(GetOcctShape(), TopAbs_WIRE); occtExplorer.More(); occtExplorer.Next())
 		{
 			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
 			if (!occtWires.Contains(occtCurrent))
@@ -50,8 +49,7 @@ namespace TopoLogicCore
 			kOcctMapIterator.More();
 			kOcctMapIterator.Next())
 		{
-			BRepTools_WireExplorer occtWireExplorer;
-			for (occtWireExplorer.Init(TopoDS::Wire(kOcctMapIterator.Value())); occtWireExplorer.More(); occtWireExplorer.Next())
+			for (BRepTools_WireExplorer occtWireExplorer(TopoDS::Wire(kOcctMapIterator.Value())); occtWireExplorer.More(); occtWireExplorer.Next())
 			{
 				TopoDS_Face occtFace;
 				bool faceFound = TopOpeBRepBuild_Tools::GetAdjacentFace(GetOcctShape(), occtWireExplorer.Current(), occtEdgeFaceMap, occtFace);
@@ -281,8 +279,7 @@ namespace TopoLogicCore
 		const TopoDS_Shape& rkOcctShape = BRepAlgoAPI_Section(GetOcctShape(), kpAnotherFace->GetOcctShape()).Shape();
 
 		TopTools_MapOfShape occtEdges;
-		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(rkOcctShape, TopAbs_EDGE); occtExplorer.More(); occtExplorer.Next())
+		for (TopExp_Explorer occtExplorer(rkOcctShape, TopAbs_EDGE); occtExplorer.More(); occtExplorer.Next())
 		{
 			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
 			if (!occtEdges.Contains(occtCurrent))
@@ -306,8 +303,7 @@ namespace TopoLogicCore
 		const TopoDS_Shape& rkOcctShape = BRepAlgoAPI_Section(GetOcctShape(), kpAnotherFace->GetOcctShape()).Shape();
 
 		TopTools_MapOfShape occtVertices;
-		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(GetOcctShape(), TopAbs_VERTEX); occtExplorer.More(); occtExplorer.Next())
+		for (TopExp_Explorer occtExplorer(GetOcctShape(), TopAbs_VERTEX); occtExplorer.More(); occtExplorer.Next())
 		{
 			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
 			if (!occtVertices.Contains(occtCurrent))

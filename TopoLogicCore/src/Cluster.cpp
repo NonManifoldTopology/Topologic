@@ -47,11 +47,9 @@ namespace TopoLogicCore
 		}
 
 		std::shared_ptr<Cluster> pCluster = std::make_shared<Cluster>(true);
-		for(std::list<std::shared_ptr<Topology>>::const_iterator kTopologyIterator = rkTopologies.begin();
-			kTopologyIterator != rkTopologies.end();
-			kTopologyIterator++)
+		for(const std::shared_ptr<Topology>& kpTopology : rkTopologies)
 		{
-			pCluster->AddTopology((*kTopologyIterator).get());
+			pCluster->AddTopology(kpTopology.get());
 		}
 		return pCluster;
 	}
@@ -237,8 +235,7 @@ namespace TopoLogicCore
 	{
 		const TopoDS_Shape& rkOcctAddedShape = kpkTopology->GetOcctShape();
 		TopTools_MapOfShape occtShapes;
-		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(GetOcctShape(), rkOcctAddedShape.ShapeType()); occtExplorer.More(); occtExplorer.Next())
+		for (TopExp_Explorer occtExplorer(GetOcctShape(), rkOcctAddedShape.ShapeType()); occtExplorer.More(); occtExplorer.Next())
 		{
 			const TopoDS_Shape& rkOcctCurrent = occtExplorer.Current();
 			if (rkOcctAddedShape.IsSame(rkOcctCurrent))

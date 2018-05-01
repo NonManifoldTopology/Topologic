@@ -17,8 +17,7 @@ namespace TopoLogicCore
 			return false;
 		}
 
-		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(rkShape1, rkShape2.ShapeType()); occtExplorer.More(); occtExplorer.Next())
+		for (TopExp_Explorer occtExplorer(rkShape1, rkShape2.ShapeType()); occtExplorer.More(); occtExplorer.Next())
 		{
 			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
 			if (occtCurrent.IsSame(rkShape2))
