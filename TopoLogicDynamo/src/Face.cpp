@@ -39,7 +39,6 @@ namespace TopoLogic
 		pCoreFace->AdjacentFaces(pAdjacentCoreFaces);
 
 		List<Face^>^ pAdjacentFaces = gcnew List<Face^>();
-		List<System::Object^>^ pDynamoAdjacentFaces = gcnew List<System::Object^>();
 
 		for(std::list<std::shared_ptr<TopoLogicCore::Face>>::const_iterator kAdjacentFaceIterator = pAdjacentCoreFaces.begin();
 			kAdjacentFaceIterator != pAdjacentCoreFaces.end();
@@ -48,7 +47,6 @@ namespace TopoLogic
 			const std::shared_ptr<TopoLogicCore::Face>& kpCoreFace = *kAdjacentFaceIterator;
 			Face^ pFace = gcnew Face(kpCoreFace);
 			pAdjacentFaces->Add(pFace);
-			pDynamoAdjacentFaces->Add(pFace->Geometry);
 		}
 
 		return pAdjacentFaces;
@@ -80,7 +78,6 @@ namespace TopoLogic
 		pCoreFace->Shells(pCoreShells);
 
 		List<Shell^>^ pShells = gcnew List<Shell^>();
-		List<System::Object^>^ pDynamoPolysurfaces = gcnew List<System::Object^>();
 
 		for (std::list<std::shared_ptr<TopoLogicCore::Shell>>::const_iterator kShellIterator = pCoreShells.begin();
 			kShellIterator != pCoreShells.end();
@@ -89,7 +86,6 @@ namespace TopoLogic
 			const std::shared_ptr<TopoLogicCore::Shell>& kpCoreShell = *kShellIterator;
 			Shell^ pShell = gcnew Shell(kpCoreShell);
 			pShells->Add(pShell);
-			pDynamoPolysurfaces->Add(pShell->Geometry);
 		}
 
 		return pShells;
@@ -463,25 +459,50 @@ namespace TopoLogic
 				}
 			}
 
+			for each(array<Autodesk::DesignScript::Geometry::Point^>^ pDynamo1DControlPoints in pDynamoControlPoints)
+			{
+				for each(Autodesk::DesignScript::Geometry::Point^ pDynamoControlPoint in pDynamo1DControlPoints)
+				{
+					delete pDynamoControlPoint;
+				}
+			}
+
+			delete pDynamoUMinVMin;
+			delete pDynamoUMinVMax;
+			delete pDynamoUMaxVMin;
+			delete pDynamoUMaxVMax;
+
 			try {
 				Autodesk::DesignScript::Geometry::Surface^ pDynamoTrimmedSurfaceByParameters = 
 					pDynamoUntrimmedSurface->TrimWithEdgeLoops(pDynamoEdgeLoops);
+
+				for each(Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoEdgeLoop in pDynamoEdgeLoops)
+				{
+					delete pDynamoEdgeLoop;
+				}
+
+				delete pDynamoUntrimmedSurface;
+
 				return pDynamoTrimmedSurfaceByParameters;
 			}
 			catch (std::exception& e)
 			{
 				String^ str = gcnew String(e.what());
-				return pDynamoUntrimmedSurface;
 			}
 			catch (Exception^ e)
 			{
 				String^ str(e->Message);
-				return pDynamoUntrimmedSurface;
 			}
 			catch (...)
 			{
-				return pDynamoUntrimmedSurface;
 			}
+
+			for each(Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoEdgeLoop in pDynamoEdgeLoops)
+			{
+				delete pDynamoEdgeLoop;
+			}
+
+			return pDynamoUntrimmedSurface;
 		}
 
 		Handle(Geom_RectangularTrimmedSurface) pOcctRectangularTrimmedSurface = Handle_Geom_RectangularTrimmedSurface::DownCast(pOcctSurface);
@@ -529,6 +550,12 @@ namespace TopoLogic
 						Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoCurves)
 					);
 				}
+
+				for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoCurve in pDynamoCurves)
+				{
+					delete pDynamoCurve;
+				}
+
 				return pDynamoSurface;
 			}
 
@@ -557,6 +584,11 @@ namespace TopoLogic
 						pDynamoSurface = Autodesk::DesignScript::Geometry::Surface::ByPatch(
 							Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoOuterCurves)
 						);
+
+						for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoOuterCurve in pDynamoOuterCurves)
+						{
+							delete pDynamoOuterCurve;
+						}
 					}
 				}
 
@@ -571,6 +603,16 @@ namespace TopoLogic
 			// this may raise exception
 			try{
 				Autodesk::DesignScript::Geometry::Surface^ pTrimmedDynamoSurface = pDynamoSurface->TrimWithEdgeLoops(pDynamoEdgeLoops);
+
+				if (pDynamoSurface != nullptr)
+				{
+					delete pDynamoSurface;
+				}
+				for each(Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoEdgeLoop in pDynamoEdgeLoops)
+				{
+					delete pDynamoEdgeLoop;
+				}
+
 				return pTrimmedDynamoSurface;
 			}
 			catch (Exception^ e)
@@ -627,7 +669,14 @@ namespace TopoLogic
 			pDynamoPoints->Add(safe_cast<Autodesk::DesignScript::Geometry::Point^>(pVertex->Geometry));
 		}
 
-		return Autodesk::DesignScript::Geometry::Surface::ByPerimeterPoints(pDynamoPoints);
+		Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface = Autodesk::DesignScript::Geometry::Surface::ByPerimeterPoints(pDynamoPoints);
+
+		for each(Autodesk::DesignScript::Geometry::Point^ pDynamoPoint in pDynamoPoints)
+		{
+			delete pDynamoPoint;
+		}
+
+		return pDynamoSurface;
 	}
 
 	Autodesk::DesignScript::Geometry::Mesh^ Face::TriangulatedMesh()
@@ -663,7 +712,18 @@ namespace TopoLogic
 			pDynamoTriangleIndices->Add(Autodesk::DesignScript::Geometry::IndexGroup::ByIndices(occtIndex1 - occtLowerBound, occtIndex2 - occtLowerBound, occtIndex3 - occtLowerBound));
 		}
 
-		return Autodesk::DesignScript::Geometry::Mesh::ByPointsFaceIndices(pDynamoPoints, pDynamoTriangleIndices);
+		Autodesk::DesignScript::Geometry::Mesh^ pDynamoMesh = Autodesk::DesignScript::Geometry::Mesh::ByPointsFaceIndices(pDynamoPoints, pDynamoTriangleIndices);
+
+		for each(Autodesk::DesignScript::Geometry::Point^ pDynamoPoint in pDynamoPoints)
+		{
+			delete pDynamoPoint;
+		}
+		for each(Autodesk::DesignScript::Geometry::IndexGroup^ pDynamoTriangleIndex in pDynamoTriangleIndices)
+		{
+			delete pDynamoTriangleIndex;
+		}
+
+		return pDynamoMesh;
 	}
 
 	Face::~Face()
@@ -677,6 +737,7 @@ namespace TopoLogic
 		// 1. NURBS parameters
 		// Transfer the poles/control points
 		array<array<Autodesk::DesignScript::Geometry::Point^>^>^ pDynamoControlPoints = pDynamoNurbsSurface->ControlPoints();
+
 		TColgp_Array2OfPnt occtPoles(0, pDynamoNurbsSurface->NumControlPointsU - 1, 0, pDynamoNurbsSurface->NumControlPointsV - 1);
 		for (int i = occtPoles.LowerRow(); i <= occtPoles.UpperRow(); i++)
 		{
@@ -931,5 +992,27 @@ namespace TopoLogic
 			pCoreOuterWire,
 			coreInnerWires
 		));
+
+
+		for each(array<Autodesk::DesignScript::Geometry::Point^>^ pDynamo1DControlPoints in pDynamoControlPoints)
+		{
+			for each(Autodesk::DesignScript::Geometry::Point^ pDynamoControlPoint in pDynamo1DControlPoints)
+			{
+				delete pDynamoControlPoint;
+			}
+		}
+
+		for each(List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamo1DCurveGroup in pDynamoCurveGroups)
+		{
+			for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoCurveGroup in pDynamo1DCurveGroup)
+			{
+				delete pDynamoCurveGroup;
+			}
+		}
+
+		if (pOuterPolycurve != nullptr)
+		{
+			delete pOuterPolycurve;
+		}
 	}
 }

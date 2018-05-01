@@ -22,7 +22,6 @@ namespace TopoLogic
 		pCoreVertex->Edges(coreEdges);
 
 		List<Edge^>^ pEdges = gcnew List<Edge^>();
-		List<Object^>^ pDynamoCurves = gcnew List<Object^>();
 		for (std::list<std::shared_ptr<TopoLogicCore::Edge>>::iterator coreEdgeIterator = coreEdges.begin();
 			coreEdgeIterator != coreEdges.end();
 			coreEdgeIterator++)
@@ -30,7 +29,6 @@ namespace TopoLogic
 			const std::shared_ptr<TopoLogicCore::Edge>& kpCoreEdge = *coreEdgeIterator;
 			Edge^ pEdge = gcnew Edge(kpCoreEdge);
 			pEdges->Add(pEdge);
-			pDynamoCurves->Add(pEdge->Geometry);
 		}
 
 		return pEdges;

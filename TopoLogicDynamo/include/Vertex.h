@@ -15,15 +15,15 @@ namespace TopoLogic
 		/// Creates a vertex by a point.
 		/// </summary>
 		/// <param name="point">A point.</param>
-		/// <returns>
-		/// "TopoLogic Vertex": the created TopoLogic vertex
+		/// <returns name="Vertex">
+		/// A vertex.
 		/// </returns>
 		static Vertex^ ByPoint(Autodesk::DesignScript::Geometry::Point^ point);
 
 		/// <summary>
 		/// Gets the list of edges incident to this vertex.
 		/// </summary>
-		/// <returns>The edges incident to this vertex</returns>
+		/// <returns name="Edge[]">The edges incident to this vertex</returns>
 		List<Edge^>^ Edges();
 
 		property Object^ Geometry
@@ -31,8 +31,8 @@ namespace TopoLogic
 			/// <summary>
 			/// 
 			/// </summary>
-			/// <returns></returns>
-			virtual Object^ get() override;
+			/// <returns name="Geometry"></returns>
+			virtual Object^ get() override;	
 		}
 
 	public protected:

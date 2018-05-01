@@ -19,20 +19,22 @@ namespace TopoLogic
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
+		/// <param name="faces"></param>
+		/// <returns name="Cell"></returns>
 		static Cell^ ByFaces(List<Face^>^ faces);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
+		/// <param name="solid"></param>
+		/// <returns name="Cell"></returns>
 		static Cell^ BySolid(Autodesk::DesignScript::Geometry::Solid^ solid);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="shell"></param>
-		/// <returns></returns>
+		/// <returns name="Cell"></returns>
 		static Cell^ ByShell(Shell^ shell);
 
 		/// <summary>
@@ -40,71 +42,71 @@ namespace TopoLogic
 		/// </summary>
 		/// <param name="vertices"></param>
 		/// <param name="faceIndices"></param>
-		/// <returns></returns>
+		/// <returns name="Cell"></returns>
 		static Cell^ ByVerticesFaceIndices(List<Vertex^>^ vertices, List<List<int>^>^ faceIndices);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="CellComplex[]"></returns>
 		List<CellComplex^>^ CellComplexes();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="Shell[]"></returns>
 		List<Shell^>^ Shells();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="Face[]"></returns>
 		List<Face^>^ Faces();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="Wire[]"></returns>
 		List<Wire^>^ Wires();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="Edge[]"></returns>
 		List<Edge^>^ Edges();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="Vertex[]"></returns>
 		List<Vertex^>^ Vertices();
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="cell"></param>
-		/// <returns></returns>
+		/// <returns name="Cell[]"></returns>
 		List<Cell^>^ AdjacentCells(Cell^ cell);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="cell"></param>
-		/// <returns></returns>
+		/// <returns name="Face[]"></returns>
 		List<Face^>^ SharedFaces(Cell^ cell);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="cell"></param>
-		/// <returns></returns>
+		/// <returns name="Face[]"></returns>
 		List<Edge^>^ SharedEdges(Cell^ cell);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="cell"></param>
-		/// <returns></returns>
+		/// <returns name="Vertex[]"></returns>
 		List<Vertex^>^ SharedVertices(Cell^ cell);
 
 		/// <summary>
@@ -122,15 +124,20 @@ namespace TopoLogic
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="double"></returns>
 		double Volume();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="Vertex"></returns>
 		Vertex^ CenterOfMass();
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="vertex"></param>
+		/// <returns name="bool"></returns>
 		bool DoesContain(Vertex^ vertex);
 
 		property Object^ Geometry

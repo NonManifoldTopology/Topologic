@@ -91,22 +91,30 @@ namespace TopoLogic
 		if (pDynamoCurves->Count == 0)
 			return nullptr;
 
+		Object^ pDynamoReturnValue = nullptr;
 		try
 		{
-			return Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoCurves);
+			pDynamoReturnValue = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoCurves);
+
+			for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoCurve in pDynamoCurves)
+			{
+				delete pDynamoCurve;
+			}
 		}
 		catch (std::exception&)
 		{
-			return pDynamoCurves;
+			pDynamoReturnValue = pDynamoCurves;
 		}
 		catch (Exception^)
 		{
-			return pDynamoCurves;
+			pDynamoReturnValue = pDynamoCurves;
 		}
 		catch (...)
 		{
 			throw gcnew Exception("An unknown Wire::Geometry exception is encountered.");
 		}
+
+		return pDynamoReturnValue;
 	}
 
 	std::shared_ptr<TopoLogicCore::TopologicalQuery> Wire::GetCoreTopologicalQuery()
@@ -154,6 +162,11 @@ namespace TopoLogic
 		}
 
 		m_pCoreWire = new std::shared_ptr<TopoLogicCore::Wire>(TopoLogicCore::Wire::ByEdges(coreEdges));
+
+		for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoCurve in pDynamoCurves)
+		{
+			delete pDynamoCurve;
+		}
 	}
 
 	Wire::~Wire()

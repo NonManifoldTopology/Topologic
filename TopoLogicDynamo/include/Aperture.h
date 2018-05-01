@@ -51,7 +51,7 @@ namespace TopoLogic
 		/// <summary>
 		/// Checks if the aperture path from the first to the second topologies is open.
 		/// </summary>
-		/// <param name="Topology[]">A list of exactly two topologies</param>
+		/// <param name="topologies">A list of exactly two topologies</param>
 		/// <returns name="bool">True if the aperture between the two paths is open</returns>
 		bool IsOpen(List<TopoLogic::Topology^>^ topologies);
 
@@ -70,7 +70,7 @@ namespace TopoLogic
 		/// <summary>
 		/// Open the aperture path connecting the input topologies.
 		/// </summary>
-		/// <param name="Topology[]">Topologies</param>
+		/// <param name="topologies">Topologies</param>
 		/// <returns name="Aperture">An aperture</returns>
 		Aperture^ Open(List<TopoLogic::Topology^>^ topologies);
 
@@ -83,7 +83,7 @@ namespace TopoLogic
 		/// <summary>
 		/// Close the aperture path between the input topologies.
 		/// </summary>
-		/// <param name="Topology[]">Topologies</param>
+		/// <param name="topologies">Topologies</param>
 		/// <returns name="Aperture">An aperture</returns>
 		Aperture^ Close(List<TopoLogic::Topology^>^ topologies);
 

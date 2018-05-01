@@ -242,7 +242,7 @@ namespace TopoLogic
 		throw gcnew NotImplementedException();
 	}
 
-	Dictionary<String^, Object^>^ Topology::BooleanImages(Topology^ topology)
+	/*Dictionary<String^, Object^>^ Topology::BooleanImages(Topology^ topology)
 	{
 		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
 		if (pCoreTopology == nullptr)
@@ -370,7 +370,8 @@ namespace TopoLogic
 		pDictionary->Add("Parts geometry between B_A and A_B", pGeometryParts_B_A_and_A_B);
 		pDictionary->Add("Parts geometry between A_B and B_B", pGeometryParts_A_B_and_B_B);
 		return pDictionary;
-	}
+	}*/
+
 	Topology^ Topology::Difference(Topology^ topology)
 	{
 		std::shared_ptr<TopoLogicCore::Topology> pCoreTopologyA = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());

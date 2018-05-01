@@ -125,7 +125,6 @@ namespace TopoLogic
 
 			// Transfer the control points
 			const TColgp_Array1OfPnt& rkOcctControlPoints = pOcctBsplineCurve->Poles();
-			//int numControlPoints = isPeriodic ? rkOcctControlPoints.Length() + 1 : rkOcctControlPoints.Length();
 			array<Autodesk::DesignScript::Geometry::Point^>^ pDynamoControlPoints = gcnew array<Autodesk::DesignScript::Geometry::Point^>(rkOcctControlPoints.Length());
 			for (int i = rkOcctControlPoints.Lower(); i <= rkOcctControlPoints.Upper(); i++)
 			{
@@ -179,8 +178,16 @@ namespace TopoLogic
 			double dynamoEndParameter = (u1 - occtFirstParameter) / occtDeltaParameter;
 
 			int degree = pOcctBsplineCurve->Degree();
-			return Autodesk::DesignScript::Geometry::NurbsCurve::ByControlPointsWeightsKnots(pDynamoControlPoints, pWeights, pKnots->ToArray(), degree)
+			Autodesk::DesignScript::Geometry::Curve^ pDynamoNurbsCurve = 
+				Autodesk::DesignScript::Geometry::NurbsCurve::ByControlPointsWeightsKnots(pDynamoControlPoints, pWeights, pKnots->ToArray(), degree)
 				->TrimByParameter(dynamoStartParameter, dynamoEndParameter);
+
+			for each(Autodesk::DesignScript::Geometry::Point^ pDynamoControlPoint in pDynamoControlPoints)
+			{
+				delete pDynamoControlPoint;
+			}
+
+			return pDynamoNurbsCurve;
 		}
 
 		Handle(Geom_TrimmedCurve) pOcctTrimmedCurve = Handle_Geom_TrimmedCurve::DownCast(pOcctCurve);
@@ -193,11 +200,19 @@ namespace TopoLogic
 		if (!pOcctCircle.IsNull())
 		{
 			const gp_Ax2& rkOcctPosition = pOcctCircle->Position();
-			return Autodesk::DesignScript::Geometry::Circle::ByCenterPointRadiusNormal(
-				Autodesk::DesignScript::Geometry::Point::ByCoordinates(rkOcctPosition.Location().X(), rkOcctPosition.Location().Y(), rkOcctPosition.Location().Z()),
+			Autodesk::DesignScript::Geometry::Point^ pDynamoCenterPoint = Autodesk::DesignScript::Geometry::Point::ByCoordinates(rkOcctPosition.Location().X(), rkOcctPosition.Location().Y(), rkOcctPosition.Location().Z());
+			Autodesk::DesignScript::Geometry::Vector^ pDynamoNormal = Autodesk::DesignScript::Geometry::Vector::ByCoordinates(rkOcctPosition.Direction().X(), rkOcctPosition.Direction().Y(), rkOcctPosition.Direction().Z());
+
+			Autodesk::DesignScript::Geometry::Circle^ pDynamoCircle = Autodesk::DesignScript::Geometry::Circle::ByCenterPointRadiusNormal(
+				pDynamoCenterPoint,
 				pOcctCircle->Radius(),
-				Autodesk::DesignScript::Geometry::Vector::ByCoordinates(rkOcctPosition.Direction().X(), rkOcctPosition.Direction().Y(), rkOcctPosition.Direction().Z())
+				pDynamoNormal
 			);
+
+			delete pDynamoCenterPoint;
+			delete pDynamoNormal;
+
+			return pDynamoCircle;
 		}
 
 		Handle(Geom_Ellipse) pOcctEllipse = Handle_Geom_Ellipse::DownCast(pOcctCurve);
@@ -230,15 +245,26 @@ namespace TopoLogic
 		std::shared_ptr<TopoLogicCore::Edge> pCoreEdge = TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(GetCoreTopologicalQuery());
 		List<Vertex^>^ pVertices = Vertices();
 
+		bool onlyTwoVertices = true;
 		if (pVertices->Count != 2)
+		{
+			onlyTwoVertices = false;
+		}
+
+		Autodesk::DesignScript::Geometry::Point^ pDynamoPoint1 = safe_cast<Autodesk::DesignScript::Geometry::Point^>(pVertices[0]->Geometry);
+		Autodesk::DesignScript::Geometry::Point^ pDynamoPoint2 = safe_cast<Autodesk::DesignScript::Geometry::Point^>(pVertices[1]->Geometry);
+
+		Autodesk::DesignScript::Geometry::Line^ pDynamoLine =
+			Autodesk::DesignScript::Geometry::Line::ByStartPointEndPoint(pDynamoPoint1, pDynamoPoint2);
+
+		delete pDynamoPoint1;
+		delete pDynamoPoint2;
+
+		if (!onlyTwoVertices)
 		{
 			throw gcnew Exception("The edge does not have exactly 2 vertices");
 		}
-
-		return Autodesk::DesignScript::Geometry::Line::ByStartPointEndPoint(
-			safe_cast<Autodesk::DesignScript::Geometry::Point^>(pVertices[0]->Geometry),
-			safe_cast<Autodesk::DesignScript::Geometry::Point^>(pVertices[1]->Geometry)
-		);
+		return pDynamoLine;
 	}
 
 	std::shared_ptr<TopoLogicCore::TopologicalQuery> Edge::GetCoreTopologicalQuery()
@@ -293,8 +319,7 @@ namespace TopoLogic
 		}
 		else if (curve->GetType() == Autodesk::DesignScript::Geometry::PolyCurve::typeid)
 		{
-			throw gcnew System::NotImplementedException("Feature not yet implemented.");
-			// Please use Wire
+			throw gcnew System::NotImplementedException("Cannot create an Edge from a PolyCurve. Create a wire instead.");
 		}
 		else if (curve->GetType() == Autodesk::DesignScript::Geometry::Curve::typeid) // a generic curve
 		{
@@ -378,6 +403,11 @@ namespace TopoLogic
 			isPeriodic,
 			isRational
 			));
+
+		for each(Autodesk::DesignScript::Geometry::Point^ pDynamoControlPoint in pDynamoControlPoints)
+		{
+			delete pDynamoControlPoint;
+		}
 	}
 
 	void Edge::Init(Autodesk::DesignScript::Geometry::Circle^ pDynamoCircle)
@@ -401,6 +431,11 @@ namespace TopoLogic
 
 		m_pCoreEdge = new std::shared_ptr<TopoLogicCore::Edge>(
 			TopoLogicCore::Edge::ByCurve(pOcctCircle));
+
+		delete pDynamoCenterPoint;
+		delete pDynamoNormal;
+		delete pDynamoCoordinateSystem;
+		delete pDynamoXAxis;
 	}
 
 	void Edge::Init(Autodesk::DesignScript::Geometry::Line^ pDynamoLine)

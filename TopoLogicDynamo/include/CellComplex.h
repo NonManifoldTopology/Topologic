@@ -20,63 +20,63 @@ namespace TopoLogic
 		/// 
 		/// </summary>
 		/// <param name="cells"></param>
-		/// <returns></returns>
+		/// <returns name="CellComplex"></returns>
 		static CellComplex^ ByCells(List<Cell^>^ cells);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="cells"></param>
-		/// <returns></returns>
+		/// <param name="faces"></param>
+		/// <returns name="CellComplex"></returns>
 		static CellComplex^ ByFaces(List<Face^>^ faces);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="Cell[]"></returns>
 		List<Cell^>^ Cells();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="Face[]"></returns>
 		List<Face^>^ Faces();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="Shell[]"></returns>
 		List<Shell^>^ Shells();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="Wire[]"></returns>
 		List<Wire^>^ Wires();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="Edge[]"></returns>
 		List<Edge^>^ Edges();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="Vertex[]"></returns>
 		List<Vertex^>^ Vertices();
 
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="Cell"></returns>
 		Cell^ OuterBoundary();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="Face[]"></returns>
 		List<Face^>^ InnerBoundaries();
 
 		property Object^ Geometry

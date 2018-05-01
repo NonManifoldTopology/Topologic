@@ -292,14 +292,14 @@ namespace TopoLogic
 	Object^ Cell::Geometry::get()
 	{
 		List<Autodesk::DesignScript::Geometry::Surface^>^ pDynamoSurfaces = gcnew List<Autodesk::DesignScript::Geometry::Surface^>();
-		List<Object^>^ pDynamoGeometry = gcnew List<Object^>();
+		List<Object^>^ pDynamoGeometries = gcnew List<Object^>();
 		List<Face^>^ pFaces = Faces();
 		bool hasFallbackVisualization = false;
 		for each(Face^ pFace in pFaces)
 		{
 			Object^ pFaceGeometry = pFace->Geometry;
 			Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface = dynamic_cast<Autodesk::DesignScript::Geometry::Surface^>(pFaceGeometry);
-			pDynamoGeometry->Add(pFaceGeometry);
+			pDynamoGeometries->Add(pFaceGeometry);
 			if(pDynamoSurface != nullptr)
 			{
 				pDynamoSurfaces->Add(pDynamoSurface);
@@ -316,7 +316,12 @@ namespace TopoLogic
 			try {
 				if (!pDynamoSurfaces->Contains(nullptr))
 				{
-					return Autodesk::DesignScript::Geometry::Solid::ByJoinedSurfaces(pDynamoSurfaces);
+					Autodesk::DesignScript::Geometry::Solid^ pDynamoSolid = Autodesk::DesignScript::Geometry::Solid::ByJoinedSurfaces(pDynamoSurfaces);
+					for each(Object^ pDynamoGeometry in pDynamoGeometries)
+					{
+						delete pDynamoGeometry;
+					}
+					return pDynamoSolid;
 				}
 				else
 				{
@@ -328,7 +333,7 @@ namespace TopoLogic
 			}
 		}
 
-		return pDynamoGeometry;
+		return pDynamoGeometries;
 	}
 
 	std::shared_ptr<TopoLogicCore::TopologicalQuery> Cell::GetCoreTopologicalQuery()
@@ -370,6 +375,7 @@ namespace TopoLogic
 			for each(Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface in pDynamoPolysurface->Surfaces())
 			{
 				pFaces->Add(gcnew Face(pDynamoSurface));
+				delete pDynamoSurface;
 			}
 			Init(pFaces);
 		}
@@ -416,21 +422,41 @@ namespace TopoLogic
 		double oneMinusPrecision = 1.0 - Precision::Confusion();
 		double onePlusPrecision = 1.0 + Precision::Confusion();
 
+		Autodesk::DesignScript::Geometry::Vector^ pDynamoXAxis = Autodesk::DesignScript::Geometry::Vector::ByCoordinates(1.0, 0.0, 0.0);
+		Autodesk::DesignScript::Geometry::Vector^ pDynamoYAxis = Autodesk::DesignScript::Geometry::Vector::ByCoordinates(0.0, 1.0, 0.0);
+		Autodesk::DesignScript::Geometry::Vector^ pDynamoZAxis = Autodesk::DesignScript::Geometry::Vector::ByCoordinates(0.0, 0.0, 1.0);
+
+		bool canCreateCell = true;
 		if (xScale < oneMinusPrecision || xScale > onePlusPrecision ||
 			yScale < oneMinusPrecision || yScale > onePlusPrecision ||
 			zScale < oneMinusPrecision || zScale > onePlusPrecision ||
-			!pDynamoCoordinateSystem->XAxis->IsAlmostEqualTo(Autodesk::DesignScript::Geometry::Vector::ByCoordinates(1.0, 0.0, 0.0)) ||
-			!pDynamoCoordinateSystem->YAxis->IsAlmostEqualTo(Autodesk::DesignScript::Geometry::Vector::ByCoordinates(0.0, 1.0, 0.0)) || 
-			!pDynamoCoordinateSystem->ZAxis->IsAlmostEqualTo(Autodesk::DesignScript::Geometry::Vector::ByCoordinates(0.0, 0.0, 1.0)))
+			!pDynamoCoordinateSystem->XAxis->IsAlmostEqualTo(pDynamoXAxis) ||
+			!pDynamoCoordinateSystem->YAxis->IsAlmostEqualTo(pDynamoYAxis) || 
+			!pDynamoCoordinateSystem->ZAxis->IsAlmostEqualTo(pDynamoZAxis))
+		{
+			canCreateCell = false; 
+		}
+
+		if(canCreateCell)
+		{
+			m_pCoreCell = new std::shared_ptr<TopoLogicCore::Cell>(TopoLogicCore::Cell::ByCuboid(
+				new Geom_CartesianPoint(pDynamoCentroid->X, pDynamoCentroid->Y, pDynamoCentroid->Z),
+				width,
+				length,
+				height
+			));
+		}
+
+		delete pDynamoCentroid;
+		delete pDynamoCoordinateSystem;
+		delete pDynamoXAxis;
+		delete pDynamoYAxis;
+		delete pDynamoZAxis;
+
+		if (!canCreateCell)
 		{
 			throw gcnew Exception("Cell creation by cuboid does not currently take transformation.");
 		}
-		m_pCoreCell = new std::shared_ptr<TopoLogicCore::Cell>(TopoLogicCore::Cell::ByCuboid(
-			new Geom_CartesianPoint(pDynamoCentroid->X, pDynamoCentroid->Y, pDynamoCentroid->Z),
-			width,
-			length,
-			height
-		));
 	}
 
 	Cell::~Cell()

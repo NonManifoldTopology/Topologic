@@ -23,13 +23,13 @@ namespace TopoLogic
 		/// 
 		/// </summary>
 		/// <param name="geometry"></param>
-		/// <returns></returns>
+		/// <returns name="Topology"></returns>
 		static Topology^ ByGeometry(Autodesk::DesignScript::Geometry::Geometry^ geometry);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="Topology"></returns>
 		static Topology^ ByContext();
 
 		/// <summary>
@@ -37,15 +37,15 @@ namespace TopoLogic
 		/// </summary>
 		/// <param name="vertexCoordinates"></param>
 		/// <param name="vertexIndices"></param>
-		/// <returns></returns>
+		/// <returns name="Topology"></returns>
 		static Topology^ ByVertexIndex(List<array<double, 3>^>^ vertexCoordinates, List<List<int>^>^ vertexIndices);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="vertexCoordinates"></param>
+		/// <param name="vertices"></param>
 		/// <param name="vertexIndices"></param>
-		/// <returns></returns>
+		/// <returns name="Topology"></returns>
 		static Topology^ ByVertexIndex(List<Vertex^>^ vertices, List<List<int>^>^ vertexIndices);
 
 		/// <summary>
@@ -106,35 +106,35 @@ namespace TopoLogic
 		/// 
 		/// </summary>
 		/// <param name="topology"></param>
-		/// <returns></returns>
+		/// <returns name="Topology"></returns>
 		Topology^ AddContent(Topology^ topology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="topology"></param>
-		/// <returns></returns>
+		/// <returns name="Topology"></returns>
 		Topology^ RemoveContent(Topology^ topology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="context"></param>
-		/// <returns></returns>
+		/// <returns name="Topology"></returns>
 		Topology^ AddContext(Context^ context);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="context"></param>
-		/// <returns></returns>
+		/// <returns name="Topology"></returns>
 		Topology^ RemoveContext(Context^ context);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="topology"></param>
-		/// <returns></returns>
+		/// <returns name="Topology"></returns>
 		List<Topology^>^ SharedTopologies(Topology^ topology);
 
 		/// <summary>
@@ -146,7 +146,7 @@ namespace TopoLogic
 		/// <returns name="Topology[][]"></returns>
 		List<List<Topology^>^>^ PathsTo(Topology^ topology, int maxLevel, int maxPaths);
 
-		/// <summary>
+		/*/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="topology"></param>
@@ -172,7 +172,7 @@ namespace TopoLogic
 			"Parts geometry between A_B and B_B"
 		})]
 		Dictionary<String^, Object^>^ BooleanParts(Topology^ topology);
-
+*/
 		/// <summary>
 		/// Perform the Difference operation between the first and second topological entities.
 		/// </summary>
@@ -252,7 +252,7 @@ namespace TopoLogic
 		/// <summary>
 		/// Returns all sub-entities that have no other parents than this cluster, i.e. do not belong to other entities.
 		/// </summary>
-		/// <returns>The immediate members</returns>
+		/// <returns name="Topology[]">The immediate members</returns>
 		List<Topology^>^ ImmediateMembers();
 
 	public protected:

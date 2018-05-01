@@ -269,7 +269,15 @@ namespace TopoLogic
 		}
 
 		try {
-			return Autodesk::DesignScript::Geometry::PolySurface::ByJoinedSurfaces(pDynamoSurfaces);
+			Autodesk::DesignScript::Geometry::PolySurface^ pDynamoPolySurface =
+				Autodesk::DesignScript::Geometry::PolySurface::ByJoinedSurfaces(pDynamoSurfaces);
+
+			for each(Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface in pDynamoSurfaces)
+			{
+				return pDynamoSurface;
+			}
+
+			return pDynamoPolySurface;
 		}
 		catch (ApplicationException^)
 		{
