@@ -191,6 +191,12 @@ namespace TopoLogicCore
 		return true;
 	}
 
+	TDF_Label LabelManager::GetRoot() const
+	{
+		const TDF_Label kRootLabel = m_pOcctDocument->Root();
+		return kRootLabel;
+	}
+
 	LabelManager::LabelManager()
 	: m_pOcctDocument(new TDF_Data())
 	{

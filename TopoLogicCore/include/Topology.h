@@ -377,10 +377,10 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kOcctShapeType"></param>
+		/// <param name="kpParentTopology"></param>
 		/// <param name="rAncestors"></param>
 		template <class Subclass>
-		void UpwardNavigation(std::list<std::shared_ptr<Subclass>>& rAncestors) const;
+		void UpwardNavigation(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Subclass>>& rAncestors) const;
 
 		/// <summary>
 		/// 
@@ -611,50 +611,51 @@ namespace TopoLogicCore
 	};
 
 	template <class Subclass>
-	void Topology::UpwardNavigation(std::list<std::shared_ptr<Subclass>>& rAncestors) const
+	void Topology::UpwardNavigation(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Subclass>>& rAncestors) const
 	{
 		static_assert(std::is_base_of<Topology, Subclass>::value, "Subclass not derived from Topology");
 		
 		TopAbs_ShapeEnum occtShapeType = CheckOcctShapeType<Subclass>();
 		//TopTools_ListOfShape occtTopShapes;
-		std::list<std::shared_ptr<Topology>> topTopologyList;
-		LabelManager::GetInstance().GetTopShapes(topTopologyList);
+		//std::list<std::shared_ptr<Topology>> topTopologyList;
+		//LabelManager::GetInstance().GetTopShapes(topTopologyList);
 		// Iterate through all 1st level OCCT labels 
+		/*TDF_Label occtTopLabel;
+		bool isLabelFound = LabelManager::GetInstance().FindChildLabelByShape(kpTopology->GetOcctShape(), LabelManager::GetInstance().GetRoot(), occtTopLabel);
+		if (!isLabelFound)
+			return;*/
 
 		TopTools_ListOfShape occtAncestorMap;
-		for (const std::shared_ptr<Topology>& kpTopTopology : topTopologyList)
+		const TopoDS_Shape& rkOcctTopShape = kpParentTopology->GetOcctShape();
+		TopTools_IndexedDataMapOfShapeListOfShape occtShapeMap;
+		TopExp::MapShapesAndUniqueAncestors(
+			rkOcctTopShape,
+			GetOcctShape().ShapeType(),
+			occtShapeType,
+			occtShapeMap);
+
+		TopTools_ListOfShape occtAncestors;
+		bool isInShape = occtShapeMap.FindFromKey(GetOcctShape(), occtAncestors);
+		if (!isInShape)
 		{
-			const TopoDS_Shape& rkOcctTopShape = kpTopTopology->GetOcctShape();
-			TopTools_IndexedDataMapOfShapeListOfShape occtShapeMap;
-			TopExp::MapShapesAndUniqueAncestors(
-				rkOcctTopShape,
-				GetOcctShape().ShapeType(),
-				occtShapeType,
-				occtShapeMap);
+			return;
+		}
 
-			TopTools_ListOfShape occtAncestors;
-			bool isInShape = occtShapeMap.FindFromKey(GetOcctShape(), occtAncestors);
-			if (!isInShape)
+		for (TopTools_ListIteratorOfListOfShape occtAncestorIterator(occtAncestors);
+			occtAncestorIterator.More();
+			occtAncestorIterator.Next())
+		{
+			const TopoDS_Shape& rkOcctAncestor = occtAncestorIterator.Value();
+			bool isAncestorAdded = occtAncestorMap.Contains(rkOcctAncestor);
+			if (rkOcctAncestor.ShapeType() == occtShapeType && !isAncestorAdded)
 			{
-				continue;
-			}
+				occtAncestorMap.Append(rkOcctAncestor);
 
-			for (TopTools_ListIteratorOfListOfShape occtAncestorIterator(occtAncestors);
-				occtAncestorIterator.More();
-				occtAncestorIterator.Next())
-			{
-				const TopoDS_Shape& rkOcctAncestor = occtAncestorIterator.Value();
-				bool isAncestorAdded = occtAncestorMap.Contains(rkOcctAncestor);
-				if (rkOcctAncestor.ShapeType() == occtShapeType && !isAncestorAdded)
-				{
-					occtAncestorMap.Append(rkOcctAncestor);
-
-					TDF_Label ancestorLabel;
-					// Find the label of rkOcctAncestor
-					bool isFound = LabelManager::FindChildLabelByShape(rkOcctAncestor, kpTopTopology->GetOcctLabel(), ancestorLabel);
-					std::shared_ptr<Topology> pTopology = ByOcctShape(rkOcctAncestor, ancestorLabel);
-					rAncestors.push_back(Downcast<Subclass>(pTopology));
-				}
+				TDF_Label ancestorLabel;
+				// Find the label of rkOcctAncestor
+				bool isFound = LabelManager::FindChildLabelByShape(rkOcctAncestor, kpParentTopology->GetOcctLabel(), ancestorLabel);
+				std::shared_ptr<Topology> pTopology = ByOcctShape(rkOcctAncestor, ancestorLabel);
+				rAncestors.push_back(Downcast<Subclass>(pTopology));
 			}
 		}
 	}

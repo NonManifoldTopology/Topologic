@@ -26,14 +26,16 @@ namespace TopoLogic {
 		/// <summary>
 		/// Gets the list of cells incident to this face.
 		/// </summary>
+		/// <param name="parentTopology"></param>
 		/// <returns name="Cell[]">The cells incident to this face</returns>
-		List<Cell^>^ Cells();
+		List<Cell^>^ Cells(Topology^ parentTopology);
 
 		/// <summary>
 		/// Gets the list of shells incident to this face.
 		/// </summary>
+		/// <param name="parentTopology"></param>
 		/// <returns name="Shell[]">The shells incident to this face</returns>
-		List<Shell^>^ Shells();
+		List<Shell^>^ Shells(Topology^ parentTopology);
 
 		/// <summary>
 		/// Gets the list of vertices constituent to this face. 

@@ -38,11 +38,12 @@ namespace TopoLogic
 		return pVertices;
 	}
 
-	List<Wire^>^ Edge::Wires()
+	List<Wire^>^ Edge::Wires(Topology^ parentTopology)
 	{
 		std::shared_ptr<TopoLogicCore::Edge> pCoreEdge = TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopoLogicCore::Topology> pCoreParentTopology = TopoLogicCore::Topology::Downcast<TopoLogicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
 		std::list<std::shared_ptr<TopoLogicCore::Wire>> coreWires;
-		pCoreEdge->Wires(coreWires);
+		pCoreEdge->Wires(pCoreParentTopology, coreWires);
 
 		List<Wire^>^ pWires = gcnew List<Wire^>();
 		for(std::list<std::shared_ptr<TopoLogicCore::Wire>>::iterator coreWireIterator = coreWires.begin();

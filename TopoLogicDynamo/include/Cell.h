@@ -48,8 +48,9 @@ namespace TopoLogic
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="parentTopology"></param>
 		/// <returns name="CellComplex[]"></returns>
-		List<CellComplex^>^ CellComplexes();
+		List<CellComplex^>^ CellComplexes(Topology^ parentTopology);
 
 		/// <summary>
 		/// 

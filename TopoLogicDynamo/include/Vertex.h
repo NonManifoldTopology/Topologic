@@ -23,8 +23,9 @@ namespace TopoLogic
 		/// <summary>
 		/// Gets the list of edges incident to this vertex.
 		/// </summary>
+		/// <param name="parentTopology"></param>
 		/// <returns name="Edge[]">The edges incident to this vertex</returns>
-		List<Edge^>^ Edges();
+		List<Edge^>^ Edges(Topology^ parentTopology);
 
 		property Object^ Geometry
 		{

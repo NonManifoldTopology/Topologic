@@ -52,12 +52,13 @@ namespace TopoLogic
 		return pCell;
 	}
 
-	List<CellComplex^>^ Cell::CellComplexes()
+	List<CellComplex^>^ Cell::CellComplexes(Topology^ parentTopology)
 	{
 		std::shared_ptr<TopoLogicCore::Cell> pCoreCell = TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopoLogicCore::Topology> pCoreParentTopology = TopoLogicCore::Topology::Downcast<TopoLogicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
 
 		std::list<std::shared_ptr<TopoLogicCore::CellComplex>> coreCellComplexes;
-		pCoreCell->CellComplexes(coreCellComplexes);
+		pCoreCell->CellComplexes(pCoreParentTopology, coreCellComplexes);
 
 		List<CellComplex^>^ pCellComplexes = gcnew List<CellComplex^>();
 		for (std::list<std::shared_ptr<TopoLogicCore::CellComplex>>::const_iterator kCellComplexIterator = coreCellComplexes.begin();

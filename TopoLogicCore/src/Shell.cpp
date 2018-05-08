@@ -56,9 +56,9 @@ extern "C" {
 
 namespace TopoLogicCore
 {
-	void Shell::Cells(std::list<std::shared_ptr<Cell>>& rCells) const
+	void Shell::Cells(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Cell>>& rCells) const
 	{
-		UpwardNavigation(rCells);
+		UpwardNavigation(kpParentTopology, rCells);
 	}
 
 	void Shell::Edges(std::list<std::shared_ptr<Edge>>& rEdges) const

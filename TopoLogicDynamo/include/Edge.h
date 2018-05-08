@@ -39,8 +39,9 @@ namespace TopoLogic {
 		/// <summary>
 		/// Gets the list of wires incident to this edge.
 		/// </summary>
+		/// <param name="parentTopology"></param>
 		/// <returns name="Wire[]">The list of wires incident to this edge</returns>
-		List<Wire^>^ Wires();
+		List<Wire^>^ Wires(Topology^ parentTopology);
 
 		/// <summary>
 		/// Returns the shared vertex between two edges.

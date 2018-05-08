@@ -36,8 +36,9 @@ namespace TopoLogic {
 		/// <summary>
 		/// Gets the list of faces that contain to this wire.
 		/// </summary>
+		/// <param name="parentTopology"></param>
 		/// <returns name="Face[]">The faces that contain this wire</returns>
-		List<Face^>^ Faces();
+		List<Face^>^ Faces(Topology^ parentTopology);
 
 		/// <summary>
 		/// Gets the list of vertices constituent to this wire.

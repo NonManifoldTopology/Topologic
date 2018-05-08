@@ -38,9 +38,9 @@ namespace TopoLogicCore
 		rVertices.push_back(std::make_shared<Vertex>(occtVertex2, occtVertex2Label));
 	}
 
-	void Edge::Wires(std::list<std::shared_ptr<Wire>>& rWires) const
+	void Edge::Wires(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Wire>>& rWires) const
 	{
-		UpwardNavigation(rWires);
+		UpwardNavigation(kpParentTopology, rWires);
 	}
 
 	std::shared_ptr<Edge> Edge::ByCurve(

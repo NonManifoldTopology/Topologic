@@ -39,8 +39,10 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="kpParentTopology"></param>
 		/// <param name="rWires"></param>
-		TOPOLOGIC_API void Wires(std::list<std::shared_ptr<Wire>>& rWires) const;
+		/// <returns></returns>
+		TOPOLOGIC_API void Wires(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Wire>>& rWires) const;
 
 		/// <summary>
 		/// 

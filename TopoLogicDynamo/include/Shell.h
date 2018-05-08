@@ -19,8 +19,9 @@ namespace TopoLogic
 		/// <summary>
 		/// Gets the cell bounded by this shell.
 		/// </summary>
+		/// <param name="parentTopology"></param>
 		/// <returns name="Cell[]">The cell bounded by this shell</returns>
-		List<Cell^>^ Cells();
+		List<Cell^>^ Cells(Topology^ parentTopology);
 
 		/// <summary>
 		/// Gets the list of faces constituent to this face. 

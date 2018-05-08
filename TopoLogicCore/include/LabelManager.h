@@ -109,6 +109,12 @@ namespace TopoLogicCore
 		/// <returns></returns>
 		bool HasLabel(const TDF_Label& rOcctLabel) const;
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		TDF_Label GetRoot() const;
+
 	protected:
 		LabelManager();
 		~LabelManager();

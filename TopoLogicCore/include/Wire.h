@@ -36,8 +36,10 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="kpParentTopology"></param>
 		/// <param name="rFaces"></param>
-		void TOPOLOGIC_API Faces(std::list<std::shared_ptr<Face>>& rFaces) const;
+		/// <returns></returns>
+		void TOPOLOGIC_API Faces(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Face>>& rFaces) const;
 
 		/// <summary>
 		/// 

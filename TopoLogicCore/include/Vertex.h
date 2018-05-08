@@ -41,7 +41,7 @@ namespace TopoLogicCore
 		/// Returns the list of edges of which this vertex is a constituent member.
 		/// </summary>
 		/// <param name="rEdges">The edges containing this vertex as a constituent member</param>
-		void TOPOLOGIC_API Edges(std::list<std::shared_ptr<Edge>>& rEdges);
+		void TOPOLOGIC_API Edges(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Edge>>& rEdges);
 
 		/// <summary>
 		/// Return the corresponding point of this vertex. The output list only contains one vertex.

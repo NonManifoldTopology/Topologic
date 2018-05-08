@@ -15,11 +15,12 @@ namespace TopoLogic
 		return gcnew Vertex(point);
 	}
 
-	List<Edge^>^ Vertex::Edges()
+	List<Edge^>^ Vertex::Edges(Topology^ parentTopology)
 	{
 		std::list<std::shared_ptr<TopoLogicCore::Edge>> coreEdges;
+		std::shared_ptr<TopoLogicCore::Topology> pCoreParentTopology = TopoLogicCore::Topology::Downcast<TopoLogicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
 		std::shared_ptr<TopoLogicCore::Vertex> pCoreVertex = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Vertex>(GetCoreTopologicalQuery());
-		pCoreVertex->Edges(coreEdges);
+		pCoreVertex->Edges(pCoreParentTopology, coreEdges);
 
 		List<Edge^>^ pEdges = gcnew List<Edge^>();
 		for (std::list<std::shared_ptr<TopoLogicCore::Edge>>::iterator coreEdgeIterator = coreEdges.begin();

@@ -32,8 +32,10 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="kpParentTopology"></param>
 		/// <param name="rCells"></param>
-		TOPOLOGIC_API void Cells(std::list<std::shared_ptr<Cell>>& rCells) const;
+		/// <returns></returns>
+		TOPOLOGIC_API void Cells(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Cell>>& rCells) const;
 
 		/// <summary>
 		/// 

@@ -30,9 +30,9 @@ namespace TopoLogicCore
 		}
 	}
 
-	void Wire::Faces(std::list<std::shared_ptr<Face>>& rFaces) const
+	void Wire::Faces(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Face>>& rFaces) const
 	{
-		UpwardNavigation(rFaces);
+		UpwardNavigation(kpParentTopology, rFaces);
 	}
 
 	bool Wire::IsClosed() const

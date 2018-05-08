@@ -36,9 +36,9 @@ namespace TopoLogicCore
 		return std::make_shared<Vertex>(BRepBuilderAPI_MakeVertex(pOcctPoint->Pnt()));
 	}
 
-	void Vertex::Edges(std::list<std::shared_ptr<Edge>>& rEdges)
+	void Vertex::Edges(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Edge>>& rEdges)
 	{
-		UpwardNavigation(rEdges);
+		UpwardNavigation(kpParentTopology, rEdges);
 	}
 
 	void Vertex::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const

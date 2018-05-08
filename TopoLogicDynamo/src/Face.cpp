@@ -52,11 +52,12 @@ namespace TopoLogic
 		return pAdjacentFaces;
 	}
 
-	List<Cell^>^ Face::Cells()
+	List<Cell^>^ Face::Cells(Topology^ parentTopology)
 	{
 		std::shared_ptr<TopoLogicCore::Face> pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopoLogicCore::Topology> pCoreParentTopology = TopoLogicCore::Topology::Downcast<TopoLogicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
 		std::list<std::shared_ptr<TopoLogicCore::Cell>> pCoreCells;
-		pCoreFace->Cells(pCoreCells);
+		pCoreFace->Cells(pCoreParentTopology, pCoreCells);
 
 		List<Cell^>^ pCells = gcnew List<Cell^>();
 		for (std::list<std::shared_ptr<TopoLogicCore::Cell>>::const_iterator kCellIterator = pCoreCells.begin();
@@ -71,11 +72,12 @@ namespace TopoLogic
 		return pCells;
 	}
 
-	List<Shell^>^ Face::Shells()
+	List<Shell^>^ Face::Shells(Topology^ parentTopology)
 	{
 		std::shared_ptr<TopoLogicCore::Face> pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopoLogicCore::Topology> pCoreParentTopology = TopoLogicCore::Topology::Downcast<TopoLogicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
 		std::list<std::shared_ptr<TopoLogicCore::Shell>> pCoreShells;
-		pCoreFace->Shells(pCoreShells);
+		pCoreFace->Shells(pCoreParentTopology, pCoreShells);
 
 		List<Shell^>^ pShells = gcnew List<Shell^>();
 

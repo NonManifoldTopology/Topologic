@@ -77,9 +77,9 @@ namespace TopoLogicCore
 		}
 	}
 
-	void Cell::CellComplexes(std::list<std::shared_ptr<TopoLogicCore::CellComplex>>& rCellComplexes) const
+	void Cell::CellComplexes(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<TopoLogicCore::CellComplex>>& rCellComplexes) const
 	{
-		UpwardNavigation(rCellComplexes);
+		UpwardNavigation(kpParentTopology, rCellComplexes);
 	}
 
 	void Cell::Shells(std::list<std::shared_ptr<Shell>>& rShells) const

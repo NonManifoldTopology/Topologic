@@ -36,8 +36,10 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="kpParentTopology"></param>
 		/// <param name="rCellComplexes"></param>
-		TOPOLOGIC_API void CellComplexes(std::list<std::shared_ptr<CellComplex>>& rCellComplexes) const;
+		/// <returns></returns>
+		TOPOLOGIC_API void CellComplexes(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<CellComplex>>& rCellComplexes) const;
 
 		/// <summary>
 		/// 

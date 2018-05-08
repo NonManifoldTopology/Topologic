@@ -61,9 +61,9 @@ namespace TopoLogicCore
 		}
 	}
 
-	void Face::Cells(std::list<std::shared_ptr<Cell>>& rCells) const
+	void Face::Cells(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Cell>>& rCells) const
 	{
-		UpwardNavigation(rCells);
+		UpwardNavigation(kpParentTopology, rCells);
 	}
 
 	void Face::Edges(std::list<std::shared_ptr<Edge>>& rEdges) const
@@ -71,9 +71,9 @@ namespace TopoLogicCore
 		DownwardNavigation(rEdges);
 	}
 
-	void Face::Shells(std::list<std::shared_ptr<Shell>>& rShells) const
+	void Face::Shells(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Shell>>& rShells) const
 	{
-		UpwardNavigation(rShells);
+		UpwardNavigation(kpParentTopology, rShells);
 	}
 
 	void Face::Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const
