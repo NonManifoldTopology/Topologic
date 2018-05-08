@@ -421,6 +421,13 @@ namespace TopoLogicCore
 		/// <returns></returns>
 		bool IsIngredient() const;
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpTopology"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API bool IsSame(const std::shared_ptr<Topology>& kpTopology) const;
+
 		/*/// <summary>
 		/// 
 		/// </summary>

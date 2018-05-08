@@ -2005,6 +2005,12 @@ namespace TopoLogicCore
 		return !m_ingredientTo.empty();
 	}
 
+	bool Topology::IsSame(const std::shared_ptr<Topology>& kpTopology) const
+	{
+		bool isSame = GetOcctShape().IsSame(kpTopology->GetOcctShape());
+		return isSame;
+	}
+
 	/*void Topology::AddIngredient(Topology * const kpTopology)
 	{
 		m_ingredients.push_back(kpTopology);

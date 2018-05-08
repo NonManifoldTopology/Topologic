@@ -108,6 +108,13 @@ namespace TopoLogic
 		return gcnew String(pCoreTopology->Analyze().c_str());
 	}
 
+	bool Topology::IsSame(Topology^ topology)
+	{
+		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopoLogicCore::Topology> pOtherCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topology->GetCoreTopologicalQuery());
+		return pCoreTopology->IsSame(pOtherCoreTopology);
+	}
+
 	Topology^ Topology::ByCoreTopology(const std::shared_ptr<TopoLogicCore::Topology>& kpCoreTopology)
 	{
 		switch (kpCoreTopology->GetType())

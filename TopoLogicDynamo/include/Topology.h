@@ -255,6 +255,13 @@ namespace TopoLogic
 		/// <returns name="Topology[]">The immediate members</returns>
 		List<Topology^>^ ImmediateMembers();
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="topology"></param>
+		/// <returns></returns>
+		bool IsSame(Topology^ topology);
+
 	public protected:
 		static Topology^ ByCoreTopology(const std::shared_ptr<TopoLogicCore::Topology>& kpCoreTopology);
 
