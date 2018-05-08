@@ -69,6 +69,29 @@ namespace TopoLogic
 		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = TopoLogicCore::Topology::ByVertexIndex(coreVertices, coreIndices);
 		return Topology::ByCoreTopology(pCoreTopology);
 	}
+
+	/*void ExploreChild(const TDF_Label& rkOcctLabel)
+	{
+		List<Object^>^ pAttributeList = gcnew List<Object^>();
+		for (TDF_ChildIterator occtChildIterator(rkOcctLabel); occtChildIterator.More(); occtChildIterator.Next())
+		{
+			const TDF_Label kOcctChildLabel = occtChildIterator.Value();
+			for (TDF_AttributeIterator occtAttributeIterator(kOcctChildLabel); occtAttributeIterator.More(); occtAttributeIterator.Next())
+			{
+				String^ pString = gcnew String(typeid(*occtAttributeIterator.Value()).name());
+				pAttributeList->Add(pString);
+			}
+			Handle(TNaming_NamedShape) occtShapeAttribute;
+			bool result = kOcctChildLabel.FindAttribute(TNaming_NamedShape::GetID(), occtShapeAttribute);
+			if(result)
+			{
+				TopoDS_Shape occtShape = occtShapeAttribute->Get();
+				int a = 0;
+			}
+			int nbChildren = kOcctChildLabel.NbChildren();
+			ExploreChild(kOcctChildLabel);
+		}
+	}*/
 	List<Object^>^ Topology::Attributes::get()
 	{
 		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
@@ -76,13 +99,14 @@ namespace TopoLogic
 		// TODO: have a list of predefined attributes, and do this in TopologicCore.
 		List<Object^>^ pAttributeList = gcnew List<Object^>();
 		const TDF_Label& rkOcctLabel = pCoreTopology->GetOcctLabel();
-		for (TDF_AttributeIterator occtLabelIterator(rkOcctLabel); occtLabelIterator.More(); occtLabelIterator.Next())
+		for (TDF_AttributeIterator occtAttributeIterator(rkOcctLabel); occtAttributeIterator.More(); occtAttributeIterator.Next())
 		{
-			String^ pString = gcnew String(typeid(*occtLabelIterator.Value()).name());
+			String^ pString = gcnew String(typeid(*occtAttributeIterator.Value()).name());
 			pAttributeList->Add(pString);
 		}
 
-		int nbChildren = rkOcctLabel.NbChildren();
+		/*int nbChildren = rkOcctLabel.NbChildren();
+		ExploreChild(rkOcctLabel);*/
 
 		return pAttributeList;
 	}

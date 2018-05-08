@@ -52,13 +52,13 @@ namespace TopoLogicCore
 		/// </summary>
 		/// <param name="rkOcctShape"></param>
 		/// <param name="rOcctLabel"></param>
-		void AddShapeToLabel(const TopoDS_Shape& rkOcctShape, TDF_Label& rOcctLabel);
+		static void AddShapeToLabel(const TopoDS_Shape& rkOcctShape, TDF_Label& rOcctLabel);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rOcctLabel"></param>
-		void AddCounterToLabel(TDF_Label& rOcctLabel);
+		static void AddCounterToLabel(TDF_Label& rOcctLabel);
 
 		/// <summary>
 		/// 

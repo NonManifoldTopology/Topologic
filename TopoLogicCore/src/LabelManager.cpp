@@ -6,6 +6,7 @@
 #include <TDF_AttributeIterator.hxx>
 #include <TDF_CopyLabel.hxx>
 #include <TNaming_Builder.hxx>
+#include <TDF_RelocationTable.hxx>
 
 #include <assert.h>
 
@@ -213,18 +214,29 @@ namespace TopoLogicCore
 		// TDF_CopyLabel cannot be used because it will copy all attributes.
 		for (TDF_AttributeIterator occtAttributeIterator(rkLabel1); occtAttributeIterator.More(); occtAttributeIterator.Next())
 		{
-			Handle(TDF_Attribute) pOcctAttribute = occtAttributeIterator.Value();
-			if (!Handle(OcctCounterAttribute)::DownCast(pOcctAttribute).IsNull() ||
-				!Handle(TNaming_NamedShape)::DownCast(pOcctAttribute).IsNull())
+			const Handle(TDF_Attribute)& kpOcctAttribute = occtAttributeIterator.Value();
+			if (!Handle(OcctCounterAttribute)::DownCast(kpOcctAttribute).IsNull())
 			{
+				AddCounterToLabel(rLabel2);
+				continue;
+			}
+			
+			Handle(TNaming_NamedShape) pOcctShape = Handle(TNaming_NamedShape)::DownCast(kpOcctAttribute);
+			if (!pOcctShape.IsNull())
+			{
+				AddShapeToLabel(pOcctShape->Get(), rLabel2);
 				continue;
 			}
 
+			Handle(TDF_Attribute) pOcctCopyAttribute = kpOcctAttribute->NewEmpty();
+			// Copy the attribute
+			kpOcctAttribute->Paste(pOcctCopyAttribute, new TDF_RelocationTable());
 			// Add the attribute to rkLabel2
 			try{
-				rLabel2.AddAttribute(pOcctAttribute);
-			}catch(...)	
+				rLabel2.AddAttribute(pOcctCopyAttribute);
+			}catch(Standard_DomainError e)
 			{ 
+				std::string strException(e.GetMessageString());
 			}
 		}
 

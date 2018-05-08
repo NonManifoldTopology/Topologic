@@ -428,6 +428,18 @@ namespace TopoLogicCore
 		/// <returns></returns>
 		TOPOLOGIC_API bool IsSame(const std::shared_ptr<Topology>& kpTopology) const;
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rOcctMembers"></param>
+		void Members(TopTools_ListOfShape& rOcctMembers) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rMembers"></param>
+		void Members(std::list<std::shared_ptr<Topology>>& rMembers) const;
+
 		/*/// <summary>
 		/// 
 		/// </summary>

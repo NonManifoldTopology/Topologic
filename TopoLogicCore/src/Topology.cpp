@@ -1729,10 +1729,10 @@ namespace TopoLogicCore
 
 		// Add the essential attributes:
 		// - Shape
-		LabelManager::GetInstance().AddShapeToLabel(GetOcctShape(), GetOcctLabel());
+		LabelManager::AddShapeToLabel(GetOcctShape(), GetOcctLabel());
 
 		// - Counter
-		LabelManager::GetInstance().AddCounterToLabel(GetOcctLabel());
+		LabelManager::AddCounterToLabel(GetOcctLabel());
 	}
 
 	void Topology::DecreaseCounter()
@@ -2009,6 +2009,36 @@ namespace TopoLogicCore
 	{
 		bool isSame = GetOcctShape().IsSame(kpTopology->GetOcctShape());
 		return isSame;
+	}
+
+	void Topology::Members(TopTools_ListOfShape& rOcctMembers) const
+	{
+		const TopoDS_Shape& rkOcctShape = GetOcctShape();
+		// Store the children
+		for (int i = ((int)rkOcctShape.ShapeType()) + 1; i < (int)TopAbs_SHAPE; ++i)
+		{
+			TopAbs_ShapeEnum occtShapeEnum = (TopAbs_ShapeEnum)i;
+			TopTools_MapOfShape occtMembers;
+			Topology::DownwardNavigation(rkOcctShape, occtShapeEnum, occtMembers);
+			for (TopTools_MapIteratorOfMapOfShape occtMembersIterator(occtMembers);
+				occtMembersIterator.More();
+				occtMembersIterator.Next())
+			{
+				rOcctMembers.Append(occtMembersIterator.Value());
+			}
+		}
+	}
+
+	void Topology::Members(std::list<std::shared_ptr<Topology>>& rMembers) const
+	{
+		TopTools_ListOfShape occtMembers;
+		Members(occtMembers);
+		for (TopTools_ListIteratorOfListOfShape occtMemberIterator(occtMembers); occtMemberIterator.More(); occtMemberIterator.Next())
+		{
+			TDF_Label occtLabel;
+			LabelManager::GetInstance().FindChildLabelByShape(occtMemberIterator.Value(), GetOcctLabel(), occtLabel);
+			rMembers.push_back(Topology::ByOcctShape(occtMemberIterator.Value(), occtLabel));
+		}
 	}
 
 	/*void Topology::AddIngredient(Topology * const kpTopology)
