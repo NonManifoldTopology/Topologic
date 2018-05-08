@@ -64,6 +64,7 @@ namespace TopoLogicCore
 		}
 	}
 
+	// This method may involve making copies of the edges if they originally do not share vertices.
 	std::shared_ptr<Wire> Wire::ByEdges(const std::list<std::shared_ptr<Edge>>& rkEdges)
 	{
 		if (rkEdges.empty())
@@ -76,7 +77,6 @@ namespace TopoLogicCore
 		for(const std::shared_ptr<Edge>& kpEdge : rkEdges)
 		{
 			occtEdges.Append(kpEdge->GetOcctShape());
-			const std::shared_ptr<Topology>& rkBaseEdge = TopologicalQuery::Upcast<Topology>(kpEdge);
 		}
 
 		BRepBuilderAPI_MakeWire occtMakeWire;
@@ -106,16 +106,6 @@ namespace TopoLogicCore
 			Throw(occtMakeWire);
 			return nullptr;
 		}
-
-
-		/*for (std::list<std::shared_ptr<Edge>>::const_iterator kEdgeIterator = rkEdges.begin();
-		kEdgeIterator != rkEdges.end();
-		kEdgeIterator++)
-		{
-		const std::shared_ptr<Edge>& pkEdge = *kEdgeIterator;
-		pkEdge->AddIngredientTo(pWire);
-		}*/
-
 	}
 
 	void Wire::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
@@ -165,7 +155,7 @@ namespace TopoLogicCore
 	void Wire::Throw(const BRepBuilderAPI_MakeWire & rkOcctMakeWire)
 	{
 		// The error messages are based on those in the OCCT documentation.
-		// https://www.opencascade.com/doc/occt-7.1.0/refman/html/_b_rep_builder_a_p_i___wire_error_8hxx.html
+		// https://www.opencascade.com/doc/occt-7.2.0/refman/html/_b_rep_builder_a_p_i___wire_error_8hxx.html
 
 		switch (rkOcctMakeWire.Error())
 		{

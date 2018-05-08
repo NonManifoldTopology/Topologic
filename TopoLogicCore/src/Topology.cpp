@@ -154,7 +154,7 @@ namespace TopoLogicCore
 		case TopAbs_SOLID: return std::make_shared<Cell>(TopoDS::Solid(rkOcctShape));
 		case TopAbs_SHELL: return std::make_shared<Shell>(TopoDS::Shell(rkOcctShape));
 		case TopAbs_FACE: return std::make_shared<Face>(TopoDS::Face(rkOcctShape));
-		case TopAbs_WIRE: return std::make_shared<Wire>(TopoDS::Wire(rkOcctShape));
+		case TopAbs_WIRE: return std::make_shared<Wire>(TopoDS::Wire(rkOcctShape), rkOcctLabel);
 		case TopAbs_EDGE: return std::make_shared<Edge>(TopoDS::Edge(rkOcctShape), rkOcctLabel);
 		case TopAbs_VERTEX: return std::make_shared<Vertex>(TopoDS::Vertex(rkOcctShape), rkOcctLabel);
 		default:
