@@ -2,7 +2,8 @@
 #include <Vertex.h>
 #include <Edge.h>
 #include <Face.h>
-#include <GlobalCluster.h>
+//#include <GlobalCluster.h>
+#include <OcctCounterAttribute.h>
 
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepTools_WireExplorer.hxx>
@@ -23,7 +24,9 @@ namespace TopoLogicCore
 		for (BRepTools_WireExplorer occtWireExplorer(GetOcctWire()); occtWireExplorer.More(); occtWireExplorer.Next())
 		{
 			const TopoDS_Edge& rkOcctEdge = occtWireExplorer.Current();
-			rEdges.push_back(TopologicalQuery::Downcast<Edge>(Topology::ByOcctShape(rkOcctEdge)));
+			TDF_Label occtEdgeLabel;
+			LabelManager::GetInstance().FindChildLabelByShape(rkOcctEdge, GetOcctLabel(), occtEdgeLabel);
+			rEdges.push_back(TopologicalQuery::Downcast<Edge>(Topology::ByOcctShape(rkOcctEdge, occtEdgeLabel)));
 		}
 	}
 
@@ -44,7 +47,9 @@ namespace TopoLogicCore
 		for(BRepTools_WireExplorer occtWireExplorer(GetOcctWire()); occtWireExplorer.More(); occtWireExplorer.Next())
 		{
 			const TopoDS_Vertex& rkOcctVertex = occtWireExplorer.CurrentVertex();
-			rVertices.push_back(TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex)));
+			TDF_Label occtVertexLabel;
+			LabelManager::GetInstance().FindChildLabelByShape(rkOcctVertex, GetOcctLabel(), occtVertexLabel);
+			rVertices.push_back(TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex, occtVertexLabel)));
 		}
 	}
 
@@ -56,9 +61,12 @@ namespace TopoLogicCore
 		}
 
 		TopTools_ListOfShape occtEdges;
+		std::list<std::pair<std::shared_ptr<Topology>, std::shared_ptr<Topology>>> topologyPairs;
 		for(const std::shared_ptr<Edge>& kpEdge : rkEdges)
 		{
 			occtEdges.Append(kpEdge->GetOcctShape());
+			const std::shared_ptr<Topology>& rkBaseEdge = TopologicalQuery::Upcast<Topology>(kpEdge);
+			topologyPairs.push_back(std::make_pair(rkBaseEdge, rkBaseEdge));
 		}
 
 		BRepBuilderAPI_MakeWire occtMakeWire;
@@ -73,6 +81,12 @@ namespace TopoLogicCore
 				const std::shared_ptr<Edge>& pkEdge = *kEdgeIterator;
 				pkEdge->AddIngredientTo(pWire);
 			}*/
+
+			// Add the edges to the wire's label. Must do this manually because of the Modified()'s nature to map 
+			// old to new sub-shapes.
+			LabelManager::GetInstance().AddModifiedMembers(
+				pWire->GetOcctLabel(),
+				topologyPairs);
 
 			return pWire;
 		}
@@ -148,16 +162,18 @@ namespace TopoLogicCore
 		}
 	}
 
-	Wire::Wire(const TopoDS_Wire& rkOcctWire)
+	Wire::Wire(const TopoDS_Wire& rkOcctWire, const TDF_Label& rkOcctLabel)
 		: Topology(1)
 		, m_occtWire(rkOcctWire)
 	{
-		GlobalCluster::GetInstance().Add(this);
+		//GlobalCluster::GetInstance().Add(this);
+		SetOcctLabel(rkOcctLabel);
+		OcctCounterAttribute::IncreaseCounter(GetOcctLabel());
 	}
 
 	Wire::~Wire()
 	{
-		GlobalCluster::GetInstance().Remove(this);
+		//GlobalCluster::GetInstance().Remove(this);
 		DecreaseCounter();
 	}
 }

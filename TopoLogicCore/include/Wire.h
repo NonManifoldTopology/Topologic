@@ -21,8 +21,9 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpOcctWire"></param>
-		Wire(const TopoDS_Wire& rkOcctWire);
+		/// <param name="rkOcctWire"></param>
+		/// <param name="rkOcctLabel"></param>
+		Wire(const TopoDS_Wire& rkOcctWire, const TDF_Label& rkOcctLabel = TDF_Label());
 
 		virtual ~Wire();
 
