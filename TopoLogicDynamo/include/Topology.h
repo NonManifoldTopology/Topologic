@@ -77,9 +77,9 @@ namespace TopoLogic
 		/// <summary>
 		/// 
 		/// </summary>
-		property Dictionary<String^, Attribute^>^ Attributes
+		property List<Object^>^ Attributes
 		{
-			Dictionary<String^, Attribute^>^ get();
+			List<Object^>^ get();
 		}
 
 		/// <summary>

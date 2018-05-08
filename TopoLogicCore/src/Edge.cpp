@@ -1,7 +1,9 @@
 #include <Edge.h>
-#include <GlobalCluster.h>
+//#include <GlobalCluster.h>
 #include <Vertex.h>
 #include <Wire.h>
+#include <LabelManager.h>
+#include <OcctCounterAttribute.h>
 
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRep_Tool.hxx>
@@ -21,8 +23,19 @@ namespace TopoLogicCore
 	void Edge::Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const
 	{
 		ShapeAnalysis_Edge occtShapeAnalysisEdge;
-		rVertices.push_back(std::make_shared<Vertex>(occtShapeAnalysisEdge.FirstVertex(GetOcctEdge())));
-		rVertices.push_back(std::make_shared<Vertex>(occtShapeAnalysisEdge.LastVertex(GetOcctEdge())));
+		
+		TopoDS_Vertex occtVertex1 = occtShapeAnalysisEdge.FirstVertex(GetOcctEdge());
+		// Find the vertex's label
+		TDF_Label occtVertex1Label;
+		LabelManager::GetInstance().FindChildLabelByShape(occtVertex1, GetOcctLabel(), occtVertex1Label);
+		rVertices.push_back(std::make_shared<Vertex>(occtVertex1, occtVertex1Label));
+		
+		TopoDS_Vertex occtVertex2 = occtShapeAnalysisEdge.LastVertex(GetOcctEdge());
+		// Find the vertex's label
+		TDF_Label occtVertex2Label;
+		LabelManager::GetInstance().FindChildLabelByShape(occtVertex2, GetOcctLabel(), occtVertex2Label);
+
+		rVertices.push_back(std::make_shared<Vertex>(occtVertex2, occtVertex2Label));
 	}
 
 	void Edge::Wires(std::list<std::shared_ptr<Wire>>& rWires) const
@@ -74,7 +87,9 @@ namespace TopoLogicCore
 			Throw(occtMakeEdge.Error());
 		}
 
-		return std::make_shared<Edge>(occtMakeEdge);
+		std::shared_ptr<Edge> pEdge = std::make_shared<Edge>(occtMakeEdge);
+		LabelManager::GetInstance().AddGeneratedMembersToLabel(pEdge->GetOcctLabel());
+		return pEdge;
 	}
 
 	std::shared_ptr<Edge> Edge::ByVertices(const std::list<std::shared_ptr<Vertex>>& rkVertices)
@@ -98,6 +113,19 @@ namespace TopoLogicCore
 				rkVertex1->GetOcctVertex(),
 				rkVertex2->GetOcctVertex());
 			pEdge = std::make_shared<Edge>(occtMakeEdge.Edge());
+
+			const std::shared_ptr<Topology>& rkBaseVertex1 = TopologicalQuery::Upcast<Topology>(rkVertex1);
+			const std::shared_ptr<Topology>& rkBaseVertex2 = TopologicalQuery::Upcast<Topology>(rkVertex2);
+			std::list<std::pair<std::shared_ptr<Topology>, std::shared_ptr<Topology>>> topologyPairs;
+			topologyPairs.push_back(std::make_pair(rkBaseVertex1, rkBaseVertex1));
+			topologyPairs.push_back(std::make_pair(rkBaseVertex2, rkBaseVertex2));
+
+			// Add the vertices to the edge's label. Must do this manually because of the Modified()'s nature to map 
+			// old to new sub-shapes.
+			LabelManager::GetInstance().AddModifiedMembers(
+				pEdge->GetOcctLabel(), 
+				topologyPairs);
+
 		}else
 		{
 			// else more than 2 vertices
@@ -124,6 +152,7 @@ namespace TopoLogicCore
 				}
 
 				pEdge = std::make_shared<Edge>(occtMakeEdge);
+				LabelManager::GetInstance().AddGeneratedMembersToLabel(pEdge->GetOcctLabel());
 			}
 			catch (Standard_ConstructionError e)
 			{
@@ -134,15 +163,6 @@ namespace TopoLogicCore
 				throw std::exception(e.GetMessageString());
 			}
 		}
-
-		// Register the ingredients
-		/*for (std::list<std::shared_ptr<Vertex>>::const_iterator kVertexIterator = rkVertices.begin();
-			kVertexIterator != rkVertices.end();
-			kVertexIterator++)
-		{
-			const std::shared_ptr<Vertex>& kpVertex = *kVertexIterator;
-			kpVertex->AddIngredientTo(pEdge);
-		}*/
 
 		return pEdge;
 	}
@@ -156,7 +176,10 @@ namespace TopoLogicCore
 			throw std::exception("The two edges have no shared vertex");
 		}
 
-		return std::make_shared<Vertex>(occtSharedVertex);
+		std::shared_ptr<Vertex> pVertex = std::make_shared<Vertex>(occtSharedVertex);
+
+		// Find which of the vertices is this vertex, then copy the attributes. 
+		return pVertex;
 	}
 
 	double Edge::ParameterAtPoint(const std::shared_ptr<Vertex>& kpVertex) const
@@ -203,7 +226,7 @@ namespace TopoLogicCore
 
 	TopoDS_Edge & Edge::GetOcctEdge()
 	{
-		assert(m_occtEdge.IsNull() && "Edge::m_occtEdge is null.");
+		assert(!m_occtEdge.IsNull() && "Edge::m_occtEdge is null.");
 		if (m_occtEdge.IsNull())
 		{
 			throw std::exception("Edge::m_occtEdge is null.");
@@ -214,7 +237,7 @@ namespace TopoLogicCore
 
 	const TopoDS_Edge & Edge::GetOcctEdge() const
 	{
-		assert(m_occtEdge.IsNull() && "Edge::m_occtEdge is null.");
+		assert(!m_occtEdge.IsNull() && "Edge::m_occtEdge is null.");
 		if (m_occtEdge.IsNull())
 		{
 			throw std::exception("Edge::m_occtEdge is null.");
@@ -276,15 +299,20 @@ namespace TopoLogicCore
 		}
 	}
 
-	Edge::Edge(const TopoDS_Edge& rkOcctEdge)
+	Edge::Edge(const TopoDS_Edge& rkOcctEdge, const TDF_Label& rkOcctLabel)
 		: Topology(1)
 		, m_occtEdge(rkOcctEdge)
 	{
-		GlobalCluster::GetInstance().Add(this);
+		//GlobalCluster::GetInstance().Add(this);
+
+		// Needs to be done in the subclass, not in Topology, as the OCCT shape is not yet defined there.
+		SetOcctLabel(rkOcctLabel);
+		OcctCounterAttribute::IncreaseCounter(GetOcctLabel());
 	}
 
 	Edge::~Edge()
 	{
-		GlobalCluster::GetInstance().Remove(this);
+		//GlobalCluster::GetInstance().Remove(this);
+		DecreaseCounter();
 	}
 }

@@ -141,7 +141,7 @@ namespace TopoLogicCore
 
 	TopoDS_Compound& Cluster::GetOcctCompound()
 	{
-		assert(m_occtCompound.IsNull() && "Cluster::m_occtCompound is null.");
+		assert(!m_occtCompound.IsNull() && "Cluster::m_occtCompound is null.");
 		if (m_occtCompound.IsNull())
 		{
 			throw std::exception("Cluster::m_occtCompound is null.");
@@ -152,7 +152,7 @@ namespace TopoLogicCore
 
 	const TopoDS_Compound& Cluster::GetOcctCompound() const
 	{
-		assert(m_occtCompound.IsNull() && "Cluster::m_occtCompound is null.");
+		assert(!m_occtCompound.IsNull() && "Cluster::m_occtCompound is null.");
 		if (m_occtCompound.IsNull())
 		{
 			throw std::exception("Cluster::m_occtCompound is null.");
@@ -194,6 +194,7 @@ namespace TopoLogicCore
 	Cluster::~Cluster()
 	{
 		GlobalCluster::GetInstance().Remove(this);
+		DecreaseCounter();
 	}
 
 	void Cluster::Shells(std::list<std::shared_ptr<Shell>>& rShells) const

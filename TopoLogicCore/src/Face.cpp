@@ -400,7 +400,7 @@ namespace TopoLogicCore
 
 	TopoDS_Face& Face::GetOcctFace()
 	{
-		assert(m_occtFace.IsNull() && "Face::m_occtFace is null.");
+		assert(!m_occtFace.IsNull() && "Face::m_occtFace is null.");
 		if (m_occtFace.IsNull())
 		{
 			throw std::exception("Face::m_occtFace is null.");
@@ -411,7 +411,7 @@ namespace TopoLogicCore
 
 	const TopoDS_Face& Face::GetOcctFace() const
 	{
-		assert(m_occtFace.IsNull() && "Face::m_occtFace is null.");
+		assert(!m_occtFace.IsNull() && "Face::m_occtFace is null.");
 		if (m_occtFace.IsNull())
 		{
 			throw std::exception("Face::m_occtFace is null.");
@@ -424,22 +424,13 @@ namespace TopoLogicCore
 		: Topology(2)
 		, m_occtFace(rkOcctFace)
 	{
-		try{
-			/*ShapeFix_Face occtShapeFix(rkOcctFace);
-			occtShapeFix.Perform();
-			m_occtFace = std::make_shared<TopoDS_Face>(occtShapeFix.Face());*/
-
-			GlobalCluster::GetInstance().Add(this);
-		}
-		catch (...)
-		{
-			throw std::exception("");
-		}
+		GlobalCluster::GetInstance().Add(this);
 	}
 
 	Face::~Face()
 	{
 		GlobalCluster::GetInstance().Remove(this);
+		DecreaseCounter();
 	}
 
 	Handle(Geom_Surface) Face::Surface() const

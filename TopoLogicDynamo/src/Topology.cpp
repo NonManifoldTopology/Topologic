@@ -15,6 +15,7 @@
 #include <Context.h>
 
 #include <TopoDS_Shape.hxx>
+#include <TDF_AttributeIterator.hxx>
 
 namespace TopoLogic
 {
@@ -68,21 +69,22 @@ namespace TopoLogic
 		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = TopoLogicCore::Topology::ByVertexIndex(coreVertices, coreIndices);
 		return Topology::ByCoreTopology(pCoreTopology);
 	}
-
-	Dictionary<String^, Attribute^>^ Topology::Attributes::get()
+	List<Object^>^ Topology::Attributes::get()
 	{
 		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
-		const TopoLogicCore::Topology::AttributeMap& rkCoreAttributes = pCoreTopology->Attributes();
 
-		Dictionary<String^, Attribute^>^ pAttributes = gcnew Dictionary<String^, Attribute^>();
-		for (TopoLogicCore::Topology::AttributeMap::const_iterator rkCoreAttributeIterator = rkCoreAttributes.cbegin();
-			rkCoreAttributeIterator != rkCoreAttributes.cend();
-			rkCoreAttributeIterator++)
+		// TODO: have a list of predefined attributes, and do this in TopologicCore.
+		List<Object^>^ pAttributeList = gcnew List<Object^>();
+		const TDF_Label& rkOcctLabel = pCoreTopology->GetOcctLabel();
+		for (TDF_AttributeIterator occtLabelIterator(rkOcctLabel); occtLabelIterator.More(); occtLabelIterator.Next())
 		{
-			pAttributes->Add(gcnew String(rkCoreAttributeIterator->first.c_str()), gcnew Attribute(rkCoreAttributeIterator->second));
+			String^ pString = gcnew String(typeid(*occtLabelIterator.Value()).name());
+			pAttributeList->Add(pString);
 		}
 
-		return pAttributes;
+		int nbChildren = rkOcctLabel.NbChildren();
+
+		return pAttributeList;
 	}
 
 	bool Topology::SaveToBRep(String^ path)

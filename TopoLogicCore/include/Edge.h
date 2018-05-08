@@ -25,7 +25,8 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <param name="rkOcctEdge"></param>
-		Edge(const TopoDS_Edge& rkOcctEdge);
+		/// <param name="rkOcctLabel"></param>
+		Edge(const TopoDS_Edge& rkOcctEdge, const TDF_Label& rkOcctLabel = TDF_Label());
 
 		virtual ~Edge();
 

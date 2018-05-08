@@ -3,6 +3,7 @@
 #include "Attribute.h"
 #include "Utilities.h"
 #include "TopologicalQuery.h"
+#include "LabelManager.h"
 
 #include <BOPCol_ListOfShape.hxx>
 #include <BOPCol_DataMapOfShapeShape.hxx>
@@ -17,6 +18,7 @@
 #include <TDataStd_Integer.hxx>
 #include <TopExp.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
+#include <TopTools_MapOfShape.hxx>
 
 #include <list>
 #include <vector>
@@ -40,13 +42,10 @@ namespace TopoLogicCore
 		TOPOLOGY_APERTURE = 8
 	};
 
-	enum TopologyRelationshipType
-	{
-		REL_CONSTITUENT = 0,
-		REL_APERTURE = 1,
-		REL_OTHER_NON_CONSTITUENT = 2
-	};
-
+	class Cluster;
+	class CellComplex;
+	class Cell;
+	class Shell;
 	class Face;
 	class Vertex;
 	class Context;
@@ -69,7 +68,7 @@ namespace TopoLogicCore
 		/// </summary>
 		/// <param name="rkOcctShape"></param>
 		/// <returns></returns>
-		static std::shared_ptr<Topology> ByOcctShape(const TopoDS_Shape& rkOcctShape);
+		static std::shared_ptr<Topology> ByOcctShape(const TopoDS_Shape& rkOcctShape, const TDF_Label& rkOcctLabel = TDF_Label());
 
 		/// <summary>
 		/// 
@@ -394,6 +393,12 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="rOcctMembers"></param>
+		static void DownwardNavigation(const TopoDS_Shape& rkOcctShape, const TopAbs_ShapeEnum& rkShapeEnum, TopTools_MapOfShape& rOcctMembers);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="kpTopology"></param>
 		void AddIngredientTo(const std::shared_ptr<Topology>& kpTopology);
 
@@ -439,19 +444,19 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		TDF_Label& GetOcctLabel() { return m_occtLabel; }
+		TOPOLOGIC_API TDF_Label& GetOcctLabel();// { return m_occtLabel; }
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		const TDF_Label& GetOcctLabel() const { return m_occtLabel; }
+		TOPOLOGIC_API const TDF_Label& GetOcctLabel() const;// { return m_occtLabel; }
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkOcctLabel"></param>
-		void SetOcctLabel(const TDF_Label& rkOcctLabel) { m_occtLabel = rkOcctLabel; }
+		void SetOcctLabel(const TDF_Label& rkOcctLabel);
 
 	protected:
 		Topology(const int kDimensionality);
@@ -560,10 +565,22 @@ namespace TopoLogicCore
 		/// <returns></returns>
 		TopoDS_Shape FixBooleanOperandFace(const TopoDS_Shape& rkOcctShape, BOPCol_DataMapOfShapeShape& rMapFaceToFixedFace);
 
+		/// <summary>
+		/// Register OCCT label to the LabelManager
+		/// </summary>
+		void RegisterLabel();
+
+		/// <summary>
+		/// Decrease the label's counter
+		/// </summary>
+		void DecreaseCounter();
+
 		AttributeMap m_attributeMap; // to be replaced by OCCT OCAF
-		TDF_Label m_occtLabel;
 		int m_dimensionality;
 		bool m_isInGlobalCluster;
+
+		TDF_Label m_occtLabel;
+		
 
 		// TODO: may cause cyclic dependencies, may need weak_ptr
 		std::list<std::shared_ptr<Topology>> m_contents;
@@ -580,23 +597,45 @@ namespace TopoLogicCore
 		static_assert(std::is_base_of<Topology, Subclass>::value, "Subclass not derived from Topology");
 		
 		TopAbs_ShapeEnum occtShapeType = CheckOcctShapeType<Subclass>();
+		//TopTools_ListOfShape occtTopShapes;
+		std::list<std::shared_ptr<Topology>> topTopologyList;
+		LabelManager::GetInstance().GetTopShapes(topTopologyList);
+		// Iterate through all 1st level OCCT labels 
 
-		TopTools_IndexedDataMapOfShapeListOfShape occtShapeMap;
-		TopExp::MapShapesAndUniqueAncestors(
-			GlobalCluster::GetInstance().GetCluster()->GetOcctShape(),
-			GetOcctShape().ShapeType(),
-			occtShapeType,
-			occtShapeMap);
-
-		const TopTools_ListOfShape& rkOcctAncestors = occtShapeMap.FindFromKey(GetOcctShape());
-
-		for (TopTools_ListOfShape::const_iterator kIterator = rkOcctAncestors.cbegin();
-			kIterator != rkOcctAncestors.cend();
-			kIterator++)
+		TopTools_ListOfShape occtAncestorMap;
+		for (const std::shared_ptr<Topology>& kpTopTopology : topTopologyList)
 		{
-			if (kIterator->ShapeType() == occtShapeType)
+			const TopoDS_Shape& rkOcctTopShape = kpTopTopology->GetOcctShape();
+			TopTools_IndexedDataMapOfShapeListOfShape occtShapeMap;
+			TopExp::MapShapesAndUniqueAncestors(
+				rkOcctTopShape,
+				GetOcctShape().ShapeType(),
+				occtShapeType,
+				occtShapeMap);
+
+			TopTools_ListOfShape occtAncestors;
+			bool isInShape = occtShapeMap.FindFromKey(GetOcctShape(), occtAncestors);
+			if (!isInShape)
 			{
-				rAncestors.push_back(Downcast<Subclass>(ByOcctShape(*kIterator)));
+				continue;
+			}
+
+			for (TopTools_ListIteratorOfListOfShape occtAncestorIterator(occtAncestors);
+				occtAncestorIterator.More();
+				occtAncestorIterator.Next())
+			{
+				const TopoDS_Shape& rkOcctAncestor = occtAncestorIterator.Value();
+				bool isAncestorAdded = occtAncestorMap.Contains(rkOcctAncestor);
+				if (rkOcctAncestor.ShapeType() == occtShapeType && !isAncestorAdded)
+				{
+					occtAncestorMap.Append(rkOcctAncestor);
+
+					TDF_Label ancestorLabel;
+					// Find the label of rkOcctAncestor
+					bool isFound = LabelManager::FindChildLabelByShape(rkOcctAncestor, kpTopTopology->GetOcctLabel(), ancestorLabel);
+					std::shared_ptr<Topology> pTopology = ByOcctShape(rkOcctAncestor, ancestorLabel);
+					rAncestors.push_back(Downcast<Subclass>(pTopology));
+				}
 			}
 		}
 	}
@@ -607,40 +646,39 @@ namespace TopoLogicCore
 		static_assert(std::is_base_of<Topology, Subclass>::value, "Subclass not derived from Topology");
 
 		// CHECK if t
-		int numChildren = 0;
-		if(!GetOcctLabel().IsNull())
-		{
-			for (TDF_ChildIterator occtLabelIterator(GetOcctLabel());
-				occtLabelIterator.More();
-				occtLabelIterator.Next())
-			{
-				TDF_Label childLabel = occtLabelIterator.Value();
-				Handle(TNaming_NamedShape) occtChildAttribute;
-				Handle(TDataStd_Integer) occtRelationshipType;
-				bool result1 = childLabel.FindAttribute(TNaming_NamedShape::GetID(), occtChildAttribute);
-				bool result2 = childLabel.FindAttribute(TDataStd_Integer::GetID(), occtRelationshipType);
-				bool result3 = occtRelationshipType->Get() == REL_CONSTITUENT; 
-				bool result4 = false;
-				TopExp_Explorer occtExplorer;
-				for (occtExplorer.Init(GetOcctShape(), TopAbs_FACE); occtExplorer.More(); occtExplorer.Next())
-				{
-					if (occtExplorer.Current().IsSame(occtChildAttribute->Get()))
-					{
-						result4 = true;
-						break;
-					}
-				}
-				if (result1 && result2 && result3 /*&& result4*/)
-				{
-					numChildren++;
-				}
-			}
-		}
+		//int numChildren = 0;
+		//if(!GetOcctLabel().IsNull())
+		//{
+		//	for (TDF_ChildIterator occtLabelIterator(GetOcctLabel());
+		//		occtLabelIterator.More();
+		//		occtLabelIterator.Next())
+		//	{
+		//		TDF_Label childLabel = occtLabelIterator.Value();
+		//		Handle(TNaming_NamedShape) occtChildAttribute;
+		//		Handle(TDataStd_Integer) occtRelationshipType;
+		//		bool result1 = childLabel.FindAttribute(TNaming_NamedShape::GetID(), occtChildAttribute);
+		//		bool result2 = childLabel.FindAttribute(TDataStd_Integer::GetID(), occtRelationshipType);
+		//		bool result3 = occtRelationshipType->Get() == REL_CONSTITUENT; 
+		//		bool result4 = false;
+		//		TopExp_Explorer occtExplorer;
+		//		for (occtExplorer.Init(GetOcctShape(), TopAbs_FACE); occtExplorer.More(); occtExplorer.Next())
+		//		{
+		//			if (occtExplorer.Current().IsSame(occtChildAttribute->Get()))
+		//			{
+		//				result4 = true;
+		//				break;
+		//			}
+		//		}
+		//		if (result1 && result2 && result3 /*&& result4*/)
+		//		{
+		//			numChildren++;
+		//		}
+		//	}
+		//}
 
 		TopAbs_ShapeEnum occtShapeType = CheckOcctShapeType<Subclass>();
 		TopTools_MapOfShape occtShapes;
-		TopExp_Explorer occtExplorer;
-		for (occtExplorer.Init(GetOcctShape(), occtShapeType); occtExplorer.More(); occtExplorer.Next())
+		for (TopExp_Explorer occtExplorer(GetOcctShape(), occtShapeType); occtExplorer.More(); occtExplorer.Next())
 		{
 			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
 			if (!occtShapes.Contains(occtCurrent))
@@ -648,6 +686,7 @@ namespace TopoLogicCore
 				occtShapes.Add(occtCurrent);
 				std::shared_ptr<Topology> pChildTopology = ByOcctShape(occtCurrent);
 				rMembers.push_back(Downcast<Subclass>(pChildTopology));
+
 				GlobalCluster::GetInstance().GetCluster()->AddChildLabel(pChildTopology, REL_CONSTITUENT);
 
 				// For now only attach constituent faces

@@ -383,7 +383,7 @@ namespace TopoLogicCore
 
 	TopoDS_Solid& Cell::GetOcctSolid()
 	{
-		assert(m_occtSolid.IsNull() && "Cell::m_occtSolid is null.");
+		assert(!m_occtSolid.IsNull() && "Cell::m_occtSolid is null.");
 		if (m_occtSolid.IsNull())
 		{
 			throw std::exception("Cell::m_occtSolid is null.");
@@ -394,7 +394,7 @@ namespace TopoLogicCore
 
 	const TopoDS_Solid& Cell::GetOcctSolid() const
 	{
-		assert(m_occtSolid.IsNull() && "Cell::m_occtSolid is null.");
+		assert(!m_occtSolid.IsNull() && "Cell::m_occtSolid is null.");
 		if (m_occtSolid.IsNull())
 		{
 			throw std::exception("Cell::m_occtSolid is null.");
@@ -424,5 +424,6 @@ namespace TopoLogicCore
 	Cell::~Cell()
 	{
 		GlobalCluster::GetInstance().Remove(this);
+		DecreaseCounter();
 	}
 }

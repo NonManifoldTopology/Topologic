@@ -1200,7 +1200,7 @@ namespace TopoLogicCore
 
 	TopoDS_Shell& Shell::GetOcctShell()
 	{
-		assert(m_occtShell.IsNull() && "Shell::m_occtShell is null.");
+		assert(!m_occtShell.IsNull() && "Shell::m_occtShell is null.");
 		if (m_occtShell.IsNull())
 		{
 			throw std::exception("Shell::m_occtShell is null.");
@@ -1211,7 +1211,7 @@ namespace TopoLogicCore
 
 	const TopoDS_Shell& Shell::GetOcctShell() const
 	{
-		assert(m_occtShell.IsNull() && "Shell::m_occtShell is null.");
+		assert(!m_occtShell.IsNull() && "Shell::m_occtShell is null.");
 		if (m_occtShell.IsNull())
 		{
 			throw std::exception("Shell::m_occtShell is null.");
@@ -1241,5 +1241,6 @@ namespace TopoLogicCore
 	Shell::~Shell()
 	{
 		GlobalCluster::GetInstance().Remove(this);
+		DecreaseCounter();
 	}
 }

@@ -107,7 +107,7 @@ namespace TopoLogicCore
 
 	TopoDS_Wire& Wire::GetOcctWire()
 	{
-		assert(m_occtWire.IsNull() && "Wire::m_occtWire is null.");
+		assert(!m_occtWire.IsNull() && "Wire::m_occtWire is null.");
 		if (m_occtWire.IsNull())
 		{
 			throw std::exception("Wire::m_occtWire is null.");
@@ -118,7 +118,7 @@ namespace TopoLogicCore
 
 	const TopoDS_Wire& Wire::GetOcctWire() const
 	{
-		assert(m_occtWire.IsNull()  && "Wire::m_occtWire is null.");
+		assert(!m_occtWire.IsNull()  && "Wire::m_occtWire is null.");
 		if (m_occtWire.IsNull())
 		{
 			throw std::exception("Wire::m_occtWire is null.");
@@ -158,5 +158,6 @@ namespace TopoLogicCore
 	Wire::~Wire()
 	{
 		GlobalCluster::GetInstance().Remove(this);
+		DecreaseCounter();
 	}
 }

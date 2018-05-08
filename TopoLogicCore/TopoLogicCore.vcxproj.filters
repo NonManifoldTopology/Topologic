@@ -17,6 +17,13 @@
     <ClInclude Include="include\Context.h" />
     <ClInclude Include="include\Aperture.h" />
     <ClInclude Include="include\AperturePath.h" />
+    <ClInclude Include="include\LabelManager.h" />
+    <ClInclude Include="include\OcctRelationshipAttribute.h">
+      <Filter>Label</Filter>
+    </ClInclude>
+    <ClInclude Include="include\OcctCounterAttribute.h">
+      <Filter>Label</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
@@ -32,5 +39,17 @@
     <ClCompile Include="src\Context.cpp" />
     <ClCompile Include="src\Aperture.cpp" />
     <ClCompile Include="src\AperturePath.cpp" />
+    <ClCompile Include="src\LabelManager.cpp" />
+    <ClCompile Include="src\OcctRelationshipAttribute.cpp">
+      <Filter>Label</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OcctCounterAttribute.cpp">
+      <Filter>Label</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Label">
+      <UniqueIdentifier>{76ff7ee9-5ca0-4b9f-a6a4-b56b3c0991ef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

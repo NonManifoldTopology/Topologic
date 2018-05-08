@@ -1,6 +1,7 @@
 #include <Vertex.h>
-#include <GlobalCluster.h>
+//#include <GlobalCluster.h>
 #include <Edge.h>
+#include <OcctCounterAttribute.h>
 
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRep_Tool.hxx>
@@ -9,18 +10,25 @@
 
 #include <assert.h>
 
+#include <LabelManager.h>
+
 namespace TopoLogicCore
 {
-	Vertex::Vertex(const TopoDS_Vertex& rkOcctVertex)
+	Vertex::Vertex(const TopoDS_Vertex& rkOcctVertex, const TDF_Label& rkOcctLabel)
 		: Topology(0)
 		, m_occtVertex(rkOcctVertex)
 	{
-		GlobalCluster::GetInstance().Add(this);
+		//GlobalCluster::GetInstance().Add(this);
+		
+		// Needs to be done in the subclass, not in Topology, as the OCCT shape is not yet defined there.
+		SetOcctLabel(rkOcctLabel);
+		OcctCounterAttribute::IncreaseCounter(GetOcctLabel());
 	}
 
 	Vertex::~Vertex()
 	{
-		GlobalCluster::GetInstance().Remove(this);
+		//GlobalCluster::GetInstance().Remove(this);
+		DecreaseCounter();
 	}
 
 	std::shared_ptr<Vertex> Vertex::ByPoint(Handle(Geom_Point) pOcctPoint)
@@ -50,7 +58,7 @@ namespace TopoLogicCore
 
 	TopoDS_Vertex& Vertex::GetOcctVertex()
 	{
-		assert(m_occtVertex.IsNull() && "Vertex::m_occtVertex is null.");
+		assert(!m_occtVertex.IsNull() && "Vertex::m_occtVertex is null.");
 		if (m_occtVertex.IsNull())
 		{
 			throw std::exception("Vertex::m_occtVertex is null.");
@@ -61,7 +69,7 @@ namespace TopoLogicCore
 
 	const TopoDS_Vertex& Vertex::GetOcctVertex() const
 	{
-		assert(m_occtVertex.IsNull() && "Vertex::m_occtVertex is null.");
+		assert(!m_occtVertex.IsNull() && "Vertex::m_occtVertex is null.");
 		if (m_occtVertex.IsNull())
 		{
 			throw std::exception("Vertex::m_occtVertex is null.");

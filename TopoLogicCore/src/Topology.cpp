@@ -9,6 +9,7 @@
 #include <Vertex.h>
 #include <Context.h>
 #include <GlobalCluster.h>
+#include <LabelManager.h>
 
 #include <TopoDS_Vertex.hxx>
 #include <TopoDS_Edge.hxx>
@@ -96,6 +97,41 @@ namespace TopoLogicCore
 		pTopology->SetOcctLabel(occtChildLabel);
 	}
 
+	TDF_Label& Topology::GetOcctLabel()
+	{
+		//assert(m_occtLabel.IsNull() && "OCAF label is null.");
+		if (m_occtLabel.IsNull())
+		{
+			//throw std::exception("OCAF label is null.");
+		}
+
+		return m_occtLabel;
+	}
+
+	const TDF_Label & Topology::GetOcctLabel() const
+	{
+		//assert(m_occtLabel.IsNull() && "OCAF label is null.");
+		if (m_occtLabel.IsNull())
+		{
+			//throw std::exception("OCAF label is null.");
+		}
+
+		return m_occtLabel;
+	}
+
+	void Topology::SetOcctLabel(const TDF_Label & rkOcctLabel)
+	{
+		// Only register the label if it is not under the root
+		if (rkOcctLabel.IsNull() || !LabelManager::GetInstance().HasLabel(rkOcctLabel))
+		{
+			RegisterLabel();
+		}
+		else
+		{
+			m_occtLabel = rkOcctLabel;
+		}
+	}
+
 	Topology::Topology(const int kDimensionality)
 		: m_dimensionality(kDimensionality)
 		, m_isInGlobalCluster(false)
@@ -104,7 +140,7 @@ namespace TopoLogicCore
 
 	}
 
-	std::shared_ptr<Topology> Topology::ByOcctShape(const TopoDS_Shape& rkOcctShape)
+	std::shared_ptr<Topology> Topology::ByOcctShape(const TopoDS_Shape& rkOcctShape, const TDF_Label& rkOcctLabel)
 	{
 		if (rkOcctShape.TShape().IsNull())
 		{
@@ -119,8 +155,8 @@ namespace TopoLogicCore
 		case TopAbs_SHELL: return std::make_shared<Shell>(TopoDS::Shell(rkOcctShape));
 		case TopAbs_FACE: return std::make_shared<Face>(TopoDS::Face(rkOcctShape));
 		case TopAbs_WIRE: return std::make_shared<Wire>(TopoDS::Wire(rkOcctShape));
-		case TopAbs_EDGE: return std::make_shared<Edge>(TopoDS::Edge(rkOcctShape));
-		case TopAbs_VERTEX: return std::make_shared<Vertex>(TopoDS::Vertex(rkOcctShape));
+		case TopAbs_EDGE: return std::make_shared<Edge>(TopoDS::Edge(rkOcctShape), rkOcctLabel);
+		case TopAbs_VERTEX: return std::make_shared<Vertex>(TopoDS::Vertex(rkOcctShape), rkOcctLabel);
 		default:
 			throw std::exception("Topology::ByOcctShape: unknown topology.");
 		}
@@ -1687,6 +1723,23 @@ namespace TopoLogicCore
 		return occtNewShape;
 	}
 
+	void Topology::RegisterLabel()
+	{
+		LabelManager::GetInstance().AddLabelToRoot(GetOcctLabel());
+
+		// Add the essential attributes:
+		// - Shape
+		LabelManager::GetInstance().AddShapeToLabel(GetOcctShape(), GetOcctLabel());
+
+		// - Counter
+		LabelManager::GetInstance().AddCounterToLabel(GetOcctLabel());
+	}
+
+	void Topology::DecreaseCounter()
+	{
+		LabelManager::GetInstance().DecreaseCounter(GetOcctLabel());
+	}
+
 	void Topology::AddBooleanOperands(
 		const std::shared_ptr<Topology>& kpOtherTopology,
 		BOPAlgo_CellsBuilder& rOcctCellsBuilder,
@@ -1906,6 +1959,18 @@ namespace TopoLogicCore
 			}
 
 			rImmediateMembers.push_back(pMemberTopology);
+		}
+	}
+
+	void Topology::DownwardNavigation(const TopoDS_Shape& rkOcctShape, const TopAbs_ShapeEnum & rkShapeEnum, TopTools_MapOfShape & rOcctMembers)
+	{
+		for (TopExp_Explorer occtExplorer(rkOcctShape, rkShapeEnum); occtExplorer.More(); occtExplorer.Next())
+		{
+			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
+			if (!rOcctMembers.Contains(occtCurrent))
+			{
+				rOcctMembers.Add(occtCurrent);
+			}
 		}
 	}
 

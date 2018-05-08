@@ -333,7 +333,7 @@ namespace TopoLogicCore
 
 	TopoDS_CompSolid& CellComplex::GetOcctCompSolid()
 	{
-		assert(m_pOcctCompSolid.IsNull() && "CellComplex::m_pOcctCompSolid is null.");
+		assert(!m_pOcctCompSolid.IsNull() && "CellComplex::m_pOcctCompSolid is null.");
 		if (m_pOcctCompSolid.IsNull())
 		{
 			throw std::exception("CellComplex::m_pOcctCompSolid is null.");
@@ -344,7 +344,7 @@ namespace TopoLogicCore
 
 	const TopoDS_CompSolid& CellComplex::GetOcctCompSolid() const
 	{
-		assert(m_pOcctCompSolid.IsNull() && "CellComplex::m_pOcctCompSolid is null.");
+		assert(!m_pOcctCompSolid.IsNull() && "CellComplex::m_pOcctCompSolid is null.");
 		if (m_pOcctCompSolid.IsNull())
 		{
 			throw std::exception("CellComplex::m_pOcctCompSolid is null.");
@@ -373,5 +373,6 @@ namespace TopoLogicCore
 	CellComplex::~CellComplex()
 	{
 		GlobalCluster::GetInstance().Remove(this);
+		DecreaseCounter();
 	}
 }
