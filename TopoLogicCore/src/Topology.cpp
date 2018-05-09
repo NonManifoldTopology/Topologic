@@ -550,6 +550,11 @@ namespace TopoLogicCore
 	{
 	}
 
+	void Topology::Contents(std::list<std::shared_ptr<Topology>>& rContents) const
+	{
+		LabelManager::Contents(GetOcctLabel(), rContents);
+	}
+
 	void Topology::ContentsV2(const bool kAllLevels, std::list<std::shared_ptr<Topology>>& rContents) const
 	{
 		const TDF_Label& rkOcctLabel = GetOcctLabel();

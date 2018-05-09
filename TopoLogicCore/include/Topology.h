@@ -273,6 +273,12 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="rContents"></param>
+		TOPOLOGIC_API void Contents(std::list<std::shared_ptr<Topology>>& rContents) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <returns></returns>
 		std::list<std::shared_ptr<Context>>& Contexts()
 		{

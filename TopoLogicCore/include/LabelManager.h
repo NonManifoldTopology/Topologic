@@ -127,6 +127,20 @@ namespace TopoLogicCore
 		/// <param name="rkOcctContextLabel"></param>
 		void AddContent(const TDF_Label& rkOcctContentLabel, const TDF_Label& rkOcctContextLabel);
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkOcctLabel"></param>
+		/// <param name="rContents"></param>
+		static void Contents(const TDF_Label& rkOcctLabel, std::list<std::shared_ptr<Topology>>& rContents);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkOcctLabel"></param>
+		/// <returns></returns>
+		static TopoDS_Shape GetShape(const TDF_Label& rkOcctLabel);
+
 	protected:
 		LabelManager();
 		~LabelManager();

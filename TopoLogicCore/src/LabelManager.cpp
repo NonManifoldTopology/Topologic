@@ -239,6 +239,37 @@ namespace TopoLogicCore
 		}
 	}
 
+	void LabelManager::Contents(const TDF_Label & rkOcctLabel, std::list<std::shared_ptr<Topology>>& rContents)
+	{
+		Handle(OcctContentsAttribute) pOcctContentsAttribute; // of the context label
+		bool hasContentsAttribute = rkOcctLabel.FindAttribute(OcctContentsAttribute::GetID(), pOcctContentsAttribute);
+		if (!hasContentsAttribute)
+		{
+			assert(false);
+		}
+
+		const std::list<TDF_Label>& rkOcctContentLabels = pOcctContentsAttribute->GetContents();
+		for(const TDF_Label& rkOcctContentLabel : rkOcctContentLabels)
+		{
+			rContents.push_back(Topology::ByOcctShape(GetShape(rkOcctContentLabel), rkOcctContentLabel));
+		}
+	}
+
+	TopoDS_Shape LabelManager::GetShape(const TDF_Label & rkOcctLabel)
+	{
+		Handle(TNaming_NamedShape) pOcctShape; // of the context label
+		bool hasContentsAttribute = rkOcctLabel.FindAttribute(TNaming_NamedShape::GetID(), pOcctShape);
+		if (!pOcctShape.IsNull())
+		{
+			return pOcctShape->Get();
+		}
+		else
+		{
+			assert(false);
+			throw std::exception("No shape");
+		}
+	}
+
 	LabelManager::LabelManager()
 	: m_pOcctDocument(new TDF_Data())
 	{

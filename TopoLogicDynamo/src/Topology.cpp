@@ -179,12 +179,13 @@ namespace TopoLogic
 	List<Topology^>^ Topology::Contents()
 	{
 		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
-		const std::list<std::shared_ptr<TopoLogicCore::Topology>>& rkCoreContents = pCoreTopology->Contents();
+		std::list<std::shared_ptr<TopoLogicCore::Topology>> coreContents;
+		pCoreTopology->Contents(coreContents);
 
 		List<Topology^>^ pTopologies = gcnew List<Topology^>();
 
-		for (std::list<std::shared_ptr<TopoLogicCore::Topology>>::const_iterator rkCoreContentIterator = rkCoreContents.cbegin();
-			rkCoreContentIterator != rkCoreContents.cend();
+		for (std::list<std::shared_ptr<TopoLogicCore::Topology>>::const_iterator rkCoreContentIterator = coreContents.cbegin();
+			rkCoreContentIterator != coreContents.cend();
 			rkCoreContentIterator++)
 		{
 			pTopologies->Add(Topology::ByCoreTopology(*rkCoreContentIterator));
