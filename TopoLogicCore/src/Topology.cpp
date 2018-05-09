@@ -149,11 +149,11 @@ namespace TopoLogicCore
 		TopAbs_ShapeEnum occtShapeType = rkOcctShape.ShapeType();
 		switch (occtShapeType)
 		{
-		case TopAbs_COMPOUND: return std::make_shared<Cluster>(TopoDS::Compound(rkOcctShape));
-		case TopAbs_COMPSOLID: return std::make_shared<CellComplex>(TopoDS::CompSolid(rkOcctShape));
-		case TopAbs_SOLID: return std::make_shared<Cell>(TopoDS::Solid(rkOcctShape));
-		case TopAbs_SHELL: return std::make_shared<Shell>(TopoDS::Shell(rkOcctShape));
-		case TopAbs_FACE: return std::make_shared<Face>(TopoDS::Face(rkOcctShape));
+		case TopAbs_COMPOUND: return std::make_shared<Cluster>(TopoDS::Compound(rkOcctShape));// , rkOcctLabel);
+		case TopAbs_COMPSOLID: return std::make_shared<CellComplex>(TopoDS::CompSolid(rkOcctShape));//, rkOcctLabel);
+		case TopAbs_SOLID: return std::make_shared<Cell>(TopoDS::Solid(rkOcctShape));//, rkOcctLabel);
+		case TopAbs_SHELL: return std::make_shared<Shell>(TopoDS::Shell(rkOcctShape));//, rkOcctLabel);
+		case TopAbs_FACE: return std::make_shared<Face>(TopoDS::Face(rkOcctShape), rkOcctLabel);
 		case TopAbs_WIRE: return std::make_shared<Wire>(TopoDS::Wire(rkOcctShape), rkOcctLabel);
 		case TopAbs_EDGE: return std::make_shared<Edge>(TopoDS::Edge(rkOcctShape), rkOcctLabel);
 		case TopAbs_VERTEX: return std::make_shared<Vertex>(TopoDS::Vertex(rkOcctShape), rkOcctLabel);
@@ -1962,14 +1962,27 @@ namespace TopoLogicCore
 		}
 	}
 
-	void Topology::DownwardNavigation(const TopoDS_Shape& rkOcctShape, const TopAbs_ShapeEnum & rkShapeEnum, TopTools_MapOfShape & rOcctMembers)
+	void Topology::UpwardNavigation(const TopoDS_Shape & rkOcctShape, const TopoDS_Shape & rkOcctParentShape, const TopAbs_ShapeEnum kShapeEnum, TopTools_ListOfShape & rOcctMembers)
+	{
+		TopTools_ListOfShape occtAncestors;
+		TopTools_IndexedDataMapOfShapeListOfShape occtShapeMap;
+		TopExp::MapShapesAndUniqueAncestors(
+			rkOcctShape,
+			rkOcctShape.ShapeType(),
+			kShapeEnum,
+			occtShapeMap);
+
+		occtShapeMap.FindFromKey(rkOcctShape, occtAncestors);
+	}
+
+	void Topology::DownwardNavigation(const TopoDS_Shape& rkOcctShape, const TopAbs_ShapeEnum & rkShapeEnum, TopTools_ListOfShape & rOcctMembers)
 	{
 		for (TopExp_Explorer occtExplorer(rkOcctShape, rkShapeEnum); occtExplorer.More(); occtExplorer.Next())
 		{
 			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
 			if (!rOcctMembers.Contains(occtCurrent))
 			{
-				rOcctMembers.Add(occtCurrent);
+				rOcctMembers.Append(occtCurrent);
 			}
 		}
 	}
@@ -2018,9 +2031,9 @@ namespace TopoLogicCore
 		for (int i = ((int)rkOcctShape.ShapeType()) + 1; i < (int)TopAbs_SHAPE; ++i)
 		{
 			TopAbs_ShapeEnum occtShapeEnum = (TopAbs_ShapeEnum)i;
-			TopTools_MapOfShape occtMembers;
+			TopTools_ListOfShape occtMembers;
 			Topology::DownwardNavigation(rkOcctShape, occtShapeEnum, occtMembers);
-			for (TopTools_MapIteratorOfMapOfShape occtMembersIterator(occtMembers);
+			for (TopTools_ListIteratorOfListOfShape occtMembersIterator(occtMembers);
 				occtMembersIterator.More();
 				occtMembersIterator.Next())
 			{

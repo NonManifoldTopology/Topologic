@@ -20,8 +20,9 @@ namespace TopoLogic {
 		/// <summary>
 		/// Gets the list of faces adjacent to this face.
 		/// </summary>
+		/// <param name="parentTopology"></param>
 		/// <returns name="Face[]">The faces adjacent to this face</returns>
-		List<Face^>^ AdjacentFaces();
+		List<Face^>^ AdjacentFaces(Topology^ parentTopology);
 
 		/// <summary>
 		/// Gets the list of cells incident to this face.

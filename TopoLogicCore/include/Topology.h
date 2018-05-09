@@ -385,6 +385,15 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="rkOcctShape"></param>
+		/// <param name="rkOcctParentShape"></param>
+		/// <param name="kShapeEnum"></param>
+		/// <param name="rOcctMembers"></param>
+		static void UpwardNavigation(const TopoDS_Shape& rkOcctShape, const TopoDS_Shape& rkOcctParentShape, const TopAbs_ShapeEnum kShapeEnum, TopTools_ListOfShape& rOcctMembers);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="kOcctShapeType"></param>
 		/// <param name="rMembers"></param>
 		template <class Subclass>
@@ -393,8 +402,10 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="rkOcctShape"></param>
+		/// <param name="rkShapeEnum"></param>
 		/// <param name="rOcctMembers"></param>
-		static void DownwardNavigation(const TopoDS_Shape& rkOcctShape, const TopAbs_ShapeEnum& rkShapeEnum, TopTools_MapOfShape& rOcctMembers);
+		static void DownwardNavigation(const TopoDS_Shape& rkOcctShape, const TopAbs_ShapeEnum& rkShapeEnum, TopTools_ListOfShape& rOcctMembers);
 
 		/// <summary>
 		/// 
@@ -707,64 +718,65 @@ namespace TopoLogicCore
 				std::shared_ptr<Topology> pChildTopology = ByOcctShape(occtCurrent);
 				rMembers.push_back(Downcast<Subclass>(pChildTopology));
 
-				GlobalCluster::GetInstance().GetCluster()->AddChildLabel(pChildTopology, REL_CONSTITUENT);
+				// UNCOMMENT THESE FOR ENERGY ANALYSIS DEMO
+				//GlobalCluster::GetInstance().GetCluster()->AddChildLabel(pChildTopology, REL_CONSTITUENT);
 
-				// For now only attach constituent faces
-				if (GetOcctLabel().IsNull())
-				{
-					continue;
-				}
+				//// For now only attach constituent faces
+				//if (GetOcctLabel().IsNull())
+				//{
+				//	continue;
+				//}
 
-				for (TDF_ChildIterator occtLabelIterator(GetOcctLabel()); 
-					occtLabelIterator.More(); 
-					occtLabelIterator.Next())
-				{
-					TDF_Label childLabel = occtLabelIterator.Value();
-					Handle(TNaming_NamedShape) occtChildAttribute;
-					Handle(TDataStd_Integer) occtRelationshipType;
-					bool result1 = childLabel.FindAttribute(TNaming_NamedShape::GetID(), occtChildAttribute);
-					bool result2 = childLabel.FindAttribute(TDataStd_Integer::GetID(), occtRelationshipType);
-					// Check if this is a child of the parent topology too
-					bool isFound = false;
-					TopExp_Explorer occtExplorer2;
-					for (occtExplorer2.Init(occtCurrent, TopAbs_FACE);
-						occtExplorer2.More();
-						occtExplorer2.Next())
-					{
-						const TopoDS_Shape& rkOcctCurrentChildShape = occtExplorer2.Current();
-						if (rkOcctCurrentChildShape.IsSame(occtChildAttribute->Get()))
-						{
-							isFound = true;
-							break;
-						}
-					}
-					if (result1 &&
-						result2 &&
-						isFound && // is face part of the child entity?
-						occtChildAttribute->Get().ShapeType() == TopAbs_FACE &&
-						occtRelationshipType->Get() == REL_CONSTITUENT)
-					{
-						std::shared_ptr<Topology> pGrandChildTopology = ByOcctShape(occtChildAttribute->Get());
-						pChildTopology->AddChildLabel(pGrandChildTopology, REL_CONSTITUENT);
+				//for (TDF_ChildIterator occtLabelIterator(GetOcctLabel()); 
+				//	occtLabelIterator.More(); 
+				//	occtLabelIterator.Next())
+				//{
+				//	TDF_Label childLabel = occtLabelIterator.Value();
+				//	Handle(TNaming_NamedShape) occtChildAttribute;
+				//	Handle(TDataStd_Integer) occtRelationshipType;
+				//	bool result1 = childLabel.FindAttribute(TNaming_NamedShape::GetID(), occtChildAttribute);
+				//	bool result2 = childLabel.FindAttribute(TDataStd_Integer::GetID(), occtRelationshipType);
+				//	// Check if this is a child of the parent topology too
+				//	bool isFound = false;
+				//	TopExp_Explorer occtExplorer2;
+				//	for (occtExplorer2.Init(occtCurrent, TopAbs_FACE);
+				//		occtExplorer2.More();
+				//		occtExplorer2.Next())
+				//	{
+				//		const TopoDS_Shape& rkOcctCurrentChildShape = occtExplorer2.Current();
+				//		if (rkOcctCurrentChildShape.IsSame(occtChildAttribute->Get()))
+				//		{
+				//			isFound = true;
+				//			break;
+				//		}
+				//	}
+				//	if (result1 &&
+				//		result2 &&
+				//		isFound && // is face part of the child entity?
+				//		occtChildAttribute->Get().ShapeType() == TopAbs_FACE &&
+				//		occtRelationshipType->Get() == REL_CONSTITUENT)
+				//	{
+				//		std::shared_ptr<Topology> pGrandChildTopology = ByOcctShape(occtChildAttribute->Get());
+				//		pChildTopology->AddChildLabel(pGrandChildTopology, REL_CONSTITUENT);
 
 
-						for (TDF_ChildIterator occtChildLabelIterator(childLabel); occtChildLabelIterator.More(); occtChildLabelIterator.Next())
-						{
-							TDF_Label apertureLabel = occtChildLabelIterator.Value();
-							Handle(TNaming_NamedShape) occtApertureAttribute;
-							Handle(TDataStd_Integer) occtApertureRelationshipType;
-							bool result1 = apertureLabel.FindAttribute(TNaming_NamedShape::GetID(), occtApertureAttribute);
-							bool result2 = apertureLabel.FindAttribute(TDataStd_Integer::GetID(), occtRelationshipType);
-							if (result1 &&
-								result2 &&
-								occtRelationshipType->Get() == REL_APERTURE)
-							{
-								std::shared_ptr<Topology> pApertureTopology = ByOcctShape(occtApertureAttribute->Get());
-								pGrandChildTopology->AddChildLabel(pApertureTopology, REL_APERTURE);
-							}
-						}
-					}
-				}
+				//		for (TDF_ChildIterator occtChildLabelIterator(childLabel); occtChildLabelIterator.More(); occtChildLabelIterator.Next())
+				//		{
+				//			TDF_Label apertureLabel = occtChildLabelIterator.Value();
+				//			Handle(TNaming_NamedShape) occtApertureAttribute;
+				//			Handle(TDataStd_Integer) occtApertureRelationshipType;
+				//			bool result1 = apertureLabel.FindAttribute(TNaming_NamedShape::GetID(), occtApertureAttribute);
+				//			bool result2 = apertureLabel.FindAttribute(TDataStd_Integer::GetID(), occtRelationshipType);
+				//			if (result1 &&
+				//				result2 &&
+				//				occtRelationshipType->Get() == REL_APERTURE)
+				//			{
+				//				std::shared_ptr<Topology> pApertureTopology = ByOcctShape(occtApertureAttribute->Get());
+				//				pGrandChildTopology->AddChildLabel(pApertureTopology, REL_APERTURE);
+				//			}
+				//		}
+				//	}
+				//}
 			}
 		}
 	}

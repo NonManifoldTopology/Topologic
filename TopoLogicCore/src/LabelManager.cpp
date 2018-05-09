@@ -72,9 +72,9 @@ namespace TopoLogicCore
 		for (int i = ((int)rkOcctShape.ShapeType()) + 1; i < (int)TopAbs_SHAPE; ++i)
 		{
 			TopAbs_ShapeEnum occtShapeEnum = (TopAbs_ShapeEnum)i;
-			TopTools_MapOfShape occtMembers;
+			TopTools_ListOfShape occtMembers;
 			Topology::DownwardNavigation(rkOcctShape, occtShapeEnum, occtMembers);
-			for (TopTools_MapIteratorOfMapOfShape occtMembersIterator(occtMembers);
+			for (TopTools_ListIteratorOfListOfShape occtMembersIterator(occtMembers);
 				occtMembersIterator.More();
 				occtMembersIterator.Next())
 			{
@@ -158,7 +158,7 @@ namespace TopoLogicCore
 		}
 
 		// Iterate through the children of rkOcctLabel.
-		for (TDF_ChildIterator occtChildLabelIterator(rkOcctParentLabel);
+		for (TDF_ChildIterator occtChildLabelIterator(rkOcctParentLabel, true);
 			occtChildLabelIterator.More();
 			occtChildLabelIterator.Next())
 		{

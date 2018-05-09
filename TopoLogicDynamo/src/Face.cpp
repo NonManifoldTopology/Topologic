@@ -32,11 +32,12 @@
 
 namespace TopoLogic
 {
-	List<Face^>^ Face::AdjacentFaces()
+	List<Face^>^ Face::AdjacentFaces(Topology^ parentTopology)
 	{
 		std::shared_ptr<TopoLogicCore::Face> pCoreFace = TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopoLogicCore::Topology> pCoreParentTopology = TopoLogicCore::Topology::Downcast<TopoLogicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
 		std::list<std::shared_ptr<TopoLogicCore::Face>> pAdjacentCoreFaces;
-		pCoreFace->AdjacentFaces(pAdjacentCoreFaces);
+		pCoreFace->AdjacentFaces(pCoreParentTopology, pAdjacentCoreFaces);
 
 		List<Face^>^ pAdjacentFaces = gcnew List<Face^>();
 

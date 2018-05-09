@@ -32,15 +32,17 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <param name="rkOcctFace"></param>
-		Face(const TopoDS_Face& rkOcctFace);
+		/// <param name="rkOcctLabel"></param>
+		Face(const TopoDS_Face& rkOcctFace, const TDF_Label& rkOcctLabel = TDF_Label());
 
 		virtual ~Face();
 
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="kpParentTopology"></param>
 		/// <param name="rFaces"></param>
-		TOPOLOGIC_API void AdjacentFaces(std::list<std::shared_ptr<Face>>& rFaces) const;
+		TOPOLOGIC_API void AdjacentFaces(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Face>>& rFaces) const;
 
 		/// <summary>
 		/// 
