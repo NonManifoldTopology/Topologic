@@ -39,13 +39,13 @@ namespace TopoLogicCore
 		/// <param name="rOcctLabel"></param>
 		void AddLabelToRoot(TDF_Label& rOcctLabel);
 
-		/// <summary>
+		/*/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rOcctLabel"></param>
 		/// <param name="rParentLabel"></param>
-		/// <param name="kRelationshipType"></param>
-		static void AddLabelToParent(TDF_Label& rOcctLabel, TDF_Label& rParentLabel, const TopologyRelationshipType kRelationshipType);
+		/// <param name="kRelationshipType"></param>*/
+		//static void AddLabelToParent(TDF_Label& rOcctLabel, TDF_Label& rParentLabel, const TopologyRelationshipType kRelationshipType);
 
 		/// <summary>
 		/// 
@@ -80,11 +80,11 @@ namespace TopoLogicCore
 		/// <returns></returns>
 		bool AddModifiedMembers(TDF_Label& rOcctParentLabel, const std::list<std::pair<std::shared_ptr<Topology>, std::shared_ptr<Topology>>>& rkTopologyPairs);
 
-		/// <summary>
+		/*/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="rTopTopologies"></param>
-		void GetTopShapes(std::list<std::shared_ptr<Topology>>& rTopTopologies);
+		/// <param name="rTopTopologies"></param>*/
+		//void GetTopShapes(std::list<std::shared_ptr<Topology>>& rTopTopologies);
 
 		/// <summary>
 		/// 
@@ -97,10 +97,9 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <param name="rkOcctShape"></param>
-		/// <param name="rkOcctParentLabel"></param>
 		/// <param name="rOcctChildLabel"></param>
 		/// <returns></returns>
-		static bool FindChildLabelByShape(const TopoDS_Shape& rkOcctShape, const TDF_Label& rkOcctParentLabel, TDF_Label& rOcctChildLabel);
+		static bool FindChildLabelByShape(const TopoDS_Shape& rkOcctShape, TDF_Label& rOcctChildLabel);
 
 		/// <summary>
 		/// 

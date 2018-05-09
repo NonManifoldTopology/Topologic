@@ -25,7 +25,7 @@ namespace TopoLogicCore
 		{
 			const TopoDS_Edge& rkOcctEdge = occtWireExplorer.Current();
 			TDF_Label occtEdgeLabel;
-			LabelManager::GetInstance().FindChildLabelByShape(rkOcctEdge, GetOcctLabel(), occtEdgeLabel);
+			LabelManager::GetInstance().FindChildLabelByShape(rkOcctEdge, occtEdgeLabel);
 			rEdges.push_back(TopologicalQuery::Downcast<Edge>(Topology::ByOcctShape(rkOcctEdge, occtEdgeLabel)));
 		}
 	}
@@ -50,7 +50,7 @@ namespace TopoLogicCore
 			const TopoDS_Vertex& rkOcctVertex = occtWireExplorer.CurrentVertex();
 			lastEdge = occtWireExplorer.Current();
 			TDF_Label occtVertexLabel;
-			LabelManager::GetInstance().FindChildLabelByShape(rkOcctVertex, GetOcctLabel(), occtVertexLabel);
+			LabelManager::GetInstance().FindChildLabelByShape(rkOcctVertex, occtVertexLabel);
 			rVertices.push_back(TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex, occtVertexLabel)));
 		}
 
@@ -59,7 +59,7 @@ namespace TopoLogicCore
 		{
 			TopoDS_Vertex occtLastVertex = TopExp::LastVertex(lastEdge);
 			TDF_Label occtVertexLabel;
-			LabelManager::GetInstance().FindChildLabelByShape(occtLastVertex, GetOcctLabel(), occtVertexLabel);
+			LabelManager::GetInstance().FindChildLabelByShape(occtLastVertex, occtVertexLabel);
 			rVertices.push_back(TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(occtLastVertex, occtVertexLabel)));
 		}
 	}

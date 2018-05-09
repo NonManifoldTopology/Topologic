@@ -2098,7 +2098,7 @@ namespace TopoLogicCore
 		for (TopTools_ListIteratorOfListOfShape occtMemberIterator(occtMembers); occtMemberIterator.More(); occtMemberIterator.Next())
 		{
 			TDF_Label occtLabel;
-			LabelManager::GetInstance().FindChildLabelByShape(occtMemberIterator.Value(), GetOcctLabel(), occtLabel);
+			LabelManager::GetInstance().FindChildLabelByShape(occtMemberIterator.Value(), occtLabel);
 			rMembers.push_back(Topology::ByOcctShape(occtMemberIterator.Value(), occtLabel));
 		}
 	}

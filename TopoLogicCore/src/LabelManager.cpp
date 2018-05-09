@@ -18,11 +18,11 @@ namespace TopoLogicCore
 		rOcctLabel = TDF_TagSource::NewChild(kRootLabel);
 	}
 
-	void LabelManager::AddLabelToParent(TDF_Label& rOcctLabel, TDF_Label& rParentLabel, const TopologyRelationshipType kRelationshipType)
+	/*void LabelManager::AddLabelToParent(TDF_Label& rOcctLabel, TDF_Label& rParentLabel, const TopologyRelationshipType kRelationshipType)
 	{
 		rOcctLabel = TDF_TagSource::NewChild(rParentLabel);
 		OcctRelationshipAttribute::Set(rOcctLabel, REL_CONSTITUENT);
-	}
+	}*/
 
 	void LabelManager::AddShapeToLabel(const TopoDS_Shape& rkOcctShape, TDF_Label & rOcctLabel)
 	{
@@ -79,7 +79,7 @@ namespace TopoLogicCore
 				occtMembersIterator.Next())
 			{
 				TDF_Label rOcctChildLabel;
-				AddLabelToParent(rOcctChildLabel, rOcctLabel, REL_CONSTITUENT);
+				AddLabelToRoot(rOcctChildLabel);
 				TNaming_Builder occtChildAttributeBuilder(rOcctChildLabel);
 				occtChildAttributeBuilder.Generated(occtMembersIterator.Value());
 			}
@@ -99,7 +99,7 @@ namespace TopoLogicCore
 		{
 			// Create a child label from the modified shape
 			TDF_Label occtModifiedChildLabel;
-			AddLabelToParent(occtModifiedChildLabel, rOcctParentLabel, REL_CONSTITUENT);
+			AddLabelToRoot(occtModifiedChildLabel);
 			TNaming_Builder occtModifiedChildAttributeBuilder(occtModifiedChildLabel);
 
 			const TopoDS_Shape& rkOcctOriginalShape = rkTopologyPair.first->GetOcctShape();
@@ -121,7 +121,7 @@ namespace TopoLogicCore
 		return true;
 	}
 
-	void LabelManager::GetTopShapes(std::list<std::shared_ptr<Topology>>& rTopTopologies)
+	/*void LabelManager::GetTopShapes(std::list<std::shared_ptr<Topology>>& rTopTopologies)
 	{
 		TopTools_ListOfShape occtShapes;
 		const TDF_Label kRootLabel = m_pOcctDocument->Root();
@@ -139,26 +139,17 @@ namespace TopoLogicCore
 				rTopTopologies.push_back(pTopology);
 			}
 		}
-	}
+	}*/
 
-	bool LabelManager::FindChildLabelByShape(const TopoDS_Shape& rkOcctShape, const TDF_Label& rkOcctParentLabel, TDF_Label& rOcctChildLabel)
+	bool LabelManager::FindChildLabelByShape(const TopoDS_Shape& rkOcctShape, TDF_Label& rOcctChildLabel)
 	{
 		// Check the parent first.
 		Handle(TNaming_NamedShape) occtShapeAttribute;
-		bool hasShapeAttribute = rkOcctParentLabel.FindAttribute(TNaming_NamedShape::GetID(), occtShapeAttribute);
-		if (hasShapeAttribute)
-		{
-			const TopoDS_Shape& rkOcctParentShape = occtShapeAttribute->Get();
-			// If the shape attribute is equal to rkOcctShape, return it.
-			if (rkOcctParentShape.IsSame(rkOcctShape))
-			{
-				rOcctChildLabel = rkOcctParentLabel;
-				return true;
-			}
-		}
+		TDF_Label occtRootLabel = GetInstance().GetRoot();
+		bool hasShapeAttribute = occtRootLabel.FindAttribute(TNaming_NamedShape::GetID(), occtShapeAttribute);
 
 		// Iterate through the children of rkOcctLabel.
-		for (TDF_ChildIterator occtChildLabelIterator(rkOcctParentLabel, true);
+		for (TDF_ChildIterator occtChildLabelIterator(occtRootLabel, true);
 			occtChildLabelIterator.More();
 			occtChildLabelIterator.Next())
 		{

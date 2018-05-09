@@ -671,7 +671,7 @@ namespace TopoLogicCore
 
 				TDF_Label ancestorLabel;
 				// Find the label of rkOcctAncestor
-				bool isFound = LabelManager::FindChildLabelByShape(rkOcctAncestor, kpParentTopology->GetOcctLabel(), ancestorLabel);
+				bool isFound = LabelManager::FindChildLabelByShape(rkOcctAncestor, ancestorLabel);
 				std::shared_ptr<Topology> pTopology = ByOcctShape(rkOcctAncestor, ancestorLabel);
 				rAncestors.push_back(Downcast<Subclass>(pTopology));
 			}
