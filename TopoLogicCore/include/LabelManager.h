@@ -64,7 +64,7 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <param name="rOcctLabel"></param>
-		static void AddContentxContextsToLabel(TDF_Label& rOcctLabel);
+		static void AddContentsContextsToLabel(TDF_Label& rOcctLabel);
 
 		/// <summary>
 		/// 
@@ -119,6 +119,13 @@ namespace TopoLogicCore
 		/// </summary>
 		/// <returns></returns>
 		TDF_Label GetRoot() const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkOcctContentLabel"></param>
+		/// <param name="rkOcctContextLabel"></param>
+		void AddContent(const TDF_Label& rkOcctContentLabel, const TDF_Label& rkOcctContextLabel);
 
 	protected:
 		LabelManager();

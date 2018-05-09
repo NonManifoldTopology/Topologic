@@ -72,6 +72,15 @@ namespace TopoLogicCore
 			return m_contexts;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		std::list<TDF_Label>& GetContexts()
+		{
+			return m_contexts;
+		}
+
 	protected:
 		std::list<TDF_Label> m_contexts;
 	};

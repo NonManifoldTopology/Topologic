@@ -37,7 +37,7 @@ namespace TopoLogicCore
 		OcctCounterAttribute::Set(rOcctLabel);
 	}
 
-	void LabelManager::AddContentxContextsToLabel(TDF_Label & rOcctLabel)
+	void LabelManager::AddContentsContextsToLabel(TDF_Label & rOcctLabel)
 	{
 		OcctContextsAttribute::Set(rOcctLabel);
 		OcctContentsAttribute::Set(rOcctLabel);
@@ -194,6 +194,49 @@ namespace TopoLogicCore
 	{
 		const TDF_Label kRootLabel = m_pOcctDocument->Root();
 		return kRootLabel;
+	}
+
+	void LabelManager::AddContent(const TDF_Label & rkOcctContentLabel, const TDF_Label & rkOcctContextLabel)
+	{
+		{
+			Handle(OcctContextsAttribute) pOcctContextsAttribute; // of the content label
+			bool hasContextsAttribute = rkOcctContentLabel.FindAttribute(OcctContextsAttribute::GetID(), pOcctContextsAttribute);
+			if (!hasContextsAttribute)
+			{
+				assert(false);
+			}
+
+			// Remove the content label from the old context labels
+			std::list<TDF_Label>& rkContexts = pOcctContextsAttribute->GetContexts();
+			for (const TDF_Label& rkOcctContextLabel : rkContexts)
+			{
+				Handle(OcctContentsAttribute) pOcctContentsAttribute; // of the context label
+				bool hasContentsAttribute = rkOcctContextLabel.FindAttribute(OcctContentsAttribute::GetID(), pOcctContentsAttribute);
+				if (!hasContentsAttribute)
+				{
+					assert(false);
+				}
+				else
+				{
+					pOcctContentsAttribute->RemoveContent(rkOcctContentLabel);
+				}
+			}
+			rkContexts.clear();
+
+			// Add the new context to the content
+			pOcctContextsAttribute->AddContext(rkOcctContextLabel);
+		}
+
+		{
+			Handle(OcctContentsAttribute) pOcctContentsAttribute; // of the context label
+			bool hasContentsAttribute = rkOcctContextLabel.FindAttribute(OcctContentsAttribute::GetID(), pOcctContentsAttribute);
+			if (!hasContentsAttribute)
+			{
+				assert(false);
+			}
+			// Add this content to the new context
+			pOcctContentsAttribute->AddContent(rkOcctContentLabel);
+		}
 	}
 
 	LabelManager::LabelManager()

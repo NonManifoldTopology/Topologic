@@ -521,10 +521,7 @@ namespace TopoLogicCore
 
 	void Topology::AddContent(const std::shared_ptr<Topology>& rkTopology)
 	{
-		if(std::find(m_contents.begin(), m_contents.end(), rkTopology) == m_contents.end())
-		{
-			m_contents.push_back(rkTopology);
-		}
+		LabelManager::GetInstance().AddContent(rkTopology->GetOcctLabel(), GetOcctLabel());
 	}
 
 	void Topology::RemoveContent(const std::shared_ptr<Topology>& rkTopology)
@@ -1784,7 +1781,7 @@ namespace TopoLogicCore
 		LabelManager::AddCounterToLabel(GetOcctLabel());
 
 		// - Contents and contexts
-		LabelManager::AddContentxContextsToLabel(GetOcctLabel());
+		LabelManager::AddContentsContextsToLabel(GetOcctLabel());
 	}
 
 	void Topology::DecreaseCounter()
