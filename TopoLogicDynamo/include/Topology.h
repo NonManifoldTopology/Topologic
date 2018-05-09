@@ -262,6 +262,13 @@ namespace TopoLogic
 		/// <returns></returns>
 		bool IsSame(Topology^ topology);
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="queryTopology"></param>
+		/// <returns></returns>
+		Topology^ ClosestLowestSubshapeTo(Topology^ queryTopology);
+
 	public protected:
 		static Topology^ ByCoreTopology(const std::shared_ptr<TopoLogicCore::Topology>& kpCoreTopology);
 

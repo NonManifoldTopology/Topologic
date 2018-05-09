@@ -47,6 +47,8 @@
 #include <TDataStd_Integer.hxx>
 #include <BRepCheck_Wire.hxx>
 #include <BOPAlgo_MakerVolume.hxx>
+#include <TopTools_DataMapOfShapeInteger.hxx>
+#include <BRepExtrema_DistShapeShape.hxx>
 
 #include <ShapeFix_Shape.hxx>
 
@@ -132,6 +134,53 @@ namespace TopoLogicCore
 		}
 	}
 
+	std::shared_ptr<Topology> Topology::ClosestLowestSubshapeTo(const std::shared_ptr<Topology>& kpTopology) const
+	{
+		//TopTools_DataMapOfShapeInteger occtShapeToDistanceMap;
+		TopoDS_Shape occtClosestSubshape;
+		double minDistance = std::numeric_limits<double>::max();
+		const TopoDS_Shape& kOcctThisShape = GetOcctShape();
+		const TopoDS_Shape& kOcctQueryShape = kpTopology->GetOcctShape();
+		TopAbs_ShapeEnum occtShapeTypes[3] = { TopAbs_VERTEX, TopAbs_EDGE, TopAbs_FACE };
+		for (int i = 0; i < 3; ++i)
+		{
+			TopAbs_ShapeEnum occtShapeType = occtShapeTypes[i];
+			TopTools_MapOfShape occtCells;
+			for (TopExp_Explorer occtExplorer(kOcctThisShape, occtShapeType); occtExplorer.More(); occtExplorer.Next())
+			{
+				const TopoDS_Shape& rkCurrentChildShape = occtExplorer.Current();
+				BRepExtrema_DistShapeShape occtDistanceCalculation(rkCurrentChildShape, kOcctQueryShape);
+				bool isDone = occtDistanceCalculation.Perform();
+				if (isDone)
+				{
+					double distance = occtDistanceCalculation.Value();
+					if (distance < minDistance)
+					{
+						minDistance = distance;
+						occtClosestSubshape = rkCurrentChildShape;
+					}
+					else if (minDistance <= distance && 
+						     distance <= minDistance + Precision::Confusion() && 
+							 rkCurrentChildShape.ShapeType() > occtClosestSubshape.ShapeType()) // larger value = lower dimension
+					{
+						TopAbs_ShapeEnum closestShapeType = occtClosestSubshape.ShapeType();
+						TopAbs_ShapeEnum currentShapeType = rkCurrentChildShape.ShapeType();
+
+						minDistance = distance;
+						occtClosestSubshape = rkCurrentChildShape;
+					}
+				}
+			}
+		}
+
+		if (occtClosestSubshape.IsNull())
+		{
+			return nullptr;
+		}
+
+		return Topology::ByOcctShape(occtClosestSubshape);
+	}
+
 	Topology::Topology(const int kDimensionality)
 		: m_dimensionality(kDimensionality)
 		, m_isInGlobalCluster(false)
@@ -142,7 +191,7 @@ namespace TopoLogicCore
 
 	std::shared_ptr<Topology> Topology::ByOcctShape(const TopoDS_Shape& rkOcctShape, const TDF_Label& rkOcctLabel)
 	{
-		if (rkOcctShape.TShape().IsNull())
+		if (rkOcctShape.TShape().IsNull()) 
 		{
 			return nullptr;
 		}

@@ -488,6 +488,13 @@ namespace TopoLogicCore
 		/// <param name="rkOcctLabel"></param>
 		void SetOcctLabel(const TDF_Label& rkOcctLabel);
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpTopology"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API std::shared_ptr<Topology> ClosestLowestSubshapeTo(const std::shared_ptr<Topology>& kpTopology) const;
+
 	protected:
 		Topology(const int kDimensionality);
 

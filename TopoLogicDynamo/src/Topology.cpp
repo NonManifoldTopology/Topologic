@@ -139,6 +139,15 @@ namespace TopoLogic
 		return pCoreTopology->IsSame(pOtherCoreTopology);
 	}
 
+	Topology ^ Topology::ClosestLowestSubshapeTo(Topology^ queryTopology)
+	{
+		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopoLogicCore::Topology> pCoreQueryTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(queryTopology->GetCoreTopologicalQuery());
+
+		std::shared_ptr<TopoLogicCore::Topology> pClosestLowestSubshape = pCoreTopology->ClosestLowestSubshapeTo(pCoreQueryTopology);
+		return ByCoreTopology(pClosestLowestSubshape);
+	}
+
 	Topology^ Topology::ByCoreTopology(const std::shared_ptr<TopoLogicCore::Topology>& kpCoreTopology)
 	{
 		switch (kpCoreTopology->GetType())

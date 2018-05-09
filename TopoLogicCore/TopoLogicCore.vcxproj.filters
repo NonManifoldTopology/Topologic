@@ -24,6 +24,12 @@
     <ClInclude Include="include\OcctCounterAttribute.h">
       <Filter>Label</Filter>
     </ClInclude>
+    <ClInclude Include="include\OcctContentsAttribute.h">
+      <Filter>Label</Filter>
+    </ClInclude>
+    <ClInclude Include="include\OcctContextsAttribute.h">
+      <Filter>Label</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
@@ -44,6 +50,12 @@
       <Filter>Label</Filter>
     </ClCompile>
     <ClCompile Include="src\OcctCounterAttribute.cpp">
+      <Filter>Label</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OcctContentsAttribute.cpp">
+      <Filter>Label</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OcctContextsAttribute.cpp">
       <Filter>Label</Filter>
     </ClCompile>
   </ItemGroup>
