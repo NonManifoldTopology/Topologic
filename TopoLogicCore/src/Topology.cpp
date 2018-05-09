@@ -1782,6 +1782,9 @@ namespace TopoLogicCore
 
 		// - Counter
 		LabelManager::AddCounterToLabel(GetOcctLabel());
+
+		// - Contents and contexts
+		LabelManager::AddContentxContextsToLabel(GetOcctLabel());
 	}
 
 	void Topology::DecreaseCounter()

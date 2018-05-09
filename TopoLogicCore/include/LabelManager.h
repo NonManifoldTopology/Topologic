@@ -64,6 +64,12 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <param name="rOcctLabel"></param>
+		static void AddContentxContextsToLabel(TDF_Label& rOcctLabel);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rOcctLabel"></param>
 		void DecreaseCounter(TDF_Label& rOcctLabel);
 
 		/// <summary>

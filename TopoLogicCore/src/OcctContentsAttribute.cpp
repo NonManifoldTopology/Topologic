@@ -43,17 +43,27 @@ namespace TopoLogicCore
 		pRelationshipAttribute->m_contents = m_contents;
 	}
 
-	void OcctContentsAttribute::RemoveContent(const std::shared_ptr<Topology>& kpTopology)
+	Handle(OcctContentsAttribute) OcctContentsAttribute::Set(const TDF_Label & label)
 	{
-		m_contents.remove(kpTopology);
+		Handle(OcctContentsAttribute) pOcctContentsAttribute;
+		if (!label.FindAttribute(OcctContentsAttribute::GetID(), pOcctContentsAttribute)) {
+			pOcctContentsAttribute = new OcctContentsAttribute();
+			label.AddAttribute(pOcctContentsAttribute);
+		}
+		return pOcctContentsAttribute;
 	}
 
-	void OcctContentsAttribute::AddContent(const std::shared_ptr<Topology>& kpTopology)
+	void OcctContentsAttribute::RemoveContent(const TDF_Label& rkLabel)
 	{
-		std::list<std::shared_ptr<Topology>>::const_iterator kContentIterator = std::find(m_contents.begin(), m_contents.end(), kpTopology);
+		m_contents.remove(rkLabel);
+	}
+
+	void OcctContentsAttribute::AddContent(const TDF_Label& rkLabel)
+	{
+		std::list<TDF_Label>::const_iterator kContentIterator = std::find(m_contents.begin(), m_contents.end(), rkLabel);
 		if (kContentIterator == m_contents.end()) // not here yet
 		{
-			m_contents.push_back(kpTopology);
+			m_contents.push_back(rkLabel);
 		}
 	}
 }

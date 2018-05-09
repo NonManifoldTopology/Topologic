@@ -43,17 +43,27 @@ namespace TopoLogicCore
 		pRelationshipAttribute->m_contexts = m_contexts;
 	}
 
-	void OcctContextsAttribute::RemoveContext(const std::shared_ptr<Context>& kpContext)
+	Handle(OcctContextsAttribute) OcctContextsAttribute::Set(const TDF_Label & label)
 	{
-		m_contexts.remove(kpContext);
+		Handle(OcctContextsAttribute) pOcctContextsAttribute;
+		if (!label.FindAttribute(OcctContextsAttribute::GetID(), pOcctContextsAttribute)) {
+			pOcctContextsAttribute = new OcctContextsAttribute();
+			label.AddAttribute(pOcctContextsAttribute);
+		}
+		return pOcctContextsAttribute;
 	}
 
-	void OcctContextsAttribute::AddContext(const std::shared_ptr<Context>& kpContext)
+	void OcctContextsAttribute::RemoveContext(const TDF_Label& rkLabel)
 	{
-		std::list<std::shared_ptr<Context>>::const_iterator kContextIterator = std::find(m_contexts.begin(), m_contexts.end(), kpContext);
+		m_contexts.remove(rkLabel);
+	}
+
+	void OcctContextsAttribute::AddContext(const TDF_Label& rkLabel)
+	{
+		std::list<TDF_Label>::const_iterator kContextIterator = std::find(m_contexts.begin(), m_contexts.end(), rkLabel);
 		if (kContextIterator == m_contexts.end()) // not here yet
 		{
-			m_contexts.push_back(kpContext);
+			m_contexts.push_back(rkLabel);
 		}
 	}
 }

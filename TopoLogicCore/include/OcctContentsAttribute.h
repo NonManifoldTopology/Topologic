@@ -47,25 +47,32 @@ namespace TopoLogicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpTopology"></param>
-		void AddContent(const std::shared_ptr<Topology>& kpTopology);
+		/// <param name="label"></param>
+		/// <returns></returns>
+		static Handle(OcctContentsAttribute) Set(const TDF_Label& label);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpTopology"></param>
-		void RemoveContent(const std::shared_ptr<Topology>& kpTopology);
+		/// <param name="rkLabel"></param>
+		void AddContent(const TDF_Label& rkLabel);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkLabel"></param>
+		void RemoveContent(const TDF_Label& rkLabel);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		const std::list<std::shared_ptr<Topology>>& GetContents() const 
+		const std::list<TDF_Label>& GetContents() const
 		{
 			return m_contents;
 		}
 
 	protected:
-		std::list<std::shared_ptr<Topology>> m_contents;
+		std::list<TDF_Label> m_contents;
 	};
 }

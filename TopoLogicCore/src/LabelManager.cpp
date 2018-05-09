@@ -2,6 +2,8 @@
 #include <Topology.h>
 #include <OcctRelationshipAttribute.h>
 #include <OcctCounterAttribute.h>
+#include <OcctContextsAttribute.h>
+#include <OcctContentsAttribute.h>
 
 #include <TDF_AttributeIterator.hxx>
 #include <TDF_CopyLabel.hxx>
@@ -33,6 +35,12 @@ namespace TopoLogicCore
 	void LabelManager::AddCounterToLabel(TDF_Label & rOcctLabel)
 	{
 		OcctCounterAttribute::Set(rOcctLabel);
+	}
+
+	void LabelManager::AddContentxContextsToLabel(TDF_Label & rOcctLabel)
+	{
+		OcctContextsAttribute::Set(rOcctLabel);
+		OcctContentsAttribute::Set(rOcctLabel);
 	}
 
 	void LabelManager::DecreaseCounter(TDF_Label& rOcctLabel)
