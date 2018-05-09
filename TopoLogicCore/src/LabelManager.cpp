@@ -149,7 +149,7 @@ namespace TopoLogicCore
 		}
 	}*/
 
-	bool LabelManager::FindChildLabelByShape(const TopoDS_Shape& rkOcctShape, TDF_Label& rOcctChildLabel)
+	bool LabelManager::FindLabelByShape(const TopoDS_Shape& rkOcctShape, TDF_Label& rOcctChildLabel)
 	{
 		// Check the parent first.
 		Handle(TNaming_NamedShape) occtShapeAttribute;

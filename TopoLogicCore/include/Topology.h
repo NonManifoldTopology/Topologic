@@ -645,7 +645,7 @@ namespace TopoLogicCore
 		//LabelManager::GetInstance().GetTopShapes(topTopologyList);
 		// Iterate through all 1st level OCCT labels 
 		/*TDF_Label occtTopLabel;
-		bool isLabelFound = LabelManager::GetInstance().FindChildLabelByShape(kpTopology->GetOcctShape(), LabelManager::GetInstance().GetRoot(), occtTopLabel);
+		bool isLabelFound = LabelManager::GetInstance().FindLabelByShape(kpTopology->GetOcctShape(), LabelManager::GetInstance().GetRoot(), occtTopLabel);
 		if (!isLabelFound)
 			return;*/
 
@@ -677,7 +677,7 @@ namespace TopoLogicCore
 
 				TDF_Label ancestorLabel;
 				// Find the label of rkOcctAncestor
-				bool isFound = LabelManager::FindChildLabelByShape(rkOcctAncestor, ancestorLabel);
+				bool isFound = LabelManager::FindLabelByShape(rkOcctAncestor, ancestorLabel);
 				std::shared_ptr<Topology> pTopology = ByOcctShape(rkOcctAncestor, ancestorLabel);
 				rAncestors.push_back(Downcast<Subclass>(pTopology));
 			}

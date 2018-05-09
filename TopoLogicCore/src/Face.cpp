@@ -55,7 +55,7 @@ namespace TopoLogicCore
 				if (faceFound)
 				{
 					TDF_Label occtFaceLabel;
-					bool isLabelFound = LabelManager::GetInstance().FindChildLabelByShape(occtAnotherFace, occtFaceLabel);
+					bool isLabelFound = LabelManager::GetInstance().FindLabelByShape(occtAnotherFace, occtFaceLabel);
 					std::shared_ptr<Face> pFace = TopologicalQuery::Downcast<Face>(Topology::ByOcctShape(occtAnotherFace, occtFaceLabel));
 					rFaces.push_back(pFace);
 				}
@@ -312,7 +312,7 @@ namespace TopoLogicCore
 				if (occtEdgeIterator1.Value().IsSame(occtEdgeIterator2.Value()))
 				{
 					TDF_Label occtChildLabel;
-					LabelManager::GetInstance().FindChildLabelByShape(occtEdgeIterator1.Value(), occtChildLabel);
+					LabelManager::GetInstance().FindLabelByShape(occtEdgeIterator1.Value(), occtChildLabel);
 					std::shared_ptr<Edge> pEdge = TopologicalQuery::Downcast<Edge>(Topology::ByOcctShape(occtEdgeIterator1.Value(), occtChildLabel));
 					rEdges.push_back(pEdge);
 				}
@@ -356,7 +356,7 @@ namespace TopoLogicCore
 				if (occtVertexIterator1.Value().IsSame(occtVertexIterator2.Value()))
 				{
 					TDF_Label occtChildLabel;
-					LabelManager::GetInstance().FindChildLabelByShape(occtVertexIterator1.Value(), occtChildLabel);
+					LabelManager::GetInstance().FindLabelByShape(occtVertexIterator1.Value(), occtChildLabel);
 					std::shared_ptr<Vertex> pVertex = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(occtVertexIterator1.Value(), occtChildLabel));
 					rVertices.push_back(pVertex);
 				}
@@ -368,7 +368,7 @@ namespace TopoLogicCore
 	{
 		TopoDS_Wire occtOuterWire = ShapeAnalysis::OuterWire(GetOcctFace());
 		TDF_Label occtWireLabel;
-		LabelManager::GetInstance().FindChildLabelByShape(occtOuterWire, occtWireLabel);
+		LabelManager::GetInstance().FindLabelByShape(occtOuterWire, occtWireLabel);
 
 		return std::make_shared<Wire>(occtOuterWire, occtWireLabel);
 	}
@@ -388,7 +388,7 @@ namespace TopoLogicCore
 			if (!rkWire.IsSame(occtOuterWire))
 			{
 				TDF_Label occtChildLabel;
-				LabelManager::GetInstance().FindChildLabelByShape(rkWire, occtChildLabel);
+				LabelManager::GetInstance().FindLabelByShape(rkWire, occtChildLabel);
 
 				rInnerBoundaries.push_back(std::make_shared<Wire>(rkWire, occtChildLabel));
 			}

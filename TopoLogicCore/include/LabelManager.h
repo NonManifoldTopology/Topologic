@@ -105,7 +105,7 @@ namespace TopoLogicCore
 		/// <param name="rkOcctShape"></param>
 		/// <param name="rOcctChildLabel"></param>
 		/// <returns></returns>
-		static bool FindChildLabelByShape(const TopoDS_Shape& rkOcctShape, TDF_Label& rOcctChildLabel);
+		static bool FindLabelByShape(const TopoDS_Shape& rkOcctShape, TDF_Label& rOcctChildLabel);
 
 		/// <summary>
 		/// 

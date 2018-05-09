@@ -26,13 +26,13 @@ namespace TopoLogicCore
 		TopoDS_Vertex occtVertex1 = occtShapeAnalysisEdge.FirstVertex(GetOcctEdge());
 		// Find the vertex's label
 		TDF_Label occtVertex1Label;
-		LabelManager::GetInstance().FindChildLabelByShape(occtVertex1, occtVertex1Label);
+		LabelManager::GetInstance().FindLabelByShape(occtVertex1, occtVertex1Label);
 		rVertices.push_back(std::make_shared<Vertex>(occtVertex1, occtVertex1Label));
 		
 		TopoDS_Vertex occtVertex2 = occtShapeAnalysisEdge.LastVertex(GetOcctEdge());
 		// Find the vertex's label
 		TDF_Label occtVertex2Label;
-		LabelManager::GetInstance().FindChildLabelByShape(occtVertex2, occtVertex2Label);
+		LabelManager::GetInstance().FindLabelByShape(occtVertex2, occtVertex2Label);
 
 		rVertices.push_back(std::make_shared<Vertex>(occtVertex2, occtVertex2Label));
 	}
