@@ -141,8 +141,9 @@ namespace TopoLogicCore
 		double minDistance = std::numeric_limits<double>::max();
 		const TopoDS_Shape& kOcctThisShape = GetOcctShape();
 		const TopoDS_Shape& kOcctQueryShape = kpTopology->GetOcctShape();
-		TopAbs_ShapeEnum occtShapeTypes[3] = { TopAbs_VERTEX, TopAbs_EDGE, TopAbs_FACE };
+		TopAbs_ShapeEnum occtShapeTypes[4] = { TopAbs_VERTEX, TopAbs_EDGE, TopAbs_FACE, TopAbs_SOLID };
 		for (int i = 0; i < 3; ++i)
+		//for (int i = 0; i < 4; ++i)
 		{
 			TopAbs_ShapeEnum occtShapeType = occtShapeTypes[i];
 			TopTools_MapOfShape occtCells;
@@ -365,20 +366,6 @@ namespace TopoLogicCore
 			}
 		}
 
-		/*TopoDS_Compound compound;
-		TopoDS_Builder builder;
-		builder.MakeCompound(compound);
-		for (TopTools_ListOfShape::Iterator occtShapeIterator(occtShapes);
-			occtShapeIterator.More();
-			occtShapeIterator.Next())
-		{
-			TopoDS_Shape& rCurrentShape = occtShapeIterator.Value();
-			builder.Add(compound, rCurrentShape);
-		}
-
-		return Topology::ByOcctShape(compound);*/
-
-
 		// - Topology[] = Merge--> this divides implicitly intersecting topologies.
 		BOPAlgo_CellsBuilder occtCellsBuilder;
 		occtCellsBuilder.SetArguments(occtShapes);
@@ -415,8 +402,6 @@ namespace TopoLogicCore
 			occtListToTake.Append(occtShapeIterator.Value());
 			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
 		}
-
-		//return Topology::ByOcctShape(occtCellsBuilder.Shape());
 
 		// - Get Face[] from Topology[]
 		BOPCol_ListOfShape occtFaces;
@@ -515,6 +500,7 @@ namespace TopoLogicCore
 			occtListToTake2.Append(kOcctShapeIterator.Value());
 			occtCellsBuilder2.AddToResult(occtListToTake2, occtListToAvoid2);
 		}
+		occtCellsBuilder2.MakeContainers();
 		
 		return Topology::ByOcctShape(occtCellsBuilder2.Shape());
 	}
