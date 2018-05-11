@@ -24,7 +24,8 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <param name="rkOcctSolid"></param>
-		Cell(const TopoDS_Solid& rkOcctSolid);
+		/// <param name="rkOcctLabel"></param>
+		Cell(const TopoDS_Solid& rkOcctSolid, const TDF_Label& rkOcctLabel = TDF_Label());
 		virtual ~Cell();
 
 		/// <summary>

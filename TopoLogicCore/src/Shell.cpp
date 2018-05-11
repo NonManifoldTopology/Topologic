@@ -6,6 +6,7 @@
 #include <Wire.h>
 #include <Face.h>
 #include <Aperture.h>
+#include <OcctCounterAttribute.h>
 
 //#include <BOPAlgo_Splitter.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
@@ -1231,16 +1232,18 @@ namespace TopoLogicCore
 		}
 	}
 
-	Shell::Shell(const TopoDS_Shell& rkOcctShell)
+	Shell::Shell(const TopoDS_Shell& rkOcctShell, const TDF_Label& rkOcctLabel)
 		: Topology(2)
 		, m_occtShell(rkOcctShell)
 	{
-		GlobalCluster::GetInstance().Add(this);
+		//GlobalCluster::GetInstance().Add(this);
+		SetOcctLabel(rkOcctLabel);
+		OcctCounterAttribute::IncreaseCounter(GetOcctLabel());
 	}
 
 	Shell::~Shell()
 	{
-		GlobalCluster::GetInstance().Remove(this);
+		//GlobalCluster::GetInstance().Remove(this);
 		DecreaseCounter();
 	}
 }

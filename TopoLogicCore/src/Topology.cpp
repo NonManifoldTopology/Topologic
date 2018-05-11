@@ -142,8 +142,8 @@ namespace TopoLogicCore
 		const TopoDS_Shape& kOcctThisShape = GetOcctShape();
 		const TopoDS_Shape& kOcctQueryShape = kpTopology->GetOcctShape();
 		TopAbs_ShapeEnum occtShapeTypes[4] = { TopAbs_VERTEX, TopAbs_EDGE, TopAbs_FACE, TopAbs_SOLID };
-		for (int i = 0; i < 3; ++i)
-		//for (int i = 0; i < 4; ++i)
+		//for (int i = 0; i < 3; ++i)
+		for (int i = 0; i < 4; ++i)
 		{
 			TopAbs_ShapeEnum occtShapeType = occtShapeTypes[i];
 			TopTools_MapOfShape occtCells;
@@ -201,8 +201,8 @@ namespace TopoLogicCore
 		{
 		case TopAbs_COMPOUND: return std::make_shared<Cluster>(TopoDS::Compound(rkOcctShape));// , rkOcctLabel);
 		case TopAbs_COMPSOLID: return std::make_shared<CellComplex>(TopoDS::CompSolid(rkOcctShape));//, rkOcctLabel);
-		case TopAbs_SOLID: return std::make_shared<Cell>(TopoDS::Solid(rkOcctShape));//, rkOcctLabel);
-		case TopAbs_SHELL: return std::make_shared<Shell>(TopoDS::Shell(rkOcctShape));//, rkOcctLabel);
+		case TopAbs_SOLID: return std::make_shared<Cell>(TopoDS::Solid(rkOcctShape), rkOcctLabel);
+		case TopAbs_SHELL: return std::make_shared<Shell>(TopoDS::Shell(rkOcctShape), rkOcctLabel);
 		case TopAbs_FACE: return std::make_shared<Face>(TopoDS::Face(rkOcctShape), rkOcctLabel);
 		case TopAbs_WIRE: return std::make_shared<Wire>(TopoDS::Wire(rkOcctShape), rkOcctLabel);
 		case TopAbs_EDGE: return std::make_shared<Edge>(TopoDS::Edge(rkOcctShape), rkOcctLabel);

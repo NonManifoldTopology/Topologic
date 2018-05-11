@@ -6,6 +6,7 @@
 #include <Shell.h>
 #include <GlobalCluster.h>
 #include <CellComplex.h>
+#include <OcctCounterAttribute.h>
 
 #include <BRep_Builder.hxx>
 #include <BRepAlgoAPI_Common.hxx>
@@ -414,16 +415,18 @@ namespace TopoLogicCore
 		}
 	}
 
-	Cell::Cell(const TopoDS_Solid& rkOcctSolid)
+	Cell::Cell(const TopoDS_Solid& rkOcctSolid, const TDF_Label& rkOcctLabel)
 		: Topology(3)
 		, m_occtSolid(rkOcctSolid)
 	{
-		GlobalCluster::GetInstance().Add(this);
+		//GlobalCluster::GetInstance().Add(this);
+		SetOcctLabel(rkOcctLabel);
+		OcctCounterAttribute::IncreaseCounter(GetOcctLabel());
 	}
 
 	Cell::~Cell()
 	{
-		GlobalCluster::GetInstance().Remove(this);
+		//GlobalCluster::GetInstance().Remove(this);
 		DecreaseCounter();
 	}
 }

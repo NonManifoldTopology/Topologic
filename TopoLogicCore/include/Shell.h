@@ -25,7 +25,8 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <param name="rkOcctShell"></param>
-		Shell(const TopoDS_Shell& rkOcctShell);
+		/// <param name="rkOcctLabel"></param>
+		Shell(const TopoDS_Shell& rkOcctShell, const TDF_Label& rkOcctLabel = TDF_Label());
 
 		virtual ~Shell();
 
