@@ -12,7 +12,7 @@
 
 #include <assert.h>
 
-namespace TopoLogicCore
+namespace TopologicCore
 {
 	void LabelManager::AddLabelToRoot(TDF_Label& rOcctLabel)
 	{

@@ -24,7 +24,7 @@
 
 #include <assert.h>
 
-namespace TopoLogicCore
+namespace TopologicCore
 {
 	void CellComplex::Cells(std::list<std::shared_ptr<Cell>>& rCells) const
 	{

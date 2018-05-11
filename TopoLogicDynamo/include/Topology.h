@@ -1,13 +1,13 @@
 #pragma once
 
 #include <TopologicalQuery.h>
-#include <TopoLogicCore/include/Topology.h>
+#include <TopologicCore/include/Topology.h>
 
 using namespace System;
 using namespace System::Collections::Generic;
 using namespace Autodesk::DesignScript::Runtime;
 
-namespace TopoLogic
+namespace Topologic
 {
 	ref class Vertex;
 	ref class Attribute;
@@ -49,16 +49,16 @@ namespace TopoLogic
 		static Topology^ ByVertexIndex(List<Vertex^>^ vertices, List<List<int>^>^ vertexIndices);
 
 		/// <summary>
-		/// Returns the dimensionality of the topological entity.
+		/// Returns the dimensionality of the Topological entity.
 		/// </summary>
-		/// <returns name="int">The topological entity's dimentionality</returns>
+		/// <returns name="int">The Topological entity's dimentionality</returns>
 		property int Dimensionality
 		{
 			int get();
 		}
 
 		/// <summary>
-		/// <para/>Creates the host geometry counterpart of the topological entity. The mapping is as follows. 
+		/// <para/>Creates the host geometry counterpart of the Topological entity. The mapping is as follows. 
 		/// <para/>- Vertex: Point;
 		/// <para/>- Edge: either a Curve or its subclasses, other than Polycurve or its subclasses; 
 		/// <para/>- Wire: PolyCurve or Polygon; 
@@ -66,9 +66,9 @@ namespace TopoLogic
 		/// <para/>- Shell: PolySurface; 
 		/// <para/>- Cell: either a Solid or its subclasses; 
 		/// <para/>- CellComplex: a list of Solids; 
-		/// <para/>- Cluster: a list of topological entities without a constituent parent.
+		/// <para/>- Cluster: a list of Topological entities without a constituent parent.
 		/// </summary>
-		/// <returns name="Geometry">The host geometry counterpart of the topological entity</returns>
+		/// <returns name="Geometry">The host geometry counterpart of the Topological entity</returns>
 		property Object^ Geometry
 		{
 			virtual Object^ get() abstract;
@@ -83,23 +83,23 @@ namespace TopoLogic
 		}
 
 		/// <summary>
-		/// Returns the topological entities containing the input topology as a non-constituent member
+		/// Returns the Topological entities containing the input topology as a non-constituent member
 		/// </summary>
-		/// <returns name="Topology[]">The topological entities containing the input topology as a non-constituent member</returns>
+		/// <returns name="Topology[]">The Topological entities containing the input topology as a non-constituent member</returns>
 		List<Topology^>^ Contents();
 
 		/// <summary>
-		/// Returns the topological entities containing the input topology as a non-constituent member
+		/// Returns the Topological entities containing the input topology as a non-constituent member
 		/// </summary>
 		/// <param name="allLevel"></param>
-		/// <returns name="Topology[]">The topological entities containing the input topology as a non-constituent member</returns>
+		/// <returns name="Topology[]">The Topological entities containing the input topology as a non-constituent member</returns>
 		List<Topology^>^ ContentsV2(
 			[Autodesk::DesignScript::Runtime::DefaultArgument("true")] bool allLevel);
 
 		/// <summary>
-		/// Returns the non-constituent members of the input topological entity.
+		/// Returns the non-constituent members of the input Topological entity.
 		/// </summary>
-		/// <returns name="Context[]">The non-constituent members of the input topological entity</returns>
+		/// <returns name="Context[]">The non-constituent members of the input Topological entity</returns>
 		List<Context^>^ Contexts();
 
 		/// <summary>
@@ -174,79 +174,79 @@ namespace TopoLogic
 		Dictionary<String^, Object^>^ BooleanParts(Topology^ topology);
 */
 		/// <summary>
-		/// Perform the Difference operation between the first and second topological entities.
+		/// Perform the Difference operation between the first and second Topological entities.
 		/// </summary>
-		/// <param name="topology">The second topological entity</param>
+		/// <param name="topology">The second Topological entity</param>
 		/// <returns name="Topology">The result of the Difference operation</returns>
 		Topology^ Difference(Topology^ topology);
 		
 		/// <summary>
-		/// Impose the second topological entity to the first one.
+		/// Impose the second Topological entity to the first one.
 		/// </summary>
-		/// <param name="topology">TopoLogic.Topology</param>
-		/// <returns name="Topology">TopoLogic.Topology</returns>
-		Topology^ Impose(TopoLogic::Topology^ topology);
+		/// <param name="topology">Topologic.Topology</param>
+		/// <returns name="Topology">Topologic.Topology</returns>
+		Topology^ Impose(Topologic::Topology^ topology);
 
 		/// <summary>
-		/// Imprint the second topological entity to the first one.
+		/// Imprint the second Topological entity to the first one.
 		/// </summary>
 		/// <param name="topology">Another topology</param>
 		/// <returns name="Topology">The result of the Imprint operation</returns>
 		Topology^ Imprint(Topology^ topology);
 
 		/// <summary>
-		/// Perform the Intersection operation between the first and the second topological entities.
+		/// Perform the Intersection operation between the first and the second Topological entities.
 		/// </summary>
 		/// <param name="topology"></param>
 		/// <returns name="Topology">The result of the Intersection operation</returns>
 		Topology^ Intersection(Topology^ topology);
 
 		/// <summary>
-		/// Merge the first and the second topological entities.
+		/// Merge the first and the second Topological entities.
 		/// </summary>
 		/// <param name="topology"></param>
 		/// <returns name="Topology">The result of the Merge operation</returns>
 		Topology^ Merge(Topology^ topology);
 
 		/// <summary>
-		/// Slice the first topological entity with the second.
+		/// Slice the first Topological entity with the second.
 		/// </summary>
 		/// <param name="topology"></param>
 		/// <returns name="Topology">The result of the Slice operation</returns>
 		Topology^ Slice(Topology^ topology);
 
 		/// <summary>
-		/// Union the first and the second topological entities.
+		/// Union the first and the second Topological entities.
 		/// </summary>
 		/// <param name="topology"></param>
 		/// <returns name="Topology">The result of the Union operation</returns>
 		Topology^ Union(Topology^ topology);
 
 		/// <summary>
-		/// Perform the XOR operation between the first and the second topological entities.
+		/// Perform the XOR operation between the first and the second Topological entities.
 		/// </summary>
 		/// <param name="topology"></param>
 		/// <returns name="Topology">The result of the XOR operation</returns>
 		Topology^ XOR(Topology^ topology);
 
 		/// <summary>
-		/// Save a topological entity to a BRep file.
+		/// Save a Topological entity to a BRep file.
 		/// </summary>
 		/// <param name="path">The path to the BRep file</param>
 		/// <returns name="bool">True if the BRep file is succesffully created, otherwise false</returns>
 		bool SaveToBRep(String^ path);
 
 		/// <summary>
-		/// Load a topological entity from a BRep file.
+		/// Load a Topological entity from a BRep file.
 		/// </summary>
 		/// <param name="path">The path to the BRep file</param>
 		/// <returns name="Topology">The loaded topology</returns>
 		static Topology^ LoadFromBRep(String^ path);
 
 		/// <summary>
-		/// Print the topological information of the input entity.
+		/// Print the Topological information of the input entity.
 		/// </summary>
-		/// <returns name="String">The topological information of the input entity</returns>
+		/// <returns name="String">The Topological information of the input entity</returns>
 		String^ Analyze();
 
 		/// <summary>
@@ -270,7 +270,7 @@ namespace TopoLogic
 		Topology^ ClosestLowestSubshapeTo(Topology^ queryTopology);
 
 	public protected:
-		static Topology^ ByCoreTopology(const std::shared_ptr<TopoLogicCore::Topology>& kpCoreTopology);
+		static Topology^ ByCoreTopology(const std::shared_ptr<TopologicCore::Topology>& kpCoreTopology);
 
 	protected:
 		Topology();

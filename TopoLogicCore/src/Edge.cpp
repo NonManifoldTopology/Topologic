@@ -17,7 +17,7 @@
 
 #include <assert.h>
 
-namespace TopoLogicCore
+namespace TopologicCore
 {
 	void Edge::Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const
 	{

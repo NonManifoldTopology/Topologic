@@ -55,7 +55,7 @@ extern "C" {
 #include <array>
 #include <assert.h>
 
-namespace TopoLogicCore
+namespace TopologicCore
 {
 	void Shell::Cells(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Cell>>& rCells) const
 	{

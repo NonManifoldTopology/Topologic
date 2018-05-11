@@ -2,7 +2,7 @@
 
 #include <Standard_GUID.hxx>
 
-namespace TopoLogicCore
+namespace TopologicCore
 {
 	OcctContextsAttribute::OcctContextsAttribute()
 	{

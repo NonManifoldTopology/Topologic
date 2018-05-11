@@ -8,16 +8,16 @@
 #include <assert.h>
 #include <array>
 
-namespace TopoLogicCore
+namespace TopologicCore
 {
-	std::shared_ptr<Aperture> Aperture::ByTopologyContext(const std::shared_ptr<TopoLogicCore::Topology>& kpTopology, const std::shared_ptr<Context>& kpContext)
+	std::shared_ptr<Aperture> Aperture::ByTopologyContext(const std::shared_ptr<TopologicCore::Topology>& kpTopology, const std::shared_ptr<Context>& kpContext)
 	{
 		std::shared_ptr<Aperture> pAperture = std::make_shared<Aperture>(kpTopology, kpContext, false);
 		pAperture->m_pMainContext->Topology()->AddContent(pAperture);
 		return pAperture;
 	}
 
-	std::shared_ptr<Aperture> Aperture::ByTopologyContextStatus(const std::shared_ptr<TopoLogicCore::Topology>& kpTopology, const std::shared_ptr<Context>& kpContext, const bool kOpenStatus)
+	std::shared_ptr<Aperture> Aperture::ByTopologyContextStatus(const std::shared_ptr<TopologicCore::Topology>& kpTopology, const std::shared_ptr<Context>& kpContext, const bool kOpenStatus)
 	{
 		std::shared_ptr<Aperture> pAperture = std::make_shared<Aperture>(kpTopology, kpContext, kOpenStatus);
 		pAperture->m_pMainContext->Topology()->AddContent(pAperture);
@@ -29,7 +29,7 @@ namespace TopoLogicCore
 		return !m_occtAperturePaths.empty();
 	}
 
-	bool Aperture::IsOpen(const std::array<std::shared_ptr<TopoLogicCore::Topology>, 2>& rkTopologies) const
+	bool Aperture::IsOpen(const std::array<std::shared_ptr<TopologicCore::Topology>, 2>& rkTopologies) const
 	{
 		AperturePath aperturePath(
 			rkTopologies[0] == nullptr? TopoDS_Shape() : rkTopologies[0]->GetOcctShape(), 
@@ -160,7 +160,7 @@ namespace TopoLogicCore
 		return TopoDS_Shape(); // empty
 	}
 
-	void Aperture::Open(const std::array<std::shared_ptr<TopoLogicCore::Topology>, 2>& rkTopologies)
+	void Aperture::Open(const std::array<std::shared_ptr<TopologicCore::Topology>, 2>& rkTopologies)
 	{
 		AperturePath aperturePath(
 			rkTopologies[0] == nullptr ? 
@@ -186,7 +186,7 @@ namespace TopoLogicCore
 		m_occtAperturePaths.clear();
 	}
 
-	void Aperture::Close(const std::array<std::shared_ptr<TopoLogicCore::Topology>, 2>& rkTopologies)
+	void Aperture::Close(const std::array<std::shared_ptr<TopologicCore::Topology>, 2>& rkTopologies)
 	{
 		AperturePath aperturePath(
 			rkTopologies[0] == nullptr ? TopoDS_Shape() : rkTopologies[0]->GetOcctShape(),
@@ -205,11 +205,11 @@ namespace TopoLogicCore
 		}
 	}
 
-	void Aperture::Paths(std::list<std::list<std::shared_ptr<TopoLogicCore::Topology>>>& rPaths) const
+	void Aperture::Paths(std::list<std::list<std::shared_ptr<TopologicCore::Topology>>>& rPaths) const
 	{
 		for(const AperturePath& rkAperturePath : m_occtAperturePaths)
 		{
-			std::list<std::shared_ptr<TopoLogicCore::Topology>> path;
+			std::list<std::shared_ptr<TopologicCore::Topology>> path;
 			path.push_back(Topology::ByOcctShape(rkAperturePath.GetTopology1()));
 			path.push_back(Topology::ByOcctShape(rkAperturePath.GetTopology2()));
 			rPaths.push_back(path);
@@ -246,8 +246,8 @@ namespace TopoLogicCore
 		return m_pTopology;
 	}
 
-	Aperture::Aperture(const std::shared_ptr<TopoLogicCore::Topology>& kpTopology, const std::shared_ptr<Context>& kpContext, const bool kOpenStatus)
-		: TopoLogicCore::Topology(kpTopology->Dimensionality())
+	Aperture::Aperture(const std::shared_ptr<TopologicCore::Topology>& kpTopology, const std::shared_ptr<Context>& kpContext, const bool kOpenStatus)
+		: TopologicCore::Topology(kpTopology->Dimensionality())
 		, m_pMainContext(kpContext)
 		, m_pTopology(kpTopology)
 	{

@@ -17,11 +17,11 @@
 #include <TopoDS_Shape.hxx>
 #include <TDF_AttributeIterator.hxx>
 
-namespace TopoLogic
+namespace Topologic
 {
 	int Topology::Dimensionality::get()
 	{
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		return pCoreTopology->Dimensionality();
 	}
 
@@ -45,10 +45,10 @@ namespace TopoLogic
 
 	Topology^ Topology::ByVertexIndex(List<Vertex^>^ vertices, List<List<int>^>^ vertexIndices)
 	{
-		std::vector<std::shared_ptr<TopoLogicCore::Vertex>> coreVertices;
+		std::vector<std::shared_ptr<TopologicCore::Vertex>> coreVertices;
 		for each(Vertex^ pVertex in vertices)
 		{
-			std::shared_ptr<TopoLogicCore::Vertex> pCoreVertex = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Vertex>(pVertex->GetCoreTopologicalQuery());
+			std::shared_ptr<TopologicCore::Vertex> pCoreVertex = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Vertex>(pVertex->GetCoreTopologicalQuery());
 			coreVertices.push_back(pCoreVertex);
 		}
 
@@ -66,7 +66,7 @@ namespace TopoLogic
 			}
 			coreIndices.push_back(coreVertex1DIndices);
 		}
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = TopoLogicCore::Topology::ByVertexIndex(coreVertices, coreIndices);
+		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::Topology::ByVertexIndex(coreVertices, coreIndices);
 		return Topology::ByCoreTopology(pCoreTopology);
 	}
 
@@ -94,7 +94,7 @@ namespace TopoLogic
 	}*/
 	List<Object^>^ Topology::Attributes::get()
 	{
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 
 		// TODO: have a list of predefined attributes, and do this in TopologicCore.
 		List<Object^>^ pAttributeList = gcnew List<Object^>();
@@ -113,7 +113,7 @@ namespace TopoLogic
 
 	bool Topology::SaveToBRep(String^ path)
 	{
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		std::string cppPath = msclr::interop::marshal_as<std::string>(path);
 		return pCoreTopology->SaveToBrep(cppPath);
 	}
@@ -121,46 +121,46 @@ namespace TopoLogic
 	Topology^ Topology::LoadFromBRep(String^ path)
 	{
 		std::string cppPath = msclr::interop::marshal_as<std::string>(path);
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = TopoLogicCore::Topology::LoadFromBrep(cppPath);
+		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::Topology::LoadFromBrep(cppPath);
 		Topology^ pTopology = Topology::ByCoreTopology(pCoreTopology);
 		return pTopology;
 	}
 
 	String^ Topology::Analyze()
 	{
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		return gcnew String(pCoreTopology->Analyze().c_str());
 	}
 
 	bool Topology::IsSame(Topology^ topology)
 	{
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopoLogicCore::Topology> pOtherCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topology->GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pOtherCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 		return pCoreTopology->IsSame(pOtherCoreTopology);
 	}
 
 	Topology ^ Topology::ClosestLowestSubshapeTo(Topology^ queryTopology)
 	{
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopoLogicCore::Topology> pCoreQueryTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(queryTopology->GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreQueryTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(queryTopology->GetCoreTopologicalQuery());
 
-		std::shared_ptr<TopoLogicCore::Topology> pClosestLowestSubshape = pCoreTopology->ClosestLowestSubshapeTo(pCoreQueryTopology);
+		std::shared_ptr<TopologicCore::Topology> pClosestLowestSubshape = pCoreTopology->ClosestLowestSubshapeTo(pCoreQueryTopology);
 		return ByCoreTopology(pClosestLowestSubshape);
 	}
 
-	Topology^ Topology::ByCoreTopology(const std::shared_ptr<TopoLogicCore::Topology>& kpCoreTopology)
+	Topology^ Topology::ByCoreTopology(const std::shared_ptr<TopologicCore::Topology>& kpCoreTopology)
 	{
 		switch (kpCoreTopology->GetType())
 		{
-		case TopoLogicCore::TOPOLOGY_CLUSTER: return gcnew Cluster(TopoLogicCore::Topology::Downcast<TopoLogicCore::Cluster>(kpCoreTopology));
-		case TopoLogicCore::TOPOLOGY_CELLCOMPLEX: return gcnew CellComplex(TopoLogicCore::Topology::Downcast<TopoLogicCore::CellComplex>(kpCoreTopology));
-		case TopoLogicCore::TOPOLOGY_CELL: return gcnew Cell(TopoLogicCore::Topology::Downcast<TopoLogicCore::Cell>(kpCoreTopology));
-		case TopoLogicCore::TOPOLOGY_SHELL: return gcnew Shell(TopoLogicCore::Topology::Downcast<TopoLogicCore::Shell>(kpCoreTopology));
-		case TopoLogicCore::TOPOLOGY_FACE: return gcnew Face(TopoLogicCore::Topology::Downcast<TopoLogicCore::Face>(kpCoreTopology));
-		case TopoLogicCore::TOPOLOGY_WIRE: return gcnew Wire(TopoLogicCore::Topology::Downcast<TopoLogicCore::Wire>(kpCoreTopology));
-		case TopoLogicCore::TOPOLOGY_EDGE: return gcnew Edge(TopoLogicCore::Topology::Downcast<TopoLogicCore::Edge>(kpCoreTopology));
-		case TopoLogicCore::TOPOLOGY_VERTEX: return gcnew Vertex(TopoLogicCore::Topology::Downcast<TopoLogicCore::Vertex>(kpCoreTopology));
-		case TopoLogicCore::TOPOLOGY_APERTURE: return gcnew Aperture(TopoLogicCore::Topology::Downcast<TopoLogicCore::Aperture>(kpCoreTopology));
+		case TopologicCore::TOPOLOGY_CLUSTER: return gcnew Cluster(TopologicCore::Topology::Downcast<TopologicCore::Cluster>(kpCoreTopology));
+		case TopologicCore::TOPOLOGY_CELLCOMPLEX: return gcnew CellComplex(TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(kpCoreTopology));
+		case TopologicCore::TOPOLOGY_CELL: return gcnew Cell(TopologicCore::Topology::Downcast<TopologicCore::Cell>(kpCoreTopology));
+		case TopologicCore::TOPOLOGY_SHELL: return gcnew Shell(TopologicCore::Topology::Downcast<TopologicCore::Shell>(kpCoreTopology));
+		case TopologicCore::TOPOLOGY_FACE: return gcnew Face(TopologicCore::Topology::Downcast<TopologicCore::Face>(kpCoreTopology));
+		case TopologicCore::TOPOLOGY_WIRE: return gcnew Wire(TopologicCore::Topology::Downcast<TopologicCore::Wire>(kpCoreTopology));
+		case TopologicCore::TOPOLOGY_EDGE: return gcnew Edge(TopologicCore::Topology::Downcast<TopologicCore::Edge>(kpCoreTopology));
+		case TopologicCore::TOPOLOGY_VERTEX: return gcnew Vertex(TopologicCore::Topology::Downcast<TopologicCore::Vertex>(kpCoreTopology));
+		case TopologicCore::TOPOLOGY_APERTURE: return gcnew Aperture(TopologicCore::Topology::Downcast<TopologicCore::Aperture>(kpCoreTopology));
 		default:
 			throw std::exception("Topology::ByCoreTopology: unknown topology.");
 		}
@@ -178,13 +178,13 @@ namespace TopoLogic
 
 	List<Topology^>^ Topology::Contents()
 	{
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
-		std::list<std::shared_ptr<TopoLogicCore::Topology>> coreContents;
+		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		std::list<std::shared_ptr<TopologicCore::Topology>> coreContents;
 		pCoreTopology->Contents(coreContents);
 
 		List<Topology^>^ pTopologies = gcnew List<Topology^>();
 
-		for (std::list<std::shared_ptr<TopoLogicCore::Topology>>::const_iterator rkCoreContentIterator = coreContents.cbegin();
+		for (std::list<std::shared_ptr<TopologicCore::Topology>>::const_iterator rkCoreContentIterator = coreContents.cbegin();
 			rkCoreContentIterator != coreContents.cend();
 			rkCoreContentIterator++)
 		{
@@ -196,13 +196,13 @@ namespace TopoLogic
 
 	List<Topology^>^ Topology::ContentsV2(bool allLevel)
 	{
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
-		std::list<std::shared_ptr<TopoLogicCore::Topology>> rkCoreContents;
+		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		std::list<std::shared_ptr<TopologicCore::Topology>> rkCoreContents;
 		pCoreTopology->ContentsV2(allLevel, rkCoreContents);
 
 		List<Topology^>^ pTopologies = gcnew List<Topology^>();
 
-		for (std::list<std::shared_ptr<TopoLogicCore::Topology>>::const_iterator rkCoreContentIterator = rkCoreContents.cbegin();
+		for (std::list<std::shared_ptr<TopologicCore::Topology>>::const_iterator rkCoreContentIterator = rkCoreContents.cbegin();
 			rkCoreContentIterator != rkCoreContents.cend();
 			rkCoreContentIterator++)
 		{
@@ -214,12 +214,12 @@ namespace TopoLogic
 
 	List<Context^>^ Topology::Contexts()
 	{
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
-		const std::list<std::shared_ptr<TopoLogicCore::Context>>& rkCoreContexts = pCoreTopology->Contexts();
+		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		const std::list<std::shared_ptr<TopologicCore::Context>>& rkCoreContexts = pCoreTopology->Contexts();
 
 		List<Context^>^ pContexts = gcnew List<Context^>();
 
-		for (std::list<std::shared_ptr<TopoLogicCore::Context>>::const_iterator rkCoreContextIterator = rkCoreContexts.cbegin();
+		for (std::list<std::shared_ptr<TopologicCore::Context>>::const_iterator rkCoreContextIterator = rkCoreContexts.cbegin();
 			rkCoreContextIterator != rkCoreContexts.cend();
 			rkCoreContextIterator++)
 		{
@@ -231,39 +231,39 @@ namespace TopoLogic
 
 	Topology^ Topology::AddContent(Topology^ topology)
 	{
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
-		pCoreTopology->AddContent(TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topology->GetCoreTopologicalQuery()));
+		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		pCoreTopology->AddContent(TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery()));
 		return this;
 	}
 
 	Topology^ Topology::RemoveContent(Topology^ topology)
 	{
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
-		pCoreTopology->RemoveContent(TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topology->GetCoreTopologicalQuery()));
+		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		pCoreTopology->RemoveContent(TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery()));
 		return this;
 	}
 
 	Topology^ Topology::AddContext(Context^ context)
 	{
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
-		pCoreTopology->AddContext(TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Context>(context->GetCoreTopologicalQuery()));
+		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		pCoreTopology->AddContext(TopologicCore::TopologicalQuery::Downcast<TopologicCore::Context>(context->GetCoreTopologicalQuery()));
 		return this;
 	}
 
 	Topology^ Topology::RemoveContext(Context^ context)
 	{
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
-		pCoreTopology->RemoveContext(TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Context>(context->GetCoreTopologicalQuery()));
+		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		pCoreTopology->RemoveContext(TopologicCore::TopologicalQuery::Downcast<TopologicCore::Context>(context->GetCoreTopologicalQuery()));
 		return this;
 	}
 
 	List<Topology^>^ Topology::SharedTopologies(Topology^ topology)
 	{
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
-		std::list<std::shared_ptr<TopoLogicCore::Topology>> coreSharedTopologies;
-		pCoreTopology->SharedTopologies(TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topology->GetCoreTopologicalQuery()), coreSharedTopologies);
+		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		std::list<std::shared_ptr<TopologicCore::Topology>> coreSharedTopologies;
+		pCoreTopology->SharedTopologies(TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery()), coreSharedTopologies);
 		List<Topology^>^ pSharedTopologies = gcnew List<Topology^>();
-		for (std::list<std::shared_ptr<TopoLogicCore::Topology>>::const_iterator kCoreSharedTopologyIterator = coreSharedTopologies.begin();
+		for (std::list<std::shared_ptr<TopologicCore::Topology>>::const_iterator kCoreSharedTopologyIterator = coreSharedTopologies.begin();
 			kCoreSharedTopologyIterator != coreSharedTopologies.end();
 			kCoreSharedTopologyIterator++)
 		{
@@ -274,10 +274,10 @@ namespace TopoLogic
 
 	List<List<Topology^>^>^ Topology::PathsTo(Topology^ topology, int maxLevel, int maxPaths)
 	{
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
-		std::list<std::list<std::shared_ptr<TopoLogicCore::TopologicalQuery>>> corePaths;
+		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		std::list<std::list<std::shared_ptr<TopologicCore::TopologicalQuery>>> corePaths;
 		pCoreTopology->PathsTo(
-			TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topology->GetCoreTopologicalQuery()), 
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery()), 
 			maxLevel,
 			maxPaths,
 			corePaths);
@@ -287,23 +287,23 @@ namespace TopoLogic
 
 	/*Dictionary<String^, Object^>^ Topology::BooleanImages(Topology^ topology)
 	{
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		if (pCoreTopology == nullptr)
 		{
 			throw gcnew Exception("Not a topology");
 		}
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopologyA = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopologyB = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topology->GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 
-		std::list<std::shared_ptr<TopoLogicCore::Topology>> coreArgumentsInArguments;
-		std::list<std::shared_ptr<TopoLogicCore::Topology>> coreArgumentsInTools;
-		std::list<std::shared_ptr<TopoLogicCore::Topology>> coreToolsInArguments;
-		std::list<std::shared_ptr<TopoLogicCore::Topology>> coreToolsInTools;
+		std::list<std::shared_ptr<TopologicCore::Topology>> coreArgumentsInArguments;
+		std::list<std::shared_ptr<TopologicCore::Topology>> coreArgumentsInTools;
+		std::list<std::shared_ptr<TopologicCore::Topology>> coreToolsInArguments;
+		std::list<std::shared_ptr<TopologicCore::Topology>> coreToolsInTools;
 		pCoreTopologyA->BooleanImages(pCoreTopologyB, coreArgumentsInArguments, coreArgumentsInTools, coreToolsInArguments, coreToolsInTools);
 
 		List<Topology^>^ pArgumentsInArguments = gcnew List<Topology^>();
 		List<Object^>^ pGeometryArgumentsInArguments = gcnew List<Object^>();
-		for (std::list<std::shared_ptr<TopoLogicCore::Topology>>::const_iterator kCoreTopology = coreArgumentsInArguments.begin();
+		for (std::list<std::shared_ptr<TopologicCore::Topology>>::const_iterator kCoreTopology = coreArgumentsInArguments.begin();
 			kCoreTopology != coreArgumentsInArguments.end();
 			kCoreTopology++)
 		{
@@ -314,7 +314,7 @@ namespace TopoLogic
 
 		List<Topology^>^ pArgumentsInTools = gcnew List<Topology^>();
 		List<Object^>^ pGeometryArgumentsInTools = gcnew List<Object^>();
-		for (std::list<std::shared_ptr<TopoLogicCore::Topology>>::const_iterator kCoreTopology = coreArgumentsInTools.begin();
+		for (std::list<std::shared_ptr<TopologicCore::Topology>>::const_iterator kCoreTopology = coreArgumentsInTools.begin();
 			kCoreTopology != coreArgumentsInTools.end();
 			kCoreTopology++)
 		{
@@ -325,7 +325,7 @@ namespace TopoLogic
 
 		List<Topology^>^ pToolsInArguments = gcnew List<Topology^>();
 		List<Object^>^ pGeometryToolsInArguments = gcnew List<Object^>();
-		for (std::list<std::shared_ptr<TopoLogicCore::Topology>>::const_iterator kCoreTopology = coreToolsInArguments.begin();
+		for (std::list<std::shared_ptr<TopologicCore::Topology>>::const_iterator kCoreTopology = coreToolsInArguments.begin();
 			kCoreTopology != coreToolsInArguments.end();
 			kCoreTopology++)
 		{
@@ -336,7 +336,7 @@ namespace TopoLogic
 
 		List<Topology^>^ pToolsInTools = gcnew List<Topology^>();
 		List<Object^>^ pGeometryToolsInTools = gcnew List<Object^>();
-		for (std::list<std::shared_ptr<TopoLogicCore::Topology>>::const_iterator kCoreTopology = coreToolsInTools.begin();
+		for (std::list<std::shared_ptr<TopologicCore::Topology>>::const_iterator kCoreTopology = coreToolsInTools.begin();
 			kCoreTopology != coreToolsInTools.end();
 			kCoreTopology++)
 		{
@@ -359,22 +359,22 @@ namespace TopoLogic
 
 	Dictionary<String^, Object^>^ Topology::BooleanParts(Topology^ topology)
 	{
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		if (pCoreTopology == nullptr)
 		{
 			throw gcnew Exception("Not a topology");
 		}
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopologyA = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopologyB = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topology->GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 
-		std::list<std::shared_ptr<TopoLogicCore::Topology>> coreParts_A_A_and_B_A;
-		std::list<std::shared_ptr<TopoLogicCore::Topology>> coreParts_B_A_and_A_B;
-		std::list<std::shared_ptr<TopoLogicCore::Topology>> coreParts_A_B_and_B_B;
+		std::list<std::shared_ptr<TopologicCore::Topology>> coreParts_A_A_and_B_A;
+		std::list<std::shared_ptr<TopologicCore::Topology>> coreParts_B_A_and_A_B;
+		std::list<std::shared_ptr<TopologicCore::Topology>> coreParts_A_B_and_B_B;
 		pCoreTopologyA->BooleanParts(pCoreTopologyB, coreParts_A_A_and_B_A, coreParts_B_A_and_A_B, coreParts_A_B_and_B_B);
 
 		List<Topology^>^ pParts_A_A_and_B_A = gcnew List<Topology^>();
 		List<Object^>^ pGeometryParts_A_A_and_B_A = gcnew List<Object^>();
-		for (std::list<std::shared_ptr<TopoLogicCore::Topology>>::const_iterator kCoreTopology = coreParts_A_A_and_B_A.begin();
+		for (std::list<std::shared_ptr<TopologicCore::Topology>>::const_iterator kCoreTopology = coreParts_A_A_and_B_A.begin();
 			kCoreTopology != coreParts_A_A_and_B_A.end();
 			kCoreTopology++)
 		{
@@ -385,7 +385,7 @@ namespace TopoLogic
 
 		List<Topology^>^ pParts_B_A_and_A_B = gcnew List<Topology^>();
 		List<Object^>^ pGeometryParts_B_A_and_A_B = gcnew List<Object^>();
-		for (std::list<std::shared_ptr<TopoLogicCore::Topology>>::const_iterator kCoreTopology = coreParts_B_A_and_A_B.begin();
+		for (std::list<std::shared_ptr<TopologicCore::Topology>>::const_iterator kCoreTopology = coreParts_B_A_and_A_B.begin();
 			kCoreTopology != coreParts_B_A_and_A_B.end();
 			kCoreTopology++)
 		{
@@ -396,7 +396,7 @@ namespace TopoLogic
 
 		List<Topology^>^ pParts_A_B_and_B_B = gcnew List<Topology^>();
 		List<Object^>^ pGeometryParts_A_B_and_B_B = gcnew List<Object^>();
-		for (std::list<std::shared_ptr<TopoLogicCore::Topology>>::const_iterator kCoreTopology = coreParts_A_B_and_B_B.begin();
+		for (std::list<std::shared_ptr<TopologicCore::Topology>>::const_iterator kCoreTopology = coreParts_A_B_and_B_B.begin();
 			kCoreTopology != coreParts_A_B_and_B_B.end();
 			kCoreTopology++)
 		{
@@ -417,11 +417,11 @@ namespace TopoLogic
 
 	Topology^ Topology::Difference(Topology^ topology)
 	{
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopologyA = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopologyB = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topology->GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 
 		try{
-			std::shared_ptr<TopoLogicCore::Topology> pDifferenceCoreTopology = pCoreTopologyA->Difference(pCoreTopologyB);
+			std::shared_ptr<TopologicCore::Topology> pDifferenceCoreTopology = pCoreTopologyA->Difference(pCoreTopologyB);
 			return Topology::ByCoreTopology(pDifferenceCoreTopology);
 		}
 		catch (std::exception& e)
@@ -432,11 +432,11 @@ namespace TopoLogic
 
 	Topology^ Topology::Impose(Topology^ topology)
 	{
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopologyA = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopologyB = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topology->GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 
 		try{
-			std::shared_ptr<TopoLogicCore::Topology> pImposeCoreTopology = pCoreTopologyA->Impose(pCoreTopologyB); 
+			std::shared_ptr<TopologicCore::Topology> pImposeCoreTopology = pCoreTopologyA->Impose(pCoreTopologyB); 
 			return Topology::ByCoreTopology(pImposeCoreTopology);
 		}
 		catch (std::exception& e)
@@ -447,11 +447,11 @@ namespace TopoLogic
 
 	Topology^ Topology::Imprint(Topology^ topology)
 	{
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopologyA = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopologyB = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topology->GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 
 		try{
-			std::shared_ptr<TopoLogicCore::Topology> pImprintCoreTopology = pCoreTopologyA->Imprint(pCoreTopologyB);
+			std::shared_ptr<TopologicCore::Topology> pImprintCoreTopology = pCoreTopologyA->Imprint(pCoreTopologyB);
 			return Topology::ByCoreTopology(pImprintCoreTopology);
 		}
 		catch (std::exception& e)
@@ -462,11 +462,11 @@ namespace TopoLogic
 
 	Topology^ Topology::Intersection(Topology^ topology)
 	{
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopologyA = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopologyB = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topology->GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 
 		try {
-			std::shared_ptr<TopoLogicCore::Topology> pIntersectionCoreTopology = pCoreTopologyA->Intersection(pCoreTopologyB);
+			std::shared_ptr<TopologicCore::Topology> pIntersectionCoreTopology = pCoreTopologyA->Intersection(pCoreTopologyB);
 			return Topology::ByCoreTopology(pIntersectionCoreTopology);
 		}
 		catch (std::exception& e)
@@ -477,11 +477,11 @@ namespace TopoLogic
 	
 	Topology^ Topology::Union(Topology^ topology)
 	{
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopologyA = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopologyB = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topology->GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 
 		try{
-			std::shared_ptr<TopoLogicCore::Topology> pUnionCoreTopology = pCoreTopologyA->Union(pCoreTopologyB);
+			std::shared_ptr<TopologicCore::Topology> pUnionCoreTopology = pCoreTopologyA->Union(pCoreTopologyB);
 			return Topology::ByCoreTopology(pUnionCoreTopology);
 		}
 		catch (std::exception& e)
@@ -492,11 +492,11 @@ namespace TopoLogic
 
 	Topology^ Topology::Merge(Topology^ topology)
 	{
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopologyA = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopologyB = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topology->GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 
 		try{
-			std::shared_ptr<TopoLogicCore::Topology> pMergeCoreTopology = pCoreTopologyA->Merge(pCoreTopologyB);
+			std::shared_ptr<TopologicCore::Topology> pMergeCoreTopology = pCoreTopologyA->Merge(pCoreTopologyB);
 			return Topology::ByCoreTopology(pMergeCoreTopology);
 		}
 		catch (std::exception& e)
@@ -507,11 +507,11 @@ namespace TopoLogic
 
 	Topology^ Topology::Slice(Topology^ topology)
 	{
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopologyA = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopologyB = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topology->GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 
 		try{
-			std::shared_ptr<TopoLogicCore::Topology> pSliceCoreTopology = pCoreTopologyA->Slice(pCoreTopologyB);
+			std::shared_ptr<TopologicCore::Topology> pSliceCoreTopology = pCoreTopologyA->Slice(pCoreTopologyB);
 			return Topology::ByCoreTopology(pSliceCoreTopology);
 		}
 		catch (std::exception& e)
@@ -522,11 +522,11 @@ namespace TopoLogic
 
 	Topology^ Topology::XOR(Topology^ topology)
 	{
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopologyA = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopologyB = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(topology->GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 
 		try{
-			std::shared_ptr<TopoLogicCore::Topology> pSliceCoreTopology = pCoreTopologyA->XOR(pCoreTopologyB);
+			std::shared_ptr<TopologicCore::Topology> pSliceCoreTopology = pCoreTopologyA->XOR(pCoreTopologyB);
 			return Topology::ByCoreTopology(pSliceCoreTopology);
 		}
 		catch (std::exception& e)
@@ -537,13 +537,13 @@ namespace TopoLogic
 
 	List<Topology^>^ Topology::ImmediateMembers()
 	{
-		std::shared_ptr<TopoLogicCore::Topology> pCoreTopology = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 
-		std::list<std::shared_ptr<TopoLogicCore::Topology>> coreTopologies;
+		std::list<std::shared_ptr<TopologicCore::Topology>> coreTopologies;
 		pCoreTopology->ImmediateMembers(coreTopologies);
 
 		List<Topology^>^ pTopologies = gcnew List<Topology^>();
-		for (std::list<std::shared_ptr<TopoLogicCore::Topology>>::const_iterator kTopologyIterator = coreTopologies.begin();
+		for (std::list<std::shared_ptr<TopologicCore::Topology>>::const_iterator kTopologyIterator = coreTopologies.begin();
 			kTopologyIterator != coreTopologies.end();
 			kTopologyIterator++)
 		{

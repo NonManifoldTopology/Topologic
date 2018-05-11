@@ -55,7 +55,7 @@
 #include <array>
 #include <algorithm>
 
-namespace TopoLogicCore
+namespace TopologicCore
 {
 	void AddOcctListShapeToAnotherList(const BOPCol_ListOfShape& rkAList, BOPCol_ListOfShape& rAnotherList)
 	{

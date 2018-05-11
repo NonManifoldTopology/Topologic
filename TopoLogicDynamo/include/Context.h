@@ -3,16 +3,16 @@
 #include <TopologicalQuery.h>
 #include <Topology.h>
 
-#include <TopoLogicCore/include/Context.h>
+#include <TopologicCore/include/Context.h>
 
 #include <memory>
 
-namespace TopoLogic
+namespace Topologic
 {
 	ref class Topology;
 
 	/// <summary>
-	/// A Context defines a topological relationship between two otherwise independent Topologies.
+	/// A Context defines a Topological relationship between two otherwise independent Topologies.
 	/// </summary>
 	public ref class Context : public TopologicalQuery
 	{
@@ -52,13 +52,13 @@ namespace TopoLogic
 		double W();
 
 	public protected:
-		Context(const std::shared_ptr<TopoLogicCore::Context>& kpCoreContext);
+		Context(const std::shared_ptr<TopologicCore::Context>& kpCoreContext);
 
-		virtual std::shared_ptr<TopoLogicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
+		virtual std::shared_ptr<TopologicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
 
 	protected:
 		virtual ~Context();
 
-		std::shared_ptr<TopoLogicCore::Context>* m_pCoreContext;
+		std::shared_ptr<TopologicCore::Context>* m_pCoreContext;
 	};
 }

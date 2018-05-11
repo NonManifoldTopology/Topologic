@@ -37,7 +37,7 @@
 
 #include <assert.h>
 
-namespace TopoLogicCore
+namespace TopologicCore
 {
 	std::shared_ptr<Cluster> Cluster::ByTopology(const std::list<std::shared_ptr<Topology>>& rkTopologies)
 	{

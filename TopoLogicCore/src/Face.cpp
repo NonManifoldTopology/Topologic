@@ -25,7 +25,7 @@
 
 #include <assert.h>
 
-namespace TopoLogicCore
+namespace TopologicCore
 {
 	void Face::AdjacentFaces(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Face>>& rFaces) const
 	{

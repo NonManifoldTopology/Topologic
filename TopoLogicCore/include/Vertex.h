@@ -10,12 +10,12 @@
 class Geom_Point;
 class gp_Pnt;
 
-namespace TopoLogicCore
+namespace TopologicCore
 {
 	class Edge;
 
 	/// <summary>
-	/// The representation of a topological vertex. This class wraps OCCT's TopoDS_Vertex.
+	/// The representation of a Topological vertex. This class wraps OCCT's TopoDS_Vertex.
 	/// </summary>
 	class Vertex : public Topology
 	{
@@ -34,14 +34,14 @@ namespace TopoLogicCore
 		/// Creates a vertex by a point.
 		/// </summary>
 		/// <param name="pOcctPoint">An OCCT point</param>
-		/// <returns>The created TopoLogic vertex.</returns>
-		static TOPOLOGIC_API std::shared_ptr<Vertex> ByPoint(Handle(Geom_Point) pOcctPoint);
+		/// <returns>The created Topologic vertex.</returns>
+		static Topologic_API std::shared_ptr<Vertex> ByPoint(Handle(Geom_Point) pOcctPoint);
 
 		/// <summary>
 		/// Returns the list of edges of which this vertex is a constituent member.
 		/// </summary>
 		/// <param name="rEdges">The edges containing this vertex as a constituent member</param>
-		void TOPOLOGIC_API Edges(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Edge>>& rEdges);
+		void Topologic_API Edges(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Edge>>& rEdges);
 
 		/// <summary>
 		/// Return the corresponding point of this vertex. The output list only contains one vertex.

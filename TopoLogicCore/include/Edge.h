@@ -13,7 +13,7 @@
 #include <TColStd_Array1OfInteger.hxx>
 #include <BRepBuilderAPI_EdgeError.hxx>
 
-namespace TopoLogicCore
+namespace TopologicCore
 {
 	class Vertex;
 	class Wire;
@@ -34,7 +34,7 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <param name="rVertices"></param>
-		TOPOLOGIC_API void Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const;
+		Topologic_API void Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const;
 
 		/// <summary>
 		/// 
@@ -42,7 +42,7 @@ namespace TopoLogicCore
 		/// <param name="kpParentTopology"></param>
 		/// <param name="rWires"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API void Wires(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Wire>>& rWires) const;
+		Topologic_API void Wires(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Wire>>& rWires) const;
 
 		/// <summary>
 		/// 
@@ -55,7 +55,7 @@ namespace TopoLogicCore
 		/// <param name="kIsPeriodic"></param>
 		/// <param name="kIsRational"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API std::shared_ptr<Edge> ByCurve(
+		static Topologic_API std::shared_ptr<Edge> ByCurve(
 			const TColgp_Array1OfPnt& rkOcctPoles, 
 			const TColStd_Array1OfReal& rkOcctWeights, 
 			const TColStd_Array1OfReal& rkOcctKnots, 
@@ -71,35 +71,35 @@ namespace TopoLogicCore
 		/// <param name="rkParameter1">The first parameter, ranging between 0 and 1.</param>
 		/// <param name="rkParameter2">The second parameter, ranging between 0 and 1. Must be larger than rkParameter1, otherwise they will be swapped.</param>
 		/// <returns></returns>
-		static TOPOLOGIC_API std::shared_ptr<Edge> ByCurve(Handle(Geom_Curve) pOcctCurve, const double rkParameter1 = 0.0, const double rkParameter2 = 1.0);
+		static Topologic_API std::shared_ptr<Edge> ByCurve(Handle(Geom_Curve) pOcctCurve, const double rkParameter1 = 0.0, const double rkParameter2 = 1.0);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkVertices"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API std::shared_ptr<Edge> ByVertices(const std::list<std::shared_ptr<Vertex>>& rkVertices);
+		static Topologic_API std::shared_ptr<Edge> ByVertices(const std::list<std::shared_ptr<Vertex>>& rkVertices);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpAnotherEdge"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API std::shared_ptr<Vertex> SharedVertex(const std::shared_ptr<Edge>& kpAnotherEdge) const;
+		Topologic_API std::shared_ptr<Vertex> SharedVertex(const std::shared_ptr<Edge>& kpAnotherEdge) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpVertex"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API double ParameterAtPoint(const std::shared_ptr<Vertex>& kpVertex) const;
+		Topologic_API double ParameterAtPoint(const std::shared_ptr<Vertex>& kpVertex) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kParameter"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API std::shared_ptr<Vertex> PointAtParameter(const double kParameter) const;
+		Topologic_API std::shared_ptr<Vertex> PointAtParameter(const double kParameter) const;
 
 		/// <summary>
 		/// 

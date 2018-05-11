@@ -7,7 +7,7 @@
 #include <memory>
 #include <list>
 
-namespace TopoLogicCore
+namespace TopologicCore
 {
 	enum TopologyRelationshipType
 	{

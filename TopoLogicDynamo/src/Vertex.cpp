@@ -8,7 +8,7 @@
 
 #include <assert.h>
 
-namespace TopoLogic
+namespace Topologic
 {
 	Vertex^ Vertex::ByPoint(Autodesk::DesignScript::Geometry::Point^ point)
 	{
@@ -17,17 +17,17 @@ namespace TopoLogic
 
 	List<Edge^>^ Vertex::Edges(Topology^ parentTopology)
 	{
-		std::list<std::shared_ptr<TopoLogicCore::Edge>> coreEdges;
-		std::shared_ptr<TopoLogicCore::Topology> pCoreParentTopology = TopoLogicCore::Topology::Downcast<TopoLogicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
-		std::shared_ptr<TopoLogicCore::Vertex> pCoreVertex = TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Vertex>(GetCoreTopologicalQuery());
+		std::list<std::shared_ptr<TopologicCore::Edge>> coreEdges;
+		std::shared_ptr<TopologicCore::Topology> pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Vertex> pCoreVertex = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Vertex>(GetCoreTopologicalQuery());
 		pCoreVertex->Edges(pCoreParentTopology, coreEdges);
 
 		List<Edge^>^ pEdges = gcnew List<Edge^>();
-		for (std::list<std::shared_ptr<TopoLogicCore::Edge>>::iterator coreEdgeIterator = coreEdges.begin();
+		for (std::list<std::shared_ptr<TopologicCore::Edge>>::iterator coreEdgeIterator = coreEdges.begin();
 			coreEdgeIterator != coreEdges.end();
 			coreEdgeIterator++)
 		{
-			const std::shared_ptr<TopoLogicCore::Edge>& kpCoreEdge = *coreEdgeIterator;
+			const std::shared_ptr<TopologicCore::Edge>& kpCoreEdge = *coreEdgeIterator;
 			Edge^ pEdge = gcnew Edge(kpCoreEdge);
 			pEdges->Add(pEdge);
 		}
@@ -35,7 +35,7 @@ namespace TopoLogic
 		return pEdges;
 	}
 
-	std::shared_ptr<TopoLogicCore::TopologicalQuery> Vertex::GetCoreTopologicalQuery()
+	std::shared_ptr<TopologicCore::TopologicalQuery> Vertex::GetCoreTopologicalQuery()
 	{
 		assert(m_pCoreVertex != nullptr && "Vertex::m_pCoreVertex is null.");
 		if (m_pCoreVertex == nullptr)
@@ -46,15 +46,15 @@ namespace TopoLogic
 		return *m_pCoreVertex;
 	}
 
-	Vertex::Vertex(const std::shared_ptr<TopoLogicCore::Vertex>& kpCoreVertex)
+	Vertex::Vertex(const std::shared_ptr<TopologicCore::Vertex>& kpCoreVertex)
 		: Topology()
-		, m_pCoreVertex(new std::shared_ptr<TopoLogicCore::Vertex>(kpCoreVertex))
+		, m_pCoreVertex(new std::shared_ptr<TopologicCore::Vertex>(kpCoreVertex))
 	{
 
 	}
 
 	Vertex::Vertex(Autodesk::DesignScript::Geometry::Point^ pDynamoPoint)
-		: Vertex(TopoLogicCore::Vertex::ByPoint(new Geom_CartesianPoint(gp_Pnt(pDynamoPoint->X, pDynamoPoint->Y, pDynamoPoint->Z))))
+		: Vertex(TopologicCore::Vertex::ByPoint(new Geom_CartesianPoint(gp_Pnt(pDynamoPoint->X, pDynamoPoint->Y, pDynamoPoint->Z))))
 	{
 
 	}
@@ -63,7 +63,7 @@ namespace TopoLogic
 	{
 		gp_Pnt occtPoint = BRep_Tool::Pnt(
 			TopoDS::Vertex(
-				TopoLogicCore::TopologicalQuery::Downcast<TopoLogicCore::Topology>(GetCoreTopologicalQuery())->GetOcctShape()
+				TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery())->GetOcctShape()
 			)
 		);
 		return Autodesk::DesignScript::Geometry::Point::ByCoordinates(occtPoint.X(), occtPoint.Y(), occtPoint.Z());

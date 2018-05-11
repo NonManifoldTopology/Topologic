@@ -2,9 +2,9 @@
 
 #include <Topology.h>
 
-#include <TopoLogicCore/include/Wire.h>
+#include <TopologicCore/include/Wire.h>
 
-namespace TopoLogic {
+namespace Topologic {
 	ref class Vertex;
 	ref class Edge;
 	ref class Face;
@@ -16,15 +16,15 @@ namespace TopoLogic {
 		/// Creates a wire by a list of edges.
 		/// </summary>
 		/// <param name="edges">The edges.</param>
-		/// <exception cref="ArgumentException">Thrown if any of the arguments is not a TopoLogic edge.</exception>
-		/// <returns name="Wire">Te created TopoLogic wire</returns>
+		/// <exception cref="ArgumentException">Thrown if any of the arguments is not a Topologic edge.</exception>
+		/// <returns name="Wire">Te created Topologic wire</returns>
 		static Wire^ ByEdges(List<Edge^>^ edges);
 
 		/// <summary>
 		/// Creates a wire by a polycurve (including a polygon)
 		/// </summary>
 		/// <param name="polycurve">The polycurve</param>
-		/// <returns name="Wire">The created TopoLogic wire</returns>
+		/// <returns name="Wire">The created Topologic wire</returns>
 		static Wire^ ByPolyCurve(Autodesk::DesignScript::Geometry::PolyCurve^ polycurve);
 
 		/// <summary>
@@ -66,7 +66,7 @@ namespace TopoLogic {
 		/// 
 		/// </summary>
 		/// <param name="kpCoreWire"></param>
-		Wire(const std::shared_ptr<TopoLogicCore::Wire>& kpCoreWire);
+		Wire(const std::shared_ptr<TopologicCore::Wire>& kpCoreWire);
 
 		/// <summary>
 		/// 
@@ -84,7 +84,7 @@ namespace TopoLogic {
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		virtual std::shared_ptr<TopoLogicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
+		virtual std::shared_ptr<TopologicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
 
 	protected:
 		virtual ~Wire();
@@ -92,6 +92,6 @@ namespace TopoLogic {
 		/// <summary>
 		/// 
 		/// </summary>
-		std::shared_ptr<TopoLogicCore::Wire>* m_pCoreWire;
+		std::shared_ptr<TopologicCore::Wire>* m_pCoreWire;
 	};
 }

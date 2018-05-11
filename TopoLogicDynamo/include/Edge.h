@@ -2,9 +2,9 @@
 
 #include <Topology.h>
 
-#include <TopoLogicCore/include/Edge.h>
+#include <TopologicCore/include/Edge.h>
 
-namespace TopoLogic {
+namespace Topologic {
 	ref class Vertex;
 	ref class Wire;
 
@@ -18,7 +18,7 @@ namespace TopoLogic {
 		/// Creates a curved edge by a Dynamo curve.
 		/// </summary>
 		/// <param name="curve">A Dynamo curve.</param>
-		/// <returns name="Edge">The created TopoLogic edge</returns>
+		/// <returns name="Edge">The created Topologic edge</returns>
 		static Edge^ ByCurve(Autodesk::DesignScript::Geometry::Curve^ curve);
 
 		/// <summary>
@@ -27,7 +27,7 @@ namespace TopoLogic {
 		/// Otherwise, an exception will be raised.
 		/// </summary>
 		/// <param name="vertices">A list of vertices. The created edge will pass all vertices in this list.</param>
-		/// <returns name="Edge">The created TopoLogic edge</returns>
+		/// <returns name="Edge">The created Topologic edge</returns>
 		static Edge^ ByVertices(List<Vertex^>^ vertices);
 
 		/// <summary>
@@ -78,7 +78,7 @@ namespace TopoLogic {
 		/// 
 		/// </summary>
 		/// <param name="kpCoreEdge"></param>
-		Edge(const std::shared_ptr<TopoLogicCore::Edge>& kpCoreEdge);
+		Edge(const std::shared_ptr<TopologicCore::Edge>& kpCoreEdge);
 
 		/// <summary>
 		/// 
@@ -102,7 +102,7 @@ namespace TopoLogic {
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		virtual std::shared_ptr<TopoLogicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
+		virtual std::shared_ptr<TopologicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
 
 	protected:
 		virtual ~Edge();
@@ -128,6 +128,6 @@ namespace TopoLogic {
 		/// <summary>
 		/// 
 		/// </summary>
-		std::shared_ptr<TopoLogicCore::Edge>* m_pCoreEdge;
+		std::shared_ptr<TopologicCore::Edge>* m_pCoreEdge;
 	};
 }

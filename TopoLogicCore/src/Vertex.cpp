@@ -12,7 +12,7 @@
 
 #include <LabelManager.h>
 
-namespace TopoLogicCore
+namespace TopologicCore
 {
 	Vertex::Vertex(const TopoDS_Vertex& rkOcctVertex, const TDF_Label& rkOcctLabel)
 		: Topology(0)

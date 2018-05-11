@@ -14,7 +14,7 @@
 class BRepBuilderAPI_MakeFace;
 class Geom_Surface;
 
-namespace TopoLogicCore
+namespace TopologicCore
 {
 	class Vertex;
 	class Edge;
@@ -42,7 +42,7 @@ namespace TopoLogicCore
 		/// </summary>
 		/// <param name="kpParentTopology"></param>
 		/// <param name="rFaces"></param>
-		TOPOLOGIC_API void AdjacentFaces(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Face>>& rFaces) const;
+		Topologic_API void AdjacentFaces(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Face>>& rFaces) const;
 
 		/// <summary>
 		/// 
@@ -50,13 +50,13 @@ namespace TopoLogicCore
 		/// <param name="kpParentTopology"></param>
 		/// <param name="rCells"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API void Cells(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Cell>>& rCells) const;
+		Topologic_API void Cells(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Cell>>& rCells) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rEdges"></param>
-		TOPOLOGIC_API void Edges(std::list<std::shared_ptr<Edge>>& rEdges) const;
+		Topologic_API void Edges(std::list<std::shared_ptr<Edge>>& rEdges) const;
 
 		/// <summary>
 		/// 
@@ -64,31 +64,31 @@ namespace TopoLogicCore
 		/// <param name="kpParentTopology"></param>
 		/// <param name="rShells"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API void Shells(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Shell>>& rShells) const;
+		Topologic_API void Shells(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Shell>>& rShells) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rVertices"></param>
-		TOPOLOGIC_API void Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const;
+		Topologic_API void Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rWires"></param>
-		TOPOLOGIC_API void Wires(std::list<std::shared_ptr<Wire>>& rWires) const;
+		Topologic_API void Wires(std::list<std::shared_ptr<Wire>>& rWires) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		TOPOLOGIC_API double Area() const;
+		Topologic_API double Area() const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkWire"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API static std::shared_ptr<Face> ByClosedWire(const std::shared_ptr<Wire>& pkWire);
+		Topologic_API static std::shared_ptr<Face> ByClosedWire(const std::shared_ptr<Wire>& pkWire);
 
 		/// <summary>
 		/// 
@@ -121,7 +121,7 @@ namespace TopoLogicCore
 		/// <param name="rkOuterWire"></param>
 		/// <param name="rkInnerWires"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API std::shared_ptr<Face> BySurface(
+		static Topologic_API std::shared_ptr<Face> BySurface(
 			const TColgp_Array2OfPnt& rkOcctPoles,
 			const TColStd_Array2OfReal& rkOcctWeights,
 			const TColStd_Array1OfReal& rkOcctUKnots,
@@ -141,52 +141,52 @@ namespace TopoLogicCore
 		/// </summary>
 		/// <param name="kpAnotherFace"></param>
 		/// <param name="rEdges"></param>
-		void TOPOLOGIC_API SharedEdges(const std::shared_ptr<Face>& kpAnotherFace, std::list<std::shared_ptr<Edge>>& rEdges) const;
+		void Topologic_API SharedEdges(const std::shared_ptr<Face>& kpAnotherFace, std::list<std::shared_ptr<Edge>>& rEdges) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpAnotherFace"></param>
 		/// <param name="rVertices"></param>
-		void TOPOLOGIC_API SharedVertices(const std::shared_ptr<Face>& kpAnotherFace, std::list<std::shared_ptr<Vertex>>& rVertices) const;
+		void Topologic_API SharedVertices(const std::shared_ptr<Face>& kpAnotherFace, std::list<std::shared_ptr<Vertex>>& rVertices) const;
 
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		TOPOLOGIC_API std::shared_ptr<Wire> OuterBoundary() const;
+		Topologic_API std::shared_ptr<Wire> OuterBoundary() const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rInnerBoundaries"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API void InnerBoundaries(std::list<std::shared_ptr<Wire>>& rInnerBoundaries) const;
+		Topologic_API void InnerBoundaries(std::list<std::shared_ptr<Wire>>& rInnerBoundaries) const;
 
 		/// <summary>
-		/// Note: TopoLogic UV values are normalized (from 0 and 1), but OCCT's values are not normalized.
+		/// Note: Topologic UV values are normalized (from 0 and 1), but OCCT's values are not normalized.
 		/// </summary>
 		/// <param name="kpVertex"></param>
 		/// <param name="rU"></param>
 		/// <param name="rV"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API void UVParameterAtPoint(const std::shared_ptr<Vertex>& kpVertex, double& rU, double &rV) const;
+		Topologic_API void UVParameterAtPoint(const std::shared_ptr<Vertex>& kpVertex, double& rU, double &rV) const;
 
 		/// <summary>
-		/// Note: TopoLogic UV values are normalized (from 0 and 1), but OCCT's values are not normalized.
+		/// Note: Topologic UV values are normalized (from 0 and 1), but OCCT's values are not normalized.
 		/// </summary>
 		/// <param name="kU"></param>
 		/// <param name="kV"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API std::shared_ptr<Vertex> PointAtParameter(const double kU, const double kV) const;
+		Topologic_API std::shared_ptr<Vertex> PointAtParameter(const double kU, const double kV) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpWire"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API std::shared_ptr<Face> Trim(const std::shared_ptr<Wire>& kpWire) const;
+		Topologic_API std::shared_ptr<Face> Trim(const std::shared_ptr<Wire>& kpWire) const;
 
 		/// <summary>
 		/// 
@@ -222,7 +222,7 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		TOPOLOGIC_API Handle(Geom_Surface) Surface() const;
+		Topologic_API Handle(Geom_Surface) Surface() const;
 
 		virtual TopologyType GetType() const { return TOPOLOGY_FACE; }
 

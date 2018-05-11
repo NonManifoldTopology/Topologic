@@ -2,7 +2,7 @@
 
 #include <TopExp_Explorer.hxx>
 
-namespace TopoLogicCore
+namespace TopologicCore
 {
 	bool DoesShape1ContainShape2(const TopoDS_Shape& rkShape1, const TopoDS_Shape& rkShape2)
 	{

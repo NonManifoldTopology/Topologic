@@ -1,9 +1,9 @@
 #include <Attribute.h>
 
-namespace TopoLogic
+namespace Topologic
 {
-	Attribute::Attribute(const std::shared_ptr<TopoLogicCore::Attribute>& kpCoreAttribute)
-		: m_pCoreAttribute(new std::shared_ptr<TopoLogicCore::Attribute>(kpCoreAttribute))
+	Attribute::Attribute(const std::shared_ptr<TopologicCore::Attribute>& kpCoreAttribute)
+		: m_pCoreAttribute(new std::shared_ptr<TopologicCore::Attribute>(kpCoreAttribute))
 	{
 
 	}

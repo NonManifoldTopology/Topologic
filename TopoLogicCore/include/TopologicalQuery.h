@@ -2,10 +2,10 @@
 
 #include <memory>
 
-namespace TopoLogicCore
+namespace TopologicCore
 {
 	/// <summary>
-	/// The root class in the TopoLogic library
+	/// The root class in the Topologic library
 	/// </summary>
 	class TopologicalQuery
 	{
@@ -16,7 +16,7 @@ namespace TopoLogicCore
 			T* pSubclassTopology = dynamic_cast<T*>(kpTopologicalQuery);
 			if (pSubclassTopology == nullptr)
 			{
-				throw std::exception("Failed downcasting a topological query");
+				throw std::exception("Failed downcasting a Topological query");
 			}
 			return pSubclassTopology;
 		}
@@ -38,7 +38,7 @@ namespace TopoLogicCore
 			std::shared_ptr<T> pSubclassTopology = std::dynamic_pointer_cast<T>(kpTopologicalQuery);
 			if (pSubclassTopology == nullptr)
 			{
-				throw std::exception("Failed downcasting a topological query");
+				throw std::exception("Failed downcasting a Topological query");
 			}
 			return pSubclassTopology;
 		}
@@ -49,7 +49,7 @@ namespace TopoLogicCore
 			const std::shared_ptr<T> kSubclassTopology = std::dynamic_pointer_cast<T>(rkTopologicalQuery);
 			if (kSubclassTopology == nullptr)
 			{
-				throw std::exception("Failed downcasting a topological query");
+				throw std::exception("Failed downcasting a Topological query");
 			}
 			return kSubclassTopology;
 		}
@@ -60,7 +60,7 @@ namespace TopoLogicCore
 			std::shared_ptr<T> pSuperClassTopology = std::dynamic_pointer_cast<T>(kpTopologicalQuery);
 			if (pSuperClassTopology == nullptr)
 			{
-				throw std::exception("Failed upcasting a topological query");
+				throw std::exception("Failed upcasting a Topological query");
 			}
 			return pSuperClassTopology;
 		}
@@ -71,7 +71,7 @@ namespace TopoLogicCore
 			const std::shared_ptr<T> pSuperClassTopology = std::dynamic_pointer_cast<T>(rkTopologicalQuery);
 			if (pSuperClassTopology == nullptr)
 			{
-				throw std::exception("Failed upcasting a topological query");
+				throw std::exception("Failed upcasting a Topological query");
 			}
 			return pSuperClassTopology;
 		}

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace TopoLogicCore
+namespace TopologicCore
 {
 	class Attribute
 	{

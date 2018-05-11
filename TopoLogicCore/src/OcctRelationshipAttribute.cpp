@@ -2,7 +2,7 @@
 
 #include <Standard_GUID.hxx>
 
-namespace TopoLogicCore
+namespace TopologicCore
 {
 	OcctRelationshipAttribute::OcctRelationshipAttribute()
 		: m_relationshipType(REL_OTHER_NON_CONSTITUENT)

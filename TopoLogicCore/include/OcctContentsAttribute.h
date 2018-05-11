@@ -4,7 +4,7 @@
 
 #include <TDF_Attribute.hxx>
 
-namespace TopoLogicCore
+namespace TopologicCore
 {
 	class OcctContentsAttribute : public TDF_Attribute
 	{

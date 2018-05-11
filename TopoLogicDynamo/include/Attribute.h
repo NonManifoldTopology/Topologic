@@ -1,21 +1,21 @@
 #pragma once
 
-#include <TopoLogicCore/include/Attribute.h>
+#include <TopologicCore/include/Attribute.h>
 
 #include <memory>
 
-namespace TopoLogic
+namespace Topologic
 {
 	public ref class Attribute
 	{
 	public:
 		
 	public protected:
-		Attribute(const std::shared_ptr<TopoLogicCore::Attribute>& kpCoreAttribute);
+		Attribute(const std::shared_ptr<TopologicCore::Attribute>& kpCoreAttribute);
 
 	protected:
 		~Attribute();
 
-		std::shared_ptr<TopoLogicCore::Attribute>* m_pCoreAttribute;
+		std::shared_ptr<TopologicCore::Attribute>* m_pCoreAttribute;
 	};
 }

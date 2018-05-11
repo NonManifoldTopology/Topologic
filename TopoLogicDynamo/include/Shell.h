@@ -2,10 +2,10 @@
 
 #include <Topology.h>
 
-#include <TopoLogicCore/include/Shell.h>
+#include <TopologicCore/include/Shell.h>
 
 using namespace Autodesk::DesignScript::Runtime;
-namespace TopoLogic
+namespace Topologic
 {
 	ref class Vertex;
 	ref class Edge;
@@ -125,13 +125,13 @@ namespace TopoLogic
 		/// 
 		/// </summary>
 		/// <param name="kpCoreShell"></param>
-		Shell(const std::shared_ptr<TopoLogicCore::Shell>& kpCoreShell);
+		Shell(const std::shared_ptr<TopologicCore::Shell>& kpCoreShell);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		virtual std::shared_ptr<TopoLogicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
+		virtual std::shared_ptr<TopologicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
 
 	protected:
 		virtual ~Shell();
@@ -139,6 +139,6 @@ namespace TopoLogic
 		/// <summary>
 		/// 
 		/// </summary>
-		std::shared_ptr<TopoLogicCore::Shell>* m_pCoreShell;
+		std::shared_ptr<TopologicCore::Shell>* m_pCoreShell;
 	};
 }

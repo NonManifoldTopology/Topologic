@@ -2,9 +2,9 @@
 
 #include <Topology.h>
 
-#include <TopoLogicCore/include/Vertex.h>
+#include <TopologicCore/include/Vertex.h>
 
-namespace TopoLogic
+namespace Topologic
 {
 	ref class Edge;
 
@@ -37,12 +37,12 @@ namespace TopoLogic
 		}
 
 	public protected:
-		Vertex(const std::shared_ptr<TopoLogicCore::Vertex>& kpCoreVertex);
+		Vertex(const std::shared_ptr<TopologicCore::Vertex>& kpCoreVertex);
 		Vertex(Autodesk::DesignScript::Geometry::Point^ pDynamoPoint);
 
 		Autodesk::DesignScript::Geometry::Point^ Point();
 
-		virtual std::shared_ptr<TopoLogicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
+		virtual std::shared_ptr<TopologicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
 
 	protected:
 		virtual ~Vertex();
@@ -50,6 +50,6 @@ namespace TopoLogic
 		/// <summary>
 		/// 
 		/// </summary>
-		std::shared_ptr<TopoLogicCore::Vertex>* m_pCoreVertex;
+		std::shared_ptr<TopologicCore::Vertex>* m_pCoreVertex;
 	};
 }

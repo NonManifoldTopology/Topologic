@@ -16,7 +16,7 @@
 
 #include <assert.h>
 
-namespace TopoLogicCore
+namespace TopologicCore
 {
 	void Wire::Edges(std::list<std::shared_ptr<Edge>>& rEdges) const
 	{

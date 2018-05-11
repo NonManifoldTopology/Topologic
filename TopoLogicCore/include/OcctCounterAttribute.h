@@ -3,7 +3,7 @@
 #include <TDF_Attribute.hxx>
 #include <Standard_GUID.hxx>
 
-namespace TopoLogicCore
+namespace TopologicCore
 {
 	/// <summary>
 	/// <para>

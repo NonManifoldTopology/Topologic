@@ -6,7 +6,7 @@
 
 #include <TopoDS_CompSolid.hxx>
 
-namespace TopoLogicCore
+namespace TopologicCore
 {
 	class Cell;
 	class Vertex;
@@ -33,63 +33,63 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <param name="rCells"></param>
-		TOPOLOGIC_API void Cells(std::list<std::shared_ptr<Cell>>& rCells) const;
+		Topologic_API void Cells(std::list<std::shared_ptr<Cell>>& rCells) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rCells"></param>
-		TOPOLOGIC_API void Faces(std::list<std::shared_ptr<Face>>& rFaces) const;
+		Topologic_API void Faces(std::list<std::shared_ptr<Face>>& rFaces) const;
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rShells"></param>
-		TOPOLOGIC_API void Shells(std::list<std::shared_ptr<Shell>>& rShells) const;
+		Topologic_API void Shells(std::list<std::shared_ptr<Shell>>& rShells) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rEdges"></param>
-		TOPOLOGIC_API void Edges(std::list<std::shared_ptr<Edge>>& rEdges) const;
+		Topologic_API void Edges(std::list<std::shared_ptr<Edge>>& rEdges) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rVertices"></param>
-		TOPOLOGIC_API void Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const;
+		Topologic_API void Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rWires"></param>
-		TOPOLOGIC_API void Wires(std::list<std::shared_ptr<Wire>>& rWires) const;
+		Topologic_API void Wires(std::list<std::shared_ptr<Wire>>& rWires) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkCells"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API std::shared_ptr<CellComplex> ByCells(const std::list<std::shared_ptr<Cell>>& rkCells);
+		static Topologic_API std::shared_ptr<CellComplex> ByCells(const std::list<std::shared_ptr<Cell>>& rkCells);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkFaces"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API std::shared_ptr<CellComplex> ByFaces(const std::list<std::shared_ptr<Face>>& rkFaces);
+		static Topologic_API std::shared_ptr<CellComplex> ByFaces(const std::list<std::shared_ptr<Face>>& rkFaces);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		TOPOLOGIC_API std::shared_ptr<Cell> OuterBoundary() const;
+		Topologic_API std::shared_ptr<Cell> OuterBoundary() const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkInternalFaces"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API void InnerBoundaries(std::list<std::shared_ptr<Face>>& rInternalFaces) const;
+		Topologic_API void InnerBoundaries(std::list<std::shared_ptr<Face>>& rInternalFaces) const;
 
 		/// <summary>
 		/// 

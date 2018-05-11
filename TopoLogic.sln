@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TopoLogicCore", "TopoLogicCore\TopoLogicCore.vcxproj", "{C2B53661-6D1F-4C1D-9F8D-909737CA2142}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TopologicCore", "TopologicCore\TopologicCore.vcxproj", "{C2B53661-6D1F-4C1D-9F8D-909737CA2142}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TopoLogicDynamo", "TopoLogicDynamo\TopoLogicDynamo.vcxproj", "{21993835-4EC5-4CC3-BCDA-47F6209CD349}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TopologicDynamo", "TopologicDynamo\TopologicDynamo.vcxproj", "{21993835-4EC5-4CC3-BCDA-47F6209CD349}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TopologicStructure", "TopologicStructure\TopologicStructure.vcxproj", "{8DD1E553-E5C3-4874-859A-A3A79B29527A}"
 EndProject

@@ -38,7 +38,7 @@
 
 #include <assert.h>
 
-namespace TopoLogicCore
+namespace TopologicCore
 {
 	void Cell::AdjacentCells(std::list<std::shared_ptr<Cell>>& rCells) const
 	{
@@ -78,7 +78,7 @@ namespace TopoLogicCore
 		}
 	}
 
-	void Cell::CellComplexes(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<TopoLogicCore::CellComplex>>& rCellComplexes) const
+	void Cell::CellComplexes(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<TopologicCore::CellComplex>>& rCellComplexes) const
 	{
 		UpwardNavigation(kpParentTopology, rCellComplexes);
 	}

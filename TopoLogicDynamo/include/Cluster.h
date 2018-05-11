@@ -2,9 +2,9 @@
 
 #include <Topology.h>
 
-#include <TopoLogicCore/include/Cluster.h>
+#include <TopologicCore/include/Cluster.h>
 
-namespace TopoLogic
+namespace Topologic
 {
 	ref class Vertex;
 	ref class Edge;
@@ -88,13 +88,13 @@ namespace TopoLogic
 		/// 
 		/// </summary>
 		/// <param name="kpCoreCluster"></param>
-		Cluster(const std::shared_ptr<TopoLogicCore::Cluster>& kpCoreCluster);
+		Cluster(const std::shared_ptr<TopologicCore::Cluster>& kpCoreCluster);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		virtual std::shared_ptr<TopoLogicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
+		virtual std::shared_ptr<TopologicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
 
 
 	protected:
@@ -103,6 +103,6 @@ namespace TopoLogic
 		/// <summary>
 		/// 
 		/// </summary>
-		std::shared_ptr<TopoLogicCore::Cluster>* m_pCoreCluster;
+		std::shared_ptr<TopologicCore::Cluster>* m_pCoreCluster;
 	};
 }

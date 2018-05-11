@@ -9,7 +9,7 @@
 
 class BRepBuilderAPI_MakeWire;
 
-namespace TopoLogicCore
+namespace TopologicCore
 {
 	class Vertex;
 	class Edge;
@@ -31,7 +31,7 @@ namespace TopoLogicCore
 		/// 
 		/// </summary>
 		/// <param name="rEdges"></param>
-		void TOPOLOGIC_API Edges(std::list<std::shared_ptr<Edge>>& rEdges) const;
+		void Topologic_API Edges(std::list<std::shared_ptr<Edge>>& rEdges) const;
 
 		/// <summary>
 		/// 
@@ -39,26 +39,26 @@ namespace TopoLogicCore
 		/// <param name="kpParentTopology"></param>
 		/// <param name="rFaces"></param>
 		/// <returns></returns>
-		void TOPOLOGIC_API Faces(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Face>>& rFaces) const;
+		void Topologic_API Faces(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Face>>& rFaces) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		bool TOPOLOGIC_API IsClosed() const;
+		bool Topologic_API IsClosed() const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rVertices"></param>
-		void TOPOLOGIC_API Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const;
+		void Topologic_API Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkEdges"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API std::shared_ptr<Wire> ByEdges(const std::list<std::shared_ptr<Edge>>& rkEdges);
+		static Topologic_API std::shared_ptr<Wire> ByEdges(const std::list<std::shared_ptr<Edge>>& rkEdges);
 
 		/// <summary>
 		/// 

@@ -2,11 +2,11 @@
 
 #include <Topology.h>
 
-#include <TopoLogicCore/include/Aperture.h>
+#include <TopologicCore/include/Aperture.h>
 
 using namespace System::Collections::Generic;
 
-namespace TopoLogic
+namespace Topologic
 {
 	ref class Context;
 
@@ -40,7 +40,7 @@ namespace TopoLogic
 		/// Returns the underlying topology.
 		/// </summary>
 		/// <returns name="Topology">The underlying topology</returns>
-		TopoLogic::Topology^ Topology();
+		Topologic::Topology^ Topology();
 
 		/// <summary>
 		/// Checks if any aperture path is open.
@@ -53,13 +53,13 @@ namespace TopoLogic
 		/// </summary>
 		/// <param name="topologies">A list of exactly two topologies</param>
 		/// <returns name="bool">True if the aperture between the two paths is open</returns>
-		bool IsOpen(List<TopoLogic::Topology^>^ topologies);
+		bool IsOpen(List<Topologic::Topology^>^ topologies);
 
 		/// <summary>
 		/// Returns all open paths.
 		/// </summary>
 		/// <returns name="Topology[][]">The open paths</returns>
-		List<List<TopoLogic::Topology^>^>^ Paths();
+		List<List<Topologic::Topology^>^>^ Paths();
 
 		/// <summary>
 		/// Open the aperture paths connecting all adjacent topologies.
@@ -72,7 +72,7 @@ namespace TopoLogic
 		/// </summary>
 		/// <param name="topologies">Topologies</param>
 		/// <returns name="Aperture">An aperture</returns>
-		Aperture^ Open(List<TopoLogic::Topology^>^ topologies);
+		Aperture^ Open(List<Topologic::Topology^>^ topologies);
 
 		/// <summary>
 		/// Close all aperture paths.
@@ -85,7 +85,7 @@ namespace TopoLogic
 		/// </summary>
 		/// <param name="topologies">Topologies</param>
 		/// <returns name="Aperture">An aperture</returns>
-		Aperture^ Close(List<TopoLogic::Topology^>^ topologies);
+		Aperture^ Close(List<Topologic::Topology^>^ topologies);
 
 		property Object^ Geometry
 		{
@@ -97,13 +97,13 @@ namespace TopoLogic
 		}
 
 	public protected:
-		Aperture(const std::shared_ptr<TopoLogicCore::Aperture>& kpCoreAperture);
+		Aperture(const std::shared_ptr<TopologicCore::Aperture>& kpCoreAperture);
 
-		virtual std::shared_ptr<TopoLogicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
+		virtual std::shared_ptr<TopologicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
 
 	protected:
 		virtual ~Aperture();
 
-		std::shared_ptr<TopoLogicCore::Aperture>* m_pCoreAperture;
+		std::shared_ptr<TopologicCore::Aperture>* m_pCoreAperture;
 	};
 }

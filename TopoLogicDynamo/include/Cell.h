@@ -2,9 +2,9 @@
 
 #include <Topology.h>
 
-#include <TopoLogicCore/include/Cell.h>
+#include <TopologicCore/include/Cell.h>
 
-namespace TopoLogic
+namespace Topologic
 {
 	ref class Vertex;
 	ref class Edge;
@@ -167,13 +167,13 @@ namespace TopoLogic
 		/// 
 		/// </summary>
 		/// <param name="kpCoreCell"></param>
-		Cell(const std::shared_ptr<TopoLogicCore::Cell>& kpCoreCell);
+		Cell(const std::shared_ptr<TopologicCore::Cell>& kpCoreCell);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		virtual std::shared_ptr<TopoLogicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
+		virtual std::shared_ptr<TopologicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
 
 	protected:
 		virtual ~Cell();
@@ -193,6 +193,6 @@ namespace TopoLogic
 		/// <summary>
 		/// 
 		/// </summary>
-		std::shared_ptr<TopoLogicCore::Cell>* m_pCoreCell;
+		std::shared_ptr<TopologicCore::Cell>* m_pCoreCell;
 	};
 }

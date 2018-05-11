@@ -4,7 +4,7 @@
 
 #include <TDF_Data.hxx>
 
-namespace TopoLogicCore
+namespace TopologicCore
 {
 	class GlobalCluster
 	{

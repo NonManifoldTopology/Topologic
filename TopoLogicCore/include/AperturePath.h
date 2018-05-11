@@ -6,7 +6,7 @@
 #include <list>
 #include <memory>
 
-namespace TopoLogicCore
+namespace TopologicCore
 {
 	class AperturePath
 	{

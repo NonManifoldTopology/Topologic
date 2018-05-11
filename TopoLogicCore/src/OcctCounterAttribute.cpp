@@ -4,7 +4,7 @@
 
 #include <assert.h>
 
-namespace TopoLogicCore
+namespace TopologicCore
 {
 	OcctCounterAttribute::OcctCounterAttribute()
 		: m_counter(0)

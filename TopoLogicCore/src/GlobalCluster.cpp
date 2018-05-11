@@ -2,7 +2,7 @@
 
 #include <assert.h>
 
-namespace TopoLogicCore
+namespace TopologicCore
 {
 	bool GlobalCluster::Add(Topology * const kpTopology)
 	{

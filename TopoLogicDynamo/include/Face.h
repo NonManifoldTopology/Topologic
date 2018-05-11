@@ -2,9 +2,9 @@
 
 #include <Topology.h>
 
-#include <TopoLogicCore/include/Face.h>
+#include <TopologicCore/include/Face.h>
 
-namespace TopoLogic {
+namespace Topologic {
 	ref class Vertex;
 	ref class Edge;
 	ref class Wire;
@@ -65,8 +65,8 @@ namespace TopoLogic {
 		/// <summary>
 		/// A factory method that creates a face by a closed wire.
 		/// </summary>
-		/// <param name="wire">A closed wire. Must be (and internally verified if it is) a Dynamo polygon or a TopoLogic wire.</param>
-		/// <exception cref="ArgumentException">Thrown if any of the arguments is neither a Dynamo polygon nor a TopoLogic wire</exception>
+		/// <param name="wire">A closed wire. Must be (and internally verified if it is) a Dynamo polygon or a Topologic wire.</param>
+		/// <exception cref="ArgumentException">Thrown if any of the arguments is neither a Dynamo polygon nor a Topologic wire</exception>
 		/// <returns name="Face">/// </returns>
 		static Face^ ByClosedWire(Wire^ wire);
 
@@ -74,7 +74,7 @@ namespace TopoLogic {
 		/// Creates a face by a list of edges. A wire will be internally created.
 		/// </summary>
 		/// <param name="edges">The edges. </param>
-		/// <exception cref="ArgumentException">Thrown if any of the arguments is not a TopoLogic edge</exception>
+		/// <exception cref="ArgumentException">Thrown if any of the arguments is not a Topologic edge</exception>
 		/// <returns name="Face">the created face</returns>
 		static Face^ ByEdges(List<Edge^>^ edges);
 
@@ -146,7 +146,7 @@ namespace TopoLogic {
 		/// 
 		/// </summary>
 		/// <param name="kpCoreFace"></param>
-		Face(const std::shared_ptr<TopoLogicCore::Face>& kpCoreFace);
+		Face(const std::shared_ptr<TopologicCore::Face>& kpCoreFace);
 
 		/// <summary>
 		/// 
@@ -176,7 +176,7 @@ namespace TopoLogic {
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		virtual std::shared_ptr<TopoLogicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
+		virtual std::shared_ptr<TopologicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
 
 	protected:
 		virtual ~Face();
@@ -191,6 +191,6 @@ namespace TopoLogic {
 		/// <summary>
 		/// 
 		/// </summary>
-		std::shared_ptr<TopoLogicCore::Face>* m_pCoreFace;
+		std::shared_ptr<TopologicCore::Face>* m_pCoreFace;
 	};
 }
