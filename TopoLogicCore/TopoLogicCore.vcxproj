@@ -92,7 +92,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>include/;$(SolutionDir)references\opencascade-7.2.0\inc;$(SolutionDir)references\ShapeOp-0.1.0\include;$(SolutionDir)references\Eigen\include;$(SolutionDir)references\Earcut\include;$(SolutionDir)references\gpc-2.3.3\include;C:\Users\Nicholas Wardhana\Documents\Project\GEOMAlgo_Splitter</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>Topologic_EXPORTS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>TOPOLOGIC_EXPORTS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>gpc-2.3.3.lib;ShapeOp.0.1.0.lib;TKCAF.lib;TKLCAF.lib;TKOffset.lib;TKIGES.lib;TKPrim.lib;TKMesh.lib;TKXSBase.lib;TKStep.lib;TKBool.lib;TKBO.lib;TKShHealing.lib;TKG3d.lib;TKG2d.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKTopAlgo.lib;TKernel.lib;TKBrep.lib;TKMath.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -106,7 +106,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>include/;$(SolutionDir)references\opencascade-7.2.0\inc;$(SolutionDir)references\ShapeOp-0.1.0\include;$(SolutionDir)references\Eigen\include;$(SolutionDir)references\Earcut\include;$(SolutionDir)references\gpc-2.3.3\include;</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>Topologic_EXPORTS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>TOPOLOGIC_EXPORTS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>gpc-2.3.3.lib;ShapeOp.0.1.0.lib;TKCAF.lib;TKLCAF.lib;TKOffset.lib;TKIGES.lib;TKPrim.lib;TKMesh.lib;TKXSBase.lib;TKStep.lib;TKBool.lib;TKBO.lib;TKShHealing.lib;TKG3d.lib;TKG2d.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKTopAlgo.lib;TKernel.lib;TKBrep.lib;TKMath.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -122,7 +122,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>include/;$(SolutionDir)references\opencascade-7.2.0\inc;$(SolutionDir)references\ShapeOp-0.1.0\include;$(SolutionDir)references\Eigen\include;$(SolutionDir)references\Earcut\include;$(SolutionDir)references\gpc-2.3.3\include;C:\Users\Nicholas Wardhana\Documents\Project\GEOMAlgo_Splitter</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>Topologic_EXPORTS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>TOPOLOGIC_EXPORTS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -140,7 +140,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>include/;$(SolutionDir)references\opencascade-7.2.0\inc;$(SolutionDir)references\ShapeOp-0.1.0\include;$(SolutionDir)references\Eigen\include;$(SolutionDir)references\Earcut\include;$(SolutionDir)references\gpc-2.3.3\include;</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>Topologic_EXPORTS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>TOPOLOGIC_EXPORTS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

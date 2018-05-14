@@ -29,7 +29,7 @@ namespace TopologicCore
 		/// <param name="kpTopology"></param>
 		/// <param name="kpContext"></param>
 		/// <returns></returns>
-		static Topologic_API std::shared_ptr<Aperture> ByTopologyContext(const std::shared_ptr<TopologicCore::Topology>& kpTopology, const std::shared_ptr<Context>& kpContext);
+		static TOPOLOGIC_API std::shared_ptr<Aperture> ByTopologyContext(const std::shared_ptr<TopologicCore::Topology>& kpTopology, const std::shared_ptr<Context>& kpContext);
 
 		/// <summary>
 		/// Creates an aperture by a topology and a context.
@@ -38,54 +38,54 @@ namespace TopologicCore
 		/// <param name="kpContext"></param>
 		/// <param name="kOpenStatus"></param>
 		/// <returns></returns>
-		static Topologic_API std::shared_ptr<Aperture> ByTopologyContextStatus(const std::shared_ptr<TopologicCore::Topology>& kpTopology, const std::shared_ptr<Context>& kpContext, const bool kOpenStatus);
+		static TOPOLOGIC_API std::shared_ptr<Aperture> ByTopologyContextStatus(const std::shared_ptr<TopologicCore::Topology>& kpTopology, const std::shared_ptr<Context>& kpContext, const bool kOpenStatus);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		Topologic_API std::shared_ptr<Topology> Topology() const;
+		TOPOLOGIC_API std::shared_ptr<Topology> Topology() const;
 
 		/// <summary>
 		/// Checks if any aperture path is open.
 		/// </summary>
 		/// <returns></returns>
-		Topologic_API bool IsOpen() const;
+		TOPOLOGIC_API bool IsOpen() const;
 
 		/// <summary>
 		/// Checks if the topologies are adjacent.
 		/// </summary>
 		/// <param name="rkTopologies"></param>
 		/// <returns></returns>
-		Topologic_API bool IsOpen(const std::array<std::shared_ptr<TopologicCore::Topology>, 2>& rkTopologies) const;
+		TOPOLOGIC_API bool IsOpen(const std::array<std::shared_ptr<TopologicCore::Topology>, 2>& rkTopologies) const;
 
 		/// <summary>
 		/// Returns all open aperture paths
 		/// </summary>
 		/// <param name="rPaths"></param>
-		Topologic_API void Paths(std::list<std::list<std::shared_ptr<TopologicCore::Topology>>>& rPaths) const;
+		TOPOLOGIC_API void Paths(std::list<std::list<std::shared_ptr<TopologicCore::Topology>>>& rPaths) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		Topologic_API void Open();
+		TOPOLOGIC_API void Open();
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkTopologies"></param>
-		Topologic_API void Open(const std::array<std::shared_ptr<TopologicCore::Topology>, 2>& rkTopologies);
+		TOPOLOGIC_API void Open(const std::array<std::shared_ptr<TopologicCore::Topology>, 2>& rkTopologies);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		Topologic_API void Close();
+		TOPOLOGIC_API void Close();
 		
 		/// <summary>
 		/// Checks if the topologies are adjacent.
 		/// </summary>
 		/// <param name="rkTopologies"></param>
-		Topologic_API void Close(const std::array<std::shared_ptr<TopologicCore::Topology>, 2>& rkTopologies);
+		TOPOLOGIC_API void Close(const std::array<std::shared_ptr<TopologicCore::Topology>, 2>& rkTopologies);
 
 		/// <summary>
 		/// 

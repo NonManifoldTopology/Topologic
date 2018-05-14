@@ -40,7 +40,7 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="rkTopologies"></param>
 		/// <returns></returns>
-		static Topologic_API std::shared_ptr<Cluster> ByTopology(const std::list<std::shared_ptr<Topology>>& rkTopologies);
+		static TOPOLOGIC_API std::shared_ptr<Cluster> ByTopology(const std::list<std::shared_ptr<Topology>>& rkTopologies);
 
 		/// <summary>
 		/// 
@@ -48,14 +48,14 @@ namespace TopologicCore
 		/// <param name="kpTopology"></param>
 		/// <param name="kCheckIfInside"></param>
 		/// <returns></returns>
-		Topologic_API bool AddTopology(Topology const * const kpkTopology, const bool kCheckIfInside = false);
+		TOPOLOGIC_API bool AddTopology(Topology const * const kpkTopology, const bool kCheckIfInside = false);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpkTopology"></param>
 		/// <returns></returns>
-		Topologic_API bool RemoveTopology(Topology const * const kpkTopologyy);
+		TOPOLOGIC_API bool RemoveTopology(Topology const * const kpkTopologyy);
 
 		/// <summary>
 		/// 
@@ -91,43 +91,43 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <param name="rShells"></param>
-		Topologic_API void Shells(std::list<std::shared_ptr<Shell>>& rShells) const;
+		TOPOLOGIC_API void Shells(std::list<std::shared_ptr<Shell>>& rShells) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rEdges"></param>
-		Topologic_API void Edges(std::list<std::shared_ptr<Edge>>& rEdges) const;
+		TOPOLOGIC_API void Edges(std::list<std::shared_ptr<Edge>>& rEdges) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rFaces"></param>
-		Topologic_API void Faces(std::list<std::shared_ptr<Face>>& rFaces) const;
+		TOPOLOGIC_API void Faces(std::list<std::shared_ptr<Face>>& rFaces) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rVertices"></param>
-		Topologic_API void Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const;
+		TOPOLOGIC_API void Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rWires"></param>
-		Topologic_API void Wires(std::list<std::shared_ptr<Wire>>& rWires) const;
+		TOPOLOGIC_API void Wires(std::list<std::shared_ptr<Wire>>& rWires) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rCells"></param>
-		Topologic_API void Cells(std::list<std::shared_ptr<Cell>>& rCells) const;
+		TOPOLOGIC_API void Cells(std::list<std::shared_ptr<Cell>>& rCells) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rCells"></param>
-		Topologic_API void CellComplexes(std::list<std::shared_ptr<CellComplex>>& rCellComplexes) const;
+		TOPOLOGIC_API void CellComplexes(std::list<std::shared_ptr<CellComplex>>& rCellComplexes) const;
 
 		virtual TopologyType GetType() const { return TOPOLOGY_CLUSTER; }
 

@@ -334,7 +334,7 @@ namespace Topologic
 
 	Edge::~Edge()
 	{
-		delete m_pCoreEdge;
+		//delete m_pCoreEdge;
 	}
 
 	void Edge::Init(Autodesk::DesignScript::Geometry::NurbsCurve^ pDynamoNurbsCurve)

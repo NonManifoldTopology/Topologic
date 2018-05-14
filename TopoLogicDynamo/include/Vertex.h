@@ -37,6 +37,7 @@ namespace Topologic
 		}
 
 	public protected:
+		Vertex(Vertex^ pAnotherVertex);
 		Vertex(const std::shared_ptr<TopologicCore::Vertex>& kpCoreVertex);
 		Vertex(Autodesk::DesignScript::Geometry::Point^ pDynamoPoint);
 

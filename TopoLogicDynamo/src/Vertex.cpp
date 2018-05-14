@@ -46,6 +46,12 @@ namespace Topologic
 		return *m_pCoreVertex;
 	}
 
+	Vertex::Vertex(Vertex ^ pAnotherVertex)
+		: m_pCoreVertex(pAnotherVertex->m_pCoreVertex)
+	{
+
+	}
+
 	Vertex::Vertex(const std::shared_ptr<TopologicCore::Vertex>& kpCoreVertex)
 		: Topology()
 		, m_pCoreVertex(new std::shared_ptr<TopologicCore::Vertex>(kpCoreVertex))
@@ -71,7 +77,7 @@ namespace Topologic
 
 	Vertex::~Vertex()
 	{
-		delete m_pCoreVertex;
+		//delete m_pCoreVertex;
 	}
 
 	Object^ Vertex::Geometry::get()

@@ -31,7 +31,7 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <param name="rEdges"></param>
-		void Topologic_API Edges(std::list<std::shared_ptr<Edge>>& rEdges) const;
+		void TOPOLOGIC_API Edges(std::list<std::shared_ptr<Edge>>& rEdges) const;
 
 		/// <summary>
 		/// 
@@ -39,26 +39,26 @@ namespace TopologicCore
 		/// <param name="kpParentTopology"></param>
 		/// <param name="rFaces"></param>
 		/// <returns></returns>
-		void Topologic_API Faces(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Face>>& rFaces) const;
+		void TOPOLOGIC_API Faces(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Face>>& rFaces) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		bool Topologic_API IsClosed() const;
+		bool TOPOLOGIC_API IsClosed() const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rVertices"></param>
-		void Topologic_API Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const;
+		void TOPOLOGIC_API Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkEdges"></param>
 		/// <returns></returns>
-		static Topologic_API std::shared_ptr<Wire> ByEdges(const std::list<std::shared_ptr<Edge>>& rkEdges);
+		static TOPOLOGIC_API std::shared_ptr<Wire> ByEdges(const std::list<std::shared_ptr<Edge>>& rkEdges);
 
 		/// <summary>
 		/// 

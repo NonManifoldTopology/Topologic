@@ -4,12 +4,15 @@
 #include <LabelManager.h>
 #include <OcctCounterAttribute.h>
 
+#include <BRepGProp.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRep_Tool.hxx>
 #include <Geom_BSplineCurve.hxx>
 #include <Geom_CartesianPoint.hxx>
+#include <Geom_Line.hxx>
 #include <GeomAPI_Interpolate.hxx>
 #include <GeomLib_Tool.hxx>
+#include <GProp_GProps.hxx>
 #include <gp_Lin.hxx>
 #include <Precision.hxx>
 #include <ShapeAnalysis_Edge.hxx>
@@ -183,7 +186,8 @@ namespace TopologicCore
 
 	double Edge::ParameterAtPoint(const std::shared_ptr<Vertex>& kpVertex) const
 	{
-		Handle(Geom_Curve) pOcctCurve = Curve();
+		double u0 = 0.0, u1 = 0.0;
+		Handle(Geom_Curve) pOcctCurve = Curve(u0, u1);
 		Handle(Geom_Point) pOcctPoint = kpVertex->Point();
 
 		double occtParameter = 0.0;
@@ -194,18 +198,32 @@ namespace TopologicCore
 		}
 
 		// Parameter may be non-normalized, so normalize it
-		return NormalizeParameter(pOcctCurve, occtParameter);
+		return NormalizeParameter(u0, u1, occtParameter);
 	}
 
 	std::shared_ptr<Vertex> Edge::PointAtParameter(const double kParameter) const
 	{
-		Handle(Geom_Curve) pOcctCurve = Curve();
+		double u0 = 0.0, u1 = 0.0;
+		Handle(Geom_Curve) pOcctCurve = Curve(u0, u1);
+		Handle(Geom_Line) pOcctLine = Handle(Geom_Line)::DownCast(pOcctCurve);
+		if (!pOcctLine.IsNull())
+		{
+			u0 = 0.0;
+			u1 = Length();
+		}
 
 		// Parameter is normalized, so non-normalize it
-		double occtParameter = NonNormalizeParameter(pOcctCurve, kParameter);
+		double occtParameter = NonNormalizeParameter(u0, u1, kParameter);
 		gp_Pnt occtPoint = pOcctCurve->Value(occtParameter);
 		
 		return Vertex::ByPoint(new Geom_CartesianPoint(occtPoint));
+	}
+
+	double Edge::Length() const
+	{
+		GProp_GProps occtShapeProperties;
+		BRepGProp::LinearProperties(GetOcctShape(), occtShapeProperties);
+		return occtShapeProperties.Mass();
 	}
 
 	void Edge::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
@@ -247,31 +265,30 @@ namespace TopologicCore
 
 	Handle(Geom_Curve) Edge::Curve() const
 	{
-		// TODO: do these parameters need to be stored?
 		double u0 = 0.0, u1 = 0.0;
-		return BRep_Tool::Curve(GetOcctEdge(), u0, u1);
+		return Curve(u0, u1);
 	}
 
-	double Edge::NormalizeParameter(Handle(Geom_Curve) pOcctCurve, const double kNonNormalizedParameter)
+	Handle(Geom_Curve) Edge::Curve(double rU0, double rU1) const
 	{
-		double occtMinParameter = pOcctCurve->FirstParameter();
-		double occtMaxParameter = pOcctCurve->LastParameter();
-		double occtDParameter = occtMaxParameter - occtMinParameter;
+		return BRep_Tool::Curve(GetOcctEdge(), rU0, rU1);
+	}
+
+	double Edge::NormalizeParameter(const double kOcctMinParameter, const double kOcctMaxParameter, const double kNonNormalizedParameter)
+	{
+		double occtDParameter = kOcctMaxParameter - kOcctMinParameter;
 		if (occtDParameter <= 0.0)
 		{
 			throw std::exception("Negative range");
 		}
 
-		return (kNonNormalizedParameter - occtMinParameter) / occtDParameter;
+		return (kNonNormalizedParameter - kOcctMinParameter) / occtDParameter;
 	}
 
-	double Edge::NonNormalizeParameter(Handle(Geom_Curve) pOcctCurve, const double kNormalizedParameter)
+	double Edge::NonNormalizeParameter(const double kOcctMinParameter, const double kOcctMaxParameter, const double kNormalizedParameter)
 	{
-		double occtMinParameter = pOcctCurve->FirstParameter();
-		double occtMaxParameter = pOcctCurve->LastParameter();
-		double occtDParameter = occtMaxParameter - occtMinParameter;
-
-		return occtMinParameter + kNormalizedParameter * occtDParameter;
+		double occtDParameter = kOcctMaxParameter - kOcctMinParameter;
+		return kOcctMinParameter + kNormalizedParameter * occtDParameter;
 	}
 
 	void Edge::Throw(const BRepBuilderAPI_EdgeError occtEdgeError)

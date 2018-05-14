@@ -98,42 +98,42 @@ namespace TopologicCore
 		/// <param name="rkVertices"></param>
 		/// <param name="rkVertexIndices"></param>
 		/// <returns></returns>
-		static Topologic_API std::shared_ptr<Topology> ByVertexIndex(const std::vector<std::shared_ptr<Vertex>>& rkVertices, const std::list<std::list<int>>& rkVertexIndices);
+		static TOPOLOGIC_API std::shared_ptr<Topology> ByVertexIndex(const std::vector<std::shared_ptr<Vertex>>& rkVertices, const std::list<std::list<int>>& rkVertexIndices);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkTopology"></param>
 		/// <returns></returns>
-		Topologic_API void AddContent(const std::shared_ptr<Topology>& rkTopology);
+		TOPOLOGIC_API void AddContent(const std::shared_ptr<Topology>& rkTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkTopology"></param>
 		/// <returns></returns>
-		Topologic_API void RemoveContent(const std::shared_ptr<Topology>& rkTopology);
+		TOPOLOGIC_API void RemoveContent(const std::shared_ptr<Topology>& rkTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkContext"></param>
 		/// <returns></returns>
-		Topologic_API void AddContext(const std::shared_ptr<Context>& rkContext);
+		TOPOLOGIC_API void AddContext(const std::shared_ptr<Context>& rkContext);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkContext"></param>
 		/// <returns></returns>
-		Topologic_API void RemoveContext(const std::shared_ptr<Context>& rkContext);
+		TOPOLOGIC_API void RemoveContext(const std::shared_ptr<Context>& rkContext);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpTopology"></param>
 		/// <param name="rkSharedTopologies"></param>
-		Topologic_API void SharedTopologies(const std::shared_ptr<Topology>& kpTopology, std::list<std::shared_ptr<Topology>>& rkSharedTopologies) const;
+		TOPOLOGIC_API void SharedTopologies(const std::shared_ptr<Topology>& kpTopology, std::list<std::shared_ptr<Topology>>& rkSharedTopologies) const;
 
 		/// <summary>
 		/// 
@@ -142,7 +142,7 @@ namespace TopologicCore
 		/// <param name="kMaxLevels"></param>
 		/// <param name="kMaxPaths"></param>
 		/// <param name="rkPaths"></param>
-		Topologic_API void PathsTo(const std::shared_ptr<Topology>& kpTopology, const int kMaxLevels, const int kMaxPaths, std::list<std::list<std::shared_ptr<TopologicalQuery>>>& rkPaths) const;
+		TOPOLOGIC_API void PathsTo(const std::shared_ptr<Topology>& kpTopology, const int kMaxLevels, const int kMaxPaths, std::list<std::list<std::shared_ptr<TopologicalQuery>>>& rkPaths) const;
 
 		/// <summary>
 		/// 
@@ -153,7 +153,7 @@ namespace TopologicCore
 		/// <param name="kToolsImagesInArguments"></param>
 		/// <param name="kToolsImagesInTools"></param>
 		/// <returns></returns>
-		Topologic_API void BooleanImages(
+		TOPOLOGIC_API void BooleanImages(
 			const std::shared_ptr<Topology>& kpOtherTopology,
 			std::list<std::shared_ptr<Topology>>& kArgumentImagesInArguments,
 			std::list<std::shared_ptr<Topology>>& kArgumentImagesInTools,
@@ -184,7 +184,7 @@ namespace TopologicCore
 			BOPCol_ListOfShape& kOcctToolsImagesInTools);
 
 
-		Topologic_API void BooleanParts(
+		TOPOLOGIC_API void BooleanParts(
 			const std::shared_ptr<Topology>& kpOtherTopology,
 			std::list<std::shared_ptr<Topology>>& rSpaceBetween_A_A_and_B_A,
 			std::list<std::shared_ptr<Topology>>& rSpaceBetween_B_A_and_A_B,
@@ -195,56 +195,56 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="kpkOtherTopology"></param>
 		/// <returns></returns>
-		Topologic_API std::shared_ptr<Topology> Difference(const std::shared_ptr<Topology>& kpOtherTopology);
+		TOPOLOGIC_API std::shared_ptr<Topology> Difference(const std::shared_ptr<Topology>& kpOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpkOtherTopology"></param>
 		/// <returns></returns>
-		Topologic_API std::shared_ptr<Topology> Impose(const std::shared_ptr<Topology>& kpOtherTopology);
+		TOPOLOGIC_API std::shared_ptr<Topology> Impose(const std::shared_ptr<Topology>& kpOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpkOtherTopology"></param>
 		/// <returns></returns>
-		Topologic_API std::shared_ptr<Topology> Imprint(const std::shared_ptr<Topology>& kpOtherTopology);
+		TOPOLOGIC_API std::shared_ptr<Topology> Imprint(const std::shared_ptr<Topology>& kpOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpkOtherTopology"></param>
 		/// <returns></returns>
-		Topologic_API std::shared_ptr<Topology> Intersection(const std::shared_ptr<Topology>& kpOtherTopology);
+		TOPOLOGIC_API std::shared_ptr<Topology> Intersection(const std::shared_ptr<Topology>& kpOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpkOtherTopology"></param>
 		/// <returns></returns>
-		Topologic_API std::shared_ptr<Topology> Merge(const std::shared_ptr<Topology>& kpOtherTopology);
+		TOPOLOGIC_API std::shared_ptr<Topology> Merge(const std::shared_ptr<Topology>& kpOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpkOtherTopology"></param>
 		/// <returns></returns>
-		Topologic_API std::shared_ptr<Topology> Slice(const std::shared_ptr<Topology>& kpOtherTopology);
+		TOPOLOGIC_API std::shared_ptr<Topology> Slice(const std::shared_ptr<Topology>& kpOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpkOtherTopology"></param>
 		/// <returns></returns>
-		Topologic_API std::shared_ptr<Topology> Union(const std::shared_ptr<Topology>& kpOtherTopology);
+		TOPOLOGIC_API std::shared_ptr<Topology> Union(const std::shared_ptr<Topology>& kpOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpkOtherTopology"></param>
 		/// <returns></returns>
-		Topologic_API std::shared_ptr<Topology> XOR(const std::shared_ptr<Topology>& kpOtherTopology);
+		TOPOLOGIC_API std::shared_ptr<Topology> XOR(const std::shared_ptr<Topology>& kpOtherTopology);
 
 		/// <summary>
 		/// 
@@ -274,7 +274,7 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <param name="rContents"></param>
-		Topologic_API void Contents(std::list<std::shared_ptr<Topology>>& rContents) const;
+		TOPOLOGIC_API void Contents(std::list<std::shared_ptr<Topology>>& rContents) const;
 
 		/// <summary>
 		/// 
@@ -300,7 +300,7 @@ namespace TopologicCore
 		/// <param name="kAllLevels"></param>
 		/// <param name="rContents"></param>
 		/// <returns></returns>
-		Topologic_API void ContentsV2(const bool kAllLevels, std::list<std::shared_ptr<Topology>>& rContents) const;
+		TOPOLOGIC_API void ContentsV2(const bool kAllLevels, std::list<std::shared_ptr<Topology>>& rContents) const;
 
 
 		/// <summary>
@@ -308,20 +308,20 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="rkPath"></param>
 		/// <returns></returns>
-		Topologic_API bool SaveToBrep(const std::string& rkPath) const;
+		TOPOLOGIC_API bool SaveToBrep(const std::string& rkPath) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkPath"></param>
 		/// <returns></returns>
-		static Topologic_API std::shared_ptr<Topology> LoadFromBrep(const std::string& rkPath);
+		static TOPOLOGIC_API std::shared_ptr<Topology> LoadFromBrep(const std::string& rkPath);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		Topologic_API std::string Analyze();
+		TOPOLOGIC_API std::string Analyze();
 
 		/// <summary>
 		/// 
@@ -350,19 +350,19 @@ namespace TopologicCore
 		/// Returns all sub-entities that have no other parents than this topology, i.e. do not belong to other entities.
 		/// </summary>
 		/// <param name="rImmediateMembers">The immediate members</param>
-		Topologic_API void ImmediateMembers(std::list<std::shared_ptr<Topology>>& rImmediateMembers) const;
+		TOPOLOGIC_API void ImmediateMembers(std::list<std::shared_ptr<Topology>>& rImmediateMembers) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		Topologic_API AttributeMap& Attributes() { return m_attributeMap; }
+		TOPOLOGIC_API AttributeMap& Attributes() { return m_attributeMap; }
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		Topologic_API const AttributeMap& Attributes() const { return m_attributeMap; }
+		TOPOLOGIC_API const AttributeMap& Attributes() const { return m_attributeMap; }
 
 		/// <summary>
 		/// 
@@ -443,7 +443,7 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="kpTopology"></param>
 		/// <returns></returns>
-		Topologic_API bool IsSame(const std::shared_ptr<Topology>& kpTopology) const;
+		TOPOLOGIC_API bool IsSame(const std::shared_ptr<Topology>& kpTopology) const;
 
 		/// <summary>
 		/// 
@@ -480,13 +480,13 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		Topologic_API TDF_Label& GetOcctLabel();// { return m_occtLabel; }
+		TOPOLOGIC_API TDF_Label& GetOcctLabel();// { return m_occtLabel; }
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		Topologic_API const TDF_Label& GetOcctLabel() const;// { return m_occtLabel; }
+		TOPOLOGIC_API const TDF_Label& GetOcctLabel() const;// { return m_occtLabel; }
 
 		/// <summary>
 		/// 
@@ -499,7 +499,7 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="kpTopology"></param>
 		/// <returns></returns>
-		Topologic_API std::shared_ptr<Topology> ClosestLowestSubshapeTo(const std::shared_ptr<Topology>& kpTopology) const;
+		TOPOLOGIC_API std::shared_ptr<Topology> ClosestLowestSubshapeTo(const std::shared_ptr<Topology>& kpTopology) const;
 
 	protected:
 		Topology(const int kDimensionality);

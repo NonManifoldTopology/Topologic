@@ -10,6 +10,6 @@ namespace Topologic
 
 	Attribute::~Attribute()
 	{
-		delete m_pCoreAttribute;
+		//delete m_pCoreAttribute;
 	}
 }

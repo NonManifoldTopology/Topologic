@@ -207,6 +207,6 @@ namespace Topologic
 
 	CellComplex::~CellComplex()
 	{
-		delete m_pCoreCellComplex;
+		//delete m_pCoreCellComplex;
 	}
 }

@@ -136,15 +136,27 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="include\Location.h" />
+    <ClInclude Include="include\Context.h" />
+    <ClInclude Include="include\Load.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Location.cpp" />
+    <ClCompile Include="src\Context.cpp" />
+    <ClCompile Include="src\Load.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TopoLogicDynamo\TopoLogicDynamo.vcxproj">
       <Project>{21993835-4ec5-4cc3-bcda-47f6209cd349}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="DynamoServices">
+      <HintPath>..\references\Dynamo\DynamoServices.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="ProtoGeometry">
+      <HintPath>..\references\Dynamo\ProtoGeometry.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

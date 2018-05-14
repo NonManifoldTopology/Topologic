@@ -302,6 +302,6 @@ namespace Topologic
 
 	Shell::~Shell()
 	{
-		delete m_pCoreShell;
+		//delete m_pCoreShell;
 	}
 }

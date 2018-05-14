@@ -36,44 +36,44 @@ namespace TopologicCore
 		/// <param name="kpParentTopology"></param>
 		/// <param name="rCells"></param>
 		/// <returns></returns>
-		Topologic_API void Cells(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Cell>>& rCells) const;
+		TOPOLOGIC_API void Cells(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Cell>>& rCells) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rEdges"></param>
-		Topologic_API void Edges(std::list<std::shared_ptr<Edge>>& rEdges) const;
+		TOPOLOGIC_API void Edges(std::list<std::shared_ptr<Edge>>& rEdges) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rWires"></param>
-		Topologic_API void Wires(std::list<std::shared_ptr<Wire>>& rWires) const;
+		TOPOLOGIC_API void Wires(std::list<std::shared_ptr<Wire>>& rWires) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rFaces"></param>
-		Topologic_API void Faces(std::list<std::shared_ptr<Face>>& rFaces) const;
+		TOPOLOGIC_API void Faces(std::list<std::shared_ptr<Face>>& rFaces) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rVertices"></param>
-		Topologic_API void Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const;
+		TOPOLOGIC_API void Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		Topologic_API bool IsClosed() const;
+		TOPOLOGIC_API bool IsClosed() const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkFaces"></param>
 		/// <returns></returns>
-		static Topologic_API std::shared_ptr<Shell> ByFaces(const std::list<std::shared_ptr<Face>>& rkFaces);
+		static TOPOLOGIC_API std::shared_ptr<Shell> ByFaces(const std::list<std::shared_ptr<Face>>& rkFaces);
 
 		/// <summary>
 		/// 
@@ -81,14 +81,14 @@ namespace TopologicCore
 		/// <param name="rkVertices"></param>
 		/// <param name="rkFaceIndices"></param>
 		/// <returns></returns>
-		static Topologic_API std::shared_ptr<Shell> ByVerticesFaceIndices(const std::vector<std::shared_ptr<Vertex>>& rkVertices, const std::list<std::list<int>>& rkFaceIndices);
+		static TOPOLOGIC_API std::shared_ptr<Shell> ByVerticesFaceIndices(const std::vector<std::shared_ptr<Vertex>>& rkVertices, const std::list<std::list<int>>& rkFaceIndices);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkWires"></param>
 		/// <returns></returns>
-		static Topologic_API std::shared_ptr<Shell> ByLoft(const std::list<std::shared_ptr<Wire>>& rkWires);
+		static TOPOLOGIC_API std::shared_ptr<Shell> ByLoft(const std::list<std::shared_ptr<Wire>>& rkWires);
 
 		/// <summary>
 		/// 
@@ -131,7 +131,7 @@ namespace TopologicCore
 		/// <param name="kCapBottom"></param>
 		/// <param name="kCapTop"></param>
 		/// <returns></returns>
-		Topologic_API static std::shared_ptr<Shell> ByFacePlanarization(
+		TOPOLOGIC_API static std::shared_ptr<Shell> ByFacePlanarization(
 			const std::shared_ptr<Face>& kpFace,
 			const int kIteration,
 			const int kEdgeSamples,
@@ -156,7 +156,7 @@ namespace TopologicCore
 		/// <param name="kCapBottom"></param>
 		/// <param name="kCapTop"></param>
 		/// <returns></returns>
-		Topologic_API static std::shared_ptr<Shell> ByFacePlanarization(
+		TOPOLOGIC_API static std::shared_ptr<Shell> ByFacePlanarization(
 			const std::shared_ptr<Face>& kpFace,
 			const int kIteration,
 			const int kEdgeSamples,

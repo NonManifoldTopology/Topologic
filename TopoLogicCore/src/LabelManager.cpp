@@ -278,7 +278,7 @@ namespace TopologicCore
 
 	LabelManager::~LabelManager()
 	{
-		m_pOcctDocument->Destroy();
+		// m_pOcctDocument is automatically destroyed.
 	}
 
 	void LabelManager::CopyAttributes(const TDF_Label& rkLabel1, TDF_Label& rLabel2)
