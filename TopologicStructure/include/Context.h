@@ -26,14 +26,14 @@ namespace TopologicStructure
 		/// <param name="wShift"></param>
 		/// <returns></returns>
 		static Context^ Create(
-			Topology^ hostTopology, 
+			Topologic::Topology^ hostTopology,
 			double u, double v, double w, 
 			double uScale, double vScale, double wScale, 
 			double uShift, double vShift, double wShift);
 
-		property Topology^ HostTopology
+		property Topologic::Topology^ HostTopology
 		{
-			Topology^ get() { return m_pHostTopology; }
+			Topologic::Topology^ get() { return m_pHostTopology; }
 		}
 
 		property double U
@@ -85,13 +85,13 @@ namespace TopologicStructure
 
 	protected:
 		Context(
-			Topology^ hostTopology,
+			Topologic::Topology^ hostTopology,
 			double u, double v, double w,
 			double uScale, double vScale, double wScale,
 			double uShift, double vShift, double wShift);
 		~Context();
 
-		Topology^ m_pHostTopology;
+		Topologic::Topology^ m_pHostTopology;
 		double m_u;
 		double m_v;
 		double m_w;

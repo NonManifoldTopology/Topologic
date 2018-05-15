@@ -201,6 +201,14 @@ namespace Topologic
 		return safe_cast<Vertex^>(Topology::ByCoreTopology(pCoreVertex));
 	}
 
+	Autodesk::DesignScript::Geometry::Vector^ Face::NormalAtParameter(Autodesk::DesignScript::Geometry::UV^ uv)
+	{
+		std::shared_ptr<TopologicCore::Face> pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
+		gp_Dir normal = pCoreFace->NormalAtParameter(uv->U, uv->V);
+
+		return Autodesk::DesignScript::Geometry::Vector::ByCoordinates(normal.X(), normal.Y(), normal.Z());
+	}
+
 	Face^ Face::Trim(Wire^ wire)
 	{
 		std::shared_ptr<TopologicCore::Face> pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());

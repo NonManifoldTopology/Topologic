@@ -1,6 +1,5 @@
 #include <Load.h>
 
-
 namespace TopologicStructure
 {
 	Load^ Load::ByVertex(Topologic::Vertex^ vertex, Autodesk::DesignScript::Geometry::Vector^ vector)
@@ -20,8 +19,17 @@ namespace TopologicStructure
 		Topologic::Vertex^ pVertex = face->PointAtParameter(pUV);
 		
 		delete pUV;
+
+		if (vector != nullptr)
+		{
+			return gcnew Load(pVertex, vector);
+		}
+
+		// If vector is null, use the surface normal
+		Autodesk::DesignScript::Geometry::Vector^ pSurfaceNormal = face->NormalAtParameter(pUV);
+		Load^ pLoad = gcnew Load(pVertex, pSurfaceNormal);
 		
-		return gcnew Load(pVertex, vector);
+		return pLoad;
 	}
 
 	double Load::Magnitude::get()

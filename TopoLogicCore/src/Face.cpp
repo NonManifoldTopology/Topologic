@@ -14,6 +14,7 @@
 #include <BSplCLib.hxx>
 #include <BRepGProp.hxx>
 #include <Geom_BSplineSurface.hxx>
+#include <GeomLProp_SLProps.hxx>
 #include <GProp_GProps.hxx>
 #include <ShapeAnalysis.hxx>
 #include <ShapeAnalysis_Surface.hxx>
@@ -419,6 +420,17 @@ namespace TopologicCore
 		gp_Pnt occtPoint = occtSurfaceAnalysis.Value(occtU, occtV);
 
 		return Vertex::ByPoint(new Geom_CartesianPoint(occtPoint));
+	}
+
+	gp_Dir Face::NormalAtParameter(const double kU, const double kV) const
+	{
+		Handle(Geom_Surface) pOcctSurface = Surface();
+		double occtU = 0.0, occtV = 0.0;
+		NonNormalizeUV(kU, kV, occtU, occtV);
+
+		GeomLProp_SLProps occtProperties(Surface(), occtU, occtV, 1, Precision::Confusion());
+
+		return occtProperties.Normal();
 	}
 
 	std::shared_ptr<Face> Face::Trim(const std::shared_ptr<Wire>& kpWire) const

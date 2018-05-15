@@ -128,6 +128,13 @@ namespace Topologic {
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="uv"></param>
+		/// <returns></returns>
+		Autodesk::DesignScript::Geometry::Vector^ NormalAtParameter(Autodesk::DesignScript::Geometry::UV^ uv);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="wire"></param>
 		/// <returns name="Face"></returns>
 		Face^ Trim(Wire^ wire);

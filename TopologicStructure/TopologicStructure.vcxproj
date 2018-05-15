@@ -138,10 +138,12 @@
   <ItemGroup>
     <ClInclude Include="include\Context.h" />
     <ClInclude Include="include\Load.h" />
+    <ClInclude Include="include\LoadCluster.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Context.cpp" />
     <ClCompile Include="src\Load.cpp" />
+    <ClCompile Include="src\LoadCluster.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TopoLogicDynamo\TopoLogicDynamo.vcxproj">

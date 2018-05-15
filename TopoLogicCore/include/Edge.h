@@ -149,7 +149,7 @@ namespace TopologicCore
 		/// <param name="rU0"></param>
 		/// <param name="rU1"></param>
 		/// <returns></returns>
-		Handle(Geom_Curve) Curve(double rU0, double rU1) const;
+		Handle(Geom_Curve) Curve(double& rU0, double& rU1) const;
 
 
 		virtual TopologyType GetType() const { return TOPOLOGY_EDGE; }

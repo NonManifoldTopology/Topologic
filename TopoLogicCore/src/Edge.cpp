@@ -269,7 +269,7 @@ namespace TopologicCore
 		return Curve(u0, u1);
 	}
 
-	Handle(Geom_Curve) Edge::Curve(double rU0, double rU1) const
+	Handle(Geom_Curve) Edge::Curve(double& rU0, double& rU1) const
 	{
 		return BRep_Tool::Curve(GetOcctEdge(), rU0, rU1);
 	}

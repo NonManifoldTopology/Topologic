@@ -84,6 +84,8 @@ namespace Topologic
 		List<Cell^>^ Cells();
 
 	public protected:
+		Cluster();
+
 		/// <summary>
 		/// 
 		/// </summary>

@@ -74,6 +74,13 @@ namespace Topologic
 
 	}
 
+	Cluster::Cluster()
+		: Topology()
+		, m_pCoreCluster(nullptr)
+	{
+		
+	}
+
 	std::shared_ptr<TopologicCore::TopologicalQuery> Cluster::GetCoreTopologicalQuery()
 	{
 		assert(m_pCoreCluster != nullptr && "Cluster::m_pCoreCluster is null.");
@@ -204,4 +211,5 @@ namespace Topologic
 
 		return pCells;
 	}
+
 }

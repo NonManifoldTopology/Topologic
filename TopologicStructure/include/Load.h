@@ -1,7 +1,5 @@
 #pragma once
 
-#include <Context.h>
-
 #include <memory>
 
 using namespace System::Collections::Generic;
@@ -11,6 +9,8 @@ using namespace Topologic;
 
 namespace TopologicStructure
 {
+	ref class Context;
+
 	public ref class Load : Topologic::Vertex
 	{
 	public:
@@ -39,7 +39,7 @@ namespace TopologicStructure
 		/// <param name="v"></param>
 		/// <param name="vector"></param>
 		/// <returns></returns>
-		static Load^ ByFace(Topologic::Face^ face, double u, double v, Autodesk::DesignScript::Geometry::Vector^ vector);
+		static Load^ ByFace(Topologic::Face^ face, double u, double v, [Autodesk::DesignScript::Runtime::DefaultArgument("null")] Autodesk::DesignScript::Geometry::Vector^ vector);
 
 		property double Magnitude
 		{

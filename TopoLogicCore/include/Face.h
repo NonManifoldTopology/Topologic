@@ -182,6 +182,14 @@ namespace TopologicCore
 		TOPOLOGIC_API std::shared_ptr<Vertex> PointAtParameter(const double kU, const double kV) const;
 
 		/// <summary>
+		/// Note: Topologic UV values are normalized (from 0 and 1), but OCCT's values are not normalized.
+		/// </summary>
+		/// <param name="kU"></param>
+		/// <param name="kV"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API gp_Dir NormalAtParameter(const double kU, const double kV) const;
+
+		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpWire"></param>
