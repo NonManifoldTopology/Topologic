@@ -32,21 +32,22 @@ namespace Topologic
 		/// <returns name="Topology"></returns>
 		static Topology^ ByContext();
 
-		/// <summary>
+		/*/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="vertexCoordinates"></param>
 		/// <param name="vertexIndices"></param>
 		/// <returns name="Topology"></returns>
-		static Topology^ ByVertexIndex(List<array<double, 3>^>^ vertexCoordinates, List<List<int>^>^ vertexIndices);
+		static Topology^ ByVertexIndex(List<array<double, 3>^>^ vertexCoordinates, List<List<int>^>^ vertexIndices);*/
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="vertices"></param>
 		/// <param name="vertexIndices"></param>
+		/// <param name="tolerance"></param>
 		/// <returns name="Topology"></returns>
-		static Topology^ ByVertexIndex(List<Vertex^>^ vertices, List<List<int>^>^ vertexIndices);
+		static Topology^ ByVertexIndex(List<Vertex^>^ vertices, List<List<int>^>^ vertexIndices, double tolerance);
 
 		/// <summary>
 		/// Returns the dimensionality of the Topological entity.

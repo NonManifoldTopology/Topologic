@@ -84,21 +84,22 @@ namespace TopologicCore
 		/// <returns></returns>
 		static std::shared_ptr<Topology> ByContext(const std::shared_ptr<Context>& kpContext);
 
-		/// <summary>
+		/*/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkVertexCoordinates"></param>
 		/// <param name="rkVertexIndices"></param>
 		/// <returns></returns>
-		static std::shared_ptr<Topology> ByVertexIndex(const std::list<std::array<double, 3>>& rkVertexCoordinates, const std::list<std::list<int>>& rkVertexIndices);
+		static std::shared_ptr<Topology> ByVertexIndex(const std::list<std::array<double, 3>>& rkVertexCoordinates, const std::list<std::list<int>>& rkVertexIndices);*/
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkVertices"></param>
 		/// <param name="rkVertexIndices"></param>
+		/// <param name="kTolerance"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API std::shared_ptr<Topology> ByVertexIndex(const std::vector<std::shared_ptr<Vertex>>& rkVertices, const std::list<std::list<int>>& rkVertexIndices);
+		static TOPOLOGIC_API std::shared_ptr<Topology> ByVertexIndex(const std::vector<std::shared_ptr<Vertex>>& rkVertices, const std::list<std::list<int>>& rkVertexIndices, const double kTolerance);
 
 		/// <summary>
 		/// 

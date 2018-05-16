@@ -37,13 +37,13 @@ namespace Topologic
 		// TODO: insert return statement here
 	}
 
-	Topology^ Topology::ByVertexIndex(List<array<double, 3>^>^ vertexCoordinates, List<List<int>^>^ vertexIndices)
-	{
-		throw gcnew System::NotImplementedException();
-		// TODO: insert return statement here
-	}
+	//Topology^ Topology::ByVertexIndex(List<array<double, 3>^>^ vertexCoordinates, List<List<int>^>^ vertexIndices)
+	//{
+	//	throw gcnew System::NotImplementedException();
+	//	// TODO: insert return statement here
+	//}
 
-	Topology^ Topology::ByVertexIndex(List<Vertex^>^ vertices, List<List<int>^>^ vertexIndices)
+	Topology^ Topology::ByVertexIndex(List<Vertex^>^ vertices, List<List<int>^>^ vertexIndices, double tolerance)
 	{
 		std::vector<std::shared_ptr<TopologicCore::Vertex>> coreVertices;
 		for each(Vertex^ pVertex in vertices)
@@ -66,7 +66,7 @@ namespace Topologic
 			}
 			coreIndices.push_back(coreVertex1DIndices);
 		}
-		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::Topology::ByVertexIndex(coreVertices, coreIndices);
+		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::Topology::ByVertexIndex(coreVertices, coreIndices, tolerance);
 		return Topology::ByCoreTopology(pCoreTopology);
 	}
 
