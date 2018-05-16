@@ -1,6 +1,6 @@
 #include <TransformationMatrix2D.h>
 
-namespace TopologicCore
+namespace TopologicSupport
 {
 	TransformationMatrix2D::~TransformationMatrix2D()
 	{

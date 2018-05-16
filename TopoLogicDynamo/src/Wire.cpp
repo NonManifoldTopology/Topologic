@@ -172,6 +172,6 @@ namespace Topologic
 
 	Wire::~Wire()
 	{
-		//delete m_pCoreWire;
+		delete m_pCoreWire;
 	}
 }

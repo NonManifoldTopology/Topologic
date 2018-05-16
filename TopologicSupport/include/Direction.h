@@ -1,12 +1,13 @@
 #pragma once
 
-#include <Geom_Direction.hxx>
+#include "Utilities.h"
+#include "Vector.h"
 
-#include <Utilities.h>
+#include <Geom_Direction.hxx>
 
 #include <memory>
 
-namespace TopologicCore
+namespace TopologicSupport
 {
 	class Direction
 	{
@@ -14,7 +15,7 @@ namespace TopologicCore
 		typedef std::shared_ptr<Direction> Ptr;
 
 	public:
-		TOPOLOGIC_SUPPORT_API Direction(const Handle(Geom_Direction) kpOcctVector);
+		Direction(const Handle(Geom_Direction) kpOcctVector);
 		~Direction();
 
 		/// <summary>
@@ -24,7 +25,9 @@ namespace TopologicCore
 		/// <param name="kY"></param>
 		/// <param name="kZ"></param>
 		/// <returns></returns>
-		Direction::Ptr ByCoordinates(const double kX, const double kY, const double kZ);
+		TOPOLOGIC_SUPPORT_API static Direction::Ptr ByCoordinates(const double kX, const double kY, const double kZ);
+
+		TOPOLOGIC_SUPPORT_API static Direction::Ptr ByVector(const Vector::Ptr& kpVector);
 
 	protected:
 

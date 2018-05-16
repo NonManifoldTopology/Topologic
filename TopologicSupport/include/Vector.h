@@ -1,12 +1,12 @@
 #pragma once
 
-#include <Utilities.h>
+#include "Utilities.h"
 
 #include <Geom_VectorWithMagnitude.hxx>
 
 #include <memory>
 
-namespace TopologicCore
+namespace TopologicSupport
 {
 	class Vector
 	{
@@ -14,7 +14,7 @@ namespace TopologicCore
 		typedef std::shared_ptr<Vector> Ptr;
 
 	public:
-		TOPOLOGIC_SUPPORT_API Vector(const Handle(Geom_VectorWithMagnitude) kpOcctVector);
+		Vector(const Handle(Geom_VectorWithMagnitude) kpOcctVector);
 		~Vector();
 
 		/// <summary>
@@ -24,7 +24,53 @@ namespace TopologicCore
 		/// <param name="kY"></param>
 		/// <param name="kZ"></param>
 		/// <returns></returns>
-		TOPOLOGIC_SUPPORT_API Vector::Ptr ByCoordinates(const double kX, const double kY, const double kZ);
+		TOPOLOGIC_SUPPORT_API static Vector::Ptr ByCoordinates(const double kX, const double kY, const double kZ);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpAnotherVector"></param>
+		/// <returns></returns>
+		TOPOLOGIC_SUPPORT_API static Vector::Ptr ByReverseVector(const Vector::Ptr& kpAnotherVector);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpAnotherVector"></param>
+		/// <param name="kScalingFactor"></param>
+		/// <returns></returns>
+		TOPOLOGIC_SUPPORT_API static Vector::Ptr ByScaledVector(const Vector::Ptr& kpAnotherVector, const double kScalingFactor);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpAnotherVector"></param>
+		/// <returns></returns>
+		TOPOLOGIC_SUPPORT_API static Vector::Ptr ByNormalizedVector(const Vector::Ptr& kpAnotherVector);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		TOPOLOGIC_SUPPORT_API double Magnitude() const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		TOPOLOGIC_SUPPORT_API double X() const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		TOPOLOGIC_SUPPORT_API double Y() const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		TOPOLOGIC_SUPPORT_API double Z() const;
 
 	protected:
 		Handle(Geom_VectorWithMagnitude) m_pOcctVector;

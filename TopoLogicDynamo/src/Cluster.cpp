@@ -94,7 +94,7 @@ namespace Topologic
 
 	Cluster::~Cluster()
 	{
-		//delete m_pCoreCluster;
+		delete m_pCoreCluster;
 	}
 
 

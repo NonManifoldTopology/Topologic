@@ -2,6 +2,8 @@
 
 #include <memory>
 
+#include <TopologicSupport/include/Vector.h>
+
 using namespace System::Collections::Generic;
 using namespace System;
 using namespace Autodesk::DesignScript::Geometry;
@@ -50,13 +52,13 @@ namespace TopologicStructure
 			double get();
 		}
 
-		property Autodesk::DesignScript::Geometry::Vector^ Vector
+		property Autodesk::DesignScript::Geometry::Vector^ Direction
 		{
 			/// <summary>
 			/// 
 			/// </summary>
 			/// <returns></returns>
-			Autodesk::DesignScript::Geometry::Vector^ get() { return m_pVector; }
+			Autodesk::DesignScript::Geometry::Vector^ get();
 		}
 
 		property Context^ Context
@@ -81,10 +83,10 @@ namespace TopologicStructure
 	public protected:
 
 	protected:
-		Load(Topologic::Vertex^ vertex, Autodesk::DesignScript::Geometry::Vector^ vector);
+		Load(Topologic::Vertex^ vertex, const TopologicSupport::Vector::Ptr& vector);
 		virtual ~Load();
 
-		Autodesk::DesignScript::Geometry::Vector^ m_pVector;
+		TopologicSupport::Vector::Ptr* m_pVector;
 		TopologicStructure::Context^ m_pContext;
 	};
 }

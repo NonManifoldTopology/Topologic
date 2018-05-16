@@ -43,7 +43,7 @@ namespace Topologic
 
 	Context::~Context()
 	{
-		//delete m_pCoreContext;
+		delete m_pCoreContext;
 	}
 
 	std::shared_ptr<TopologicCore::TopologicalQuery> Context::GetCoreTopologicalQuery()

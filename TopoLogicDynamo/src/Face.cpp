@@ -739,7 +739,7 @@ namespace Topologic
 
 	Face::~Face()
 	{
-		//delete m_pCoreFace;
+		delete m_pCoreFace;
 	}
 
 	void Face::Init(Autodesk::DesignScript::Geometry::NurbsSurface^ pDynamoNurbsSurface,

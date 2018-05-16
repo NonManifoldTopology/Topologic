@@ -462,6 +462,6 @@ namespace Topologic
 
 	Cell::~Cell()
 	{
-		//delete m_pCoreCell;
+		delete m_pCoreCell;
 	}
 }

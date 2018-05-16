@@ -6,7 +6,7 @@
 
 #include <memory>
 
-namespace TopologicCore
+namespace TopologicSupport
 {
 	class TransformationMatrix2D
 	{
@@ -14,7 +14,7 @@ namespace TopologicCore
 		typedef std::shared_ptr<TransformationMatrix2D> Ptr;
 
 	public:
-		TOPOLOGIC_SUPPORT_API TransformationMatrix2D(const Handle(Geom2d_Transformation) kpOcctTransformationMatrix2D);
+		TransformationMatrix2D(const Handle(Geom2d_Transformation) kpOcctTransformationMatrix2D);
 		~TransformationMatrix2D();
 
 	protected:
