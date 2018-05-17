@@ -4,6 +4,8 @@
 
 #include <memory>
 
+#include <TDF_Attribute.hxx>
+
 namespace Topologic
 {
 	public ref class Attribute
@@ -11,11 +13,11 @@ namespace Topologic
 	public:
 		
 	public protected:
-		Attribute(const std::shared_ptr<TopologicCore::Attribute>& kpCoreAttribute);
+		Attribute(Handle(TDF_Attribute) pCoreAttribute);
 
 	protected:
 		~Attribute();
 
-		std::shared_ptr<TopologicCore::Attribute>* m_pCoreAttribute;
+		Handle(TDF_Attribute)* m_pCoreAttribute;
 	};
 }

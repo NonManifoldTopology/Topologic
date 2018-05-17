@@ -4,10 +4,21 @@
     <ClInclude Include="include\Load.h" />
     <ClInclude Include="include\Context.h" />
     <ClInclude Include="include\LoadCluster.h" />
+    <ClInclude Include="include\OcctLoadAttribute.h">
+      <Filter>Label</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Load.cpp" />
     <ClCompile Include="src\Context.cpp" />
     <ClCompile Include="src\LoadCluster.cpp" />
+    <ClCompile Include="src\OcctLoadAttribute.cpp">
+      <Filter>Label</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Label">
+      <UniqueIdentifier>{3f788237-605a-4437-9e06-bbc7f5499845}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

@@ -3,10 +3,12 @@
 #include <memory>
 
 #include <TopologicSupport/include/Vector.h>
+#include <TopologicCore/include/TopologicalQuery.h>
 
 using namespace System::Collections::Generic;
 using namespace System;
 using namespace Autodesk::DesignScript::Geometry;
+using namespace Autodesk::DesignScript::Runtime;
 using namespace Topologic;
 
 namespace TopologicStructure

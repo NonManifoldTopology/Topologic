@@ -2,8 +2,8 @@
 
 namespace Topologic
 {
-	Attribute::Attribute(const std::shared_ptr<TopologicCore::Attribute>& kpCoreAttribute)
-		: m_pCoreAttribute(new std::shared_ptr<TopologicCore::Attribute>(kpCoreAttribute))
+	Attribute::Attribute(Handle(TDF_Attribute) pCoreAttribute)
+		: m_pCoreAttribute(new Handle(TDF_Attribute)(pCoreAttribute))
 	{
 
 	}

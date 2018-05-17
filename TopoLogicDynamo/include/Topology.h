@@ -7,6 +7,8 @@ using namespace System;
 using namespace System::Collections::Generic;
 using namespace Autodesk::DesignScript::Runtime;
 
+#pragma make_public(TDF_Attribute)
+
 namespace Topologic
 {
 	ref class Vertex;
@@ -106,9 +108,9 @@ namespace Topologic
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="topology"></param>
+		/// <param name="contentTopology"></param>
 		/// <returns name="Topology"></returns>
-		Topology^ AddContent(Topology^ topology);
+		Topology^ AddContent(Topology^ contentTopology);
 
 		/// <summary>
 		/// 
@@ -274,6 +276,11 @@ namespace Topologic
 		static Topology^ ByCoreTopology(const std::shared_ptr<TopologicCore::Topology>& kpCoreTopology);
 
 	protected:
+		/// <summary>
+		/// 
+		/// </summary>
+		void AttachAttribute(TDF_Attribute* pAttribute);
+
 		Topology();
 		virtual ~Topology();
 	};

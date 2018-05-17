@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -141,11 +141,13 @@
     <ClInclude Include="include\Context.h" />
     <ClInclude Include="include\Load.h" />
     <ClInclude Include="include\LoadCluster.h" />
+    <ClInclude Include="include\OcctLoadAttribute.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Context.cpp" />
     <ClCompile Include="src\Load.cpp" />
     <ClCompile Include="src\LoadCluster.cpp" />
+    <ClCompile Include="src\OcctLoadAttribute.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TopoLogicDynamo\TopoLogicDynamo.vcxproj">

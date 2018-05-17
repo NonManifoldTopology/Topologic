@@ -1,4 +1,9 @@
 #include <Load.h>
+#include <OcctLoadAttribute.h>
+
+#include <TopologicCore/include/Vertex.h>
+
+#include <assert.h>
 
 namespace TopologicStructure
 {
@@ -37,11 +42,21 @@ namespace TopologicStructure
 		return (*m_pVector)->Magnitude();
 	}
 
+	//void Load::AttachAttribute()
+	//{
+	//	//GetCoreTopologicalQuery();
+	//}
+
 	Load::Load(Topologic::Vertex^ vertex, const TopologicSupport::Vector::Ptr& vector)
 		: Topologic::Vertex(vertex)
 		, m_pVector(new TopologicSupport::Vector::Ptr(vector))
 	{
-
+		Handle(OcctLoadAttribute) pOcctLoadAttribute = new OcctLoadAttribute(
+			vector->X(), vector->Y(), vector->Z(),
+			vector->Magnitude());
+		
+		//Topologic::Attribute^ pAttribute = gcnew Topologic::Attribute(abc);
+		AttachAttribute(pOcctLoadAttribute.get());
 	}
 
 	Load::~Load()

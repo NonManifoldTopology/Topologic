@@ -148,6 +148,17 @@ namespace Topologic
 		return ByCoreTopology(pClosestLowestSubshape);
 	}
 
+	void Topology::AttachAttribute(TDF_Attribute* attribute)
+	{
+		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		TDF_Label& rLabel = pCoreTopology->GetOcctLabel();
+
+		Handle(TDF_Attribute) pAttribute(attribute);
+		if (!rLabel.FindAttribute(attribute->ID(), pAttribute)) {
+			rLabel.AddAttribute(pAttribute);
+		}
+	}
+
 	Topology^ Topology::ByCoreTopology(const std::shared_ptr<TopologicCore::Topology>& kpCoreTopology)
 	{
 		switch (kpCoreTopology->GetType())
@@ -229,10 +240,12 @@ namespace Topologic
 		return pContexts;
 	}
 
-	Topology^ Topology::AddContent(Topology^ topology)
+	// This topology is the parent topology.
+	Topology^ Topology::AddContent(Topology^ contentTopology)
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		pCoreTopology->AddContent(TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery()));
+		pCoreTopology->AddContent(TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(contentTopology->GetCoreTopologicalQuery()));
+		//contentTopology->AttachAttributes();
 		return this;
 	}
 
