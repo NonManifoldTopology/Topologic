@@ -27,7 +27,7 @@
     <ClInclude Include="include\OcctContentsAttribute.h">
       <Filter>Label</Filter>
     </ClInclude>
-    <ClInclude Include="include\OcctContextsAttribute.h">
+    <ClInclude Include="include\OcctContextListAttribute.h">
       <Filter>Label</Filter>
     </ClInclude>
   </ItemGroup>
@@ -55,7 +55,7 @@
     <ClCompile Include="src\OcctContentsAttribute.cpp">
       <Filter>Label</Filter>
     </ClCompile>
-    <ClCompile Include="src\OcctContextsAttribute.cpp">
+    <ClCompile Include="src\OcctContextListAttribute.cpp">
       <Filter>Label</Filter>
     </ClCompile>
   </ItemGroup>

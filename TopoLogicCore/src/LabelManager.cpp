@@ -2,7 +2,7 @@
 #include <Topology.h>
 #include <OcctRelationshipAttribute.h>
 #include <OcctCounterAttribute.h>
-#include <OcctContextsAttribute.h>
+#include <OcctContextListAttribute.h>
 #include <OcctContentsAttribute.h>
 
 #include <TDF_AttributeIterator.hxx>
@@ -39,7 +39,7 @@ namespace TopologicCore
 
 	void LabelManager::AddContentsContextsToLabel(TDF_Label & rOcctLabel)
 	{
-		OcctContextsAttribute::Set(rOcctLabel);
+		OcctContextListAttribute::Set(rOcctLabel);
 		OcctContentsAttribute::Set(rOcctLabel);
 	}
 
@@ -199,15 +199,15 @@ namespace TopologicCore
 	void LabelManager::AddContent(const TDF_Label & rkOcctContentLabel, const TDF_Label & rkOcctContextLabel)
 	{
 		{
-			Handle(OcctContextsAttribute) pOcctContextsAttribute; // of the content label
-			bool hasContextsAttribute = rkOcctContentLabel.FindAttribute(OcctContextsAttribute::GetID(), pOcctContextsAttribute);
+			Handle(OcctContextListAttribute) pOcctContextListAttribute; // of the content label
+			bool hasContextsAttribute = rkOcctContentLabel.FindAttribute(OcctContextListAttribute::GetID(), pOcctContextListAttribute);
 			if (!hasContextsAttribute)
 			{
 				assert(false);
 			}
 
 			// Remove the content label from the old context labels
-			std::list<TDF_Label>& rkContexts = pOcctContextsAttribute->GetContexts();
+			std::list<TDF_Label>& rkContexts = pOcctContextListAttribute->GetContexts();
 			for (const TDF_Label& rkOcctContextLabel : rkContexts)
 			{
 				Handle(OcctContentsAttribute) pOcctContentsAttribute; // of the context label
@@ -224,7 +224,7 @@ namespace TopologicCore
 			rkContexts.clear();
 
 			// Add the new context to the content
-			pOcctContextsAttribute->AddContext(rkOcctContextLabel);
+			pOcctContextListAttribute->AddContext(rkOcctContextLabel);
 		}
 
 		{

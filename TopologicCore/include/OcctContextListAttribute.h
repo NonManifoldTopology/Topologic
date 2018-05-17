@@ -6,11 +6,11 @@
 
 namespace TopologicCore
 {
-	class OcctContextsAttribute : public TDF_Attribute
+	class OcctContextListAttribute : public TDF_Attribute
 	{
 	public:
-		OcctContextsAttribute();
-		~OcctContextsAttribute();
+		OcctContextListAttribute();
+		~OcctContextListAttribute();
 
 		/// <summary>
 		/// 
@@ -61,7 +61,7 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="label"></param>
 		/// <returns></returns>
-		static Handle(OcctContextsAttribute) Set(const TDF_Label& label);
+		static Handle(OcctContextListAttribute) Set(const TDF_Label& label);
 
 		/// <summary>
 		/// 
