@@ -502,6 +502,13 @@ namespace TopologicCore
 		/// <returns></returns>
 		TOPOLOGIC_API std::shared_ptr<Topology> ClosestLowestSubshapeTo(const std::shared_ptr<Topology>& kpTopology) const;
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kID"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API TDF_Attribute* FindAttribute(const Standard_GUID& kID) const;
+
 	protected:
 		Topology(const int kDimensionality);
 

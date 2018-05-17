@@ -148,6 +148,13 @@ namespace Topologic
 		return ByCoreTopology(pClosestLowestSubshape);
 	}
 
+	TDF_Attribute* Topology::FindAttribute(String ^ ID)
+	{
+		std::string cppID = msclr::interop::marshal_as<std::string>(ID);
+		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		return pCoreTopology->FindAttribute(Standard_GUID(cppID.c_str()));
+	}
+
 	void Topology::AttachAttribute(TDF_Attribute* attribute)
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());

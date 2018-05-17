@@ -1,6 +1,6 @@
 #pragma once
 
-#include <TopologicalQuery.h>
+#include "TopologicalQuery.h"
 #include <TopologicCore/include/Topology.h>
 
 using namespace System;
@@ -271,6 +271,9 @@ namespace Topologic
 		/// <param name="queryTopology"></param>
 		/// <returns></returns>
 		Topology^ ClosestLowestSubshapeTo(Topology^ queryTopology);
+
+		[IsVisibleInDynamoLibrary(false)]
+		TDF_Attribute* FindAttribute(String^ ID);
 
 	public protected:
 		static Topology^ ByCoreTopology(const std::shared_ptr<TopologicCore::Topology>& kpCoreTopology);

@@ -9,13 +9,13 @@ namespace TopologicStructure
 {
 	Load^ Load::ByVertex(Topologic::Vertex^ vertex, Autodesk::DesignScript::Geometry::Vector^ vector)
 	{
-		return gcnew Load(vertex, TopologicSupport::Vector::ByCoordinates(vector->X, vector->Y, vector->Z));
+		return gcnew Load(vertex, TopologicSupport::Vector::ByCoordinates(vector->X, vector->Y, vector->Z), true);
 	}
 
 	Load^ Load::ByEdge(Topologic::Edge^ edge, double u, Autodesk::DesignScript::Geometry::Vector^ vector)
 	{
 		Topologic::Vertex^ pVertex = edge->PointAtParameter(u);
-		return gcnew Load(pVertex, TopologicSupport::Vector::ByCoordinates(vector->X, vector->Y, vector->Z));
+		return gcnew Load(pVertex, TopologicSupport::Vector::ByCoordinates(vector->X, vector->Y, vector->Z), true);
 	}
 
 	Load^ Load::ByFace(Topologic::Face^ face, double u, double v, Autodesk::DesignScript::Geometry::Vector^ vector)
@@ -27,12 +27,12 @@ namespace TopologicStructure
 
 		if (vector != nullptr)
 		{
-			return gcnew Load(pVertex, TopologicSupport::Vector::ByCoordinates(vector->X, vector->Y, vector->Z));
+			return gcnew Load(pVertex, TopologicSupport::Vector::ByCoordinates(vector->X, vector->Y, vector->Z), true);
 		}
 
 		// If vector is null, use the reverse surface normal
 		Autodesk::DesignScript::Geometry::Vector^ pSurfaceNormal = face->NormalAtParameter(pUV);
-		Load^ pLoad = gcnew Load(pVertex, TopologicSupport::Vector::ByCoordinates(-pSurfaceNormal->X, -pSurfaceNormal->Y, -pSurfaceNormal->Z));
+		Load^ pLoad = gcnew Load(pVertex, TopologicSupport::Vector::ByCoordinates(-pSurfaceNormal->X, -pSurfaceNormal->Y, -pSurfaceNormal->Z), true);
 		delete pSurfaceNormal;
 		return pLoad;
 	}
@@ -47,7 +47,7 @@ namespace TopologicStructure
 	//	//GetCoreTopologicalQuery();
 	//}
 
-	Load::Load(Topologic::Vertex^ vertex, const TopologicSupport::Vector::Ptr& vector)
+	Load::Load(Topologic::Vertex^ vertex, const TopologicSupport::Vector::Ptr& vector, bool attachAttribute)
 		: Topologic::Vertex(vertex)
 		, m_pVector(new TopologicSupport::Vector::Ptr(vector))
 	{
@@ -55,8 +55,11 @@ namespace TopologicStructure
 			vector->X(), vector->Y(), vector->Z(),
 			vector->Magnitude());
 		
-		//Topologic::Attribute^ pAttribute = gcnew Topologic::Attribute(abc);
-		AttachAttribute(pOcctLoadAttribute.get());
+		if (attachAttribute)
+		{
+			// Attach the load attribute to the vertex's label
+			AttachAttribute(pOcctLoadAttribute.get());
+		}
 	}
 
 	Load::~Load()

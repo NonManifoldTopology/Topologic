@@ -140,12 +140,14 @@
   <ItemGroup>
     <ClInclude Include="include\Context.h" />
     <ClInclude Include="include\Load.h" />
+    <ClInclude Include="include\LoadAnalysis.h" />
     <ClInclude Include="include\LoadCluster.h" />
     <ClInclude Include="include\OcctLoadAttribute.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Context.cpp" />
     <ClCompile Include="src\Load.cpp" />
+    <ClCompile Include="src\LoadAnalysis.cpp" />
     <ClCompile Include="src\LoadCluster.cpp" />
     <ClCompile Include="src\OcctLoadAttribute.cpp" />
   </ItemGroup>

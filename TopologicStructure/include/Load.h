@@ -83,9 +83,9 @@ namespace TopologicStructure
 		}
 
 	public protected:
+		Load(Topologic::Vertex^ vertex, const TopologicSupport::Vector::Ptr& vector, const bool attachAttribute);
 
 	protected:
-		Load(Topologic::Vertex^ vertex, const TopologicSupport::Vector::Ptr& vector);
 		virtual ~Load();
 
 		TopologicSupport::Vector::Ptr* m_pVector;

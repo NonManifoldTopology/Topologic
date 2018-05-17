@@ -183,6 +183,11 @@ namespace TopologicCore
 		return Topology::ByOcctShape(occtClosestSubshape);
 	}
 
+	TDF_Attribute * Topology::FindAttribute(const Standard_GUID & kID) const
+	{
+		return LabelManager::FindAttribute(GetOcctLabel(), kID);
+	}
+
 	Topology::Topology(const int kDimensionality)
 		: m_dimensionality(kDimensionality)
 		, m_isInGlobalCluster(false)

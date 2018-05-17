@@ -270,6 +270,13 @@ namespace TopologicCore
 		}
 	}
 
+	TDF_Attribute* LabelManager::FindAttribute(const TDF_Label & rkOcctLabel, const Standard_GUID& rkID)
+	{
+		Handle(TDF_Attribute) pOcctAttribute;
+		rkOcctLabel.FindAttribute(rkID, pOcctAttribute);
+		return pOcctAttribute.get();
+	}
+
 	LabelManager::LabelManager()
 	: m_pOcctDocument(new TDF_Data())
 	{

@@ -66,6 +66,10 @@ namespace TopologicStructure
 			double& rXDirection, double& rYDirection, double& rZDirection,
 			double& rMagnitude) const;
 
+		double X() const { return m_xDirection; }
+		double Y() const { return m_yDirection; }
+		double Z() const { return m_zDirection; }
+
 	protected:
 		double m_xDirection;
 		double m_yDirection;

@@ -141,6 +141,14 @@ namespace TopologicCore
 		/// <returns></returns>
 		static TopoDS_Shape GetShape(const TDF_Label& rkOcctLabel);
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkOcctLabel"></param>
+		/// <param name="rkID"></param>
+		/// <returns></returns>
+		static TDF_Attribute* FindAttribute(const TDF_Label& rkOcctLabel, const Standard_GUID& rkID);
+
 	protected:
 		LabelManager();
 		~LabelManager();
