@@ -139,13 +139,21 @@ namespace Topologic
 		return pCoreTopology->IsSame(pOtherCoreTopology);
 	}
 
-	Topology ^ Topology::ClosestLowestSubshapeTo(Topology^ queryTopology)
+	Topology ^ Topology::ClosestSimplestSubshape(Topology^ queryTopology)
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		std::shared_ptr<TopologicCore::Topology> pCoreQueryTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(queryTopology->GetCoreTopologicalQuery());
 
 		std::shared_ptr<TopologicCore::Topology> pClosestLowestSubshape = pCoreTopology->ClosestLowestSubshapeTo(pCoreQueryTopology);
 		return ByCoreTopology(pClosestLowestSubshape);
+	}
+
+	double Topology::Distance(Topology ^ topology)
+	{
+		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		TopologicCore::Topology::Ptr pCoreOtherTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
+
+		return pCoreTopology->Distance(pCoreOtherTopology);
 	}
 
 	TDF_Attribute* Topology::FindAttribute(String ^ ID)

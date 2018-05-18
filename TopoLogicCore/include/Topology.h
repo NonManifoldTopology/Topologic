@@ -59,6 +59,7 @@ namespace TopologicCore
 		typedef std::map<std::string, std::shared_ptr<Attribute>> AttributeMap;
 		typedef AttributeMap::iterator AttributeMapIterator;
 		typedef AttributeMap::const_iterator AttributeMapConstIterator;
+		typedef std::shared_ptr<Topology> Ptr;
 
 	public:
 		virtual ~Topology();
@@ -508,6 +509,13 @@ namespace TopologicCore
 		/// <param name="kID"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API TDF_Attribute* FindAttribute(const Standard_GUID& kID) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpTopology"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API double Distance(const Topology::Ptr& kpTopology) const;
 
 	protected:
 		Topology(const int kDimensionality);

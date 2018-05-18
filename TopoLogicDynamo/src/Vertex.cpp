@@ -77,7 +77,7 @@ namespace Topologic
 
 	Vertex::~Vertex()
 	{
-		delete m_pCoreVertex;
+		//delete m_pCoreVertex;
 	}
 
 	Object^ Vertex::Geometry::get()

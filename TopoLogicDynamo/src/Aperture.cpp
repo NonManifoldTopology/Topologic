@@ -143,7 +143,7 @@ namespace Topologic
 
 	Aperture::~Aperture()
 	{
-		delete m_pCoreAperture;
+		//delete m_pCoreAperture;
 	}
 
 	std::shared_ptr<TopologicCore::TopologicalQuery> Aperture::GetCoreTopologicalQuery()

@@ -30,6 +30,9 @@
     <ClInclude Include="include\OcctContextListAttribute.h">
       <Filter>Label</Filter>
     </ClInclude>
+    <ClInclude Include="include\OcctContextAttribute.h">
+      <Filter>Label</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
@@ -56,6 +59,9 @@
       <Filter>Label</Filter>
     </ClCompile>
     <ClCompile Include="src\OcctContextListAttribute.cpp">
+      <Filter>Label</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OcctContextAttribute.cpp">
       <Filter>Label</Filter>
     </ClCompile>
   </ItemGroup>

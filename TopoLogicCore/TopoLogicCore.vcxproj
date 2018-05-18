@@ -162,6 +162,7 @@
     <ClInclude Include="include\Face.h" />
     <ClInclude Include="include\GlobalCluster.h" />
     <ClInclude Include="include\OcctContentsAttribute.h" />
+    <ClInclude Include="include\OcctContextAttribute.h" />
     <ClInclude Include="include\OcctContextListAttribute.h" />
     <ClInclude Include="include\OcctCounterAttribute.h" />
     <ClInclude Include="include\OcctRelationshipAttribute.h" />
@@ -184,6 +185,7 @@
     <ClCompile Include="src\GlobalCluster.cpp" />
     <ClCompile Include="src\LabelManager.cpp" />
     <ClCompile Include="src\OcctContentsAttribute.cpp" />
+    <ClCompile Include="src\OcctContextAttribute.cpp" />
     <ClCompile Include="src\OcctContextListAttribute.cpp" />
     <ClCompile Include="src\OcctCounterAttribute.cpp" />
     <ClCompile Include="src\OcctRelationshipAttribute.cpp" />

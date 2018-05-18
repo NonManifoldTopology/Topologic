@@ -188,6 +188,12 @@ namespace TopologicCore
 		return LabelManager::FindAttribute(GetOcctLabel(), kID);
 	}
 
+	double Topology::Distance(const Topology::Ptr& kpTopology) const
+	{
+		BRepExtrema_DistShapeShape occtDistance(GetOcctShape(), kpTopology->GetOcctShape());
+		return occtDistance.Value();
+	}
+
 	Topology::Topology(const int kDimensionality)
 		: m_dimensionality(kDimensionality)
 		, m_isInGlobalCluster(false)

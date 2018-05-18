@@ -14,6 +14,11 @@ namespace TopologicStructure
 
 	Load^ Load::ByEdge(Topologic::Edge^ edge, double u, Autodesk::DesignScript::Geometry::Vector^ vector)
 	{
+		if (u < 0.0 || u > 1.0)
+		{
+			throw gcnew Exception("Parameter out of bound; it needs to be between 0 and 1.");
+		}
+
 		Topologic::Vertex^ pVertex = edge->PointAtParameter(u);
 		return gcnew Load(pVertex, TopologicSupport::Vector::ByCoordinates(vector->X, vector->Y, vector->Z), true);
 	}
@@ -21,20 +26,26 @@ namespace TopologicStructure
 	Load^ Load::ByFace(Topologic::Face^ face, double u, double v, Autodesk::DesignScript::Geometry::Vector^ vector)
 	{
 		Autodesk::DesignScript::Geometry::UV^ pUV = Autodesk::DesignScript::Geometry::UV::ByCoordinates(u, v);
-		Topologic::Vertex^ pVertex = face->PointAtParameter(pUV);
-		
-		delete pUV;
+		try {
+			Topologic::Vertex^ pVertex = face->PointAtParameter(pUV);
 
-		if (vector != nullptr)
-		{
-			return gcnew Load(pVertex, TopologicSupport::Vector::ByCoordinates(vector->X, vector->Y, vector->Z), true);
+			delete pUV;
+
+			if (vector != nullptr)
+			{
+				return gcnew Load(pVertex, TopologicSupport::Vector::ByCoordinates(vector->X, vector->Y, vector->Z), true);
+			}
+
+			// If vector is null, use the reverse surface normal
+			Autodesk::DesignScript::Geometry::Vector^ pSurfaceNormal = face->NormalAtParameter(pUV);
+			Load^ pLoad = gcnew Load(pVertex, TopologicSupport::Vector::ByCoordinates(-pSurfaceNormal->X, -pSurfaceNormal->Y, -pSurfaceNormal->Z), true);
+			delete pSurfaceNormal;
+			return pLoad;
 		}
-
-		// If vector is null, use the reverse surface normal
-		Autodesk::DesignScript::Geometry::Vector^ pSurfaceNormal = face->NormalAtParameter(pUV);
-		Load^ pLoad = gcnew Load(pVertex, TopologicSupport::Vector::ByCoordinates(-pSurfaceNormal->X, -pSurfaceNormal->Y, -pSurfaceNormal->Z), true);
-		delete pSurfaceNormal;
-		return pLoad;
+		catch (Exception^ e)
+		{
+			throw gcnew Exception("Load not on the face.");
+		}
 	}
 
 	double Load::Magnitude::get()
@@ -55,11 +66,11 @@ namespace TopologicStructure
 			vector->X(), vector->Y(), vector->Z(),
 			vector->Magnitude());
 		
-		if (attachAttribute)
-		{
-			// Attach the load attribute to the vertex's label
-			AttachAttribute(pOcctLoadAttribute.get());
-		}
+		//if (attachAttribute)
+		//{
+		//	// Attach the load attribute to the vertex's label
+		//	AttachAttribute(pOcctLoadAttribute.get());
+		//}
 	}
 
 	Load::~Load()

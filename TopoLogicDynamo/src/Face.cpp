@@ -196,9 +196,15 @@ namespace Topologic
 	Vertex^ Face::PointAtParameter(Autodesk::DesignScript::Geometry::UV^ uv)
 	{
 		std::shared_ptr<TopologicCore::Face> pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopologicCore::Vertex> pCoreVertex = pCoreFace->PointAtParameter(uv->U, uv->V);
-
-		return safe_cast<Vertex^>(Topology::ByCoreTopology(pCoreVertex));
+		try{
+			std::shared_ptr<TopologicCore::Vertex> pCoreVertex = pCoreFace->PointAtParameter(uv->U, uv->V);
+			return safe_cast<Vertex^>(Topology::ByCoreTopology(pCoreVertex));
+		}
+		catch (std::exception& e)
+		{
+			throw gcnew Exception(gcnew String(e.what()));
+		}
+		return nullptr;
 	}
 
 	Autodesk::DesignScript::Geometry::Vector^ Face::NormalAtParameter(Autodesk::DesignScript::Geometry::UV^ uv)
@@ -739,7 +745,7 @@ namespace Topologic
 
 	Face::~Face()
 	{
-		delete m_pCoreFace;
+		//delete m_pCoreFace;
 	}
 
 	void Face::Init(Autodesk::DesignScript::Geometry::NurbsSurface^ pDynamoNurbsSurface,

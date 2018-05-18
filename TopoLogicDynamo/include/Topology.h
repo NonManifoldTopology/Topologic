@@ -270,7 +270,14 @@ namespace Topologic
 		/// </summary>
 		/// <param name="queryTopology"></param>
 		/// <returns></returns>
-		Topology^ ClosestLowestSubshapeTo(Topology^ queryTopology);
+		Topology^ ClosestSimplestSubshape(Topology^ queryTopology);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="topology"></param>
+		/// <returns></returns>
+		double Distance(Topology^ topology);
 
 		[IsVisibleInDynamoLibrary(false)]
 		TDF_Attribute* FindAttribute(String^ ID);

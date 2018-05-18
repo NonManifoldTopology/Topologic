@@ -418,6 +418,14 @@ namespace TopologicCore
 
 		ShapeAnalysis_Surface occtSurfaceAnalysis(Surface());
 		gp_Pnt occtPoint = occtSurfaceAnalysis.Value(occtU, occtV);
+		Vertex::Ptr vertex = Vertex::ByPoint(new Geom_CartesianPoint(occtPoint));
+
+		// Check distance: if more than a small aount, it is not part of the face.
+		double distance = Distance(vertex);
+		if (distance > Precision::Confusion())
+		{
+			throw std::exception("Point not on the face.");
+		}
 
 		return Vertex::ByPoint(new Geom_CartesianPoint(occtPoint));
 	}
