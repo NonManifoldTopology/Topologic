@@ -100,7 +100,7 @@ namespace TopologicCore
 		/// <param name="rkVertexIndices"></param>
 		/// <param name="kTolerance"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API std::shared_ptr<Topology> ByVertexIndex(const std::vector<std::shared_ptr<Vertex>>& rkVertices, const std::list<std::list<int>>& rkVertexIndices, const double kTolerance);
+		static TOPOLOGIC_API std::shared_ptr<Topology> ByVertexIndex(const std::vector<std::shared_ptr<Vertex>>& rkVertices, const std::list<std::list<int>>& rkVertexIndices, const int iteration);
 
 		/// <summary>
 		/// 

@@ -14,6 +14,8 @@
 #include <BSplCLib.hxx>
 #include <BRepGProp.hxx>
 #include <Geom_BSplineSurface.hxx>
+#include <GeomConvert.hxx>
+#include <Geom_RectangularTrimmedSurface.hxx>
 #include <GeomLProp_SLProps.hxx>
 #include <GProp_GProps.hxx>
 #include <ShapeAnalysis.hxx>
@@ -416,11 +418,18 @@ namespace TopologicCore
 		double occtU = 0.0, occtV = 0.0;
 		NonNormalizeUV(kU, kV, occtU, occtV);
 
+		double occtMinU = 0.0, occtMaxU = 0.0, occtMinV = 0.0, occtMaxV = 0.0;
+		ShapeAnalysis::GetFaceUVBounds(GetOcctFace(), occtMinU, occtMaxU, occtMinV, occtMaxV);
 		ShapeAnalysis_Surface occtSurfaceAnalysis(Surface());
-		gp_Pnt occtPoint = occtSurfaceAnalysis.Value(occtU, occtV);
+		const Handle(Geom_Surface)& rSurface = occtSurfaceAnalysis.Surface();
+		Handle(Geom_RectangularTrimmedSurface) pTrimmedSurface = new Geom_RectangularTrimmedSurface(rSurface, occtMinU, occtMaxU, occtMinV, occtMaxV);
+		Handle(Geom_BSplineSurface) pBSplineSurface = GeomConvert::SurfaceToBSplineSurface(pTrimmedSurface);
+		//gp_Pnt occtPoint = occtSurfaceAnalysis.Value(occtU, occtV);
+		gp_Pnt occtPoint = pBSplineSurface->Value(occtU, occtV);
 		Vertex::Ptr vertex = Vertex::ByPoint(new Geom_CartesianPoint(occtPoint));
 
 		// Check distance: if more than a small aount, it is not part of the face.
+		// Hack: project to surface
 		double distance = Distance(vertex);
 		if (distance > Precision::Confusion())
 		{

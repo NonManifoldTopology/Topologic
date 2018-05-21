@@ -23,8 +23,9 @@ namespace TopologicStructure
 		/// </summary>
 		/// <param name="vertex"></param>
 		/// <param name="vector"></param>
+		/// <param name="magnitude"></param>
 		/// <returns name="Load"></returns>
-		static Load^ ByVertex(Topologic::Vertex^ vertex, Autodesk::DesignScript::Geometry::Vector^ vector);
+		static Load^ ByVertex(Topologic::Vertex^ vertex, Autodesk::DesignScript::Geometry::Vector^ vector, double magnitude);
 
 		/// <summary>
 		/// 
@@ -32,8 +33,9 @@ namespace TopologicStructure
 		/// <param name="edge"></param>
 		/// <param name="u"></param>
 		/// <param name="vector"></param>
+		/// <param name="magnitude"></param>
 		/// <returns></returns>
-		static Load^ ByEdge(Topologic::Edge^ edge, double u, Autodesk::DesignScript::Geometry::Vector^ vector);
+		static Load^ ByEdge(Topologic::Edge^ edge, double u, Autodesk::DesignScript::Geometry::Vector^ vector, double magnitude);
 
 		/// <summary>
 		/// 
@@ -42,8 +44,9 @@ namespace TopologicStructure
 		/// <param name="u"></param>
 		/// <param name="v"></param>
 		/// <param name="vector"></param>
+		/// <param name="magnitude"></param>
 		/// <returns></returns>
-		static Load^ ByFace(Topologic::Face^ face, double u, double v, [Autodesk::DesignScript::Runtime::DefaultArgument("null")] Autodesk::DesignScript::Geometry::Vector^ vector);
+		static Load^ ByFace(Topologic::Face^ face, double u, double v, [Autodesk::DesignScript::Runtime::DefaultArgument("null")] Autodesk::DesignScript::Geometry::Vector^ vector, [Autodesk::DesignScript::Runtime::DefaultArgument("false")] bool reverseDefaultNormal, double magnitude);
 
 		property double Magnitude
 		{

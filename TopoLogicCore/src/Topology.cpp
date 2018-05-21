@@ -50,6 +50,9 @@
 #include <BOPAlgo_MakerVolume.hxx>
 #include <TopTools_DataMapOfShapeInteger.hxx>
 #include <BRepExtrema_DistShapeShape.hxx>
+#include <BRepFill_Filling.hxx>
+
+#include <BRepAdaptor_Surface.hxx>
 
 #include <ShapeFix_Shape.hxx>
 
@@ -293,7 +296,7 @@ namespace TopologicCore
 		return nullptr;
 	}*/
 
-	std::shared_ptr<Topology> Topology::ByVertexIndex(const std::vector<std::shared_ptr<Vertex>>& rkVertices, const std::list<std::list<int>>& rkVertexIndices, const double kTolerance)
+	std::shared_ptr<Topology> Topology::ByVertexIndex(const std::vector<std::shared_ptr<Vertex>>& rkVertices, const std::list<std::list<int>>& rkVertexIndices, const int iteration)
 	{
 		if (rkVertices.empty() || rkVertexIndices.empty())
 		{
@@ -342,20 +345,43 @@ namespace TopologicCore
 				if (occtMakeWire.Error() == BRepBuilderAPI_WireDone)
 				{
 					const TopoDS_Wire& rkOcctWire = occtMakeWire.Wire();
-					ShapeFix_ShapeTolerance occtShapeTolerance;
-					occtShapeTolerance.SetTolerance(rkOcctWire, kTolerance, TopAbs_WIRE);
+					/*ShapeFix_ShapeTolerance occtShapeTolerance;
+					occtShapeTolerance.SetTolerance(rkOcctWire, kTolerance, TopAbs_WIRE);*/
 					
 					if(BRepCheck_Wire(rkOcctWire).Closed() == BRepCheck_NoError)
 					{
+						int Degree = 3;
+						int NbPtsOnCur = 10;
+						int NbIter = 2;
+						bool Anisotropie = false;
+						double Tol2d = Precision::Confusion();
+						double Tol3d = Precision::Confusion();
+						double TolAng = 0.01;
+						double TolCurv = 0.1;
+						int MaxDeg = 8;
+						int MaxSegments = 9;
 						// Try creating a face
-						BRepBuilderAPI_MakeFace occtMakeFace(rkOcctWire);
-						if (occtMakeFace.Error() == BRepBuilderAPI_FaceDone)
+						BRepFill_Filling occtFilling(Degree, NbPtsOnCur, NbIter, Anisotropie, Tol2d, Tol3d, TolAng, TolCurv, MaxDeg, MaxSegments);
+						//BRepFill_Filling occtFilling;
+						for (TopTools_ListIteratorOfListOfShape occtEdgeIterator(occtEdges); occtEdgeIterator.More(); occtEdgeIterator.Next())
 						{
-							// Add the face
-							ShapeFix_ShapeTolerance occtShapeTolerance;
-							occtShapeTolerance.SetTolerance(occtMakeFace.Face(), 1e-6, TopAbs_WIRE);
-							occtShapes.Append(occtMakeFace.Face());
+							occtFilling.Add(TopoDS::Edge(occtEdgeIterator.Value()), GeomAbs_C0, true);
 						}
+						occtFilling.Build();
+						if (occtFilling.IsDone())
+						{
+							Handle(Geom_Surface) pSurface = BRep_Tool::Surface(occtFilling.Face());
+							GeomAbs_SurfaceType type = BRepAdaptor_Surface(occtFilling.Face()).GetType();
+							occtShapes.Append(occtFilling.Face());
+						}
+						//BRepBuilderAPI_MakeFace occtMakeFace(rkOcctWire);
+						//if (occtMakeFace.Error() == BRepBuilderAPI_FaceDone)
+						//{
+						//	// Add the face
+						//	ShapeFix_ShapeTolerance occtShapeTolerance;
+						//	occtShapeTolerance.SetTolerance(occtMakeFace.Face(), 1e-6, TopAbs_WIRE);
+						//	occtShapes.Append(occtMakeFace.Face());
+						//}
 						else
 						{
 							// Add the closed wire
@@ -389,10 +415,21 @@ namespace TopologicCore
 		}
 
 
+		TopoDS_Compound occtCompound;
+		BRep_Builder occtBuilder;
+		occtBuilder.MakeCompound(occtCompound);
+		for(TopTools_ListIteratorOfListOfShape iterator(occtShapes);
+			iterator.More();
+			iterator.Next())
+		{
+			occtBuilder.Add(occtCompound, iterator.Value());
+		}
+		//return Topology::ByOcctShape(occtCompound);
+
 		// - Topology[] = Merge--> this divides implicitly intersecting topologies.
 		BOPAlgo_CellsBuilder occtCellsBuilder;
 		occtCellsBuilder.SetArguments(occtShapes);
-		occtCellsBuilder.SetFuzzyValue(kTolerance);
+		//occtCellsBuilder.SetFuzzyValue(kTolerance);
 		try {
 			occtCellsBuilder.Perform();
 		}
@@ -438,8 +475,8 @@ namespace TopologicCore
 			const TopoDS_Shape& rkOcctCurrent = occtExplorer.Current();
 			if (!occtFaces.Contains(rkOcctCurrent))
 			{
-				ShapeFix_ShapeTolerance occtShapeTolerance;
-				occtShapeTolerance.SetTolerance(rkOcctCurrent, kTolerance, TopAbs_WIRE);
+				/*ShapeFix_ShapeTolerance occtShapeTolerance;
+				occtShapeTolerance.SetTolerance(rkOcctCurrent, kTolerance, TopAbs_WIRE);*/
 				occtFaces.Append(rkOcctCurrent);
 			}
 		}
@@ -462,8 +499,17 @@ namespace TopologicCore
 			/*throw std::exception(errorStream.str().c_str());*/
 			std::ostringstream warningStream;
 			occtVolumeMaker.DumpWarnings(warningStream);
-
-			throw std::exception();
+			TopoDS_Compound occtCompound;
+			BRep_Builder occtBuilder;
+			occtBuilder.MakeCompound(occtCompound);
+			for (TopTools_ListIteratorOfListOfShape iterator(occtShapes);
+				iterator.More();
+				iterator.Next())
+			{
+				occtBuilder.Add(occtCompound, iterator.Value());
+			}
+			return Topology::ByOcctShape(occtCompound);
+			//throw std::exception();
 		}
 		//DEBUG
 		//return Topology::ByOcctShape(occtVolumeMaker.Shape());

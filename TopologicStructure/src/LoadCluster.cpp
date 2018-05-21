@@ -9,7 +9,7 @@ namespace TopologicStructure
 		return gcnew LoadCluster(loads, nullptr, loads->Count, 1);
 	}
 
-	LoadCluster^ LoadCluster::ByEdge(Topologic::Edge^ edge, Autodesk::DesignScript::Geometry::Vector^ vector, int rows, double uScale, double uShift)
+	LoadCluster^ LoadCluster::ByEdge(Topologic::Edge^ edge, Autodesk::DesignScript::Geometry::Vector^ vector, double magnitude, int rows, double uScale, double uShift)
 	{
 		if (rows < 1)
 		{
@@ -21,12 +21,13 @@ namespace TopologicStructure
 		}
 
 		List<Load^>^ pLoads = gcnew List<Load^>();
-		double minU = uShift;
+		double halfScale = 0.5*uScale;
+		double minU = 0.5 + uShift - halfScale;
 		double maxU = minU + uScale;
 		if (rows == 1)
 		{
 			double halfU = (minU + maxU) / 2.0;
-			Load^ pLoad = Load::ByEdge(edge, halfU, vector);
+			Load^ pLoad = Load::ByEdge(edge, halfU, vector, magnitude);
 			pLoads->Add(pLoad);
 		}else
 		{
@@ -34,7 +35,7 @@ namespace TopologicStructure
 			for (int i = 0; i < rows; ++i)
 			{
 				double u = minU + i * du;
-				Load^ pLoad = Load::ByEdge(edge, u, vector);
+				Load^ pLoad = Load::ByEdge(edge, u, vector, magnitude);
 				pLoads->Add(pLoad);
 			}
 		}
@@ -45,7 +46,7 @@ namespace TopologicStructure
 		return gcnew LoadCluster(pLoads, pContext, rows, 1);
 	}
 
-	LoadCluster^ LoadCluster::ByFace(Topologic::Face ^ face, Autodesk::DesignScript::Geometry::Vector ^ vector, int rows, int columns, double uScale, double vScale, double uShift, double vShift)
+	LoadCluster^ LoadCluster::ByFace(Topologic::Face ^ face, Autodesk::DesignScript::Geometry::Vector ^ vector, bool reverseDefaultNormal, double magnitude, int rows, int columns, double uScale, double vScale, double uShift, double vShift)
 	{
 		if (rows < 1)
 		{
@@ -66,9 +67,11 @@ namespace TopologicStructure
 
 
 		List<Load^>^ pLoads = gcnew List<Load^>();
-		double minU = uShift;
+		double halfUScale = 0.5*uScale;
+		double minU = 0.5 + uShift - halfUScale;
 		double maxU = minU + uScale;
-		double minV = vShift;
+		double halfVScale = 0.5*vScale;
+		double minV = 0.5 + vShift - halfVScale;
 		double maxV = minV + vScale;
 
 		List<double>^ uList = gcnew List<double>();
@@ -107,7 +110,7 @@ namespace TopologicStructure
 		{
 			for each (double v in vList)
 			{
-				Load^ pLoad = Load::ByFace(face, u, v, vector);
+				Load^ pLoad = Load::ByFace(face, u, v, vector, reverseDefaultNormal, magnitude);
 				pLoads->Add(pLoad);
 			}
 		}

@@ -26,19 +26,21 @@ namespace TopologicStructure
 		/// 
 		/// </summary>
 		/// <param name="edge"></param>
-		/// <param name="magnitude"></param>
 		/// <param name="vector"></param>
+		/// <param name="magnitude"></param>
 		/// <param name="rows"></param>
 		/// <param name="uScale"></param>
 		/// <param name="uShift"></param>
 		/// <returns></returns>
-		static LoadCluster^ ByEdge(Topologic::Edge^ edge, Autodesk::DesignScript::Geometry::Vector^ vector, int rows, double uScale, double uShift);
+		static LoadCluster^ ByEdge(Topologic::Edge^ edge, Autodesk::DesignScript::Geometry::Vector^ vector, double magnitude, int rows, double uScale, double uShift);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="face"></param>
 		/// <param name="vector"></param>
+		/// <param name="reverseDefaultNormal"></param>
+		/// <param name="magnitude"></param>
 		/// <param name="rows"></param>
 		/// <param name="columns"></param>
 		/// <param name="uScale"></param>
@@ -46,7 +48,7 @@ namespace TopologicStructure
 		/// <param name="uShift"></param>
 		/// <param name="vShift"></param>
 		/// <returns></returns>
-		static LoadCluster^ ByFace(Topologic::Face^ face, [Autodesk::DesignScript::Runtime::DefaultArgument("null")] Autodesk::DesignScript::Geometry::Vector^ vector, int rows, int columns, double uScale, double vScale, double uShift, double vShift);
+		static LoadCluster^ ByFace(Topologic::Face^ face, [Autodesk::DesignScript::Runtime::DefaultArgument("null")] Autodesk::DesignScript::Geometry::Vector^ vector, [Autodesk::DesignScript::Runtime::DefaultArgument("false")] bool reverseDefaultNormal, double magnitude, int rows, int columns, double uScale, double vScale, double uShift, double vShift);
 
 		property List<Load^>^ Loads
 		{

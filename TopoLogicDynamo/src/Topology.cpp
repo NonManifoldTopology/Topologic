@@ -43,7 +43,7 @@ namespace Topologic
 	//	// TODO: insert return statement here
 	//}
 
-	Topology^ Topology::ByVertexIndex(List<Vertex^>^ vertices, List<List<int>^>^ vertexIndices, double tolerance)
+	Topology^ Topology::ByVertexIndex(List<Vertex^>^ vertices, List<List<int>^>^ vertexIndices, int iteration)
 	{
 		std::vector<std::shared_ptr<TopologicCore::Vertex>> coreVertices;
 		for each(Vertex^ pVertex in vertices)
@@ -66,7 +66,7 @@ namespace Topologic
 			}
 			coreIndices.push_back(coreVertex1DIndices);
 		}
-		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::Topology::ByVertexIndex(coreVertices, coreIndices, tolerance);
+		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::Topology::ByVertexIndex(coreVertices, coreIndices, iteration);
 		return Topology::ByCoreTopology(pCoreTopology);
 	}
 

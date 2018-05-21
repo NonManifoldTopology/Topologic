@@ -468,7 +468,11 @@ namespace Topologic
 			for each(Wire^ pWire in pWires)
 			{
 				try{
-					pDynamoEdgeLoops->Add(safe_cast<Autodesk::DesignScript::Geometry::PolyCurve^>(pWire->Geometry));
+					Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoWireGeometry = safe_cast<Autodesk::DesignScript::Geometry::PolyCurve^>(pWire->Geometry);
+					if(pDynamoWireGeometry != nullptr)
+					{
+						pDynamoEdgeLoops->Add(pDynamoWireGeometry);
+					}
 				}
 				catch (Exception^)
 				{
@@ -509,6 +513,39 @@ namespace Topologic
 			catch (Exception^ e)
 			{
 				String^ str(e->Message);
+				//if (e->Message->Equals(gcnew String("trim_with_edge_loops requires all curves to touch surface")))
+				{
+					// Project to surface
+					List<Autodesk::DesignScript::Geometry::PolyCurve^>^ pDynamoProjectedEdgeLoops = gcnew List<Autodesk::DesignScript::Geometry::PolyCurve^>();
+
+					for each(Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoEdgeLoop in pDynamoEdgeLoops)
+					{
+						Autodesk::DesignScript::Geometry::Curve^ pDynamoProjectedCurve = pDynamoEdgeLoop->PullOntoSurface(pDynamoUntrimmedSurface);
+						List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoProjectedCurves = gcnew List<Autodesk::DesignScript::Geometry::Curve^>();
+						pDynamoProjectedCurves->Add(pDynamoProjectedCurve);
+						Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoProjectedPolyCurve = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoProjectedCurves);
+						pDynamoProjectedEdgeLoops->Add(pDynamoProjectedPolyCurve);
+						pDynamoProjectedCurves->Clear();
+						delete pDynamoProjectedCurves;
+					}
+
+					try {
+						Autodesk::DesignScript::Geometry::Surface^ pDynamoTrimmedSurfaceByParameters =
+							pDynamoUntrimmedSurface->TrimWithEdgeLoops(pDynamoProjectedEdgeLoops);
+
+						for each(Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoEdgeLoop in pDynamoEdgeLoops)
+						{
+							delete pDynamoEdgeLoop;
+						}
+
+						delete pDynamoUntrimmedSurface;
+
+						return pDynamoTrimmedSurfaceByParameters;
+					}
+					catch (...)
+					{
+					}
+				}
 			}
 			catch (...)
 			{

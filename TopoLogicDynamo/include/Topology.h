@@ -47,9 +47,9 @@ namespace Topologic
 		/// </summary>
 		/// <param name="vertices"></param>
 		/// <param name="vertexIndices"></param>
-		/// <param name="tolerance"></param>
+		/// <param name="iteration"></param>
 		/// <returns name="Topology"></returns>
-		static Topology^ ByVertexIndex(List<Vertex^>^ vertices, List<List<int>^>^ vertexIndices, double tolerance);
+		static Topology^ ByVertexIndex(List<Vertex^>^ vertices, List<List<int>^>^ vertexIndices, int iteration);
 
 		/// <summary>
 		/// Returns the dimensionality of the Topological entity.
