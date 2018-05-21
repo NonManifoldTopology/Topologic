@@ -76,7 +76,7 @@ namespace TopologicStructure
 			delete pSurfaceNormal;
 			return pLoad;
 		}
-		catch (Exception^ e)
+		catch (Exception^)
 		{
 			throw gcnew Exception("Load not on the face.");
 		}
@@ -95,6 +95,7 @@ namespace TopologicStructure
 	Load::Load(Topologic::Vertex^ vertex, const TopologicSupport::Vector::Ptr& vector, bool attachAttribute)
 		: Topologic::Vertex(vertex)
 		, m_pVector(new TopologicSupport::Vector::Ptr(vector))
+		, m_pTopology(vertex)
 	{
 		Handle(OcctLoadAttribute) pOcctLoadAttribute = new OcctLoadAttribute(
 			vector->X(), vector->Y(), vector->Z(),

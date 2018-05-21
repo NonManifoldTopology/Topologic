@@ -19,8 +19,9 @@ namespace TopologicStructure
 		/// 
 		/// </summary>
 		/// <param name="loads"></param>
-		/// <returns></returns>
-		static LoadCluster^ ByLoads(List<Load^>^ loads);
+		/// <param name="topology"></param>
+		/// <returns name="LoadCluster"></returns>
+		static LoadCluster^ ByLoads(List<Load^>^ loads, Topologic::Topology^ topology);
 
 		/// <summary>
 		/// 
@@ -31,7 +32,7 @@ namespace TopologicStructure
 		/// <param name="rows"></param>
 		/// <param name="uScale"></param>
 		/// <param name="uShift"></param>
-		/// <returns></returns>
+		/// <returns name="LoadCluster"></returns>
 		static LoadCluster^ ByEdge(Topologic::Edge^ edge, Autodesk::DesignScript::Geometry::Vector^ vector, double magnitude, int rows, double uScale, double uShift);
 
 		/// <summary>
@@ -47,7 +48,7 @@ namespace TopologicStructure
 		/// <param name="vScale"></param>
 		/// <param name="uShift"></param>
 		/// <param name="vShift"></param>
-		/// <returns></returns>
+		/// <returns name="LoadCluster"></returns>
 		static LoadCluster^ ByFace(Topologic::Face^ face, [Autodesk::DesignScript::Runtime::DefaultArgument("null")] Autodesk::DesignScript::Geometry::Vector^ vector, [Autodesk::DesignScript::Runtime::DefaultArgument("false")] bool reverseDefaultNormal, double magnitude, int rows, int columns, double uScale, double vScale, double uShift, double vShift);
 
 		property List<Load^>^ Loads
@@ -95,12 +96,22 @@ namespace TopologicStructure
 			virtual Object^ get() override;
 		}
 
+		property Topologic::Topology^ Topology
+		{
+			/// <summary>
+			/// 
+			/// </summary>
+			/// <returns name="Topology"></returns>
+			Topologic::Topology^ get() { return m_pTopology; }
+		}
+
 	protected:
-		LoadCluster(List<Load^>^ loads, TopologicStructure::Context^ context, int rows, int columns);
+		LoadCluster(List<Load^>^ loads, Topologic::Topology^ topology, TopologicStructure::Context^ context, int rows, int columns);
 		~LoadCluster();
 
 		List<Load^>^ m_pLoads;
 		TopologicStructure::Context^ m_pContext;
+		Topologic::Topology^ m_pTopology;
 		int m_rows;
 		int m_columns;
 	};

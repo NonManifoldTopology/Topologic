@@ -4,9 +4,9 @@
 
 namespace TopologicStructure
 {
-	LoadCluster^ LoadCluster::ByLoads(List<Load^>^ loads)
+	LoadCluster^ LoadCluster::ByLoads(List<Load^>^ loads, Topologic::Topology^ topology)
 	{
-		return gcnew LoadCluster(loads, nullptr, loads->Count, 1);
+		return gcnew LoadCluster(loads, topology, nullptr, loads->Count, 1);
 	}
 
 	LoadCluster^ LoadCluster::ByEdge(Topologic::Edge^ edge, Autodesk::DesignScript::Geometry::Vector^ vector, double magnitude, int rows, double uScale, double uShift)
@@ -43,7 +43,7 @@ namespace TopologicStructure
 		//What to fill u?
 		TopologicStructure::Context^ pContext = TopologicStructure::Context::Create(edge, 0.0, 0.0, 0.0, uScale, 0.0, 0.0, uShift, 0.0, 0.0);
 
-		return gcnew LoadCluster(pLoads, pContext, rows, 1);
+		return gcnew LoadCluster(pLoads, edge, pContext, rows, 1);
 	}
 
 	LoadCluster^ LoadCluster::ByFace(Topologic::Face ^ face, Autodesk::DesignScript::Geometry::Vector ^ vector, bool reverseDefaultNormal, double magnitude, int rows, int columns, double uScale, double vScale, double uShift, double vShift)
@@ -117,12 +117,13 @@ namespace TopologicStructure
 		//What to fill u and v?
 		TopologicStructure::Context^ pContext = TopologicStructure::Context::Create(face, 0.0, 0.0, 0.0, uScale, vScale, 0.0, uShift, vShift, 0.0);
 
-		return gcnew LoadCluster(pLoads, pContext, rows, columns);
+		return gcnew LoadCluster(pLoads, face, pContext, rows, columns);
 	}
 
-	LoadCluster::LoadCluster(List<Load^>^ loads, TopologicStructure::Context^ context, int rows, int columns)
+	LoadCluster::LoadCluster(List<Load^>^ loads, Topologic::Topology^ topology, TopologicStructure::Context^ context, int rows, int columns)
 		: Topologic::Cluster()
 		, m_pLoads(loads)
+		, m_pTopology(topology)
 		, m_pContext(context)
 		, m_rows(rows > 0? rows : throw gcnew Exception("rows must be larger than zero."))
 		, m_columns(columns > 0 ? columns : throw gcnew Exception("columns must be larger than zero."))

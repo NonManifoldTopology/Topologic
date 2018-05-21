@@ -85,6 +85,11 @@ namespace TopologicStructure
 			virtual Object^ get() override;
 		}
 
+		property Topologic::Topology^ Topology
+		{
+			Topologic::Topology^ get() { return m_pTopology; }
+		}
+
 	public protected:
 		Load(Topologic::Vertex^ vertex, const TopologicSupport::Vector::Ptr& vector, const bool attachAttribute);
 
@@ -93,5 +98,6 @@ namespace TopologicStructure
 
 		TopologicSupport::Vector::Ptr* m_pVector;
 		TopologicStructure::Context^ m_pContext;
+		Topologic::Topology^ m_pTopology;
 	};
 }
