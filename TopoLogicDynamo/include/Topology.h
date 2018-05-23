@@ -47,9 +47,8 @@ namespace Topologic
 		/// </summary>
 		/// <param name="vertices"></param>
 		/// <param name="vertexIndices"></param>
-		/// <param name="iteration"></param>
-		/// <returns name="Topology"></returns>
-		static Topology^ ByVertexIndex(List<Vertex^>^ vertices, List<List<int>^>^ vertexIndices, int iteration);
+		/// <returns name="Topology[]"></returns>
+		static List<Topology^>^ ByVertexIndex(List<Vertex^>^ vertices, List<List<int>^>^ vertexIndices);
 
 		/// <summary>
 		/// Returns the dimensionality of the Topological entity.
@@ -210,6 +209,12 @@ namespace Topologic
 		/// <param name="topology"></param>
 		/// <returns name="Topology">The result of the Merge operation</returns>
 		Topology^ Merge(Topology^ topology);
+
+		/// <summary>
+		/// Self=merge.
+		/// </summary>
+		/// <returns name="Topology">The result of the Merge operation</returns>
+		Topology^ SelfMerge();
 
 		/// <summary>
 		/// Slice the first Topological entity with the second.

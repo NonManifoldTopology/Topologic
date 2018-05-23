@@ -48,7 +48,9 @@ namespace TopologicStructure
 		/// <param name="vScale"></param>
 		/// <param name="uShift"></param>
 		/// <param name="vShift"></param>
+		/// <param name="rotation">In degrees</param>
 		/// <returns name="LoadCluster"></returns>
+		//static LoadCluster^ ByFace(Topologic::Face^ face, [Autodesk::DesignScript::Runtime::DefaultArgument("null")] Autodesk::DesignScript::Geometry::Vector^ vector, [Autodesk::DesignScript::Runtime::DefaultArgument("false")] bool reverseDefaultNormal, double magnitude, int rows, int columns, double uScale, double vScale, double uShift, double vShift, double rotation);
 		static LoadCluster^ ByFace(Topologic::Face^ face, [Autodesk::DesignScript::Runtime::DefaultArgument("null")] Autodesk::DesignScript::Geometry::Vector^ vector, [Autodesk::DesignScript::Runtime::DefaultArgument("false")] bool reverseDefaultNormal, double magnitude, int rows, int columns, double uScale, double vScale, double uShift, double vShift);
 
 		property List<Load^>^ Loads

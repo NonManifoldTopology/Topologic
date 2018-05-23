@@ -43,7 +43,7 @@ namespace Topologic
 	//	// TODO: insert return statement here
 	//}
 
-	Topology^ Topology::ByVertexIndex(List<Vertex^>^ vertices, List<List<int>^>^ vertexIndices, int iteration)
+	List<Topology^>^ Topology::ByVertexIndex(List<Vertex^>^ vertices, List<List<int>^>^ vertexIndices)
 	{
 		std::vector<std::shared_ptr<TopologicCore::Vertex>> coreVertices;
 		for each(Vertex^ pVertex in vertices)
@@ -66,8 +66,15 @@ namespace Topologic
 			}
 			coreIndices.push_back(coreVertex1DIndices);
 		}
-		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::Topology::ByVertexIndex(coreVertices, coreIndices, iteration);
-		return Topology::ByCoreTopology(pCoreTopology);
+		std::list<TopologicCore::Topology::Ptr> pCoreTopologies;
+		TopologicCore::Topology::ByVertexIndex(coreVertices, coreIndices, pCoreTopologies);
+
+		List<Topology^>^ pTopologies = gcnew List<Topology^>();
+		for (const TopologicCore::Topology::Ptr& kpCoreTopology : pCoreTopologies)
+		{
+			pTopologies->Add(Topology::ByCoreTopology(kpCoreTopology));
+		}
+		return pTopologies;
 	}
 
 	/*void ExploreChild(const TDF_Label& rkOcctLabel)
@@ -516,6 +523,14 @@ namespace Topologic
 		{
 			throw gcnew Exception(gcnew String(e.what()));
 		}
+	}
+
+	Topology^ Topology::SelfMerge()
+	{
+		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+
+		TopologicCore::Topology::Ptr pMergeCoreTopology = pCoreTopology->Merge();
+		return Topology::ByCoreTopology(pMergeCoreTopology);
 	}
 
 	Topology^ Topology::Merge(Topology^ topology)

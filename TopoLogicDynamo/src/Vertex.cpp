@@ -15,6 +15,11 @@ namespace Topologic
 		return gcnew Vertex(point);
 	}
 
+	Vertex ^ Vertex::ByCoordinates(double x, double y, double z)
+	{
+		return Vertex::ByPoint(Autodesk::DesignScript::Geometry::Point::ByCoordinates(x, y, z));
+	}
+
 	List<Edge^>^ Vertex::Edges(Topology^ parentTopology)
 	{
 		std::list<std::shared_ptr<TopologicCore::Edge>> coreEdges;

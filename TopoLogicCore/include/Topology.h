@@ -98,9 +98,18 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="rkVertices"></param>
 		/// <param name="rkVertexIndices"></param>
+		/// <param name="rTopologies"></param>
+		/// <returns></returns>
+		static TOPOLOGIC_API void ByVertexIndex(const std::vector<std::shared_ptr<Vertex>>& rkVertices, const std::list<std::list<int>>& rkVertexIndices, std::list<Topology::Ptr>& rTopologies);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkVertices"></param>
+		/// <param name="rkVertexIndices"></param>
 		/// <param name="kTolerance"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API std::shared_ptr<Topology> ByVertexIndex(const std::vector<std::shared_ptr<Vertex>>& rkVertices, const std::list<std::list<int>>& rkVertexIndices, const int iteration);
+		static TOPOLOGIC_API std::shared_ptr<Topology> ByVertexIndex_Old(const std::vector<std::shared_ptr<Vertex>>& rkVertices, const std::list<std::list<int>>& rkVertexIndices, const int iteration);
 
 		/// <summary>
 		/// 
@@ -226,6 +235,12 @@ namespace TopologicCore
 		/// <param name="kpkOtherTopology"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API std::shared_ptr<Topology> Merge(const std::shared_ptr<Topology>& kpOtherTopology);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		TOPOLOGIC_API std::shared_ptr<Topology> Merge();
 
 		/// <summary>
 		/// 

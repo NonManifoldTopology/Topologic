@@ -46,6 +46,7 @@ namespace TopologicStructure
 		return gcnew LoadCluster(pLoads, edge, pContext, rows, 1);
 	}
 
+	//LoadCluster^ LoadCluster::ByFace(Topologic::Face ^ face, Autodesk::DesignScript::Geometry::Vector ^ vector, bool reverseDefaultNormal, double magnitude, int rows, int columns, double uScale, double vScale, double uShift, double vShift, double rotation)
 	LoadCluster^ LoadCluster::ByFace(Topologic::Face ^ face, Autodesk::DesignScript::Geometry::Vector ^ vector, bool reverseDefaultNormal, double magnitude, int rows, int columns, double uScale, double vScale, double uShift, double vShift)
 	{
 		if (rows < 1)

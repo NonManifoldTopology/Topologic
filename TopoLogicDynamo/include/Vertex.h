@@ -21,6 +21,17 @@ namespace Topologic
 		static Vertex^ ByPoint(Autodesk::DesignScript::Geometry::Point^ point);
 
 		/// <summary>
+		/// Creates a vertex by a point.
+		/// </summary>
+		/// <param name="x">The x coordinate.</param>
+		/// <param name="y">The y coordinate.</param>
+		/// <param name="z">The z coordinate.</param>
+		/// <returns name="Vertex">
+		/// A vertex.
+		/// </returns>
+		static Vertex^ ByCoordinates(double x, double y, double z);
+
+		/// <summary>
 		/// Gets the list of edges incident to this vertex.
 		/// </summary>
 		/// <param name="parentTopology"></param>
