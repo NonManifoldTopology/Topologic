@@ -180,13 +180,16 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="DynamoCore">
-      <HintPath>..\references\Dynamo\DynamoCore.dll</HintPath>
+      <HintPath>..\references\Dynamo-2.0.1\DynamoCore.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <Reference Include="DynamoServices">
-      <HintPath>..\references\Dynamo\DynamoServices.dll</HintPath>
+      <HintPath>..\references\Dynamo-2.0.1\DynamoServices.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <Reference Include="ProtoGeometry">
-      <HintPath>..\references\Dynamo\ProtoGeometry.dll</HintPath>
+      <HintPath>..\references\Dynamo-2.0.1\ProtoGeometry.dll</HintPath>
+      <Private>false</Private>
     </Reference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

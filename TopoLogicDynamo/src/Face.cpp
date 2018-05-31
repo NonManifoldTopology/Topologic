@@ -523,7 +523,7 @@ namespace Topologic
 						Autodesk::DesignScript::Geometry::Curve^ pDynamoProjectedCurve = pDynamoEdgeLoop->PullOntoSurface(pDynamoUntrimmedSurface);
 						List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoProjectedCurves = gcnew List<Autodesk::DesignScript::Geometry::Curve^>();
 						pDynamoProjectedCurves->Add(pDynamoProjectedCurve);
-						Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoProjectedPolyCurve = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoProjectedCurves);
+						Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoProjectedPolyCurve = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoProjectedCurves, 0.001);
 						pDynamoProjectedEdgeLoops->Add(pDynamoProjectedPolyCurve);
 						pDynamoProjectedCurves->Clear();
 						delete pDynamoProjectedCurves;
@@ -601,7 +601,7 @@ namespace Topologic
 				if (pDynamoCurves->Count > 0)
 				{
 					pDynamoSurface = Autodesk::DesignScript::Geometry::Surface::ByPatch(
-						Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoCurves)
+						Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoCurves, 0.001)
 					);
 				}
 
@@ -636,7 +636,7 @@ namespace Topologic
 							pDynamoOuterCurves->Add(pOuterEdge->Curve());
 						}
 						pDynamoSurface = Autodesk::DesignScript::Geometry::Surface::ByPatch(
-							Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoOuterCurves)
+							Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoOuterCurves, 0.001)
 						);
 
 						for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoOuterCurve in pDynamoOuterCurves)
@@ -1014,7 +1014,7 @@ namespace Topologic
 			{
 				++index;
 			}
-			pOuterPolycurve = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoCurveGroups[index]);
+			pOuterPolycurve = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoCurveGroups[index], 0.001);
 			pCoreOuterWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>((gcnew Wire(pOuterPolycurve))->GetCoreTopologicalQuery());
 			pDynamoCurveGroups->RemoveAt(index);
 		}
@@ -1025,7 +1025,7 @@ namespace Topologic
 		// Create wires and add them to occtMakeFace to create internal wires;
 		for each(List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoConnectedCurves in pDynamoCurveGroups)
 		{
-			Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoPolycurve = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoConnectedCurves);
+			Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoPolycurve = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoConnectedCurves, 0.001);
 			Wire^ pWire = gcnew Wire(pDynamoPolycurve);
 			coreInnerWires.push_back(TopologicCore::Topology::Downcast<TopologicCore::Wire>(pWire->GetCoreTopologicalQuery()));
 		}

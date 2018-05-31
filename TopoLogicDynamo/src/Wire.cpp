@@ -95,7 +95,7 @@ namespace Topologic
 		Object^ pDynamoReturnValue = nullptr;
 		try
 		{
-			pDynamoReturnValue = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoCurves);
+			pDynamoReturnValue = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoCurves, 0.001);
 
 			for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoCurve in pDynamoCurves)
 			{
