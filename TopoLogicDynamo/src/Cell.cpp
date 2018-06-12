@@ -52,6 +52,25 @@ namespace Topologic
 		return pCell;
 	}
 
+	Cell^ Cell::ByLoft(List<Wire^>^ wires)
+	{
+
+		std::list<std::shared_ptr<TopologicCore::Wire>> coreWires;
+		for each(Wire^ pWire in wires)
+		{
+			coreWires.push_back(TopologicCore::Topology::Downcast<TopologicCore::Wire>(pWire->GetCoreTopologicalQuery()));
+		}
+
+		try {
+			std::shared_ptr<TopologicCore::Cell> pCoreCell = TopologicCore::Cell::ByLoft(coreWires);
+			return gcnew Cell(pCoreCell);
+		}
+		catch (std::exception&)
+		{
+			throw gcnew Exception("Loft error");
+		}
+	}
+
 	List<CellComplex^>^ Cell::CellComplexes(Topology^ parentTopology)
 	{
 		std::shared_ptr<TopologicCore::Cell> pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());

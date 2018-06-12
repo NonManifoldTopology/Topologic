@@ -1185,7 +1185,13 @@ namespace TopologicCore
 		{
 			occtLoft.AddWire(kpWire->GetOcctWire());
 		};
-		occtLoft.Build();
+		try {
+			occtLoft.Build();
+		}
+		catch (...)
+		{
+			throw std::exception("Loft error");
+		}
 		return std::make_shared<Shell>(TopoDS::Shell(occtLoft.Shape()));
 	}
 

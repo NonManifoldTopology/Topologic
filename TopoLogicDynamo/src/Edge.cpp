@@ -7,6 +7,7 @@
 #include <Geom_BSplineSurface.hxx>
 #include <Geom_BezierCurve.hxx>
 #include <Geom_TrimmedCurve.hxx>
+#include <GeomConvert.hxx>
 #include <Geom_Circle.hxx>
 #include <Geom_Ellipse.hxx>
 #include <Geom_Hyperbola.hxx>
@@ -109,86 +110,92 @@ namespace Topologic
 		return Curve();
 	}
 
+	Autodesk::DesignScript::Geometry::Curve^ DynamoCurveFromBSplineCurve(Handle(Geom_BSplineCurve) pOcctBsplineCurve, const double u0, const double u1)
+	{
+		bool isPeriodic = pOcctBsplineCurve->IsPeriodic();
+		if (isPeriodic)
+			pOcctBsplineCurve->SetNotPeriodic();
+
+		// Transfer the control points
+		const TColgp_Array1OfPnt& rkOcctControlPoints = pOcctBsplineCurve->Poles();
+		array<Autodesk::DesignScript::Geometry::Point^>^ pDynamoControlPoints = gcnew array<Autodesk::DesignScript::Geometry::Point^>(rkOcctControlPoints.Length());
+		for (int i = rkOcctControlPoints.Lower(); i <= rkOcctControlPoints.Upper(); i++)
+		{
+			const gp_Pnt& rkControlPoint = rkOcctControlPoints.Value(i);
+			pDynamoControlPoints[i - rkOcctControlPoints.Lower()] = Autodesk::DesignScript::Geometry::Point::ByCoordinates(rkControlPoint.X(), rkControlPoint.Y(), rkControlPoint.Z());
+		}
+
+		// Transfer the control points' weights
+		const TColStd_Array1OfReal* pkOcctWeights = pOcctBsplineCurve->Weights();
+		array<double>^ pWeights = nullptr;
+		// if null, every weight is assumed to be one, i.e. a uniform curve
+		if (pkOcctWeights == nullptr)
+		{
+			pWeights = gcnew array<double>(rkOcctControlPoints.Length());
+			for (int i = 0; i < pWeights->Length; i++)
+			{
+				pWeights[i] = 1.0;
+			}
+		}
+		else
+		{
+			pWeights = gcnew array<double>(rkOcctControlPoints.Length());
+			assert(pkOcctWeights->Length() == rkOcctControlPoints.Length() && "Weights and control points have different lengths.");
+			for (int i = pkOcctWeights->Lower(); i <= pkOcctWeights->Upper(); i++)
+			{
+				pWeights[i - pkOcctWeights->Lower()] = pkOcctWeights->Value(i);
+			}
+		}
+
+		// Transfer the knots. Note the format difference. OCCT has a separate multiplicity list, while Dynamo simply repeats the knots.
+		const TColStd_Array1OfReal& krOcctKnots = pOcctBsplineCurve->Knots();
+		List<double>^ pKnots = gcnew List<double>();
+		for (int i = krOcctKnots.Lower(); i <= krOcctKnots.Upper(); i++)
+		{
+			int multiplicity = pOcctBsplineCurve->Multiplicity(i);
+			for (int j = 0; j < multiplicity; j++)
+			{
+				double occtKnot = krOcctKnots.Value(i);
+				pKnots->Add(occtKnot);
+			}
+		}
+
+		// OCCT has arbitrary parameters. Dynamo's parameter ranges between 0 and 1.
+		// Order: First - Start - End - Last
+		double occtFirstParameter = pOcctBsplineCurve->FirstParameter();
+		double occtLastParameter = pOcctBsplineCurve->LastParameter();
+		double occtDeltaParameter = occtLastParameter - occtFirstParameter;
+		if (occtDeltaParameter < Precision::Confusion())
+			occtDeltaParameter = Precision::Confusion();
+		double dynamoStartParameter = (u0 - occtFirstParameter) / occtDeltaParameter;
+		double dynamoEndParameter = (u1 - occtFirstParameter) / occtDeltaParameter;
+
+		int degree = pOcctBsplineCurve->Degree();
+		Autodesk::DesignScript::Geometry::Curve^ pDynamoNurbsCurve =
+			Autodesk::DesignScript::Geometry::NurbsCurve::ByControlPointsWeightsKnots(pDynamoControlPoints, pWeights, pKnots->ToArray(), degree)
+			->TrimByParameter(dynamoStartParameter, dynamoEndParameter);
+
+		for each(Autodesk::DesignScript::Geometry::Point^ pDynamoControlPoint in pDynamoControlPoints)
+		{
+			delete pDynamoControlPoint;
+		}
+
+		return pDynamoNurbsCurve;
+	}
+
 	Autodesk::DesignScript::Geometry::Curve^ Edge::Curve(Handle(Geom_Curve) pOcctCurve, const double u0, const double u1)
 	{
 		Handle(Geom_BezierCurve) pOcctBezierCurve = Handle_Geom_BezierCurve::DownCast(pOcctCurve);
 		if (!pOcctBezierCurve.IsNull())
 		{
-			throw gcnew NotImplementedException("Feature not yet implemented");
+			Handle(Geom_BSplineCurve) pOcctBsplineCurve = GeomConvert::CurveToBSplineCurve(pOcctBezierCurve);
+			return DynamoCurveFromBSplineCurve(pOcctBsplineCurve, u0, u1);
 		}
 
 		Handle(Geom_BSplineCurve) pOcctBsplineCurve = Handle_Geom_BSplineCurve::DownCast(pOcctCurve);
 		if (!pOcctBsplineCurve.IsNull())
 		{
-			bool isPeriodic = pOcctBsplineCurve->IsPeriodic();
-			if (isPeriodic)
-				pOcctBsplineCurve->SetNotPeriodic();
-
-			// Transfer the control points
-			const TColgp_Array1OfPnt& rkOcctControlPoints = pOcctBsplineCurve->Poles();
-			array<Autodesk::DesignScript::Geometry::Point^>^ pDynamoControlPoints = gcnew array<Autodesk::DesignScript::Geometry::Point^>(rkOcctControlPoints.Length());
-			for (int i = rkOcctControlPoints.Lower(); i <= rkOcctControlPoints.Upper(); i++)
-			{
-				const gp_Pnt& rkControlPoint = rkOcctControlPoints.Value(i);
-				pDynamoControlPoints[i - rkOcctControlPoints.Lower()] = Autodesk::DesignScript::Geometry::Point::ByCoordinates(rkControlPoint.X(), rkControlPoint.Y(), rkControlPoint.Z());
-			}
-
-			// Transfer the control points' weights
-			const TColStd_Array1OfReal* pkOcctWeights = pOcctBsplineCurve->Weights();
-			array<double>^ pWeights = nullptr;
-			// if null, every weight is assumed to be one, i.e. a uniform curve
-			if (pkOcctWeights == nullptr)
-			{
-				pWeights = gcnew array<double>(rkOcctControlPoints.Length());
-				for (int i = 0; i < pWeights->Length; i++)
-				{
-					pWeights[i] = 1.0;
-				}
-			}
-			else
-			{
-				pWeights = gcnew array<double>(rkOcctControlPoints.Length());
-				assert(pkOcctWeights->Length() == rkOcctControlPoints.Length() && "Weights and control points have different lengths.");
-				for (int i = pkOcctWeights->Lower(); i <= pkOcctWeights->Upper(); i++)
-				{
-					pWeights[i - pkOcctWeights->Lower()] = pkOcctWeights->Value(i);
-				}
-			}
-
-			// Transfer the knots. Note the format difference. OCCT has a separate multiplicity list, while Dynamo simply repeats the knots.
-			const TColStd_Array1OfReal& krOcctKnots = pOcctBsplineCurve->Knots();
-			List<double>^ pKnots = gcnew List<double>();
-			for (int i = krOcctKnots.Lower(); i <= krOcctKnots.Upper(); i++)
-			{
-				int multiplicity = pOcctBsplineCurve->Multiplicity(i);
-				for (int j = 0; j < multiplicity; j++)
-				{
-					double occtKnot = krOcctKnots.Value(i);
-					pKnots->Add(occtKnot);
-				}
-			}
-
-			// OCCT has arbitrary parameters. Dynamo's parameter ranges between 0 and 1.
-			// Order: First - Start - End - Last
-			double occtFirstParameter = pOcctCurve->FirstParameter();
-			double occtLastParameter = pOcctCurve->LastParameter();
-			double occtDeltaParameter = occtLastParameter - occtFirstParameter;
-			if (occtDeltaParameter < Precision::Confusion())
-				occtDeltaParameter = Precision::Confusion();
-			double dynamoStartParameter = (u0 - occtFirstParameter) / occtDeltaParameter;
-			double dynamoEndParameter = (u1 - occtFirstParameter) / occtDeltaParameter;
-
-			int degree = pOcctBsplineCurve->Degree();
-			Autodesk::DesignScript::Geometry::Curve^ pDynamoNurbsCurve = 
-				Autodesk::DesignScript::Geometry::NurbsCurve::ByControlPointsWeightsKnots(pDynamoControlPoints, pWeights, pKnots->ToArray(), degree)
-				->TrimByParameter(dynamoStartParameter, dynamoEndParameter);
-
-			for each(Autodesk::DesignScript::Geometry::Point^ pDynamoControlPoint in pDynamoControlPoints)
-			{
-				delete pDynamoControlPoint;
-			}
-
-			return pDynamoNurbsCurve;
+			return DynamoCurveFromBSplineCurve(pOcctBsplineCurve, u0, u1);
 		}
 
 		Handle(Geom_TrimmedCurve) pOcctTrimmedCurve = Handle_Geom_TrimmedCurve::DownCast(pOcctCurve);

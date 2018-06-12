@@ -46,6 +46,13 @@ namespace Topologic
 		static Cell^ ByVerticesFaceIndices(List<Vertex^>^ vertices, List<List<int>^>^ faceIndices);
 
 		/// <summary>
+		/// Creates a cell by lofting through a set of wires.
+		/// </summary>
+		/// <param name="wires">A set of wires</param>
+		/// <returns name="Cell">The created cell</returns>
+		static Cell^ ByLoft(List<Wire^>^ wires);
+
+		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="parentTopology"></param>

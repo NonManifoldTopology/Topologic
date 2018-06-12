@@ -117,6 +117,13 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="rkWires"></param>
+		/// <returns></returns>
+		static TOPOLOGIC_API std::shared_ptr<Cell> ByLoft(const std::list<std::shared_ptr<Wire>>& rkWires);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="kpAnotherCell"></param>
 		/// <param name="rEdges"></param>
 		TOPOLOGIC_API void SharedEdges(const std::shared_ptr<Cell>& kpAnotherCell, std::list<std::shared_ptr<Edge>>& rEdges) const;

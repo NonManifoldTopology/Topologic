@@ -19,6 +19,7 @@
 #include <BRepClass3d.hxx>
 #include <BRepClass3d_SolidClassifier.hxx>
 #include <BRepGProp.hxx>
+#include <BRepOffsetAPI_ThruSections.hxx>
 #include <BRepPrimAPI_MakeBox.hxx>
 #include <GProp_GProps.hxx>
 #include <ShapeFix_Solid.hxx>
@@ -258,6 +259,23 @@ namespace TopologicCore
 			kpVertex->AddIngredientTo(pCell);
 		}*/
 		return pCell;
+	}
+
+	std::shared_ptr<Cell> Cell::ByLoft(const std::list<std::shared_ptr<Wire>>& rkWires)
+	{
+		BRepOffsetAPI_ThruSections occtLoft(true);
+		for (const std::shared_ptr<Wire>& kpWire : rkWires)
+		{
+			occtLoft.AddWire(kpWire->GetOcctWire());
+		};
+		try {
+			occtLoft.Build();
+		}
+		catch (...)
+		{
+			throw std::exception("Loft error");
+		}
+		return std::make_shared<Cell>(TopoDS::Solid(occtLoft.Shape()));
 	}
 
 	void Cell::SharedEdges(const std::shared_ptr<Cell>& kpAnotherCell, std::list<std::shared_ptr<Edge>>& rEdges) const

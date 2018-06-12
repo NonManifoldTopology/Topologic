@@ -130,8 +130,14 @@ namespace Topologic
 			coreWires.push_back(TopologicCore::Topology::Downcast<TopologicCore::Wire>(pWire->GetCoreTopologicalQuery()));
 		}
 
-		std::shared_ptr<TopologicCore::Shell> pCoreShell = TopologicCore::Shell::ByLoft(coreWires);
-		return gcnew Shell(pCoreShell);
+		try {
+			std::shared_ptr<TopologicCore::Shell> pCoreShell = TopologicCore::Shell::ByLoft(coreWires);
+			return gcnew Shell(pCoreShell);
+		}
+		catch (std::exception&)
+		{
+			throw gcnew Exception("Loft error");
+		}
 	}
 
 	Shell^ Shell::ByVerticesFaceIndices(List<Vertex^>^ vertices, List<List<int>^>^ faceIndices)
