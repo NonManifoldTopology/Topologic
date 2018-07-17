@@ -232,6 +232,20 @@ namespace TopologicCore
 		DownwardNavigation(rCellComplexes);
 	}
 
+	//Cluster::Ptr Cluster::Flatten()
+	//{
+	//	std::list<Topology::Ptr> allMembers;
+	//	std::list<Topology::Ptr> thisClusterMembers;
+	//	BOPCol_ListOfShape occtClusters;
+	//	occtClusters.Append(GetOcctCompound());
+	//	
+	//	// Non-recursive breadth first search
+	//	// Iterate through the members
+	//	ImmediateMembers(thisClusterMembers);
+
+	//	return Cluster::ByTopology(topologies);
+	//}
+
 	bool Cluster::IsInside(Topology const * const kpkTopology) const
 	{
 		const TopoDS_Shape& rkOcctAddedShape = kpkTopology->GetOcctShape();

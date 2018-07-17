@@ -1965,6 +1965,16 @@ namespace TopologicCore
 			kOcctShapeIteratorA.More();
 			kOcctShapeIteratorA.Next())
 		{
+			occtListToTake.Clear();
+			occtListToAvoid.Clear();
+			occtListToTake.Append(kOcctShapeIteratorA.Value());
+			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
+		}
+
+		/*for (BOPCol_ListIteratorOfListOfShape kOcctShapeIteratorA(occtCellsBuildersOperandsA);
+			kOcctShapeIteratorA.More();
+			kOcctShapeIteratorA.Next())
+		{
 			for (BOPCol_ListIteratorOfListOfShape kOcctShapeIteratorB(occtCellsBuildersOperandsB);
 				kOcctShapeIteratorB.More();
 				kOcctShapeIteratorB.Next())
@@ -1986,7 +1996,7 @@ namespace TopologicCore
 			occtListToTake.Append(kOcctShapeIteratorA.Value());
 			occtListToAvoid.Append(occtCellsBuildersOperandsB);
 			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
-		}
+		}*/
 
 		std::shared_ptr<Topology> pResult = GetBooleanResult(
 			kpOtherTopology,
@@ -2190,7 +2200,8 @@ namespace TopologicCore
 	{
 		// Buffer lists are currently provided for cell complexes to be processed per cells.
 		BOPCol_ListOfShape occtCellsBuildersArguments;
-		if (GetType() == TOPOLOGY_CELLCOMPLEX)
+		TopologyType typeA = GetType();
+		if (typeA == TOPOLOGY_CELLCOMPLEX)
 		{
 			CellComplex* pCellComplex = TopologicalQuery::Downcast<CellComplex>(this);
 			std::list<std::shared_ptr<Cell>> cells;
@@ -2204,6 +2215,19 @@ namespace TopologicCore
 				occtCellsBuildersArguments.Append(kpCell->GetOcctShape());
 			}
 		}
+		else if (typeA == TOPOLOGY_CLUSTER)
+		{
+			std::list<Topology::Ptr> members;
+			ImmediateMembers(members);
+			for (const Topology::Ptr& kpMember : members)
+			{
+				TopoDS_Shape occtNewShape = FixBooleanOperandFace(kpMember->GetOcctShape(), rOcctMapFaceToFixedFaceA);
+				occtNewShape = FixBooleanOperandShell(kpMember->GetOcctShape());
+				occtNewShape = FixBooleanOperandCell(kpMember->GetOcctShape());
+				rOcctCellsBuildersOperandsA.Append(kpMember->GetOcctShape());
+				occtCellsBuildersArguments.Append(kpMember->GetOcctShape());
+			}
+		}
 		else
 		{
 			BOPCol_DataMapOfShapeShape occtMapFaceToFixedFace;
@@ -2214,7 +2238,8 @@ namespace TopologicCore
 			occtCellsBuildersArguments.Append(occtNewShape);
 		}
 
-		if (kpOtherTopology->GetType() == TOPOLOGY_CELLCOMPLEX)
+		TopologyType typeB = kpOtherTopology->GetType();
+		if (typeB == TOPOLOGY_CELLCOMPLEX)
 		{
 			std::shared_ptr<CellComplex> kpkCellComplex = TopologicalQuery::Downcast<CellComplex>(kpOtherTopology);
 			std::list<std::shared_ptr<Cell>> cells;
@@ -2226,6 +2251,19 @@ namespace TopologicCore
 				occtNewShape = FixBooleanOperandCell(kpCell->GetOcctShape());
 				rOcctCellsBuildersOperandsB.Append(kpCell->GetOcctShape());
 				occtCellsBuildersArguments.Append(kpCell->GetOcctShape());
+			}
+		}
+		else if (typeB == TOPOLOGY_CLUSTER)
+		{
+			std::list<Topology::Ptr> members;
+			kpOtherTopology->ImmediateMembers(members);
+			for (const Topology::Ptr& kpMember : members)
+			{
+				TopoDS_Shape occtNewShape = FixBooleanOperandFace(kpMember->GetOcctShape(), rOcctMapFaceToFixedFaceA);
+				occtNewShape = FixBooleanOperandShell(kpMember->GetOcctShape());
+				occtNewShape = FixBooleanOperandCell(kpMember->GetOcctShape());
+				rOcctCellsBuildersOperandsB.Append(kpMember->GetOcctShape());
+				occtCellsBuildersArguments.Append(kpMember->GetOcctShape());
 			}
 		}
 		else

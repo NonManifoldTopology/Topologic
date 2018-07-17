@@ -285,7 +285,7 @@ namespace Topologic
 		try {
 			return Surface();
 		}
-		catch (Exception^)
+		catch (Exception^ e)
 		{
 			return TriangulatedMesh();
 		}
@@ -468,15 +468,16 @@ namespace Topologic
 			for each(Wire^ pWire in pWires)
 			{
 				try{
-					Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoWireGeometry = safe_cast<Autodesk::DesignScript::Geometry::PolyCurve^>(pWire->Geometry);
+					Object^ pWireGeometry = pWire->Geometry;
+					Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoWireGeometry = safe_cast<Autodesk::DesignScript::Geometry::PolyCurve^>(pWireGeometry);
 					if(pDynamoWireGeometry != nullptr)
 					{
 						pDynamoEdgeLoops->Add(pDynamoWireGeometry);
 					}
 				}
-				catch (Exception^)
+				catch (Exception^ e)
 				{
-
+					int i = 0;
 				}
 			}
 
@@ -562,6 +563,7 @@ namespace Topologic
 		Handle(Geom_RectangularTrimmedSurface) pOcctRectangularTrimmedSurface = Handle_Geom_RectangularTrimmedSurface::DownCast(pOcctSurface);
 		if (!pOcctRectangularTrimmedSurface.IsNull())
 		{
+			Handle(Geom_Surface) pOcctBasisSurface = pOcctRectangularTrimmedSurface->BasisSurface();
 			throw gcnew NotImplementedException("Feature not yet implemented");
 		}
 

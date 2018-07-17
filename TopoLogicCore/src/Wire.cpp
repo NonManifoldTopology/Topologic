@@ -28,6 +28,12 @@ namespace TopologicCore
 			LabelManager::GetInstance().FindLabelByShape(rkOcctEdge, occtEdgeLabel);
 			rEdges.push_back(TopologicalQuery::Downcast<Edge>(Topology::ByOcctShape(rkOcctEdge, occtEdgeLabel)));
 		}
+
+		// If still empty, use the DownwardNavigation
+		if (rEdges.empty())
+		{
+			DownwardNavigation(rEdges);
+		}
 	}
 
 	void Wire::Faces(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Face>>& rFaces) const

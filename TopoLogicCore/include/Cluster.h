@@ -20,6 +20,9 @@ namespace TopologicCore
 	class Cluster : public Topology
 	{
 	public:
+		typedef std::shared_ptr<Cluster> Ptr;
+
+	public:
 		/// <summary>
 		/// 
 		/// </summary>
@@ -128,6 +131,12 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="rCells"></param>
 		TOPOLOGIC_API void CellComplexes(std::list<std::shared_ptr<CellComplex>>& rCellComplexes) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		//TOPOLOGIC_API Cluster::Ptr Flatten();
 
 		virtual TopologyType GetType() const { return TOPOLOGY_CLUSTER; }
 
