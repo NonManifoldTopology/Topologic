@@ -186,12 +186,13 @@ namespace Topologic
 		return pVertices;
 	}
 
-	List<Cell^>^ Cell::AdjacentCells(Cell^ cell)
+	List<Cell^>^ Cell::AdjacentCells(Topology^ parentTopology)
 	{
-		std::shared_ptr<TopologicCore::Cell> pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(cell->GetCoreTopologicalQuery());
+		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
+		TopologicCore::Topology::Ptr pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
 
-		std::list<std::shared_ptr<TopologicCore::Cell>> coreAdjacentCells;
-		pCoreCell->AdjacentCells(coreAdjacentCells);
+		std::list<TopologicCore::Cell::Ptr> coreAdjacentCells;
+		pCoreCell->AdjacentCells(pCoreParentTopology, coreAdjacentCells);
 
 		List<Cell^>^ pAdjacentCells = gcnew List<Cell^>();
 		for (std::list<std::shared_ptr<TopologicCore::Cell>>::const_iterator kCellIterator = coreAdjacentCells.begin();

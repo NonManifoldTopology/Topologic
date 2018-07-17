@@ -20,6 +20,9 @@ namespace TopologicCore
 	class Cell : public Topology
 	{
 	public:
+		typedef std::shared_ptr<Cell> Ptr;
+
+	public:
 		/// <summary>
 		/// 
 		/// </summary>
@@ -31,8 +34,10 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="kpParentTopology"></param>
 		/// <param name="rCells"></param>
-		TOPOLOGIC_API void AdjacentCells(std::list<std::shared_ptr<Cell>>& rCells) const;
+		/// <returns></returns>
+		TOPOLOGIC_API void AdjacentCells(const Topology::Ptr& kpParentTopology, std::list<std::shared_ptr<Cell>>& rCells) const;
 
 		/// <summary>
 		/// 

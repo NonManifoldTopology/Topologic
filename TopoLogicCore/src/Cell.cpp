@@ -41,11 +41,11 @@
 
 namespace TopologicCore
 {
-	void Cell::AdjacentCells(std::list<std::shared_ptr<Cell>>& rCells) const
+	void Cell::AdjacentCells(const Topology::Ptr& kpParentTopology, std::list<std::shared_ptr<Cell>>& rCells) const
 	{
 		// Iterate through the faces and find the incident cells which are not this cell.
 		TopTools_IndexedDataMapOfShapeListOfShape occtFaceSolidMap;
-		TopExp::MapShapesAndUniqueAncestors(GlobalCluster::GetInstance().GetCluster()->GetOcctShape(), TopAbs_FACE, TopAbs_SOLID, occtFaceSolidMap);
+		TopExp::MapShapesAndUniqueAncestors(kpParentTopology->GetOcctShape(), TopAbs_FACE, TopAbs_SOLID, occtFaceSolidMap);
 
 		// Find the constituent faces
 		TopTools_MapOfShape occtFaces;

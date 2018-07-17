@@ -1967,7 +1967,7 @@ namespace TopologicCore
 	std::shared_ptr<Topology> Topology::Slice(const std::shared_ptr<Topology>& kpOtherTopology)
 	{
 		// Check dimensionality. The second operand must be of lower dimensionality.
-		if (Dimensionality() <= kpOtherTopology->Dimensionality())
+		if (kpOtherTopology->GetType() != TOPOLOGY_CLUSTER && Dimensionality() <= kpOtherTopology->Dimensionality())
 		{
 			throw std::exception("Cannot perform slice. The second operand must be of lower dimensionality.");
 		}

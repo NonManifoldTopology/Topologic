@@ -92,9 +92,9 @@ namespace Topologic
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="cell"></param>
+		/// <param name="parentTopology"></param>
 		/// <returns name="Cell[]"></returns>
-		List<Cell^>^ AdjacentCells(Cell^ cell);
+		List<Cell^>^ AdjacentCells(Topology^ parentTopology);
 
 		/// <summary>
 		/// 
