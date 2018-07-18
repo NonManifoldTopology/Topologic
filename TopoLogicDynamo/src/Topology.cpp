@@ -309,12 +309,14 @@ namespace Topologic
 		return pSharedTopologies;
 	}
 
-	List<List<Topology^>^>^ Topology::PathsTo(Topology^ topology, int maxLevel, int maxPaths)
+	List<List<Topology^>^>^ Topology::PathsTo(Topology^ topology, Topology^ parentTopology, int maxLevel, int maxPaths)
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreParentTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
 		std::list<std::list<std::shared_ptr<TopologicCore::TopologicalQuery>>> corePaths;
 		pCoreTopology->PathsTo(
-			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery()), 
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery()),
+			pCoreParentTopology,
 			maxLevel,
 			maxPaths,
 			corePaths);

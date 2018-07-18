@@ -146,7 +146,7 @@ namespace Topologic
 		/// <param name="maxLevel"></param>
 		/// <param name="maxPaths"></param>
 		/// <returns name="Topology[][]"></returns>
-		List<List<Topology^>^>^ PathsTo(Topology^ topology, int maxLevel, int maxPaths);
+		List<List<Topology^>^>^ PathsTo(Topology^ topology, Topology^ parentTopology, int maxLevel, int maxPaths);
 
 		/*/// <summary>
 		/// 

@@ -56,6 +56,8 @@
 
 #include <array>
 #include <algorithm>
+#include <queue>
+#include <set>
 
 namespace TopologicCore
 {
@@ -706,9 +708,32 @@ namespace TopologicCore
 	{
 	}
 
-	void Topology::PathsTo(const Topology::Ptr& kpTopology, const int kMaxLevels, const int kMaxPaths, std::list<std::list<std::shared_ptr<TopologicalQuery>>>& rkPaths) const
+	void Topology::PathsTo(const Topology::Ptr& kpTopology, const Topology::Ptr& kpParentTopology, const int kMaxLevels, const int kMaxPaths, std::list<std::list<std::shared_ptr<TopologicalQuery>>>& rkPaths) const
 	{
-		
+		// Use BFS.
+		// https://en.wikipedia.org/wiki/Breadth-first_search
+		//std::queue<Topology const *> openSetTopology;
+		//std::set<Topology const *> closedSetTopology;
+		//topologyToVisit.push_back(this);
+		//std::list<Topology const *> visitedTopologies;
+		//while (!topologyToVisit.empty())
+		//{
+		//	Topology const * kpCurrentTopology = topologyToVisit.front();
+		//	topologyToVisit.pop_front();
+		//	visitedTopologies.push_back(kpCurrentTopology);
+
+		//	// Get neighbours
+		//	std::list<Topology const *> neighbours; // up and down
+
+		//	DownwardNavigation(neighbours);
+		//	UpwardNavigation(kpParentTopology, neighbours);
+
+		//	for(Topology const * kpNeighbour : neighbours)
+		//	{
+		//		if()
+		//	}
+		//}
+
 	}
 
 	void Topology::Contents(std::list<Topology::Ptr>& rContents) const
