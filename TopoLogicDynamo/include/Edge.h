@@ -31,6 +31,13 @@ namespace Topologic {
 		static Edge^ ByVertices(List<Vertex^>^ vertices);
 
 		/// <summary>
+		/// Gets the list of edges adjacent to this edge.
+		/// </summary>
+		/// <param name="parentTopology"></param>
+		/// <returns name="Edge[]">The edges adjacent to this edge</returns>
+		List<Edge^>^ AdjacentEdges(Topology^ parentTopology);
+
+		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns name="Vertex[]"></returns>

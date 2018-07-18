@@ -20,6 +20,31 @@
 
 namespace TopologicCore
 {
+	void Edge::AdjacentEdges(const Topology::Ptr& kpParentTopology, std::list<Edge::Ptr>& rEdges) const
+	{
+		std::list<Vertex::Ptr> vertices;
+		Vertices(vertices);
+
+		// Find the constituent edges
+		TopTools_MapOfShape occtEdges;
+		for (const Vertex::Ptr& kpVertex : vertices)
+		{
+			// Find the edges
+			std::list<Edge::Ptr> edges;
+			kpVertex->Edges(kpParentTopology, edges);
+
+			for (const Edge::Ptr& kpEdge : edges)
+			{
+				if (!IsSame(kpEdge) &&
+					!occtEdges.Contains(kpEdge->GetOcctShape()))
+				{
+					occtEdges.Add(kpEdge->GetOcctShape());
+					rEdges.push_back(kpEdge);
+				}
+			}
+		}
+	}
+
 	void Edge::Vertices(std::list<Vertex::Ptr>& rVertices) const
 	{
 		ShapeAnalysis_Edge occtShapeAnalysisEdge;

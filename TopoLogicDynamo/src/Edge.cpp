@@ -20,6 +20,27 @@
 
 namespace Topologic
 {
+	List<Edge^>^ Edge::AdjacentEdges(Topology ^ parentTopology)
+	{
+		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
+		std::list<TopologicCore::Edge::Ptr> pAdjacentCoreEdges;
+		pCoreEdge->AdjacentEdges(pCoreParentTopology, pAdjacentCoreEdges);
+
+		List<Edge^>^ pAdjacentEdges = gcnew List<Edge^>();
+
+		for (std::list<TopologicCore::Edge::Ptr>::const_iterator kAdjacentEdgeIterator = pAdjacentCoreEdges.begin();
+			kAdjacentEdgeIterator != pAdjacentCoreEdges.end();
+			kAdjacentEdgeIterator++)
+		{
+			const TopologicCore::Edge::Ptr& kpCoreEdge = *kAdjacentEdgeIterator;
+			Edge^ pEdge = gcnew Edge(kpCoreEdge);
+			pAdjacentEdges->Add(pEdge);
+		}
+
+		return pAdjacentEdges;
+	}
+
 	List<Vertex^>^ Edge::Vertices()
 	{
 		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());

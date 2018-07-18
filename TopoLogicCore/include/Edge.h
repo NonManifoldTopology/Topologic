@@ -35,6 +35,14 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="kpParentTopology"></param>
+		/// <param name="rEdges"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API void AdjacentEdges(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Edge>>& rEdges) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="rVertices"></param>
 		TOPOLOGIC_API void Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const;
 
