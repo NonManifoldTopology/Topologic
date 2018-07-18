@@ -10,25 +10,25 @@
 
 #include <assert.h>
 
-#include <LabelManager.h>
+//#include <LabelManager.h>
 
 namespace TopologicCore
 {
-	Vertex::Vertex(const TopoDS_Vertex& rkOcctVertex, const TDF_Label& rkOcctLabel)
+	Vertex::Vertex(const TopoDS_Vertex& rkOcctVertex)
 		: Topology(0)
 		, m_occtVertex(rkOcctVertex)
 	{
 		//GlobalCluster::GetInstance().Add(this);
 		
 		// Needs to be done in the subclass, not in Topology, as the OCCT shape is not yet defined there.
-		SetOcctLabel(rkOcctLabel);
-		OcctCounterAttribute::IncreaseCounter(GetOcctLabel());
+		/*SetOcctLabel(rkOcctLabel);
+		OcctCounterAttribute::IncreaseCounter(GetOcctLabel());*/
 	}
 
 	Vertex::~Vertex()
 	{
 		//GlobalCluster::GetInstance().Remove(this);
-		DecreaseCounter();
+		//DecreaseCounter();
 	}
 
 	std::shared_ptr<Vertex> Vertex::ByPoint(Handle(Geom_Point) pOcctPoint)

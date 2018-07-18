@@ -105,12 +105,12 @@ namespace Topologic
 
 		// TODO: have a list of predefined attributes, and do this in TopologicCore.
 		List<Object^>^ pAttributeList = gcnew List<Object^>();
-		const TDF_Label& rkOcctLabel = pCoreTopology->GetOcctLabel();
+		/*const TDF_Label& rkOcctLabel = pCoreTopology->GetOcctLabel();
 		for (TDF_AttributeIterator occtAttributeIterator(rkOcctLabel); occtAttributeIterator.More(); occtAttributeIterator.Next())
 		{
 			String^ pString = gcnew String(typeid(*occtAttributeIterator.Value()).name());
 			pAttributeList->Add(pString);
-		}
+		}*/
 
 		/*int nbChildren = rkOcctLabel.NbChildren();
 		ExploreChild(rkOcctLabel);*/
@@ -165,20 +165,22 @@ namespace Topologic
 
 	TDF_Attribute* Topology::FindAttribute(String ^ ID)
 	{
-		std::string cppID = msclr::interop::marshal_as<std::string>(ID);
+		/*std::string cppID = msclr::interop::marshal_as<std::string>(ID);
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		return pCoreTopology->FindAttribute(Standard_GUID(cppID.c_str()));
+		return pCoreTopology->FindAttribute(Standard_GUID(cppID.c_str()));*/
+
+		return nullptr;
 	}
 
 	void Topology::AttachAttribute(TDF_Attribute* attribute)
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		TDF_Label& rLabel = pCoreTopology->GetOcctLabel();
+		/*TDF_Label& rLabel = pCoreTopology->GetOcctLabel();
 
 		Handle(TDF_Attribute) pAttribute(attribute);
 		if (!rLabel.FindAttribute(attribute->ID(), pAttribute)) {
 			rLabel.AddAttribute(pAttribute);
-		}
+		}*/
 	}
 
 	Topology^ Topology::ByCoreTopology(const std::shared_ptr<TopologicCore::Topology>& kpCoreTopology)

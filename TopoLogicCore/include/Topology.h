@@ -387,7 +387,7 @@ namespace TopologicCore
 		/// <returns></returns>
 		std::string GetTypeAsString() const;
 
-		void SetInGlobalCluster(const bool kInGlobalCluster)
+		/*void SetInGlobalCluster(const bool kInGlobalCluster)
 		{
 			m_isInGlobalCluster = kInGlobalCluster;
 		}
@@ -395,7 +395,7 @@ namespace TopologicCore
 		bool IsInGlobalCluster() const
 		{
 			return m_isInGlobalCluster;
-		}
+		}*/
 
 		/// <summary>
 		/// 
@@ -434,26 +434,26 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <param name="kpTopology"></param>
-		void AddIngredientTo(const std::shared_ptr<Topology>& kpTopology);
+		//void AddIngredientTo(const std::shared_ptr<Topology>& kpTopology);
 
 		/// <summary>
 		/// Used when deleted
 		/// </summary>
 		/// <param name="kpTopology"></param>
-		void RemoveIngredientTo(const std::shared_ptr<Topology>& kpTopology);
+		//void RemoveIngredientTo(const std::shared_ptr<Topology>& kpTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpTopology"></param>
 		/// <returns></returns>
-		bool IsIngredientTo(const std::shared_ptr<Topology>& kpTopology) const;
+		//bool IsIngredientTo(const std::shared_ptr<Topology>& kpTopology) const;
 		
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		bool IsIngredient() const;
+		//bool IsIngredient() const;
 
 		/// <summary>
 		/// 
@@ -491,25 +491,25 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="pTopology"></param>
 		/// <param name="kRelationshipType"></param>
-		void AddChildLabel(std::shared_ptr<Topology>& pTopology, const TopologyRelationshipType kRelationshipType);
+		//void AddChildLabel(std::shared_ptr<Topology>& pTopology, const TopologyRelationshipType kRelationshipType);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		TOPOLOGIC_API TDF_Label& GetOcctLabel();// { return m_occtLabel; }
+		//TOPOLOGIC_API TDF_Label& GetOcctLabel();// { return m_occtLabel; }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		TOPOLOGIC_API const TDF_Label& GetOcctLabel() const;// { return m_occtLabel; }
+		///// <summary>
+		///// 
+		///// </summary>
+		///// <returns></returns>
+		//TOPOLOGIC_API const TDF_Label& GetOcctLabel() const;// { return m_occtLabel; }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="rkOcctLabel"></param>
-		void SetOcctLabel(const TDF_Label& rkOcctLabel);
+		///// <summary>
+		///// 
+		///// </summary>
+		///// <param name="rkOcctLabel"></param>
+		//void SetOcctLabel(const TDF_Label& rkOcctLabel);
 
 		/// <summary>
 		/// 
@@ -523,7 +523,7 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="kID"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API TDF_Attribute* FindAttribute(const Standard_GUID& kID) const;
+		//TOPOLOGIC_API TDF_Attribute* FindAttribute(const Standard_GUID& kID) const;
 
 		/// <summary>
 		/// 
@@ -611,11 +611,11 @@ namespace TopologicCore
 		/// <param name="rOcctMapFaceToFixedFaceA"></param>
 		/// <param name="rOcctMapFaceToFixedFaceB"></param>
 		/// <returns></returns>
-		std::shared_ptr<Topology> ManageBooleanLabels(
+		/*std::shared_ptr<Topology> ManageBooleanLabels(
 			const std::shared_ptr<Topology>& kpOtherTopology,
 			BOPAlgo_CellsBuilder& rOcctCellsBuilder,
 			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceA,
-			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceB);
+			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceB);*/
 
 		/// <summary>
 		/// 
@@ -642,18 +642,18 @@ namespace TopologicCore
 		/// <summary>
 		/// Register OCCT label to the LabelManager
 		/// </summary>
-		void RegisterLabel();
+		//void RegisterLabel();
 
 		/// <summary>
 		/// Decrease the label's counter
 		/// </summary>
-		void DecreaseCounter();
+		//void DecreaseCounter();
 
 		AttributeMap m_attributeMap; // to be replaced by OCCT OCAF
 		int m_dimensionality;
-		bool m_isInGlobalCluster;
+		//bool m_isInGlobalCluster;
 
-		TDF_Label m_occtLabel;
+		//TDF_Label m_occtLabel;
 		
 
 		// TODO: may cause cyclic dependencies, may need weak_ptr
@@ -661,8 +661,8 @@ namespace TopologicCore
 		std::list<std::shared_ptr<Context>> m_contexts;
 
 		// TODO: may cause cyclic dependencies, may need weak_ptr
-		std::list<std::shared_ptr<Topology>> m_ingredientTo;
-		std::list<std::shared_ptr<Topology>> m_ingredients;
+		/*std::list<std::shared_ptr<Topology>> m_ingredientTo;
+		std::list<std::shared_ptr<Topology>> m_ingredients;*/
 	};
 
 	template <class Subclass>
@@ -671,14 +671,6 @@ namespace TopologicCore
 		static_assert(std::is_base_of<Topology, Subclass>::value, "Subclass not derived from Topology");
 		
 		TopAbs_ShapeEnum occtShapeType = CheckOcctShapeType<Subclass>();
-		//TopTools_ListOfShape occtTopShapes;
-		//std::list<std::shared_ptr<Topology>> topTopologyList;
-		//LabelManager::GetInstance().GetTopShapes(topTopologyList);
-		// Iterate through all 1st level OCCT labels 
-		/*TDF_Label occtTopLabel;
-		bool isLabelFound = LabelManager::GetInstance().FindLabelByShape(kpTopology->GetOcctShape(), LabelManager::GetInstance().GetRoot(), occtTopLabel);
-		if (!isLabelFound)
-			return;*/
 
 		TopTools_ListOfShape occtAncestorMap;
 		const TopoDS_Shape& rkOcctTopShape = kpParentTopology->GetOcctShape();
@@ -706,10 +698,11 @@ namespace TopologicCore
 			{
 				occtAncestorMap.Append(rkOcctAncestor);
 
-				TDF_Label ancestorLabel;
-				// Find the label of rkOcctAncestor
-				bool isFound = LabelManager::FindLabelByShape(rkOcctAncestor, ancestorLabel);
-				std::shared_ptr<Topology> pTopology = ByOcctShape(rkOcctAncestor, ancestorLabel);
+				//TDF_Label ancestorLabel;
+				//// Find the label of rkOcctAncestor
+				//bool isFound = LabelManager::FindLabelByShape(rkOcctAncestor, ancestorLabel);
+				//std::shared_ptr<Topology> pTopology = ByOcctShape(rkOcctAncestor, ancestorLabel);
+				std::shared_ptr<Topology> pTopology = ByOcctShape(rkOcctAncestor);
 				rAncestors.push_back(Downcast<Subclass>(pTopology));
 			}
 		}

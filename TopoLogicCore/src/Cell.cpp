@@ -152,48 +152,48 @@ namespace TopologicCore
 
 		std::shared_ptr<Cell> pCell = std::make_shared<Cell>(occtMakeSolid);
 		std::shared_ptr<Topology> pUpcastCell = TopologicalQuery::Upcast<Topology>(pCell);
-		GlobalCluster::GetInstance().GetCluster()->AddChildLabel(pUpcastCell, REL_CONSTITUENT);
+		//GlobalCluster::GetInstance().GetCluster()->AddChildLabel(pUpcastCell, REL_CONSTITUENT);
 
 		// HACK: add the v1 contents to the current cell faces.
 
-		if (!kpShell->GetOcctLabel().IsNull())
-		{
-			// Do the labeling.
-			// Iterate through the shell's child labels.
-			for (TDF_ChildIterator occtShellLabelIterator(kpShell->GetOcctLabel()); occtShellLabelIterator.More(); occtShellLabelIterator.Next())
-			{
-				TDF_Label shellFaceLabel = occtShellLabelIterator.Value();
-				Handle(TNaming_NamedShape) occtFaceAttribute;
-				bool result = shellFaceLabel.FindAttribute(TNaming_NamedShape::GetID(), occtFaceAttribute);
-				TopoDS_Shape occtShellFace = occtFaceAttribute->Get();
-				if (occtMakeSolid.IsDeleted(occtShellFace))
-				{
-					continue;
-				}
+		//if (!kpShell->GetOcctLabel().IsNull())
+		//{
+		//	// Do the labeling.
+		//	// Iterate through the shell's child labels.
+		//	for (TDF_ChildIterator occtShellLabelIterator(kpShell->GetOcctLabel()); occtShellLabelIterator.More(); occtShellLabelIterator.Next())
+		//	{
+		//		TDF_Label shellFaceLabel = occtShellLabelIterator.Value();
+		//		Handle(TNaming_NamedShape) occtFaceAttribute;
+		//		bool result = shellFaceLabel.FindAttribute(TNaming_NamedShape::GetID(), occtFaceAttribute);
+		//		TopoDS_Shape occtShellFace = occtFaceAttribute->Get();
+		//		if (occtMakeSolid.IsDeleted(occtShellFace))
+		//		{
+		//			continue;
+		//		}
 
-				// Create a cell face from a shell face, they are essentially the same.
-				// Add this face to the cell
-				std::shared_ptr<Topology> cellFace = Topology::ByOcctShape(occtShellFace);
-				pCell->AddChildLabel(cellFace, REL_CONSTITUENT);
-				int numChildren = cellFace->GetOcctLabel().NbChildren();
+		//		// Create a cell face from a shell face, they are essentially the same.
+		//		// Add this face to the cell
+		//		std::shared_ptr<Topology> cellFace = Topology::ByOcctShape(occtShellFace);
+		//		//pCell->AddChildLabel(cellFace, REL_CONSTITUENT);
+		//		int numChildren = cellFace->GetOcctLabel().NbChildren();
 
-				// Transfer the aperture attributes from the shell's face to the cell's face
-				for (TDF_ChildIterator occtLabelIterator(shellFaceLabel); occtLabelIterator.More(); occtLabelIterator.Next())
-				{
-					TDF_Label apertureLabel = occtLabelIterator.Value();
-					Handle(TNaming_NamedShape) occtApertureAttribute;
-					Handle(TDataStd_Integer) occtRelationshipType;
-					if (apertureLabel.FindAttribute(TNaming_NamedShape::GetID(), occtApertureAttribute) &&
-						apertureLabel.FindAttribute(TDataStd_Integer::GetID(), occtRelationshipType) &&
-						occtRelationshipType->Get() == REL_APERTURE)
-					{
-						TopoDS_Shape occtAperture = occtApertureAttribute->Get();
-						std::shared_ptr<Topology> aperture = Topology::ByOcctShape(occtAperture);
-						cellFace->AddChildLabel(aperture, REL_APERTURE);
-					}
-				}
-			}
-		}
+		//		// Transfer the aperture attributes from the shell's face to the cell's face
+		//		for (TDF_ChildIterator occtLabelIterator(shellFaceLabel); occtLabelIterator.More(); occtLabelIterator.Next())
+		//		{
+		//			TDF_Label apertureLabel = occtLabelIterator.Value();
+		//			Handle(TNaming_NamedShape) occtApertureAttribute;
+		//			Handle(TDataStd_Integer) occtRelationshipType;
+		//			if (apertureLabel.FindAttribute(TNaming_NamedShape::GetID(), occtApertureAttribute) &&
+		//				apertureLabel.FindAttribute(TDataStd_Integer::GetID(), occtRelationshipType) &&
+		//				occtRelationshipType->Get() == REL_APERTURE)
+		//			{
+		//				TopoDS_Shape occtAperture = occtApertureAttribute->Get();
+		//				std::shared_ptr<Topology> aperture = Topology::ByOcctShape(occtAperture);
+		//				cellFace->AddChildLabel(aperture, REL_APERTURE);
+		//			}
+		//		}
+		//	}
+		//}
 
 		return pCell;
 	}
@@ -433,18 +433,18 @@ namespace TopologicCore
 		}
 	}
 
-	Cell::Cell(const TopoDS_Solid& rkOcctSolid, const TDF_Label& rkOcctLabel)
+	Cell::Cell(const TopoDS_Solid& rkOcctSolid)
 		: Topology(3)
 		, m_occtSolid(rkOcctSolid)
 	{
 		//GlobalCluster::GetInstance().Add(this);
-		SetOcctLabel(rkOcctLabel);
-		OcctCounterAttribute::IncreaseCounter(GetOcctLabel());
+		/*SetOcctLabel(rkOcctLabel);
+		OcctCounterAttribute::IncreaseCounter(GetOcctLabel());*/
 	}
 
 	Cell::~Cell()
 	{
 		//GlobalCluster::GetInstance().Remove(this);
-		DecreaseCounter();
+		//DecreaseCounter();
 	}
 }

@@ -26,15 +26,13 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kAddToGlobalCluster"></param>
-		Cluster(const bool kAddToGlobalCluster = true);
+		Cluster();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="rkOcctCompound"></param>
-		/// <param name="kAddToGlobalCluster"></param>
-		Cluster(const TopoDS_Compound& rkOcctCompound, const bool kAddToGlobalCluster = true);
+		/// <param name="rkOcctCompound"></param>x
+		Cluster(const TopoDS_Compound& rkOcctCompound);
 
 		virtual ~Cluster();
 

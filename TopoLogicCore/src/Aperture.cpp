@@ -1,6 +1,6 @@
 #include <Aperture.h>
 #include <Context.h>
-#include <GlobalCluster.h>
+//#include <GlobalCluster.h>
 
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
@@ -75,7 +75,7 @@ namespace TopologicCore
 
 		m_occtAperturePaths.clear();
 		TopTools_IndexedDataMapOfShapeListOfShape apertureToTopologyMap;
-		TopExp::MapShapesAndUniqueAncestors(GlobalCluster::GetInstance().GetCluster()->GetOcctShape(), occtContextTopologyType, occtParentTopologyType, apertureToTopologyMap);
+		//TopExp::MapShapesAndUniqueAncestors(GlobalCluster::GetInstance().GetCluster()->GetOcctShape(), occtContextTopologyType, occtParentTopologyType, apertureToTopologyMap);
 
 		const TopTools_ListOfShape& rkOcctParentTopologies = apertureToTopologyMap.FindFromKey(m_pMainContext->Topology()->GetOcctShape());
 

@@ -24,9 +24,7 @@ namespace TopologicCore
 		/// Creates a vertex by an OCCT vertex.
 		/// </summary>
 		/// <param name="rkOcctVertex">An OCCT vertex</param>
-		/// <param name="rkOcctLabel">Pass this if this is based on a vertex already in the LabelManager. 
-		/// Otherwise a default value is used and the label will be added to the LabelManager.</param>
-		Vertex(const TopoDS_Vertex& rkOcctVertex, const TDF_Label& rkOcctLabel = TDF_Label());
+		Vertex(const TopoDS_Vertex& rkOcctVertex);
 
 		virtual ~Vertex();
 

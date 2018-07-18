@@ -103,23 +103,16 @@ namespace TopologicCore
 
 		occtSewing.Perform();
 		std::shared_ptr<Shell> pShell = std::make_shared<Shell>(TopoDS::Shell(occtSewing.SewedShape()));
-		/*for (std::list<std::shared_ptr<Face>>::const_iterator kFaceIterator = rkFaces.begin();
-			kFaceIterator != rkFaces.end();
-			kFaceIterator++)
-		{
-			const std::shared_ptr<Face>& kpFace = *kFaceIterator;
-			kpFace->AddIngredientTo(pShell);
-		}*/
 
 		// HACK: add the v1 contents to the current shell faces.
 		std::shared_ptr<Topology> pUpcastShell = TopologicalQuery::Upcast<Topology>(pShell);
-		GlobalCluster::GetInstance().GetCluster()->AddChildLabel(pUpcastShell, REL_CONSTITUENT);
+		//GlobalCluster::GetInstance().GetCluster()->AddChildLabel(pUpcastShell, REL_CONSTITUENT);
 
 		for (const std::shared_ptr<Face>& kShellFace : rkFaces)
 		{
 			const TopoDS_Shape& rkModifiedShape = occtSewing.Modified(kShellFace->GetOcctShape());
 			std::shared_ptr<Topology> pChildTopology = Topology::ByOcctShape(rkModifiedShape);
-			pShell->AddChildLabel(pChildTopology, REL_CONSTITUENT);
+			//pShell->AddChildLabel(pChildTopology, REL_CONSTITUENT);
 
 			// Map the aperture to the modifed shell faces.
 			std::list<std::shared_ptr<Topology>>& rContents = kShellFace->Contents();
@@ -139,7 +132,7 @@ namespace TopologicCore
 
 				std::shared_ptr<Face> pApertureFace = TopologicalQuery::Downcast<Face>(aperture->Topology());
 				std::shared_ptr<Topology> pUpcastApertureFace = TopologicalQuery::Upcast<Topology>(pApertureFace);
-				pChildTopology->AddChildLabel(pUpcastApertureFace, REL_APERTURE);
+				//pChildTopology->AddChildLabel(pUpcastApertureFace, REL_APERTURE);
 			}
 		}
 
@@ -1128,7 +1121,7 @@ namespace TopologicCore
 
 		// Register the shapes to the OCCT documents.
 		std::shared_ptr<Topology> pUpcastTopology = TopologicalQuery::Upcast<Topology>(pOutputShell);
-		GlobalCluster::GetInstance().GetCluster()->AddChildLabel(pUpcastTopology, REL_CONSTITUENT);
+		//GlobalCluster::GetInstance().GetCluster()->AddChildLabel(pUpcastTopology, REL_CONSTITUENT);
 
 		// Iterate through the faces of the shell and attach them as labels of the shell's label.
 		std::list<std::shared_ptr<Face>> outputFaces;
@@ -1160,7 +1153,7 @@ namespace TopologicCore
 				TopoDS_Shape occtModifiedShape = occtSewing.ModifiedSubShape(rkKeyShape);
 				std::shared_ptr<Topology> modifiedShape = Topology::ByOcctShape(occtModifiedShape);
 
-				pOutputShell->AddChildLabel(modifiedShape, REL_CONSTITUENT);
+				//pOutputShell->AddChildLabel(modifiedShape, REL_CONSTITUENT);
 
 				// The apertures of the modifiedShape are transferred to 
 				const BOPCol_ListOfShape& rkOcctApertures = iterator.Value();
@@ -1170,7 +1163,7 @@ namespace TopologicCore
 				{
 					const TopoDS_Shape& rkOcctAperture = occtApertureIterator.Value();
 					std::shared_ptr<Topology> aperture = Topology::ByOcctShape(rkOcctAperture);
-					modifiedShape->AddChildLabel(aperture, REL_APERTURE);
+					//modifiedShape->AddChildLabel(aperture, REL_APERTURE);
 				}
 			}
 		}
@@ -1238,18 +1231,18 @@ namespace TopologicCore
 		}
 	}
 
-	Shell::Shell(const TopoDS_Shell& rkOcctShell, const TDF_Label& rkOcctLabel)
+	Shell::Shell(const TopoDS_Shell& rkOcctShell)
 		: Topology(2)
 		, m_occtShell(rkOcctShell)
 	{
 		//GlobalCluster::GetInstance().Add(this);
-		SetOcctLabel(rkOcctLabel);
-		OcctCounterAttribute::IncreaseCounter(GetOcctLabel());
+		/*SetOcctLabel(rkOcctLabel);
+		OcctCounterAttribute::IncreaseCounter(GetOcctLabel());*/
 	}
 
 	Shell::~Shell()
 	{
 		//GlobalCluster::GetInstance().Remove(this);
-		DecreaseCounter();
+		//DecreaseCounter();
 	}
 }

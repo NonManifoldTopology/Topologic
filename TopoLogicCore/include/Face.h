@@ -32,8 +32,7 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <param name="rkOcctFace"></param>
-		/// <param name="rkOcctLabel"></param>
-		Face(const TopoDS_Face& rkOcctFace, const TDF_Label& rkOcctLabel = TDF_Label());
+		Face(const TopoDS_Face& rkOcctFace);
 
 		virtual ~Face();
 

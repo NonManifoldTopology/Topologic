@@ -1,7 +1,7 @@
 #include <Edge.h>
 #include <Vertex.h>
 #include <Wire.h>
-#include <LabelManager.h>
+//#include <LabelManager.h>
 #include <OcctCounterAttribute.h>
 
 #include <BRepGProp.hxx>
@@ -27,17 +27,18 @@ namespace TopologicCore
 		ShapeAnalysis_Edge occtShapeAnalysisEdge;
 		
 		TopoDS_Vertex occtVertex1 = occtShapeAnalysisEdge.FirstVertex(GetOcctEdge());
-		// Find the vertex's label
-		TDF_Label occtVertex1Label;
-		LabelManager::GetInstance().FindLabelByShape(occtVertex1, occtVertex1Label);
-		rVertices.push_back(std::make_shared<Vertex>(occtVertex1, occtVertex1Label));
+		rVertices.push_back(std::make_shared<Vertex>(occtVertex1));
+		//// Find the vertex's label
+		//TDF_Label occtVertex1Label;
+		//LabelManager::GetInstance().FindLabelByShape(occtVertex1, occtVertex1Label);
+		//rVertices.push_back(std::make_shared<Vertex>(occtVertex1, occtVertex1Label));
 		
 		TopoDS_Vertex occtVertex2 = occtShapeAnalysisEdge.LastVertex(GetOcctEdge());
+		rVertices.push_back(std::make_shared<Vertex>(occtVertex2));
 		// Find the vertex's label
-		TDF_Label occtVertex2Label;
-		LabelManager::GetInstance().FindLabelByShape(occtVertex2, occtVertex2Label);
-
-		rVertices.push_back(std::make_shared<Vertex>(occtVertex2, occtVertex2Label));
+		/*TDF_Label occtVertex2Label;
+		LabelManager::GetInstance().FindLabelByShape(occtVertex2, occtVertex2Label);*/
+		//rVertices.push_back(std::make_shared<Vertex>(occtVertex2, occtVertex2Label));
 	}
 
 	void Edge::Wires(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Wire>>& rWires) const
@@ -90,7 +91,7 @@ namespace TopologicCore
 		}
 
 		std::shared_ptr<Edge> pEdge = std::make_shared<Edge>(occtMakeEdge);
-		LabelManager::GetInstance().AddGeneratedMembersToLabel(pEdge->GetOcctLabel());
+		//LabelManager::GetInstance().AddGeneratedMembersToLabel(pEdge->GetOcctLabel());
 		return pEdge;
 	}
 
@@ -124,9 +125,9 @@ namespace TopologicCore
 
 			// Add the vertices to the edge's label. Must do this manually because of the Modified()'s nature to map 
 			// old to new sub-shapes.
-			LabelManager::GetInstance().AddModifiedMembers(
+			/*LabelManager::GetInstance().AddModifiedMembers(
 				pEdge->GetOcctLabel(), 
-				topologyPairs);
+				topologyPairs);*/
 
 		}else
 		{
@@ -154,7 +155,7 @@ namespace TopologicCore
 				}
 
 				pEdge = std::make_shared<Edge>(occtMakeEdge);
-				LabelManager::GetInstance().AddGeneratedMembersToLabel(pEdge->GetOcctLabel());
+				//LabelManager::GetInstance().AddGeneratedMembersToLabel(pEdge->GetOcctLabel());
 			}
 			catch (Standard_ConstructionError e)
 			{
@@ -315,20 +316,20 @@ namespace TopologicCore
 		}
 	}
 
-	Edge::Edge(const TopoDS_Edge& rkOcctEdge, const TDF_Label& rkOcctLabel)
+	Edge::Edge(const TopoDS_Edge& rkOcctEdge)
 		: Topology(1)
 		, m_occtEdge(rkOcctEdge)
 	{
 		//GlobalCluster::GetInstance().Add(this);
 
 		// Needs to be done in the subclass, not in Topology, as the OCCT shape is not yet defined there.
-		SetOcctLabel(rkOcctLabel);
-		OcctCounterAttribute::IncreaseCounter(GetOcctLabel());
+		/*SetOcctLabel(rkOcctLabel);
+		OcctCounterAttribute::IncreaseCounter(GetOcctLabel());*/
 	}
 
 	Edge::~Edge()
 	{
 		//GlobalCluster::GetInstance().Remove(this);
-		DecreaseCounter();
+		//DecreaseCounter();
 	}
 }

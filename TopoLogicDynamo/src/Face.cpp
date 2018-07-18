@@ -285,7 +285,7 @@ namespace Topologic
 		try {
 			return Surface();
 		}
-		catch (Exception^ e)
+		catch (Exception^)
 		{
 			return TriangulatedMesh();
 		}
@@ -475,7 +475,7 @@ namespace Topologic
 						pDynamoEdgeLoops->Add(pDynamoWireGeometry);
 					}
 				}
-				catch (Exception^ e)
+				catch (Exception^ )
 				{
 					int i = 0;
 				}
