@@ -34,18 +34,18 @@ namespace Topologic
 {
 	List<Face^>^ Face::AdjacentFaces(Topology^ parentTopology)
 	{
-		std::shared_ptr<TopologicCore::Face> pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
+		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
 		std::shared_ptr<TopologicCore::Topology> pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
-		std::list<std::shared_ptr<TopologicCore::Face>> pAdjacentCoreFaces;
+		std::list<TopologicCore::Face::Ptr> pAdjacentCoreFaces;
 		pCoreFace->AdjacentFaces(pCoreParentTopology, pAdjacentCoreFaces);
 
 		List<Face^>^ pAdjacentFaces = gcnew List<Face^>();
 
-		for(std::list<std::shared_ptr<TopologicCore::Face>>::const_iterator kAdjacentFaceIterator = pAdjacentCoreFaces.begin();
+		for(std::list<TopologicCore::Face::Ptr>::const_iterator kAdjacentFaceIterator = pAdjacentCoreFaces.begin();
 			kAdjacentFaceIterator != pAdjacentCoreFaces.end();
 			kAdjacentFaceIterator++)
 		{
-			const std::shared_ptr<TopologicCore::Face>& kpCoreFace = *kAdjacentFaceIterator;
+			const TopologicCore::Face::Ptr& kpCoreFace = *kAdjacentFaceIterator;
 			Face^ pFace = gcnew Face(kpCoreFace);
 			pAdjacentFaces->Add(pFace);
 		}
@@ -55,17 +55,17 @@ namespace Topologic
 
 	List<Cell^>^ Face::Cells(Topology^ parentTopology)
 	{
-		std::shared_ptr<TopologicCore::Face> pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
+		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
 		std::shared_ptr<TopologicCore::Topology> pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
-		std::list<std::shared_ptr<TopologicCore::Cell>> pCoreCells;
+		std::list<TopologicCore::Cell::Ptr> pCoreCells;
 		pCoreFace->Cells(pCoreParentTopology, pCoreCells);
 
 		List<Cell^>^ pCells = gcnew List<Cell^>();
-		for (std::list<std::shared_ptr<TopologicCore::Cell>>::const_iterator kCellIterator = pCoreCells.begin();
+		for (std::list<TopologicCore::Cell::Ptr>::const_iterator kCellIterator = pCoreCells.begin();
 			kCellIterator != pCoreCells.end();
 			kCellIterator++)
 		{
-			const std::shared_ptr<TopologicCore::Cell>& kpCoreCell = *kCellIterator;
+			const TopologicCore::Cell::Ptr& kpCoreCell = *kCellIterator;
 			Cell^ pCell = gcnew Cell(kpCoreCell);
 			pCells->Add(pCell);
 		}
@@ -75,18 +75,18 @@ namespace Topologic
 
 	List<Shell^>^ Face::Shells(Topology^ parentTopology)
 	{
-		std::shared_ptr<TopologicCore::Face> pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
+		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
 		std::shared_ptr<TopologicCore::Topology> pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
-		std::list<std::shared_ptr<TopologicCore::Shell>> pCoreShells;
+		std::list<TopologicCore::Shell::Ptr> pCoreShells;
 		pCoreFace->Shells(pCoreParentTopology, pCoreShells);
 
 		List<Shell^>^ pShells = gcnew List<Shell^>();
 
-		for (std::list<std::shared_ptr<TopologicCore::Shell>>::const_iterator kShellIterator = pCoreShells.begin();
+		for (std::list<TopologicCore::Shell::Ptr>::const_iterator kShellIterator = pCoreShells.begin();
 			kShellIterator != pCoreShells.end();
 			kShellIterator++)
 		{
-			const std::shared_ptr<TopologicCore::Shell>& kpCoreShell = *kShellIterator;
+			const TopologicCore::Shell::Ptr& kpCoreShell = *kShellIterator;
 			Shell^ pShell = gcnew Shell(kpCoreShell);
 			pShells->Add(pShell);
 		}
@@ -96,7 +96,7 @@ namespace Topologic
 
 	double Face::Area()
 	{
-		std::shared_ptr<TopologicCore::Face> pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
+		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
 		return pCoreFace->Area();
 	}
 
@@ -117,18 +117,18 @@ namespace Topologic
 
 	List<Edge^>^ Face::SharedEdges(Face^ face)
 	{
-		std::shared_ptr<TopologicCore::Face> pCoreFace1 = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopologicCore::Face> pCoreFace2 = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
-		std::list<std::shared_ptr<TopologicCore::Edge>> pCoreEdges;
+		TopologicCore::Face::Ptr pCoreFace1 = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
+		TopologicCore::Face::Ptr pCoreFace2 = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
+		std::list<TopologicCore::Edge::Ptr> pCoreEdges;
 		pCoreFace1->SharedEdges(pCoreFace2, pCoreEdges);
 
 		List<Edge^>^ pSharedEdges = gcnew List<Edge^>();
 
-		for (std::list<std::shared_ptr<TopologicCore::Edge>>::const_iterator kEdgeIterator = pCoreEdges.begin();
+		for (std::list<TopologicCore::Edge::Ptr>::const_iterator kEdgeIterator = pCoreEdges.begin();
 			kEdgeIterator != pCoreEdges.end();
 			kEdgeIterator++)
 		{
-			const std::shared_ptr<TopologicCore::Edge>& kpCoreEdge = *kEdgeIterator;
+			const TopologicCore::Edge::Ptr& kpCoreEdge = *kEdgeIterator;
 			Edge^ pEdge = gcnew Edge(kpCoreEdge);
 			pSharedEdges->Add(pEdge);
 		}
@@ -138,18 +138,18 @@ namespace Topologic
 
 	List<Vertex^>^ Face::SharedVertices(Face^ face)
 	{
-		std::shared_ptr<TopologicCore::Face> pCoreFace1 = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopologicCore::Face> pCoreFace2 = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
-		std::list<std::shared_ptr<TopologicCore::Vertex>> pCoreVertices;
+		TopologicCore::Face::Ptr pCoreFace1 = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
+		TopologicCore::Face::Ptr pCoreFace2 = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
+		std::list<TopologicCore::Vertex::Ptr> pCoreVertices;
 		pCoreFace1->SharedVertices(pCoreFace2, pCoreVertices);
 
 		List<Vertex^>^ pSharedVertices = gcnew List<Vertex^>();
 
-		for (std::list<std::shared_ptr<TopologicCore::Vertex>>::const_iterator kVertexIterator = pCoreVertices.begin();
+		for (std::list<TopologicCore::Vertex::Ptr>::const_iterator kVertexIterator = pCoreVertices.begin();
 			kVertexIterator != pCoreVertices.end();
 			kVertexIterator++)
 		{
-			const std::shared_ptr<TopologicCore::Vertex>& kpCoreVertex = *kVertexIterator;
+			const TopologicCore::Vertex::Ptr& kpCoreVertex = *kVertexIterator;
 			Vertex^ pVertex = gcnew Vertex(kpCoreVertex);
 			pSharedVertices->Add(pVertex);
 		}
@@ -159,22 +159,22 @@ namespace Topologic
 
 	Wire^ Face::OuterBoundary()
 	{
-		std::shared_ptr<TopologicCore::Face> pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
+		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
 		return gcnew Wire(pCoreFace->OuterBoundary());
 	}
 
 	List<Wire^>^ Face::InnerBoundaries()
 	{
-		std::shared_ptr<TopologicCore::Face> pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
-		std::list<std::shared_ptr<TopologicCore::Wire>> pCoreWires;
+		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
+		std::list<TopologicCore::Wire::Ptr> pCoreWires;
 		pCoreFace->InnerBoundaries(pCoreWires);
 
 		List<Wire^>^ pInnerBoundaries = gcnew List<Wire^>();
-		for (std::list<std::shared_ptr<TopologicCore::Wire>>::const_iterator kWireIterator = pCoreWires.begin();
+		for (std::list<TopologicCore::Wire::Ptr>::const_iterator kWireIterator = pCoreWires.begin();
 			kWireIterator != pCoreWires.end();
 			kWireIterator++)
 		{
-			const std::shared_ptr<TopologicCore::Wire>& pCoreWire = *kWireIterator;
+			const TopologicCore::Wire::Ptr& pCoreWire = *kWireIterator;
 			Wire^ pWire = gcnew Wire(pCoreWire);
 			pInnerBoundaries->Add(pWire);
 		}
@@ -183,7 +183,7 @@ namespace Topologic
 
 	Autodesk::DesignScript::Geometry::UV^ Face::UVParameterAtPoint(Vertex^ vertex)
 	{
-		std::shared_ptr<TopologicCore::Face> pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
+		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
 		double u = 0.0, v = 0.0;
 		pCoreFace->UVParameterAtPoint(
 			TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex->GetCoreTopologicalQuery()),
@@ -195,9 +195,9 @@ namespace Topologic
 
 	Vertex^ Face::PointAtParameter(Autodesk::DesignScript::Geometry::UV^ uv)
 	{
-		std::shared_ptr<TopologicCore::Face> pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
+		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
 		try{
-			std::shared_ptr<TopologicCore::Vertex> pCoreVertex = pCoreFace->PointAtParameter(uv->U, uv->V);
+			TopologicCore::Vertex::Ptr pCoreVertex = pCoreFace->PointAtParameter(uv->U, uv->V);
 			return safe_cast<Vertex^>(Topology::ByCoreTopology(pCoreVertex));
 		}
 		catch (std::exception& e)
@@ -209,7 +209,7 @@ namespace Topologic
 
 	Autodesk::DesignScript::Geometry::Vector^ Face::NormalAtParameter(Autodesk::DesignScript::Geometry::UV^ uv)
 	{
-		std::shared_ptr<TopologicCore::Face> pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
+		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
 		gp_Dir normal = pCoreFace->NormalAtParameter(uv->U, uv->V);
 
 		return Autodesk::DesignScript::Geometry::Vector::ByCoordinates(normal.X(), normal.Y(), normal.Z());
@@ -217,25 +217,25 @@ namespace Topologic
 
 	Face^ Face::Trim(Wire^ wire)
 	{
-		std::shared_ptr<TopologicCore::Face> pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopologicCore::Wire> pCoreWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>(wire->GetCoreTopologicalQuery());
+		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
+		TopologicCore::Wire::Ptr pCoreWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>(wire->GetCoreTopologicalQuery());
 
-		std::shared_ptr<TopologicCore::Face> pTrimmedFace = pCoreFace->Trim(pCoreWire);
+		TopologicCore::Face::Ptr pTrimmedFace = pCoreFace->Trim(pCoreWire);
 		return safe_cast<Face^>(Topology::ByCoreTopology(pTrimmedFace));
 	}
 
 	List<Vertex^>^ Face::Vertices()
 	{
-		std::shared_ptr<TopologicCore::Face> pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
-		std::list<std::shared_ptr<TopologicCore::Vertex>> pCoreVertices;
+		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
+		std::list<TopologicCore::Vertex::Ptr> pCoreVertices;
 		pCoreFace->Vertices(pCoreVertices);
 
 		List<Vertex^>^ pVertices = gcnew List<Vertex^>();
-		for (std::list<std::shared_ptr<TopologicCore::Vertex>>::const_iterator kVertexIterator = pCoreVertices.begin();
+		for (std::list<TopologicCore::Vertex::Ptr>::const_iterator kVertexIterator = pCoreVertices.begin();
 			kVertexIterator != pCoreVertices.end();
 			kVertexIterator++)
 		{
-			const std::shared_ptr<TopologicCore::Vertex>& kpCoreVertex = *kVertexIterator;
+			const TopologicCore::Vertex::Ptr& kpCoreVertex = *kVertexIterator;
 			Vertex^ pVertex = gcnew Vertex(kpCoreVertex);
 			pVertices->Add(pVertex);
 		}
@@ -244,16 +244,16 @@ namespace Topologic
 
 	List<Edge^>^ Face::Edges()
 	{
-		std::shared_ptr<TopologicCore::Face> pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
-		std::list<std::shared_ptr<TopologicCore::Edge>> pCoreEdges;
+		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
+		std::list<TopologicCore::Edge::Ptr> pCoreEdges;
 		pCoreFace->Edges(pCoreEdges);
 
 		List<Edge^>^ pEdges = gcnew List<Edge^>();
-		for (std::list<std::shared_ptr<TopologicCore::Edge>>::const_iterator kEdgeIterator = pCoreEdges.begin();
+		for (std::list<TopologicCore::Edge::Ptr>::const_iterator kEdgeIterator = pCoreEdges.begin();
 			kEdgeIterator != pCoreEdges.end();
 			kEdgeIterator++)
 		{
-			const std::shared_ptr<TopologicCore::Edge>& kpCoreEdge = *kEdgeIterator;
+			const TopologicCore::Edge::Ptr& kpCoreEdge = *kEdgeIterator;
 			Edge^ pEdge = gcnew Edge(kpCoreEdge);
 			pEdges->Add(pEdge);
 		}
@@ -263,16 +263,16 @@ namespace Topologic
 
 	List<Wire^>^ Face::Wires()
 	{
-		std::shared_ptr<TopologicCore::Face> pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
-		std::list<std::shared_ptr<TopologicCore::Wire>> pCoreWires;
+		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
+		std::list<TopologicCore::Wire::Ptr> pCoreWires;
 		pCoreFace->Wires(pCoreWires);
 
 		List<Wire^>^ pWires = gcnew List<Wire^>();
-		for (std::list<std::shared_ptr<TopologicCore::Wire>>::const_iterator kWireIterator = pCoreWires.begin();
+		for (std::list<TopologicCore::Wire::Ptr>::const_iterator kWireIterator = pCoreWires.begin();
 			kWireIterator != pCoreWires.end();
 			kWireIterator++)
 		{
-			const std::shared_ptr<TopologicCore::Wire>& kpCoreWire = *kWireIterator;
+			const TopologicCore::Wire::Ptr& kpCoreWire = *kWireIterator;
 			Wire^ pWire = gcnew Wire(kpCoreWire);
 			pWires->Add(pWire);
 		}
@@ -302,16 +302,16 @@ namespace Topologic
 		return *m_pCoreFace;
 	}
 
-	Face::Face(const std::shared_ptr<TopologicCore::Face>&  kpCoreFace)
+	Face::Face(const TopologicCore::Face::Ptr&  kpCoreFace)
 		: Topology()
-		, m_pCoreFace(new std::shared_ptr<TopologicCore::Face>(kpCoreFace))
+		, m_pCoreFace(new TopologicCore::Face::Ptr(kpCoreFace))
 	{
 
 	}
 
 	Face::Face(Wire^ pWire)
 		: Topology()
-		, m_pCoreFace(new std::shared_ptr<TopologicCore::Face>(
+		, m_pCoreFace(new TopologicCore::Face::Ptr(
 			TopologicCore::Face::ByClosedWire(
 				TopologicCore::Topology::Downcast<TopologicCore::Wire>(pWire->GetCoreTopologicalQuery())
 			)))
@@ -342,7 +342,7 @@ namespace Topologic
 
 	Autodesk::DesignScript::Geometry::Surface^ Face::Surface()
 	{
-		std::shared_ptr<TopologicCore::Face> pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
+		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
 		Handle(Geom_Surface) pOcctSurface = pCoreFace->Surface();
 
 		Handle(Geom_BezierSurface) pOcctBezierSurface = Handle_Geom_BezierSurface::DownCast(pOcctSurface);
@@ -1005,7 +1005,7 @@ namespace Topologic
 			}
 		}*/
 
-		std::shared_ptr<TopologicCore::Wire> pCoreOuterWire = nullptr;
+		TopologicCore::Wire::Ptr pCoreOuterWire = nullptr;
 		if (checkWire)
 		{
 			std::list<double>::iterator maxAreaIterator = std::max_element(surfaceAreas.begin(), surfaceAreas.end());
@@ -1022,7 +1022,7 @@ namespace Topologic
 		}
 
 		// 3. Bounding wires
-		std::list<std::shared_ptr<TopologicCore::Wire>> coreInnerWires;
+		std::list<TopologicCore::Wire::Ptr> coreInnerWires;
 
 		// Create wires and add them to occtMakeFace to create internal wires;
 		for each(List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoConnectedCurves in pDynamoCurveGroups)
@@ -1033,7 +1033,7 @@ namespace Topologic
 		}
 		
 		//=================================================
-		m_pCoreFace = new std::shared_ptr<TopologicCore::Face>(TopologicCore::Face::BySurface(
+		m_pCoreFace = new TopologicCore::Face::Ptr(TopologicCore::Face::BySurface(
 			occtPoles,
 			occtWeights,
 			occtUKnots,

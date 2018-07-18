@@ -18,6 +18,9 @@ namespace TopologicCore
 	class Wire : public Topology
 	{
 	public:
+		typedef std::shared_ptr<Wire> Ptr;
+
+	public:
 		/// <summary>
 		/// 
 		/// </summary>

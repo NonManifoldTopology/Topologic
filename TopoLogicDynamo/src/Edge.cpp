@@ -22,16 +22,16 @@ namespace Topologic
 {
 	List<Vertex^>^ Edge::Vertices()
 	{
-		std::shared_ptr<TopologicCore::Edge> pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
-		std::list<std::shared_ptr<TopologicCore::Vertex>> coreVertices;
+		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
+		std::list<TopologicCore::Vertex::Ptr> coreVertices;
 		pCoreEdge->Vertices(coreVertices);
 
 		List<Vertex^>^ pVertices = gcnew List<Vertex^>();
-		for (std::list<std::shared_ptr<TopologicCore::Vertex>>::iterator coreVertexIterator = coreVertices.begin();
+		for (std::list<TopologicCore::Vertex::Ptr>::iterator coreVertexIterator = coreVertices.begin();
 			coreVertexIterator != coreVertices.end();
 			coreVertexIterator++)
 		{
-			const std::shared_ptr<TopologicCore::Vertex>& kpCoreVertex = *coreVertexIterator;
+			const TopologicCore::Vertex::Ptr& kpCoreVertex = *coreVertexIterator;
 			Vertex^ pVertex = gcnew Vertex(kpCoreVertex);
 			pVertices->Add(pVertex);
 		}
@@ -41,17 +41,17 @@ namespace Topologic
 
 	List<Wire^>^ Edge::Wires(Topology^ parentTopology)
 	{
-		std::shared_ptr<TopologicCore::Edge> pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
+		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
 		std::shared_ptr<TopologicCore::Topology> pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
-		std::list<std::shared_ptr<TopologicCore::Wire>> coreWires;
+		std::list<TopologicCore::Wire::Ptr> coreWires;
 		pCoreEdge->Wires(pCoreParentTopology, coreWires);
 
 		List<Wire^>^ pWires = gcnew List<Wire^>();
-		for(std::list<std::shared_ptr<TopologicCore::Wire>>::iterator coreWireIterator = coreWires.begin();
+		for(std::list<TopologicCore::Wire::Ptr>::iterator coreWireIterator = coreWires.begin();
 			coreWireIterator != coreWires.end();
 			coreWireIterator++)
 		{
-			const std::shared_ptr<TopologicCore::Wire>& kpCoreWire = *coreWireIterator;
+			const TopologicCore::Wire::Ptr& kpCoreWire = *coreWireIterator;
 			Wire^ pWire = gcnew Wire(kpCoreWire);
 			pWires->Add(pWire);
 		}
@@ -66,20 +66,20 @@ namespace Topologic
 
 	Edge^ Edge::ByVertices(List<Vertex^>^ vertices)
 	{
-		std::list<std::shared_ptr<TopologicCore::Vertex>> pCoreVertices;
+		std::list<TopologicCore::Vertex::Ptr> pCoreVertices;
 		for each(Vertex^ pVertex in vertices)
 		{
 			pCoreVertices.push_back(TopologicCore::Topology::Downcast<TopologicCore::Vertex>(pVertex->GetCoreTopologicalQuery()));
 		}
-		std::shared_ptr<TopologicCore::Edge> pCoreEdge = TopologicCore::Edge::ByVertices(pCoreVertices);
+		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Edge::ByVertices(pCoreVertices);
 		return gcnew Edge(pCoreEdge);
 	}
 
 	Vertex^ Edge::SharedVertex(Edge^ edge)
 	{
-		std::shared_ptr<TopologicCore::Edge> pCoreEdge1 = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopologicCore::Edge> pCoreEdge2 = TopologicCore::Topology::Downcast<TopologicCore::Edge>(edge->GetCoreTopologicalQuery());
-		std::shared_ptr<TopologicCore::Vertex> pCoreVertex = pCoreEdge1->SharedVertex(pCoreEdge2);
+		TopologicCore::Edge::Ptr pCoreEdge1 = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
+		TopologicCore::Edge::Ptr pCoreEdge2 = TopologicCore::Topology::Downcast<TopologicCore::Edge>(edge->GetCoreTopologicalQuery());
+		TopologicCore::Vertex::Ptr pCoreVertex = pCoreEdge1->SharedVertex(pCoreEdge2);
 
 		return gcnew Vertex(pCoreVertex);
 	}
@@ -94,14 +94,14 @@ namespace Topologic
 
 	double Edge::ParameterAtPoint(Vertex^ vertex)
 	{
-		std::shared_ptr<TopologicCore::Edge> pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
+		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
 		return pCoreEdge->ParameterAtPoint(TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex->GetCoreTopologicalQuery()));
 	}
 
 	Vertex^ Edge::PointAtParameter(double parameter)
 	{
-		std::shared_ptr<TopologicCore::Edge> pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopologicCore::Vertex> pCoreVertex = pCoreEdge->PointAtParameter(parameter);
+		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
+		TopologicCore::Vertex::Ptr pCoreVertex = pCoreEdge->PointAtParameter(parameter);
 		return gcnew Vertex(pCoreVertex);
 	}
 
@@ -250,7 +250,7 @@ namespace Topologic
 		// The default is a line:
 		// Handle(Geom_Line) pOcctLine = Handle_Geom_Line::DownCast(pOcctCurve);
 
-		std::shared_ptr<TopologicCore::Edge> pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
+		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
 		List<Vertex^>^ pVertices = Vertices();
 
 		bool onlyTwoVertices = true;
@@ -286,9 +286,9 @@ namespace Topologic
 		return *m_pCoreEdge;
 	}
 
-	Edge::Edge(const std::shared_ptr<TopologicCore::Edge>& kpCoreEdge)
+	Edge::Edge(const TopologicCore::Edge::Ptr& kpCoreEdge)
 		: Topology()
-		, m_pCoreEdge(new std::shared_ptr<TopologicCore::Edge>(kpCoreEdge))
+		, m_pCoreEdge(new TopologicCore::Edge::Ptr(kpCoreEdge))
 	{
 
 	}
@@ -402,7 +402,7 @@ namespace Topologic
 		bool isPeriodic = pDynamoNurbsCurve->IsPeriodic;
 		int degree = pDynamoNurbsCurve->Degree;
 
-		m_pCoreEdge = new std::shared_ptr<TopologicCore::Edge>(TopologicCore::Edge::ByCurve(
+		m_pCoreEdge = new TopologicCore::Edge::Ptr(TopologicCore::Edge::ByCurve(
 			occtPoles,
 			occtWeights,
 			occtKnots,
@@ -437,7 +437,7 @@ namespace Topologic
 			radius
 			);
 
-		m_pCoreEdge = new std::shared_ptr<TopologicCore::Edge>(
+		m_pCoreEdge = new TopologicCore::Edge::Ptr(
 			TopologicCore::Edge::ByCurve(pOcctCircle));
 
 		delete pDynamoCenterPoint;
@@ -448,9 +448,9 @@ namespace Topologic
 
 	void Edge::Init(Autodesk::DesignScript::Geometry::Line^ pDynamoLine)
 	{
-		std::list<std::shared_ptr<TopologicCore::Vertex>> coreVertices;
+		std::list<TopologicCore::Vertex::Ptr> coreVertices;
 		coreVertices.push_back(TopologicCore::Topology::Downcast<TopologicCore::Vertex>((gcnew Vertex(pDynamoLine->StartPoint))->GetCoreTopologicalQuery()));
 		coreVertices.push_back(TopologicCore::Topology::Downcast<TopologicCore::Vertex>((gcnew Vertex(pDynamoLine->EndPoint))->GetCoreTopologicalQuery()));
-		m_pCoreEdge = new std::shared_ptr<TopologicCore::Edge>(TopologicCore::Edge::ByVertices(coreVertices));
+		m_pCoreEdge = new TopologicCore::Edge::Ptr(TopologicCore::Edge::ByVertices(coreVertices));
 	}
 }

@@ -26,37 +26,37 @@
 
 namespace TopologicCore
 {
-	void CellComplex::Cells(std::list<std::shared_ptr<Cell>>& rCells) const
+	void CellComplex::Cells(std::list<Cell::Ptr>& rCells) const
 	{
 		DownwardNavigation(rCells);
 	}
 
-	void CellComplex::Faces(std::list<std::shared_ptr<Face>>& rFaces) const
+	void CellComplex::Faces(std::list<Face::Ptr>& rFaces) const
 	{
 		DownwardNavigation(rFaces);
 	}
 
-	void CellComplex::Shells(std::list<std::shared_ptr<Shell>>& rShells) const
+	void CellComplex::Shells(std::list<Shell::Ptr>& rShells) const
 	{
 		DownwardNavigation(rShells);
 	}
 
-	void CellComplex::Edges(std::list<std::shared_ptr<Edge>>& rEdges) const
+	void CellComplex::Edges(std::list<Edge::Ptr>& rEdges) const
 	{
 		DownwardNavigation(rEdges);
 	}
 
-	void CellComplex::Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const
+	void CellComplex::Vertices(std::list<Vertex::Ptr>& rVertices) const
 	{
 		DownwardNavigation(rVertices);
 	}
 
-	void CellComplex::Wires(std::list<std::shared_ptr<Wire>>& rWires) const
+	void CellComplex::Wires(std::list<Wire::Ptr>& rWires) const
 	{
 		DownwardNavigation(rWires);
 	}
 
-	std::shared_ptr<CellComplex> CellComplex::ByCells(const std::list<std::shared_ptr<Cell>>& rkCells)
+	CellComplex::Ptr CellComplex::ByCells(const std::list<Cell::Ptr>& rkCells)
 	{
 		if (rkCells.empty())
 		{
@@ -67,7 +67,7 @@ namespace TopologicCore
 		BRep_Builder occtBuilder;
 		occtBuilder.MakeCompSolid(occtCompSolid);
 
-		std::list<std::shared_ptr<Cell>>::const_iterator rkCellIterator = rkCells.begin();
+		std::list<Cell::Ptr>::const_iterator rkCellIterator = rkCells.begin();
 		if (rkCells.size() == 1)
 		{
 			// Return a cell complex with only that cells
@@ -96,9 +96,9 @@ namespace TopologicCore
 			std::shared_ptr<Cluster> otherCellsAsCluster = Cluster::ByTopology(topologies);
 			std::shared_ptr<Topology> pMergeTopology = (*rkCells.begin())->Merge(otherCellsAsCluster);
 
-			std::list<std::shared_ptr<Cell>> cells;
+			std::list<Cell::Ptr> cells;
 			pMergeTopology->DownwardNavigation(cells);
-			for (const std::shared_ptr<Cell>& kpCell : cells)
+			for (const Cell::Ptr& kpCell : cells)
 			{
 				try {
 					occtBuilder.Add(occtCompSolid, kpCell->GetOcctShape());
@@ -115,16 +115,16 @@ namespace TopologicCore
 		}
 
 		// Should get us a CellComplex, otherwise an exception.
-		std::shared_ptr<CellComplex> pMergeCellComplex = std::dynamic_pointer_cast<CellComplex>(CellComplex::ByOcctShape(occtCompSolid));
+		CellComplex::Ptr pMergeCellComplex = std::dynamic_pointer_cast<CellComplex>(CellComplex::ByOcctShape(occtCompSolid));
 		if (pMergeCellComplex == nullptr)
 		{
 			throw std::exception("CellComplex::ByCells(): Merge operation is not giving a cell complex");
 		}
 
-		std::list<std::shared_ptr<Face>> cellComplexFaces;
+		std::list<Face::Ptr> cellComplexFaces;
 		pMergeCellComplex->Faces(cellComplexFaces);
 
-		std::list<std::shared_ptr<Face>> cellFaces;
+		std::list<Face::Ptr> cellFaces;
 		(*rkCells.begin())->Faces(cellFaces);
 
 		// Manage labels
@@ -183,7 +183,7 @@ namespace TopologicCore
 		//	}
 		//}
 
-		/*for (const std::shared_ptr<Cell>& kpCell : rkCells)
+		/*for (const Cell::Ptr& kpCell : rkCells)
 		{
 			kpCell->AddIngredientTo(pMergeCellComplex);
 		}*/
@@ -191,11 +191,11 @@ namespace TopologicCore
 		return pMergeCellComplex;
 	}
 
-	std::shared_ptr<CellComplex> CellComplex::ByFaces(const std::list<std::shared_ptr<Face>>& rkFaces)
+	CellComplex::Ptr CellComplex::ByFaces(const std::list<Face::Ptr>& rkFaces)
 	{
 		BOPAlgo_MakerVolume occtMakerVolume;
 		BOPCol_ListOfShape occtShapes;
-		for (const std::shared_ptr<Face>& kpFace: rkFaces)
+		for (const Face::Ptr& kpFace: rkFaces)
 		{
 			occtShapes.Append(kpFace->GetOcctShape());
 		}
@@ -216,7 +216,7 @@ namespace TopologicCore
 		//
 		const TopoDS_Shape& rkOcctResult = occtMakerVolume.Shape();
 
-		std::list<std::shared_ptr<Cell>> cells;
+		std::list<Cell::Ptr> cells;
 		// The result is either:
 		// - A solid
 		if (rkOcctResult.ShapeType() == TopAbs_SOLID)
@@ -242,12 +242,12 @@ namespace TopologicCore
 		return ByCells(cells);
 	}
 
-	std::shared_ptr<Cell> CellComplex::OuterBoundary() const
+	Cell::Ptr CellComplex::OuterBoundary() const
 	{
 		BOPCol_ListOfShape occtCellsBuildersArguments;
-		std::list<std::shared_ptr<Cell>> cells;
+		std::list<Cell::Ptr> cells;
 		Cells(cells);
-		for (const std::shared_ptr<Cell>& kpCell : cells)
+		for (const Cell::Ptr& kpCell : cells)
 		{
 			occtCellsBuildersArguments.Append(kpCell->GetOcctShape());
 		}
@@ -291,21 +291,21 @@ namespace TopologicCore
 		return nullptr;
 	}
 
-	void CellComplex::InnerBoundaries(std::list<std::shared_ptr<Face>>& rInternalFaces) const
+	void CellComplex::InnerBoundaries(std::list<Face::Ptr>& rInternalFaces) const
 	{
-		std::shared_ptr<Cell> pEnvelopeCell = OuterBoundary();
+		Cell::Ptr pEnvelopeCell = OuterBoundary();
 
-		std::list<std::shared_ptr<Face>> envelopeFaces;
+		std::list<Face::Ptr> envelopeFaces;
 		pEnvelopeCell->Faces(envelopeFaces);
 
-		std::list<std::shared_ptr<Face>> faces;
+		std::list<Face::Ptr> faces;
 		Faces(faces);
 
 		Handle(IntTools_Context) pOcctIntToolsContext = new IntTools_Context();
-		for (const std::shared_ptr<Face>& kpFace : faces)
+		for (const Face::Ptr& kpFace : faces)
 		{
 			bool isEnvelopeFace = false;
-			for (const std::shared_ptr<Face>& kpEnvelopeFace : envelopeFaces)
+			for (const Face::Ptr& kpEnvelopeFace : envelopeFaces)
 			{
 				if(BOPTools_AlgoTools::CheckSameGeom(kpFace->GetOcctFace(), kpEnvelopeFace->GetOcctFace(), pOcctIntToolsContext))
 				{
@@ -355,9 +355,9 @@ namespace TopologicCore
 
 	void CellComplex::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
 	{
-		std::list<std::shared_ptr<Face>> faces;
+		std::list<Face::Ptr> faces;
 		Faces(faces);
-		for (const std::shared_ptr<Face>& kpFace : faces)
+		for (const Face::Ptr& kpFace : faces)
 		{
 			rOcctGeometries.push_back(kpFace->Surface());
 		}

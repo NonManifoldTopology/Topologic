@@ -1,12 +1,10 @@
 #include <Shell.h>
-#include <GlobalCluster.h>
 #include <Cell.h>
 #include <Vertex.h>
 #include <Edge.h>
 #include <Wire.h>
 #include <Face.h>
 #include <Aperture.h>
-#include <OcctCounterAttribute.h>
 
 //#include <BOPAlgo_Splitter.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
@@ -57,22 +55,22 @@ extern "C" {
 
 namespace TopologicCore
 {
-	void Shell::Cells(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Cell>>& rCells) const
+	void Shell::Cells(const Topology::Ptr& kpParentTopology, std::list<Cell::Ptr>& rCells) const
 	{
 		UpwardNavigation(kpParentTopology, rCells);
 	}
 
-	void Shell::Edges(std::list<std::shared_ptr<Edge>>& rEdges) const
+	void Shell::Edges(std::list<Edge::Ptr>& rEdges) const
 	{
 		DownwardNavigation(rEdges);
 	}
 
-	void Shell::Wires(std::list<std::shared_ptr<Wire>>& rWires) const
+	void Shell::Wires(std::list<Wire::Ptr>& rWires) const
 	{
 		DownwardNavigation(rWires);
 	}
 
-	void Shell::Faces(std::list<std::shared_ptr<Face>>& rFaces) const
+	void Shell::Faces(std::list<Face::Ptr>& rFaces) const
 	{
 		DownwardNavigation(rFaces);
 	}
@@ -83,12 +81,12 @@ namespace TopologicCore
 		return (occtBrepCheckShell.Closed() == BRepCheck_NoError);
 	}
 
-	void Shell::Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const
+	void Shell::Vertices(std::list<Vertex::Ptr>& rVertices) const
 	{
 		DownwardNavigation(rVertices);
 	}
 
-	std::shared_ptr<Shell> Shell::ByFaces(const std::list<std::shared_ptr<Face>>& rkFaces)
+	Shell::Ptr Shell::ByFaces(const std::list<Face::Ptr>& rkFaces)
 	{
 		if (rkFaces.empty())
 		{
@@ -96,27 +94,27 @@ namespace TopologicCore
 		}
 
 		BRepBuilderAPI_Sewing occtSewing;
-		for(const std::shared_ptr<Face>& kpFace : rkFaces)
+		for(const Face::Ptr& kpFace : rkFaces)
 		{
 			occtSewing.Add(kpFace->GetOcctShape());
 		}
 
 		occtSewing.Perform();
-		std::shared_ptr<Shell> pShell = std::make_shared<Shell>(TopoDS::Shell(occtSewing.SewedShape()));
+		Shell::Ptr pShell = std::make_shared<Shell>(TopoDS::Shell(occtSewing.SewedShape()));
 
 		// HACK: add the v1 contents to the current shell faces.
-		std::shared_ptr<Topology> pUpcastShell = TopologicalQuery::Upcast<Topology>(pShell);
+		Topology::Ptr pUpcastShell = TopologicalQuery::Upcast<Topology>(pShell);
 		//GlobalCluster::GetInstance().GetCluster()->AddChildLabel(pUpcastShell, REL_CONSTITUENT);
 
-		for (const std::shared_ptr<Face>& kShellFace : rkFaces)
+		for (const Face::Ptr& kShellFace : rkFaces)
 		{
 			const TopoDS_Shape& rkModifiedShape = occtSewing.Modified(kShellFace->GetOcctShape());
-			std::shared_ptr<Topology> pChildTopology = Topology::ByOcctShape(rkModifiedShape);
+			Topology::Ptr pChildTopology = Topology::ByOcctShape(rkModifiedShape);
 			//pShell->AddChildLabel(pChildTopology, REL_CONSTITUENT);
 
 			// Map the aperture to the modifed shell faces.
-			std::list<std::shared_ptr<Topology>>& rContents = kShellFace->Contents();
-			for (const std::shared_ptr<Topology>& rkContent : rContents)
+			std::list<Topology::Ptr>& rContents = kShellFace->Contents();
+			for (const Topology::Ptr& rkContent : rContents)
 			{
 				if (rkContent->GetType() != TOPOLOGY_APERTURE)
 				{
@@ -130,8 +128,8 @@ namespace TopologicCore
 					continue;
 				}
 
-				std::shared_ptr<Face> pApertureFace = TopologicalQuery::Downcast<Face>(aperture->Topology());
-				std::shared_ptr<Topology> pUpcastApertureFace = TopologicalQuery::Upcast<Topology>(pApertureFace);
+				Face::Ptr pApertureFace = TopologicalQuery::Downcast<Face>(aperture->Topology());
+				Topology::Ptr pUpcastApertureFace = TopologicalQuery::Upcast<Topology>(pApertureFace);
 				//pChildTopology->AddChildLabel(pUpcastApertureFace, REL_APERTURE);
 			}
 		}
@@ -139,9 +137,9 @@ namespace TopologicCore
 		return pShell;
 	}
 
-	std::shared_ptr<Shell> Shell::ByVerticesFaceIndices(const std::vector<std::shared_ptr<Vertex>>& rkVertices, const std::list<std::list<int>>& rkFaceIndices)
+	Shell::Ptr Shell::ByVerticesFaceIndices(const std::vector<Vertex::Ptr>& rkVertices, const std::list<std::list<int>>& rkFaceIndices)
 	{
-		std::list<std::shared_ptr<Face>> faces;
+		std::list<Face::Ptr> faces;
 		for(const std::list<int>& rkVertexIndices : rkFaceIndices)
 		{
 			BRepBuilderAPI_MakeWire occtMakeWire;
@@ -171,21 +169,21 @@ namespace TopologicCore
 			BRepBuilderAPI_MakeFace occtMakeFace(pOcctWire);
 			faces.push_back(std::make_shared<Face>(occtMakeFace));
 		}
-		std::shared_ptr<Shell> pShell = ByFaces(faces);
+		Shell::Ptr pShell = ByFaces(faces);
 
 		// Only add the vertices; the faces are dealt with in ByFaces()
-		/*for (std::vector<std::shared_ptr<Vertex>>::const_iterator kVertexIterator = rkVertices.begin();
+		/*for (std::vector<Vertex::Ptr>::const_iterator kVertexIterator = rkVertices.begin();
 			kVertexIterator != rkVertices.end();
 			kVertexIterator++)
 		{
-			const std::shared_ptr<Vertex>& kpVertex = *kVertexIterator;
+			const Vertex::Ptr& kpVertex = *kVertexIterator;
 			kpVertex->AddIngredientTo(pShell);
 		}*/
 		return pShell;
 	}
 
-	std::shared_ptr<Shell> Shell::ByFacePlanarization(
-		const std::shared_ptr<Face>& kpFace,
+	Shell::Ptr Shell::ByFacePlanarization(
+		const Face::Ptr& kpFace,
 		const int kIteration,
 		const int kEdgeSamples,
 		const int kNumUPanels,
@@ -193,10 +191,10 @@ namespace TopologicCore
 		const double kTolerance,
 		const bool kCapBottom,
 		const bool kCapTop,
-		std::list<std::shared_ptr<Vertex>>& vertices,
-		std::list<std::shared_ptr<Edge>>& edges,
-		std::list<std::shared_ptr<Wire>>& wires,
-		std::list<std::shared_ptr<Face>>& faces)
+		std::list<Vertex::Ptr>& vertices,
+		std::list<Edge::Ptr>& edges,
+		std::list<Wire::Ptr>& wires,
+		std::list<Face::Ptr>& faces)
 	{
 		if (kNumUPanels < 1)
 		{
@@ -339,8 +337,8 @@ namespace TopologicCore
 		gpc_free_polygon(&subjectPolygon);
 	}
 
-	std::shared_ptr<Shell> Shell::ByFacePlanarization(
-		const std::shared_ptr<Face>& kpFace, 
+	Shell::Ptr Shell::ByFacePlanarization(
+		const Face::Ptr& kpFace, 
 		const int kIteration, 
 		const int kEdgeSamples,
 		const std::list<double>& rkUValues, 
@@ -348,10 +346,10 @@ namespace TopologicCore
 		const double kTolerance,
 		const bool kCapBottom,
 		const bool kCapTop,
-		std::list<std::shared_ptr<Vertex>>& vertices,
-		std::list<std::shared_ptr<Edge>>& edges,
-		std::list<std::shared_ptr<Wire>>& wires,
-		std::list<std::shared_ptr<Face>>& faces)
+		std::list<Vertex::Ptr>& vertices,
+		std::list<Edge::Ptr>& edges,
+		std::list<Wire::Ptr>& wires,
+		std::list<Face::Ptr>& faces)
 	{
 		// Check that kIteration, kNumUPanels, and kNumVPanels are 1 or more.
 		if (kIteration < 1)
@@ -459,9 +457,9 @@ namespace TopologicCore
 			}
 		}
 
-		std::list<std::shared_ptr<Topology>>& rContents = kpFace->Contents();
+		std::list<Topology::Ptr>& rContents = kpFace->Contents();
 		std::list<std::list<Handle(Geom2d_CartesianPoint)>> allApertureSampleVerticesUV;
-		for (const std::shared_ptr<Topology>& rkContent : rContents)
+		for (const Topology::Ptr& rkContent : rContents)
 		{
 			if (rkContent->GetType() != TOPOLOGY_APERTURE)
 			{
@@ -475,25 +473,25 @@ namespace TopologicCore
 				continue;
 			}
 
-			std::shared_ptr<Face> apertureFace = TopologicalQuery::Downcast<Face>(aperture->Topology());
-			std::shared_ptr<Wire> apertureWire = apertureFace->OuterBoundary();
+			Face::Ptr apertureFace = TopologicalQuery::Downcast<Face>(aperture->Topology());
+			Wire::Ptr apertureWire = apertureFace->OuterBoundary();
 			//wires.push_back(apertureWire);
-			std::list<std::shared_ptr<Edge>> apertureEdges;
+			std::list<Edge::Ptr> apertureEdges;
 			apertureWire->Edges(apertureEdges);
 			
-			for (std::shared_ptr<Edge> e : apertureEdges)
+			for (Edge::Ptr e : apertureEdges)
 			{
 				edges.push_back(e);
 			}
 			std::list<Handle(Geom2d_CartesianPoint)> apertureSampleVerticesUV;
-			for (const std::shared_ptr<Edge>& kpEdge : apertureEdges)
+			for (const Edge::Ptr& kpEdge : apertureEdges)
 			{
 				// HACK: go backward
 				//for (int i = 0; i < numberOfSamples - 1; ++i)
 				for (int i = kEdgeSamples - 2; i >= 0; --i)
 				{
 					double parameter = (double)i / (double)(kEdgeSamples - 1);
-					std::shared_ptr<Vertex> apertureSampleVertex = kpEdge->PointAtParameter(parameter);
+					Vertex::Ptr apertureSampleVertex = kpEdge->PointAtParameter(parameter);
 					//edges.push_back(kpEdge);
 					//vertices.push_back(apertureSampleVertex);
 
@@ -715,10 +713,10 @@ namespace TopologicCore
 					const TopoDS_Vertex& rkOcctVertex3 = occtMakeVertex3.Vertex();
 					const TopoDS_Vertex& rkOcctVertex4 = occtMakeVertex4.Vertex();
 
-					std::shared_ptr<Vertex> pVertex1 = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex1));
-					std::shared_ptr<Vertex> pVertex2 = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex2));
-					std::shared_ptr<Vertex> pVertex3 = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex3));
-					std::shared_ptr<Vertex> pVertex4 = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex4));
+					Vertex::Ptr pVertex1 = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex1));
+					Vertex::Ptr pVertex2 = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex2));
+					Vertex::Ptr pVertex3 = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex3));
+					Vertex::Ptr pVertex4 = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex4));
 
 					BRepBuilderAPI_MakeEdge occtMakeEdge12(rkOcctVertex1, rkOcctVertex2);
 					BRepBuilderAPI_MakeEdge occtMakeEdge23(rkOcctVertex2, rkOcctVertex3);
@@ -770,10 +768,10 @@ namespace TopologicCore
 				const TopoDS_Vertex& rkOcctVertex3 = occtMakeVertex3.Vertex();
 				const TopoDS_Vertex& rkOcctVertex4 = occtMakeVertex4.Vertex();
 
-				std::shared_ptr<Vertex> pWallVertex1 = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex1));
-				std::shared_ptr<Vertex> pWallVertex2 = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex2));
-				std::shared_ptr<Vertex> pWallVertex3 = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex3));
-				std::shared_ptr<Vertex> pWallVertex4 = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex4));
+				Vertex::Ptr pWallVertex1 = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex1));
+				Vertex::Ptr pWallVertex2 = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex2));
+				Vertex::Ptr pWallVertex3 = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex3));
+				Vertex::Ptr pWallVertex4 = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex4));
 
 				BRepBuilderAPI_MakeEdge occtMakeEdge12(rkOcctVertex1, rkOcctVertex2);
 				BRepBuilderAPI_MakeEdge occtMakeEdge23(rkOcctVertex2, rkOcctVertex3);
@@ -810,7 +808,7 @@ namespace TopologicCore
 				//========================
 				// Map the apertures.
 				ShapeAnalysis_Surface occtSurfaceAnalysis(pOcctPanelSurface);
-				std::shared_ptr<Face> pPanelFace = TopologicalQuery::Downcast<Face>(Topology::ByOcctShape(rkOcctPanelFace));
+				Face::Ptr pPanelFace = TopologicalQuery::Downcast<Face>(Topology::ByOcctShape(rkOcctPanelFace));
 				
 				// These are all the vertices of (and the UV on) the panel (the shell of flat faces).
 				// The UV are NON-NORMALISED
@@ -1075,7 +1073,7 @@ namespace TopologicCore
 								BRepBuilderAPI_MakeWire occtMakeMappedApertureWire;
 								occtMakeMappedApertureWire.Add(occtMappedApertureEdges);
 								BRepBuilderAPI_MakeFace occtMakeMappedApertureFace(pOcctPanelSurface, occtMakeMappedApertureWire.Wire());
-								std::shared_ptr<Face> mappedApertureFace = TopologicalQuery::Downcast<Face>(Topology::ByOcctShape(occtMakeMappedApertureFace.Face()));
+								Face::Ptr mappedApertureFace = TopologicalQuery::Downcast<Face>(Topology::ByOcctShape(occtMakeMappedApertureFace.Face()));
 								aperturePanels.Append(occtMakeMappedApertureFace.Shape());
 
 								//faces.push_back(mappedApertureFace);
@@ -1117,14 +1115,14 @@ namespace TopologicCore
 		occtSewing.Perform();
 
 		// Reconstruct the shape
-		std::shared_ptr<Shell> pOutputShell = std::make_shared<Shell>(TopoDS::Shell(occtSewing.SewedShape()));
+		Shell::Ptr pOutputShell = std::make_shared<Shell>(TopoDS::Shell(occtSewing.SewedShape()));
 
 		// Register the shapes to the OCCT documents.
-		std::shared_ptr<Topology> pUpcastTopology = TopologicalQuery::Upcast<Topology>(pOutputShell);
+		Topology::Ptr pUpcastTopology = TopologicalQuery::Upcast<Topology>(pOutputShell);
 		//GlobalCluster::GetInstance().GetCluster()->AddChildLabel(pUpcastTopology, REL_CONSTITUENT);
 
 		// Iterate through the faces of the shell and attach them as labels of the shell's label.
-		std::list<std::shared_ptr<Face>> outputFaces;
+		std::list<Face::Ptr> outputFaces;
 		pOutputShell->Faces(outputFaces);
 
 		TopTools_ListOfShape occtOutputFaces;
@@ -1151,7 +1149,7 @@ namespace TopologicCore
 
 				// This should be a face in the output shell
 				TopoDS_Shape occtModifiedShape = occtSewing.ModifiedSubShape(rkKeyShape);
-				std::shared_ptr<Topology> modifiedShape = Topology::ByOcctShape(occtModifiedShape);
+				Topology::Ptr modifiedShape = Topology::ByOcctShape(occtModifiedShape);
 
 				//pOutputShell->AddChildLabel(modifiedShape, REL_CONSTITUENT);
 
@@ -1162,7 +1160,7 @@ namespace TopologicCore
 					occtApertureIterator.Next())
 				{
 					const TopoDS_Shape& rkOcctAperture = occtApertureIterator.Value();
-					std::shared_ptr<Topology> aperture = Topology::ByOcctShape(rkOcctAperture);
+					Topology::Ptr aperture = Topology::ByOcctShape(rkOcctAperture);
 					//modifiedShape->AddChildLabel(aperture, REL_APERTURE);
 				}
 			}
@@ -1171,10 +1169,10 @@ namespace TopologicCore
 		return pOutputShell;
 	}
 
-	std::shared_ptr<Shell> Shell::ByLoft(const std::list<std::shared_ptr<Wire>>& rkWires)
+	Shell::Ptr Shell::ByLoft(const std::list<Wire::Ptr>& rkWires)
 	{
 		BRepOffsetAPI_ThruSections occtLoft;
-		for(const std::shared_ptr<Wire>& kpWire : rkWires)
+		for(const Wire::Ptr& kpWire : rkWires)
 		{
 			occtLoft.AddWire(kpWire->GetOcctWire());
 		};
@@ -1223,9 +1221,9 @@ namespace TopologicCore
 	void Shell::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
 	{
 		// Returns a list of faces
-		std::list<std::shared_ptr<Face>> faces;
+		std::list<Face::Ptr> faces;
 		Faces(faces);
-		for (const std::shared_ptr<Face>& kpFace : faces)
+		for (const Face::Ptr& kpFace : faces)
 		{
 			rOcctGeometries.push_back(kpFace->Surface());
 		}

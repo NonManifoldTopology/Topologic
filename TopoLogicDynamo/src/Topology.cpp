@@ -45,10 +45,10 @@ namespace Topologic
 
 	List<Topology^>^ Topology::ByVertexIndex(List<Vertex^>^ vertices, List<List<int>^>^ vertexIndices)
 	{
-		std::vector<std::shared_ptr<TopologicCore::Vertex>> coreVertices;
+		std::vector<TopologicCore::Vertex::Ptr> coreVertices;
 		for each(Vertex^ pVertex in vertices)
 		{
-			std::shared_ptr<TopologicCore::Vertex> pCoreVertex = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Vertex>(pVertex->GetCoreTopologicalQuery());
+			TopologicCore::Vertex::Ptr pCoreVertex = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Vertex>(pVertex->GetCoreTopologicalQuery());
 			coreVertices.push_back(pCoreVertex);
 		}
 

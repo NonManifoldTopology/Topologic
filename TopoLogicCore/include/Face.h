@@ -28,6 +28,9 @@ namespace TopologicCore
 	class Face : public Topology
 	{
 	public:
+		typedef std::shared_ptr<Face> Ptr;
+
+	public:
 		/// <summary>
 		/// 
 		/// </summary>

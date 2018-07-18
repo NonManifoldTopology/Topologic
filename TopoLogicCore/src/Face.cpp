@@ -30,7 +30,7 @@
 
 namespace TopologicCore
 {
-	void Face::AdjacentFaces(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Face>>& rFaces) const
+	void Face::AdjacentFaces(const Topology::Ptr& kpParentTopology, std::list<Face::Ptr>& rFaces) const
 	{
 		// Get the map of edge->faces
 		TopTools_IndexedDataMapOfShapeListOfShape occtEdgeFaceMap;
@@ -57,38 +57,34 @@ namespace TopologicCore
 				bool faceFound = TopOpeBRepBuild_Tools::GetAdjacentFace(GetOcctShape(), occtWireExplorer.Current(), occtEdgeFaceMap, occtAnotherFace);
 				if (faceFound)
 				{
-					/*TDF_Label occtFaceLabel;
-					bool isLabelFound = LabelManager::GetInstance().FindLabelByShape(occtAnotherFace, occtFaceLabel);
-					std::shared_ptr<Face> pFace = TopologicalQuery::Downcast<Face>(Topology::ByOcctShape(occtAnotherFace, occtFaceLabel));*/
-
-					std::shared_ptr<Face> pFace = TopologicalQuery::Downcast<Face>(Topology::ByOcctShape(occtAnotherFace));
+					Face::Ptr pFace = TopologicalQuery::Downcast<Face>(Topology::ByOcctShape(occtAnotherFace));
 					rFaces.push_back(pFace);
 				}
 			}
 		}
 	}
 
-	void Face::Cells(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Cell>>& rCells) const
+	void Face::Cells(const Topology::Ptr& kpParentTopology, std::list<Cell::Ptr>& rCells) const
 	{
 		UpwardNavigation(kpParentTopology, rCells);
 	}
 
-	void Face::Edges(std::list<std::shared_ptr<Edge>>& rEdges) const
+	void Face::Edges(std::list<Edge::Ptr>& rEdges) const
 	{
 		DownwardNavigation(rEdges);
 	}
 
-	void Face::Shells(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Shell>>& rShells) const
+	void Face::Shells(const Topology::Ptr& kpParentTopology, std::list<Shell::Ptr>& rShells) const
 	{
 		UpwardNavigation(kpParentTopology, rShells);
 	}
 
-	void Face::Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const
+	void Face::Vertices(std::list<Vertex::Ptr>& rVertices) const
 	{
 		DownwardNavigation(rVertices);
 	}
 
-	void Face::Wires(std::list<std::shared_ptr<Wire>>& rWires) const
+	void Face::Wires(std::list<Wire::Ptr>& rWires) const
 	{
 		DownwardNavigation(rWires);
 	}
@@ -100,7 +96,7 @@ namespace TopologicCore
 		return occtShapeProperties.Mass();
 	}
 
-	std::shared_ptr<Face> Face::ByClosedWire(const std::shared_ptr<Wire>& pkWire)
+	Face::Ptr Face::ByClosedWire(const Wire::Ptr& pkWire)
 	{
 		BRepBuilderAPI_MakeFace occtMakeFace(pkWire->GetOcctWire());
 		if (occtMakeFace.Error() != BRepBuilderAPI_FaceDone)
@@ -108,37 +104,38 @@ namespace TopologicCore
 			Throw(occtMakeFace);
 		}
 
-		std::shared_ptr<Face> pFace = std::make_shared<Face>(occtMakeFace);
-		std::list<std::pair<std::shared_ptr<Topology>, std::shared_ptr<Topology>>> topologyPairs;
-		std::list<std::shared_ptr<Topology>> members;
+		Face::Ptr pFace = std::make_shared<Face>(occtMakeFace);
+		std::list<std::pair<Topology::Ptr, Topology::Ptr>> topologyPairs;
+		std::list<Topology::Ptr> members;
 		pFace->Members(members);
 
-		for (const std::shared_ptr<Topology>& kpMember : members)
+		// TODO: Add modified mebrs
+		/*for (const Topology::Ptr& kpMember : members)
 		{
 			topologyPairs.push_back(std::make_pair(kpMember, kpMember));
 		}
 
-		/*LabelManager::GetInstance().AddModifiedMembers(
+		LabelManager::GetInstance().AddModifiedMembers(
 			pFace->GetOcctLabel(),
 			topologyPairs);*/
 
 		return pFace;
 	}
 
-	std::shared_ptr<Face> Face::ByEdges(const std::list<std::shared_ptr<Edge>>& rkEdges)
+	Face::Ptr Face::ByEdges(const std::list<Edge::Ptr>& rkEdges)
 	{
 		if (rkEdges.size())
 		{
 			throw std::exception("No edge is passed.");
 		}
 		
-		std::shared_ptr<Wire> pWire = Wire::ByEdges(rkEdges);
-		std::shared_ptr<Face> pFace = ByClosedWire(pWire);
+		Wire::Ptr pWire = Wire::ByEdges(rkEdges);
+		Face::Ptr pFace = ByClosedWire(pWire);
 
 		return pFace;
 	}
 
-	std::shared_ptr<Face> Face::BySurface(Handle(Geom_Surface) pOcctSurface)
+	Face::Ptr Face::BySurface(Handle(Geom_Surface) pOcctSurface)
 	{
 		BRepBuilderAPI_MakeFace occtMakeFace;
 		try {
@@ -148,12 +145,12 @@ namespace TopologicCore
 		{
 			Throw(occtMakeFace);
 		}
-		std::shared_ptr<Face> pFace = std::make_shared<Face>(occtMakeFace);
+		Face::Ptr pFace = std::make_shared<Face>(occtMakeFace);
 		//LabelManager::GetInstance().AddGeneratedMembersToLabel(pFace->GetOcctLabel());
 		return pFace;
 	}
 
-	std::shared_ptr<Face> Face::BySurface(
+	Face::Ptr Face::BySurface(
 		const TColgp_Array2OfPnt& rkOcctPoles, 
 		const TColStd_Array2OfReal& rkOcctWeights, 
 		const TColStd_Array1OfReal& rkOcctUKnots, 
@@ -165,8 +162,8 @@ namespace TopologicCore
 		const bool kIsUPeriodic, 
 		const bool kIsVPeriodic, 
 		const bool kIsRational,
-		const std::shared_ptr<Wire>& kpOuterWire,
-		const std::list<std::shared_ptr<Wire>>& rkInnerWires)
+		const Wire::Ptr& kpOuterWire,
+		const std::list<Wire::Ptr>& rkInnerWires)
 	{
 		BRepBuilderAPI_MakeFace occtMakeFace;
 		try {
@@ -265,14 +262,14 @@ namespace TopologicCore
 			Throw(occtMakeFace);
 		}
 
-		for (const std::shared_ptr<Wire>& kInnerWire : rkInnerWires)
+		for (const Wire::Ptr& kInnerWire : rkInnerWires)
 		{
 			occtMakeFace.Add(kInnerWire->GetOcctWire());
 		}
 
-		std::shared_ptr<Face> pFace = std::make_shared<Face>(occtMakeFace);
-		std::list<std::pair<std::shared_ptr<Topology>, std::shared_ptr<Topology>>> topologyPairs;
-		std::list<std::shared_ptr<Topology>> members;
+		Face::Ptr pFace = std::make_shared<Face>(occtMakeFace);
+		std::list<std::pair<Topology::Ptr, Topology::Ptr>> topologyPairs;
+		std::list<Topology::Ptr> members;
 		pFace->Members(members);
 
 		/*LabelManager::GetInstance().AddModifiedMembers(
@@ -281,7 +278,7 @@ namespace TopologicCore
 		return pFace;
 	}
 
-	void Face::SharedEdges(const std::shared_ptr<Face>& kpAnotherFace, std::list<std::shared_ptr<Edge>>& rEdges) const
+	void Face::SharedEdges(const Face::Ptr& kpAnotherFace, std::list<Edge::Ptr>& rEdges) const
 	{
 		const TopoDS_Shape& rkOcctShape1 = GetOcctShape();
 		TopTools_ListOfShape occtEdges1;
@@ -305,7 +302,6 @@ namespace TopologicCore
 			}
 		}
 
-		//const TDF_Label kOcctLabel = GetOcctLabel();
 		for (TopTools_ListIteratorOfListOfShape occtEdgeIterator1(occtEdges1);
 			occtEdgeIterator1.More();
 			occtEdgeIterator1.Next())
@@ -316,17 +312,14 @@ namespace TopologicCore
 			{
 				if (occtEdgeIterator1.Value().IsSame(occtEdgeIterator2.Value()))
 				{
-					/*TDF_Label occtChildLabel;
-					LabelManager::GetInstance().FindLabelByShape(occtEdgeIterator1.Value(), occtChildLabel);
-					std::shared_ptr<Edge> pEdge = TopologicalQuery::Downcast<Edge>(Topology::ByOcctShape(occtEdgeIterator1.Value(), occtChildLabel));*/
-					std::shared_ptr<Edge> pEdge = TopologicalQuery::Downcast<Edge>(Topology::ByOcctShape(occtEdgeIterator1.Value()));
+					Edge::Ptr pEdge = TopologicalQuery::Downcast<Edge>(Topology::ByOcctShape(occtEdgeIterator1.Value()));
 					rEdges.push_back(pEdge);
 				}
 			}
 		}
 	}
 
-	void Face::SharedVertices(const std::shared_ptr<Face>& kpAnotherFace, std::list<std::shared_ptr<Vertex>>& rVertices) const
+	void Face::SharedVertices(const Face::Ptr& kpAnotherFace, std::list<Vertex::Ptr>& rVertices) const
 	{
 		const TopoDS_Shape& rkOcctShape1 = GetOcctShape();
 		TopTools_ListOfShape occtVertices1;
@@ -363,15 +356,15 @@ namespace TopologicCore
 				{
 					/*TDF_Label occtChildLabel;
 					LabelManager::GetInstance().FindLabelByShape(occtVertexIterator1.Value(), occtChildLabel);
-					std::shared_ptr<Vertex> pVertex = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(occtVertexIterator1.Value(), occtChildLabel));*/
-					std::shared_ptr<Vertex> pVertex = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(occtVertexIterator1.Value()));
+					Vertex::Ptr pVertex = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(occtVertexIterator1.Value(), occtChildLabel));*/
+					Vertex::Ptr pVertex = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(occtVertexIterator1.Value()));
 					rVertices.push_back(pVertex);
 				}
 			}
 		}
 	}
 
-	std::shared_ptr<Wire> Face::OuterBoundary() const
+	Wire::Ptr Face::OuterBoundary() const
 	{
 		TopoDS_Wire occtOuterWire = ShapeAnalysis::OuterWire(GetOcctFace());
 
@@ -382,7 +375,7 @@ namespace TopologicCore
 		return std::make_shared<Wire>(occtOuterWire, occtWireLabel);*/
 	}
 
-	void Face::InnerBoundaries(std::list<std::shared_ptr<Wire>>& rInnerBoundaries) const
+	void Face::InnerBoundaries(std::list<Wire::Ptr>& rInnerBoundaries) const
 	{
 		//const TDF_Label kOcctLabel = GetOcctLabel();
 		const TopoDS_Face& rkFace = GetOcctFace();
@@ -407,7 +400,7 @@ namespace TopologicCore
 		}
 	}
 
-	void Face::UVParameterAtPoint(const std::shared_ptr<Vertex>& kpVertex, double& rU, double& rV) const
+	void Face::UVParameterAtPoint(const Vertex::Ptr& kpVertex, double& rU, double& rV) const
 	{
 		Handle(Geom_Surface) pOcctSurface = Surface();
 		ShapeAnalysis_Surface occtSurfaceAnalysis(pOcctSurface);
@@ -420,7 +413,7 @@ namespace TopologicCore
 		NormalizeUV(occtU, occtV, rU, rV);
 	}
 
-	std::shared_ptr<Vertex> Face::PointAtParameter(const double kU, const double kV) const
+	Vertex::Ptr Face::PointAtParameter(const double kU, const double kV) const
 	{
 		Handle(Geom_Surface) pOcctSurface = Surface();
 		double occtU = 0.0, occtV = 0.0;
@@ -458,7 +451,7 @@ namespace TopologicCore
 		return occtProperties.Normal();
 	}
 
-	std::shared_ptr<Face> Face::Trim(const std::shared_ptr<Wire>& kpWire) const
+	Face::Ptr Face::Trim(const Wire::Ptr& kpWire) const
 	{
 		Handle(Geom_Surface) pOcctSurface = Surface();
 		const TopoDS_Wire& rkWire = kpWire->GetOcctWire();

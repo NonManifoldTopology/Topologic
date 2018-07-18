@@ -18,16 +18,13 @@
 
 namespace TopologicCore
 {
-	void Wire::Edges(std::list<std::shared_ptr<Edge>>& rEdges) const
+	void Wire::Edges(std::list<Edge::Ptr>& rEdges) const
 	{
 		// This query uses a specialised class BRepTools_WireExplorer 
 		for (BRepTools_WireExplorer occtWireExplorer(GetOcctWire()); occtWireExplorer.More(); occtWireExplorer.Next())
 		{
 			const TopoDS_Edge& rkOcctEdge = occtWireExplorer.Current();
 			rEdges.push_back(TopologicalQuery::Downcast<Edge>(Topology::ByOcctShape(rkOcctEdge)));
-			/*TDF_Label occtEdgeLabel;
-			LabelManager::GetInstance().FindLabelByShape(rkOcctEdge, occtEdgeLabel);*/
-			//rEdges.push_back(TopologicalQuery::Downcast<Edge>(Topology::ByOcctShape(rkOcctEdge, occtEdgeLabel)));
 		}
 
 		// If still empty, use the DownwardNavigation
@@ -37,7 +34,7 @@ namespace TopologicCore
 		}
 	}
 
-	void Wire::Faces(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Face>>& rFaces) const
+	void Wire::Faces(const Topology::Ptr& kpParentTopology, std::list<Face::Ptr>& rFaces) const
 	{
 		UpwardNavigation(kpParentTopology, rFaces);
 	}
@@ -49,7 +46,7 @@ namespace TopologicCore
 		return shapeAnalysisWire.CheckClosed();
 	}
 
-	void Wire::Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const
+	void Wire::Vertices(std::list<Vertex::Ptr>& rVertices) const
 	{
 		TopoDS_Edge lastEdge;
 		for(BRepTools_WireExplorer occtWireExplorer(GetOcctWire()); occtWireExplorer.More(); occtWireExplorer.Next())
@@ -57,9 +54,6 @@ namespace TopologicCore
 			const TopoDS_Vertex& rkOcctVertex = occtWireExplorer.CurrentVertex();
 			lastEdge = occtWireExplorer.Current();
 			rVertices.push_back(TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex)));
-			/*TDF_Label occtVertexLabel;
-			LabelManager::GetInstance().FindLabelByShape(rkOcctVertex, occtVertexLabel);*/
-			//rVertices.push_back(TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex, occtVertexLabel)));
 		}
 
 		// Add the last one.
@@ -67,13 +61,11 @@ namespace TopologicCore
 		{
 			TopoDS_Vertex occtLastVertex = TopExp::LastVertex(lastEdge);
 			rVertices.push_back(TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(occtLastVertex)));
-			/*TDF_Label occtVertexLabel;
-			LabelManager::GetInstance().FindLabelByShape(occtLastVertex, occtVertexLabel);*/
 		}
 	}
 
 	// This method may involve making copies of the edges if they originally do not share vertices.
-	std::shared_ptr<Wire> Wire::ByEdges(const std::list<std::shared_ptr<Edge>>& rkEdges)
+	Wire::Ptr Wire::ByEdges(const std::list<Edge::Ptr>& rkEdges)
 	{
 		if (rkEdges.empty())
 		{
@@ -82,7 +74,7 @@ namespace TopologicCore
 
 		TopTools_ListOfShape occtEdges;
 
-		for(const std::shared_ptr<Edge>& kpEdge : rkEdges)
+		for(const Edge::Ptr& kpEdge : rkEdges)
 		{
 			occtEdges.Append(kpEdge->GetOcctShape());
 		}
@@ -91,19 +83,19 @@ namespace TopologicCore
 		occtMakeWire.Add(occtEdges);
 
 		try {
-			std::shared_ptr<Wire> pWire = std::make_shared<Wire>(occtMakeWire);
+			Wire::Ptr pWire = std::make_shared<Wire>(occtMakeWire);
 
-			std::list<std::pair<std::shared_ptr<Topology>, std::shared_ptr<Topology>>> topologyPairs;
-			std::list<std::shared_ptr<Topology>> members;
+			// Add the edges to the wire's label. Must do this manually because of the Modified()'s nature to map 
+			// old to new sub-shapes.
+			/*std::list<std::pair<Topology::Ptr, Topology::Ptr>> topologyPairs;
+			std::list<Topology::Ptr> members;
 			pWire->Members(members);
-			for (const std::shared_ptr<Topology>& kpMember : members)
+			for (const Topology::Ptr& kpMember : members)
 			{
 				topologyPairs.push_back(std::make_pair(kpMember, kpMember));
 			}
 
-			// Add the edges to the wire's label. Must do this manually because of the Modified()'s nature to map 
-			// old to new sub-shapes.
-			/*LabelManager::GetInstance().AddModifiedMembers(
+			LabelManager::GetInstance().AddModifiedMembers(
 				pWire->GetOcctLabel(),
 				topologyPairs);*/
 
@@ -119,10 +111,10 @@ namespace TopologicCore
 	void Wire::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
 	{
 		// Returns a list of curves
-		std::list<std::shared_ptr<Edge>> edges;
+		std::list<Edge::Ptr> edges;
 		Edges(edges);
 
-		for (const std::shared_ptr<Edge>& kpEdge : edges)
+		for (const Edge::Ptr& kpEdge : edges)
 		{
 			rOcctGeometries.push_back(kpEdge->Curve());
 		}
@@ -185,14 +177,11 @@ namespace TopologicCore
 		: Topology(1)
 		, m_occtWire(rkOcctWire)
 	{
-		//GlobalCluster::GetInstance().Add(this);
-		/*SetOcctLabel(rkOcctLabel);
-		OcctCounterAttribute::IncreaseCounter(GetOcctLabel());*/
+
 	}
 
 	Wire::~Wire()
 	{
-		//GlobalCluster::GetInstance().Remove(this);
-		//DecreaseCounter();
+
 	}
 }

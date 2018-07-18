@@ -21,6 +21,9 @@ namespace TopologicCore
 	class CellComplex : public Topology
 	{
 	public:
+		typedef std::shared_ptr<CellComplex> Ptr;
+
+	public:
 		/// <summary>
 		/// 
 		/// </summary>

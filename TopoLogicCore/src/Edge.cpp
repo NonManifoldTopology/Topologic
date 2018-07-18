@@ -1,8 +1,6 @@
 #include <Edge.h>
 #include <Vertex.h>
 #include <Wire.h>
-//#include <LabelManager.h>
-#include <OcctCounterAttribute.h>
 
 #include <BRepGProp.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
@@ -22,31 +20,23 @@
 
 namespace TopologicCore
 {
-	void Edge::Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const
+	void Edge::Vertices(std::list<Vertex::Ptr>& rVertices) const
 	{
 		ShapeAnalysis_Edge occtShapeAnalysisEdge;
 		
 		TopoDS_Vertex occtVertex1 = occtShapeAnalysisEdge.FirstVertex(GetOcctEdge());
 		rVertices.push_back(std::make_shared<Vertex>(occtVertex1));
-		//// Find the vertex's label
-		//TDF_Label occtVertex1Label;
-		//LabelManager::GetInstance().FindLabelByShape(occtVertex1, occtVertex1Label);
-		//rVertices.push_back(std::make_shared<Vertex>(occtVertex1, occtVertex1Label));
 		
 		TopoDS_Vertex occtVertex2 = occtShapeAnalysisEdge.LastVertex(GetOcctEdge());
 		rVertices.push_back(std::make_shared<Vertex>(occtVertex2));
-		// Find the vertex's label
-		/*TDF_Label occtVertex2Label;
-		LabelManager::GetInstance().FindLabelByShape(occtVertex2, occtVertex2Label);*/
-		//rVertices.push_back(std::make_shared<Vertex>(occtVertex2, occtVertex2Label));
 	}
 
-	void Edge::Wires(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Wire>>& rWires) const
+	void Edge::Wires(const Topology::Ptr& kpParentTopology, std::list<Wire::Ptr>& rWires) const
 	{
 		UpwardNavigation(kpParentTopology, rWires);
 	}
 
-	std::shared_ptr<Edge> Edge::ByCurve(
+	Edge::Ptr Edge::ByCurve(
 		const TColgp_Array1OfPnt &rkOcctPoles,
 		const TColStd_Array1OfReal &rkOcctWeights,
 		const TColStd_Array1OfReal &rkOcctKnots,
@@ -74,7 +64,7 @@ namespace TopologicCore
 		return ByCurve(pOcctBSplineCurve);
 	}
 
-	std::shared_ptr<Edge> Edge::ByCurve(Handle(Geom_Curve) pOcctCurve, const double rkParameter1, const double rkParameter2)
+	Edge::Ptr Edge::ByCurve(Handle(Geom_Curve) pOcctCurve, const double rkParameter1, const double rkParameter2)
 	{
 		const double kOcctFirstParameter = pOcctCurve->FirstParameter();
 		const double kOcctLastParameter = pOcctCurve->LastParameter();
@@ -90,12 +80,12 @@ namespace TopologicCore
 			Throw(occtMakeEdge.Error());
 		}
 
-		std::shared_ptr<Edge> pEdge = std::make_shared<Edge>(occtMakeEdge);
+		Edge::Ptr pEdge = std::make_shared<Edge>(occtMakeEdge);
 		//LabelManager::GetInstance().AddGeneratedMembersToLabel(pEdge->GetOcctLabel());
 		return pEdge;
 	}
 
-	std::shared_ptr<Edge> Edge::ByVertices(const std::list<std::shared_ptr<Vertex>>& rkVertices)
+	Edge::Ptr Edge::ByVertices(const std::list<Vertex::Ptr>& rkVertices)
 	{
 		// Cases:
 		// - 0 or 1 vertex --> invalid
@@ -103,29 +93,31 @@ namespace TopologicCore
 		// - 3 --> BSpline
 
 		int numberOfVertices = (int) rkVertices.size();
-		std::shared_ptr<Edge> pEdge = nullptr;
+		Edge::Ptr pEdge = nullptr;
 		if (numberOfVertices < 2)
 		{
 			throw std::exception("Too few vertices to create an edge.");
 		}
 		else if (numberOfVertices == 2) // a line
 		{
-			const std::shared_ptr<Vertex>& rkVertex1 = *(rkVertices.begin());
-			const std::shared_ptr<Vertex>& rkVertex2 = *(++rkVertices.begin());
+			const Vertex::Ptr& rkVertex1 = *(rkVertices.begin());
+			const Vertex::Ptr& rkVertex2 = *(++rkVertices.begin());
 			BRepBuilderAPI_MakeEdge occtMakeEdge(
 				rkVertex1->GetOcctVertex(),
 				rkVertex2->GetOcctVertex());
 			pEdge = std::make_shared<Edge>(occtMakeEdge.Edge());
 
-			const std::shared_ptr<Topology>& rkBaseVertex1 = TopologicalQuery::Upcast<Topology>(rkVertex1);
-			const std::shared_ptr<Topology>& rkBaseVertex2 = TopologicalQuery::Upcast<Topology>(rkVertex2);
-			std::list<std::pair<std::shared_ptr<Topology>, std::shared_ptr<Topology>>> topologyPairs;
+			const Topology::Ptr& rkBaseVertex1 = TopologicalQuery::Upcast<Topology>(rkVertex1);
+			const Topology::Ptr& rkBaseVertex2 = TopologicalQuery::Upcast<Topology>(rkVertex2);
+
+			// TODO: Add the vertices to the edge's label. Must do this manually because of the Modified()'s nature to map 
+			// old to new sub-shapes.
+			/*// Original --> modified shapes
+			std::list<std::pair<Topology::Ptr, Topology::Ptr>> topologyPairs;
 			topologyPairs.push_back(std::make_pair(rkBaseVertex1, rkBaseVertex1));
 			topologyPairs.push_back(std::make_pair(rkBaseVertex2, rkBaseVertex2));
 
-			// Add the vertices to the edge's label. Must do this manually because of the Modified()'s nature to map 
-			// old to new sub-shapes.
-			/*LabelManager::GetInstance().AddModifiedMembers(
+			LabelManager::GetInstance().AddModifiedMembers(
 				pEdge->GetOcctLabel(), 
 				topologyPairs);*/
 
@@ -134,7 +126,7 @@ namespace TopologicCore
 			// else more than 2 vertices
 			Handle(TColgp_HArray1OfPnt) pOcctPoints = new TColgp_HArray1OfPnt(1, numberOfVertices);
 			int i = 1;
-			for(const std::shared_ptr<Vertex>& kpVertex : rkVertices)
+			for(const Vertex::Ptr& kpVertex : rkVertices)
 			{
 				pOcctPoints->SetValue(i, kpVertex->Point()->Pnt());
 				++i;
@@ -170,7 +162,7 @@ namespace TopologicCore
 		return pEdge;
 	}
 
-	std::shared_ptr<Vertex> Edge::SharedVertex(const std::shared_ptr<Edge>& kpAnotherEdge) const
+	Vertex::Ptr Edge::SharedVertex(const Edge::Ptr& kpAnotherEdge) const
 	{
 		TopoDS_Vertex occtSharedVertex;
 		bool hasSharedVertex = TopExp::CommonVertex(m_occtEdge, kpAnotherEdge->GetOcctEdge(), occtSharedVertex);
@@ -179,13 +171,13 @@ namespace TopologicCore
 			throw std::exception("The two edges have no shared vertex");
 		}
 
-		std::shared_ptr<Vertex> pVertex = std::make_shared<Vertex>(occtSharedVertex);
+		Vertex::Ptr pVertex = std::make_shared<Vertex>(occtSharedVertex);
 
 		// Find which of the vertices is this vertex, then copy the attributes. 
 		return pVertex;
 	}
 
-	double Edge::ParameterAtPoint(const std::shared_ptr<Vertex>& kpVertex) const
+	double Edge::ParameterAtPoint(const Vertex::Ptr& kpVertex) const
 	{
 		double u0 = 0.0, u1 = 0.0;
 		Handle(Geom_Curve) pOcctCurve = Curve(u0, u1);
@@ -202,7 +194,7 @@ namespace TopologicCore
 		return NormalizeParameter(u0, u1, occtParameter);
 	}
 
-	std::shared_ptr<Vertex> Edge::PointAtParameter(const double kParameter) const
+	Vertex::Ptr Edge::PointAtParameter(const double kParameter) const
 	{
 		double u0 = 0.0, u1 = 0.0;
 		Handle(Geom_Curve) pOcctCurve = Curve(u0, u1);
@@ -320,16 +312,11 @@ namespace TopologicCore
 		: Topology(1)
 		, m_occtEdge(rkOcctEdge)
 	{
-		//GlobalCluster::GetInstance().Add(this);
 
-		// Needs to be done in the subclass, not in Topology, as the OCCT shape is not yet defined there.
-		/*SetOcctLabel(rkOcctLabel);
-		OcctCounterAttribute::IncreaseCounter(GetOcctLabel());*/
 	}
 
 	Edge::~Edge()
 	{
-		//GlobalCluster::GetInstance().Remove(this);
-		//DecreaseCounter();
+
 	}
 }

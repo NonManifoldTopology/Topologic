@@ -1,5 +1,4 @@
 #include <Cluster.h>
-#include <GlobalCluster.h>
 #include <CellComplex.h>
 #include <Cell.h>
 #include <Vertex.h>
@@ -39,16 +38,15 @@
 
 namespace TopologicCore
 {
-	std::shared_ptr<Cluster> Cluster::ByTopology(const std::list<std::shared_ptr<Topology>>& rkTopologies)
+	Cluster::Ptr Cluster::ByTopology(const std::list<Topology::Ptr>& rkTopologies)
 	{
 		if (rkTopologies.empty())
 		{
 			throw std::exception("No topology is passed.");
 		}
 
-		//std::shared_ptr<Cluster> pCluster = std::make_shared<Cluster>(true);
-		std::shared_ptr<Cluster> pCluster = std::make_shared<Cluster>();
-		for(const std::shared_ptr<Topology>& kpTopology : rkTopologies)
+		Cluster::Ptr pCluster = std::make_shared<Cluster>();
+		for(const Topology::Ptr& kpTopology : rkTopologies)
 		{
 			pCluster->AddTopology(kpTopology.get());
 		}
@@ -69,7 +67,7 @@ namespace TopologicCore
 		// If this cluster is not the global cluster, it must have been inside the global cluster.
 		// (Added during initialisation.) The free flag is therefore at this point false.
 		// To add a new member to this cluster, unfreeze it first/set the flag to true.
-		/*std::shared_ptr<Cluster> pGlobalCluster = GlobalCluster::GetInstance().GetCluster();
+		/*Cluster::Ptr pGlobalCluster = GlobalCluster::GetInstance().GetCluster();
 		if (GetOcctShape().IsNotEqual(pGlobalCluster->GetOcctShape()))
 		{
 			GetOcctShape().Free(true);
@@ -103,7 +101,7 @@ namespace TopologicCore
 		// If this cluster is not the global cluster, it must have been inside the global cluster.
 		// (Added during initialisation.) The free flag is therefore at this point false.
 		// To remove a new member to this cluster, unfreeze it first/set the flag to true.
-		/*std::shared_ptr<Cluster> pGlobalCluster = GlobalCluster::GetInstance().GetCluster();
+		/*Cluster::Ptr pGlobalCluster = GlobalCluster::GetInstance().GetCluster();
 		if (GetOcctShape().IsNotEqual(pGlobalCluster->GetOcctShape()))
 		{
 			GetOcctShape().Free(true);
@@ -198,37 +196,37 @@ namespace TopologicCore
 		DecreaseCounter();*/
 	}
 
-	void Cluster::Shells(std::list<std::shared_ptr<Shell>>& rShells) const
+	void Cluster::Shells(std::list<Shell::Ptr>& rShells) const
 	{
 		DownwardNavigation(rShells);
 	}
 
-	void Cluster::Edges(std::list<std::shared_ptr<Edge>>& rEdges) const
+	void Cluster::Edges(std::list<Edge::Ptr>& rEdges) const
 	{
 		DownwardNavigation(rEdges);
 	}
 
-	void Cluster::Faces(std::list<std::shared_ptr<Face>>& rFaces) const
+	void Cluster::Faces(std::list<Face::Ptr>& rFaces) const
 	{
 		DownwardNavigation(rFaces);
 	}
 
-	void Cluster::Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const
+	void Cluster::Vertices(std::list<Vertex::Ptr>& rVertices) const
 	{
 		DownwardNavigation(rVertices);
 	}
 
-	void Cluster::Wires(std::list<std::shared_ptr<Wire>>& rWires) const
+	void Cluster::Wires(std::list<Wire::Ptr>& rWires) const
 	{
 		DownwardNavigation(rWires);
 	}
 
-	void Cluster::Cells(std::list<std::shared_ptr<Cell>>& rCells) const
+	void Cluster::Cells(std::list<Cell::Ptr>& rCells) const
 	{
 		DownwardNavigation(rCells);
 	}
 
-	void Cluster::CellComplexes(std::list<std::shared_ptr<CellComplex>>& rCellComplexes) const
+	void Cluster::CellComplexes(std::list<CellComplex::Ptr>& rCellComplexes) const
 	{
 		DownwardNavigation(rCellComplexes);
 	}

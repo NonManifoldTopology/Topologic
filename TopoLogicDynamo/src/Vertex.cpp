@@ -22,17 +22,17 @@ namespace Topologic
 
 	List<Edge^>^ Vertex::Edges(Topology^ parentTopology)
 	{
-		std::list<std::shared_ptr<TopologicCore::Edge>> coreEdges;
+		std::list<TopologicCore::Edge::Ptr> coreEdges;
 		std::shared_ptr<TopologicCore::Topology> pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
-		std::shared_ptr<TopologicCore::Vertex> pCoreVertex = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Vertex>(GetCoreTopologicalQuery());
+		TopologicCore::Vertex::Ptr pCoreVertex = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Vertex>(GetCoreTopologicalQuery());
 		pCoreVertex->Edges(pCoreParentTopology, coreEdges);
 
 		List<Edge^>^ pEdges = gcnew List<Edge^>();
-		for (std::list<std::shared_ptr<TopologicCore::Edge>>::iterator coreEdgeIterator = coreEdges.begin();
+		for (std::list<TopologicCore::Edge::Ptr>::iterator coreEdgeIterator = coreEdges.begin();
 			coreEdgeIterator != coreEdges.end();
 			coreEdgeIterator++)
 		{
-			const std::shared_ptr<TopologicCore::Edge>& kpCoreEdge = *coreEdgeIterator;
+			const TopologicCore::Edge::Ptr& kpCoreEdge = *coreEdgeIterator;
 			Edge^ pEdge = gcnew Edge(kpCoreEdge);
 			pEdges->Add(pEdge);
 		}
@@ -57,9 +57,9 @@ namespace Topologic
 
 	}
 
-	Vertex::Vertex(const std::shared_ptr<TopologicCore::Vertex>& kpCoreVertex)
+	Vertex::Vertex(const TopologicCore::Vertex::Ptr& kpCoreVertex)
 		: Topology()
-		, m_pCoreVertex(new std::shared_ptr<TopologicCore::Vertex>(kpCoreVertex))
+		, m_pCoreVertex(new TopologicCore::Vertex::Ptr(kpCoreVertex))
 	{
 
 	}

@@ -20,6 +20,9 @@ namespace TopologicCore
 	class Vertex : public Topology
 	{
 	public:
+		typedef std::shared_ptr<Vertex> Ptr;
+
+	public:
 		/// <summary>
 		/// Creates a vertex by an OCCT vertex.
 		/// </summary>

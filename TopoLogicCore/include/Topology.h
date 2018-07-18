@@ -3,7 +3,7 @@
 #include "Attribute.h"
 #include "Utilities.h"
 #include "TopologicalQuery.h"
-#include "LabelManager.h"
+//#include "LabelManager.h"
 
 #include <BOPCol_ListOfShape.hxx>
 #include <BOPCol_DataMapOfShapeShape.hxx>

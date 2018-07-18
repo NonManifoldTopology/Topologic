@@ -14,37 +14,37 @@ namespace Topologic
 {
 	CellComplex^ CellComplex::ByCells(List<Cell^>^ cells)
 	{
-		std::list<std::shared_ptr<TopologicCore::Cell>> coreCells;
+		std::list<TopologicCore::Cell::Ptr> coreCells;
 		for each(Cell^ pCell in cells)
 		{
 			coreCells.push_back(TopologicCore::Topology::Downcast<TopologicCore::Cell>(pCell->GetCoreTopologicalQuery()));
 		}
-		std::shared_ptr<TopologicCore::CellComplex> pCoreCellComplex = TopologicCore::CellComplex::ByCells(coreCells);
+		TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::CellComplex::ByCells(coreCells);
 		CellComplex^ pCellComplex = gcnew CellComplex(pCoreCellComplex);
 		return pCellComplex;
 	}
 
 	CellComplex^ CellComplex::ByFaces(List<Face^>^ faces)
 	{
-		std::list<std::shared_ptr<TopologicCore::Face>> coreFaces;
+		std::list<TopologicCore::Face::Ptr> coreFaces;
 		for each(Face^ pFace in faces)
 		{
 			coreFaces.push_back(TopologicCore::Topology::Downcast<TopologicCore::Face>(pFace->GetCoreTopologicalQuery()));
 		}
-		std::shared_ptr<TopologicCore::CellComplex> pCoreCellComplex = TopologicCore::CellComplex::ByFaces(coreFaces);
+		TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::CellComplex::ByFaces(coreFaces);
 		CellComplex^ pCellComplex = gcnew CellComplex(pCoreCellComplex);
 		return pCellComplex;
 	}
 
 	List<Cell^>^ CellComplex::Cells()
 	{
-		std::shared_ptr<TopologicCore::CellComplex> pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(GetCoreTopologicalQuery());
+		TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(GetCoreTopologicalQuery());
 
-		std::list<std::shared_ptr<TopologicCore::Cell>> coreCells;
+		std::list<TopologicCore::Cell::Ptr> coreCells;
 		pCoreCellComplex->Cells(coreCells);
 
 		List<Cell^>^ pCells = gcnew List<Cell^>();
-		for (std::list<std::shared_ptr<TopologicCore::Cell>>::const_iterator kCellIterator = coreCells.begin();
+		for (std::list<TopologicCore::Cell::Ptr>::const_iterator kCellIterator = coreCells.begin();
 			kCellIterator != coreCells.end();
 			kCellIterator++)
 		{
@@ -57,13 +57,13 @@ namespace Topologic
 
 	List<Face^>^ CellComplex::Faces()
 	{
-		std::shared_ptr<TopologicCore::CellComplex> pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(GetCoreTopologicalQuery());
+		TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(GetCoreTopologicalQuery());
 
-		std::list<std::shared_ptr<TopologicCore::Face>> coreFaces;
+		std::list<TopologicCore::Face::Ptr> coreFaces;
 		pCoreCellComplex->Faces(coreFaces);
 
 		List<Face^>^ pFaces = gcnew List<Face^>();
-		for (std::list<std::shared_ptr<TopologicCore::Face>>::const_iterator kFaceIterator = coreFaces.begin();
+		for (std::list<TopologicCore::Face::Ptr>::const_iterator kFaceIterator = coreFaces.begin();
 			kFaceIterator != coreFaces.end();
 			kFaceIterator++)
 		{
@@ -76,13 +76,13 @@ namespace Topologic
 
 	List<Shell^>^ CellComplex::Shells()
 	{
-		std::shared_ptr<TopologicCore::CellComplex> pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(GetCoreTopologicalQuery());
+		TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(GetCoreTopologicalQuery());
 
-		std::list<std::shared_ptr<TopologicCore::Shell>> coreShells;
+		std::list<TopologicCore::Shell::Ptr> coreShells;
 		pCoreCellComplex->Shells(coreShells);
 
 		List<Shell^>^ pShells = gcnew List<Shell^>();
-		for (std::list<std::shared_ptr<TopologicCore::Shell>>::const_iterator kShellIterator = coreShells.begin();
+		for (std::list<TopologicCore::Shell::Ptr>::const_iterator kShellIterator = coreShells.begin();
 			kShellIterator != coreShells.end();
 			kShellIterator++)
 		{
@@ -95,13 +95,13 @@ namespace Topologic
 
 	List<Wire^>^ CellComplex::Wires()
 	{
-		std::shared_ptr<TopologicCore::CellComplex> pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(GetCoreTopologicalQuery());
+		TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(GetCoreTopologicalQuery());
 
-		std::list<std::shared_ptr<TopologicCore::Wire>> coreWires;
+		std::list<TopologicCore::Wire::Ptr> coreWires;
 		pCoreCellComplex->Wires(coreWires);
 
 		List<Wire^>^ pWires = gcnew List<Wire^>();
-		for (std::list<std::shared_ptr<TopologicCore::Wire>>::const_iterator kWireIterator = coreWires.begin();
+		for (std::list<TopologicCore::Wire::Ptr>::const_iterator kWireIterator = coreWires.begin();
 			kWireIterator != coreWires.end();
 			kWireIterator++)
 		{
@@ -114,13 +114,13 @@ namespace Topologic
 
 	List<Edge^>^ CellComplex::Edges()
 	{
-		std::shared_ptr<TopologicCore::CellComplex> pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(GetCoreTopologicalQuery());
+		TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(GetCoreTopologicalQuery());
 
-		std::list<std::shared_ptr<TopologicCore::Edge>> coreEdges;
+		std::list<TopologicCore::Edge::Ptr> coreEdges;
 		pCoreCellComplex->Edges(coreEdges);
 
 		List<Edge^>^ pEdges = gcnew List<Edge^>();
-		for (std::list<std::shared_ptr<TopologicCore::Edge>>::const_iterator kEdgeIterator = coreEdges.begin();
+		for (std::list<TopologicCore::Edge::Ptr>::const_iterator kEdgeIterator = coreEdges.begin();
 			kEdgeIterator != coreEdges.end();
 			kEdgeIterator++)
 		{
@@ -133,13 +133,13 @@ namespace Topologic
 
 	List<Vertex^>^ CellComplex::Vertices()
 	{
-		std::shared_ptr<TopologicCore::CellComplex> pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(GetCoreTopologicalQuery());
+		TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(GetCoreTopologicalQuery());
 
-		std::list<std::shared_ptr<TopologicCore::Vertex>> coreVertices;
+		std::list<TopologicCore::Vertex::Ptr> coreVertices;
 		pCoreCellComplex->Vertices(coreVertices);
 
 		List<Vertex^>^ pVertices = gcnew List<Vertex^>();
-		for (std::list<std::shared_ptr<TopologicCore::Vertex>>::const_iterator kVertexIterator = coreVertices.begin();
+		for (std::list<TopologicCore::Vertex::Ptr>::const_iterator kVertexIterator = coreVertices.begin();
 			kVertexIterator != coreVertices.end();
 			kVertexIterator++)
 		{
@@ -152,20 +152,20 @@ namespace Topologic
 
 	Cell^ CellComplex::OuterBoundary()
 	{
-		std::shared_ptr<TopologicCore::CellComplex> pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopologicCore::Cell> pCoreEnvelope = pCoreCellComplex->OuterBoundary();
+		TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(GetCoreTopologicalQuery());
+		TopologicCore::Cell::Ptr pCoreEnvelope = pCoreCellComplex->OuterBoundary();
 		return gcnew Cell(pCoreEnvelope);
 	}
 
 	List<Face^>^ CellComplex::InnerBoundaries()
 	{
-		std::shared_ptr<TopologicCore::CellComplex> pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(GetCoreTopologicalQuery());
+		TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(GetCoreTopologicalQuery());
 
-		std::list<std::shared_ptr<TopologicCore::Face>> coreInternalFaces;
+		std::list<TopologicCore::Face::Ptr> coreInternalFaces;
 		pCoreCellComplex->InnerBoundaries(coreInternalFaces);
 
 		List<Face^>^ pInternalFaces = gcnew List<Face^>();
-		for (std::list<std::shared_ptr<TopologicCore::Face>>::const_iterator kInternalFaceIterator = coreInternalFaces.begin();
+		for (std::list<TopologicCore::Face::Ptr>::const_iterator kInternalFaceIterator = coreInternalFaces.begin();
 			kInternalFaceIterator != coreInternalFaces.end();
 			kInternalFaceIterator++)
 		{
@@ -187,9 +187,9 @@ namespace Topologic
 		return pObjects;
 	}
 
-	CellComplex::CellComplex(const std::shared_ptr<TopologicCore::CellComplex>& kpCoreCellComplex)
+	CellComplex::CellComplex(const TopologicCore::CellComplex::Ptr& kpCoreCellComplex)
 		: Topology()
-		, m_pCoreCellComplex(new std::shared_ptr<TopologicCore::CellComplex>(kpCoreCellComplex))
+		, m_pCoreCellComplex(new TopologicCore::CellComplex::Ptr(kpCoreCellComplex))
 	{
 
 	}

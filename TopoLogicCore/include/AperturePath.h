@@ -11,6 +11,9 @@ namespace TopologicCore
 	class AperturePath
 	{
 	public:
+		typedef std::shared_ptr<AperturePath> Ptr;
+
+	public:
 		AperturePath(const TopoDS_Shape& rkOcctShape1, const TopoDS_Shape& rkOcctShape2)
 			: m_kOcctShape1(rkOcctShape1)
 			, m_kOcctShape2(rkOcctShape2)

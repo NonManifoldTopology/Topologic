@@ -21,6 +21,9 @@ namespace TopologicCore
 	class Shell : public Topology
 	{
 	public:
+		typedef std::shared_ptr<Shell> Ptr;
+
+	public:
 		/// <summary>
 		/// 
 		/// </summary>

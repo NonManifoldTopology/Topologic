@@ -15,6 +15,9 @@ namespace TopologicCore
 	class Context : public TopologicalQuery
 	{
 	public:
+		typedef std::shared_ptr<Context> Ptr;
+
+	public:
 		Context(const std::shared_ptr<TopologicCore::Topology>& kpTopology, const double kU, const double kV, const double kW);
 		virtual ~Context();
 

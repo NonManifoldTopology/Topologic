@@ -20,6 +20,9 @@ namespace TopologicCore
 	class Aperture : public Topology
 	{
 	public:
+		typedef std::shared_ptr<Aperture> Ptr;
+
+	public:
 		Aperture(const std::shared_ptr<TopologicCore::Topology>& kpTopology, const std::shared_ptr<Context>& kpContext, const bool kOpenStatus);
 		~Aperture();
 
