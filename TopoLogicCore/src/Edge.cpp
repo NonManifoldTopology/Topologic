@@ -193,7 +193,7 @@ namespace TopologicCore
 		bool hasSharedVertex = TopExp::CommonVertex(m_occtEdge, kpAnotherEdge->GetOcctEdge(), occtSharedVertex);
 		if (!hasSharedVertex)
 		{
-			throw std::exception("The two edges have no shared vertex");
+			return nullptr;
 		}
 
 		Vertex::Ptr pVertex = std::make_shared<Vertex>(occtSharedVertex);

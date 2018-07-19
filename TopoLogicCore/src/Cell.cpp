@@ -24,9 +24,9 @@
 #include <GProp_GProps.hxx>
 #include <ShapeFix_Solid.hxx>
 #include <StdFail_NotDone.hxx>
-#include <TDataStd_Integer.hxx>
-#include <TDF_ChildIterator.hxx>
-#include <TNaming_NamedShape.hxx>
+//#include <TDataStd_Integer.hxx>
+//#include <TDF_ChildIterator.hxx>
+//#include <TNaming_NamedShape.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
@@ -362,30 +362,15 @@ namespace TopologicCore
 
 	void Cell::InnerBoundaries(std::list<Shell::Ptr>& rShells) const
 	{
-		TopTools_MapOfShape occtShells;
-		for (TopExp_Explorer occtExplorer(GetOcctShape(), TopAbs_SHELL); occtExplorer.More(); occtExplorer.Next())
-		{
-			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-			if (!occtShells.Contains(occtCurrent))
-			{
-				TopAbs_Orientation occtOrientation;
-				TopoDS_Iterator occtIterator;
+		Shell::Ptr pOuterBoundary = OuterBoundary();
 
-				occtIterator.Initialize(occtCurrent);
-				if (occtIterator.More()) {
-					const TopoDS_Shape& rkMember = occtIterator.Value();
-					occtOrientation = rkMember.Orientation();
-					if (occtOrientation == TopAbs_INTERNAL)
-					{
-						// Only include an internal shell if it is closed
-						const TopoDS_Shell& rkShell = TopoDS::Shell(occtCurrent);
-						if (BRepCheck_Shell(rkShell).Closed())
-						{
-							occtShells.Add(occtCurrent);
-							rShells.push_back(std::make_shared<Shell>(rkShell));
-						}
-					}
-				}
+		std::list<Shell::Ptr> shells;
+		DownwardNavigation(shells);
+		for (const Shell::Ptr& kpShell : shells)
+		{
+			if (!kpShell->IsSame(pOuterBoundary))
+			{
+				rShells.push_back(kpShell);
 			}
 		}
 	}

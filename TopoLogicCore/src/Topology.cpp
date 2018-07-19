@@ -21,9 +21,9 @@
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <TopoDS.hxx>
-#include <TNaming_Builder.hxx>
-#include <TDF_ChildIterator.hxx>
-#include <TDataStd_Integer.hxx>
+//#include <TNaming_Builder.hxx>
+//#include <TDF_ChildIterator.hxx>
+//#include <TDataStd_Integer.hxx>
 #include <ShapeAnalysis_ShapeContents.hxx>
 
 #include <BOPAlgo_Builder.hxx>
@@ -205,7 +205,7 @@ namespace TopologicCore
 
 	}
 
-	Topology::Ptr Topology::ByOcctShape(const TopoDS_Shape& rkOcctShape, const TDF_Label& rkOcctLabel)
+	Topology::Ptr Topology::ByOcctShape(const TopoDS_Shape& rkOcctShape)
 	{
 		if (rkOcctShape.TShape().IsNull()) 
 		{
@@ -388,299 +388,6 @@ namespace TopologicCore
 		}
 	}
 
-	Topology::Ptr Topology::ByVertexIndex_Old(const std::vector<Vertex::Ptr>& rkVertices, const std::list<std::list<int>>& rkVertexIndices, const int iteration)
-	{
-		if (rkVertices.empty() || rkVertexIndices.empty())
-		{
-			return nullptr;
-		}
-		// Input: vertex[], int[][] indices
-
-		// - Topology[] = iterate through indices and create either a face(if > 2, planar), a wire (if > 2, non-planar), an edge(= 2), or a vertex.
-		TopTools_ListOfShape occtShapes;
-		for (const std::list<int>& rkVertex1DIndices : rkVertexIndices)
-		{
-			if (rkVertex1DIndices.empty())
-				continue;
-
-			std::list<TopoDS_Vertex> occtVertices;
-			for (int vertexIndex : rkVertex1DIndices)
-			{
-				occtVertices.push_back(rkVertices[vertexIndex]->GetOcctVertex());
-			}
-
-			if (occtVertices.size() > 2)
-			{
-				// Always assume it tries to build a face, so add the first index again.
-				occtVertices.push_back(rkVertices[*rkVertex1DIndices.begin()]->GetOcctVertex());
-
-				// Create edges
-				TopTools_ListOfShape occtEdges;
-				std::list<TopoDS_Vertex>::const_iterator kEndVertexIterator = occtVertices.end();
-				kEndVertexIterator--;
-
-				for (std::list<TopoDS_Vertex>::const_iterator kVertexIterator = occtVertices.begin();
-					kVertexIterator != kEndVertexIterator;
-					kVertexIterator++)
-				{
-					std::list<TopoDS_Vertex>::const_iterator kNextVertexIterator = kVertexIterator;
-					kNextVertexIterator++;
-
-					BRepBuilderAPI_MakeEdge occtMakeEdge(TopoDS::Vertex(*kVertexIterator), TopoDS::Vertex(*kNextVertexIterator));
-					occtEdges.Append(occtMakeEdge);
-				}
-				// No need to connect the first and last vertices
-
-				// Creating a face
-				BRepBuilderAPI_MakeWire occtMakeWire;
-				occtMakeWire.Add(occtEdges);
-				if (occtMakeWire.Error() == BRepBuilderAPI_WireDone)
-				{
-					const TopoDS_Wire& rkOcctWire = occtMakeWire.Wire();
-					/*ShapeFix_ShapeTolerance occtShapeTolerance;
-					occtShapeTolerance.SetTolerance(rkOcctWire, kTolerance, TopAbs_WIRE);*/
-					
-					if(BRepCheck_Wire(rkOcctWire).Closed() == BRepCheck_NoError)
-					{
-						int Degree = 3;
-						int NbPtsOnCur = 10;
-						int NbIter = 2;
-						bool Anisotropie = false;
-						double Tol2d = Precision::Confusion();
-						double Tol3d = Precision::Confusion();
-						double TolAng = 0.01;
-						double TolCurv = 0.1;
-						int MaxDeg = 8;
-						int MaxSegments = 9;
-						// Try creating a face
-						BRepFill_Filling occtFilling(Degree, NbPtsOnCur, NbIter, Anisotropie, Tol2d, Tol3d, TolAng, TolCurv, MaxDeg, MaxSegments);
-						//BRepFill_Filling occtFilling;
-						for (TopTools_ListIteratorOfListOfShape occtEdgeIterator(occtEdges); occtEdgeIterator.More(); occtEdgeIterator.Next())
-						{
-							occtFilling.Add(TopoDS::Edge(occtEdgeIterator.Value()), GeomAbs_C0, true);
-						}
-						occtFilling.Build();
-						if (occtFilling.IsDone())
-						{
-							Handle(Geom_Surface) pSurface = BRep_Tool::Surface(occtFilling.Face());
-							GeomAbs_SurfaceType type = BRepAdaptor_Surface(occtFilling.Face()).GetType();
-							occtShapes.Append(occtFilling.Face());
-						}
-						//BRepBuilderAPI_MakeFace occtMakeFace(rkOcctWire);
-						//if (occtMakeFace.Error() == BRepBuilderAPI_FaceDone)
-						//{
-						//	// Add the face
-						//	ShapeFix_ShapeTolerance occtShapeTolerance;
-						//	occtShapeTolerance.SetTolerance(occtMakeFace.Face(), 1e-6, TopAbs_WIRE);
-						//	occtShapes.Append(occtMakeFace.Face());
-						//}
-						else
-						{
-							// Add the closed wire
-							occtShapes.Append(rkOcctWire);
-						}
-					}
-					else
-					{
-						// Add the opem wire
-						occtShapes.Append(rkOcctWire);
-					}
-				}
-				else
-				{
-					// Add the edges
-					occtShapes.Append(occtEdges);
-				}
-			}
-			else if (occtVertices.size() == 2)
-			{
-				// Try creating an edge
-				BRepBuilderAPI_MakeEdge occtMakeEdge(TopoDS::Vertex(occtVertices.front()), 
-					                                 TopoDS::Vertex(occtVertices.back()));
-				occtShapes.Append(occtMakeEdge);
-			}
-			else if (occtVertices.size() == 1)
-			{
-				// Insert the vertices
-				occtShapes.Append(occtVertices.front());
-			}
-		}
-
-
-		TopoDS_Compound occtCompound;
-		BRep_Builder occtBuilder;
-		occtBuilder.MakeCompound(occtCompound);
-		for(TopTools_ListIteratorOfListOfShape iterator(occtShapes);
-			iterator.More();
-			iterator.Next())
-		{
-			occtBuilder.Add(occtCompound, iterator.Value());
-		}
-		//return Topology::ByOcctShape(occtCompound);
-
-		// - Topology[] = Merge--> this divides implicitly intersecting topologies.
-		BOPAlgo_CellsBuilder occtCellsBuilder;
-		occtCellsBuilder.SetArguments(occtShapes);
-		//occtCellsBuilder.SetFuzzyValue(kTolerance);
-		try {
-			occtCellsBuilder.Perform();
-		}
-		catch (Standard_Failure& e)
-		{
-			const char* str = e.GetMessageString();
-			std::string stlStr(str);
-		}
-		catch (std::exception& e)
-		{
-			const char* str = e.what();
-			std::string stlStr(str);
-		}
-
-		if (occtCellsBuilder.HasErrors() || occtCellsBuilder.HasWarnings())
-		{
-			std::ostringstream errorStream;
-			occtCellsBuilder.DumpErrors(errorStream);
-			std::ostringstream warningStream;
-			occtCellsBuilder.DumpWarnings(warningStream);
-
-			// Exit here and return occtShapes as a cluster.
-			TopoDS_Compound occtCompound;
-			BRep_Builder occtBuilder;
-			occtBuilder.MakeCompound(occtCompound);
-			for(TopTools_ListIteratorOfListOfShape occtShapeIterator(occtShapes);
-				occtShapeIterator.More();
-				occtShapeIterator.Next())
-			{
-				occtBuilder.Add(occtCompound, occtShapeIterator.Value());
-			}
-			return Topology::ByOcctShape(occtCompound);
-		}
-		occtCellsBuilder.AddAllToResult();
-
-		// DEBUG
-		//return Topology::ByOcctShape(occtCellsBuilder.Shape());
-
-		// - Get Face[] from Topology[]
-		BOPCol_ListOfShape occtFaces;
-		for (TopExp_Explorer occtExplorer(occtCellsBuilder.Shape(), TopAbs_FACE); occtExplorer.More(); occtExplorer.Next())
-		{
-			const TopoDS_Shape& rkOcctCurrent = occtExplorer.Current();
-			if (!occtFaces.Contains(rkOcctCurrent))
-			{
-				/*ShapeFix_ShapeTolerance occtShapeTolerance;
-				occtShapeTolerance.SetTolerance(rkOcctCurrent, kTolerance, TopAbs_WIRE);*/
-				occtFaces.Append(rkOcctCurrent);
-			}
-		}
-
-		// - Topology = VolumeMaker(Face[])--> first result
-		BOPAlgo_MakerVolume occtVolumeMaker;
-		Standard_Boolean bRunParallel = Standard_False; /* parallel or single mode (the default value is FALSE)*/
-		Standard_Boolean bIntersect = Standard_True; /* intersect or not the arguments (the default value is TRUE)*/
-		Standard_Real aTol = 0.0; /* fuzzy option (default value is 0)*/
-								  //
-		occtVolumeMaker.SetArguments(occtFaces);
-		occtVolumeMaker.SetRunParallel(bRunParallel);
-		occtVolumeMaker.SetIntersect(bIntersect);
-		occtVolumeMaker.SetFuzzyValue(aTol);
-		//
-		occtVolumeMaker.Perform(); //perform the operation
-		if (occtVolumeMaker.HasErrors() || occtVolumeMaker.HasWarnings()) { //check error status
-			std::ostringstream errorStream;
-			occtVolumeMaker.DumpErrors(errorStream);
-			/*throw std::exception(errorStream.str().c_str());*/
-			std::ostringstream warningStream;
-			occtVolumeMaker.DumpWarnings(warningStream);
-			TopoDS_Compound occtCompound;
-			BRep_Builder occtBuilder;
-			occtBuilder.MakeCompound(occtCompound);
-			for (TopTools_ListIteratorOfListOfShape iterator(occtShapes);
-				iterator.More();
-				iterator.Next())
-			{
-				occtBuilder.Add(occtCompound, iterator.Value());
-			}
-			return Topology::ByOcctShape(occtCompound);
-			//throw std::exception();
-		}
-		//DEBUG
-		//return Topology::ByOcctShape(occtVolumeMaker.Shape());
-
-		// - Get discarded faces from VolumeMaker--> second result
-		BOPCol_ListOfShape occtDiscardedFaces;
-		for (BOPCol_ListIteratorOfListOfShape occtFaceIterator(occtFaces);
-			occtFaceIterator.More();
-			occtFaceIterator.Next())
-		{
-			TopoDS_Shape& rCurrent = occtFaceIterator.Value();
-			if (occtVolumeMaker.IsDeleted(rCurrent))
-			{
-				occtDiscardedFaces.Append(rCurrent);
-			}
-		}
-
-		// - Get the rest from Topology[] --> third result
-		BOPCol_ListOfShape occtOtherShapes;
-		for (BOPCol_ListIteratorOfListOfShape occtShapeIterator(occtShapes);
-			occtShapeIterator.More();
-			occtShapeIterator.Next())
-		{
-			if (occtShapeIterator.Value().ShapeType() != TopAbs_FACE)
-			{
-				occtOtherShapes.Append(occtShapeIterator.Value());
-			}
-		}
-
-		// - Merge results #1 #2 #3
-		BOPCol_ListOfShape occtFinalArguments;
-		occtFinalArguments.Append(occtVolumeMaker.Shape());
-		occtFinalArguments.Append(occtDiscardedFaces);
-		occtFinalArguments.Append(occtOtherShapes);
-
-		if (occtFinalArguments.Size() == 1)
-		{
-			return Topology::ByOcctShape(occtVolumeMaker.Shape());
-		}
-		BOPAlgo_CellsBuilder occtCellsBuilder2;
-		occtCellsBuilder2.SetArguments(occtFinalArguments);
-		try {
-			occtCellsBuilder2.Perform();
-		}
-		catch (Standard_Failure& e)
-		{
-			const char* str = e.GetMessageString();
-			std::string stlStr(str);
-		}
-		catch (std::exception& e)
-		{
-			const char* str = e.what();
-			std::string stlStr(str);
-		}
-
-		if (occtCellsBuilder2.HasErrors())
-		{
-			std::ostringstream errorStream;
-			occtCellsBuilder2.DumpErrors(errorStream);
-			throw std::exception(errorStream.str().c_str());
-		}
-
-		BOPCol_ListOfShape occtListToTake2;
-		BOPCol_ListOfShape occtListToAvoid2;
-
-		for (BOPCol_ListIteratorOfListOfShape kOcctShapeIterator(occtFinalArguments);
-			kOcctShapeIterator.More();
-			kOcctShapeIterator.Next())
-		{
-			occtListToTake2.Clear();
-			occtListToAvoid2.Clear();
-			occtListToTake2.Append(kOcctShapeIterator.Value());
-			occtCellsBuilder2.AddToResult(occtListToTake2, occtListToAvoid2);
-		}
-		occtCellsBuilder2.MakeContainers();
-		
-		return Topology::ByOcctShape(occtCellsBuilder2.Shape());
-	}
-
 	void Topology::AddContent(const Topology::Ptr& rkTopology)
 	{
 		//LabelManager::GetInstance().AddContent(rkTopology->GetOcctLabel(), GetOcctLabel());
@@ -733,7 +440,6 @@ namespace TopologicCore
 		//		if()
 		//	}
 		//}
-
 	}
 
 	void Topology::Contents(std::list<Topology::Ptr>& rContents) const
@@ -1766,9 +1472,11 @@ namespace TopologicCore
 
 	Topology::Ptr Topology::Merge()
 	{
+		// 1
 		BOPCol_ListOfShape occtShapes;
 		ImmediateMembers(GetOcctShape(), occtShapes);
 
+		// 2
 		BOPAlgo_CellsBuilder occtCellsBuilder;
 		occtCellsBuilder.SetArguments(occtShapes);
 		//occtCellsBuilder.SetFuzzyValue(kTolerance);
@@ -1809,7 +1517,7 @@ namespace TopologicCore
 		// DEBUG
 		//return Topology::ByOcctShape(occtCellsBuilder.Shape());
 
-		//Get discarded faces from Cells Builder
+		// 2b. Get discarded faces from Cells Builder
 		BOPCol_ListOfShape occtDiscardedFaces;
 		TopoDS_Compound occtCompound;
 		BRep_Builder occtBuilder;
@@ -1828,7 +1536,7 @@ namespace TopologicCore
 		//return Topology::ByOcctShape(occtCompound);
 
 
-		// - Get Face[] from Topology[]
+		// 3. Get Face[] from Topology[]
 		BOPCol_ListOfShape occtFaces;
 		TopoDS_Compound occtCompound3;
 		BRep_Builder occtBuilder3;
@@ -1844,7 +1552,7 @@ namespace TopologicCore
 		}
 		//return Topology::ByOcctShape(occtCompound3);
 
-		// - Topology = VolumeMaker(Face[])--> first result
+		// 5. Topology = VolumeMaker(Face[])--> first result
 		BOPAlgo_MakerVolume occtVolumeMaker;
 		Standard_Boolean bRunParallel = Standard_False; /* parallel or single mode (the default value is FALSE)*/
 		Standard_Boolean bIntersect = Standard_True; /* intersect or not the arguments (the default value is TRUE)*/
@@ -1877,7 +1585,7 @@ namespace TopologicCore
 		//DEBUG
 		//return Topology::ByOcctShape(occtVolumeMaker.Shape());
 
-		// - Get discarded faces from VolumeMaker--> second result
+		// 6. Get discarded faces from VolumeMaker--> second result
 		TopoDS_Compound occtCompound2;
 		BRep_Builder occtBuilder2;
 		occtBuilder2.MakeCompound(occtCompound2);
@@ -1894,7 +1602,7 @@ namespace TopologicCore
 		}
 		//return Topology::ByOcctShape(occtCompound2);
 
-		// - Get the rest from Topology[] --> third result
+		// 7. Get the rest from Topology[] --> third result
 		BOPCol_ListOfShape occtOtherShapes;
 		for (BOPCol_ListIteratorOfListOfShape occtShapeIterator(occtShapes);
 			occtShapeIterator.More();
@@ -1919,7 +1627,7 @@ namespace TopologicCore
 		}
 		//return Topology::ByOcctShape(occtCompound4);
 
-		// - Merge results #1 #2 #3
+		// 8. Merge results #1 #2 #3
 		BOPCol_ListOfShape occtFinalArguments;
 		occtFinalArguments.Append(occtVolumeMaker.Shape());
 		occtFinalArguments.Append(occtDiscardedFaces);
@@ -1955,7 +1663,7 @@ namespace TopologicCore
 		occtCellsBuilder2.AddAllToResult();
 		occtCellsBuilder2.MakeContainers();
 
-		// If there is still a discarded face, add to merge2Topology as a cluster.
+		// 9. If there is still a discarded face, add to merge2Topology as a cluster.
 		BOPCol_ListOfShape clusterCandidates;
 		for (BOPCol_ListIteratorOfListOfShape merge2Topologies(occtFinalArguments);
 			merge2Topologies.More();

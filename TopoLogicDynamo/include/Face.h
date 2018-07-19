@@ -68,7 +68,7 @@ namespace Topologic {
 		/// <param name="wire">A closed wire. Must be (and internally verified if it is) a Dynamo polygon or a Topologic wire.</param>
 		/// <exception cref="ArgumentException">Thrown if any of the arguments is neither a Dynamo polygon nor a Topologic wire</exception>
 		/// <returns name="Face">/// </returns>
-		static Face^ ByClosedWire(Wire^ wire);
+		static Face^ ByWire(Wire^ wire);
 
 		/// <summary>
 		/// Creates a face by a list of edges. A wire will be internally created.

@@ -15,7 +15,7 @@
 #include <Context.h>
 
 #include <TopoDS_Shape.hxx>
-#include <TDF_AttributeIterator.hxx>
+//#include <TDF_AttributeIterator.hxx>
 
 namespace Topologic
 {
@@ -163,25 +163,25 @@ namespace Topologic
 		return pCoreTopology->Distance(pCoreOtherTopology);
 	}
 
-	TDF_Attribute* Topology::FindAttribute(String ^ ID)
-	{
-		/*std::string cppID = msclr::interop::marshal_as<std::string>(ID);
-		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		return pCoreTopology->FindAttribute(Standard_GUID(cppID.c_str()));*/
+	//TDF_Attribute* Topology::FindAttribute(String ^ ID)
+	//{
+	//	/*std::string cppID = msclr::interop::marshal_as<std::string>(ID);
+	//	std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+	//	return pCoreTopology->FindAttribute(Standard_GUID(cppID.c_str()));*/
 
-		return nullptr;
-	}
+	//	return nullptr;
+	//}
 
-	void Topology::AttachAttribute(TDF_Attribute* attribute)
-	{
-		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		/*TDF_Label& rLabel = pCoreTopology->GetOcctLabel();
+	//void Topology::AttachAttribute(TDF_Attribute* attribute)
+	//{
+	//	std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+	//	/*TDF_Label& rLabel = pCoreTopology->GetOcctLabel();
 
-		Handle(TDF_Attribute) pAttribute(attribute);
-		if (!rLabel.FindAttribute(attribute->ID(), pAttribute)) {
-			rLabel.AddAttribute(pAttribute);
-		}*/
-	}
+	//	Handle(TDF_Attribute) pAttribute(attribute);
+	//	if (!rLabel.FindAttribute(attribute->ID(), pAttribute)) {
+	//		rLabel.AddAttribute(pAttribute);
+	//	}*/
+	//}
 
 	Topology^ Topology::ByCoreTopology(const std::shared_ptr<TopologicCore::Topology>& kpCoreTopology)
 	{

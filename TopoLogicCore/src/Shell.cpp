@@ -35,9 +35,9 @@
 #include <Geom2d_CartesianPoint.hxx>
 #include <BRepMesh_IncrementalMesh.hxx>
 
-#include <TDataStd_Integer.hxx>
-#include <TDF_ChildIterator.hxx>
-#include <TNaming_NamedShape.hxx>
+//#include <TDataStd_Integer.hxx>
+//#include <TDF_ChildIterator.hxx>
+//#include <TNaming_NamedShape.hxx>
 // ShapeOp
 #include <Constraint.h>
 #include <Solver.h>

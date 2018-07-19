@@ -96,7 +96,7 @@ namespace TopologicCore
 		return occtShapeProperties.Mass();
 	}
 
-	Face::Ptr Face::ByClosedWire(const Wire::Ptr& pkWire)
+	Face::Ptr Face::ByWire(const Wire::Ptr& pkWire)
 	{
 		BRepBuilderAPI_MakeFace occtMakeFace(pkWire->GetOcctWire());
 		if (occtMakeFace.Error() != BRepBuilderAPI_FaceDone)
@@ -130,7 +130,7 @@ namespace TopologicCore
 		}
 		
 		Wire::Ptr pWire = Wire::ByEdges(rkEdges);
-		Face::Ptr pFace = ByClosedWire(pWire);
+		Face::Ptr pFace = ByWire(pWire);
 
 		return pFace;
 	}

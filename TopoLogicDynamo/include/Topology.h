@@ -7,7 +7,7 @@ using namespace System;
 using namespace System::Collections::Generic;
 using namespace Autodesk::DesignScript::Runtime;
 
-#pragma make_public(TDF_Attribute)
+//#pragma make_public(TDF_Attribute)
 
 namespace Topologic
 {
@@ -284,8 +284,8 @@ namespace Topologic
 		/// <returns></returns>
 		double Distance(Topology^ topology);
 
-		[IsVisibleInDynamoLibrary(false)]
-		TDF_Attribute* FindAttribute(String^ ID);
+		/*[IsVisibleInDynamoLibrary(false)]
+		TDF_Attribute* FindAttribute(String^ ID);*/
 
 	public protected:
 		static Topology^ ByCoreTopology(const std::shared_ptr<TopologicCore::Topology>& kpCoreTopology);
@@ -294,7 +294,7 @@ namespace Topologic
 		/// <summary>
 		/// 
 		/// </summary>
-		void AttachAttribute(TDF_Attribute* pAttribute);
+		//void AttachAttribute(TDF_Attribute* pAttribute);
 
 		Topology();
 		virtual ~Topology();

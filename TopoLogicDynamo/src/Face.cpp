@@ -100,14 +100,14 @@ namespace Topologic
 		return pCoreFace->Area();
 	}
 
-	Face^ Face::ByClosedWire(Wire^ wire)
+	Face^ Face::ByWire(Wire^ wire)
 	{
 		return gcnew Face(wire);
 	}
 
 	Face^ Face::ByEdges(List<Edge^>^ edges)
 	{
-		return ByClosedWire(gcnew Wire(edges));
+		return ByWire(gcnew Wire(edges));
 	}
 
 	Face^ Face::BySurface(Autodesk::DesignScript::Geometry::Surface^ surface)
@@ -312,7 +312,7 @@ namespace Topologic
 	Face::Face(Wire^ pWire)
 		: Topology()
 		, m_pCoreFace(new TopologicCore::Face::Ptr(
-			TopologicCore::Face::ByClosedWire(
+			TopologicCore::Face::ByWire(
 				TopologicCore::Topology::Downcast<TopologicCore::Wire>(pWire->GetCoreTopologicalQuery())
 			)))
 	{
@@ -974,7 +974,7 @@ namespace Topologic
 		for each(Wire^ pWire in pWires)
 		{
 			try{
-				Face^ pFace = Face::ByClosedWire(pWire);
+				Face^ pFace = Face::ByWire(pWire);
 				surfaceAreas.push_back(pFace->Area());
 			}
 			catch(...)

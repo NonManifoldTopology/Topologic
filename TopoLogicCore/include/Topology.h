@@ -12,10 +12,10 @@
 #include <Geom_Geometry.hxx>
 #include <Standard_GUID.hxx>
 #include <TopoDS_CompSolid.hxx>
-#include <TDF_Label.hxx>
-#include <TDF_ChildIterator.hxx>
-#include <TNaming_NamedShape.hxx>
-#include <TDataStd_Integer.hxx>
+//#include <TDF_Label.hxx>
+//#include <TDF_ChildIterator.hxx>
+//#include <TNaming_NamedShape.hxx>
+//#include <TDataStd_Integer.hxx>
 #include <TopExp.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 #include <TopTools_MapOfShape.hxx>
@@ -69,7 +69,7 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="rkOcctShape"></param>
 		/// <returns></returns>
-		static Topology::Ptr ByOcctShape(const TopoDS_Shape& rkOcctShape, const TDF_Label& rkOcctLabel = TDF_Label());
+		static Topology::Ptr ByOcctShape(const TopoDS_Shape& rkOcctShape);// , const TDF_Label& rkOcctLabel = TDF_Label());
 
 		/// <summary>
 		/// 
@@ -101,15 +101,6 @@ namespace TopologicCore
 		/// <param name="rTopologies"></param>
 		/// <returns></returns>
 		static TOPOLOGIC_API void ByVertexIndex(const std::vector<std::shared_ptr<Vertex>>& rkVertices, const std::list<std::list<int>>& rkVertexIndices, std::list<Topology::Ptr>& rTopologies);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="rkVertices"></param>
-		/// <param name="rkVertexIndices"></param>
-		/// <param name="kTolerance"></param>
-		/// <returns></returns>
-		static TOPOLOGIC_API Topology::Ptr ByVertexIndex_Old(const std::vector<std::shared_ptr<Vertex>>& rkVertices, const std::list<std::list<int>>& rkVertexIndices, const int iteration);
 
 		/// <summary>
 		/// 

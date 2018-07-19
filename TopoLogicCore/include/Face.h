@@ -90,7 +90,7 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="rkWire"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API static std::shared_ptr<Face> ByClosedWire(const std::shared_ptr<Wire>& pkWire);
+		TOPOLOGIC_API static std::shared_ptr<Face> ByWire(const std::shared_ptr<Wire>& pkWire);
 
 		/// <summary>
 		/// 
