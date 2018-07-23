@@ -12,7 +12,7 @@
 
 namespace Topologic
 {
-	Cluster^ Cluster::ByTopology(List<Topology^>^ topology)
+	Cluster^ Cluster::ByTopologies(IEnumerable<Topology^>^ topology)
 	{
 		std::list<std::shared_ptr<TopologicCore::Topology>> coreTopologies;
 		for each(Topology^ pTopology in topology)
@@ -24,7 +24,7 @@ namespace Topologic
 			}
 		}
 		
-		return gcnew Cluster(TopologicCore::Cluster::ByTopology(coreTopologies));
+		return gcnew Cluster(TopologicCore::Cluster::ByTopologies(coreTopologies));
 	}
 
 	Cluster^ Cluster::AddTopology(Topology^ topology)
@@ -210,6 +210,25 @@ namespace Topologic
 		}
 
 		return pCells;
+	}
+
+	List<CellComplex^>^ Cluster::CellComplexes()
+	{
+		TopologicCore::Cluster::Ptr pCoreCluster = TopologicCore::Topology::Downcast<TopologicCore::Cluster>(GetCoreTopologicalQuery());
+
+		std::list<TopologicCore::CellComplex::Ptr> coreCellComplexes;
+		pCoreCluster->CellComplexes(coreCellComplexes);
+
+		List<CellComplex^>^ pCellComplexes = gcnew List<CellComplex^>();
+		for (std::list<TopologicCore::CellComplex::Ptr>::const_iterator kCellComplexIterator = coreCellComplexes.begin();
+			kCellComplexIterator != coreCellComplexes.end();
+			kCellComplexIterator++)
+		{
+			CellComplex^ pCellComplex = gcnew CellComplex(*kCellComplexIterator);
+			pCellComplexes->Add(pCellComplex);
+		}
+
+		return pCellComplexes;
 	}
 
 }

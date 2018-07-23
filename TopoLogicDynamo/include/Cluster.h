@@ -12,6 +12,7 @@ namespace Topologic
 	ref class Face;
 	ref class Shell;
 	ref class Cell;
+	ref class CellComplex;
 
 	public ref class Cluster : Topology
 	{
@@ -22,7 +23,7 @@ namespace Topologic
 		/// </summary>
 		/// <param name="topology"></param>
 		/// <returns></returns>
-		static Cluster^ ByTopology(List<Topology^>^ topology);
+		static Cluster^ ByTopologies(IEnumerable<Topology^>^ topology);
 
 		/// <summary>
 		/// 
@@ -50,38 +51,44 @@ namespace Topologic
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="Shell[]"></returns>
 		List<Shell^>^ Shells();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="Face[]"></returns>
 		List<Face^>^ Faces();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="Wire[]"></returns>
 		List<Wire^>^ Wires();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="Edge[]"></returns>
 		List<Edge^>^ Edges();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="Vertex[]"></returns>
 		List<Vertex^>^ Vertices();
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="Cell[]"></returns>
 		List<Cell^>^ Cells();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns name="CellComplex[]"></returns>
+		List<CellComplex^>^ CellComplexes();
 
 	public protected:
 		Cluster();

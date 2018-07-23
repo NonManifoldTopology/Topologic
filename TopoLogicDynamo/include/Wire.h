@@ -18,7 +18,7 @@ namespace Topologic {
 		/// <param name="edges">The edges.</param>
 		/// <exception cref="ArgumentException">Thrown if any of the arguments is not a Topologic edge.</exception>
 		/// <returns name="Wire">Te created Topologic wire</returns>
-		static Wire^ ByEdges(List<Edge^>^ edges);
+		static Wire^ ByEdges(IEnumerable<Edge^>^ edges);
 
 		/// <summary>
 		/// Creates a wire by a polycurve (including a polygon)
@@ -72,7 +72,7 @@ namespace Topologic {
 		/// 
 		/// </summary>
 		/// <param name="pEdges"></param>
-		Wire(List<Edge^>^ pEdges);
+		Wire(IEnumerable<Edge^>^ pEdges);
 
 		/// <summary>
 		/// 

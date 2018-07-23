@@ -85,7 +85,7 @@ namespace Topologic
 		return gcnew Edge(curve);
 	}
 
-	Edge^ Edge::ByVertices(List<Vertex^>^ vertices)
+	Edge^ Edge::ByVertices(IEnumerable<Vertex^>^ vertices)
 	{
 		std::list<TopologicCore::Vertex::Ptr> pCoreVertices;
 		for each(Vertex^ pVertex in vertices)

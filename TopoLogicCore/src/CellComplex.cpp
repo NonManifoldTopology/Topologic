@@ -93,7 +93,7 @@ namespace TopologicCore
 			{
 				topologies.push_back(*rkCellIterator);
 			}
-			std::shared_ptr<Cluster> otherCellsAsCluster = Cluster::ByTopology(topologies);
+			std::shared_ptr<Cluster> otherCellsAsCluster = Cluster::ByTopologies(topologies);
 			std::shared_ptr<Topology> pMergeTopology = (*rkCells.begin())->Merge(otherCellsAsCluster);
 
 			std::list<Cell::Ptr> cells;

@@ -105,7 +105,7 @@ namespace Topologic
 		return gcnew Face(wire);
 	}
 
-	Face^ Face::ByEdges(List<Edge^>^ edges)
+	Face^ Face::ByEdges(IEnumerable<Edge^>^ edges)
 	{
 		return ByWire(gcnew Wire(edges));
 	}

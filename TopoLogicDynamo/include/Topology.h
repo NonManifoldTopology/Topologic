@@ -48,7 +48,7 @@ namespace Topologic
 		/// <param name="vertices"></param>
 		/// <param name="vertexIndices"></param>
 		/// <returns name="Topology[]"></returns>
-		static List<Topology^>^ ByVertexIndex(List<Vertex^>^ vertices, List<List<int>^>^ vertexIndices);
+		static List<Topology^>^ ByVertexIndex(IEnumerable<Vertex^>^ vertices, IEnumerable<IEnumerable<int>^>^ vertexIndices);
 
 		/// <summary>
 		/// Returns the dimensionality of the Topological entity.

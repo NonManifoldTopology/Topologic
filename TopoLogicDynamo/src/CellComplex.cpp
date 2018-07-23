@@ -12,7 +12,7 @@
 
 namespace Topologic
 {
-	CellComplex^ CellComplex::ByCells(List<Cell^>^ cells)
+	CellComplex^ CellComplex::ByCells(IEnumerable<Cell^>^ cells)
 	{
 		std::list<TopologicCore::Cell::Ptr> coreCells;
 		for each(Cell^ pCell in cells)
@@ -24,7 +24,7 @@ namespace Topologic
 		return pCellComplex;
 	}
 
-	CellComplex^ CellComplex::ByFaces(List<Face^>^ faces)
+	CellComplex^ CellComplex::ByFaces(IEnumerable<Face^>^ faces)
 	{
 		std::list<TopologicCore::Face::Ptr> coreFaces;
 		for each(Face^ pFace in faces)

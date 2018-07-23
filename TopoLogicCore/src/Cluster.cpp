@@ -38,7 +38,7 @@
 
 namespace TopologicCore
 {
-	Cluster::Ptr Cluster::ByTopology(const std::list<Topology::Ptr>& rkTopologies)
+	Cluster::Ptr Cluster::ByTopologies(const std::list<Topology::Ptr>& rkTopologies)
 	{
 		if (rkTopologies.empty())
 		{

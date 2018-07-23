@@ -41,7 +41,7 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="rkTopologies"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API std::shared_ptr<Cluster> ByTopology(const std::list<std::shared_ptr<Topology>>& rkTopologies);
+		static TOPOLOGIC_API std::shared_ptr<Cluster> ByTopologies(const std::list<std::shared_ptr<Topology>>& rkTopologies);
 
 		/// <summary>
 		/// 

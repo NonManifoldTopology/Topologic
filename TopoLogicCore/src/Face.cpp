@@ -32,33 +32,22 @@ namespace TopologicCore
 {
 	void Face::AdjacentFaces(const Topology::Ptr& kpParentTopology, std::list<Face::Ptr>& rFaces) const
 	{
-		// Get the map of edge->faces
-		TopTools_IndexedDataMapOfShapeListOfShape occtEdgeFaceMap;
-		TopExp::MapShapesAndUniqueAncestors(kpParentTopology->GetOcctShape(), TopAbs_EDGE, TopAbs_FACE, occtEdgeFaceMap);
+		std::list<Vertex::Ptr> edges;
+		Vertices(edges);
 
-		// Get the wires of this face
-		TopTools_ListOfShape occtWires;
-		for (TopExp_Explorer occtExplorer(GetOcctShape(), TopAbs_WIRE); occtExplorer.More(); occtExplorer.Next())
+		TopTools_ListOfShape occtFaces;
+		for (const Vertex::Ptr& kpEdge : edges)
 		{
-			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-			if (!occtWires.Contains(occtCurrent))
-			{
-				occtWires.Append(occtCurrent);
-			}
-		}
+			std::list<Face::Ptr> faces;
+			kpEdge->UpwardNavigation(kpParentTopology, faces);
 
-		for(TopTools_ListIteratorOfListOfShape kOcctWireIterator(occtWires);
-			kOcctWireIterator.More();
-			kOcctWireIterator.Next())
-		{
-			for (BRepTools_WireExplorer occtWireExplorer(TopoDS::Wire(kOcctWireIterator.Value())); occtWireExplorer.More(); occtWireExplorer.Next())
+			for (const Face::Ptr& kpFace : faces)
 			{
-				TopoDS_Face occtAnotherFace;
-				bool faceFound = TopOpeBRepBuild_Tools::GetAdjacentFace(GetOcctShape(), occtWireExplorer.Current(), occtEdgeFaceMap, occtAnotherFace);
-				if (faceFound)
+				if (!IsSame(kpFace) && 
+					!occtFaces.Contains(kpFace->GetOcctShape()))
 				{
-					Face::Ptr pFace = TopologicalQuery::Downcast<Face>(Topology::ByOcctShape(occtAnotherFace));
-					rFaces.push_back(pFace);
+					occtFaces.Append(kpFace->GetOcctShape());
+					rFaces.push_back(kpFace);
 				}
 			}
 		}

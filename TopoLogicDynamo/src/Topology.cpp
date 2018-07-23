@@ -43,7 +43,7 @@ namespace Topologic
 	//	// TODO: insert return statement here
 	//}
 
-	List<Topology^>^ Topology::ByVertexIndex(List<Vertex^>^ vertices, List<List<int>^>^ vertexIndices)
+	List<Topology^>^ Topology::ByVertexIndex(IEnumerable<Vertex^>^ vertices, IEnumerable<IEnumerable<int>^>^ vertexIndices)
 	{
 		std::vector<TopologicCore::Vertex::Ptr> coreVertices;
 		for each(Vertex^ pVertex in vertices)

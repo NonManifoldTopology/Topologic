@@ -76,7 +76,7 @@ namespace Topologic {
 		/// <param name="edges">The edges. </param>
 		/// <exception cref="ArgumentException">Thrown if any of the arguments is not a Topologic edge</exception>
 		/// <returns name="Face">the created face</returns>
-		static Face^ ByEdges(List<Edge^>^ edges);
+		static Face^ ByEdges(IEnumerable<Edge^>^ edges);
 
 		/// <summary>
 		/// Creates a face by a surface.
