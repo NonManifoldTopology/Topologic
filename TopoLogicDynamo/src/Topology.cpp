@@ -183,6 +183,13 @@ namespace Topologic
 	//	}*/
 	//}
 
+	String^ Topology::Type()
+	{
+		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		std::string strType = pCoreTopology->GetTypeAsString();
+		return gcnew String(strType.c_str());
+	}
+
 	Topology^ Topology::ByCoreTopology(const std::shared_ptr<TopologicCore::Topology>& kpCoreTopology)
 	{
 		switch (kpCoreTopology->GetType())

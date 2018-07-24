@@ -287,6 +287,8 @@ namespace Topologic
 		/*[IsVisibleInDynamoLibrary(false)]
 		TDF_Attribute* FindAttribute(String^ ID);*/
 
+		String^ Type();
+
 	public protected:
 		static Topology^ ByCoreTopology(const std::shared_ptr<TopologicCore::Topology>& kpCoreTopology);
 

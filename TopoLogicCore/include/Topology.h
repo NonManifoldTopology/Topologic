@@ -377,7 +377,7 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		std::string GetTypeAsString() const;
+		TOPOLOGIC_API std::string GetTypeAsString() const;
 
 		/*void SetInGlobalCluster(const bool kInGlobalCluster)
 		{
