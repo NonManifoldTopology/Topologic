@@ -63,6 +63,12 @@ namespace Topologic {
 		double Area();
 
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns name="Vertex"></returns>
+		Vertex^ CenterOfMass();
+
+		/// <summary>
 		/// A factory method that creates a face by a closed wire.
 		/// </summary>
 		/// <param name="wire">A closed wire. Must be (and internally verified if it is) a Dynamo polygon or a Topologic wire.</param>

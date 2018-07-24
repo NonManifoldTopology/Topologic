@@ -148,6 +148,7 @@
     <ClInclude Include="include\CellComplex.h" />
     <ClInclude Include="include\Cluster.h" />
     <ClInclude Include="include\Context.h" />
+    <ClInclude Include="include\DualGraph.h" />
     <ClInclude Include="include\Edge.h" />
     <ClInclude Include="include\Face.h" />
     <ClInclude Include="include\Shell.h" />
@@ -157,6 +158,7 @@
     <ClInclude Include="include\Wire.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="include\DualGraph.cpp" />
     <ClCompile Include="src\Aperture.cpp" />
     <ClCompile Include="src\Attribute.cpp" />
     <ClCompile Include="src\Cell.cpp" />

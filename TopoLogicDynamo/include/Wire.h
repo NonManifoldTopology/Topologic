@@ -30,8 +30,9 @@ namespace Topologic {
 		/// <summary>
 		/// Gets the list of edges constituent to this wire.
 		/// </summary>
+		/// <param name="hasOrder">Does the wire has loop order?</param>
 		/// <returns name="Edge[]">The constituent edges</returns>
-		List<Edge^>^ Edges();
+		List<Edge^>^ Edges(bool hasOrder);
 
 		/// <summary>
 		/// Gets the list of faces that contain to this wire.
@@ -43,8 +44,9 @@ namespace Topologic {
 		/// <summary>
 		/// Gets the list of vertices constituent to this wire.
 		/// </summary>
+		/// <param name="hasOrder">Does the wire has loop order?</param>
 		/// <returns name="Vertex[]">The constituent vertices</returns>
-		List<Vertex^>^ Vertices();
+		List<Vertex^>^ Vertices(bool hasOrder);
 
 		/// <summary>
 		/// Checks if the wire is closed.

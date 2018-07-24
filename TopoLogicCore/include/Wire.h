@@ -33,7 +33,8 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <param name="rEdges"></param>
-		void TOPOLOGIC_API Edges(std::list<std::shared_ptr<Edge>>& rEdges) const;
+		/// <param name="kHasOrder"></param>
+		void TOPOLOGIC_API Edges(std::list<std::shared_ptr<Edge>>& rEdges, const bool kHasOrder) const;
 
 		/// <summary>
 		/// 
@@ -53,7 +54,7 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <param name="rVertices"></param>
-		void TOPOLOGIC_API Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const;
+		void TOPOLOGIC_API Vertices(std::list<std::shared_ptr<Vertex>>& rVertices, const bool kHasOrder) const;
 
 		/// <summary>
 		/// 

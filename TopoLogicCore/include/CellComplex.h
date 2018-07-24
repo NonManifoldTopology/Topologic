@@ -97,6 +97,13 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="rNonManifoldFaces"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API void NonManifoldFaces(std::list<std::shared_ptr<Face>>& rNonManifoldFaces) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <returns></returns>
 		virtual TopoDS_Shape& GetOcctShape();
 

@@ -7,11 +7,11 @@
 
 namespace Topologic
 {
-	List<Edge^>^ Wire::Edges()
+	List<Edge^>^ Wire::Edges(bool hasOrder)
 	{
 		TopologicCore::Wire::Ptr pCoreWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Edge::Ptr> pCoreEdgeList;
-		pCoreWire->Edges(pCoreEdgeList);
+		pCoreWire->Edges(pCoreEdgeList, hasOrder);
 		List<Edge^>^ pEdges = gcnew List<Edge^>();
 
 		for (std::list<TopologicCore::Edge::Ptr>::iterator kCoreEdgeIterator = pCoreEdgeList.begin();
@@ -51,11 +51,11 @@ namespace Topologic
 		return TopologicCore::Topology::Downcast<TopologicCore::Wire>(GetCoreTopologicalQuery())->IsClosed();
 	}
 
-	List<Vertex^>^ Wire::Vertices()
+	List<Vertex^>^ Wire::Vertices(bool hasOrder)
 	{
 		TopologicCore::Wire::Ptr pCoreWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Vertex::Ptr> pCoreVertexList;
-		pCoreWire->Vertices(pCoreVertexList);
+		pCoreWire->Vertices(pCoreVertexList, hasOrder);
 		List<Vertex^>^ pVertices = gcnew List<Vertex^>();
 
 		for (std::list<TopologicCore::Vertex::Ptr>::iterator kCoreVertexIterator = pCoreVertexList.begin();
@@ -83,7 +83,7 @@ namespace Topologic
 	Object^ Wire::Geometry::get()
 	{
 		List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoCurves = gcnew List<Autodesk::DesignScript::Geometry::Curve^>();
-		List<Edge^>^ pEdges = Edges();
+		List<Edge^>^ pEdges = Edges(false);
 		for each(Edge^ pEdge in pEdges)
 		{
 			pDynamoCurves->Add(pEdge->Curve());

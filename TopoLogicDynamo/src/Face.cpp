@@ -100,6 +100,13 @@ namespace Topologic
 		return pCoreFace->Area();
 	}
 
+	Vertex^ Face::CenterOfMass()
+	{
+		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
+		TopologicCore::Vertex::Ptr pCoreCenterOfMass = pCoreFace->CenterOfMass();
+		return gcnew Vertex(pCoreCenterOfMass);
+	}
+
 	Face^ Face::ByWire(Wire^ wire)
 	{
 		return gcnew Face(wire);
@@ -630,7 +637,7 @@ namespace Topologic
 				{
 					if (TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(pWire->GetCoreTopologicalQuery())->GetOcctShape().IsSame(rkOcctOuterWire))
 					{
-						List<Edge^>^ pOuterEdges = pWire->Edges();
+						List<Edge^>^ pOuterEdges = pWire->Edges(true);
 						List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoOuterCurves = gcnew List<Autodesk::DesignScript::Geometry::Curve^>();
 						for each(Edge^ pOuterEdge in pOuterEdges)
 						{

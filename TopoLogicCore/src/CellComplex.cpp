@@ -321,6 +321,24 @@ namespace TopologicCore
 		}
 	}
 
+	void CellComplex::NonManifoldFaces(std::list<Face::Ptr>& rNonManifoldFaces) const
+	{
+		std::list<Face::Ptr> faces;
+		Faces(faces);
+
+		for (const Face::Ptr& kpFace : faces)
+		{
+			std::list<Cell::Ptr> cells;
+			kpFace->Cells(this, cells);
+
+			// A non-manifold face has more than 1 cells.
+			if (cells.size() > 1)
+			{
+				rNonManifoldFaces.push_back(kpFace);
+			}
+		}
+	}
+
 	TopoDS_Shape& CellComplex::GetOcctShape()
 	{
 		return GetOcctCompSolid();

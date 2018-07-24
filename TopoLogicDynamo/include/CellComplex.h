@@ -79,6 +79,12 @@ namespace Topologic
 		/// <returns name="Face[]"></returns>
 		List<Face^>^ InnerBoundaries();
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns name="Face[]"></returns>
+		List<Face^>^ NonManifoldFaces();
+
 		property Object^ Geometry
 		{
 			/// <summary>

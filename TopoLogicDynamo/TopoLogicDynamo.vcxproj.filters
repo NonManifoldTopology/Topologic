@@ -14,6 +14,7 @@
     <ClInclude Include="include\Aperture.h" />
     <ClInclude Include="include\Context.h" />
     <ClInclude Include="include\TopologicalQuery.h" />
+    <ClInclude Include="include\DualGraph.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
@@ -28,5 +29,6 @@
     <ClCompile Include="src\Wire.cpp" />
     <ClCompile Include="src\Context.cpp" />
     <ClCompile Include="src\Aperture.cpp" />
+    <ClCompile Include="include\DualGraph.cpp" />
   </ItemGroup>
 </Project>

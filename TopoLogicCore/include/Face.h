@@ -54,6 +54,8 @@ namespace TopologicCore
 		/// <returns></returns>
 		TOPOLOGIC_API void Cells(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Cell>>& rCells) const;
 
+		void Cells(Topology const * kpkParentTopology, std::list<std::shared_ptr<Cell>>& rCells) const;
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -84,6 +86,11 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		TOPOLOGIC_API double Area() const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		TOPOLOGIC_API std::shared_ptr<Vertex> CenterOfMass() const;
 
 		/// <summary>
 		/// 

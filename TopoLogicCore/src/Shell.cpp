@@ -477,7 +477,7 @@ namespace TopologicCore
 			Wire::Ptr apertureWire = apertureFace->OuterBoundary();
 			//wires.push_back(apertureWire);
 			std::list<Edge::Ptr> apertureEdges;
-			apertureWire->Edges(apertureEdges);
+			apertureWire->Edges(apertureEdges, true);
 			
 			for (Edge::Ptr e : apertureEdges)
 			{

@@ -16,6 +16,7 @@
     <ClInclude Include="include\Context.h" />
     <ClInclude Include="include\Aperture.h" />
     <ClInclude Include="include\AperturePath.h" />
+    <ClInclude Include="include\DualGraph.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
@@ -30,5 +31,6 @@
     <ClCompile Include="src\Context.cpp" />
     <ClCompile Include="src\Aperture.cpp" />
     <ClCompile Include="src\AperturePath.cpp" />
+    <ClCompile Include="src\DualGraph.cpp" />
   </ItemGroup>
 </Project>

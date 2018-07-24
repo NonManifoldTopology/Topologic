@@ -55,7 +55,12 @@ namespace TopologicCore
 
 	void Face::Cells(const Topology::Ptr& kpParentTopology, std::list<Cell::Ptr>& rCells) const
 	{
-		UpwardNavigation(kpParentTopology, rCells);
+		Cells(kpParentTopology.get(), rCells);
+	}
+
+	void Face::Cells(Topology const * kpkParentTopology, std::list<std::shared_ptr<Cell>>& rCells) const
+	{
+		UpwardNavigation(kpkParentTopology, rCells);
 	}
 
 	void Face::Edges(std::list<Edge::Ptr>& rEdges) const
@@ -83,6 +88,13 @@ namespace TopologicCore
 		GProp_GProps occtShapeProperties;
 		BRepGProp::SurfaceProperties(GetOcctShape(), occtShapeProperties);
 		return occtShapeProperties.Mass();
+	}
+
+	Vertex::Ptr Face::CenterOfMass() const
+	{
+		GProp_GProps occtShapeProperties;
+		BRepGProp::SurfaceProperties(GetOcctShape(), occtShapeProperties);
+		return Vertex::ByPoint(new Geom_CartesianPoint(occtShapeProperties.CentreOfMass()));
 	}
 
 	Face::Ptr Face::ByWire(const Wire::Ptr& pkWire)

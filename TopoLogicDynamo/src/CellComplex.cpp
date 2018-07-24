@@ -176,6 +176,25 @@ namespace Topologic
 		return pInternalFaces;
 	}
 
+	List<Face^>^ CellComplex::NonManifoldFaces()
+	{
+		TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(GetCoreTopologicalQuery());
+
+		std::list<TopologicCore::Face::Ptr> coreNonManifoldFaces;
+		pCoreCellComplex->NonManifoldFaces(coreNonManifoldFaces);
+
+		List<Face^>^ pNonManifoldFaces = gcnew List<Face^>();
+		for (std::list<TopologicCore::Face::Ptr>::const_iterator kNonManifoldFaceIterator = coreNonManifoldFaces.begin();
+			kNonManifoldFaceIterator != coreNonManifoldFaces.end();
+			kNonManifoldFaceIterator++)
+		{
+			Face^ pNonManifoldFace = gcnew Face(*kNonManifoldFaceIterator);
+			pNonManifoldFaces->Add(pNonManifoldFace);
+		}
+
+		return pNonManifoldFaces;
+	}
+
 	Object^ CellComplex::Geometry::get()
 	{
 		List<Cell^>^ pCells = Cells();

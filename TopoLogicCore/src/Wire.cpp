@@ -18,17 +18,17 @@
 
 namespace TopologicCore
 {
-	void Wire::Edges(std::list<Edge::Ptr>& rEdges) const
+	void Wire::Edges(std::list<Edge::Ptr>& rEdges, const bool kHasOrder) const
 	{
-		// This query uses a specialised class BRepTools_WireExplorer 
-		for (BRepTools_WireExplorer occtWireExplorer(GetOcctWire()); occtWireExplorer.More(); occtWireExplorer.Next())
+		if(kHasOrder)
 		{
-			const TopoDS_Edge& rkOcctEdge = occtWireExplorer.Current();
-			rEdges.push_back(TopologicalQuery::Downcast<Edge>(Topology::ByOcctShape(rkOcctEdge)));
-		}
-
-		// If still empty, use the DownwardNavigation
-		if (rEdges.empty())
+			// This query uses a specialised class BRepTools_WireExplorer 
+			for (BRepTools_WireExplorer occtWireExplorer(GetOcctWire()); occtWireExplorer.More(); occtWireExplorer.Next())
+			{
+				const TopoDS_Edge& rkOcctEdge = occtWireExplorer.Current();
+				rEdges.push_back(TopologicalQuery::Downcast<Edge>(Topology::ByOcctShape(rkOcctEdge)));
+			}
+		}else
 		{
 			DownwardNavigation(rEdges);
 		}
@@ -46,21 +46,28 @@ namespace TopologicCore
 		return shapeAnalysisWire.CheckClosed();
 	}
 
-	void Wire::Vertices(std::list<Vertex::Ptr>& rVertices) const
+	void Wire::Vertices(std::list<Vertex::Ptr>& rVertices, const bool kHasOrder) const
 	{
-		TopoDS_Edge lastEdge;
-		for(BRepTools_WireExplorer occtWireExplorer(GetOcctWire()); occtWireExplorer.More(); occtWireExplorer.Next())
+		if (kHasOrder)
 		{
-			const TopoDS_Vertex& rkOcctVertex = occtWireExplorer.CurrentVertex();
-			lastEdge = occtWireExplorer.Current();
-			rVertices.push_back(TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex)));
-		}
+			TopoDS_Edge lastEdge;
+			for (BRepTools_WireExplorer occtWireExplorer(GetOcctWire()); occtWireExplorer.More(); occtWireExplorer.Next())
+			{
+				const TopoDS_Vertex& rkOcctVertex = occtWireExplorer.CurrentVertex();
+				lastEdge = occtWireExplorer.Current();
+				rVertices.push_back(TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex)));
+			}
 
-		// Add the last one.
-		if (!lastEdge.IsNull())
+			// Add the last one.
+			if (!lastEdge.IsNull())
+			{
+				TopoDS_Vertex occtLastVertex = TopExp::LastVertex(lastEdge);
+				rVertices.push_back(TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(occtLastVertex)));
+			}
+		}
+		else
 		{
-			TopoDS_Vertex occtLastVertex = TopExp::LastVertex(lastEdge);
-			rVertices.push_back(TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(occtLastVertex)));
+			DownwardNavigation(rVertices);
 		}
 	}
 
@@ -112,7 +119,7 @@ namespace TopologicCore
 	{
 		// Returns a list of curves
 		std::list<Edge::Ptr> edges;
-		Edges(edges);
+		Edges(edges, false);
 
 		for (const Edge::Ptr& kpEdge : edges)
 		{
