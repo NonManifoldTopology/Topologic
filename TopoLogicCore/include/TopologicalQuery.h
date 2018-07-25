@@ -77,5 +77,6 @@ namespace TopologicCore
 		}
 
 		virtual ~TopologicalQuery() {};
+
 	};
 }

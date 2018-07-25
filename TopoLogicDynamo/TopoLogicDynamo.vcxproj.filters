@@ -15,6 +15,16 @@
     <ClInclude Include="include\Context.h" />
     <ClInclude Include="include\TopologicalQuery.h" />
     <ClInclude Include="include\DualGraph.h" />
+    <ClInclude Include="include\ContentDictionary.h" />
+    <ClInclude Include="include\ContentFactory.h">
+      <Filter>ContentFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ApertureContentFactory.h">
+      <Filter>ContentFactory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\VertexContentFactory.h">
+      <Filter>ContentFactory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
@@ -30,5 +40,17 @@
     <ClCompile Include="src\Context.cpp" />
     <ClCompile Include="src\Aperture.cpp" />
     <ClCompile Include="include\DualGraph.cpp" />
+    <ClCompile Include="src\ContentDictionary.cpp" />
+    <ClCompile Include="src\ApertureContentFactory.cpp">
+      <Filter>ContentFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\VertexContentFactory.cpp">
+      <Filter>ContentFactory</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="ContentFactory">
+      <UniqueIdentifier>{5d92c990-396d-4e24-87e4-05cd296ee6b4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

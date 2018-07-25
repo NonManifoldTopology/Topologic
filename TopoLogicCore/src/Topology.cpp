@@ -8,6 +8,8 @@
 #include <Edge.h>
 #include <Vertex.h>
 #include <Context.h>
+#include <ContentManager.h>
+
 #include <ShapeFix_ShapeTolerance.hxx>
 
 #include <TopoDS_Vertex.hxx>
@@ -94,50 +96,6 @@ namespace TopologicCore
 		}
 	}
 
-	/*void Topology::AddChildLabel(Topology::Ptr& pTopology, const TopologyRelationshipType kRelationshipType)
-	{
-		TDF_Label occtChildLabel = TDF_TagSource::NewChild(GetOcctLabel());
-		TNaming_Builder cellAttributeBuilder(occtChildLabel);
-		cellAttributeBuilder.Generated(pTopology->GetOcctShape());
-		TDataStd_Integer::Set(occtChildLabel, kRelationshipType);
-		pTopology->SetOcctLabel(occtChildLabel);
-	}*/
-
-	//TDF_Label& Topology::GetOcctLabel()
-	//{
-	//	//assert(m_occtLabel.IsNull() && "OCAF label is null.");
-	//	if (m_occtLabel.IsNull())
-	//	{
-	//		//throw std::exception("OCAF label is null.");
-	//	}
-
-	//	return m_occtLabel;
-	//}
-
-	//const TDF_Label & Topology::GetOcctLabel() const
-	//{
-	//	//assert(m_occtLabel.IsNull() && "OCAF label is null.");
-	//	if (m_occtLabel.IsNull())
-	//	{
-	//		//throw std::exception("OCAF label is null.");
-	//	}
-
-	//	return m_occtLabel;
-	//}
-
-	//void Topology::SetOcctLabel(const TDF_Label & rkOcctLabel)
-	//{
-	//	// Only register the label if it is not under the root
-	//	if (rkOcctLabel.IsNull() || !LabelManager::GetInstance().HasLabel(rkOcctLabel))
-	//	{
-	//		RegisterLabel();
-	//	}
-	//	else
-	//	{
-	//		m_occtLabel = rkOcctLabel;
-	//	}
-	//}
-
 	Topology::Ptr Topology::ClosestLowestSubshapeTo(const Topology::Ptr& kpTopology) const
 	{
 		//TopTools_DataMapOfShapeInteger occtShapeToDistanceMap;
@@ -186,11 +144,6 @@ namespace TopologicCore
 		return Topology::ByOcctShape(occtClosestSubshape);
 	}
 
-	/*TDF_Attribute * Topology::FindAttribute(const Standard_GUID & kID) const
-	{
-		return LabelManager::FindAttribute(GetOcctLabel(), kID);
-	}*/
-
 	double Topology::Distance(const Topology::Ptr& kpTopology) const
 	{
 		BRepExtrema_DistShapeShape occtDistance(GetOcctShape(), kpTopology->GetOcctShape());
@@ -199,8 +152,6 @@ namespace TopologicCore
 
 	Topology::Topology(const int kDimensionality)
 		: m_dimensionality(kDimensionality)
-		/*, m_isInGlobalCluster(false)
-		, m_occtLabel()*/
 	{
 
 	}
@@ -259,16 +210,6 @@ namespace TopologicCore
 
 	Topology::~Topology()
 	{
-		// Clear ingredients information
-		/*for (std::list<Topology*>::const_iterator kTopologyIterator = m_ingredientTo.begin();
-			kTopologyIterator != m_ingredientTo.end();
-			kTopologyIterator++)
-		{
-			Topology* pTopology = *kTopologyIterator;
-			pTopology->m_ingredients.remove(this);
-		}*/
-		/*m_ingredientTo.clear();
-		m_ingredients.clear();*/
 		m_contents.clear();
 		m_contexts.clear();
 
@@ -390,12 +331,12 @@ namespace TopologicCore
 
 	void Topology::AddContent(const Topology::Ptr& rkTopology)
 	{
-		//LabelManager::GetInstance().AddContent(rkTopology->GetOcctLabel(), GetOcctLabel());
+		ContentManager::GetInstance().Add(GetOcctShape(), rkTopology);
 	}
 
 	void Topology::RemoveContent(const Topology::Ptr& rkTopology)
 	{
-		m_contents.remove(rkTopology);
+		ContentManager::GetInstance().Add(GetOcctShape(), rkTopology);
 	}
 
 	void Topology::AddContext(const std::shared_ptr<Context>& rkContext)
@@ -444,37 +385,37 @@ namespace TopologicCore
 
 	void Topology::Contents(std::list<Topology::Ptr>& rContents) const
 	{
-		//LabelManager::Contents(GetOcctLabel(), rContents);
+		ContentManager::GetInstance().Find(GetOcctShape(), rContents);
 	}
 
-	void Topology::ContentsV2(const bool kAllLevels, std::list<Topology::Ptr>& rContents) const
-	{
-		//const TDF_Label& rkOcctLabel = GetOcctLabel();
-		//if (rkOcctLabel.IsNull())
-		//{
-		//	return;
-		//}
+	//void Topology::ContentsV2(const bool kAllLevels, std::list<Topology::Ptr>& rContents) const
+	//{
+	//	//const TDF_Label& rkOcctLabel = GetOcctLabel();
+	//	//if (rkOcctLabel.IsNull())
+	//	//{
+	//	//	return;
+	//	//}
 
-		//// Get the list of attribute shapes in the child labels in all levels, therefore no need to iterate hierarchically.
-		//for (TDF_ChildIterator occtLabelIterator(rkOcctLabel, kAllLevels); occtLabelIterator.More(); occtLabelIterator.Next())
-		//{
-		//	TDF_Label childLabel = occtLabelIterator.Value();
-		//	// Only care about those labels with aperture or other non-constituent relationships.
-		//	Handle(TNaming_NamedShape) occtApertureAttribute;
-		//	Handle(TDataStd_Integer) occtRelationshipType;
-		//	bool result1 = childLabel.FindAttribute(TNaming_NamedShape::GetID(), occtApertureAttribute);
-		//	bool result2 = childLabel.FindAttribute(TDataStd_Integer::GetID(), occtRelationshipType);
-		//	int result3 = occtRelationshipType->Get();
-		//	if (result1 &&
-		//		result2 &&
-		//		occtRelationshipType->Get() != REL_CONSTITUENT)
-		//	{
-		//		Topology::Ptr pTopology = Topology::ByOcctShape(occtApertureAttribute->Get());
-		//		pTopology->SetOcctLabel(childLabel);
-		//		rContents.push_back(pTopology);
-		//	}
-		//}
-	}
+	//	//// Get the list of attribute shapes in the child labels in all levels, therefore no need to iterate hierarchically.
+	//	//for (TDF_ChildIterator occtLabelIterator(rkOcctLabel, kAllLevels); occtLabelIterator.More(); occtLabelIterator.Next())
+	//	//{
+	//	//	TDF_Label childLabel = occtLabelIterator.Value();
+	//	//	// Only care about those labels with aperture or other non-constituent relationships.
+	//	//	Handle(TNaming_NamedShape) occtApertureAttribute;
+	//	//	Handle(TDataStd_Integer) occtRelationshipType;
+	//	//	bool result1 = childLabel.FindAttribute(TNaming_NamedShape::GetID(), occtApertureAttribute);
+	//	//	bool result2 = childLabel.FindAttribute(TDataStd_Integer::GetID(), occtRelationshipType);
+	//	//	int result3 = occtRelationshipType->Get();
+	//	//	if (result1 &&
+	//	//		result2 &&
+	//	//		occtRelationshipType->Get() != REL_CONSTITUENT)
+	//	//	{
+	//	//		Topology::Ptr pTopology = Topology::ByOcctShape(occtApertureAttribute->Get());
+	//	//		pTopology->SetOcctLabel(childLabel);
+	//	//		rContents.push_back(pTopology);
+	//	//	}
+	//	//}
+	//}
 
 	bool Topology::SaveToBrep(const std::string & rkPath) const
 	{
@@ -1168,98 +1109,6 @@ namespace TopologicCore
 		return pTopology;*/
 	}
 
-	//Topology::Ptr Topology::ManageBooleanLabels(
-	//	const Topology::Ptr& kpOtherTopology,
-	//	BOPAlgo_CellsBuilder& rOcctCellsBuilder,
-	//	BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceA,
-	//	BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceB)
-	//{
-	//	// Add the output cluster to the root.
-	//	const TopoDS_Shape& rkBooleanResult = rOcctCellsBuilder.Shape();
-	//	Topology::Ptr pBooleanResult = Topology::ByOcctShape(rkBooleanResult);
-	//	GlobalCluster::GetInstance().GetCluster()->AddChildLabel(pBooleanResult, REL_CONSTITUENT);
-
-	//	// For now, only map the faces and their apertures to the only cell complex in the output cluster.
-	//	TopTools_MapOfShape occtCompSolids; 
-	//	for (TopExp_Explorer occtExplorer(rOcctCellsBuilder.Shape(), TopAbs_COMPSOLID); occtExplorer.More(); occtExplorer.Next())
-	//	{
-	//		const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-	//		if (!occtCompSolids.Contains(occtCurrent))
-	//		{
-	//			occtCompSolids.Add(occtCurrent);
-	//		}
-	//	}
-	//	if (occtCompSolids.Size() == 0)
-	//	{
-	//		return pBooleanResult;
-	//	}
-
-	//	// Add the cell complex as the constituent child label to the cluster.
-	//	const TopoDS_Shape& rkCompSolid = *occtCompSolids.cbegin();
-	//	Topology::Ptr pCellComplex = Topology::ByOcctShape(rkCompSolid);
-	//	pBooleanResult->AddChildLabel(pCellComplex, REL_CONSTITUENT);
-	//	
-	//	// Get the input face labels. These are the labels of the original faces which are not fixed yet,
-	//	// so we need to map these faces to the fixed ones.
-	//	for (TDF_ChildIterator occtLabelIterator(GetOcctLabel()); occtLabelIterator.More(); occtLabelIterator.Next())
-	//	{
-	//		TDF_Label childLabel = occtLabelIterator.Value();
-	//		Handle(TNaming_NamedShape) occtChildShapeAttribute;
-	//		Handle(TDataStd_Integer) occtRelationshipType;
-	//		bool result1 = childLabel.FindAttribute(TNaming_NamedShape::GetID(), occtChildShapeAttribute);
-	//		bool result2 = childLabel.FindAttribute(TDataStd_Integer::GetID(), occtRelationshipType);
-	//		int result3 = occtRelationshipType->Get();
-
-	//		TopoDS_Shape occtFixedFace;
-	//		try{
-	//			occtFixedFace = rOcctMapFaceToFixedFaceA.Find(occtChildShapeAttribute->Get());
-	//		}
-	//		catch (...)
-	//		{
-
-	//		}
-
-	//		if (result1 &&
-	//			result2 &&
-	//			occtRelationshipType->Get() == REL_CONSTITUENT &&
-	//			!occtFixedFace.IsNull())
-	//		{
-	//			// Add this label to fixed face label to the cell complex
-	//			TopTools_ListOfShape occtModifiedFixedFaces = rOcctCellsBuilder.Modified(occtFixedFace);
-
-	//			for(TopTools_ListIteratorOfListOfShape occtModifiedFixedFaceIterator(occtModifiedFixedFaces);
-	//				occtModifiedFixedFaceIterator.More();
-	//				occtModifiedFixedFaceIterator.Next())
-	//			{
-	//				const TopoDS_Shape& rkOcctModifiedFixedFace = occtModifiedFixedFaceIterator.Value();
-	//				Topology::Ptr pModifiedFixedFace = Topology::ByOcctShape(rkOcctModifiedFixedFace);
-	//				pCellComplex->AddChildLabel(pModifiedFixedFace, REL_CONSTITUENT);
-
-	//				// Transfer the apertures from the original face (if any) to the fixed face
-	//				for (TDF_ChildIterator occtFaceLabelIterator(childLabel); occtFaceLabelIterator.More(); occtFaceLabelIterator.Next())
-	//				{
-	//					TDF_Label apertureLabel = occtFaceLabelIterator.Value();
-	//					Handle(TNaming_NamedShape) occtApertureShapeAttribute;
-	//					Handle(TDataStd_Integer) occtApertureRelationshipType;
-	//					bool result1 = apertureLabel.FindAttribute(TNaming_NamedShape::GetID(), occtApertureShapeAttribute);
-	//					bool result2 = apertureLabel.FindAttribute(TDataStd_Integer::GetID(), occtApertureRelationshipType);
-	//					int result3 = occtApertureRelationshipType->Get();
-
-	//					if (result1 &&
-	//						result2 &&
-	//						occtApertureRelationshipType->Get() != REL_CONSTITUENT)
-	//					{
-	//						Topology::Ptr pAperture = Topology::ByOcctShape(occtApertureShapeAttribute->Get());
-	//						pModifiedFixedFace->AddChildLabel(pAperture, (TopologyRelationshipType) occtApertureRelationshipType->Get());
-	//					}
-	//				}
-	//			}
-	//		}
-	//	}
-
-	//	return pBooleanResult;
-	//}
-
 	Topology::Ptr Topology::Difference(const Topology::Ptr& kpOtherTopology)
 	{
 		BOPCol_ListOfShape occtCellsBuildersOperandsA;
@@ -1899,26 +1748,6 @@ namespace TopologicCore
 		return occtNewShape;
 	}
 
-	//void Topology::RegisterLabel()
-	//{
-	//	LabelManager::GetInstance().AddLabelToRoot(GetOcctLabel());
-
-	//	// Add the essential attributes:
-	//	// - Shape
-	//	LabelManager::AddShapeToLabel(GetOcctShape(), GetOcctLabel());
-
-	//	// - Counter
-	//	LabelManager::AddCounterToLabel(GetOcctLabel());
-
-	//	// - Contents and contexts
-	//	LabelManager::AddContentsContextsToLabel(GetOcctLabel());
-	//}
-
-	//void Topology::DecreaseCounter()
-	//{
-	//	LabelManager::GetInstance().DecreaseCounter(GetOcctLabel());
-	//}
-
 	void Topology::AddBooleanOperands(
 		const Topology::Ptr& kpOtherTopology,
 		BOPAlgo_CellsBuilder& rOcctCellsBuilder,
@@ -2166,37 +1995,6 @@ namespace TopologicCore
 		}
 	}
 
-	/*void Topology::AddIngredientTo(const Topology::Ptr& kpTopology)
-	{
-		if(!IsIngredientTo(kpTopology))
-		{
-			m_ingredientTo.push_back(kpTopology);
-			kpTopology->m_ingredients.push_back(shared_from_this());
-
-			GlobalCluster::GetInstance().Remove(this);
-		}
-	}
-
-	void Topology::RemoveIngredientTo(const Topology::Ptr& kpTopology)
-	{
-		m_ingredientTo.remove(kpTopology);
-		kpTopology->m_ingredients.remove(shared_from_this());
-		if (m_ingredientTo.empty())
-		{
-			GlobalCluster::GetInstance().Add(this);
-		}
-	}
-
-	bool Topology::IsIngredientTo(const Topology::Ptr& kpTopology) const
-	{
-		return std::find(m_ingredientTo.begin(), m_ingredientTo.end(), kpTopology) != m_ingredientTo.end();
-	}
-
-	bool Topology::IsIngredient() const
-	{
-		return !m_ingredientTo.empty();
-	}*/
-
 	bool Topology::IsSame(const Topology::Ptr& kpTopology) const
 	{
 		bool isSame = GetOcctShape().IsSame(kpTopology->GetOcctShape());
@@ -2233,14 +2031,4 @@ namespace TopologicCore
 			rMembers.push_back(Topology::ByOcctShape(occtMemberIterator.Value()));
 		}
 	}
-
-	/*void Topology::AddIngredient(Topology * const kpTopology)
-	{
-		m_ingredients.push_back(kpTopology);
-	}
-
-	void Topology::RemoveIngredient(Topology * const kpTopology)
-	{
-		m_ingredients.remove(kpTopology);
-	}*/
 }

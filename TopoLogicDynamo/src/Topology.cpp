@@ -13,6 +13,8 @@
 #include <Aperture.h>
 #include <Attribute.h>
 #include <Context.h>
+#include <ContentDictionary.h>
+#include <ContentFactory.h>
 
 #include <TopoDS_Shape.hxx>
 //#include <TDF_AttributeIterator.hxx>
@@ -208,6 +210,11 @@ namespace Topologic
 		}
 	}
 
+	void Topology::RegisterFactory(const TopologicCore::Topology::Ptr & kpCoreTopology, ContentFactory ^ contentFactory)
+	{
+		ContentDictionary::Instance->Add(kpCoreTopology, contentFactory);
+	}
+
 	Topology::Topology()
 	{
 
@@ -226,17 +233,22 @@ namespace Topologic
 
 		List<Topology^>^ pTopologies = gcnew List<Topology^>();
 
-		for (std::list<std::shared_ptr<TopologicCore::Topology>>::const_iterator rkCoreContentIterator = coreContents.cbegin();
+		/*for (std::list<std::shared_ptr<TopologicCore::Topology>>::const_iterator rkCoreContentIterator = coreContents.cbegin();
 			rkCoreContentIterator != coreContents.cend();
 			rkCoreContentIterator++)
 		{
 			pTopologies->Add(Topology::ByCoreTopology(*rkCoreContentIterator));
-		}
+		}*/
 
+		for (const TopologicCore::Topology::Ptr& kpCoreContent : coreContents)
+		{
+			String^ guid = gcnew String(kpCoreContent->GetGUID().c_str());
+			pTopologies->Add(ContentDictionary::Instance->Find(guid)->Create(kpCoreContent));
+		}
 		return pTopologies;
 	}
 
-	List<Topology^>^ Topology::ContentsV2(bool allLevel)
+	/*List<Topology^>^ Topology::ContentsV2(bool allLevel)
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		std::list<std::shared_ptr<TopologicCore::Topology>> rkCoreContents;
@@ -252,7 +264,7 @@ namespace Topologic
 		}
 
 		return pTopologies;
-	}
+	}*/
 
 	List<Context^>^ Topology::Contexts()
 	{
@@ -276,7 +288,6 @@ namespace Topologic
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		pCoreTopology->AddContent(TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(contentTopology->GetCoreTopologicalQuery()));
-		//contentTopology->AttachAttributes();
 		return this;
 	}
 

@@ -309,7 +309,7 @@ namespace TopologicCore
 		/// <param name="kAllLevels"></param>
 		/// <param name="rContents"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API void ContentsV2(const bool kAllLevels, std::list<Topology::Ptr>& rContents) const;
+		//TOPOLOGIC_API void ContentsV2(const bool kAllLevels, std::list<Topology::Ptr>& rContents) const;
 
 
 		/// <summary>
@@ -379,16 +379,6 @@ namespace TopologicCore
 		/// <returns></returns>
 		TOPOLOGIC_API std::string GetTypeAsString() const;
 
-		/*void SetInGlobalCluster(const bool kInGlobalCluster)
-		{
-			m_isInGlobalCluster = kInGlobalCluster;
-		}
-
-		bool IsInGlobalCluster() const
-		{
-			return m_isInGlobalCluster;
-		}*/
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -429,31 +419,6 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <param name="kpTopology"></param>
-		//void AddIngredientTo(const Topology::Ptr& kpTopology);
-
-		/// <summary>
-		/// Used when deleted
-		/// </summary>
-		/// <param name="kpTopology"></param>
-		//void RemoveIngredientTo(const Topology::Ptr& kpTopology);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="kpTopology"></param>
-		/// <returns></returns>
-		//bool IsIngredientTo(const Topology::Ptr& kpTopology) const;
-		
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		//bool IsIngredient() const;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="kpTopology"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API bool IsSame(const Topology::Ptr& kpTopology) const;
 
@@ -469,43 +434,6 @@ namespace TopologicCore
 		/// <param name="rMembers"></param>
 		void Members(std::list<Topology::Ptr>& rMembers) const;
 
-		/*/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="kpTopology"></param>
-		void AddIngredient(Topology * const kpTopology);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="kpTopology"></param>
-		void RemoveIngredient(Topology * const kpTopology);*/
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="pTopology"></param>
-		/// <param name="kRelationshipType"></param>
-		//void AddChildLabel(Topology::Ptr& pTopology, const TopologyRelationshipType kRelationshipType);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		//TOPOLOGIC_API TDF_Label& GetOcctLabel();// { return m_occtLabel; }
-
-		///// <summary>
-		///// 
-		///// </summary>
-		///// <returns></returns>
-		//TOPOLOGIC_API const TDF_Label& GetOcctLabel() const;// { return m_occtLabel; }
-
-		///// <summary>
-		///// 
-		///// </summary>
-		///// <param name="rkOcctLabel"></param>
-		//void SetOcctLabel(const TDF_Label& rkOcctLabel);
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -516,16 +444,15 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kID"></param>
-		/// <returns></returns>
-		//TOPOLOGIC_API TDF_Attribute* FindAttribute(const Standard_GUID& kID) const;
-
-		/// <summary>
-		/// 
-		/// </summary>
 		/// <param name="kpTopology"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API double Distance(const Topology::Ptr& kpTopology) const;
+
+		/// <summary>
+		/// Identifies the class type by GUID
+		/// </summary>
+		/// <returns>The GUID</returns>
+		TOPOLOGIC_API virtual std::string GetGUID() const = 0;
 
 	protected:
 		Topology(const int kDimensionality);
@@ -602,19 +529,6 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="rOcctCellsBuilder"></param>
-		/// <param name="rOcctMapFaceToFixedFaceA"></param>
-		/// <param name="rOcctMapFaceToFixedFaceB"></param>
-		/// <returns></returns>
-		/*Topology::Ptr ManageBooleanLabels(
-			const Topology::Ptr& kpOtherTopology,
-			BOPAlgo_CellsBuilder& rOcctCellsBuilder,
-			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceA,
-			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceB);*/
-
-		/// <summary>
-		/// 
-		/// </summary>
 		/// <param name="rkOcctShape"></param>
 		/// <returns></returns>
 		TopoDS_Shape FixBooleanOperandCell(const TopoDS_Shape& rkOcctShape);
@@ -634,30 +548,13 @@ namespace TopologicCore
 		/// <returns></returns>
 		TopoDS_Shape FixBooleanOperandFace(const TopoDS_Shape& rkOcctShape, BOPCol_DataMapOfShapeShape& rMapFaceToFixedFace);
 
-		/// <summary>
-		/// Register OCCT label to the LabelManager
-		/// </summary>
-		//void RegisterLabel();
-
-		/// <summary>
-		/// Decrease the label's counter
-		/// </summary>
-		//void DecreaseCounter();
-
 		AttributeMap m_attributeMap; // to be replaced by OCCT OCAF
 		int m_dimensionality;
-		//bool m_isInGlobalCluster;
-
-		//TDF_Label m_occtLabel;
 		
 
 		// TODO: may cause cyclic dependencies, may need weak_ptr
 		std::list<Topology::Ptr> m_contents;
 		std::list<std::shared_ptr<Context>> m_contexts;
-
-		// TODO: may cause cyclic dependencies, may need weak_ptr
-		/*std::list<Topology::Ptr> m_ingredientTo;
-		std::list<Topology::Ptr> m_ingredients;*/
 	};
 
 	template <class Subclass>

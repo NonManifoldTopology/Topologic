@@ -1,5 +1,6 @@
 #include "Vertex.h"
 #include <Edge.h>
+#include <VertexContentFactory.h>
 
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRep_Tool.hxx>
@@ -61,7 +62,8 @@ namespace Topologic
 		: Topology()
 		, m_pCoreVertex(new TopologicCore::Vertex::Ptr(kpCoreVertex))
 	{
-
+		// Register the factory
+		RegisterFactory(kpCoreVertex, gcnew VertexContentFactory());
 	}
 
 	Vertex::Vertex(Autodesk::DesignScript::Geometry::Point^ pDynamoPoint)

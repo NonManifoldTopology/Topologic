@@ -83,6 +83,10 @@ namespace TopologicCore
 
 		virtual TopologyType GetType() const { return TOPOLOGY_VERTEX; }
 
+		virtual std::string GetGUID() const {
+			return std::string("c4a9b420-edaf-4f8f-96eb-c87fbcc92f2b");
+		}
+
 	protected:
 		/// <summary>
 		/// The underlying OCCT vertex.

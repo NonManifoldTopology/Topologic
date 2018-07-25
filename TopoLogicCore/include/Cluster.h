@@ -138,6 +138,10 @@ namespace TopologicCore
 
 		virtual TopologyType GetType() const { return TOPOLOGY_CLUSTER; }
 
+		virtual std::string GetGUID() const {
+			return std::string("7c498db6-f3e7-4722-be58-9720a4a9c2cc");
+		}
+
 	protected:
 		/// <summary>
 		/// 

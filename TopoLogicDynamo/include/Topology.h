@@ -14,6 +14,7 @@ namespace Topologic
 	ref class Vertex;
 	ref class Attribute;
 	ref class Context;
+	ref class ContentFactory;
 
 	/// <summary>
 	/// A Topology is an abstract superclass that constructors, properties and methods used by other subclasses that extend it.
@@ -90,13 +91,13 @@ namespace Topologic
 		/// <returns name="Topology[]">The Topological entities containing the input topology as a non-constituent member</returns>
 		List<Topology^>^ Contents();
 
-		/// <summary>
+		/*/// <summary>
 		/// Returns the Topological entities containing the input topology as a non-constituent member
 		/// </summary>
 		/// <param name="allLevel"></param>
 		/// <returns name="Topology[]">The Topological entities containing the input topology as a non-constituent member</returns>
 		List<Topology^>^ ContentsV2(
-			[Autodesk::DesignScript::Runtime::DefaultArgument("true")] bool allLevel);
+			[Autodesk::DesignScript::Runtime::DefaultArgument("true")] bool allLevel);*/
 
 		/// <summary>
 		/// Returns the non-constituent members of the input Topological entity.
@@ -291,6 +292,8 @@ namespace Topologic
 
 	public protected:
 		static Topology^ ByCoreTopology(const std::shared_ptr<TopologicCore::Topology>& kpCoreTopology);
+
+		void RegisterFactory(const TopologicCore::Topology::Ptr& kpCoreTopology, ContentFactory^ contentFactory);
 
 	protected:
 		/// <summary>

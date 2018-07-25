@@ -133,6 +133,10 @@ namespace TopologicCore
 
 		virtual TopologyType GetType() const { return TOPOLOGY_CELLCOMPLEX; }
 
+		virtual std::string GetGUID() const {
+			return std::string("4ec9904b-dc01-42df-9647-2e58c2e08e78");
+		}
+
 	protected:
 		/// <summary>
 		/// The underlying OCCT cell complex.
