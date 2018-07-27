@@ -14,7 +14,7 @@ namespace Topologic
 	ref class Vertex;
 	ref class Attribute;
 	ref class Context;
-	ref class ContentFactory;
+	ref class TopologyFactory;
 
 	/// <summary>
 	/// A Topology is an abstract superclass that constructors, properties and methods used by other subclasses that extend it.
@@ -309,7 +309,7 @@ namespace Topologic
 	public protected:
 		static Topology^ ByCoreTopology(const std::shared_ptr<TopologicCore::Topology>& kpCoreTopology);
 
-		void RegisterFactory(const TopologicCore::Topology::Ptr& kpCoreTopology, ContentFactory^ contentFactory);
+		void RegisterFactory(const TopologicCore::Topology::Ptr& kpCoreTopology, TopologyFactory^ contentFactory);
 
 	protected:
 		/// <summary>

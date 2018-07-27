@@ -15,17 +15,17 @@
     <ClInclude Include="include\Context.h" />
     <ClInclude Include="include\TopologicalQuery.h" />
     <ClInclude Include="include\DualGraph.h" />
-    <ClInclude Include="include\ContentDictionary.h" />
-    <ClInclude Include="include\ContentFactory.h">
+    <ClInclude Include="include\TopologyFactoryDictionary.h" />
+    <ClInclude Include="include\TopologyFactory.h">
       <Filter>ContentFactory</Filter>
     </ClInclude>
-    <ClInclude Include="include\ApertureContentFactory.h">
+    <ClInclude Include="include\ApertureFactory.h">
       <Filter>ContentFactory</Filter>
     </ClInclude>
-    <ClInclude Include="include\VertexContentFactory.h">
+    <ClInclude Include="include\FaceFactory.h">
       <Filter>ContentFactory</Filter>
     </ClInclude>
-    <ClInclude Include="include\FaceContentFactory.h">
+    <ClInclude Include="include\VertexFactory.h">
       <Filter>ContentFactory</Filter>
     </ClInclude>
   </ItemGroup>
@@ -43,14 +43,14 @@
     <ClCompile Include="src\Context.cpp" />
     <ClCompile Include="src\Aperture.cpp" />
     <ClCompile Include="include\DualGraph.cpp" />
-    <ClCompile Include="src\ContentDictionary.cpp" />
-    <ClCompile Include="src\ApertureContentFactory.cpp">
+    <ClCompile Include="src\TopologyFactoryDictionary.cpp" />
+    <ClCompile Include="src\ApertureFactory.cpp">
       <Filter>ContentFactory</Filter>
     </ClCompile>
-    <ClCompile Include="src\VertexContentFactory.cpp">
+    <ClCompile Include="src\FaceFactory.cpp">
       <Filter>ContentFactory</Filter>
     </ClCompile>
-    <ClCompile Include="src\FaceContentFactory.cpp">
+    <ClCompile Include="src\VertexFactory.cpp">
       <Filter>ContentFactory</Filter>
     </ClCompile>
   </ItemGroup>

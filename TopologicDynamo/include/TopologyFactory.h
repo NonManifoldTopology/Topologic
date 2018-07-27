@@ -8,7 +8,7 @@ using namespace System::Collections::Generic;
 
 namespace Topologic
 {
-	ref class ContentFactory abstract
+	ref class TopologyFactory abstract
 	{
 	public protected:
 		virtual Topology^ Create(const TopologicCore::Topology::Ptr& kpTopology) abstract;

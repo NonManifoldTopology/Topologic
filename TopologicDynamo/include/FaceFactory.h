@@ -1,10 +1,10 @@
 #pragma once
 
-#include <ContentFactory.h>
+#include <TopologyFactory.h>
 
 namespace Topologic
 {
-	ref class ApertureContentFactory : ContentFactory
+	ref class FaceFactory : TopologyFactory
 	{
 	public protected:
 		virtual Topology^ Create(const TopologicCore::Topology::Ptr& kpTopology) override;

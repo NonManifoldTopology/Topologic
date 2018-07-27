@@ -13,8 +13,8 @@
 #include <Aperture.h>
 #include <Attribute.h>
 #include <Context.h>
-#include <ContentDictionary.h>
-#include <ContentFactory.h>
+#include <TopologyFactoryDictionary.h>
+#include <TopologyFactory.h>
 
 #include <TopoDS_Shape.hxx>
 //#include <TDF_AttributeIterator.hxx>
@@ -190,9 +190,9 @@ namespace Topologic
 		}
 	}
 
-	void Topology::RegisterFactory(const TopologicCore::Topology::Ptr & kpCoreTopology, ContentFactory ^ contentFactory)
+	void Topology::RegisterFactory(const TopologicCore::Topology::Ptr & kpCoreTopology, TopologyFactory^ topologyFactory)
 	{
-		ContentDictionary::Instance->Add(kpCoreTopology, contentFactory);
+		TopologyFactoryDictionary::Instance->Add(kpCoreTopology, topologyFactory);
 	}
 
 	Topology::Topology()
@@ -217,7 +217,7 @@ namespace Topologic
 		{
 			//String^ guid = gcnew String(kpCoreContent->GetGUID().c_str());
 			int type = (int)kpCoreContent->GetType();
-			pTopologies->Add(ContentDictionary::Instance->Find(type)->Create(kpCoreContent));
+			pTopologies->Add(TopologyFactoryDictionary::Instance->Find(type)->Create(kpCoreContent));
 		}
 		return pTopologies;
 	}

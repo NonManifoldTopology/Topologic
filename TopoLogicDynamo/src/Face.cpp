@@ -4,7 +4,7 @@
 #include <Wire.h>
 #include <Shell.h>
 #include <Cell.h>
-#include <FaceContentFactory.h>
+#include <FaceFactory.h>
 
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepMesh_IncrementalMesh.hxx>
@@ -315,7 +315,7 @@ namespace Topologic
 		, m_pCoreFace(new TopologicCore::Face::Ptr(kpCoreFace))
 	{
 		// Register the factory
-		RegisterFactory(*m_pCoreFace, gcnew FaceContentFactory());
+		RegisterFactory(*m_pCoreFace, gcnew FaceFactory());
 	}
 
 	Face::Face(Wire^ pWire)
@@ -326,7 +326,7 @@ namespace Topologic
 			)))
 	{
 		// Register the factory
-		RegisterFactory(*m_pCoreFace, gcnew FaceContentFactory());
+		RegisterFactory(*m_pCoreFace, gcnew FaceFactory());
 	}
 	Face::Face(Autodesk::DesignScript::Geometry::Surface ^ pDynamoSurface)
 		: Topology()
@@ -350,7 +350,7 @@ namespace Topologic
 		}
 
 		// Register the factory
-		RegisterFactory(*m_pCoreFace, gcnew FaceContentFactory());
+		RegisterFactory(*m_pCoreFace, gcnew FaceFactory());
 	}
 
 	Autodesk::DesignScript::Geometry::Surface^ Face::Surface()

@@ -1,7 +1,7 @@
 #include "Aperture.h"
 #include <Topology.h>
 #include <Context.h>
-#include <ApertureContentFactory.h>
+#include <ApertureFactory.h>
 
 #include <assert.h>
 #include <array>
@@ -140,7 +140,7 @@ namespace Topologic
 		: m_pCoreAperture(new std::shared_ptr<TopologicCore::Aperture>(kpCoreAperture))
 	{
 		// Register the factory
-		RegisterFactory(kpCoreAperture, gcnew ApertureContentFactory());
+		RegisterFactory(kpCoreAperture, gcnew ApertureFactory());
 	}
 
 	Aperture::~Aperture()
