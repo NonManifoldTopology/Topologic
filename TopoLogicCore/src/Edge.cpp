@@ -316,6 +316,11 @@ namespace TopologicCore
 		return Vertex::ByPoint(new Geom_CartesianPoint(occtShapeProperties.CentreOfMass()));
 	}
 
+	std::string Edge::GetTypeAsString() const
+	{
+		return std::string("Edge");
+	}
+
 	void Edge::Throw(const BRepBuilderAPI_EdgeError occtEdgeError)
 	{
 		switch (occtEdgeError)

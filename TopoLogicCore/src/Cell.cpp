@@ -418,6 +418,11 @@ namespace TopologicCore
 		}
 	}
 
+	std::string Cell::GetTypeAsString() const
+	{
+		return std::string("Cell");
+	}
+
 	Cell::Cell(const TopoDS_Solid& rkOcctSolid)
 		: Topology(3)
 		, m_occtSolid(rkOcctSolid)

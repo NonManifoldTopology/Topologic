@@ -138,9 +138,11 @@ namespace TopologicCore
 
 		virtual TopologyType GetType() const { return TOPOLOGY_CELLCOMPLEX; }
 
-		virtual std::string GetGUID() const {
-			return std::string("4ec9904b-dc01-42df-9647-2e58c2e08e78");
-		}
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual std::string GetTypeAsString() const;
 
 	protected:
 		/// <summary>

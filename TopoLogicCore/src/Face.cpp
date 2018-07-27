@@ -93,7 +93,9 @@ namespace TopologicCore
 	Vertex::Ptr Face::CenterOfMass() const
 	{
 		GProp_GProps occtShapeProperties;
-		BRepGProp::SurfaceProperties(GetOcctShape(), occtShapeProperties);
+		ShapeFix_Face occtShapeFix(GetOcctFace());
+		occtShapeFix.Perform();
+		BRepGProp::SurfaceProperties(occtShapeFix.Face(), occtShapeProperties);
 		return Vertex::ByPoint(new Geom_CartesianPoint(occtShapeProperties.CentreOfMass()));
 	}
 
@@ -521,6 +523,11 @@ namespace TopologicCore
 	{
 		TopoDS_Face occtFace = GetOcctFace();
 		return BRep_Tool::Surface(occtFace);
+	}
+
+	std::string Face::GetTypeAsString() const
+	{
+		return std::string("Face");
 	}
 
 	void Face::Throw(const BRepBuilderAPI_MakeFace& rkOcctMakeFace)

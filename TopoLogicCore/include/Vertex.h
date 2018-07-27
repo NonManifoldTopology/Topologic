@@ -85,9 +85,11 @@ namespace TopologicCore
 
 		virtual TopologyType GetType() const { return TOPOLOGY_VERTEX; }
 
-		virtual std::string GetGUID() const {
-			return std::string("c4a9b420-edaf-4f8f-96eb-c87fbcc92f2b");
-		}
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual std::string GetTypeAsString() const;
 
 	protected:
 		/// <summary>

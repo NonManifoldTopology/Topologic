@@ -266,4 +266,9 @@ namespace TopologicCore
 		throw std::exception("Not yet implemented");
 	}
 
+	std::string Cluster::GetTypeAsString() const
+	{
+		return std::string("Cluster");
+	}
+
 }

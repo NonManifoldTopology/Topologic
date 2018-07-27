@@ -26,9 +26,13 @@ namespace TopologicCore
 
 		static TOPOLOGIC_API DualGraph::Ptr ByCellComplex(const std::shared_ptr<CellComplex>& kpCellComplex);
 
-		virtual std::string GetGUID() const {
-			return std::string("e9ad9252-f758-4dcb-8b9a-0979f4fa8c87");
-		}
+		virtual TopologyType GetType() const { return TOPOLOGY_DUALGRAPH; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual std::string GetTypeAsString() const;
 
 	protected:
 	};

@@ -74,30 +74,7 @@ namespace TopologicCore
 		}
 	}
 
-	std::string Topology::GetTypeAsString() const
-	{
-		switch (GetType())
-		{
-		case TOPOLOGY_CLUSTER:
-			return std::string("Cluster");
-		case TOPOLOGY_CELLCOMPLEX:
-			return std::string("CellComplex");
-		case TOPOLOGY_CELL:
-			return std::string("Cell");
-		case TOPOLOGY_SHELL:
-			return std::string("Shell");
-		case TOPOLOGY_FACE:
-			return std::string("Face");
-		case TOPOLOGY_WIRE:
-			return std::string("Wire");
-		case TOPOLOGY_EDGE:
-			return std::string("Edge");
-		default: // case TOPOLOGY_VERTEX:
-			return std::string("Vertex");
-		}
-	}
-
-	Topology::Ptr Topology::ClosestLowestSubshapeTo(const Topology::Ptr& kpTopology) const
+	Topology::Ptr Topology::ClosestSimplestSubshape(const Topology::Ptr& kpTopology) const
 	{
 		//TopTools_DataMapOfShapeInteger occtShapeToDistanceMap;
 		TopoDS_Shape occtClosestSubshape;
@@ -2007,6 +1984,8 @@ namespace TopologicCore
 	{
 		BRepBuilderAPI_Copy occtShapeCopy(GetOcctShape());
 		rOcctShapeCopy = occtShapeCopy.Shape();
+
+		// TODO: Copy the contents of the original topology to the copy
 	}
 
 	void Topology::ReplaceSubentity(const Topology::Ptr& rkOriginalSubshape, const Topology::Ptr& rkNewSubshape)

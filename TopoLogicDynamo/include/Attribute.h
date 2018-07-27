@@ -4,7 +4,7 @@
 
 #include <memory>
 
-#include <TDF_Attribute.hxx>
+//#include <TDF_Attribute.hxx>
 
 namespace Topologic
 {
@@ -13,11 +13,11 @@ namespace Topologic
 	public:
 		
 	public protected:
-		Attribute(Handle(TDF_Attribute) pCoreAttribute);
+		//Attribute(Handle(TDF_Attribute) pCoreAttribute);
 
 	protected:
-		~Attribute();
+		/*~Attribute();
 
-		Handle(TDF_Attribute)* m_pCoreAttribute;
+		Handle(TDF_Attribute)* m_pCoreAttribute;*/
 	};
 }

@@ -105,6 +105,12 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
+		virtual std::string GetTypeAsString() const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
 		virtual TopoDS_Shape& GetOcctShape();
 
 		/// <summary>
@@ -118,10 +124,6 @@ namespace TopologicCore
 		/// </summary>
 		/// <returns></returns>
 		virtual TopologyType GetType() const;
-
-		virtual std::string GetGUID() const {
-			return std::string("740d9d31-ca8c-47ef-825f-68c607af80aa");
-		}
 
 	protected:
 		std::list<AperturePath> m_occtAperturePaths;

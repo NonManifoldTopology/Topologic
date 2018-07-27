@@ -190,6 +190,11 @@ namespace TopologicCore
 		return Vertex::ByPoint(new Geom_CartesianPoint(occtShapeProperties.CentreOfMass()));
 	}
 
+	std::string Wire::GetTypeAsString() const
+	{
+		return std::string("Wire");
+	}
+
 	Wire::Wire(const TopoDS_Wire& rkOcctWire)
 		: Topology(1)
 		, m_occtWire(rkOcctWire)

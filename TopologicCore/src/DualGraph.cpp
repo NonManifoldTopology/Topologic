@@ -64,4 +64,8 @@ namespace TopologicCore
 	{
 
 	}
+	std::string DualGraph::GetTypeAsString() const
+	{
+		return std::string("DualGraph");
+	}
 }

@@ -383,6 +383,11 @@ namespace TopologicCore
 		}
 	}
 
+	std::string CellComplex::GetTypeAsString() const
+	{
+		return std::string("CellComplex");
+	}
+
 	Vertex::Ptr CellComplex::CenterOfMass() const
 	{
 		GProp_GProps occtShapeProperties;

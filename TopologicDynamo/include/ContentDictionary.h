@@ -15,7 +15,7 @@ namespace Topologic
 		ContentDictionary() {}
 		ContentDictionary(const ContentDictionary%) { throw gcnew System::InvalidOperationException("singleton cannot be copy-constructed"); }
 		static ContentDictionary m_instance;
-		Dictionary<String^, ContentFactory^>^ m_contentFactoryDict = gcnew Dictionary<String^, ContentFactory^>();
+		Dictionary<int, ContentFactory^>^ m_contentFactoryDict = gcnew Dictionary<int, ContentFactory^>();
 
 	public protected:
 		static property ContentDictionary^ Instance {
@@ -24,8 +24,8 @@ namespace Topologic
 
 		void Add(const TopologicCore::Topology::Ptr& content, ContentFactory^ value);
 
-		void Add(String^ key, ContentFactory^ value);
+		void Add(int key, ContentFactory^ value);
 
-		ContentFactory^ Find(String^ key);
+		ContentFactory^ Find(int key);
 	};
 }

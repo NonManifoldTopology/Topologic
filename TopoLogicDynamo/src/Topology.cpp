@@ -153,7 +153,7 @@ namespace Topologic
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		std::shared_ptr<TopologicCore::Topology> pCoreQueryTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(queryTopology->GetCoreTopologicalQuery());
 
-		std::shared_ptr<TopologicCore::Topology> pClosestLowestSubshape = pCoreTopology->ClosestLowestSubshapeTo(pCoreQueryTopology);
+		std::shared_ptr<TopologicCore::Topology> pClosestLowestSubshape = pCoreTopology->ClosestSimplestSubshape(pCoreQueryTopology);
 		return ByCoreTopology(pClosestLowestSubshape);
 	}
 
@@ -164,26 +164,6 @@ namespace Topologic
 
 		return pCoreTopology->Distance(pCoreOtherTopology);
 	}
-
-	//TDF_Attribute* Topology::FindAttribute(String ^ ID)
-	//{
-	//	/*std::string cppID = msclr::interop::marshal_as<std::string>(ID);
-	//	std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-	//	return pCoreTopology->FindAttribute(Standard_GUID(cppID.c_str()));*/
-
-	//	return nullptr;
-	//}
-
-	//void Topology::AttachAttribute(TDF_Attribute* attribute)
-	//{
-	//	std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-	//	/*TDF_Label& rLabel = pCoreTopology->GetOcctLabel();
-
-	//	Handle(TDF_Attribute) pAttribute(attribute);
-	//	if (!rLabel.FindAttribute(attribute->ID(), pAttribute)) {
-	//		rLabel.AddAttribute(pAttribute);
-	//	}*/
-	//}
 
 	String^ Topology::Type()
 	{
@@ -235,8 +215,9 @@ namespace Topologic
 
 		for (const TopologicCore::Topology::Ptr& kpCoreContent : coreContents)
 		{
-			String^ guid = gcnew String(kpCoreContent->GetGUID().c_str());
-			pTopologies->Add(ContentDictionary::Instance->Find(guid)->Create(kpCoreContent));
+			//String^ guid = gcnew String(kpCoreContent->GetGUID().c_str());
+			int type = (int)kpCoreContent->GetType();
+			pTopologies->Add(ContentDictionary::Instance->Find(type)->Create(kpCoreContent));
 		}
 		return pTopologies;
 	}
@@ -266,61 +247,28 @@ namespace Topologic
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreCopyParentTopology = pCoreParentTopology->Copy();
 		
-		 // 2. Get the center of mass of the contentTopology
+		// 2. Get the center of mass of the contentTopology
+		TopologicCore::Topology::Ptr pCoreContentTopology =
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(contentTopology->GetCoreTopologicalQuery());
+		TopologicCore::Vertex::Ptr pCoreContentCenterOfMass = pCoreContentTopology->CenterOfMass();
 
 		// 3. Find the closest simplest topology of the copy topology
+		TopologicCore::Topology::Ptr closestSimplestSubshape = pCoreCopyParentTopology->ClosestSimplestSubshape(pCoreContentCenterOfMass);
+
 		// 4. Add contentTopology as the content of the closest simplest topology
+		closestSimplestSubshape->AddContent(pCoreContentTopology);
+
 		// 5. Return the copy topology
-
-		throw gcnew NotImplementedException();
+		return Topology::ByCoreTopology(pCoreCopyParentTopology);
 	}
-
-	//	// 1. If parent is given,
-	//	Topology^ fixedParentTopology = parentTopology;
-	//	Topology^ fixedThisTopology = thisTopology;
-	//	if (fixedParentTopology != nullptr)
-	//	{
-	//		//    a. Copy the parent
-	//		TopologicCore::Topology::Ptr pCoreParentTopology = 
-	//			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
-	//		TopologicCore::Topology::Ptr pCoreParentTopology = pCoreParentTopology->Copy();
-	//		fixedParentTopology = Topology::ByCoreTopology(pCoreParentTopology);
-
-	//		//    b. Find the correspondending subshape to this topology
-	//		fixedThisTopology = ...
-	//	}
-	//	else
-	//	{
-	//		// 2. Otherwise, copy this topology
-	//		std::shared_ptr<TopologicCore::Topology> pCoreThisTopology =
-	//			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(thisTopology->GetCoreTopologicalQuery());
-	//		TopologicCore::Topology::Ptr pCoreThisTopology = pCoreThisTopology->Copy();
-	//		fixedThisTopology = Topology::ByCoreTopology(pCoreThisTopology);
-	//	}
-
-	//	// 3. Add the content to this topology's correspondence
-	//	TopologicCore::Topology::Ptr pCoreFixedThisTopology =
-	//		TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(fixedThisTopology->GetCoreTopologicalQuery());
-	//	pCoreFixedThisTopology->AddContent(TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(contentTopology->GetCoreTopologicalQuery()));
-
-	//	/*if (fixedParentTopology != nullptr)
-	//	{
-	//		TopologicCore::Topology::Ptr pCoreFixedParentTopology =
-	//			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(fixedParentTopology->GetCoreTopologicalQuery());
-
-	//	}*/
-	//	Dictionary<String^, Object^>^ returnValue = gcnew Dictionary<String^, Object^>();
-	//	returnValue->Add("Topology", fixedThisTopology);
-	//	returnValue->Add("ParentTopology", fixedParentTopology);
-	//	return returnValue;
-	//	//return this;
-	//}
 
 	Topology^ Topology::RemoveContent(Topology^ topology)
 	{
-		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		/*std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		pCoreTopology->RemoveContent(TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery()));
-		return this;
+		return this;*/
+
+		throw gcnew NotImplementedException();
 	}
 
 	Topology^ Topology::AddContext(Context^ context)

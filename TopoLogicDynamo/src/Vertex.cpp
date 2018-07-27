@@ -53,7 +53,7 @@ namespace Topologic
 	}
 
 	Vertex::Vertex(Vertex ^ pAnotherVertex)
-		: m_pCoreVertex(pAnotherVertex->m_pCoreVertex)
+		: Vertex(*pAnotherVertex->m_pCoreVertex)
 	{
 
 	}
@@ -63,7 +63,7 @@ namespace Topologic
 		, m_pCoreVertex(new TopologicCore::Vertex::Ptr(kpCoreVertex))
 	{
 		// Register the factory
-		RegisterFactory(kpCoreVertex, gcnew VertexContentFactory());
+		RegisterFactory(*m_pCoreVertex, gcnew VertexContentFactory());
 	}
 
 	Vertex::Vertex(Autodesk::DesignScript::Geometry::Point^ pDynamoPoint)

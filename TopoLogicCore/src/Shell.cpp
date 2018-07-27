@@ -1227,6 +1227,11 @@ namespace TopologicCore
 		return Vertex::ByPoint(new Geom_CartesianPoint(occtShapeProperties.CentreOfMass()));
 	}
 
+	std::string Shell::GetTypeAsString() const
+	{
+		return std::string("Shell");
+	}
+
 	void Shell::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
 	{
 		// Returns a list of faces

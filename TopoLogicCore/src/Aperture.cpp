@@ -223,6 +223,11 @@ namespace TopologicCore
 		return Topology()->CenterOfMass();
 	}
 
+	std::string Aperture::GetTypeAsString() const
+	{
+		return std::string("Aperture");
+	}
+
 	void Aperture::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
 	{
 		Topology()->Geometry(rOcctGeometries);

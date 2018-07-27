@@ -4,6 +4,7 @@
 #include <Wire.h>
 #include <Shell.h>
 #include <Cell.h>
+#include <FaceContentFactory.h>
 
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepMesh_IncrementalMesh.hxx>
@@ -313,7 +314,8 @@ namespace Topologic
 		: Topology()
 		, m_pCoreFace(new TopologicCore::Face::Ptr(kpCoreFace))
 	{
-
+		// Register the factory
+		RegisterFactory(*m_pCoreFace, gcnew FaceContentFactory());
 	}
 
 	Face::Face(Wire^ pWire)
@@ -323,7 +325,8 @@ namespace Topologic
 				TopologicCore::Topology::Downcast<TopologicCore::Wire>(pWire->GetCoreTopologicalQuery())
 			)))
 	{
-		
+		// Register the factory
+		RegisterFactory(*m_pCoreFace, gcnew FaceContentFactory());
 	}
 	Face::Face(Autodesk::DesignScript::Geometry::Surface ^ pDynamoSurface)
 		: Topology()
@@ -345,6 +348,9 @@ namespace Topologic
 		{
 			throw gcnew ArgumentException("The argument is not a valid Dynamo surface.");
 		}
+
+		// Register the factory
+		RegisterFactory(*m_pCoreFace, gcnew FaceContentFactory());
 	}
 
 	Autodesk::DesignScript::Geometry::Surface^ Face::Surface()

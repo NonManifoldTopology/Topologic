@@ -10,7 +10,6 @@
 #include <BOPAlgo_CellsBuilder.hxx>
 #include <Standard_Handle.hxx>
 #include <Geom_Geometry.hxx>
-#include <Standard_GUID.hxx>
 #include <TopoDS_CompSolid.hxx>
 //#include <TDF_Label.hxx>
 //#include <TDF_ChildIterator.hxx>
@@ -39,7 +38,8 @@ namespace TopologicCore
 		TOPOLOGY_CELL = 5,
 		TOPOLOGY_CELLCOMPLEX = 6,
 		TOPOLOGY_CLUSTER = 7,
-		TOPOLOGY_APERTURE = 8
+		TOPOLOGY_APERTURE = 8,
+		TOPOLOGY_DUALGRAPH = 9
 	};
 
 	class Cluster;
@@ -377,7 +377,7 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		TOPOLOGIC_API std::string GetTypeAsString() const;
+		TOPOLOGIC_API virtual std::string GetTypeAsString() const = 0;
 
 		/// <summary>
 		/// 
@@ -467,7 +467,7 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="kpTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology::Ptr ClosestLowestSubshapeTo(const Topology::Ptr& kpTopology) const;
+		TOPOLOGIC_API Topology::Ptr ClosestSimplestSubshape(const Topology::Ptr& kpTopology) const;
 
 		/// <summary>
 		/// 
@@ -481,12 +481,6 @@ namespace TopologicCore
 		/// <param name="kpTopology"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API double Distance(const Topology::Ptr& kpTopology) const;
-
-		/// <summary>
-		/// Identifies the class type by GUID
-		/// </summary>
-		/// <returns>The GUID</returns>
-		TOPOLOGIC_API virtual std::string GetGUID() const = 0;
 
 	protected:
 		Topology(const int kDimensionality);

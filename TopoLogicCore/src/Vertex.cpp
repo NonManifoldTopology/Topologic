@@ -79,4 +79,8 @@ namespace TopologicCore
 		Handle(Geom_Point) pOcctPoint = Point();
 		return ByPoint(pOcctPoint);
 	}
+	std::string Vertex::GetTypeAsString() const
+	{
+		return std::string("Vertex");
+	}
 }

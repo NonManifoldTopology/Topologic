@@ -165,9 +165,11 @@ namespace TopologicCore
 
 		virtual TopologyType GetType() const { return TOPOLOGY_EDGE; }
 
-		virtual std::string GetGUID() const {
-			return std::string("1fc6e6e1-9a09-4c0a-985d-758138c49e35");
-		}
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual std::string GetTypeAsString() const;
 
 	protected:
 		/// <summary>
