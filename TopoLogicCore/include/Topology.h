@@ -418,6 +418,34 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <returns></returns>
+		TOPOLOGIC_API Topology::Ptr Copy();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rOcctShapeCopy"></param>
+		/// <returns></returns>
+		void Copy(TopoDS_Shape& rOcctShapeCopy);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkOriginalSubshape"></param>
+		/// <param name="rkNewSubshape"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API void ReplaceSubentity(const Topology::Ptr& rkOriginalSubshape, const Topology::Ptr& rkNewSubshape);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkOcctOriginalSubshape"></param>
+		/// <param name="rkOcctNewSubshape"></param>
+		void ReplaceSubentity(const TopoDS_Shape& rkOcctOriginalSubshape, const TopoDS_Shape& rkOcctNewSubshape);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="kpTopology"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API bool IsSame(const Topology::Ptr& kpTopology) const;
@@ -440,6 +468,12 @@ namespace TopologicCore
 		/// <param name="kpTopology"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API Topology::Ptr ClosestLowestSubshapeTo(const Topology::Ptr& kpTopology) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		TOPOLOGIC_API virtual std::shared_ptr<Vertex> CenterOfMass() const = 0;
 
 		/// <summary>
 		/// 

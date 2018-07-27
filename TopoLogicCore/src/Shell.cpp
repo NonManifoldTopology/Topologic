@@ -13,9 +13,11 @@
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepBuilderAPI_Sewing.hxx>
 #include <BRepCheck_Shell.hxx>
+#include <BRepGProp.hxx>
 #include <BRepOffsetAPI_ThruSections.hxx>
 #include <BRep_Tool.hxx>
 #include <Geom_Surface.hxx>
+#include <GProp_GProps.hxx>
 #include <ShapeAnalysis.hxx>
 #include <ShapeAnalysis_Surface.hxx>
 #include <ShapeFix_ShapeTolerance.hxx>
@@ -1216,6 +1218,13 @@ namespace TopologicCore
 		}
 
 		return m_occtShell;
+	}
+
+	Vertex::Ptr Shell::CenterOfMass() const
+	{
+		GProp_GProps occtShapeProperties;
+		BRepGProp::SurfaceProperties(GetOcctShape(), occtShapeProperties);
+		return Vertex::ByPoint(new Geom_CartesianPoint(occtShapeProperties.CentreOfMass()));
 	}
 
 	void Shell::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const

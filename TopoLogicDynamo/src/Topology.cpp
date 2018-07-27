@@ -233,13 +233,6 @@ namespace Topologic
 
 		List<Topology^>^ pTopologies = gcnew List<Topology^>();
 
-		/*for (std::list<std::shared_ptr<TopologicCore::Topology>>::const_iterator rkCoreContentIterator = coreContents.cbegin();
-			rkCoreContentIterator != coreContents.cend();
-			rkCoreContentIterator++)
-		{
-			pTopologies->Add(Topology::ByCoreTopology(*rkCoreContentIterator));
-		}*/
-
 		for (const TopologicCore::Topology::Ptr& kpCoreContent : coreContents)
 		{
 			String^ guid = gcnew String(kpCoreContent->GetGUID().c_str());
@@ -247,24 +240,6 @@ namespace Topologic
 		}
 		return pTopologies;
 	}
-
-	/*List<Topology^>^ Topology::ContentsV2(bool allLevel)
-	{
-		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		std::list<std::shared_ptr<TopologicCore::Topology>> rkCoreContents;
-		pCoreTopology->ContentsV2(allLevel, rkCoreContents);
-
-		List<Topology^>^ pTopologies = gcnew List<Topology^>();
-
-		for (std::list<std::shared_ptr<TopologicCore::Topology>>::const_iterator rkCoreContentIterator = rkCoreContents.cbegin();
-			rkCoreContentIterator != rkCoreContents.cend();
-			rkCoreContentIterator++)
-		{
-			pTopologies->Add(Topology::ByCoreTopology(*rkCoreContentIterator));
-		}
-
-		return pTopologies;
-	}*/
 
 	List<Context^>^ Topology::Contexts()
 	{
@@ -283,13 +258,63 @@ namespace Topologic
 		return pContexts;
 	}
 
-	// This topology is the parent topology.
 	Topology^ Topology::AddContent(Topology^ contentTopology)
+		//Dictionary<String^, Object^>^ AddContent(Topology^ thisTopology, Topology^ contentTopology, Topology^ parentTopology)
 	{
-		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		pCoreTopology->AddContent(TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(contentTopology->GetCoreTopologicalQuery()));
-		return this;
+		// 1. Copy this topology
+		TopologicCore::Topology::Ptr pCoreParentTopology =
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		TopologicCore::Topology::Ptr pCoreCopyParentTopology = pCoreParentTopology->Copy();
+		
+		 // 2. Get the center of mass of the contentTopology
+
+		// 3. Find the closest simplest topology of the copy topology
+		// 4. Add contentTopology as the content of the closest simplest topology
+		// 5. Return the copy topology
+
+		throw gcnew NotImplementedException();
 	}
+
+	//	// 1. If parent is given,
+	//	Topology^ fixedParentTopology = parentTopology;
+	//	Topology^ fixedThisTopology = thisTopology;
+	//	if (fixedParentTopology != nullptr)
+	//	{
+	//		//    a. Copy the parent
+	//		TopologicCore::Topology::Ptr pCoreParentTopology = 
+	//			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
+	//		TopologicCore::Topology::Ptr pCoreParentTopology = pCoreParentTopology->Copy();
+	//		fixedParentTopology = Topology::ByCoreTopology(pCoreParentTopology);
+
+	//		//    b. Find the correspondending subshape to this topology
+	//		fixedThisTopology = ...
+	//	}
+	//	else
+	//	{
+	//		// 2. Otherwise, copy this topology
+	//		std::shared_ptr<TopologicCore::Topology> pCoreThisTopology =
+	//			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(thisTopology->GetCoreTopologicalQuery());
+	//		TopologicCore::Topology::Ptr pCoreThisTopology = pCoreThisTopology->Copy();
+	//		fixedThisTopology = Topology::ByCoreTopology(pCoreThisTopology);
+	//	}
+
+	//	// 3. Add the content to this topology's correspondence
+	//	TopologicCore::Topology::Ptr pCoreFixedThisTopology =
+	//		TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(fixedThisTopology->GetCoreTopologicalQuery());
+	//	pCoreFixedThisTopology->AddContent(TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(contentTopology->GetCoreTopologicalQuery()));
+
+	//	/*if (fixedParentTopology != nullptr)
+	//	{
+	//		TopologicCore::Topology::Ptr pCoreFixedParentTopology =
+	//			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(fixedParentTopology->GetCoreTopologicalQuery());
+
+	//	}*/
+	//	Dictionary<String^, Object^>^ returnValue = gcnew Dictionary<String^, Object^>();
+	//	returnValue->Add("Topology", fixedThisTopology);
+	//	returnValue->Add("ParentTopology", fixedParentTopology);
+	//	return returnValue;
+	//	//return this;
+	//}
 
 	Topology^ Topology::RemoveContent(Topology^ topology)
 	{
@@ -616,5 +641,12 @@ namespace Topologic
 			pTopologies->Add(pTopology);
 		}
 		return pTopologies;
+	}
+
+	Vertex^ Topology::CenterOfMass()
+	{
+		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		TopologicCore::Vertex::Ptr pCoreCenterOfMass = pCoreTopology->CenterOfMass();
+		return gcnew Vertex(pCoreCenterOfMass);
 	}
 }

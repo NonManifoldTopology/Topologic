@@ -81,6 +81,8 @@ namespace TopologicCore
 		/// <returns></returns>
 		Handle(Geom_Point) Point() const;
 
+		virtual std::shared_ptr<Vertex> CenterOfMass() const;
+
 		virtual TopologyType GetType() const { return TOPOLOGY_VERTEX; }
 
 		virtual std::string GetGUID() const {

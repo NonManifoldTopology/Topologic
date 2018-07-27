@@ -161,6 +161,7 @@ namespace TopologicCore
 		/// <returns></returns>
 		Handle(Geom_Curve) Curve(double& rU0, double& rU1) const;
 
+		virtual std::shared_ptr<Vertex> CenterOfMass() const;
 
 		virtual TopologyType GetType() const { return TOPOLOGY_EDGE; }
 

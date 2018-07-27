@@ -6,7 +6,10 @@
 //#include <OcctCounterAttribute.h>
 
 #include <BRepBuilderAPI_MakeWire.hxx>
+#include <BRepGProp.hxx>
 #include <BRepTools_WireExplorer.hxx>
+#include <Geom_CartesianPoint.hxx>
+#include <GProp_GProps.hxx>
 #include <ShapeAnalysis_Wire.hxx>
 #include <ShapeFix_Wire.hxx>
 #include <StdFail_NotDone.hxx>
@@ -178,6 +181,13 @@ namespace TopologicCore
 		default: // i.e. BRepBuilderAPI_WireDone 
 			throw std::exception("A wire was successfully created.");
 		}
+	}
+
+	std::shared_ptr<Vertex> Wire::CenterOfMass() const
+	{
+		GProp_GProps occtShapeProperties;
+		BRepGProp::LinearProperties(GetOcctShape(), occtShapeProperties);
+		return Vertex::ByPoint(new Geom_CartesianPoint(occtShapeProperties.CentreOfMass()));
 	}
 
 	Wire::Wire(const TopoDS_Wire& rkOcctWire)

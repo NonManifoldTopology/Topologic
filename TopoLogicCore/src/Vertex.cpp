@@ -73,4 +73,10 @@ namespace TopologicCore
 	{
 		return new Geom_CartesianPoint(BRep_Tool::Pnt(GetOcctVertex()));
 	}
+
+	std::shared_ptr<Vertex> Vertex::CenterOfMass() const
+	{
+		Handle(Geom_Point) pOcctPoint = Point();
+		return ByPoint(pOcctPoint);
+	}
 }

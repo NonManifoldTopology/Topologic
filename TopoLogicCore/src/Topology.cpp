@@ -33,6 +33,7 @@
 #include <BOPAlgo_Splitter.hxx>
 #include <BOPCol_ListOfShape.hxx>
 #include <BRep_Builder.hxx>
+#include <BRepBuilderAPI_Copy.hxx>
 #include <BRepTools.hxx>
 #include <ShapeAnalysis_ShapeContents.hxx>
 #include <ShapeBuild_ReShape.hxx>
@@ -1993,6 +1994,31 @@ namespace TopologicCore
 				rOcctMembers.Append(occtCurrent);
 			}
 		}
+	}
+
+	Topology::Ptr Topology::Copy()
+	{
+		TopoDS_Shape occtShapeCopy;
+		Copy(occtShapeCopy);
+		return Topology::ByOcctShape(occtShapeCopy);
+	}
+
+	void Topology::Copy(TopoDS_Shape& rOcctShapeCopy)
+	{
+		BRepBuilderAPI_Copy occtShapeCopy(GetOcctShape());
+		rOcctShapeCopy = occtShapeCopy.Shape();
+	}
+
+	void Topology::ReplaceSubentity(const Topology::Ptr& rkOriginalSubshape, const Topology::Ptr& rkNewSubshape)
+	{
+		ReplaceSubentity(rkOriginalSubshape->GetOcctShape(), rkNewSubshape->GetOcctShape());
+	}
+
+	void Topology::ReplaceSubentity(const TopoDS_Shape& rkOcctOriginalSubshape, const TopoDS_Shape& rkOcctNewSubshape)
+	{
+		Handle(ShapeBuild_ReShape) occtReshaper = new ShapeBuild_ReShape();
+		occtReshaper->Replace(rkOcctOriginalSubshape, rkOcctNewSubshape);
+		TopoDS_Shape newShape = occtReshaper->Apply(GetOcctShape());
 	}
 
 	bool Topology::IsSame(const Topology::Ptr& kpTopology) const

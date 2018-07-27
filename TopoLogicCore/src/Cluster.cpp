@@ -260,4 +260,10 @@ namespace TopologicCore
 
 		return false;
 	}
+
+	Vertex::Ptr Cluster::CenterOfMass() const
+	{
+		throw std::exception("Not yet implemented");
+	}
+
 }

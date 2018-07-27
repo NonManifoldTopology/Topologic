@@ -1,5 +1,9 @@
 #include <Aperture.h>
 #include <Context.h>
+#include <Vertex.h>
+
+#include <BRepGProp.hxx>
+#include <GProp_GProps.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 
@@ -212,6 +216,11 @@ namespace TopologicCore
 			path.push_back(Topology::ByOcctShape(rkAperturePath.GetTopology2()));
 			rPaths.push_back(path);
 		}
+	}
+
+	Vertex::Ptr Aperture::CenterOfMass() const
+	{
+		return Topology()->CenterOfMass();
 	}
 
 	void Aperture::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const

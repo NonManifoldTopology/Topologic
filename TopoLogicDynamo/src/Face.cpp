@@ -100,12 +100,12 @@ namespace Topologic
 		return pCoreFace->Area();
 	}
 
-	Vertex^ Face::CenterOfMass()
+	/*Vertex^ Face::CenterOfMass()
 	{
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
 		TopologicCore::Vertex::Ptr pCoreCenterOfMass = pCoreFace->CenterOfMass();
 		return gcnew Vertex(pCoreCenterOfMass);
-	}
+	}*/
 
 	Face^ Face::ByWire(Wire^ wire)
 	{

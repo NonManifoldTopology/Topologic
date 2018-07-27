@@ -309,6 +309,13 @@ namespace TopologicCore
 		return kOcctMinParameter + kNormalizedParameter * occtDParameter;
 	}
 
+	std::shared_ptr<Vertex> Edge::CenterOfMass() const
+	{
+		GProp_GProps occtShapeProperties;
+		BRepGProp::LinearProperties(GetOcctShape(), occtShapeProperties);
+		return Vertex::ByPoint(new Geom_CartesianPoint(occtShapeProperties.CentreOfMass()));
+	}
+
 	void Edge::Throw(const BRepBuilderAPI_EdgeError occtEdgeError)
 	{
 		switch (occtEdgeError)

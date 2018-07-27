@@ -62,11 +62,11 @@ namespace Topologic {
 		/// <returns name="double"></returns>
 		double Area();
 
-		/// <summary>
+		/*/// <summary>
 		/// 
 		/// </summary>
 		/// <returns name="Vertex"></returns>
-		Vertex^ CenterOfMass();
+		Vertex^ CenterOfMass();*/
 
 		/// <summary>
 		/// A factory method that creates a face by a closed wire.

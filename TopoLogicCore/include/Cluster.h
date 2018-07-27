@@ -136,6 +136,11 @@ namespace TopologicCore
 		/// <returns></returns>
 		//TOPOLOGIC_API Cluster::Ptr Flatten();
 
+		/// <summary>
+		/// 
+		/// </summary>
+		virtual std::shared_ptr<Vertex> CenterOfMass() const;
+
 		virtual TopologyType GetType() const { return TOPOLOGY_CLUSTER; }
 
 		virtual std::string GetGUID() const {

@@ -296,12 +296,12 @@ namespace Topologic
 		return pCoreCell->Volume();
 	}
 
-	Vertex^ Cell::CenterOfMass()
+	/*Vertex^ Cell::CenterOfMass()
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 		TopologicCore::Vertex::Ptr pCoreCenterOfMass = pCoreCell->CenterOfMass();
 		return gcnew Vertex(pCoreCenterOfMass);
-	}
+	}*/
 
 	bool Cell::DoesContain(Vertex ^ vertex)
 	{

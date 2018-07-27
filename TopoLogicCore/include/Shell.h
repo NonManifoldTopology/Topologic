@@ -172,6 +172,10 @@ namespace TopologicCore
 			std::list<std::shared_ptr<Wire>>& wires,
 			std::list<std::shared_ptr<Face>>& faces);
 
+		/// <summary>
+		/// 
+		/// </summary>
+		virtual std::shared_ptr<Vertex> CenterOfMass() const;
 
 		virtual TopologyType GetType() const { return TOPOLOGY_SHELL; }
 

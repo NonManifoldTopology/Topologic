@@ -99,6 +99,11 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		virtual std::shared_ptr<Vertex> CenterOfMass() const;
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <returns></returns>
 		virtual TopoDS_Shape& GetOcctShape();
 

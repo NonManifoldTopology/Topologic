@@ -8,7 +8,9 @@
 #include <Shell.h>
 
 #include <BRep_Builder.hxx>
+#include <BRepGProp.hxx>
 #include <Geom_Surface.hxx>
+#include <GProp_GProps.hxx>
 #include <ShapeAnalysis_ShapeContents.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
@@ -379,6 +381,13 @@ namespace TopologicCore
 		{
 			rOcctGeometries.push_back(kpFace->Surface());
 		}
+	}
+
+	Vertex::Ptr CellComplex::CenterOfMass() const
+	{
+		GProp_GProps occtShapeProperties;
+		BRepGProp::VolumeProperties(GetOcctShape(), occtShapeProperties);
+		return Vertex::ByPoint(new Geom_CartesianPoint(occtShapeProperties.CentreOfMass()));
 	}
 
 	CellComplex::CellComplex(const TopoDS_CompSolid& rkOcctCompSolid)

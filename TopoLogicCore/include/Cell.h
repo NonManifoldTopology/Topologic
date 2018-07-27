@@ -85,7 +85,7 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		TOPOLOGIC_API std::shared_ptr<Vertex> CenterOfMass() const;
+		virtual std::shared_ptr<Vertex> CenterOfMass() const;
 
 		/// <summary>
 		/// 

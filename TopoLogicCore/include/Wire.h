@@ -93,6 +93,8 @@ namespace TopologicCore
 		/// <returns></returns>
 		virtual const TopoDS_Wire& GetOcctWire() const;
 
+		virtual std::shared_ptr<Vertex> CenterOfMass() const;
+
 		virtual TopologyType GetType() const { return TOPOLOGY_WIRE; }
 
 		virtual std::string GetGUID() const {

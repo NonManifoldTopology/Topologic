@@ -128,6 +128,11 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		virtual std::shared_ptr<Vertex> CenterOfMass() const;
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="rOcctGeometries"></param>
 		virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const;
 

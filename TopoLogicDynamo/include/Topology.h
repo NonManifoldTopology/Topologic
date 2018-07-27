@@ -105,11 +105,21 @@ namespace Topologic
 		/// <returns name="Context[]">The non-constituent members of the input Topological entity</returns>
 		List<Context^>^ Contexts();
 
+		///// <summary>
+		///// 
+		///// </summary>
+		///// <param name="contentTopology"></param>
+		///// <param name="parentTopology"></param>
+		///// <returns name="Topology"></returns>
+		//[MultiReturn(gcnew array<String^> { "Topology", "ParentTopology" })]
+		//Dictionary<String^, Object^>^ AddContent(Topology^ thisTopology, Topology^ contentTopology, [DefaultArgument("null")] Topology^ parentTopology);
+		////Topology^ AddContent(Topology^ contentTopology, [DefaultArgument("null")] Topology^ parentTopology);
+		
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="contentTopology"></param>
-		/// <returns name="Topology"></returns>
+		/// <returns></returns>
 		Topology^ AddContent(Topology^ contentTopology);
 
 		/// <summary>
@@ -284,6 +294,12 @@ namespace Topologic
 		/// <param name="topology"></param>
 		/// <returns></returns>
 		double Distance(Topology^ topology);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns name="Vertex"></returns>
+		Vertex^ CenterOfMass();
 
 		/*[IsVisibleInDynamoLibrary(false)]
 		TDF_Attribute* FindAttribute(String^ ID);*/
