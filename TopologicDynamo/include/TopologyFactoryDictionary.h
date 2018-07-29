@@ -18,14 +18,14 @@ namespace Topologic
 
 		void Add(const TopologicCore::Topology::Ptr& content, TopologyFactory^ value);
 
-		void Add(int key, TopologyFactory^ value);
+		void Add(String^ key, TopologyFactory^ value);
 
-		TopologyFactory^ Find(int key);
+		TopologyFactory^ Find(String^ key);
 
 	private:
 		TopologyFactoryDictionary() {}
 		TopologyFactoryDictionary(const TopologyFactoryDictionary%) { throw gcnew System::InvalidOperationException("singleton cannot be copy-constructed"); }
 		static TopologyFactoryDictionary m_instance;
-		Dictionary<int, TopologyFactory^>^ m_TopologyFactoryDict = gcnew Dictionary<int, TopologyFactory^>();
+		Dictionary<String^, TopologyFactory^>^ m_TopologyFactoryDict = gcnew Dictionary<String^, TopologyFactory^>();
 	};
 }

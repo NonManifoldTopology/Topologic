@@ -103,6 +103,10 @@ namespace TopologicCore
 		/// <returns></returns>
 		virtual std::string GetTypeAsString() const;
 
+		virtual std::string GetGUID() const {
+			return std::string("b99ccd99-6756-401d-ab6c-11162de541a3");
+		}
+
 	protected:
 		/// <summary>
 		/// 

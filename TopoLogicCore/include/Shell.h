@@ -185,6 +185,10 @@ namespace TopologicCore
 		/// <returns></returns>
 		virtual std::string GetTypeAsString() const;
 
+		virtual std::string GetGUID() const {
+			return std::string("51c1e590-cec9-4e84-8f6b-e4f8c34fd3b3");
+		}
+
 	protected:
 		/// <summary>
 		/// The underlying OCCT shell.

@@ -215,9 +215,8 @@ namespace Topologic
 
 		for (const TopologicCore::Topology::Ptr& kpCoreContent : coreContents)
 		{
-			//String^ guid = gcnew String(kpCoreContent->GetGUID().c_str());
-			int type = (int)kpCoreContent->GetType();
-			pTopologies->Add(TopologyFactoryDictionary::Instance->Find(type)->Create(kpCoreContent));
+			String^ guid = gcnew String(kpCoreContent->GetGUID().c_str());
+			pTopologies->Add(TopologyFactoryDictionary::Instance->Find(guid)->Create(kpCoreContent));
 		}
 		return pTopologies;
 	}

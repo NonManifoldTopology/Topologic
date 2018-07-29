@@ -482,6 +482,12 @@ namespace TopologicCore
 		/// <returns></returns>
 		TOPOLOGIC_API double Distance(const Topology::Ptr& kpTopology) const;
 
+		/// <summary>
+		/// Identifies the class type by GUID. Used in the factory class system since GUID is easily extendable.
+		/// </summary>
+		/// <returns>The GUID</returns>
+		TOPOLOGIC_API virtual std::string GetGUID() const = 0;
+
 	protected:
 		Topology(const int kDimensionality);
 

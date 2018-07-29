@@ -125,6 +125,10 @@ namespace TopologicCore
 		/// <returns></returns>
 		virtual TopologyType GetType() const;
 
+		virtual std::string GetGUID() const {
+			return std::string("740d9d31-ca8c-47ef-825f-68c607af80aa");
+		}
+
 	protected:
 		std::list<AperturePath> m_occtAperturePaths;
 		std::shared_ptr<Context> m_pMainContext; // the primary context passed in the constructor is stored here

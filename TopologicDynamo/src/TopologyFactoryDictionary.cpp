@@ -4,10 +4,10 @@ namespace Topologic
 {
 	void TopologyFactoryDictionary::Add(const TopologicCore::Topology::Ptr& content, TopologyFactory^ value)
 	{
-		Add(content->GetType(), value);
+		Add(gcnew String(content->GetGUID().c_str()), value);
 	}
 
-	void TopologyFactoryDictionary::Add(int key, TopologyFactory^ value)
+	void TopologyFactoryDictionary::Add(String^ key, TopologyFactory^ value)
 	{
 		try {
 			m_TopologyFactoryDict->Add(key, value);
@@ -18,7 +18,7 @@ namespace Topologic
 		}
 	}
 
-	TopologyFactory^ TopologyFactoryDictionary::Find(int key)
+	TopologyFactory^ TopologyFactoryDictionary::Find(String^ key)
 	{
 		if (m_TopologyFactoryDict->ContainsKey(key))
 		{
