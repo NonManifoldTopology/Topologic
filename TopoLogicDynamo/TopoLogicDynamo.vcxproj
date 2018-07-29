@@ -147,6 +147,7 @@
     <ClInclude Include="include\Attribute.h" />
     <ClInclude Include="include\Cell.h" />
     <ClInclude Include="include\CellComplex.h" />
+    <ClInclude Include="include\CellComplexFactory.h" />
     <ClInclude Include="include\Cluster.h" />
     <ClInclude Include="include\TopologyFactoryDictionary.h" />
     <ClInclude Include="include\TopologyFactory.h" />
@@ -169,6 +170,7 @@
     <ClCompile Include="src\Attribute.cpp" />
     <ClCompile Include="src\Cell.cpp" />
     <ClCompile Include="src\CellComplex.cpp" />
+    <ClCompile Include="src\CellComplexFactory.cpp" />
     <ClCompile Include="src\Cluster.cpp" />
     <ClCompile Include="src\TopologyFactoryDictionary.cpp" />
     <ClCompile Include="src\Context.cpp" />

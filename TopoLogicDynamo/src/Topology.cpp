@@ -174,20 +174,8 @@ namespace Topologic
 
 	Topology^ Topology::ByCoreTopology(const std::shared_ptr<TopologicCore::Topology>& kpCoreTopology)
 	{
-		switch (kpCoreTopology->GetType())
-		{
-		case TopologicCore::TOPOLOGY_CLUSTER: return gcnew Cluster(TopologicCore::Topology::Downcast<TopologicCore::Cluster>(kpCoreTopology));
-		case TopologicCore::TOPOLOGY_CELLCOMPLEX: return gcnew CellComplex(TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(kpCoreTopology));
-		case TopologicCore::TOPOLOGY_CELL: return gcnew Cell(TopologicCore::Topology::Downcast<TopologicCore::Cell>(kpCoreTopology));
-		case TopologicCore::TOPOLOGY_SHELL: return gcnew Shell(TopologicCore::Topology::Downcast<TopologicCore::Shell>(kpCoreTopology));
-		case TopologicCore::TOPOLOGY_FACE: return gcnew Face(TopologicCore::Topology::Downcast<TopologicCore::Face>(kpCoreTopology));
-		case TopologicCore::TOPOLOGY_WIRE: return gcnew Wire(TopologicCore::Topology::Downcast<TopologicCore::Wire>(kpCoreTopology));
-		case TopologicCore::TOPOLOGY_EDGE: return gcnew Edge(TopologicCore::Topology::Downcast<TopologicCore::Edge>(kpCoreTopology));
-		case TopologicCore::TOPOLOGY_VERTEX: return gcnew Vertex(TopologicCore::Topology::Downcast<TopologicCore::Vertex>(kpCoreTopology));
-		case TopologicCore::TOPOLOGY_APERTURE: return gcnew Aperture(TopologicCore::Topology::Downcast<TopologicCore::Aperture>(kpCoreTopology));
-		default:
-			throw std::exception("Topology::ByCoreTopology: unknown topology.");
-		}
+		String^ guid = gcnew String(kpCoreTopology->GetGUID().c_str());
+		return TopologyFactoryDictionary::Instance->Find(guid)->Create(kpCoreTopology);
 	}
 
 	void Topology::RegisterFactory(const TopologicCore::Topology::Ptr & kpCoreTopology, TopologyFactory^ topologyFactory)
@@ -215,8 +203,8 @@ namespace Topologic
 
 		for (const TopologicCore::Topology::Ptr& kpCoreContent : coreContents)
 		{
-			String^ guid = gcnew String(kpCoreContent->GetGUID().c_str());
-			pTopologies->Add(TopologyFactoryDictionary::Instance->Find(guid)->Create(kpCoreContent));
+			Topology^ topology = Topology::ByCoreTopology(kpCoreContent);
+			pTopologies->Add(topology);
 		}
 		return pTopologies;
 	}

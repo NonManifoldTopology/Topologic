@@ -28,6 +28,9 @@
     <ClInclude Include="include\VertexFactory.h">
       <Filter>ContentFactory</Filter>
     </ClInclude>
+    <ClInclude Include="include\CellComplexFactory.h">
+      <Filter>ContentFactory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
@@ -51,6 +54,9 @@
       <Filter>ContentFactory</Filter>
     </ClCompile>
     <ClCompile Include="src\VertexFactory.cpp">
+      <Filter>ContentFactory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CellComplexFactory.cpp">
       <Filter>ContentFactory</Filter>
     </ClCompile>
   </ItemGroup>

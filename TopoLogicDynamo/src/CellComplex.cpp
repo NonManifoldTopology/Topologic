@@ -7,6 +7,7 @@
 #include <Shell.h>
 #include <Cell.h>
 #include <CellComplex.h>
+#include <CellComplexFactory.h>
 
 #include <assert.h>
 
@@ -210,7 +211,8 @@ namespace Topologic
 		: Topology()
 		, m_pCoreCellComplex(new TopologicCore::CellComplex::Ptr(kpCoreCellComplex))
 	{
-
+		// Register the factory
+		RegisterFactory(*m_pCoreCellComplex, gcnew CellComplexFactory());
 	}
 
 	std::shared_ptr<TopologicCore::TopologicalQuery> CellComplex::GetCoreTopologicalQuery()
