@@ -193,11 +193,11 @@ namespace Topologic
 
 	}
 
-	List<Topology^>^ Topology::Contents()
+	List<Topology^>^ Topology::Contents(bool allLevels)
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		std::list<std::shared_ptr<TopologicCore::Topology>> coreContents;
-		pCoreTopology->Contents(coreContents);
+		pCoreTopology->Contents(allLevels, coreContents);
 
 		List<Topology^>^ pTopologies = gcnew List<Topology^>();
 

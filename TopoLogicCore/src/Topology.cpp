@@ -361,9 +361,33 @@ namespace TopologicCore
 		//}
 	}
 
-	void Topology::Contents(std::list<Topology::Ptr>& rContents) const
+	void Topology::Contents(const bool kAllLevels, std::list<Topology::Ptr>& rContents) const
 	{
+		//if (!kAllLevels)
+		//{
 		ContentManager::GetInstance().Find(GetOcctShape(), rContents);
+		//}
+		//else //
+		if(kAllLevels)
+		{
+			TopAbs_ShapeEnum occtType = GetOcctShape().ShapeType();
+			int occtTypeInt = (int)occtType;
+			for (int occtTypeIntIteration = occtTypeInt; occtTypeIntIteration != (int)TopAbs_SHAPE; occtTypeIntIteration++)
+			{
+				// Get members in each level
+				TopAbs_ShapeEnum occtTypeIteration = (TopAbs_ShapeEnum)occtTypeIntIteration;
+				TopTools_MapOfShape occtMembers;
+				DownwardNavigation(GetOcctShape(), occtTypeIteration, occtMembers);
+				
+				// For each member, get the contents
+				for (TopTools_MapIteratorOfMapOfShape occtMemberIterator(occtMembers);
+					occtMemberIterator.More();
+					occtMemberIterator.Next())
+				{
+					ContentManager::GetInstance().Find(occtMemberIterator.Value(), rContents);
+				}
+			}
+		}
 	}
 
 	//void Topology::ContentsV2(const bool kAllLevels, std::list<Topology::Ptr>& rContents) const
@@ -1961,14 +1985,14 @@ namespace TopologicCore
 		occtShapeMap.FindFromKey(rkOcctShape, occtAncestors);
 	}
 
-	void Topology::DownwardNavigation(const TopoDS_Shape& rkOcctShape, const TopAbs_ShapeEnum & rkShapeEnum, TopTools_ListOfShape & rOcctMembers)
+	void Topology::DownwardNavigation(const TopoDS_Shape& rkOcctShape, const TopAbs_ShapeEnum & rkShapeEnum, TopTools_MapOfShape & rOcctMembers)
 	{
 		for (TopExp_Explorer occtExplorer(rkOcctShape, rkShapeEnum); occtExplorer.More(); occtExplorer.Next())
 		{
 			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
 			if (!rOcctMembers.Contains(occtCurrent))
 			{
-				rOcctMembers.Append(occtCurrent);
+				rOcctMembers.Add(occtCurrent);
 			}
 		}
 	}
@@ -2013,9 +2037,9 @@ namespace TopologicCore
 		for (int i = ((int)rkOcctShape.ShapeType()) + 1; i < (int)TopAbs_SHAPE; ++i)
 		{
 			TopAbs_ShapeEnum occtShapeEnum = (TopAbs_ShapeEnum)i;
-			TopTools_ListOfShape occtMembers;
+			TopTools_MapOfShape occtMembers;
 			Topology::DownwardNavigation(rkOcctShape, occtShapeEnum, occtMembers);
-			for (TopTools_ListIteratorOfListOfShape occtMembersIterator(occtMembers);
+			for (TopTools_MapIteratorOfMapOfShape occtMembersIterator(occtMembers);
 				occtMembersIterator.More();
 				occtMembersIterator.Next())
 			{

@@ -27,7 +27,8 @@ namespace TopologicCore
 	{
 		if (m_occtShapeToContentsMap.find(rkOcctShape) != m_occtShapeToContentsMap.end())
 		{
-			rContents = m_occtShapeToContentsMap[rkOcctShape];
+			std::list<Topology::Ptr> contents = m_occtShapeToContentsMap[rkOcctShape];
+			rContents.insert(rContents.end(), contents.begin(), contents.end());
 			return true;
 		}
 

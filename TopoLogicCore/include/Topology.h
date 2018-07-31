@@ -282,8 +282,9 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="kAllLevels"></param>
 		/// <param name="rContents"></param>
-		TOPOLOGIC_API void Contents(std::list<Topology::Ptr>& rContents) const;
+		TOPOLOGIC_API void Contents(const bool kAllLevels, std::list<Topology::Ptr>& rContents) const;
 
 		/// <summary>
 		/// 
@@ -413,7 +414,7 @@ namespace TopologicCore
 		/// <param name="rkOcctShape"></param>
 		/// <param name="rkShapeEnum"></param>
 		/// <param name="rOcctMembers"></param>
-		static void DownwardNavigation(const TopoDS_Shape& rkOcctShape, const TopAbs_ShapeEnum& rkShapeEnum, TopTools_ListOfShape& rOcctMembers);
+		static void DownwardNavigation(const TopoDS_Shape& rkOcctShape, const TopAbs_ShapeEnum& rkShapeEnum, TopTools_MapOfShape& rOcctMembers);
 
 		/// <summary>
 		/// 
