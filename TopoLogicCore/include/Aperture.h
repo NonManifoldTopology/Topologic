@@ -23,7 +23,7 @@ namespace TopologicCore
 		typedef std::shared_ptr<Aperture> Ptr;
 
 	public:
-		Aperture(const Topology::Ptr& kpTopology, const std::shared_ptr<Context>& kpContext, const bool kOpenStatus);
+		Aperture(const Topology::Ptr& kpTopology, const std::shared_ptr<Context>& kpContext, const bool kOpenStatus, const std::string& rkGuid = "");
 		~Aperture();
 
 		/// <summary>
@@ -125,7 +125,7 @@ namespace TopologicCore
 		/// <returns></returns>
 		virtual TopologyType GetType() const;
 
-		virtual std::string GetGUID() const {
+		virtual std::string GetClassGUID() const {
 			return std::string("740d9d31-ca8c-47ef-825f-68c607af80aa");
 		}
 

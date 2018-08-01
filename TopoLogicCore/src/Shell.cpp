@@ -1243,8 +1243,8 @@ namespace TopologicCore
 		}
 	}
 
-	Shell::Shell(const TopoDS_Shell& rkOcctShell)
-		: Topology(2)
+	Shell::Shell(const TopoDS_Shell& rkOcctShell, const std::string& rkGuid)
+		: Topology(2, rkOcctShell, rkGuid.compare("") == 0 ? GetClassGUID() : rkGuid)
 		, m_occtShell(rkOcctShell)
 	{
 		//GlobalCluster::GetInstance().Add(this);

@@ -45,7 +45,10 @@ namespace TopologicCore
 			throw std::exception("No topology is passed.");
 		}
 
-		Cluster::Ptr pCluster = std::make_shared<Cluster>();
+		TopoDS_Compound occtCompound;
+		TopoDS_Builder occtBuilder;
+		occtBuilder.MakeCompound(occtCompound);
+		Cluster::Ptr pCluster = std::make_shared<Cluster>(occtCompound);
 		for(const Topology::Ptr& kpTopology : rkTopologies)
 		{
 			pCluster->AddTopology(kpTopology.get());
@@ -165,29 +168,25 @@ namespace TopologicCore
 		throw std::exception("No implementation for Cluster entity");
 	}
 
-	Cluster::Cluster()
-		: Topology(3)
-		, m_occtCompound(TopoDS_Compound())
-		, m_occtBuilder(TopoDS_Builder())
-	{
-		m_occtBuilder.MakeCompound(m_occtCompound);
+	//Cluster::Cluster(const std::string& rkGuid)
+	//	: Topology(3, rkGuid.compare("") == 0 ? GetClassGUID() : rkGuid)
+	//	, m_occtCompound(TopoDS_Compound())
+	//	, m_occtBuilder(TopoDS_Builder())
+	//{
+	//	m_occtBuilder.MakeCompound(m_occtCompound);
 
-		/*if (kAddToGlobalCluster)
-		{
-			GlobalCluster::GetInstance().Add(this);
-		}*/
-	}
+	//	/*if (kAddToGlobalCluster)
+	//	{
+	//		GlobalCluster::GetInstance().Add(this);
+	//	}*/
+	//}
 
-	Cluster::Cluster(const TopoDS_Compound& rkOcctCompound)
-		: Topology(3)
+	Cluster::Cluster(const TopoDS_Compound& rkOcctCompound, const std::string& rkGuid)
+		: Topology(3, rkOcctCompound, rkGuid.compare("") == 0 ? GetClassGUID() : rkGuid)
 		, m_occtCompound(rkOcctCompound)
 	{
 		// This constructor does not initialise the compound with MakeCompound.
 
-		/*if (kAddToGlobalCluster)
-		{
-			GlobalCluster::GetInstance().Add(this);
-		}*/
 	}
 
 	Cluster::~Cluster()

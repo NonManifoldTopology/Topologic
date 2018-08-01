@@ -17,19 +17,19 @@
     <ClInclude Include="include\DualGraph.h" />
     <ClInclude Include="include\TopologyFactoryDictionary.h" />
     <ClInclude Include="include\TopologyFactory.h">
-      <Filter>ContentFactory</Filter>
+      <Filter>Factory</Filter>
     </ClInclude>
     <ClInclude Include="include\ApertureFactory.h">
-      <Filter>ContentFactory</Filter>
+      <Filter>Factory</Filter>
     </ClInclude>
     <ClInclude Include="include\FaceFactory.h">
-      <Filter>ContentFactory</Filter>
+      <Filter>Factory</Filter>
     </ClInclude>
     <ClInclude Include="include\VertexFactory.h">
-      <Filter>ContentFactory</Filter>
+      <Filter>Factory</Filter>
     </ClInclude>
     <ClInclude Include="include\CellComplexFactory.h">
-      <Filter>ContentFactory</Filter>
+      <Filter>Factory</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -48,20 +48,20 @@
     <ClCompile Include="include\DualGraph.cpp" />
     <ClCompile Include="src\TopologyFactoryDictionary.cpp" />
     <ClCompile Include="src\ApertureFactory.cpp">
-      <Filter>ContentFactory</Filter>
+      <Filter>Factory</Filter>
     </ClCompile>
     <ClCompile Include="src\FaceFactory.cpp">
-      <Filter>ContentFactory</Filter>
+      <Filter>Factory</Filter>
     </ClCompile>
     <ClCompile Include="src\VertexFactory.cpp">
-      <Filter>ContentFactory</Filter>
+      <Filter>Factory</Filter>
     </ClCompile>
     <ClCompile Include="src\CellComplexFactory.cpp">
-      <Filter>ContentFactory</Filter>
+      <Filter>Factory</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="ContentFactory">
+    <Filter Include="Factory">
       <UniqueIdentifier>{5d92c990-396d-4e24-87e4-05cd296ee6b4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>

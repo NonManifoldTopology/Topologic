@@ -195,8 +195,8 @@ namespace TopologicCore
 		return std::string("Wire");
 	}
 
-	Wire::Wire(const TopoDS_Wire& rkOcctWire)
-		: Topology(1)
+	Wire::Wire(const TopoDS_Wire& rkOcctWire, const std::string& rkGuid)
+		: Topology(1, rkOcctWire, rkGuid.compare("") == 0 ? GetClassGUID() : rkGuid)
 		, m_occtWire(rkOcctWire)
 	{
 

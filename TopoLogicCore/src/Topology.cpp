@@ -9,6 +9,7 @@
 #include <Vertex.h>
 #include <Context.h>
 #include <ContentManager.h>
+#include <InstanceGUIDManager.h>
 
 #include <ShapeFix_ShapeTolerance.hxx>
 
@@ -61,6 +62,8 @@
 #include <algorithm>
 #include <queue>
 #include <set>
+
+#include <assert.h>
 
 namespace TopologicCore
 {
@@ -128,10 +131,11 @@ namespace TopologicCore
 		return occtDistance.Value();
 	}
 
-	Topology::Topology(const int kDimensionality)
+	Topology::Topology(const int kDimensionality, const TopoDS_Shape& rkOcctShape, const std::string& rkGuid)
 		: m_dimensionality(kDimensionality)
 	{
-
+		// If no guid is given, use the default class GUID in TopologicCore classes.
+		InstanceGUIDManager::GetInstance().Add(rkOcctShape, rkGuid);
 	}
 
 	Topology::Ptr Topology::ByOcctShape(const TopoDS_Shape& rkOcctShape)
@@ -2059,5 +2063,13 @@ namespace TopologicCore
 			rMembers.push_back(Topology::ByOcctShape(occtMemberIterator.Value(), occtLabel));*/
 			rMembers.push_back(Topology::ByOcctShape(occtMemberIterator.Value()));
 		}
+	}
+
+	const std::string Topology::GetInstanceGUID() const
+	{
+		std::string guid;
+		bool value = InstanceGUIDManager::GetInstance().Find(GetOcctShape(), guid);
+		assert(value);
+		return guid;
 	}
 }

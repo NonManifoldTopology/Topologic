@@ -4,7 +4,7 @@ namespace Topologic
 {
 	void TopologyFactoryDictionary::Add(const TopologicCore::Topology::Ptr& content, TopologyFactory^ value)
 	{
-		Add(gcnew String(content->GetGUID().c_str()), value);
+		Add(gcnew String(content->GetClassGUID().c_str()), value);
 	}
 
 	void TopologyFactoryDictionary::Add(String^ key, TopologyFactory^ value)

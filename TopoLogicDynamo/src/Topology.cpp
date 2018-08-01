@@ -1,5 +1,7 @@
 #include <msclr/marshal_cppstd.h>
-
+#ifdef max
+#undef max
+#endif
 #include "Topology.h"
 
 #include <Cluster.h>
@@ -15,6 +17,8 @@
 #include <Context.h>
 #include <TopologyFactoryDictionary.h>
 #include <TopologyFactory.h>
+
+#include "TopologicCore/include/InstanceGUIDManager.h"
 
 #include <TopoDS_Shape.hxx>
 //#include <TDF_AttributeIterator.hxx>
@@ -174,13 +178,18 @@ namespace Topologic
 
 	Topology^ Topology::ByCoreTopology(const std::shared_ptr<TopologicCore::Topology>& kpCoreTopology)
 	{
-		String^ guid = gcnew String(kpCoreTopology->GetGUID().c_str());
-		return TopologyFactoryDictionary::Instance->Find(guid)->Create(kpCoreTopology);
+		String^ guid = gcnew String(kpCoreTopology->GetInstanceGUID().c_str());
+		return TopologyFactoryDictionary::Instance->Find(guid)->Create(TopologicCore::TopologyPtr(kpCoreTopology));
 	}
 
 	void Topology::RegisterFactory(const TopologicCore::Topology::Ptr & kpCoreTopology, TopologyFactory^ topologyFactory)
 	{
 		TopologyFactoryDictionary::Instance->Add(kpCoreTopology, topologyFactory);
+	}
+
+	void Topology::RegisterFactory(String^ guid, TopologyFactory ^ topologyFactory)
+	{
+		TopologyFactoryDictionary::Instance->Add(guid, topologyFactory);
 	}
 
 	Topology::Topology()

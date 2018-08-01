@@ -504,8 +504,8 @@ namespace TopologicCore
 		return m_occtFace;
 	}
 
-	Face::Face(const TopoDS_Face& rkOcctFace)
-		: Topology(2)
+	Face::Face(const TopoDS_Face& rkOcctFace, const std::string& rkGuid)
+		: Topology(2, rkOcctFace, rkGuid.compare("") == 0 ? GetClassGUID() : rkGuid)
 		, m_occtFace(rkOcctFace)
 	{
 		//GlobalCluster::GetInstance().Add(this);

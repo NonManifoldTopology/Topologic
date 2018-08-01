@@ -27,7 +27,7 @@ namespace TopologicCore
 		/// Creates a vertex by an OCCT vertex.
 		/// </summary>
 		/// <param name="rkOcctVertex">An OCCT vertex</param>
-		Vertex(const TopoDS_Vertex& rkOcctVertex);
+		Vertex(const TopoDS_Vertex& rkOcctVertex, const std::string& rkGuid = "");
 
 		virtual ~Vertex();
 
@@ -91,7 +91,7 @@ namespace TopologicCore
 		/// <returns></returns>
 		virtual std::string GetTypeAsString() const;
 
-		virtual std::string GetGUID() const {
+		virtual std::string GetClassGUID() const {
 			return std::string("c4a9b420-edaf-4f8f-96eb-c87fbcc92f2b");
 		}
 

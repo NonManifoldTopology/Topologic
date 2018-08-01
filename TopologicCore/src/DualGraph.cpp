@@ -54,8 +54,8 @@ namespace TopologicCore
 		return nullptr;
 	}
 
-	DualGraph::DualGraph(const TopoDS_Wire& rkOcctWire)
-		: Wire(rkOcctWire)
+	DualGraph::DualGraph(const TopoDS_Wire& rkOcctWire, const std::string& rkGuid)
+		: Wire(rkOcctWire, rkGuid.compare("") == 0 ? GetClassGUID() : rkGuid)
 	{
 
 	}

@@ -1,6 +1,7 @@
 #include <LoadCluster.h>
 #include <Load.h>
 #include <Context.h>
+#include <LoadClusterFactory.h>
 
 namespace TopologicStructure
 {
@@ -129,7 +130,7 @@ namespace TopologicStructure
 		, m_rows(rows > 0? rows : throw gcnew Exception("rows must be larger than zero."))
 		, m_columns(columns > 0 ? columns : throw gcnew Exception("columns must be larger than zero."))
 	{
-
+		RegisterFactory(LoadClusterFactory::GetGUID(), gcnew LoadClusterFactory());
 	}
 
 	LoadCluster::~LoadCluster()

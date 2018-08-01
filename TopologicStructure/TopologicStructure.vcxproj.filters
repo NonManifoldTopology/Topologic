@@ -10,6 +10,12 @@
     <ClInclude Include="include\Context.h">
       <Filter>Label</Filter>
     </ClInclude>
+    <ClInclude Include="include\LoadFactory.h">
+      <Filter>Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LoadClusterFactory.h">
+      <Filter>Factory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Load.cpp" />
@@ -21,10 +27,19 @@
     <ClCompile Include="src\Context.cpp">
       <Filter>Label</Filter>
     </ClCompile>
+    <ClCompile Include="src\LoadFactory.cpp">
+      <Filter>Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LoadClusterFactory.cpp">
+      <Filter>Factory</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Label">
       <UniqueIdentifier>{3f788237-605a-4437-9e06-bbc7f5499845}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Factory">
+      <UniqueIdentifier>{f913aab5-c179-429b-89a2-8a9018c8fdd7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -1,7 +1,8 @@
+//#include <OcctLoadAttribute.h>
 #include <Load.h>
-#include <OcctLoadAttribute.h>
+#include <LoadFactory.h>
 
-#include <TopologicCore/include/Vertex.h>
+//#include <TopologicCore/include/Vertex.h>
 
 #include <assert.h>
 
@@ -97,15 +98,26 @@ namespace TopologicStructure
 		, m_pVector(new TopologicSupport::Vector::Ptr(vector))
 		, m_pTopology(vertex)
 	{
-		Handle(OcctLoadAttribute) pOcctLoadAttribute = new OcctLoadAttribute(
+		RegisterFactory(LoadFactory::GetGUID(), gcnew LoadFactory());
+
+		/*Handle(OcctLoadAttribute) pOcctLoadAttribute = new OcctLoadAttribute(
 			vector->X(), vector->Y(), vector->Z(),
-			vector->Magnitude());
+			vector->Magnitude());*/
 		
 		//if (attachAttribute)
 		//{
 		//	// Attach the load attribute to the vertex's label
 		//	AttachAttribute(pOcctLoadAttribute.get());
 		//}
+	}
+
+	Load::Load(const TopologicCore::Vertex::Ptr& vertex)
+		: Topologic::Vertex(vertex)
+		, m_pVector(nullptr)
+		, m_pTopology(nullptr)
+	{
+		RegisterFactory(LoadFactory::GetGUID(), gcnew LoadFactory());
+
 	}
 
 	Load::~Load()

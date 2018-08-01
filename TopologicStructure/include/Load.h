@@ -3,7 +3,8 @@
 #include <memory>
 
 #include <TopologicSupport/include/Vector.h>
-#include <TopologicCore/include/TopologicalQuery.h>
+#include <TopologicCore/include/Vertex.h>
+//#include <TopologicCore/include/TopologicalQuery.h>
 
 using namespace System::Collections::Generic;
 using namespace System;
@@ -93,6 +94,7 @@ namespace TopologicStructure
 	public protected:
 		Load(Topologic::Vertex^ vertex, const TopologicSupport::Vector::Ptr& vector, const bool attachAttribute);
 
+		Load(const TopologicCore::Vertex::Ptr& vertex);
 	protected:
 		virtual ~Load();
 

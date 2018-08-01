@@ -35,7 +35,7 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <param name="rkOcctFace"></param>
-		Face(const TopoDS_Face& rkOcctFace);
+		Face(const TopoDS_Face& rkOcctFace, const std::string& rkGuid = "");
 
 		virtual ~Face();
 
@@ -249,7 +249,7 @@ namespace TopologicCore
 		/// <returns></returns>
 		virtual std::string GetTypeAsString() const;
 
-		virtual std::string GetGUID() const {
+		virtual std::string GetClassGUID() const {
 			return std::string("3b0a6afe-af86-4d96-a30d-d235e9c98475");
 		}
 

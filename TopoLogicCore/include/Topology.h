@@ -3,7 +3,6 @@
 #include "Attribute.h"
 #include "Utilities.h"
 #include "TopologicalQuery.h"
-//#include "LabelManager.h"
 
 #include <BOPCol_ListOfShape.hxx>
 #include <BOPCol_DataMapOfShapeShape.hxx>
@@ -11,10 +10,6 @@
 #include <Standard_Handle.hxx>
 #include <Geom_Geometry.hxx>
 #include <TopoDS_CompSolid.hxx>
-//#include <TDF_Label.hxx>
-//#include <TDF_ChildIterator.hxx>
-//#include <TNaming_NamedShape.hxx>
-//#include <TDataStd_Integer.hxx>
 #include <TopExp.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 #include <TopTools_MapOfShape.hxx>
@@ -484,13 +479,27 @@ namespace TopologicCore
 		TOPOLOGIC_API double Distance(const Topology::Ptr& kpTopology) const;
 
 		/// <summary>
+		/// <para>
 		/// Identifies the class type by GUID. Used in the factory class system since GUID is easily extendable.
+		/// WARNING: Do not use this to identify the instance!
+		/// </para>
+		/// </summary>
+		/// <returns></returns>
+		TOPOLOGIC_API virtual std::string GetClassGUID() const = 0;
+
+		/// <summary>
+		/// Identifies the instance type by GUID. Used in the factory class system since GUID is easily extendable.
 		/// </summary>
 		/// <returns>The GUID</returns>
-		TOPOLOGIC_API virtual std::string GetGUID() const = 0;
+		TOPOLOGIC_API const std::string GetInstanceGUID() const;
+
+		/*TOPOLOGIC_API void SetInstanceGUID(const std::string& rkGuid) {
+			m_guid = rkGuid;
+		}*/
+
 
 	protected:
-		Topology(const int kDimensionality);
+		Topology(const int kDimensionality, const TopoDS_Shape& rkOcctShape, const std::string& rkGuid = "");
 
 		/// <summary>
 		/// 
@@ -590,6 +599,7 @@ namespace TopologicCore
 		// TODO: may cause cyclic dependencies, may need weak_ptr
 		std::list<Topology::Ptr> m_contents;
 		std::list<std::shared_ptr<Context>> m_contexts;
+		std::string m_guid;
 	};
 
 	template <class Subclass>
@@ -789,4 +799,17 @@ namespace TopologicCore
 		
 		throw std::exception("Other subclasses are invalid.");
 	}
+
+	/// <summary>
+	/// Used by TopologyFactory to pass smart pointers
+	/// </summary>
+	struct TopologyPtr
+	{
+		TOPOLOGIC_API TopologyPtr(const std::shared_ptr<Topology>& pTopologyPtr)
+			: topologyPtr(pTopologyPtr)
+		{
+		}
+
+		const std::shared_ptr<Topology>& topologyPtr;
+	};
 }

@@ -423,8 +423,8 @@ namespace TopologicCore
 		return std::string("Cell");
 	}
 
-	Cell::Cell(const TopoDS_Solid& rkOcctSolid)
-		: Topology(3)
+	Cell::Cell(const TopoDS_Solid& rkOcctSolid, const std::string& rkGuid)
+		: Topology(3, rkOcctSolid, rkGuid.compare("") == 0 ? GetClassGUID() : rkGuid)
 		, m_occtSolid(rkOcctSolid)
 	{
 		//GlobalCluster::GetInstance().Add(this);

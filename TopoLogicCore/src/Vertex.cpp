@@ -10,8 +10,8 @@
 
 namespace TopologicCore
 {
-	Vertex::Vertex(const TopoDS_Vertex& rkOcctVertex)
-		: Topology(0)
+	Vertex::Vertex(const TopoDS_Vertex& rkOcctVertex, const std::string& rkGuid)
+		: Topology(0, rkOcctVertex, rkGuid.compare("") == 0 ? GetClassGUID() : rkGuid)
 		, m_occtVertex(rkOcctVertex)
 	{
 

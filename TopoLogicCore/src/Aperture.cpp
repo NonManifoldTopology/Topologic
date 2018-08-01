@@ -258,8 +258,8 @@ namespace TopologicCore
 		return m_pTopology;
 	}
 
-	Aperture::Aperture(const Topology::Ptr& kpTopology, const std::shared_ptr<Context>& kpContext, const bool kOpenStatus)
-		: TopologicCore::Topology(kpTopology->Dimensionality())
+	Aperture::Aperture(const Topology::Ptr& kpTopology, const std::shared_ptr<Context>& kpContext, const bool kOpenStatus, const std::string& rkGuid)
+		: TopologicCore::Topology(kpTopology->Dimensionality(), kpTopology->GetOcctShape(), rkGuid.compare("") == 0 ? GetClassGUID() : rkGuid)
 		, m_pMainContext(kpContext)
 		, m_pTopology(kpTopology)
 	{

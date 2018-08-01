@@ -26,13 +26,13 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		Cluster();
+		//Cluster(const std::string& rkGuid = "");
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkOcctCompound"></param>x
-		Cluster(const TopoDS_Compound& rkOcctCompound);
+		Cluster(const TopoDS_Compound& rkOcctCompound, const std::string& rkGuid = "");
 
 		virtual ~Cluster();
 
@@ -149,7 +149,7 @@ namespace TopologicCore
 		/// <returns></returns>
 		virtual std::string GetTypeAsString() const;
 
-		virtual std::string GetGUID() const {
+		virtual std::string GetClassGUID() const {
 			return std::string("7c498db6-f3e7-4722-be58-9720a4a9c2cc");
 		}
 

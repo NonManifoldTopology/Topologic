@@ -395,8 +395,8 @@ namespace TopologicCore
 		return Vertex::ByPoint(new Geom_CartesianPoint(occtShapeProperties.CentreOfMass()));
 	}
 
-	CellComplex::CellComplex(const TopoDS_CompSolid& rkOcctCompSolid)
-		: Topology(3)
+	CellComplex::CellComplex(const TopoDS_CompSolid& rkOcctCompSolid, const std::string& rkGuid)
+		: Topology(3, rkOcctCompSolid, rkGuid.compare("") == 0 ? GetClassGUID() : rkGuid)
 		, m_pOcctCompSolid(rkOcctCompSolid)
 	{
 		//GlobalCluster::GetInstance().Add(this);

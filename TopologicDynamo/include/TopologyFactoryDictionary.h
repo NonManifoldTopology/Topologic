@@ -1,6 +1,8 @@
 #pragma once
 
-#include <TopologicCore/include/Topology.h>
+#include <Topology.h>
+
+//#include <TopologicCore/include/Topology.h>
 
 using namespace System;
 using namespace System::Collections::Generic;

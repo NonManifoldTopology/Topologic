@@ -28,7 +28,7 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <param name="rkOcctShell"></param>
-		Shell(const TopoDS_Shell& rkOcctShell);
+		Shell(const TopoDS_Shell& rkOcctShell, const std::string& rkGuid = "");
 
 		virtual ~Shell();
 
@@ -185,7 +185,7 @@ namespace TopologicCore
 		/// <returns></returns>
 		virtual std::string GetTypeAsString() const;
 
-		virtual std::string GetGUID() const {
+		virtual std::string GetClassGUID() const {
 			return std::string("51c1e590-cec9-4e84-8f6b-e4f8c34fd3b3");
 		}
 

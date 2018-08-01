@@ -3,6 +3,9 @@
 #include "TopologicalQuery.h"
 #include <TopologicCore/include/Topology.h>
 
+#pragma make_public(TopologicCore::Topology)
+#pragma make_public(TopologicCore::TopologyPtr)
+
 using namespace System;
 using namespace System::Collections::Generic;
 using namespace Autodesk::DesignScript::Runtime;
@@ -308,10 +311,14 @@ namespace Topologic
 
 		String^ Type();
 
+		[IsVisibleInDynamoLibrary(false)]
+		void RegisterFactory(const TopologicCore::Topology::Ptr& kpCoreTopology, TopologyFactory^ topologyFactory);
+
+		[IsVisibleInDynamoLibrary(false)]
+		void RegisterFactory(String^ rkGUID, TopologyFactory^ topologyFactory);
+
 	public protected:
 		static Topology^ ByCoreTopology(const std::shared_ptr<TopologicCore::Topology>& kpCoreTopology);
-
-		void RegisterFactory(const TopologicCore::Topology::Ptr& kpCoreTopology, TopologyFactory^ contentFactory);
 
 	protected:
 		/// <summary>

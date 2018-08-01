@@ -28,7 +28,7 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <param name="rkOcctCompSolid"></param>
-		CellComplex(const TopoDS_CompSolid& rkOcctCompSolid);
+		CellComplex(const TopoDS_CompSolid& rkOcctCompSolid, const std::string& rkGuid = "");
 
 		virtual ~CellComplex();
 
@@ -144,7 +144,7 @@ namespace TopologicCore
 		/// <returns></returns>
 		virtual std::string GetTypeAsString() const;
 
-		virtual std::string GetGUID() const {
+		virtual std::string GetClassGUID() const {
 			return std::string("4ec9904b-dc01-42df-9647-2e58c2e08e78");
 		}
 

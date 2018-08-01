@@ -47,9 +47,11 @@ namespace Topologic
 			virtual Object^ get() override;	
 		}
 
+		[IsVisibleInDynamoLibrary(false)]
+		Vertex(const std::shared_ptr<TopologicCore::Vertex>& kpCoreVertex);
+
 	public protected:
 		Vertex(Vertex^ pAnotherVertex);
-		Vertex(const std::shared_ptr<TopologicCore::Vertex>& kpCoreVertex);
 		Vertex(Autodesk::DesignScript::Geometry::Point^ pDynamoPoint);
 
 		Autodesk::DesignScript::Geometry::Point^ Point();

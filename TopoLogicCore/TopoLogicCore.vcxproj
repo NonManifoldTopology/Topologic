@@ -161,6 +161,7 @@
     <ClInclude Include="include\DualGraph.h" />
     <ClInclude Include="include\Edge.h" />
     <ClInclude Include="include\Face.h" />
+    <ClInclude Include="include\InstanceGUIDManager.h" />
     <ClInclude Include="include\Shell.h" />
     <ClInclude Include="include\TopologicalQuery.h" />
     <ClInclude Include="include\Topology.h" />
@@ -179,6 +180,7 @@
     <ClCompile Include="src\DualGraph.cpp" />
     <ClCompile Include="src\Edge.cpp" />
     <ClCompile Include="src\Face.cpp" />
+    <ClCompile Include="src\InstanceGUIDManager.cpp" />
     <ClCompile Include="src\Shell.cpp" />
     <ClCompile Include="src\Topology.cpp" />
     <ClCompile Include="src\Vertex.cpp" />

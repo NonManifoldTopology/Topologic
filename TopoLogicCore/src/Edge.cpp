@@ -345,8 +345,8 @@ namespace TopologicCore
 		}
 	}
 
-	Edge::Edge(const TopoDS_Edge& rkOcctEdge)
-		: Topology(1)
+	Edge::Edge(const TopoDS_Edge& rkOcctEdge, const std::string& rkGuid)
+		: Topology(1, rkOcctEdge, rkGuid.compare("") == 0 ? GetClassGUID() : rkGuid)
 		, m_occtEdge(rkOcctEdge)
 	{
 
