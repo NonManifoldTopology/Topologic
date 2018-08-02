@@ -115,8 +115,9 @@ namespace TopologicCore
 			//pShell->AddChildLabel(pChildTopology, REL_CONSTITUENT);
 
 			// Map the aperture to the modifed shell faces.
-			std::list<Topology::Ptr>& rContents = kShellFace->Contents();
-			for (const Topology::Ptr& rkContent : rContents)
+			std::list<Topology::Ptr> contents;
+			kShellFace->Contents(false, contents);
+			for (const Topology::Ptr& rkContent : contents)
 			{
 				if (rkContent->GetType() != TOPOLOGY_APERTURE)
 				{
@@ -459,9 +460,10 @@ namespace TopologicCore
 			}
 		}
 
-		std::list<Topology::Ptr>& rContents = kpFace->Contents();
+		std::list<Topology::Ptr> contents; 
+		kpFace->Contents(false, contents);
 		std::list<std::list<Handle(Geom2d_CartesianPoint)>> allApertureSampleVerticesUV;
-		for (const Topology::Ptr& rkContent : rContents)
+		for (const Topology::Ptr& rkContent : contents)
 		{
 			if (rkContent->GetType() != TOPOLOGY_APERTURE)
 			{

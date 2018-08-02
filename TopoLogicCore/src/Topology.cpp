@@ -9,6 +9,7 @@
 #include <Vertex.h>
 #include <Context.h>
 #include <ContentManager.h>
+#include <ContextManager.h>
 #include <InstanceGUIDManager.h>
 
 #include <ShapeFix_ShapeTolerance.hxx>
@@ -192,8 +193,8 @@ namespace TopologicCore
 
 	Topology::~Topology()
 	{
-		m_contents.clear();
-		m_contexts.clear();
+		/*m_contents.clear();
+		m_contexts.clear();*/
 
 		/*for (AttributeMapIterator attributeMapIterator = m_attributeMap.begin();
 			attributeMapIterator != m_attributeMap.end();
@@ -201,7 +202,7 @@ namespace TopologicCore
 		{
 			delete attributeMapIterator->second;
 		}*/
-		m_attributeMap.clear();
+		//m_attributeMap.clear();
 	}
 
 	Topology::Ptr Topology::ByGeometry(Handle(Geom_Geometry) pGeometry)
@@ -323,15 +324,15 @@ namespace TopologicCore
 
 	void Topology::AddContext(const std::shared_ptr<Context>& rkContext)
 	{
-		if (std::find(m_contexts.begin(), m_contexts.end(), rkContext) == m_contexts.end())
+		/*if (std::find(m_contexts.begin(), m_contexts.end(), rkContext) == m_contexts.end())
 		{
 			m_contexts.push_back(rkContext);
-		}
+		}*/
 	}
 
 	void Topology::RemoveContext(const std::shared_ptr<Context>& rkContext)
 	{
-		m_contexts.remove(rkContext);
+		//m_contexts.remove(rkContext);
 	}
 
 	void Topology::SharedTopologies(const Topology::Ptr& kpTopology, std::list<Topology::Ptr>& rkSharedTopologies) const
@@ -392,6 +393,11 @@ namespace TopologicCore
 				}
 			}
 		}
+	}
+	
+	bool Topology::Contexts(std::list<std::shared_ptr<Context>>& rContexts) const
+	{
+		return ContextManager::GetInstance().Find(GetOcctShape(), rContexts);
 	}
 
 	//void Topology::ContentsV2(const bool kAllLevels, std::list<Topology::Ptr>& rContents) const

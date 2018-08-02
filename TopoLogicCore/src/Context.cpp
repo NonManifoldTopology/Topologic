@@ -9,7 +9,7 @@ namespace TopologicCore
 	}
 
 	Context::Context(const Topology::Ptr& kpTopology, const double kU, double kV, double kW)
-		: m_pTopology(kpTopology)
+		: m_occtShape(kpTopology->GetOcctShape())
 		, m_u(kU)
 		, m_v(kV)
 		, m_w(kW)
@@ -18,5 +18,10 @@ namespace TopologicCore
 
 	Context::~Context()
 	{
+	}
+	
+	std::shared_ptr<Topology> Context::Topology() const
+	{
+		return Topology::ByOcctShape(m_occtShape);
 	}
 }

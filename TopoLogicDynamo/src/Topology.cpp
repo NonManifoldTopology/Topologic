@@ -221,7 +221,8 @@ namespace Topologic
 	List<Context^>^ Topology::Contexts()
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		const std::list<std::shared_ptr<TopologicCore::Context>>& rkCoreContexts = pCoreTopology->Contexts();
+		std::list<std::shared_ptr<TopologicCore::Context>> rkCoreContexts;
+		pCoreTopology->Contexts(rkCoreContexts);
 
 		List<Context^>^ pContexts = gcnew List<Context^>();
 
@@ -251,10 +252,13 @@ namespace Topologic
 		// 3. Find the closest simplest topology of the copy topology
 		TopologicCore::Topology::Ptr closestSimplestSubshape = pCoreCopyParentTopology->ClosestSimplestSubshape(pCoreContentCenterOfMass);
 
-		// 4. Add contentTopology as the content of the closest simplest topology
-		closestSimplestSubshape->AddContent(pCoreContentTopology);
+		// 4. Copy the content topology
+		TopologicCore::Topology::Ptr pCoreCopyContentTopology = pCoreContentTopology->Copy();
 
-		// 5. Return the copy topology
+		// 5. Add contentTopology as the content of the closest simplest topology
+		closestSimplestSubshape->AddContent(pCoreCopyContentTopology);
+
+		// 6. Return the copy topology
 		return Topology::ByCoreTopology(pCoreCopyParentTopology);
 	}
 

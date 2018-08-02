@@ -153,11 +153,13 @@
     <ClInclude Include="include\Aperture.h" />
     <ClInclude Include="include\AperturePath.h" />
     <ClInclude Include="include\Attribute.h" />
+    <ClInclude Include="include\AttributeManager.h" />
     <ClInclude Include="include\Cell.h" />
     <ClInclude Include="include\CellComplex.h" />
     <ClInclude Include="include\Cluster.h" />
     <ClInclude Include="include\ContentManager.h" />
     <ClInclude Include="include\Context.h" />
+    <ClInclude Include="include\ContextManager.h" />
     <ClInclude Include="include\DualGraph.h" />
     <ClInclude Include="include\Edge.h" />
     <ClInclude Include="include\Face.h" />
@@ -170,6 +172,7 @@
     <ClInclude Include="include\Wire.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="include\AttributeManager.cpp" />
     <ClCompile Include="src\Aperture.cpp" />
     <ClCompile Include="src\AperturePath.cpp" />
     <ClCompile Include="src\Cell.cpp" />
@@ -177,6 +180,7 @@
     <ClCompile Include="src\Cluster.cpp" />
     <ClCompile Include="src\ContentManager.cpp" />
     <ClCompile Include="src\Context.cpp" />
+    <ClCompile Include="src\ContextManager.cpp" />
     <ClCompile Include="src\DualGraph.cpp" />
     <ClCompile Include="src\Edge.cpp" />
     <ClCompile Include="src\Face.cpp" />

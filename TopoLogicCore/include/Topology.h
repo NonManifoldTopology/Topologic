@@ -259,24 +259,6 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <returns></returns>
-		std::list<Topology::Ptr>& Contents()
-		{
-			return m_contents;
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		const std::list<Topology::Ptr>& Contents() const
-		{
-			return m_contents;
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
 		/// <param name="kAllLevels"></param>
 		/// <param name="rContents"></param>
 		TOPOLOGIC_API void Contents(const bool kAllLevels, std::list<Topology::Ptr>& rContents) const;
@@ -285,26 +267,14 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		std::list<std::shared_ptr<Context>>& Contexts()
-		{
-			return m_contexts;
-		}
+		TOPOLOGIC_API bool Contexts(std::list<std::shared_ptr<Context>>& rContexts) const;
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		const std::list<std::shared_ptr<Context>>& Contexts() const
-		{
-			return m_contexts;
-		}
-
-		/// <summary>
+		/*/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kAllLevels"></param>
 		/// <param name="rContents"></param>
-		/// <returns></returns>
+		/// <returns></returns>*/
 		//TOPOLOGIC_API void ContentsV2(const bool kAllLevels, std::list<Topology::Ptr>& rContents) const;
 
 
@@ -357,7 +327,7 @@ namespace TopologicCore
 		/// <param name="rImmediateMembers">The immediate members</param>
 		TOPOLOGIC_API void ImmediateMembers(std::list<Topology::Ptr>& rImmediateMembers) const;
 
-		/// <summary>
+		/*/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
@@ -367,7 +337,7 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		TOPOLOGIC_API const AttributeMap& Attributes() const { return m_attributeMap; }
+		TOPOLOGIC_API const AttributeMap& Attributes() const { return m_attributeMap; }*/
 
 		/// <summary>
 		/// 
@@ -592,14 +562,14 @@ namespace TopologicCore
 		/// <returns></returns>
 		TopoDS_Shape FixBooleanOperandFace(const TopoDS_Shape& rkOcctShape, BOPCol_DataMapOfShapeShape& rMapFaceToFixedFace);
 
-		AttributeMap m_attributeMap; // to be replaced by OCCT OCAF
+		//AttributeMap m_attributeMap; // to be replaced by OCCT OCAF
 		int m_dimensionality;
 		
 
 		// TODO: may cause cyclic dependencies, may need weak_ptr
-		std::list<Topology::Ptr> m_contents;
+		/*std::list<Topology::Ptr> m_contents;
 		std::list<std::shared_ptr<Context>> m_contexts;
-		std::string m_guid;
+		std::string m_guid;*/
 	};
 
 	template <class Subclass>

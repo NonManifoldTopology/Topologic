@@ -117,7 +117,6 @@ namespace TopologicStructure
 		, m_pTopology(nullptr)
 	{
 		RegisterFactory(LoadFactory::GetGUID(), gcnew LoadFactory());
-
 	}
 
 	Load::~Load()

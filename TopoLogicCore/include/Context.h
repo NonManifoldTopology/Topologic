@@ -35,7 +35,7 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <returns>The associated topology</returns>
-		TOPOLOGIC_API std::shared_ptr<Topology> Topology() const { return m_pTopology; }
+		TOPOLOGIC_API std::shared_ptr<Topology> Topology() const;
 
 		/// <summary>
 		/// Returns the U parameter.
@@ -56,7 +56,7 @@ namespace TopologicCore
 		TOPOLOGIC_API double W() const { return m_w; }
 
 	protected:
-		std::shared_ptr<TopologicCore::Topology> m_pTopology;
+		TopoDS_Shape m_occtShape;
 		double m_u;
 		double m_v;
 		double m_w;
