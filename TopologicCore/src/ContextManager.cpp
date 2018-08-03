@@ -1,5 +1,6 @@
 #include <ContextManager.h>
 #include <Context.h>
+#include <ContentManager.h>
 #include <Topology.h>
 
 namespace TopologicCore
@@ -13,6 +14,8 @@ namespace TopologicCore
 		}
 
 		m_occtShapeToContextsMap[rkOcctShape].push_back(kpContext);
+
+		// Do not add content here, it would create a cyclic recursion
 	}
 
 	void ContextManager::Remove(const TopoDS_Shape& rkOcctShape, const TopoDS_Shape& rkOcctContextShape)
@@ -25,6 +28,8 @@ namespace TopologicCore
 				return kpContext->Topology()->GetOcctShape().IsSame(rkOcctContextShape);
 			});
 		}
+
+		ContentManager::GetInstance().Remove(rkOcctContextShape, rkOcctShape);
 	}
 
 	bool ContextManager::Find(const TopoDS_Shape& rkOcctShape, std::list<std::shared_ptr<Context>>& rContents)
@@ -43,6 +48,12 @@ namespace TopologicCore
 	{
 		if (m_occtShapeToContextsMap.find(rkOcctShape) != m_occtShapeToContextsMap.end())
 		{
+			// Remove from all contents.
+			// Removal is find: it will not do anything if the item is no longer there.
+			for (const Context::Ptr& kpContext : m_occtShapeToContextsMap[rkOcctShape])
+			{
+				ContentManager::GetInstance().Remove(kpContext->Topology()->GetOcctShape(), rkOcctShape);
+			}
 			m_occtShapeToContextsMap[rkOcctShape].clear();
 			m_occtShapeToContextsMap.erase(rkOcctShape);
 		}
@@ -51,5 +62,8 @@ namespace TopologicCore
 	void ContextManager::ClearAll()
 	{
 		m_occtShapeToContextsMap.clear();
+
+		// Also remove contents. Removal is find: it will not do anything if the item is no longer there.
+		ContentManager::GetInstance().ClearAll();
 	}
 }

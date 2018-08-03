@@ -12,10 +12,25 @@ namespace Topologic
 {
 	Aperture^ Aperture::ByTopologyContext(Topologic::Topology^ topology, Context^ context)
 	{
+		// 1. Copy topology
+		TopologicCore::Topology::Ptr pCoreTopology = 
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
+		TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->Copy();
+
+		// 2. Copy context
+		TopologicCore::Topology::Ptr pCoreContextTopology =
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(context->Topology()->GetCoreTopologicalQuery());
+		TopologicCore::Topology::Ptr pCoreCopyContextTopology = pCoreContextTopology->Copy();
+		TopologicCore::Context::Ptr pCoreCopyContext = TopologicCore::Context::ByTopologyParameters(
+			pCoreCopyContextTopology,
+			context->U(), context->V(), context->W());
+		
+		// 3. Copy topology becomes the content of copy context's topology
 		std::shared_ptr<TopologicCore::Aperture> pCoreAperture = TopologicCore::Aperture::ByTopologyContext(
-			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery()),
-			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Context>(context->GetCoreTopologicalQuery())
+			pCoreCopyTopology,
+			pCoreCopyContext
 			);
+
 		return gcnew Aperture(pCoreAperture);
 	}
 
@@ -33,10 +48,11 @@ namespace Topologic
 	{
 		std::shared_ptr<TopologicCore::Aperture> pCoreAperture = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Aperture>(GetCoreTopologicalQuery());
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = pCoreAperture->Topology();
-		return Topology::ByCoreTopology(pCoreTopology);
+		Topologic::Topology^ topology = Topology::ByCoreTopology(pCoreTopology);
+		return topology;
 	}
 
-	bool Aperture::IsOpen()
+	/*bool Aperture::IsOpen()
 	{
 		std::shared_ptr<TopologicCore::Aperture> pCoreAperture = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Aperture>(GetCoreTopologicalQuery());
 		return pCoreAperture->IsOpen();
@@ -134,7 +150,7 @@ namespace Topologic
 		};
 		pCoreAperture->Close(coreTopologies);
 		return this;
-	}
+	}*/
 
 	Aperture::Aperture(const std::shared_ptr<TopologicCore::Aperture>& kpCoreAperture)
 		: m_pCoreAperture(new std::shared_ptr<TopologicCore::Aperture>(kpCoreAperture))

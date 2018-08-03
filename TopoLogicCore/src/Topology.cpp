@@ -319,20 +319,17 @@ namespace TopologicCore
 
 	void Topology::RemoveContent(const Topology::Ptr& rkTopology)
 	{
-		ContentManager::GetInstance().Add(GetOcctShape(), rkTopology);
+		ContentManager::GetInstance().Remove(GetOcctShape(), rkTopology->GetOcctShape());
 	}
 
 	void Topology::AddContext(const std::shared_ptr<Context>& rkContext)
 	{
-		/*if (std::find(m_contexts.begin(), m_contexts.end(), rkContext) == m_contexts.end())
-		{
-			m_contexts.push_back(rkContext);
-		}*/
+		ContextManager::GetInstance().Add(GetOcctShape(), rkContext);
 	}
 
 	void Topology::RemoveContext(const std::shared_ptr<Context>& rkContext)
 	{
-		//m_contexts.remove(rkContext);
+		ContextManager::GetInstance().Remove(GetOcctShape(), rkContext->Topology()->GetOcctShape());
 	}
 
 	void Topology::SharedTopologies(const Topology::Ptr& kpTopology, std::list<Topology::Ptr>& rkSharedTopologies) const

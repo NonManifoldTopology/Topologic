@@ -42,7 +42,7 @@ namespace Topologic
 		/// <returns name="Topology">The underlying topology</returns>
 		Topologic::Topology^ Topology();
 
-		/// <summary>
+		/*/// <summary>
 		/// Checks if any aperture path is open.
 		/// </summary>
 		/// <returns name="bool">True if the aperture is open</returns>
@@ -85,7 +85,7 @@ namespace Topologic
 		/// </summary>
 		/// <param name="topologies">Topologies</param>
 		/// <returns name="Aperture">An aperture</returns>
-		Aperture^ Close(List<Topologic::Topology^>^ topologies);
+		Aperture^ Close(List<Topologic::Topology^>^ topologies);*/
 
 		property Object^ Geometry
 		{

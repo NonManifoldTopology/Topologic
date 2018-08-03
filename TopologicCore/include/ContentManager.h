@@ -26,7 +26,8 @@ namespace TopologicCore
 
 		void Add(const TopoDS_Shape& rkOcctShape, const std::shared_ptr<Topology>& kpContentTopology);
 
-		void Remove(const TopoDS_Shape& rkOcctShape, const std::shared_ptr<Topology>& kpContentTopology);
+		//void Remove(const TopoDS_Shape& rkOcctShape, const std::shared_ptr<Topology>& kpContentTopology);
+		void Remove(const TopoDS_Shape& rkOcctShape, const TopoDS_Shape& rkOcctContentTopology);
 
 		bool Find(const TopoDS_Shape& rkOcctShape, std::list<std::shared_ptr<Topology>>& rContents);
 
