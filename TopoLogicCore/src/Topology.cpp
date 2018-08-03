@@ -314,7 +314,14 @@ namespace TopologicCore
 
 	void Topology::AddContent(const Topology::Ptr& rkTopology)
 	{
-		ContentManager::GetInstance().Add(GetOcctShape(), rkTopology);
+		// 1. Get the center of mass of the content
+		Vertex::Ptr pCenterOfMass = rkTopology->CenterOfMass();
+
+		// 2. Find the closest simplest topology of the copy topology
+		Topology::Ptr pClosestSimplestSubshape = ClosestSimplestSubshape(pCenterOfMass);
+
+		// 3. Register to ContentManager
+		ContentManager::GetInstance().Add(pClosestSimplestSubshape->GetOcctShape(), rkTopology);
 	}
 
 	void Topology::RemoveContent(const Topology::Ptr& rkTopology)
@@ -324,6 +331,13 @@ namespace TopologicCore
 
 	void Topology::AddContext(const std::shared_ptr<Context>& rkContext)
 	{
+		// 1. Get the center of mass of the content
+		Vertex::Ptr pCenterOfMass = CenterOfMass();
+
+		// 2. Find the closest simplest topology of the copy topology
+		Topology::Ptr pClosestSimplestSubshape = rkContext->Topology()->ClosestSimplestSubshape(pCenterOfMass);
+
+		// 3. Register to ContentManager
 		ContextManager::GetInstance().Add(GetOcctShape(), rkContext);
 	}
 

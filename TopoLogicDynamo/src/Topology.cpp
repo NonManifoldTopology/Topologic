@@ -237,7 +237,6 @@ namespace Topologic
 	}
 
 	Topology^ Topology::AddContent(Topology^ contentTopology)
-		//Dictionary<String^, Object^>^ AddContent(Topology^ thisTopology, Topology^ contentTopology, Topology^ parentTopology)
 	{
 		// 1. Copy this topology
 		TopologicCore::Topology::Ptr pCoreParentTopology =
@@ -245,24 +244,27 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreCopyParentTopology = pCoreParentTopology->Copy();
 		
 		// 2. Get the center of mass of the contentTopology
-		TopologicCore::Topology::Ptr pCoreContentTopology =
-			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(contentTopology->GetCoreTopologicalQuery());
-		TopologicCore::Vertex::Ptr pCoreContentCenterOfMass = pCoreContentTopology->CenterOfMass();
+		// MOVED to Core
+		/*TopologicCore::Vertex::Ptr pCoreContentCenterOfMass = pCoreContentTopology->CenterOfMass();*/
 
 		// 3. Find the closest simplest topology of the copy topology
-		TopologicCore::Topology::Ptr closestSimplestSubshape = pCoreCopyParentTopology->ClosestSimplestSubshape(pCoreContentCenterOfMass);
+		// MOVED to Core
+		//TopologicCore::Topology::Ptr closestSimplestSubshape = pCoreCopyParentTopology->ClosestSimplestSubshape(pCoreContentCenterOfMass);
 
 		// 4. Copy the content topology
+		TopologicCore::Topology::Ptr pCoreContentTopology =
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(contentTopology->GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreCopyContentTopology = pCoreContentTopology->Copy();
 
+		pCoreCopyParentTopology->AddContent(pCoreCopyContentTopology);
 		// 5. Add contentTopology as the content of the closest simplest topology
-		closestSimplestSubshape->AddContent(pCoreCopyContentTopology);
+		//closestSimplestSubshape->AddContent(pCoreCopyContentTopology);
 
 		// 6. Add closestSimplestSubshape as the context of pCoreCopyContentTopology
-		const double kDefaultParameter = 0.0;
+		const double kDefaultParameter = 0.0; // TODO: calculate the parameters
 		pCoreCopyContentTopology->AddContext(
 			TopologicCore::Context::ByTopologyParameters(
-				closestSimplestSubshape, 
+				pCoreCopyParentTopology,
 				kDefaultParameter, kDefaultParameter, kDefaultParameter
 			));
 
@@ -287,7 +289,7 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreCopyInstanceTopology = pCoreInstanceTopology->Copy();
 
 		// 2. Get the center of mass of the instanceTopology
-		TopologicCore::Vertex::Ptr pCoreInstanceCenterOfMass = pCoreInstanceTopology->CenterOfMass();
+		//TopologicCore::Vertex::Ptr pCoreInstanceCenterOfMass = pCoreInstanceTopology->CenterOfMass();
 
 		// 3. Copy the context topology
 		TopologicCore::Topology::Ptr pCoreContextTopology =
@@ -295,11 +297,14 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreCopyContextTopology = pCoreContextTopology->Copy();
 
 		// 4. Find the closest simplest topology of the copy topology
-		TopologicCore::Topology::Ptr closestSimplestSubshape = pCoreCopyContextTopology->ClosestSimplestSubshape(pCoreInstanceCenterOfMass);
+		//TopologicCore::Topology::Ptr closestSimplestSubshape = pCoreCopyContextTopology->ClosestSimplestSubshape(pCoreInstanceCenterOfMass);
 
 		// 5. Add closestSimplestSubshape as the contex of the copyInstanceTopology
-		TopologicCore::Context::Ptr pCoreContext = TopologicCore::Context::ByTopologyParameters(closestSimplestSubshape, context->U(), context->V(), context->W());
+		//TopologicCore::Context::Ptr pCoreContext = TopologicCore::Context::ByTopologyParameters(closestSimplestSubshape, context->U(), context->V(), context->W());
+		TopologicCore::Context::Ptr pCoreContext = TopologicCore::Context::ByTopologyParameters(pCoreCopyContextTopology, context->U(), context->V(), context->W());
 		pCoreCopyInstanceTopology->AddContext(pCoreContext);
+
+		pCoreCopyContextTopology->AddContent(pCoreCopyInstanceTopology);
 
 		// 7. Return the copy topology
 		return Topology::ByCoreTopology(pCoreInstanceTopology);
