@@ -62,12 +62,6 @@ namespace Topologic {
 		/// <returns name="double"></returns>
 		double Area();
 
-		/*/// <summary>
-		/// 
-		/// </summary>
-		/// <returns name="Vertex"></returns>
-		Vertex^ CenterOfMass();*/
-
 		/// <summary>
 		/// A factory method that creates a face by a closed wire.
 		/// </summary>
@@ -90,6 +84,13 @@ namespace Topologic {
 		/// <param name="surface">The surface</param>
 		/// <returns name="Face">The created face</returns>
 		static Face^ BySurface(Autodesk::DesignScript::Geometry::Surface^ surface);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="vertices"></param>
+		/// <returns></returns>
+		static Face^ ByInterpolation(IEnumerable<IEnumerable<Vertex^>^>^ vertices);
 
 		/// <summary>
 		/// Returns the shared edges between two faces. 

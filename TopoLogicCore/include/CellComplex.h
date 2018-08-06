@@ -52,6 +52,7 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="rCells"></param>
 		TOPOLOGIC_API void Faces(std::list<std::shared_ptr<Face>>& rFaces) const;
+
 		/// <summary>
 		/// 
 		/// </summary>

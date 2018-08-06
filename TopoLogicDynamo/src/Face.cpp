@@ -123,6 +123,22 @@ namespace Topologic
 		return gcnew Face(surface);
 	}
 
+	Face ^ Face::ByInterpolation(IEnumerable<IEnumerable<Vertex^>^>^ vertices)
+	{
+		std::list<std::list<TopologicCore::Vertex::Ptr>> coreVertices;
+		for each(IEnumerable<Vertex^>^ verticesList in vertices)
+		{
+			std::list<TopologicCore::Vertex::Ptr> coreVerticesList;
+			for each(Vertex^ vertex in verticesList)
+			{
+				coreVerticesList.push_back(TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex->GetCoreTopologicalQuery()));
+			}
+			coreVertices.push_back(coreVerticesList);
+		}
+		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Face::ByInterpolation(coreVertices);
+		return gcnew Face(pCoreFace);
+	}
+
 	List<Edge^>^ Face::SharedEdges(Face^ face)
 	{
 		TopologicCore::Face::Ptr pCoreFace1 = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());

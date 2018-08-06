@@ -1,12 +1,11 @@
 #include <Face.h>
 #include <Edge.h>
-//#include <GlobalCluster.h>
 #include <Cell.h>
 #include <Shell.h>
 #include <Vertex.h>
 #include <Wire.h>
 #include <FaceFactory.h>
-//#include <OcctCounterAttribute.h>
+#include <Utilities.h>
 
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepAlgoAPI_Section.hxx>
@@ -15,6 +14,7 @@
 #include <BSplCLib.hxx>
 #include <BRepGProp.hxx>
 #include <Geom_BSplineSurface.hxx>
+#include <GeomAPI_PointsToBSplineSurface.hxx>
 #include <GeomConvert.hxx>
 #include <Geom_RectangularTrimmedSurface.hxx>
 #include <GeomLProp_SLProps.hxx>
@@ -363,6 +363,44 @@ namespace TopologicCore
 				}
 			}
 		}
+	}
+
+	Face::Ptr Face::ByInterpolation(const std::list<std::list<TopologicCore::Vertex::Ptr>>& rkVertices)
+	{
+		// Check if all vertex lists have the same length
+		int rowLength = 0;
+		bool firstRow = true;
+		for(const std::list<TopologicCore::Vertex::Ptr>& rkVerticesRow : rkVertices)
+		{ 
+			if (firstRow)
+			{
+				rowLength = (int) rkVerticesRow.size();
+				firstRow = false;
+			}
+			else
+			{
+				if (rowLength != rkVerticesRow.size())
+				{
+					throw std::exception("Rows have inequal lengths");
+				}
+			}
+		}
+		int columnLength = (int) rkVertices.size();
+
+		TColgp_Array2OfPnt occtPoints(1, columnLength, 1, rowLength);
+		int i = 1;
+		for (const std::list<TopologicCore::Vertex::Ptr>& rkVerticesRow : rkVertices)
+		{
+			int j = 1;
+			for (const TopologicCore::Vertex::Ptr& kpVertex: rkVerticesRow)
+			{
+				occtPoints.SetValue(i, j, kpVertex->Point()->Pnt());
+				j++;
+			}
+			i++;
+		}
+		Handle(Geom_Surface) pSurface = GeomAPI_PointsToBSplineSurface(occtPoints).Surface();
+		return Face::BySurface(pSurface);
 	}
 
 	Wire::Ptr Face::OuterBoundary() const

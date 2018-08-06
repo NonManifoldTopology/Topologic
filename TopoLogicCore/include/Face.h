@@ -122,6 +122,38 @@ namespace TopologicCore
 		/// <returns></returns>
 		static std::shared_ptr<Face> BySurface(Handle(Geom_Surface) pOcctSurface);
 
+		/*/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkPoles"></param>
+		/// <param name="rkWeights"></param>
+		/// <param name="rkUKnots"></param>
+		/// <param name="rkVKnots"></param>
+		/// <param name="rkUMultiplicities"></param>
+		/// <param name="rkVMultiplicities"></param>
+		/// <param name="kUDegree"></param>
+		/// <param name="kVDegree"></param>
+		/// <param name="kIsUPeriodic"></param>
+		/// <param name="kIsVPeriodic"></param>
+		/// <param name="kIsRational"></param>
+		/// <param name="kpOuterWire"></param>
+		/// <param name="rkInnerWires"></param>
+		/// <returns></returns>
+		static TOPOLOGIC_API std::shared_ptr<Face> BySurface(
+			const std::list<std::list<std::shared_ptr<Vertex>>>& rkPoles,
+			const std::list<std::list<double>>& rkWeights,
+			const std::list<double>& rkUKnots,
+			const std::list<double>& rkVKnots,
+			const std::list<int>& rkUMultiplicities,
+			const std::list<int>& rkVMultiplicities,
+			const int kUDegree,
+			const int kVDegree,
+			const bool kIsUPeriodic,
+			const bool kIsVPeriodic,
+			const bool kIsRational,
+			const std::shared_ptr<Wire>& kpOuterWire,
+			const std::list<std::shared_ptr<Wire>>& rkInnerWires);*/
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -153,6 +185,13 @@ namespace TopologicCore
 			const bool kIsRational,
 			const std::shared_ptr<Wire>& kpOuterWire,
 			const std::list<std::shared_ptr<Wire>>& rkInnerWires);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="coreVertices"></param>
+		/// <returns></returns>
+		static TOPOLOGIC_API Face::Ptr ByInterpolation(const std::list<std::list<std::shared_ptr<Vertex>>>& rkVertices);
 
 		/// <summary>
 		/// 
