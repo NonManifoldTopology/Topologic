@@ -5,6 +5,7 @@
 #include <Shell.h>
 #include <Vertex.h>
 #include <Wire.h>
+#include <FaceFactory.h>
 //#include <OcctCounterAttribute.h>
 
 #include <BRepBuilderAPI_MakeFace.hxx>
@@ -315,7 +316,7 @@ namespace TopologicCore
 			{
 				if (occtEdgeIterator1.Value().IsSame(occtEdgeIterator2.Value()))
 				{
-					Edge::Ptr pEdge = TopologicalQuery::Downcast<Edge>(Topology::ByOcctShape(occtEdgeIterator1.Value()));
+					Edge::Ptr pEdge = std::make_shared<Edge>(TopoDS::Edge(occtEdgeIterator1.Value()));
 					rEdges.push_back(pEdge);
 				}
 			}
@@ -357,10 +358,7 @@ namespace TopologicCore
 			{
 				if (occtVertexIterator1.Value().IsSame(occtVertexIterator2.Value()))
 				{
-					/*TDF_Label occtChildLabel;
-					LabelManager::GetInstance().FindLabelByShape(occtVertexIterator1.Value(), occtChildLabel);
-					Vertex::Ptr pVertex = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(occtVertexIterator1.Value(), occtChildLabel));*/
-					Vertex::Ptr pVertex = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(occtVertexIterator1.Value()));
+					Vertex::Ptr pVertex = std::make_shared<Vertex>(TopoDS::Vertex(occtVertexIterator1.Value()));
 					rVertices.push_back(pVertex);
 				}
 			}
@@ -464,7 +462,7 @@ namespace TopologicCore
 		{
 			Throw(occtTrimMakeFace);
 		}
-		return TopologicalQuery::Downcast<Face>(Topology::ByOcctShape(occtTrimMakeFace.Shape()));
+		return std::make_shared<Face>(TopoDS::Face(occtTrimMakeFace.Shape()));
 	}
 
 	void Face::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
@@ -508,9 +506,7 @@ namespace TopologicCore
 		: Topology(2, rkOcctFace, rkGuid.compare("") == 0 ? GetClassGUID() : rkGuid)
 		, m_occtFace(rkOcctFace)
 	{
-		//GlobalCluster::GetInstance().Add(this);
-		/*SetOcctLabel(rkOcctLabel);
-		OcctCounterAttribute::IncreaseCounter(GetOcctLabel());*/
+		RegisterFactory(GetClassGUID(), std::make_shared<FaceFactory>());
 	}
 
 	Face::~Face()

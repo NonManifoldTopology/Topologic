@@ -6,10 +6,20 @@
 
 namespace Topologic
 {
-	DualGraph^ DualGraph::ByCellComplex(CellComplex ^ cellComplex)
+	DualGraph^ DualGraph::ByCellComplex(
+		CellComplex^ cellComplex,
+		bool useCells,
+		bool useNonManifoldFaces,
+		bool useManifoldFaces,
+		bool useApertures)
 	{
 		TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(cellComplex->GetCoreTopologicalQuery());
-		TopologicCore::DualGraph::Ptr pCoreDualGraph = TopologicCore::DualGraph::ByCellComplex(pCoreCellComplex);
+		TopologicCore::DualGraph::Ptr pCoreDualGraph = TopologicCore::DualGraph::ByCellComplex(
+			pCoreCellComplex, 
+			useCells,
+			useNonManifoldFaces,
+			useManifoldFaces,
+			useApertures);
 
 		return gcnew DualGraph(pCoreDualGraph);
 	}

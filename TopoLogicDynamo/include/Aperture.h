@@ -8,6 +8,8 @@ using namespace System::Collections::Generic;
 
 namespace Topologic
 {
+	ref class Face;
+	ref class Wire;
 	ref class Context;
 
 	/// <summary>
@@ -35,6 +37,16 @@ namespace Topologic
 		/// <param name="openStatus">An open status</param>
 		/// <returns name="Aperture">An aperture</returns>
 		static Aperture^ ByTopologyContextStatus(Topology^ topology, Context^ context, bool openStatus);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="hostFace"></param>
+		/// <param name="apertureBoundary"></param>
+		/// <param name="link"></param>
+		/// <param name="open"></param>
+		/// <returns></returns>
+		static Aperture^ ByBoundaryWithinHost(Face^ hostFace, Wire^ apertureBoundary, bool link, bool open);
 
 		/// <summary>
 		/// Returns the underlying topology.

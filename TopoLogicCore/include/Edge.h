@@ -18,6 +18,15 @@ namespace TopologicCore
 	class Vertex;
 	class Wire;
 
+	class EdgeGUID
+	{
+	public:
+		static std::string Get()
+		{
+			return std::string("1fc6e6e1-9a09-4c0a-985d-758138c49e35");
+		}
+	};
+
 	class Edge : public Topology
 	{
 	public:
@@ -172,7 +181,7 @@ namespace TopologicCore
 		virtual std::string GetTypeAsString() const;
 
 		virtual std::string GetClassGUID() const {
-			return std::string("1fc6e6e1-9a09-4c0a-985d-758138c49e35");
+			return EdgeGUID::Get();
 		}
 
 	protected:

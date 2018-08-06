@@ -22,6 +22,6 @@ namespace TopologicCore
 	
 	std::shared_ptr<Topology> Context::Topology() const
 	{
-		return Topology::ByOcctShape(m_occtShape);
+		return Topology::ByOcctShape(m_occtShape, "");
 	}
 }

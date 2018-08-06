@@ -6,15 +6,11 @@
 #include <Wire.h>
 #include <Face.h>
 #include <Shell.h>
+#include <ClusterFactory.h>
 
 #include <TopoDS_Builder.hxx>
 #include <TopoDS_UnCompatibleShapes.hxx>
 #include <TopoDS_FrozenShape.hxx>
-
-
-
-
-
 #include <BRep_Builder.hxx>
 #include <BRepAlgoAPI_Common.hxx>
 #include <BRepAlgoAPI_Section.hxx>
@@ -186,7 +182,7 @@ namespace TopologicCore
 		, m_occtCompound(rkOcctCompound)
 	{
 		// This constructor does not initialise the compound with MakeCompound.
-
+		RegisterFactory(GetClassGUID(), std::make_shared<ClusterFactory>());
 	}
 
 	Cluster::~Cluster()

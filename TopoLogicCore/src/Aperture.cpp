@@ -1,6 +1,9 @@
 #include <Aperture.h>
 #include <Context.h>
 #include <Vertex.h>
+#include <Face.h>
+#include <Wire.h>
+#include <ApertureFactory.h>
 
 #include <BRepGProp.hxx>
 #include <GProp_GProps.hxx>
@@ -225,6 +228,12 @@ namespace TopologicCore
 		return TOPOLOGY_APERTURE;
 	}
 
+	Aperture::Ptr Aperture::ByBoundaryWithinHost(const Face::Ptr& kpHostFace, const Wire::Ptr& kpApertureBoundary, const bool kLink, const bool kOpenStatus)
+	{
+		Face::Ptr trimmedFace = kpHostFace->Trim(kpApertureBoundary);
+		return std::make_shared<Aperture>(trimmedFace, nullptr, kOpenStatus);
+	}
+
 	Topology::Ptr Aperture::Topology() const
 	{
 		assert(m_pTopology != nullptr && "The underlying topology is null.");
@@ -236,20 +245,24 @@ namespace TopologicCore
 	}
 
 	Aperture::Aperture(const Topology::Ptr& kpTopology, const std::shared_ptr<Context>& kpContext, const bool kOpenStatus, const std::string& rkGuid)
-		: TopologicCore::Topology(kpTopology->Dimensionality(), kpTopology->GetOcctShape(), rkGuid.compare("") == 0 ? kpTopology->GetClassGUID() : rkGuid)
+		: TopologicCore::Topology(kpTopology->Dimensionality(), kpTopology->GetOcctShape(), rkGuid.compare("") == 0 ? GetClassGUID() : rkGuid)
 		, m_pMainContext(kpContext)
 		, m_pTopology(kpTopology)
 	{
+		RegisterFactory(GetClassGUID(), std::make_shared<ApertureFactory>());
 		if (kpTopology == nullptr)
 		{
 			throw std::exception("A null topology is passed.");
 		}
-		if (kpContext == nullptr)
+		/*if (kpContext == nullptr)
 		{
 			throw std::exception("A null context is passed.");
-		}
+		}*/
 
-		AddContext(kpContext);
+		if (kpContext != nullptr)
+		{
+			AddContext(kpContext);
+		}
 
 		/*if (kOpenStatus)
 		{

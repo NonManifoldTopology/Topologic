@@ -5,6 +5,15 @@
 
 namespace TopologicCore
 {
+	class DualGraphGUID
+	{
+	public:
+		static std::string Get()
+		{
+			return std::string("e9ad9252-f758-4dcb-8b9a-0979f4fa8c87");
+		}
+	};
+
 	/// <summary>
 	/// <para>
 	/// A DualGraph is a Wire that is defined by the topology of a CellComplex or a Shell. It can be manifold or non-manifold.
@@ -24,7 +33,12 @@ namespace TopologicCore
 
 		virtual ~DualGraph();
 
-		static TOPOLOGIC_API DualGraph::Ptr ByCellComplex(const std::shared_ptr<CellComplex>& kpCellComplex);
+		static TOPOLOGIC_API DualGraph::Ptr ByCellComplex(
+			const std::shared_ptr<CellComplex>& kpCellComplex,
+			const bool kUseCells,
+			const bool kUseNonManifoldFaces,
+			const bool kUseManifoldFaces,
+			const bool kUseApertures);
 
 		virtual TopologyType GetType() const { return TOPOLOGY_DUALGRAPH; }
 
@@ -35,7 +49,7 @@ namespace TopologicCore
 		virtual std::string GetTypeAsString() const;
 
 		virtual std::string GetClassGUID() const {
-			return std::string("e9ad9252-f758-4dcb-8b9a-0979f4fa8c87");
+			return DualGraphGUID::Get();
 		}
 
 	protected:

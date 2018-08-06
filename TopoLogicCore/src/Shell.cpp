@@ -5,6 +5,7 @@
 #include <Wire.h>
 #include <Face.h>
 #include <Aperture.h>
+#include <ShellFactory.h>
 
 //#include <BOPAlgo_Splitter.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
@@ -111,7 +112,7 @@ namespace TopologicCore
 		for (const Face::Ptr& kShellFace : rkFaces)
 		{
 			const TopoDS_Shape& rkModifiedShape = occtSewing.Modified(kShellFace->GetOcctShape());
-			Topology::Ptr pChildTopology = Topology::ByOcctShape(rkModifiedShape);
+			Topology::Ptr pChildTopology = Topology::ByOcctShape(rkModifiedShape, "");
 			//pShell->AddChildLabel(pChildTopology, REL_CONSTITUENT);
 
 			// Map the aperture to the modifed shell faces.
@@ -717,10 +718,10 @@ namespace TopologicCore
 					const TopoDS_Vertex& rkOcctVertex3 = occtMakeVertex3.Vertex();
 					const TopoDS_Vertex& rkOcctVertex4 = occtMakeVertex4.Vertex();
 
-					Vertex::Ptr pVertex1 = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex1));
-					Vertex::Ptr pVertex2 = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex2));
-					Vertex::Ptr pVertex3 = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex3));
-					Vertex::Ptr pVertex4 = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex4));
+					Vertex::Ptr pVertex1 = std::make_shared<Vertex>(rkOcctVertex1);
+					Vertex::Ptr pVertex2 = std::make_shared<Vertex>(rkOcctVertex2);
+					Vertex::Ptr pVertex3 = std::make_shared<Vertex>(rkOcctVertex3);
+					Vertex::Ptr pVertex4 = std::make_shared<Vertex>(rkOcctVertex4);
 
 					BRepBuilderAPI_MakeEdge occtMakeEdge12(rkOcctVertex1, rkOcctVertex2);
 					BRepBuilderAPI_MakeEdge occtMakeEdge23(rkOcctVertex2, rkOcctVertex3);
@@ -772,10 +773,10 @@ namespace TopologicCore
 				const TopoDS_Vertex& rkOcctVertex3 = occtMakeVertex3.Vertex();
 				const TopoDS_Vertex& rkOcctVertex4 = occtMakeVertex4.Vertex();
 
-				Vertex::Ptr pWallVertex1 = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex1));
-				Vertex::Ptr pWallVertex2 = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex2));
-				Vertex::Ptr pWallVertex3 = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex3));
-				Vertex::Ptr pWallVertex4 = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex4));
+				Vertex::Ptr pWallVertex1 = std::make_shared<Vertex>(rkOcctVertex1);
+				Vertex::Ptr pWallVertex2 = std::make_shared<Vertex>(rkOcctVertex2);
+				Vertex::Ptr pWallVertex3 = std::make_shared<Vertex>(rkOcctVertex3);
+				Vertex::Ptr pWallVertex4 = std::make_shared<Vertex>(rkOcctVertex4);
 
 				BRepBuilderAPI_MakeEdge occtMakeEdge12(rkOcctVertex1, rkOcctVertex2);
 				BRepBuilderAPI_MakeEdge occtMakeEdge23(rkOcctVertex2, rkOcctVertex3);
@@ -812,7 +813,7 @@ namespace TopologicCore
 				//========================
 				// Map the apertures.
 				ShapeAnalysis_Surface occtSurfaceAnalysis(pOcctPanelSurface);
-				Face::Ptr pPanelFace = TopologicalQuery::Downcast<Face>(Topology::ByOcctShape(rkOcctPanelFace));
+				Face::Ptr pPanelFace = std::make_shared<Face>(rkOcctPanelFace);
 				
 				// These are all the vertices of (and the UV on) the panel (the shell of flat faces).
 				// The UV are NON-NORMALISED
@@ -1006,9 +1007,9 @@ namespace TopologicCore
 
 								// apertures before triangulation
 								const TopoDS_Wire& rkMappedApertureWire = occtMakeWire.Wire();
-								wires.push_back(TopologicalQuery::Downcast<Wire>(Topology::ByOcctShape(rkMappedApertureWire)));
+								wires.push_back(std::make_shared<Wire>(rkMappedApertureWire));
 								BRepBuilderAPI_MakeFace occtMakeFace(pOcctPanelSurface, rkMappedApertureWire);
-								faces.push_back(TopologicalQuery::Downcast<Face>(Topology::ByOcctShape(occtMakeFace)));
+								faces.push_back(std::make_shared<Face>(occtMakeFace));
 							}
 						}
 
@@ -1077,7 +1078,7 @@ namespace TopologicCore
 								BRepBuilderAPI_MakeWire occtMakeMappedApertureWire;
 								occtMakeMappedApertureWire.Add(occtMappedApertureEdges);
 								BRepBuilderAPI_MakeFace occtMakeMappedApertureFace(pOcctPanelSurface, occtMakeMappedApertureWire.Wire());
-								Face::Ptr mappedApertureFace = TopologicalQuery::Downcast<Face>(Topology::ByOcctShape(occtMakeMappedApertureFace.Face()));
+								Face::Ptr mappedApertureFace = std::make_shared<Face>(occtMakeMappedApertureFace.Face());
 								aperturePanels.Append(occtMakeMappedApertureFace.Shape());
 
 								//faces.push_back(mappedApertureFace);
@@ -1153,7 +1154,7 @@ namespace TopologicCore
 
 				// This should be a face in the output shell
 				TopoDS_Shape occtModifiedShape = occtSewing.ModifiedSubShape(rkKeyShape);
-				Topology::Ptr modifiedShape = Topology::ByOcctShape(occtModifiedShape);
+				Topology::Ptr modifiedShape = Topology::ByOcctShape(occtModifiedShape, "");
 
 				//pOutputShell->AddChildLabel(modifiedShape, REL_CONSTITUENT);
 
@@ -1164,7 +1165,7 @@ namespace TopologicCore
 					occtApertureIterator.Next())
 				{
 					const TopoDS_Shape& rkOcctAperture = occtApertureIterator.Value();
-					Topology::Ptr aperture = Topology::ByOcctShape(rkOcctAperture);
+					Topology::Ptr aperture = Topology::ByOcctShape(rkOcctAperture, "");
 					//modifiedShape->AddChildLabel(aperture, REL_APERTURE);
 				}
 			}
@@ -1249,9 +1250,7 @@ namespace TopologicCore
 		: Topology(2, rkOcctShell, rkGuid.compare("") == 0 ? GetClassGUID() : rkGuid)
 		, m_occtShell(rkOcctShell)
 	{
-		//GlobalCluster::GetInstance().Add(this);
-		/*SetOcctLabel(rkOcctLabel);
-		OcctCounterAttribute::IncreaseCounter(GetOcctLabel());*/
+		RegisterFactory(GetClassGUID(), std::make_shared<ShellFactory>());
 	}
 
 	Shell::~Shell()

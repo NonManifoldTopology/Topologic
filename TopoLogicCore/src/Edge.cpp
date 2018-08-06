@@ -1,6 +1,7 @@
 #include <Edge.h>
 #include <Vertex.h>
 #include <Wire.h>
+#include <EdgeFactory.h>
 
 #include <BRepGProp.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
@@ -349,7 +350,7 @@ namespace TopologicCore
 		: Topology(1, rkOcctEdge, rkGuid.compare("") == 0 ? GetClassGUID() : rkGuid)
 		, m_occtEdge(rkOcctEdge)
 	{
-
+		RegisterFactory(GetClassGUID(), std::make_shared<EdgeFactory>());
 	}
 
 	Edge::~Edge()

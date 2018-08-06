@@ -4,13 +4,19 @@
 #include <Face.h>
 #include <Edge.h>
 #include <Vertex.h>
+#include <DualGraphFactory.h>
 
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <StdFail_NotDone.hxx>
 
 namespace TopologicCore
 {
-	DualGraph::Ptr DualGraph::ByCellComplex(const CellComplex::Ptr& kpCellComplex)
+	DualGraph::Ptr DualGraph::ByCellComplex(
+		const CellComplex::Ptr& kpCellComplex,
+		const bool kUseCells,
+		const bool kUseNonManifoldFaces,
+		const bool kUseManifoldFaces,
+		const bool kUseApertures)
 	{
 		// Get the non-manifold faces
 		std::list<Face::Ptr> nonManifoldFaces;
@@ -57,7 +63,7 @@ namespace TopologicCore
 	DualGraph::DualGraph(const TopoDS_Wire& rkOcctWire, const std::string& rkGuid)
 		: Wire(rkOcctWire, rkGuid.compare("") == 0 ? GetClassGUID() : rkGuid)
 	{
-
+		RegisterFactory(GetClassGUID(), std::make_shared<DualGraphFactory>());
 	}
 
 	DualGraph::~DualGraph()

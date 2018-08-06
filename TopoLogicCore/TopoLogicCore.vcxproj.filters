@@ -29,6 +29,42 @@
     <ClInclude Include="include\ContextManager.h">
       <Filter>Context</Filter>
     </ClInclude>
+    <ClInclude Include="include\TopologyFactoryDictionary.h">
+      <Filter>Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TopologyFactory.h">
+      <Filter>Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\VertexFactory.h">
+      <Filter>Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ClusterFactory.h">
+      <Filter>Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DualGraphFactory.h">
+      <Filter>Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EdgeFactory.h">
+      <Filter>Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\FaceFactory.h">
+      <Filter>Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ShellFactory.h">
+      <Filter>Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\WireFactory.h">
+      <Filter>Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ApertureFactory.h">
+      <Filter>Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CellComplexFactory.h">
+      <Filter>Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CellFactory.h">
+      <Filter>Factory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
@@ -45,14 +81,47 @@
     <ClCompile Include="src\DualGraph.cpp" />
     <ClCompile Include="src\ContentManager.cpp" />
     <ClCompile Include="src\InstanceGUIDManager.cpp" />
-    <ClCompile Include="include\AttributeManager.cpp">
-      <Filter>Attribute</Filter>
-    </ClCompile>
     <ClCompile Include="src\Context.cpp">
       <Filter>Context</Filter>
     </ClCompile>
     <ClCompile Include="src\ContextManager.cpp">
       <Filter>Context</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TopologyFactoryDictionary.cpp">
+      <Filter>Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\VertexFactory.cpp">
+      <Filter>Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AttributeManager.cpp">
+      <Filter>Attribute</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ShellFactory.cpp">
+      <Filter>Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WireFactory.cpp">
+      <Filter>Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ApertureFactory.cpp">
+      <Filter>Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CellComplexFactory.cpp">
+      <Filter>Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CellFactory.cpp">
+      <Filter>Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ClusterFactory.cpp">
+      <Filter>Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DualGraphFactory.cpp">
+      <Filter>Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EdgeFactory.cpp">
+      <Filter>Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FaceFactory.cpp">
+      <Filter>Factory</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -61,6 +130,9 @@
     </Filter>
     <Filter Include="Context">
       <UniqueIdentifier>{ac751df2-d33d-4350-8a20-34c4c87e1c27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Factory">
+      <UniqueIdentifier>{a21958dd-917d-4441-b751-1a82742b61e7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

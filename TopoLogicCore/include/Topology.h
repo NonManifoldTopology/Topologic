@@ -44,6 +44,7 @@ namespace TopologicCore
 	class Face;
 	class Vertex;
 	class Context;
+	class TopologyFactory;
 
 	/// <summary>
 	/// A Topology is an abstract superclass that constructors, properties and methods used by other subclasses that extend it.
@@ -63,8 +64,9 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <param name="rkOcctShape"></param>
+		/// <param name="rkInstanceGuid"></param>
 		/// <returns></returns>
-		static Topology::Ptr ByOcctShape(const TopoDS_Shape& rkOcctShape);// , const TDF_Label& rkOcctLabel = TDF_Label());
+		static Topology::Ptr ByOcctShape(const TopoDS_Shape& rkOcctShape, const std::string& rkInstanceGuid);
 
 		/// <summary>
 		/// 
@@ -390,9 +392,8 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="rOcctShapeCopy"></param>
 		/// <returns></returns>
-		void Copy(TopoDS_Shape& rOcctShapeCopy);
+		TopoDS_Shape CopyOcct();
 
 		/// <summary>
 		/// 
@@ -470,6 +471,8 @@ namespace TopologicCore
 
 	protected:
 		Topology(const int kDimensionality, const TopoDS_Shape& rkOcctShape, const std::string& rkGuid = "");
+
+		void RegisterFactory(const std::string& rkGuid, const std::shared_ptr<TopologyFactory>& kpTopologyFactory);
 
 		/// <summary>
 		/// 
@@ -615,7 +618,7 @@ namespace TopologicCore
 				//// Find the label of rkOcctAncestor
 				//bool isFound = LabelManager::FindLabelByShape(rkOcctAncestor, ancestorLabel);
 				//Topology::Ptr pTopology = ByOcctShape(rkOcctAncestor, ancestorLabel);
-				Topology::Ptr pTopology = ByOcctShape(rkOcctAncestor);
+				Topology::Ptr pTopology = ByOcctShape(rkOcctAncestor, "");
 				rAncestors.push_back(Downcast<Subclass>(pTopology));
 			}
 		}
@@ -665,7 +668,7 @@ namespace TopologicCore
 			if (!occtShapes.Contains(occtCurrent))
 			{
 				occtShapes.Add(occtCurrent);
-				Topology::Ptr pChildTopology = ByOcctShape(occtCurrent);
+				Topology::Ptr pChildTopology = ByOcctShape(occtCurrent, "");
 				rMembers.push_back(Downcast<Subclass>(pChildTopology));
 
 				// UNCOMMENT THESE FOR ENERGY ANALYSIS DEMO

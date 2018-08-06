@@ -10,8 +10,6 @@ using namespace System;
 using namespace System::Collections::Generic;
 using namespace Autodesk::DesignScript::Runtime;
 
-//#pragma make_public(TDF_Attribute)
-
 namespace Topologic
 {
 	ref class Vertex;
@@ -306,9 +304,6 @@ namespace Topologic
 		/// <returns name="Vertex"></returns>
 		Vertex^ CenterOfMass();
 
-		/*[IsVisibleInDynamoLibrary(false)]
-		TDF_Attribute* FindAttribute(String^ ID);*/
-
 		String^ Type();
 
 		[IsVisibleInDynamoLibrary(false)]
@@ -321,11 +316,6 @@ namespace Topologic
 		static Topology^ ByCoreTopology(const std::shared_ptr<TopologicCore::Topology>& kpCoreTopology);
 
 	protected:
-		/// <summary>
-		/// 
-		/// </summary>
-		//void AttachAttribute(TDF_Attribute* pAttribute);
-
 		Topology();
 		virtual ~Topology();
 	};

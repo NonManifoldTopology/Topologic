@@ -1,5 +1,6 @@
 #include <Vertex.h>
 #include <Edge.h>
+#include <VertexFactory.h>
 
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRep_Tool.hxx>
@@ -14,7 +15,7 @@ namespace TopologicCore
 		: Topology(0, rkOcctVertex, rkGuid.compare("") == 0 ? GetClassGUID() : rkGuid)
 		, m_occtVertex(rkOcctVertex)
 	{
-
+		RegisterFactory(GetClassGUID(), std::make_shared<VertexFactory>());
 	}
 
 	Vertex::~Vertex()

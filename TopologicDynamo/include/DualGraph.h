@@ -15,8 +15,17 @@ namespace Topologic
 		/// 
 		/// </summary>
 		/// <param name="cellComplex"></param>
+		/// <param name="useCells"></param>
+		/// <param name="useNonManifoldFaces"></param>
+		/// <param name="useManifoldFaces"></param>
+		/// <param name="useApertures"></param>
 		/// <returns></returns>
-		static DualGraph^ ByCellComplex(CellComplex^ cellComplex);
+		static DualGraph^ ByCellComplex(
+			CellComplex^ cellComplex,
+			bool useCells,
+			bool useNonManifoldFaces,
+			bool useManifoldFaces,
+			bool useApertures);
 
 
 		property Object^ Geometry

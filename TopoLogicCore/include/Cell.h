@@ -17,6 +17,15 @@ namespace TopologicCore
 	class Shell;
 	class CellComplex;
 
+	class CellGUID
+	{
+	public:
+		static std::string Get()
+		{
+			return std::string("8bda6c76-fa5c-4288-9830-80d32d283251");
+		}
+	};
+
 	class Cell : public Topology
 	{
 	public:
@@ -207,7 +216,7 @@ namespace TopologicCore
 		virtual std::string GetTypeAsString() const;
 
 		virtual std::string GetClassGUID() const {
-			return std::string("8bda6c76-fa5c-4288-9830-80d32d283251");
+			return CellGUID::Get();
 		}
 
 	protected:

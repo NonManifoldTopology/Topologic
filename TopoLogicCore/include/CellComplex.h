@@ -15,6 +15,15 @@ namespace TopologicCore
 	class Face;
 	class Shell;
 
+	class CellComplexGUID
+	{
+	public:
+		static std::string Get()
+		{
+			return std::string("4ec9904b-dc01-42df-9647-2e58c2e08e78");
+		}
+	};
+
 	/// <summary>
 	/// 
 	/// </summary>
@@ -145,7 +154,7 @@ namespace TopologicCore
 		virtual std::string GetTypeAsString() const;
 
 		virtual std::string GetClassGUID() const {
-			return std::string("4ec9904b-dc01-42df-9647-2e58c2e08e78");
+			return CellComplexGUID::Get();
 		}
 
 	protected:

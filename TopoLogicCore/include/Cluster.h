@@ -17,6 +17,15 @@ namespace TopologicCore
 	class Face;
 	class Shell;
 
+	class ClusterGUID
+	{
+	public:
+		static std::string Get()
+		{
+			return std::string("7c498db6-f3e7-4722-be58-9720a4a9c2cc");
+		}
+	};
+
 	class Cluster : public Topology
 	{
 	public:
@@ -150,7 +159,7 @@ namespace TopologicCore
 		virtual std::string GetTypeAsString() const;
 
 		virtual std::string GetClassGUID() const {
-			return std::string("7c498db6-f3e7-4722-be58-9720a4a9c2cc");
+			return ClusterGUID::Get();
 		}
 
 	protected:

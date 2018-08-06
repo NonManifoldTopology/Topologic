@@ -2,6 +2,7 @@
 #include <Vertex.h>
 #include <Edge.h>
 #include <Face.h>
+#include <WireFactory.h>
 //#include <GlobalCluster.h>
 //#include <OcctCounterAttribute.h>
 
@@ -29,7 +30,7 @@ namespace TopologicCore
 			for (BRepTools_WireExplorer occtWireExplorer(GetOcctWire()); occtWireExplorer.More(); occtWireExplorer.Next())
 			{
 				const TopoDS_Edge& rkOcctEdge = occtWireExplorer.Current();
-				rEdges.push_back(TopologicalQuery::Downcast<Edge>(Topology::ByOcctShape(rkOcctEdge)));
+				rEdges.push_back(std::make_shared<Edge>(rkOcctEdge, EdgeGUID::Get()));
 			}
 		}else
 		{
@@ -58,14 +59,14 @@ namespace TopologicCore
 			{
 				const TopoDS_Vertex& rkOcctVertex = occtWireExplorer.CurrentVertex();
 				lastEdge = occtWireExplorer.Current();
-				rVertices.push_back(TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex)));
+				rVertices.push_back(std::make_shared<Vertex>(rkOcctVertex, VertexGUID::Get()));
 			}
 
 			// Add the last one.
 			if (!lastEdge.IsNull())
 			{
 				TopoDS_Vertex occtLastVertex = TopExp::LastVertex(lastEdge);
-				rVertices.push_back(TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(occtLastVertex)));
+				rVertices.push_back(std::make_shared<Vertex>(occtLastVertex));
 			}
 		}
 		else
@@ -199,7 +200,7 @@ namespace TopologicCore
 		: Topology(1, rkOcctWire, rkGuid.compare("") == 0 ? GetClassGUID() : rkGuid)
 		, m_occtWire(rkOcctWire)
 	{
-
+		RegisterFactory(GetClassGUID(), std::make_shared<WireFactory>());
 	}
 
 	Wire::~Wire()

@@ -10,6 +10,16 @@
 namespace TopologicCore
 {
 	class Context;
+	class Wire;
+
+	class ApertureGUID
+	{
+	public:
+		static std::string Get()
+		{
+			return std::string("740d9d31-ca8c-47ef-825f-68c607af80aa");
+		}
+	};
 
 	/// <summary>
 	/// <para>
@@ -42,6 +52,16 @@ namespace TopologicCore
 		/// <param name="kOpenStatus"></param>
 		/// <returns></returns>
 		static TOPOLOGIC_API std::shared_ptr<Aperture> ByTopologyContextStatus(const Topology::Ptr& kpTopology, const std::shared_ptr<Context>& kpContext, const bool kOpenStatus);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="hostFace"></param>
+		/// <param name="apertureBoundary"></param>
+		/// <param name="kLink"></param>
+		/// <param name="kOpen"></param>
+		/// <returns></returns>
+		static TOPOLOGIC_API Aperture::Ptr ByBoundaryWithinHost(const std::shared_ptr<Face>& kpHostFace, const std::shared_ptr<Wire>& kpApertureBoundary, const bool kLink, const bool kOpenStatus);
 
 		/// <summary>
 		/// 
@@ -138,7 +158,7 @@ namespace TopologicCore
 		virtual TopologyType GetType() const;
 
 		virtual std::string GetClassGUID() const {
-			return std::string("740d9d31-ca8c-47ef-825f-68c607af80aa");
+			return ApertureGUID::Get();
 		}
 
 	protected:

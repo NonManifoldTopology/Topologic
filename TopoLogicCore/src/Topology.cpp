@@ -11,6 +11,8 @@
 #include <ContentManager.h>
 #include <ContextManager.h>
 #include <InstanceGUIDManager.h>
+#include <TopologyFactory.h>
+#include <TopologyFactoryDictionary.h>
 
 #include <ShapeFix_ShapeTolerance.hxx>
 
@@ -123,7 +125,7 @@ namespace TopologicCore
 			return nullptr;
 		}
 
-		return Topology::ByOcctShape(occtClosestSubshape);
+		return Topology::ByOcctShape(occtClosestSubshape, "");
 	}
 
 	double Topology::Distance(const Topology::Ptr& kpTopology) const
@@ -139,26 +141,42 @@ namespace TopologicCore
 		InstanceGUIDManager::GetInstance().Add(rkOcctShape, rkGuid);
 	}
 
-	Topology::Ptr Topology::ByOcctShape(const TopoDS_Shape& rkOcctShape)
+	void Topology::RegisterFactory(const std::string & rkGuid, const TopologyFactory::Ptr & kpTopologyFactory)
 	{
-		if (rkOcctShape.TShape().IsNull()) 
+		TopologyFactoryDictionary::GetInstance().Add(rkGuid, kpTopologyFactory);
+	}
+
+	Topology::Ptr Topology::ByOcctShape(const TopoDS_Shape& rkOcctShape, const std::string& rkInstanceGuid)
+	{
+		TopologyFactory::Ptr pTopologyFactory = nullptr;
+		if (rkInstanceGuid.compare("") == 0)
 		{
-			return nullptr;
+			pTopologyFactory = TopologyFactoryDictionary::GetDefaultFactory(rkOcctShape.ShapeType());
 		}
-		TopAbs_ShapeEnum occtShapeType = rkOcctShape.ShapeType();
-		switch (occtShapeType)
+		else
 		{
-		case TopAbs_COMPOUND: return std::make_shared<Cluster>(TopoDS::Compound(rkOcctShape));// , rkOcctLabel);
-		case TopAbs_COMPSOLID: return std::make_shared<CellComplex>(TopoDS::CompSolid(rkOcctShape));//, rkOcctLabel);
-		case TopAbs_SOLID: return std::make_shared<Cell>(TopoDS::Solid(rkOcctShape));
-		case TopAbs_SHELL: return std::make_shared<Shell>(TopoDS::Shell(rkOcctShape));
-		case TopAbs_FACE: return std::make_shared<Face>(TopoDS::Face(rkOcctShape));
-		case TopAbs_WIRE: return std::make_shared<Wire>(TopoDS::Wire(rkOcctShape));
-		case TopAbs_EDGE: return std::make_shared<Edge>(TopoDS::Edge(rkOcctShape));
-		case TopAbs_VERTEX: return std::make_shared<Vertex>(TopoDS::Vertex(rkOcctShape));
-		default:
-			throw std::exception("Topology::ByOcctShape: unknown topology.");
+			TopologyFactoryDictionary::GetInstance().Find(rkInstanceGuid, pTopologyFactory);
 		}
+		assert(pTopologyFactory != nullptr);
+		return pTopologyFactory->Create(rkOcctShape);
+		//if (rkOcctShape.TShape().IsNull()) 
+		//{
+		//	return nullptr;
+		//}
+		//TopAbs_ShapeEnum occtShapeType = rkOcctShape.ShapeType();
+		//switch (occtShapeType)
+		//{
+		//case TopAbs_COMPOUND: return std::make_shared<Cluster>(TopoDS::Compound(rkOcctShape));// , rkOcctLabel);
+		//case TopAbs_COMPSOLID: return std::make_shared<CellComplex>(TopoDS::CompSolid(rkOcctShape));//, rkOcctLabel);
+		//case TopAbs_SOLID: return std::make_shared<Cell>(TopoDS::Solid(rkOcctShape));
+		//case TopAbs_SHELL: return std::make_shared<Shell>(TopoDS::Shell(rkOcctShape));
+		//case TopAbs_FACE: return std::make_shared<Face>(TopoDS::Face(rkOcctShape));
+		//case TopAbs_WIRE: return std::make_shared<Wire>(TopoDS::Wire(rkOcctShape));
+		//case TopAbs_EDGE: return std::make_shared<Edge>(TopoDS::Edge(rkOcctShape));
+		//case TopAbs_VERTEX: return std::make_shared<Vertex>(TopoDS::Vertex(rkOcctShape));
+		//default:
+		//	throw std::exception("Topology::ByOcctShape: unknown topology.");
+		//}
 	}
 
 	TopoDS_CompSolid Topology::MakeCompSolid(const TopoDS_Shape& rkOcctShape)
@@ -272,18 +290,18 @@ namespace TopologicCore
 						BRepBuilderAPI_MakeFace occtMakeFace(rkOcctWire);
 						if (occtMakeFace.Error() == BRepBuilderAPI_FaceDone)
 						{
-							rTopologies.push_back(Topology::ByOcctShape(occtMakeFace.Face()));
+							rTopologies.push_back(std::make_shared<Face>(occtMakeFace));
 						}
 						else
 						{
 							// Add the closed wire
-							rTopologies.push_back(Topology::ByOcctShape(rkOcctWire));
+							rTopologies.push_back(std::make_shared<Wire>(rkOcctWire));
 						}
 					}
 					else
 					{
 						// Add the opem wire
-						rTopologies.push_back(Topology::ByOcctShape(rkOcctWire));
+						rTopologies.push_back(std::make_shared<Wire>(rkOcctWire));
 					}
 				}
 				else
@@ -293,7 +311,7 @@ namespace TopologicCore
 						occtEdgeIterator.More();
 						occtEdgeIterator.Next())
 					{
-						rTopologies.push_back(Topology::ByOcctShape(occtEdgeIterator.Value()));
+						rTopologies.push_back(std::make_shared<Edge>(TopoDS::Edge(occtEdgeIterator.Value())));
 					}
 				}
 			}
@@ -302,12 +320,12 @@ namespace TopologicCore
 				// Try creating an edge
 				BRepBuilderAPI_MakeEdge occtMakeEdge(TopoDS::Vertex(occtVertices.front()),
 					TopoDS::Vertex(occtVertices.back()));
-				rTopologies.push_back(Topology::ByOcctShape(occtMakeEdge));
+				rTopologies.push_back(std::make_shared<Edge>(occtMakeEdge));
 			}
 			else if (occtVertices.size() == 1)
 			{
 				// Insert the vertices
-				rTopologies.push_back(Topology::ByOcctShape(occtVertices.front()));
+				rTopologies.push_back(std::make_shared<Vertex>(occtVertices.front()));
 			}
 		}
 	}
@@ -337,8 +355,11 @@ namespace TopologicCore
 		// 2. Find the closest simplest topology of the copy topology
 		Topology::Ptr pClosestSimplestSubshape = rkContext->Topology()->ClosestSimplestSubshape(pCenterOfMass);
 
-		// 3. Register to ContentManager
-		ContextManager::GetInstance().Add(GetOcctShape(), rkContext);
+		// 3. Make another context with only the closest subshape
+		Context::Ptr pClosestSimplestContext = Context::ByTopologyParameters(pClosestSimplestSubshape, rkContext->U(), rkContext->V(), rkContext->W());
+
+		// 4. Register to ContentManager
+		ContextManager::GetInstance().Add(GetOcctShape(), pClosestSimplestContext);
 	}
 
 	void Topology::RemoveContext(const std::shared_ptr<Context>& rkContext)
@@ -451,7 +472,7 @@ namespace TopologicCore
 		BRep_Builder occtBRepBuilder;
 		bool returnValue = BRepTools::Read(occtShape, rkPath.c_str(), occtBRepBuilder);
 
-		return Topology::ByOcctShape(occtShape);
+		return Topology::ByOcctShape(occtShape, "");
 	}
 
 	std::string Topology::Analyze(const TopoDS_Shape& rkShape, const int kLevel)
@@ -598,25 +619,25 @@ namespace TopologicCore
 			kImageIterator.More();
 			kImageIterator.Next())
 		{
-			kArgumentImagesInArguments.push_back(Topology::ByOcctShape(kImageIterator.Value()));
+			kArgumentImagesInArguments.push_back(Topology::ByOcctShape(kImageIterator.Value(), ""));
 		}
 		for (BOPCol_ListIteratorOfListOfShape kImageIterator(occtArgumentImagesInTools);
 			kImageIterator.More();
 			kImageIterator.Next())
 		{
-			kArgumentImagesInTools.push_back(Topology::ByOcctShape(kImageIterator.Value()));
+			kArgumentImagesInTools.push_back(Topology::ByOcctShape(kImageIterator.Value(), ""));
 		}
 		for (BOPCol_ListIteratorOfListOfShape kImageIterator(occtToolsImagesInArguments);
 			kImageIterator.More();
 			kImageIterator.Next())
 		{
-			kToolsImagesInArguments.push_back(Topology::ByOcctShape(kImageIterator.Value()));
+			kToolsImagesInArguments.push_back(Topology::ByOcctShape(kImageIterator.Value(), ""));
 		}
 		for (BOPCol_ListIteratorOfListOfShape kImageIterator(occtToolsImagesInTools);
 			kImageIterator.More();
 			kImageIterator.Next())
 		{
-			kToolsImagesInTools.push_back(Topology::ByOcctShape(kImageIterator.Value()));
+			kToolsImagesInTools.push_back(Topology::ByOcctShape(kImageIterator.Value(), ""));
 		}
 	}
 
@@ -704,7 +725,7 @@ namespace TopologicCore
 		int size = rkImages.Size();
 
 		const TopoDS_Shape& rkParts = rOcctCellsBuilder.GetAllParts();
-		Topology::Ptr pTopologyParts = Topology::ByOcctShape(rkParts);
+		Topology::Ptr pTopologyParts = Topology::ByOcctShape(rkParts, "");
 		std::string strParts = pTopologyParts->Analyze();
 
 		// 3. Classify the images: exclusively from argument, exclusively from tools, or shared.
@@ -1019,7 +1040,7 @@ namespace TopologicCore
 			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
 			occtCellsBuilder.MakeContainers();
 			const TopoDS_Shape& occtBooleanResult = occtCellsBuilder.Shape();
-			Topology::Ptr pTopology = Topology::ByOcctShape(occtBooleanResult);
+			Topology::Ptr pTopology = Topology::ByOcctShape(occtBooleanResult, "");
 			rSpaceBetween_A_A_and_B_A.push_back(pTopology);
 		}
 
@@ -1040,7 +1061,7 @@ namespace TopologicCore
 				occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
 				occtCellsBuilder.MakeContainers();
 				const TopoDS_Shape& occtBooleanResult = occtCellsBuilder.Shape();
-				Topology::Ptr pTopology = Topology::ByOcctShape(occtBooleanResult);
+				Topology::Ptr pTopology = Topology::ByOcctShape(occtBooleanResult, "");
 				rSpaceBetween_B_A_and_A_B.push_back(pTopology);
 			}
 		}
@@ -1064,7 +1085,7 @@ namespace TopologicCore
 			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
 			occtCellsBuilder.MakeContainers();
 			const TopoDS_Shape& occtBooleanResult = occtCellsBuilder.Shape();
-			Topology::Ptr pTopology = Topology::ByOcctShape(occtBooleanResult);
+			Topology::Ptr pTopology = Topology::ByOcctShape(occtBooleanResult, "");
 			rSpaceBetween_A_B_and_B_B.push_back(pTopology);
 		}
 	}
@@ -1115,10 +1136,10 @@ namespace TopologicCore
 		if (occtImmediateMembers.Size() == 1)
 		{
 			BOPCol_ListIteratorOfListOfShape occtImmediateMemberIterator(occtImmediateMembers);
-			return Topology::ByOcctShape(occtImmediateMemberIterator.Value());
+			return Topology::ByOcctShape(occtImmediateMemberIterator.Value(), "");
 		}
 
-		return Topology::ByOcctShape(rOcctCellsBuilder.Shape());
+		return Topology::ByOcctShape(rOcctCellsBuilder.Shape(), "");
 
 		/*Topology::Ptr pTopology;
 		if (occtImmediateMembers.Size() == 1)
@@ -1383,7 +1404,7 @@ namespace TopologicCore
 			{
 				occtBuilder.Add(occtCompound, occtShapeIterator.Value());
 			}
-			return Topology::ByOcctShape(occtCompound);
+			return Topology::ByOcctShape(occtCompound, "");
 		}
 		occtCellsBuilder.AddAllToResult();
 		// DEBUG
@@ -1451,7 +1472,7 @@ namespace TopologicCore
 			{
 				occtBuilder.Add(occtCompound, iterator.Value());
 			}
-			return Topology::ByOcctShape(occtCompound);
+			return Topology::ByOcctShape(occtCompound, "");
 			//throw std::exception();
 		}
 		//DEBUG
@@ -1507,7 +1528,7 @@ namespace TopologicCore
 
 		if (occtFinalArguments.Size() == 1)
 		{
-			return Topology::ByOcctShape(occtVolumeMaker.Shape());
+			return Topology::ByOcctShape(occtVolumeMaker.Shape(), "");
 		}
 		BOPAlgo_CellsBuilder occtCellsBuilder2;
 		occtCellsBuilder2.SetArguments(occtFinalArguments);
@@ -1561,11 +1582,11 @@ namespace TopologicCore
 			{
 				occtFinalBuilder.Add(occtFinalCompound, clusterCandidateIterator.Value());
 			}
-			return Topology::ByOcctShape(occtFinalCompound);
+			return Topology::ByOcctShape(occtFinalCompound, "");
 		}
 
 		// Otherwise, return the result final merge result
-		return Topology::ByOcctShape(occtCellsBuilder2.Shape());
+		return Topology::ByOcctShape(occtCellsBuilder2.Shape(), "");
 	}
 
 	Topology::Ptr Topology::Slice(const Topology::Ptr& kpOtherTopology)
@@ -1611,7 +1632,7 @@ namespace TopologicCore
 	void Topology::AddUnionInternalStructure(const TopoDS_Shape& rkOcctShape, BOPCol_ListOfShape& rUnionArguments)
 	{
 		TopAbs_ShapeEnum occtShapeType = rkOcctShape.ShapeType();
-		Topology::Ptr pTopology = Topology::ByOcctShape(rkOcctShape);
+		Topology::Ptr pTopology = Topology::ByOcctShape(rkOcctShape, "");
 		std::list<Face::Ptr> faces;
 		// Cell complex -> faces not part of the envelope
 		// Cell -> inner shells
@@ -1880,7 +1901,7 @@ namespace TopologicCore
 		
 		if (occtCellsBuildersArguments.Size() < 2)
 		{
-			return Topology::ByOcctShape(occtCellsBuildersArguments.First());
+			return Topology::ByOcctShape(occtCellsBuildersArguments.First(), "");
 		}
 
 		occtCellsBuilder2.SetArguments(occtCellsBuildersArguments);
@@ -1894,7 +1915,7 @@ namespace TopologicCore
 		}
 		occtCellsBuilder2.AddAllToResult();
 		TopoDS_Shape occtUnionResult = occtCellsBuilder2.Shape();
-		Topology::Ptr pUnionTopology = Topology::ByOcctShape(occtUnionResult);
+		Topology::Ptr pUnionTopology = Topology::ByOcctShape(occtUnionResult, "");
 		return pUnionTopology;
 	}
 
@@ -1966,7 +1987,7 @@ namespace TopologicCore
 			occtIterator.More();
 			occtIterator.Next())
 		{
-			Topology::Ptr pMemberTopology = Topology::ByOcctShape(occtIterator.Value());
+			Topology::Ptr pMemberTopology = Topology::ByOcctShape(occtIterator.Value(), "");
 
 			//if (!GetOcctLabel().IsNull())
 			//{
@@ -2020,15 +2041,14 @@ namespace TopologicCore
 
 	Topology::Ptr Topology::Copy()
 	{
-		TopoDS_Shape occtShapeCopy;
-		Copy(occtShapeCopy);
-		return Topology::ByOcctShape(occtShapeCopy);
+		TopoDS_Shape occtShapeCopy = CopyOcct();
+		return Topology::ByOcctShape(occtShapeCopy, GetInstanceGUID());
 	}
 
-	void Topology::Copy(TopoDS_Shape& rOcctShapeCopy)
+	TopoDS_Shape Topology::CopyOcct()
 	{
 		BRepBuilderAPI_Copy occtShapeCopy(GetOcctShape());
-		rOcctShapeCopy = occtShapeCopy.Shape();
+		return occtShapeCopy.Shape();
 
 		// TODO: Copy the contents of the original topology to the copy
 	}
@@ -2075,10 +2095,7 @@ namespace TopologicCore
 		Members(occtMembers);
 		for (TopTools_ListIteratorOfListOfShape occtMemberIterator(occtMembers); occtMemberIterator.More(); occtMemberIterator.Next())
 		{
-			/*TDF_Label occtLabel;
-			LabelManager::GetInstance().FindLabelByShape(occtMemberIterator.Value(), occtLabel);
-			rMembers.push_back(Topology::ByOcctShape(occtMemberIterator.Value(), occtLabel));*/
-			rMembers.push_back(Topology::ByOcctShape(occtMemberIterator.Value()));
+			rMembers.push_back(Topology::ByOcctShape(occtMemberIterator.Value(), ""));
 		}
 	}
 

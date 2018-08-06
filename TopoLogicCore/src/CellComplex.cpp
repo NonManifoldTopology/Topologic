@@ -6,6 +6,7 @@
 #include <Edge.h>
 #include <Wire.h>
 #include <Shell.h>
+#include <CellComplexFactory.h>
 
 #include <BRep_Builder.hxx>
 #include <BRepGProp.hxx>
@@ -117,7 +118,7 @@ namespace TopologicCore
 		}
 
 		// Should get us a CellComplex, otherwise an exception.
-		CellComplex::Ptr pMergeCellComplex = std::dynamic_pointer_cast<CellComplex>(CellComplex::ByOcctShape(occtCompSolid));
+		CellComplex::Ptr pMergeCellComplex = std::make_shared<CellComplex>(occtCompSolid);
 		if (pMergeCellComplex == nullptr)
 		{
 			throw std::exception("CellComplex::ByCells(): Merge operation is not giving a cell complex");
@@ -224,7 +225,7 @@ namespace TopologicCore
 		if (rkOcctResult.ShapeType() == TopAbs_SOLID)
 		{
 			// Create a cell complex with only this
-			cells.push_back(TopologicalQuery::Downcast<Cell>(Cell::ByOcctShape(rkOcctResult)));
+			cells.push_back(std::make_shared<Cell>(TopoDS::Solid(rkOcctResult)));
 		}
 		// - A compound, collect the solids
 		else if (rkOcctResult.ShapeType() == TopAbs_COMPOUND)
@@ -236,7 +237,7 @@ namespace TopologicCore
 				if (!occtShapes.Contains(occtCurrent))
 				{
 					occtShapes.Add(occtCurrent);
-					cells.push_back(Downcast<Cell>(ByOcctShape(occtCurrent)));
+					cells.push_back(std::make_shared<Cell>(TopoDS::Solid(occtCurrent)));
 				}
 			}
 		}
@@ -399,12 +400,11 @@ namespace TopologicCore
 		: Topology(3, rkOcctCompSolid, rkGuid.compare("") == 0 ? GetClassGUID() : rkGuid)
 		, m_pOcctCompSolid(rkOcctCompSolid)
 	{
-		//GlobalCluster::GetInstance().Add(this);
+		RegisterFactory(GetClassGUID(), std::make_shared<CellComplexFactory>());
 	}
 
 	CellComplex::~CellComplex()
 	{
-		/*GlobalCluster::GetInstance().Remove(this);
-		DecreaseCounter();*/
+
 	}
 }

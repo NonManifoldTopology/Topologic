@@ -13,6 +13,15 @@ class gp_Pnt;
 namespace TopologicCore
 {
 	class Edge;
+	
+	class VertexGUID
+	{
+	public:
+		static std::string Get()
+		{
+			return std::string("c4a9b420-edaf-4f8f-96eb-c87fbcc92f2b");
+		}
+	};
 
 	/// <summary>
 	/// The representation of a Topological vertex. This class wraps OCCT's TopoDS_Vertex.
@@ -92,7 +101,7 @@ namespace TopologicCore
 		virtual std::string GetTypeAsString() const;
 
 		virtual std::string GetClassGUID() const {
-			return std::string("c4a9b420-edaf-4f8f-96eb-c87fbcc92f2b");
+			return VertexGUID::Get();
 		}
 
 	protected:

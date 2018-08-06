@@ -2,6 +2,8 @@
 #include <Topology.h>
 #include <Context.h>
 #include <ApertureFactory.h>
+#include <Face.h>
+#include <Wire.h>
 
 #include <assert.h>
 #include <array>
@@ -40,6 +42,17 @@ namespace Topologic
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery()),
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Context>(context->GetCoreTopologicalQuery()),
 			openStatus
+		);
+		return gcnew Aperture(pCoreAperture);
+	}
+
+	Aperture ^ Aperture::ByBoundaryWithinHost(Face ^ hostFace, Wire ^ apertureBoundary, bool link, bool open)
+	{
+		TopologicCore::Aperture::Ptr pCoreAperture = TopologicCore::Aperture::ByBoundaryWithinHost(
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Face>(hostFace->GetCoreTopologicalQuery()),
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Wire>(apertureBoundary->GetCoreTopologicalQuery()),
+			link,
+			open
 		);
 		return gcnew Aperture(pCoreAperture);
 	}
