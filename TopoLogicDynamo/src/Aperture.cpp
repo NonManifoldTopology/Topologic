@@ -1,9 +1,11 @@
-#include "Aperture.h"
+#include <Aperture.h>
 #include <Topology.h>
 #include <Context.h>
 #include <ApertureFactory.h>
 #include <Face.h>
 #include <Wire.h>
+#include <TopologyFactoryDictionary.h>
+#include <TopologyFactory.h>
 
 #include <assert.h>
 #include <array>
@@ -59,10 +61,9 @@ namespace Topologic
 
 	Topologic::Topology^ Aperture::Topology()
 	{
-		std::shared_ptr<TopologicCore::Aperture> pCoreAperture = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Aperture>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopologicCore::Topology> pCoreTopology = pCoreAperture->Topology();
-		Topologic::Topology^ topology = Topology::ByCoreTopology(pCoreTopology);
-		return topology;
+		TopologicCore::Aperture::Ptr pCoreAperture = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Aperture>(GetCoreTopologicalQuery());
+		TopologicCore::Topology::Ptr pCoreTopology = pCoreAperture->Topology();
+		return TopologyFactoryDictionary::GetDefaultFactory(pCoreTopology)->Create(pCoreTopology);
 	}
 
 	/*bool Aperture::IsOpen()

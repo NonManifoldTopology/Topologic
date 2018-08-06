@@ -24,6 +24,8 @@ namespace Topologic
 
 		TopologyFactory^ Find(String^ key);
 
+		static TopologyFactory^ GetDefaultFactory(const TopologicCore::Topology::Ptr& content);
+
 	private:
 		TopologyFactoryDictionary() {}
 		TopologyFactoryDictionary(const TopologyFactoryDictionary%) { throw gcnew System::InvalidOperationException("singleton cannot be copy-constructed"); }

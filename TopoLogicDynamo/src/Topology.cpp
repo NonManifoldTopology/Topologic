@@ -187,7 +187,7 @@ namespace Topologic
 		TopologyFactoryDictionary::Instance->Add(kpCoreTopology, topologyFactory);
 	}
 
-	void Topology::RegisterFactory(String^ guid, TopologyFactory ^ topologyFactory)
+	void Topology::RegisterFactory(String^ guid, TopologyFactory^ topologyFactory)
 	{
 		TopologyFactoryDictionary::Instance->Add(guid, topologyFactory);
 	}
