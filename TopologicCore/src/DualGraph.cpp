@@ -5,6 +5,8 @@
 #include <Edge.h>
 #include <Vertex.h>
 #include <DualGraphFactory.h>
+#include <Aperture.h>
+#include <Context.h>
 
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <StdFail_NotDone.hxx>
@@ -18,34 +20,132 @@ namespace TopologicCore
 		const bool kUseManifoldFaces,
 		const bool kUseApertures)
 	{
-		// Get the non-manifold faces
-		std::list<Face::Ptr> nonManifoldFaces;
-		kpCellComplex->NonManifoldFaces(nonManifoldFaces);
+		if (!kUseCells)
+		{
+			return nullptr;
+		}
 
 		TopTools_ListOfShape occtEdges;
-		// For each non-manifold face,
-		for (const Face::Ptr& kpNonManifoldFace : nonManifoldFaces)
+		if (kUseNonManifoldFaces)
 		{
-			// Get the adjacent cells
-			std::list<Cell::Ptr> adjacentCells;
-			kpNonManifoldFace->Cells(kpCellComplex, adjacentCells);
+			// Get the non-manifold faces
+			std::list<Face::Ptr> nonManifoldFaces;
+			kpCellComplex->NonManifoldFaces(nonManifoldFaces);
 
-			// Connect the face centroid with the cell centroid
-			Vertex::Ptr faceCentroid = kpNonManifoldFace->CenterOfMass();
-			for (const Cell::Ptr& kpAdjacentCell: adjacentCells)
+			// For each non-manifold face,
+			for (const Face::Ptr& kpNonManifoldFace : nonManifoldFaces)
 			{
-				Vertex::Ptr cellCentroid = kpAdjacentCell->CenterOfMass();
+				// Get the adjacent cells
+				std::list<Cell::Ptr> adjacentCells;
+				kpNonManifoldFace->Cells(kpCellComplex, adjacentCells);
 
-				std::list<Vertex::Ptr> vertices;
-				vertices.push_back(faceCentroid);
-				vertices.push_back(cellCentroid);
-				Edge::Ptr pEdge = Edge::ByVertices(vertices);
-				occtEdges.Append(pEdge->GetOcctShape());
+				// Connect the face centroid with the cell centroid
+				Vertex::Ptr faceCentroid = kpNonManifoldFace->CenterOfMass();
+				for (const Cell::Ptr& kpAdjacentCell : adjacentCells)
+				{
+					Vertex::Ptr cellCentroid = kpAdjacentCell->CenterOfMass();
+
+					std::list<Vertex::Ptr> vertices;
+					vertices.push_back(faceCentroid);
+					vertices.push_back(cellCentroid);
+					Edge::Ptr pEdge = Edge::ByVertices(vertices);
+					occtEdges.Append(pEdge->GetOcctShape());
+				}
+			}
+		}
+
+		if (kUseManifoldFaces)
+		{
+			// Get the faces
+			std::list<Face::Ptr> manifoldFaces;
+			kpCellComplex->Faces(manifoldFaces);
+
+			// For each face,
+			for (const Face::Ptr& kpManifoldFace : manifoldFaces)
+			{
+				// If it is manifold, skip it.
+				if (!kpManifoldFace->IsManifold(kpCellComplex.get()))
+				{
+					continue;
+				}
+
+				// Get the adjacent cells
+				std::list<Cell::Ptr> adjacentCells;
+				kpManifoldFace->Cells(kpCellComplex, adjacentCells);
+
+				// Connect the face centroid with the cell centroid
+				Vertex::Ptr faceCentroid = kpManifoldFace->CenterOfMass();
+				for (const Cell::Ptr& kpAdjacentCell : adjacentCells)
+				{
+					Vertex::Ptr cellCentroid = kpAdjacentCell->CenterOfMass();
+
+					std::list<Vertex::Ptr> vertices;
+					vertices.push_back(faceCentroid);
+					vertices.push_back(cellCentroid);
+					Edge::Ptr pEdge = Edge::ByVertices(vertices);
+					occtEdges.Append(pEdge->GetOcctShape());
+				}
+			}
+		}
+
+		if (kUseApertures)
+		{
+			// Get the apertures
+			std::list<Topology::Ptr> contents;
+			kpCellComplex->Contents(true, contents);
+
+			for (const Topology::Ptr& kpContent : contents)
+			{
+				// If this is not an aperture, skip it
+				if (kpContent->GetType() != TOPOLOGY_APERTURE)
+				{
+					continue;
+				}
+				Aperture::Ptr pAperture = TopologicalQuery::Downcast<Aperture>(kpContent);
+				Topology::Ptr pApertureTopology = pAperture->Topology();
+				
+				// Connect the face centroid with the cell centroid
+				Vertex::Ptr faceCentroid = pApertureTopology->CenterOfMass();
+				
+				// For now, do only faces which have faces as context
+				std::list<Context::Ptr> contexts;
+				pAperture->Contexts(contexts);
+				if (pApertureTopology->GetType() == TOPOLOGY_FACE)
+				{
+					for (const Context::Ptr& kpContext : contexts)
+					{
+						Topology::Ptr pContextTopology = kpContext->Topology();
+						if (pContextTopology->GetType() == TOPOLOGY_FACE)
+						{
+							Face::Ptr pFaceContextTopology = TopologicalQuery::Downcast<Face>(pContextTopology);
+							// Get the adjacent cells of the context topology
+							std::list<Cell::Ptr> adjacentCells;
+							pFaceContextTopology->Cells(kpCellComplex, adjacentCells);
+
+							for (const Cell::Ptr& kpAdjacentCell : adjacentCells)
+							{
+								Vertex::Ptr cellCentroid = kpAdjacentCell->CenterOfMass();
+
+								std::list<Vertex::Ptr> vertices;
+								vertices.push_back(faceCentroid);
+								vertices.push_back(cellCentroid);
+								Edge::Ptr pEdge = Edge::ByVertices(vertices);
+								occtEdges.Append(pEdge->GetOcctShape());
+							}
+						}
+					}
+					
+				}
 			}
 		}
 
 		BRepBuilderAPI_MakeWire occtMakeWire;
 		occtMakeWire.Add(occtEdges);
+
+		if (occtEdges.IsEmpty())
+		{
+			return nullptr;
+		}
 
 		try {
 			DualGraph::Ptr pDualGraph = std::make_shared<DualGraph>(occtMakeWire);

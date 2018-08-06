@@ -119,6 +119,11 @@ namespace TopologicCore
 		}
 	}
 
+	bool Wire::IsManifold(TopologicCore::Topology const * const kpkParentTopology) const
+	{
+		return false;
+	}
+
 	void Wire::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
 	{
 		// Returns a list of curves

@@ -245,6 +245,11 @@ namespace TopologicCore
 		return occtShapeProperties.Mass();
 	}
 
+	bool Edge::IsManifold(TopologicCore::Topology const * const kpkParentTopology) const
+	{
+		throw std::exception("Not implemented yet");
+	}
+
 	void Edge::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
 	{
 		rOcctGeometries.push_back(Curve());

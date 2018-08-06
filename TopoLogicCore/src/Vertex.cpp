@@ -33,6 +33,11 @@ namespace TopologicCore
 		UpwardNavigation(kpParentTopology, rEdges);
 	}
 
+	bool Vertex::IsManifold(TopologicCore::Topology const * const kpkParentTopology) const
+	{
+		throw std::exception("Not implemented yet");
+	}
+
 	void Vertex::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
 	{
 		rOcctGeometries.push_back(Point());

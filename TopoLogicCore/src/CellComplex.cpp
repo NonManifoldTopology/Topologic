@@ -324,6 +324,11 @@ namespace TopologicCore
 		}
 	}
 
+	bool CellComplex::IsManifold(TopologicCore::Topology const * const kpkParentTopology) const
+	{
+		throw std::exception("Not implemented yet");
+	}
+
 	void CellComplex::NonManifoldFaces(std::list<Face::Ptr>& rNonManifoldFaces) const
 	{
 		std::list<Face::Ptr> faces;
@@ -331,11 +336,7 @@ namespace TopologicCore
 
 		for (const Face::Ptr& kpFace : faces)
 		{
-			std::list<Cell::Ptr> cells;
-			kpFace->Cells(this, cells);
-
-			// A non-manifold face has more than 1 cells.
-			if (cells.size() > 1)
+			if(!kpFace->IsManifold(this))
 			{
 				rNonManifoldFaces.push_back(kpFace);
 			}

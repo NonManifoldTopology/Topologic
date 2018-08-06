@@ -150,6 +150,13 @@ namespace TopologicCore
 		/// </summary>
 		virtual std::shared_ptr<Vertex> CenterOfMass() const;
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpkParentTopology"></param>
+		/// <returns></returns>
+		virtual bool IsManifold(TopologicCore::Topology const * const kpkParentTopology) const;
+
 		virtual TopologyType GetType() const { return TOPOLOGY_CLUSTER; }
 
 		/// <summary>

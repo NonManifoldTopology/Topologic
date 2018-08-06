@@ -375,6 +375,11 @@ namespace TopologicCore
 		}
 	}
 
+	bool Cell::IsManifold(TopologicCore::Topology const * const kpkParentTopology) const
+	{
+		throw std::exception("Not implemented yet");
+	}
+
 	TopoDS_Shape& Cell::GetOcctShape()
 	{
 		return GetOcctSolid();

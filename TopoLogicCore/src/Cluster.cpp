@@ -261,6 +261,11 @@ namespace TopologicCore
 		throw std::exception("Not yet implemented");
 	}
 
+	bool Cluster::IsManifold(TopologicCore::Topology const * const kpkParentTopology) const
+	{
+		throw std::exception("Not implemented yet");
+	}
+
 	std::string Cluster::GetTypeAsString() const
 	{
 		return std::string("Cluster");

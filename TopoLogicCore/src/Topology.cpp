@@ -432,6 +432,11 @@ namespace TopologicCore
 		return ContextManager::GetInstance().Find(GetOcctShape(), rContexts);
 	}
 
+	bool Topology::IsManifold(const std::shared_ptr<Topology>& kpTopology) const
+	{
+		return IsManifold(kpTopology.get());
+	}
+
 	//void Topology::ContentsV2(const bool kAllLevels, std::list<Topology::Ptr>& rContents) const
 	//{
 	//	//const TDF_Label& rkOcctLabel = GetOcctLabel();

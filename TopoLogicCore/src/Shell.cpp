@@ -1191,6 +1191,11 @@ namespace TopologicCore
 		return std::make_shared<Shell>(TopoDS::Shell(occtLoft.Shape()));
 	}
 
+	bool Shell::IsManifold(TopologicCore::Topology const * const kpkParentTopology) const
+	{
+		throw std::exception("Not implemented yet");
+	}
+
 	TopoDS_Shape& Shell::GetOcctShape()
 	{
 		return GetOcctShell();

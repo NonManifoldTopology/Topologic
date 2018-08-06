@@ -136,6 +136,13 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="kpkTopology"></param>
+		/// <returns></returns>
+		virtual bool IsManifold(TopologicCore::Topology const * const kpkParentTopology) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <returns></returns>
 		virtual std::string GetTypeAsString() const;
 

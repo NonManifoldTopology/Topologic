@@ -203,6 +203,11 @@ namespace TopologicCore
 		return Topology()->CenterOfMass();
 	}
 
+	bool Aperture::IsManifold(TopologicCore::Topology const * const kpkParentTopology) const
+	{
+		throw std::exception("Not implemented yet");
+	}
+
 	std::string Aperture::GetTypeAsString() const
 	{
 		return std::string("Aperture");

@@ -54,6 +54,13 @@ namespace TopologicCore
 		void TOPOLOGIC_API Edges(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Edge>>& rEdges);
 
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpkParentTopology"></param>
+		/// <returns></returns>
+		virtual bool IsManifold(TopologicCore::Topology const * const kpkParentTopology) const;
+
+		/// <summary>
 		/// Return the corresponding point of this vertex. The output list only contains one vertex.
 		/// </summary>
 		/// <exception cref="std::exception">Null OCCT vertex</exception>

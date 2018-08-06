@@ -106,6 +106,13 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="kpkParentTopology"></param>
+		/// <returns></returns>
+		virtual bool IsManifold(TopologicCore::Topology const * const kpkParentTopology) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="rNonManifoldFaces"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API void NonManifoldFaces(std::list<std::shared_ptr<Face>>& rNonManifoldFaces) const;

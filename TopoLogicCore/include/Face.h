@@ -168,7 +168,6 @@ namespace TopologicCore
 		/// <param name="rVertices"></param>
 		void TOPOLOGIC_API SharedVertices(const std::shared_ptr<Face>& kpAnotherFace, std::list<std::shared_ptr<Vertex>>& rVertices) const;
 
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -181,6 +180,13 @@ namespace TopologicCore
 		/// <param name="rInnerBoundaries"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API void InnerBoundaries(std::list<std::shared_ptr<Wire>>& rInnerBoundaries) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpkParentTopology"></param>
+		/// <returns></returns>
+		virtual bool IsManifold(TopologicCore::Topology const * const kpkParentTopology) const;
 
 		/// <summary>
 		/// Note: Topologic UV values are normalized (from 0 and 1), but OCCT's values are not normalized.

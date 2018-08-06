@@ -129,6 +129,13 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="kpkParentTopology"></param>
+		/// <returns></returns>
+		virtual bool IsManifold(TopologicCore::Topology const * const kpkParentTopology) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="rOcctGeometries"></param>
 		virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const;
 

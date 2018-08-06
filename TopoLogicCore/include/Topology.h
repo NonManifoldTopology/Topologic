@@ -271,14 +271,14 @@ namespace TopologicCore
 		/// <returns></returns>
 		TOPOLOGIC_API bool Contexts(std::list<std::shared_ptr<Context>>& rContexts) const;
 
-		/*/// <summary>
+		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kAllLevels"></param>
-		/// <param name="rContents"></param>
-		/// <returns></returns>*/
-		//TOPOLOGIC_API void ContentsV2(const bool kAllLevels, std::list<Topology::Ptr>& rContents) const;
+		/// <param name="kpkParentTopology"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API bool IsManifold(const std::shared_ptr<Topology>& kpkParentTopology) const;
 
+		TOPOLOGIC_API virtual bool IsManifold(Topology const * const kpkParentTopology) const = 0;
 
 		/// <summary>
 		/// 

@@ -401,6 +401,20 @@ namespace TopologicCore
 		}
 	}
 
+	bool Face::IsManifold(TopologicCore::Topology const * const kpkParentTopology) const
+	{
+		std::list<Cell::Ptr> cells;
+		Cells(kpkParentTopology, cells);
+
+		// A manifold face has 0 or 1 cell.
+		if (cells.size() < 2)
+		{
+			return true;
+		}
+
+		return false;
+	}
+
 	void Face::UVParameterAtPoint(const Vertex::Ptr& kpVertex, double& rU, double& rV) const
 	{
 		Handle(Geom_Surface) pOcctSurface = Surface();
