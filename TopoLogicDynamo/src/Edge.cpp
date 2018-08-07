@@ -20,6 +20,16 @@
 
 namespace Topologic
 {
+	Edge^ Edge::ByCircle(
+		Vertex^ centerPoint, double radius,
+		double xAxisX, double xAxisY, double xAxisZ,
+		double normalX, double normalY, double normalZ)
+	{
+		TopologicCore::Vertex::Ptr pCoreCentrePoint = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(centerPoint->GetCoreTopologicalQuery());
+		TopologicCore::Edge::Ptr pCoreCircleEdge = TopologicCore::Edge::ByCircle(pCoreCentrePoint, radius, xAxisX, xAxisY, xAxisZ, normalX, normalY, normalZ);
+		return gcnew Edge(pCoreCircleEdge);
+	}
+
 	List<Edge^>^ Edge::AdjacentEdges(Topology ^ parentTopology)
 	{
 		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());

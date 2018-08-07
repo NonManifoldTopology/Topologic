@@ -8,6 +8,7 @@
 #include <BRep_Tool.hxx>
 #include <Geom_BSplineCurve.hxx>
 #include <Geom_CartesianPoint.hxx>
+#include <Geom_Circle.hxx>
 #include <Geom_Line.hxx>
 #include <GeomAPI_Interpolate.hxx>
 #include <GeomLib_Tool.hxx>
@@ -186,6 +187,22 @@ namespace TopologicCore
 		}
 
 		return pEdge;
+	}
+
+	Edge::Ptr Edge::ByCircle(
+		const std::shared_ptr<Vertex>& kpCenterPoint, const double kRadius,
+		const double kXAxisX, const double kXAxisY, const double kXAxisZ,
+		const double kNormalX, const double kNormalY, const double kNormalZ)
+	{
+		Handle(Geom_Circle) pOcctCircle = new Geom_Circle(
+			gp_Ax2(
+				kpCenterPoint->Point()->Pnt(),
+				gp_Dir(kNormalX, kNormalY, kNormalZ),
+				gp_Dir(kXAxisX, kXAxisY, kXAxisZ)
+			),
+			kRadius
+		);
+		return Edge::ByCurve(pOcctCircle);
 	}
 
 	Vertex::Ptr Edge::SharedVertex(const Edge::Ptr& kpAnotherEdge) const

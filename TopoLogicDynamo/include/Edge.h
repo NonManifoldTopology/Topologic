@@ -31,6 +31,23 @@ namespace Topologic {
 		static Edge^ ByVertices(IEnumerable<Vertex^>^ vertices);
 
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="centerPoint"></param>
+		/// <param name="radius"></param>
+		/// <param name="xAxisX"></param>
+		/// <param name="xAxisY"></param>
+		/// <param name="xAxisZ"></param>
+		/// <param name="normalX"></param>
+		/// <param name="normalY"></param>
+		/// <param name="normalZ"></param>
+		/// <returns></returns>
+		static Edge^ ByCircle(
+			Vertex^ centerPoint, double radius, 
+			double xAxisX, double xAxisY, double xAxisZ, 
+			double normalX, double normalY, double normalZ);
+
+		/// <summary>
 		/// Gets the list of edges adjacent to this edge.
 		/// </summary>
 		/// <param name="parentTopology"></param>

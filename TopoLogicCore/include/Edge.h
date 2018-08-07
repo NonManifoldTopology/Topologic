@@ -102,6 +102,23 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="kpCenterPoint"></param>
+		/// <param name="kRadius"></param>
+		/// <param name="kXAxisX"></param>
+		/// <param name="kXAxisY"></param>
+		/// <param name="kXAxisZ"></param>
+		/// <param name="kNormalX"></param>
+		/// <param name="kNormalY"></param>
+		/// <param name="kNormalZ"></param>
+		/// <returns></returns>
+		static TOPOLOGIC_API Edge::Ptr ByCircle(
+			const std::shared_ptr<Vertex>& kpCenterPoint, const double kRadius,
+			const double kXAxisX, const double kXAxisY, const double kXAxisZ,
+			const double kNormalX, const double kNormalY, const double kNormalZ);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="kpAnotherEdge"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API std::shared_ptr<Vertex> SharedVertex(const Edge::Ptr& kpAnotherEdge) const;
