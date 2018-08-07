@@ -252,6 +252,15 @@ namespace Topologic
 		Topology^ XOR(Topology^ topology);
 
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="z"></param>
+		/// <returns name="Topology"></returns>
+		Topology^ Translate(double x, double y, double z);
+
+		/// <summary>
 		/// Save a Topological entity to a BRep file.
 		/// </summary>
 		/// <param name="path">The path to the BRep file</param>

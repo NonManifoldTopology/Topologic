@@ -609,6 +609,17 @@ namespace Topologic
 		}
 	}
 
+	Topology^ Topology::Translate(double x, double y, double z)
+	{
+		// 1. Copy this topology
+		TopologicCore::Topology::Ptr pCoreTopology =
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->Copy();
+		pCoreCopyTopology->Translate(x, y, z);
+
+		return Topology::ByCoreTopology(pCoreCopyTopology);
+	}
+
 	List<Topology^>^ Topology::ImmediateMembers()
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());

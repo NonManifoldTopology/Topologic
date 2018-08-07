@@ -330,6 +330,13 @@ namespace TopologicCore
 		}
 	}
 
+	void Topology::Translate(const double x, const double y, const double z)
+	{
+		gp_Trsf transformation;
+		transformation.SetTranslation(gp_Vec(x, y, z));
+		GetOcctShape().Move(TopLoc_Location(transformation));
+	}
+
 	void Topology::AddContent(const Topology::Ptr& rkTopology)
 	{
 		// 1. Get the center of mass of the content

@@ -102,6 +102,14 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="z"></param>
+		TOPOLOGIC_API void Translate(const double x, const double y, const double z);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="rkTopology"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API void AddContent(const Topology::Ptr& rkTopology);

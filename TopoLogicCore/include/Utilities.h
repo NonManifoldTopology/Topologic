@@ -11,7 +11,8 @@
 
 struct OcctShapeComparator {
 	bool operator()(const TopoDS_Shape& rkOcctShape1, const TopoDS_Shape& rkOcctShape2) const {
-		int upperLimit = std::numeric_limits<int>::max();
-		return rkOcctShape1.HashCode(upperLimit) < rkOcctShape2.HashCode(upperLimit);
+		int value1 = (int)ptrdiff_t(rkOcctShape1.TShape().operator->());
+		int value2 = (int)ptrdiff_t(rkOcctShape2.TShape().operator->());
+		return value1 < value2;
 	}
 };
