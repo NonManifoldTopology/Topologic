@@ -4,7 +4,7 @@
 #include <ApertureFactory.h>
 #include <Face.h>
 #include <Wire.h>
-#include <TopologyFactoryDictionary.h>
+#include <TopologyFactoryManager.h>
 #include <TopologyFactory.h>
 
 #include <assert.h>
@@ -59,11 +59,32 @@ namespace Topologic
 		return gcnew Aperture(pCoreAperture);
 	}
 
+	Aperture ^ Aperture::ByTopologyContext(Topologic::Topology ^ topology, Topologic::Topology ^ contextTopology)
+	{
+		// 1. Copy topology
+		TopologicCore::Topology::Ptr pCoreTopology =
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
+		TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->Copy();
+
+		// 2. Copy contextTopology
+		TopologicCore::Topology::Ptr pCoreContextTopology =
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(contextTopology->GetCoreTopologicalQuery());
+		TopologicCore::Topology::Ptr pCoreCopyContextTopology = pCoreContextTopology->Copy();
+
+		// 3. Copy topology becomes the content of copy context's topology
+		std::shared_ptr<TopologicCore::Aperture> pCoreAperture = TopologicCore::Aperture::ByTopologyContext(
+			pCoreCopyTopology,
+			pCoreCopyContextTopology
+		);
+
+		return gcnew Aperture(pCoreAperture);
+	}
+
 	Topologic::Topology^ Aperture::Topology()
 	{
 		TopologicCore::Aperture::Ptr pCoreAperture = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Aperture>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreTopology = pCoreAperture->Topology();
-		return TopologyFactoryDictionary::GetDefaultFactory(pCoreTopology)->Create(pCoreTopology);
+		return TopologyFactoryManager::GetDefaultFactory(pCoreTopology)->Create(pCoreTopology);
 	}
 
 	/*bool Aperture::IsOpen()

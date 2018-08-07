@@ -107,6 +107,8 @@ namespace TopologicCore
 		/// <param name="z"></param>
 		TOPOLOGIC_API void Translate(const double x, const double y, const double z);
 
+		void AddContent(const Topology::Ptr& rkTopology, Topology::Ptr& rClosestSimplestSubshape);
+
 		/// <summary>
 		/// 
 		/// </summary>

@@ -45,8 +45,16 @@ namespace Topologic
 		/// <param name="apertureBoundary"></param>
 		/// <param name="link"></param>
 		/// <param name="open"></param>
-		/// <returns></returns>
+		/// <returns name="Aperture"></returns>
 		static Aperture^ ByBoundaryWithinHost(Face^ hostFace, Wire^ apertureBoundary, bool link, bool open);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="topology"></param>
+		/// <param name="contextTopology"></param>
+		/// <returns name="Aperture"></returns>
+		static Aperture^ ByTopologyContext(Topology^ topology, Topology^ contextTopology);
 
 		/// <summary>
 		/// Returns the underlying topology.

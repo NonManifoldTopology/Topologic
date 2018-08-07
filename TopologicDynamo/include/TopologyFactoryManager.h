@@ -11,11 +11,11 @@ namespace Topologic
 {
 	ref class TopologyFactory;
 
-	ref class TopologyFactoryDictionary
+	ref class TopologyFactoryManager
 	{
 	public protected:
-		static property TopologyFactoryDictionary^ Instance {
-			TopologyFactoryDictionary^ get() { return %m_instance; }
+		static property TopologyFactoryManager^ Instance {
+			TopologyFactoryManager^ get() { return %m_instance; }
 		}
 
 		void Add(const TopologicCore::Topology::Ptr& content, TopologyFactory^ value);
@@ -27,9 +27,9 @@ namespace Topologic
 		static TopologyFactory^ GetDefaultFactory(const TopologicCore::Topology::Ptr& content);
 
 	private:
-		TopologyFactoryDictionary() {}
-		TopologyFactoryDictionary(const TopologyFactoryDictionary%) { throw gcnew System::InvalidOperationException("singleton cannot be copy-constructed"); }
-		static TopologyFactoryDictionary m_instance;
+		TopologyFactoryManager() {}
+		TopologyFactoryManager(const TopologyFactoryManager%) { throw gcnew System::InvalidOperationException("singleton cannot be copy-constructed"); }
+		static TopologyFactoryManager m_instance;
 		Dictionary<String^, TopologyFactory^>^ m_TopologyFactoryDict = gcnew Dictionary<String^, TopologyFactory^>();
 	};
 }

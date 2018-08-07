@@ -149,7 +149,7 @@
     <ClInclude Include="include\CellComplex.h" />
     <ClInclude Include="include\CellComplexFactory.h" />
     <ClInclude Include="include\Cluster.h" />
-    <ClInclude Include="include\TopologyFactoryDictionary.h" />
+    <ClInclude Include="include\TopologyFactoryManager.h" />
     <ClInclude Include="include\TopologyFactory.h" />
     <ClInclude Include="include\Context.h" />
     <ClInclude Include="include\DualGraph.h" />
@@ -172,7 +172,7 @@
     <ClCompile Include="src\CellComplex.cpp" />
     <ClCompile Include="src\CellComplexFactory.cpp" />
     <ClCompile Include="src\Cluster.cpp" />
-    <ClCompile Include="src\TopologyFactoryDictionary.cpp" />
+    <ClCompile Include="src\TopologyFactoryManager.cpp" />
     <ClCompile Include="src\Context.cpp" />
     <ClCompile Include="src\Edge.cpp" />
     <ClCompile Include="src\Face.cpp" />

@@ -135,6 +135,13 @@ namespace Topologic
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="apertureTopology"></param>
+		/// <returns name="Topology"></returns>
+		Topology^ AddAperture(Topology^ apertureTopology);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="context"></param>
 		/// <returns name="Topology"></returns>
 		Topology^ AddContext(Context^ context);

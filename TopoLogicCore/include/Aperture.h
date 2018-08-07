@@ -45,6 +45,14 @@ namespace TopologicCore
 		static TOPOLOGIC_API std::shared_ptr<Aperture> ByTopologyContext(const Topology::Ptr& kpTopology, const std::shared_ptr<Context>& kpContext);
 
 		/// <summary>
+		/// Creates an aperture by a topology and a context topology.
+		/// </summary>
+		/// <param name="kpTopology"></param>
+		/// <param name="kpContextTopology"></param>
+		/// <returns></returns>
+		static TOPOLOGIC_API std::shared_ptr<Aperture> ByTopologyContext(const Topology::Ptr& kpTopology, const Topology::Ptr& kpContextTopology);
+
+		/// <summary>
 		/// Creates an aperture by a topology and a context.
 		/// </summary>
 		/// <param name="kpTopology"></param>

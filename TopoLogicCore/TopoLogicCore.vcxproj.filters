@@ -29,9 +29,6 @@
     <ClInclude Include="include\ContextManager.h">
       <Filter>Context</Filter>
     </ClInclude>
-    <ClInclude Include="include\TopologyFactoryDictionary.h">
-      <Filter>Factory</Filter>
-    </ClInclude>
     <ClInclude Include="include\TopologyFactory.h">
       <Filter>Factory</Filter>
     </ClInclude>
@@ -65,6 +62,9 @@
     <ClInclude Include="include\CellFactory.h">
       <Filter>Factory</Filter>
     </ClInclude>
+    <ClInclude Include="include\TopologyFactoryManager.h">
+      <Filter>Factory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
@@ -86,9 +86,6 @@
     </ClCompile>
     <ClCompile Include="src\ContextManager.cpp">
       <Filter>Context</Filter>
-    </ClCompile>
-    <ClCompile Include="src\TopologyFactoryDictionary.cpp">
-      <Filter>Factory</Filter>
     </ClCompile>
     <ClCompile Include="src\VertexFactory.cpp">
       <Filter>Factory</Filter>
@@ -121,6 +118,9 @@
       <Filter>Factory</Filter>
     </ClCompile>
     <ClCompile Include="src\FaceFactory.cpp">
+      <Filter>Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TopologyFactoryManager.cpp">
       <Filter>Factory</Filter>
     </ClCompile>
   </ItemGroup>

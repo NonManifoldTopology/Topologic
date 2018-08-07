@@ -1,4 +1,4 @@
-#include <TopologyFactoryDictionary.h>
+#include <TopologyFactoryManager.h>
 #include <CellComplexFactory.h>
 #include <FaceFactory.h>
 #include <VertexFactory.h>
@@ -6,12 +6,12 @@
 
 namespace Topologic
 {
-	void TopologyFactoryDictionary::Add(const TopologicCore::Topology::Ptr& content, TopologyFactory^ value)
+	void TopologyFactoryManager::Add(const TopologicCore::Topology::Ptr& content, TopologyFactory^ value)
 	{
 		Add(gcnew String(content->GetClassGUID().c_str()), value);
 	}
 
-	void TopologyFactoryDictionary::Add(String^ key, TopologyFactory^ value)
+	void TopologyFactoryManager::Add(String^ key, TopologyFactory^ value)
 	{
 		try {
 			m_TopologyFactoryDict->Add(key, value);
@@ -22,7 +22,7 @@ namespace Topologic
 		}
 	}
 
-	TopologyFactory^ TopologyFactoryDictionary::Find(String^ key)
+	TopologyFactory^ TopologyFactoryManager::Find(String^ key)
 	{
 		if (m_TopologyFactoryDict->ContainsKey(key))
 		{
@@ -34,7 +34,7 @@ namespace Topologic
 		}
 	}
 
-	TopologyFactory^ TopologyFactoryDictionary::GetDefaultFactory(const TopologicCore::Topology::Ptr & content)
+	TopologyFactory^ TopologyFactoryManager::GetDefaultFactory(const TopologicCore::Topology::Ptr & content)
 	{
 		switch (content->GetType())
 		{

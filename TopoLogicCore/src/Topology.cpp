@@ -12,7 +12,7 @@
 #include <ContextManager.h>
 #include <InstanceGUIDManager.h>
 #include <TopologyFactory.h>
-#include <TopologyFactoryDictionary.h>
+#include <TopologyFactoryManager.h>
 
 #include <ShapeFix_ShapeTolerance.hxx>
 
@@ -143,7 +143,7 @@ namespace TopologicCore
 
 	void Topology::RegisterFactory(const std::string & rkGuid, const TopologyFactory::Ptr & kpTopologyFactory)
 	{
-		TopologyFactoryDictionary::GetInstance().Add(rkGuid, kpTopologyFactory);
+		TopologyFactoryManager::GetInstance().Add(rkGuid, kpTopologyFactory);
 	}
 
 	Topology::Ptr Topology::ByOcctShape(const TopoDS_Shape& rkOcctShape, const std::string& rkInstanceGuid)
@@ -151,11 +151,11 @@ namespace TopologicCore
 		TopologyFactory::Ptr pTopologyFactory = nullptr;
 		if (rkInstanceGuid.compare("") == 0)
 		{
-			pTopologyFactory = TopologyFactoryDictionary::GetDefaultFactory(rkOcctShape.ShapeType());
+			pTopologyFactory = TopologyFactoryManager::GetDefaultFactory(rkOcctShape.ShapeType());
 		}
 		else
 		{
-			TopologyFactoryDictionary::GetInstance().Find(rkInstanceGuid, pTopologyFactory);
+			TopologyFactoryManager::GetInstance().Find(rkInstanceGuid, pTopologyFactory);
 		}
 		assert(pTopologyFactory != nullptr);
 		return pTopologyFactory->Create(rkOcctShape);
@@ -337,16 +337,22 @@ namespace TopologicCore
 		GetOcctShape().Move(TopLoc_Location(transformation));
 	}
 
-	void Topology::AddContent(const Topology::Ptr& rkTopology)
+	void Topology::AddContent(const Topology::Ptr & rkTopology, Topology::Ptr& rClosestSimplestSubshape)
 	{
 		// 1. Get the center of mass of the content
 		Vertex::Ptr pCenterOfMass = rkTopology->CenterOfMass();
 
 		// 2. Find the closest simplest topology of the copy topology
-		Topology::Ptr pClosestSimplestSubshape = ClosestSimplestSubshape(pCenterOfMass);
+		rClosestSimplestSubshape = ClosestSimplestSubshape(pCenterOfMass);
 
 		// 3. Register to ContentManager
-		ContentManager::GetInstance().Add(pClosestSimplestSubshape->GetOcctShape(), rkTopology);
+		ContentManager::GetInstance().Add(rClosestSimplestSubshape->GetOcctShape(), rkTopology);
+	}
+
+	void Topology::AddContent(const Topology::Ptr& rkTopology)
+	{
+		Topology::Ptr pClosestSimplestSubshape;
+		AddContent(rkTopology, pClosestSimplestSubshape);
 	}
 
 	void Topology::RemoveContent(const Topology::Ptr& rkTopology)

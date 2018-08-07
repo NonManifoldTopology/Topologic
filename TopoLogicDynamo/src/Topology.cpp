@@ -15,13 +15,11 @@
 #include <Aperture.h>
 #include <Attribute.h>
 #include <Context.h>
-#include <TopologyFactoryDictionary.h>
+#include <TopologyFactoryManager.h>
 #include <TopologyFactory.h>
+#include <ApertureFactory.h>
 
-#include "TopologicCore/include/InstanceGUIDManager.h"
-
-#include <TopoDS_Shape.hxx>
-//#include <TDF_AttributeIterator.hxx>
+//#include <TopoDS_Shape.hxx>
 
 namespace Topologic
 {
@@ -179,17 +177,17 @@ namespace Topologic
 	Topology^ Topology::ByCoreTopology(const std::shared_ptr<TopologicCore::Topology>& kpCoreTopology)
 	{
 		String^ guid = gcnew String(kpCoreTopology->GetInstanceGUID().c_str());
-		return TopologyFactoryDictionary::Instance->Find(guid)->Create(TopologicCore::TopologyPtr(kpCoreTopology));
+		return TopologyFactoryManager::Instance->Find(guid)->Create(TopologicCore::TopologyPtr(kpCoreTopology));
 	}
 
 	void Topology::RegisterFactory(const TopologicCore::Topology::Ptr & kpCoreTopology, TopologyFactory^ topologyFactory)
 	{
-		TopologyFactoryDictionary::Instance->Add(kpCoreTopology, topologyFactory);
+		TopologyFactoryManager::Instance->Add(kpCoreTopology, topologyFactory);
 	}
 
 	void Topology::RegisterFactory(String^ guid, TopologyFactory^ topologyFactory)
 	{
-		TopologyFactoryDictionary::Instance->Add(guid, topologyFactory);
+		TopologyFactoryManager::Instance->Add(guid, topologyFactory);
 	}
 
 	Topology::Topology()
@@ -279,6 +277,30 @@ namespace Topologic
 		return this;*/
 
 		throw gcnew NotImplementedException();
+	}
+
+	Topology^ Topology::AddAperture(Topology ^ apertureTopology)
+	{
+		// 1. Copy this topology
+		TopologicCore::Topology::Ptr pCoreParentTopology =
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		TopologicCore::Topology::Ptr pCoreCopyParentTopology = pCoreParentTopology->Copy();
+
+		// 2. Copy the aperture topology
+		TopologicCore::Topology::Ptr pCoreApertureTopology =
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(apertureTopology->GetCoreTopologicalQuery());
+		TopologicCore::Topology::Ptr pCoreCopyApertureTopology = pCoreApertureTopology->Copy();
+
+		// 3. Add the aperture
+		TopologicCore::Aperture::Ptr pCoreAperture = TopologicCore::Aperture::ByTopologyContext(
+			pCoreCopyApertureTopology, 
+			pCoreCopyParentTopology);
+
+		// HACK: Add ApertureFactory. TODO: Find a better place.
+		RegisterFactory(pCoreAperture, gcnew ApertureFactory());
+
+		// 4. Return the copy parent topology
+		return Topology::ByCoreTopology(pCoreCopyParentTopology);
 	}
 
 	Topology^ Topology::AddContext(Context^ context)

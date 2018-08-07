@@ -13,15 +13,15 @@ namespace TopologicCore
 {
 	class TopologyFactory;
 
-	class TopologyFactoryDictionary
+	class TopologyFactoryManager
 	{
 	public:
-		typedef std::shared_ptr<TopologyFactoryDictionary> Ptr;
+		typedef std::shared_ptr<TopologyFactoryManager> Ptr;
 
 	public:
-		static TopologyFactoryDictionary& GetInstance()
+		static TopologyFactoryManager& GetInstance()
 		{
-			static TopologyFactoryDictionary instance;
+			static TopologyFactoryManager instance;
 			return instance;
 		}
 

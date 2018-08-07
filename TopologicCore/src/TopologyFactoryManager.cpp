@@ -1,4 +1,4 @@
-#include <TopologyFactoryDictionary.h>
+#include <TopologyFactoryManager.h>
 #include <TopologyFactory.h>
 #include <ClusterFactory.h>
 #include <CellComplexFactory.h>
@@ -11,7 +11,7 @@
 
 namespace TopologicCore
 {
-	void TopologyFactoryDictionary::Add(const std::string& rkGuid, const TopologyFactory::Ptr& rkTopologyFactory)
+	void TopologyFactoryManager::Add(const std::string& rkGuid, const TopologyFactory::Ptr& rkTopologyFactory)
 	{
 		if (m_topologyFactoryMap.find(rkGuid) == m_topologyFactoryMap.end())
 		{
@@ -19,7 +19,7 @@ namespace TopologicCore
 		}
 	}
 
-	bool TopologyFactoryDictionary::Find(const std::string& rkGuid, TopologyFactory::Ptr& rTopologyFactory)
+	bool TopologyFactoryManager::Find(const std::string& rkGuid, TopologyFactory::Ptr& rTopologyFactory)
 	{
 		if (m_topologyFactoryMap.find(rkGuid) != m_topologyFactoryMap.end())
 		{
@@ -30,7 +30,7 @@ namespace TopologicCore
 		return false;
 	}
 
-	TopologyFactory::Ptr TopologyFactoryDictionary::GetDefaultFactory(const TopAbs_ShapeEnum kOcctType)
+	TopologyFactory::Ptr TopologyFactoryManager::GetDefaultFactory(const TopAbs_ShapeEnum kOcctType)
 	{
 		switch (kOcctType)
 		{

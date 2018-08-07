@@ -30,7 +30,7 @@
     <ClInclude Include="include\CellComplexFactory.h">
       <Filter>Factory</Filter>
     </ClInclude>
-    <ClInclude Include="include\TopologyFactoryDictionary.h">
+    <ClInclude Include="include\TopologyFactoryManager.h">
       <Filter>Factory</Filter>
     </ClInclude>
   </ItemGroup>
@@ -60,7 +60,7 @@
     <ClCompile Include="src\CellComplexFactory.cpp">
       <Filter>Factory</Filter>
     </ClCompile>
-    <ClCompile Include="src\TopologyFactoryDictionary.cpp">
+    <ClCompile Include="src\TopologyFactoryManager.cpp">
       <Filter>Factory</Filter>
     </ClCompile>
   </ItemGroup>

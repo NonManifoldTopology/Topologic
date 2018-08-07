@@ -21,11 +21,26 @@ namespace TopologicCore
 		return ByTopologyContextStatus(kpTopology, kpContext, kDefaultStatus);
 	}
 
+	std::shared_ptr<Aperture> Aperture::ByTopologyContext(const Topology::Ptr & kpTopology, const Topology::Ptr & kpContextTopology)
+	{
+		const bool kDefaultStatus = false;
+		const double  kDefaultParameter = 0.0;
+		Topology::Ptr pClosestSimplestSubshape = kpContextTopology->ClosestSimplestSubshape(kpTopology->CenterOfMass());
+
+		Context::Ptr pContext = Context::ByTopologyParameters(pClosestSimplestSubshape, kDefaultParameter, kDefaultParameter, kDefaultParameter);
+
+		std::shared_ptr<Aperture> pAperture = std::make_shared<Aperture>(kpTopology, pContext, kDefaultStatus);
+		kpContextTopology->AddContent(pAperture);
+		//pAperture->AddContext(pContext); // Done in the constructor
+		return pAperture;
+	}
+
 	std::shared_ptr<Aperture> Aperture::ByTopologyContextStatus(const Topology::Ptr& kpTopology, const std::shared_ptr<Context>& kpContext, const bool kOpenStatus)
 	{
 		std::shared_ptr<Aperture> pAperture = std::make_shared<Aperture>(kpTopology, kpContext, kOpenStatus);
-		kpContext->Topology()->AddContent(pAperture);
-		//pAperture->AddContext(kpContext);
+		Topology::Ptr pClosestSimplestSubshape;
+		kpContext->Topology()->AddContent(pAperture, pClosestSimplestSubshape);
+		pAperture->AddContext(kpContext);
 		return pAperture;
 	}
 
