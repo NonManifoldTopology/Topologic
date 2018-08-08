@@ -33,6 +33,24 @@
     <ClInclude Include="include\TopologyFactoryManager.h">
       <Filter>Factory</Filter>
     </ClInclude>
+    <ClInclude Include="include\ShellFactory.h">
+      <Filter>Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\WireFactory.h">
+      <Filter>Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CellFactory.h">
+      <Filter>Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ClusterFactory.h">
+      <Filter>Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DualGraphFactory.h">
+      <Filter>Factory</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EdgeFactory.h">
+      <Filter>Factory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
@@ -47,7 +65,6 @@
     <ClCompile Include="src\Wire.cpp" />
     <ClCompile Include="src\Context.cpp" />
     <ClCompile Include="src\Aperture.cpp" />
-    <ClCompile Include="include\DualGraph.cpp" />
     <ClCompile Include="src\ApertureFactory.cpp">
       <Filter>Factory</Filter>
     </ClCompile>
@@ -61,6 +78,25 @@
       <Filter>Factory</Filter>
     </ClCompile>
     <ClCompile Include="src\TopologyFactoryManager.cpp">
+      <Filter>Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DualGraph.cpp" />
+    <ClCompile Include="src\CellFactory.cpp">
+      <Filter>Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ClusterFactory.cpp">
+      <Filter>Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DualGraphFactory.cpp">
+      <Filter>Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EdgeFactory.cpp">
+      <Filter>Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ShellFactory.cpp">
+      <Filter>Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WireFactory.cpp">
       <Filter>Factory</Filter>
     </ClCompile>
   </ItemGroup>

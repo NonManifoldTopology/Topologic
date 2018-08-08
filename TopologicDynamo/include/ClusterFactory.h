@@ -4,11 +4,10 @@
 
 namespace Topologic
 {
-	ref class FaceFactory : TopologyFactory
+	ref class ClusterFactory : TopologyFactory
 	{
 	public:
 		[IsVisibleInDynamoLibrary(false)]
 		virtual Topology^ Create(const TopologicCore::TopologyPtr& kpTopology) override;
 	};
-
 }
