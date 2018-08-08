@@ -89,8 +89,8 @@ namespace Topologic {
 		/// 
 		/// </summary>
 		/// <param name="vertices"></param>
-		/// <returns></returns>
-		static Face^ ByInterpolation(IEnumerable<IEnumerable<Vertex^>^>^ vertices);
+		/// <returns name="Face"></returns>
+		static Face^ ByVertices(IEnumerable<IEnumerable<Vertex^>^>^ vertices);
 
 		/// <summary>
 		/// Returns the shared edges between two faces. 

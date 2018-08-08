@@ -365,7 +365,7 @@ namespace TopologicCore
 		}
 	}
 
-	Face::Ptr Face::ByInterpolation(const std::list<std::list<TopologicCore::Vertex::Ptr>>& rkVertices)
+	Face::Ptr Face::ByVertices(const std::list<std::list<TopologicCore::Vertex::Ptr>>& rkVertices)
 	{
 		// Check if all vertex lists have the same length
 		int rowLength = 0;

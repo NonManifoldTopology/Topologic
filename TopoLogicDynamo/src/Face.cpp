@@ -123,7 +123,7 @@ namespace Topologic
 		return gcnew Face(surface);
 	}
 
-	Face ^ Face::ByInterpolation(IEnumerable<IEnumerable<Vertex^>^>^ vertices)
+	Face ^ Face::ByVertices(IEnumerable<IEnumerable<Vertex^>^>^ vertices)
 	{
 		std::list<std::list<TopologicCore::Vertex::Ptr>> coreVertices;
 		for each(IEnumerable<Vertex^>^ verticesList in vertices)
@@ -135,7 +135,7 @@ namespace Topologic
 			}
 			coreVertices.push_back(coreVerticesList);
 		}
-		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Face::ByInterpolation(coreVertices);
+		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Face::ByVertices(coreVertices);
 		return gcnew Face(pCoreFace);
 	}
 

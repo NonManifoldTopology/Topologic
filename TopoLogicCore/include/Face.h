@@ -191,7 +191,7 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="coreVertices"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API Face::Ptr ByInterpolation(const std::list<std::list<std::shared_ptr<Vertex>>>& rkVertices);
+		static TOPOLOGIC_API Face::Ptr ByVertices(const std::list<std::list<std::shared_ptr<Vertex>>>& rkVertices);
 
 		/// <summary>
 		/// 
