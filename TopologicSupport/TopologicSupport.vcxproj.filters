@@ -5,10 +5,42 @@
     <ClInclude Include="include\Direction.h" />
     <ClInclude Include="include\TransformationMatrix2D.h" />
     <ClInclude Include="include\Utilities.h" />
+    <ClInclude Include="include\AttributeManager.h">
+      <Filter>Attribute</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Attribute.h">
+      <Filter>Attribute</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AttributeMap.h">
+      <Filter>Attribute</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IntAttribute.h">
+      <Filter>Attribute</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DoubleAttribute.h">
+      <Filter>Attribute</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Vector.cpp" />
     <ClCompile Include="src\Direction.cpp" />
     <ClCompile Include="src\TransformationMatrix2D.cpp" />
+    <ClCompile Include="src\AttributeManager.cpp">
+      <Filter>Attribute</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AttributeMap.cpp">
+      <Filter>Attribute</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DoubleAttribute.cpp">
+      <Filter>Attribute</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IntAttribute.cpp">
+      <Filter>Attribute</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Attribute">
+      <UniqueIdentifier>{02bf7a9a-77fd-4ecd-87a6-a3dd785117ea}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

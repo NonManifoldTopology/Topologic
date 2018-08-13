@@ -7,6 +7,7 @@
 //#include <OcctCounterAttribute.h>
 
 #include <BRepBuilderAPI_MakeWire.hxx>
+#include <BRepCheck_Wire.hxx>
 #include <BRepGProp.hxx>
 #include <BRepTools_WireExplorer.hxx>
 #include <Geom_CartesianPoint.hxx>
@@ -45,9 +46,10 @@ namespace TopologicCore
 
 	bool Wire::IsClosed() const
 	{
-		ShapeAnalysis_Wire shapeAnalysisWire;
-		shapeAnalysisWire.Load(GetOcctWire());
-		return shapeAnalysisWire.CheckClosed();
+		BRepCheck_Wire occtCheckWire(TopoDS::Wire(GetOcctShape()));
+		BRepCheck_Status status = occtCheckWire.Closed();
+		bool isClosed = status == BRepCheck_NoError;
+		return isClosed;
 	}
 
 	void Wire::Vertices(std::list<Vertex::Ptr>& rVertices, const bool kHasOrder) const

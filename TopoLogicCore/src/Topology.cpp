@@ -2063,7 +2063,7 @@ namespace TopologicCore
 		return Topology::ByOcctShape(occtShapeCopy, GetInstanceGUID());
 	}
 
-	TopoDS_Shape Topology::CopyOcct()
+	TopoDS_Shape Topology::CopyOcct() const
 	{
 		BRepBuilderAPI_Copy occtShapeCopy(GetOcctShape());
 		return occtShapeCopy.Shape();

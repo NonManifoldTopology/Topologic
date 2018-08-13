@@ -135,12 +135,6 @@ namespace Topologic
 		/// <returns name="double"></returns>
 		double Volume();
 
-		/*/// <summary>
-		/// 
-		/// </summary>
-		/// <returns name="Vertex"></returns>
-		Vertex^ CenterOfMass();*/
-
 		/// <summary>
 		/// 
 		/// </summary>

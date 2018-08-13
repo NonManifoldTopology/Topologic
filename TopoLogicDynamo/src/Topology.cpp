@@ -13,7 +13,7 @@
 #include <Edge.h>
 #include <Vertex.h>
 #include <Aperture.h>
-#include <Attribute.h>
+//#include <Attribute.h>
 #include <Context.h>
 #include <TopologyFactoryManager.h>
 #include <TopologyFactory.h>

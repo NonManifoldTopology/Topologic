@@ -17,12 +17,6 @@
     <ClInclude Include="include\DualGraph.h" />
     <ClInclude Include="include\ContentManager.h" />
     <ClInclude Include="include\InstanceGUIDManager.h" />
-    <ClInclude Include="include\AttributeManager.h">
-      <Filter>Attribute</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Attribute.h">
-      <Filter>Attribute</Filter>
-    </ClInclude>
     <ClInclude Include="include\Context.h">
       <Filter>Context</Filter>
     </ClInclude>
@@ -90,9 +84,6 @@
     <ClCompile Include="src\VertexFactory.cpp">
       <Filter>Factory</Filter>
     </ClCompile>
-    <ClCompile Include="src\AttributeManager.cpp">
-      <Filter>Attribute</Filter>
-    </ClCompile>
     <ClCompile Include="src\ShellFactory.cpp">
       <Filter>Factory</Filter>
     </ClCompile>
@@ -125,9 +116,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="Attribute">
-      <UniqueIdentifier>{05ec6486-c79c-405e-8476-002ac9a86701}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Context">
       <UniqueIdentifier>{ac751df2-d33d-4350-8a20-34c4c87e1c27}</UniqueIdentifier>
     </Filter>

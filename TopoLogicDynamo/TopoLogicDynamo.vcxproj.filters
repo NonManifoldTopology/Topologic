@@ -2,7 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="include\Topology.h" />
-    <ClInclude Include="include\Attribute.h" />
     <ClInclude Include="include\Vertex.h" />
     <ClInclude Include="include\Cell.h" />
     <ClInclude Include="include\CellComplex.h" />
@@ -51,10 +50,11 @@
     <ClInclude Include="include\EdgeFactory.h">
       <Filter>Factory</Filter>
     </ClInclude>
+    <ClInclude Include="include\AttributeMap.h" />
+    <ClInclude Include="include\ApertureAttribute.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
-    <ClCompile Include="src\Attribute.cpp" />
     <ClCompile Include="src\Vertex.cpp" />
     <ClCompile Include="src\Cell.cpp" />
     <ClCompile Include="src\CellComplex.cpp" />
@@ -99,6 +99,7 @@
     <ClCompile Include="src\WireFactory.cpp">
       <Filter>Factory</Filter>
     </ClCompile>
+    <ClCompile Include="src\AttributeMap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Factory">

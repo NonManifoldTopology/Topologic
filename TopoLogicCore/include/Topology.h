@@ -403,7 +403,7 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		TopoDS_Shape CopyOcct();
+		TopoDS_Shape CopyOcct() const;
 
 		/// <summary>
 		/// 
