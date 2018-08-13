@@ -12,14 +12,22 @@
 #include <Wire.h>
 #include <Edge.h>
 #include <Vertex.h>
+#include <DualGraph.h>
 #include <Aperture.h>
-//#include <Attribute.h>
 #include <Context.h>
 #include <TopologyFactoryManager.h>
 #include <TopologyFactory.h>
 #include <ApertureFactory.h>
-
-//#include <TopoDS_Shape.hxx>
+#include <VertexFactory.h>
+#include <EdgeFactory.h>
+#include <WireFactory.h>
+#include <FaceFactory.h>
+#include <ShellFactory.h>
+#include <CellFactory.h>
+#include <CellComplexFactory.h>
+#include <ClusterFactory.h>
+#include <DualGraphFactory.h>
+#include <ApertureFactory.h>
 
 namespace Topologic
 {
@@ -192,7 +200,21 @@ namespace Topologic
 
 	Topology::Topology()
 	{
-
+		// Register the factories
+		static bool areFactoriesAdded = false;
+		if(!areFactoriesAdded)
+		{
+			RegisterFactory(gcnew String(TopologicCore::VertexGUID::Get().c_str()), gcnew VertexFactory());
+			RegisterFactory(gcnew String(TopologicCore::EdgeGUID::Get().c_str()), gcnew EdgeFactory());
+			RegisterFactory(gcnew String(TopologicCore::WireGUID::Get().c_str()), gcnew WireFactory());
+			RegisterFactory(gcnew String(TopologicCore::ShellGUID::Get().c_str()), gcnew ShellFactory());
+			RegisterFactory(gcnew String(TopologicCore::CellGUID::Get().c_str()), gcnew CellFactory());
+			RegisterFactory(gcnew String(TopologicCore::CellComplexGUID::Get().c_str()), gcnew CellComplexFactory());
+			RegisterFactory(gcnew String(TopologicCore::ClusterGUID::Get().c_str()), gcnew ClusterFactory());
+			RegisterFactory(gcnew String(TopologicCore::DualGraphGUID::Get().c_str()), gcnew DualGraphFactory());
+			RegisterFactory(gcnew String(TopologicCore::ApertureGUID::Get().c_str()), gcnew ApertureFactory());
+			areFactoriesAdded = true;
+		}
 	}
 
 	Topology::~Topology()
