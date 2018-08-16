@@ -62,8 +62,7 @@ namespace Topologic
 		: Topology()
 		, m_pCoreVertex(new TopologicCore::Vertex::Ptr(kpCoreVertex))
 	{
-		// Register the factory
-		RegisterFactory(*m_pCoreVertex, gcnew VertexFactory());
+
 	}
 
 	Vertex::Vertex(Autodesk::DesignScript::Geometry::Point^ pDynamoPoint)

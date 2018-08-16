@@ -28,7 +28,7 @@ namespace Topologic {
 		/// </summary>
 		/// <param name="vertices">A list of vertices. The created edge will pass all vertices in this list.</param>
 		/// <returns name="Edge">The created Topologic edge</returns>
-		static Edge^ ByVertices(IEnumerable<Vertex^>^ vertices);
+		static Edge^ ByVertices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices);
 
 		/// <summary>
 		/// 

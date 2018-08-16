@@ -60,7 +60,7 @@ namespace Topologic
 		/// </summary>
 		/// <param name="faces">A set of faces.</param>
 		/// <returns name="Shell">The created shell</returns>
-		static Shell^ ByFaces(IEnumerable<Face^>^ faces);
+		static Shell^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces);
 
 		/// <summary>
 		/// Creates a shell by a polysurface.
@@ -74,7 +74,7 @@ namespace Topologic
 		/// </summary>
 		/// <param name="wires">A set of wires</param>
 		/// <returns name="Shell">The created shell</returns>
-		static Shell^ ByLoft(IEnumerable<Wire^>^ wires);
+		static Shell^ ByLoft(System::Collections::Generic::IEnumerable<Wire^>^ wires);
 
 		/// <summary>
 		/// Creates a shell by a list of vertices and a list of face indices.
@@ -82,7 +82,7 @@ namespace Topologic
 		/// <param name="vertices">A list of vertices.</param>
 		/// <param name="faceIndices">A list of face indices. Every element must be within the range of the vertices argument.</param>
 		/// <returns name="Shell">The created shell</returns>
-		static Shell^ ByVerticesFaceIndices(IEnumerable<Vertex^>^ vertices, IEnumerable<IEnumerable<int>^>^ faceIndices);
+		static Shell^ ByVerticesFaceIndices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<int>^>^ faceIndices);
 		
 		/// <summary>
 		/// 
@@ -109,7 +109,7 @@ namespace Topologic
 		/// <param name="capTop">Cap the holes if the surface is closed either in the maximum u- or v-direction but open on the other</param>
 		/// <returns></returns>
 		[MultiReturn(gcnew array<String^> { "Vertices", "Edges", "Wires", "Faces", "Shell" })]
-		static Dictionary<String^, Object^>^ ByFacePlanarization(Face^ face, int iteration, int numEdgeSamples, IEnumerable<double>^ uValues, IEnumerable<double>^ vValues, double tolerance, bool capBottom, bool capTop);
+		static Dictionary<String^, Object^>^ ByFacePlanarization(Face^ face, int iteration, int numEdgeSamples, System::Collections::Generic::IEnumerable<double>^ uValues, System::Collections::Generic::IEnumerable<double>^ vValues, double tolerance, bool capBottom, bool capTop);
 
 		property Object^ Geometry
 		{

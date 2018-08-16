@@ -100,21 +100,22 @@ namespace TopologicCore
 		return Vertex::ByPoint(new Geom_CartesianPoint(occtShapeProperties.CentreOfMass()));
 	}
 
-	Face::Ptr Face::ByWire(const Wire::Ptr& pkWire)
+	Face::Ptr Face::ByExternalBoundary(const Wire::Ptr& kpExternalBoundary)
 	{
-		BRepBuilderAPI_MakeFace occtMakeFace(pkWire->GetOcctWire());
+		/*BRepBuilderAPI_MakeFace occtMakeFace(pkWire->GetOcctWire());
 		if (occtMakeFace.Error() != BRepBuilderAPI_FaceDone)
 		{
 			Throw(occtMakeFace);
 		}
 
-		Face::Ptr pFace = std::make_shared<Face>(occtMakeFace);
-		std::list<std::pair<Topology::Ptr, Topology::Ptr>> topologyPairs;
+		Face::Ptr pFace = std::make_shared<Face>(occtMakeFace);*/
+		
+		// TODO: Add modified mebrs
+		/*std::list<std::pair<Topology::Ptr, Topology::Ptr>> topologyPairs;
 		std::list<Topology::Ptr> members;
 		pFace->Members(members);
 
-		// TODO: Add modified mebrs
-		/*for (const Topology::Ptr& kpMember : members)
+		for (const Topology::Ptr& kpMember : members)
 		{
 			topologyPairs.push_back(std::make_pair(kpMember, kpMember));
 		}
@@ -123,6 +124,26 @@ namespace TopologicCore
 			pFace->GetOcctLabel(),
 			topologyPairs);*/
 
+		std::list<Wire::Ptr> internalBoundaries;
+		return ByExternalInternalBoundaries(kpExternalBoundary, internalBoundaries);
+	}
+
+	Face::Ptr Face::ByExternalInternalBoundaries(
+		const Wire::Ptr& pkExternalBoundary,
+		const std::list<Wire::Ptr>& rkInternalBoundaries)
+	{
+		BRepBuilderAPI_MakeFace occtMakeFace(pkExternalBoundary->GetOcctWire());
+		if (occtMakeFace.Error() != BRepBuilderAPI_FaceDone)
+		{
+			Throw(occtMakeFace);
+		}
+
+		for (const std::shared_ptr<Wire>& kpInternalBoundary : rkInternalBoundaries)
+		{
+			occtMakeFace.Add(kpInternalBoundary->GetOcctWire());
+		}
+
+		Face::Ptr pFace = std::make_shared<Face>(occtMakeFace);
 		return pFace;
 	}
 
@@ -134,7 +155,7 @@ namespace TopologicCore
 		}
 		
 		Wire::Ptr pWire = Wire::ByEdges(rkEdges);
-		Face::Ptr pFace = ByWire(pWire);
+		Face::Ptr pFace = ByExternalBoundary(pWire);
 
 		return pFace;
 	}

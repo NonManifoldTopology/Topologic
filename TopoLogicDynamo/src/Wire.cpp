@@ -70,7 +70,7 @@ namespace Topologic
 		return pVertices;
 	}
 
-	Wire^ Wire::ByEdges(IEnumerable<Edge^>^ edges)
+	Wire^ Wire::ByEdges(System::Collections::Generic::IEnumerable<Edge^>^ edges)
 	{
 		return gcnew Wire(edges);
 	}
@@ -136,7 +136,7 @@ namespace Topologic
 
 	}
 
-	Wire::Wire(IEnumerable<Edge^>^ pEdges)
+	Wire::Wire(System::Collections::Generic::IEnumerable<Edge^>^ pEdges)
 		: Topology()
 		, m_pCoreWire(nullptr)
 	{

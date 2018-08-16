@@ -104,9 +104,19 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="rkWire"></param>
+		/// <param name="kpExternalBoundary"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API static std::shared_ptr<Face> ByWire(const std::shared_ptr<Wire>& pkWire);
+		TOPOLOGIC_API static std::shared_ptr<Face> ByExternalBoundary(const std::shared_ptr<Wire>& kpExternalBoundary);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="pkExternalBoundary"></param>
+		/// <param name="rkInternalBoundaries"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API static std::shared_ptr<Face> ByExternalInternalBoundaries(
+			const std::shared_ptr<Wire>& pkExternalBoundary, 
+			const std::list<std::shared_ptr<Wire>>& rkInternalBoundaries);
 
 		/// <summary>
 		/// 

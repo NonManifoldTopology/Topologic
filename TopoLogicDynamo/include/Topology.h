@@ -1,6 +1,8 @@
 #pragma once
 
 #include "TopologicalQuery.h"
+#include "AttributeMap.h"
+
 #include <TopologicCore/include/Topology.h>
 
 #pragma make_public(TopologicCore::Topology)
@@ -50,7 +52,7 @@ namespace Topologic
 		/// <param name="vertices"></param>
 		/// <param name="vertexIndices"></param>
 		/// <returns name="Topology[]"></returns>
-		static List<Topology^>^ ByVertexIndex(IEnumerable<Vertex^>^ vertices, IEnumerable<IEnumerable<int>^>^ vertexIndices);
+		static List<Topology^>^ ByVertexIndex(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<int>^>^ vertexIndices);
 
 		/// <summary>
 		/// Returns the dimensionality of the Topological entity.
@@ -81,10 +83,17 @@ namespace Topologic
 		/// <summary>
 		/// 
 		/// </summary>
-		property List<Object^>^ Attributes
+		property Support::AttributeMap^ AttributeMap
 		{
-			List<Object^>^ get();
+			Support::AttributeMap^ get();
 		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="attributeMap"></param>
+		/// <returns></returns>
+		Topology^ AddAttributeMap(Support::AttributeMap^ attributeMap);
 
 		/// <summary>
 		/// Returns the Topological entities containing the input topology as a non-constituent member

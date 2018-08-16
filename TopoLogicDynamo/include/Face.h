@@ -65,10 +65,18 @@ namespace Topologic {
 		/// <summary>
 		/// A factory method that creates a face by a closed wire.
 		/// </summary>
-		/// <param name="wire">A closed wire. Must be (and internally verified if it is) a Dynamo polygon or a Topologic wire.</param>
+		/// <param name="externalBoundary">A closed wire. Must be (and internally verified if it is) a Dynamo polygon or a Topologic wire.</param>
 		/// <exception cref="ArgumentException">Thrown if any of the arguments is neither a Dynamo polygon nor a Topologic wire</exception>
 		/// <returns name="Face">/// </returns>
-		static Face^ ByWire(Wire^ wire);
+		static Face^ ByExternalBoundary(Wire^ externalBoundary);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="externalBoundary"></param>
+		/// <param name="internalBoundaries"></param>
+		/// <returns name="Face"></returns>
+		static Face^ ByExternalInternalBoundaries(Wire^ externalBoundary, System::Collections::Generic::IEnumerable<Wire^>^ internalBoundaries);
 
 		/// <summary>
 		/// Creates a face by a list of edges. A wire will be internally created.
@@ -76,7 +84,7 @@ namespace Topologic {
 		/// <param name="edges">The edges. </param>
 		/// <exception cref="ArgumentException">Thrown if any of the arguments is not a Topologic edge</exception>
 		/// <returns name="Face">the created face</returns>
-		static Face^ ByEdges(IEnumerable<Edge^>^ edges);
+		static Face^ ByEdges(System::Collections::Generic::IEnumerable<Edge^>^ edges);
 
 		/// <summary>
 		/// Creates a face by a surface.
@@ -90,7 +98,7 @@ namespace Topologic {
 		/// </summary>
 		/// <param name="vertices"></param>
 		/// <returns name="Face"></returns>
-		static Face^ ByVertices(IEnumerable<IEnumerable<Vertex^>^>^ vertices);
+		static Face^ ByVertices(System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<Vertex^>^>^ vertices);
 
 		/// <summary>
 		/// Returns the shared edges between two faces. 

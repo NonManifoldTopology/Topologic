@@ -21,14 +21,14 @@ namespace Topologic
 		/// </summary>
 		/// <param name="cells"></param>
 		/// <returns name="CellComplex"></returns>
-		static CellComplex^ ByCells(IEnumerable<Cell^>^ cells);
+		static CellComplex^ ByCells(System::Collections::Generic::IEnumerable<Cell^>^ cells);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="faces"></param>
 		/// <returns name="CellComplex"></returns>
-		static CellComplex^ ByFaces(IEnumerable<Face^>^ faces);
+		static CellComplex^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces);
 
 		/// <summary>
 		/// 

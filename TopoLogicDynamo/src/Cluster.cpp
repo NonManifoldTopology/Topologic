@@ -12,7 +12,7 @@
 
 namespace Topologic
 {
-	Cluster^ Cluster::ByTopologies(IEnumerable<Topology^>^ topology)
+	Cluster^ Cluster::ByTopologies(System::Collections::Generic::IEnumerable<Topology^>^ topology)
 	{
 		std::list<std::shared_ptr<TopologicCore::Topology>> coreTopologies;
 		for each(Topology^ pTopology in topology)

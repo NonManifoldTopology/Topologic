@@ -48,7 +48,7 @@ namespace Topologic
 		/// 
 		/// </summary>
 		/// <param name="pEdges"></param>
-		DualGraph(IEnumerable<Edge^>^ pEdges);
+		DualGraph(System::Collections::Generic::IEnumerable<Edge^>^ pEdges);
 
 		/// <summary>
 		/// 

@@ -23,7 +23,7 @@ namespace Topologic
 		/// </summary>
 		/// <param name="topology"></param>
 		/// <returns></returns>
-		static Cluster^ ByTopologies(IEnumerable<Topology^>^ topology);
+		static Cluster^ ByTopologies(System::Collections::Generic::IEnumerable<Topology^>^ topology);
 
 		/// <summary>
 		/// 

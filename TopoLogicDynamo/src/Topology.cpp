@@ -29,6 +29,9 @@
 #include <DualGraphFactory.h>
 #include <ApertureFactory.h>
 
+#include <TopologicSupport/include/AttributeMap.h>
+#include <TopologicSupport/include/AttributeManager.h>
+
 namespace Topologic
 {
 	int Topology::Dimensionality::get()
@@ -55,7 +58,7 @@ namespace Topologic
 	//	// TODO: insert return statement here
 	//}
 
-	List<Topology^>^ Topology::ByVertexIndex(IEnumerable<Vertex^>^ vertices, IEnumerable<IEnumerable<int>^>^ vertexIndices)
+	List<Topology^>^ Topology::ByVertexIndex(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<int>^>^ vertexIndices)
 	{
 		std::vector<TopologicCore::Vertex::Ptr> coreVertices;
 		for each(Vertex^ pVertex in vertices)
@@ -89,45 +92,13 @@ namespace Topologic
 		return pTopologies;
 	}
 
-	/*void ExploreChild(const TDF_Label& rkOcctLabel)
-	{
-		List<Object^>^ pAttributeList = gcnew List<Object^>();
-		for (TDF_ChildIterator occtChildIterator(rkOcctLabel); occtChildIterator.More(); occtChildIterator.Next())
-		{
-			const TDF_Label kOcctChildLabel = occtChildIterator.Value();
-			for (TDF_AttributeIterator occtAttributeIterator(kOcctChildLabel); occtAttributeIterator.More(); occtAttributeIterator.Next())
-			{
-				String^ pString = gcnew String(typeid(*occtAttributeIterator.Value()).name());
-				pAttributeList->Add(pString);
-			}
-			Handle(TNaming_NamedShape) occtShapeAttribute;
-			bool result = kOcctChildLabel.FindAttribute(TNaming_NamedShape::GetID(), occtShapeAttribute);
-			if(result)
-			{
-				TopoDS_Shape occtShape = occtShapeAttribute->Get();
-				int a = 0;
-			}
-			int nbChildren = kOcctChildLabel.NbChildren();
-			ExploreChild(kOcctChildLabel);
-		}
-	}*/
-	List<Object^>^ Topology::Attributes::get()
+	Support::AttributeMap^ Topology::AttributeMap::get()
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-
-		// TODO: have a list of predefined attributes, and do this in TopologicCore.
-		List<Object^>^ pAttributeList = gcnew List<Object^>();
-		/*const TDF_Label& rkOcctLabel = pCoreTopology->GetOcctLabel();
-		for (TDF_AttributeIterator occtAttributeIterator(rkOcctLabel); occtAttributeIterator.More(); occtAttributeIterator.Next())
-		{
-			String^ pString = gcnew String(typeid(*occtAttributeIterator.Value()).name());
-			pAttributeList->Add(pString);
-		}*/
-
-		/*int nbChildren = rkOcctLabel.NbChildren();
-		ExploreChild(rkOcctLabel);*/
-
-		return pAttributeList;
+		TopologicSupport::AttributeMap::Ptr pAttributeMap = nullptr;
+		TopologicSupport::AttributeManager::GetInstance().GetAttributeMap(pCoreTopology, pAttributeMap);
+		
+		return gcnew Support::AttributeMap(pAttributeMap);
 	}
 
 	bool Topology::SaveToBRep(String^ path)
@@ -220,6 +191,15 @@ namespace Topologic
 	Topology::~Topology()
 	{
 
+	}
+
+	Topology^ Topology::AddAttributeMap(Support::AttributeMap ^ attributeMap)
+	{
+		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		TopologicSupport::AttributeMap::Ptr supportAttributeMap = *attributeMap->GetSupportAttributeMap();
+		TopologicSupport::AttributeManager::GetInstance().AddAttributeMap(pCoreTopology, supportAttributeMap);
+
+		return this;
 	}
 
 	List<Topology^>^ Topology::Contents(bool allLevels)

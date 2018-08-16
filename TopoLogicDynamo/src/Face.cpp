@@ -108,14 +108,29 @@ namespace Topologic
 		return gcnew Vertex(pCoreCenterOfMass);
 	}*/
 
-	Face^ Face::ByWire(Wire^ wire)
+	Face^ Face::ByExternalBoundary(Wire^ wire)
 	{
 		return gcnew Face(wire);
 	}
 
-	Face^ Face::ByEdges(IEnumerable<Edge^>^ edges)
+	Face ^ Face::ByExternalInternalBoundaries(Wire ^ externalBoundary, System::Collections::Generic::IEnumerable<Wire^>^ internalBoundaries)
 	{
-		return ByWire(gcnew Wire(edges));
+		TopologicCore::Wire::Ptr pCoreExternalBoundary = TopologicCore::Topology::Downcast<TopologicCore::Wire>(externalBoundary->GetCoreTopologicalQuery());
+		std::list<TopologicCore::Wire::Ptr> coreInternalBoundaries;
+
+		for each(Wire^ internalBoundary in internalBoundaries)
+		{
+			coreInternalBoundaries.push_back(TopologicCore::Topology::Downcast<TopologicCore::Wire>(internalBoundary->GetCoreTopologicalQuery()));
+		}
+
+		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Face::ByExternalInternalBoundaries(pCoreExternalBoundary, coreInternalBoundaries);
+
+		return gcnew Face(pCoreFace);
+	}
+
+	Face^ Face::ByEdges(System::Collections::Generic::IEnumerable<Edge^>^ edges)
+	{
+		return ByExternalBoundary(gcnew Wire(edges));
 	}
 
 	Face^ Face::BySurface(Autodesk::DesignScript::Geometry::Surface^ surface)
@@ -123,10 +138,10 @@ namespace Topologic
 		return gcnew Face(surface);
 	}
 
-	Face ^ Face::ByVertices(IEnumerable<IEnumerable<Vertex^>^>^ vertices)
+	Face ^ Face::ByVertices(System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<Vertex^>^>^ vertices)
 	{
 		std::list<std::list<TopologicCore::Vertex::Ptr>> coreVertices;
-		for each(IEnumerable<Vertex^>^ verticesList in vertices)
+		for each(System::Collections::Generic::IEnumerable<Vertex^>^ verticesList in vertices)
 		{
 			std::list<TopologicCore::Vertex::Ptr> coreVerticesList;
 			for each(Vertex^ vertex in verticesList)
@@ -330,20 +345,19 @@ namespace Topologic
 		: Topology()
 		, m_pCoreFace(new TopologicCore::Face::Ptr(kpCoreFace))
 	{
-		// Register the factory
-		RegisterFactory(*m_pCoreFace, gcnew FaceFactory());
+		
 	}
 
 	Face::Face(Wire^ pWire)
 		: Topology()
 		, m_pCoreFace(new TopologicCore::Face::Ptr(
-			TopologicCore::Face::ByWire(
+			TopologicCore::Face::ByExternalBoundary(
 				TopologicCore::Topology::Downcast<TopologicCore::Wire>(pWire->GetCoreTopologicalQuery())
 			)))
 	{
-		// Register the factory
-		RegisterFactory(*m_pCoreFace, gcnew FaceFactory());
+
 	}
+
 	Face::Face(Autodesk::DesignScript::Geometry::Surface ^ pDynamoSurface)
 		: Topology()
 		, m_pCoreFace(nullptr)
@@ -1003,7 +1017,7 @@ namespace Topologic
 		for each(Wire^ pWire in pWires)
 		{
 			try{
-				Face^ pFace = Face::ByWire(pWire);
+				Face^ pFace = Face::ByExternalBoundary(pWire);
 				surfaceAreas.push_back(pFace->Area());
 			}
 			catch(...)

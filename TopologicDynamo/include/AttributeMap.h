@@ -6,6 +6,7 @@
 #include <memory>
 
 using namespace System;
+using namespace System::Collections;
 using namespace System::Collections::Generic;
 
 namespace Topologic {
@@ -14,13 +15,15 @@ namespace Topologic {
 		public ref class AttributeMap
 		{
 		public:
-			//static AttributeMap^ ByDictionary(Dictionary<String^, Object^>^ dictionary);
-			static AttributeMap^ ByDictionary(List<String^>^ keys, List<Object^>^ values);
+			static AttributeMap^ ByDictionary(System::Collections::IDictionary^ dictionary);
+			//static AttributeMap^ ByDictionary(List<String^>^ keys, List<Object^>^ values);
 
 			Dictionary<String^, Object^>^ GetDictionary();
 
 		public protected:
 			AttributeMap(const TopologicSupport::AttributeMap::Ptr& kpCoreAttribute);
+
+			TopologicSupport::AttributeMap::Ptr* GetSupportAttributeMap() { return m_pCoreAttributeMap; }
 
 		protected:
 			~AttributeMap();

@@ -4,37 +4,38 @@
 
 #include <TopologicSupport/include/IntAttribute.h>
 #include <TopologicSupport/include/DoubleAttribute.h>
+#include <TopologicSupport/include/StringAttribute.h>
 
 #include <memory>
 
 namespace Topologic {
 	namespace Support
 	{
-		/*AttributeMap^ AttributeMap::ByDictionary(Dictionary<String^, Object^>^ dictionary)
+		AttributeMap^ AttributeMap::ByDictionary(System::Collections::IDictionary^ dictionary)
 		{
 			TopologicSupport::AttributeMap::Ptr pCoreAttributeMap = std::make_shared<TopologicSupport::AttributeMap>();
-			List<String^>^ keys = gcnew List<String^>(dictionary->Keys);
+			System::Collections::ICollection^ keys = dictionary->Keys;
 			for each(String^ key in keys)
 			{
 				Object^ value = dictionary[key];
 				AddToCoreAttributeMap(pCoreAttributeMap, key, value);
 			}
 			return gcnew AttributeMap(pCoreAttributeMap);
-		}*/
-
-		AttributeMap^ AttributeMap::ByDictionary(List<String^>^ keys, List<Object^>^ values)//Dictionary<String^, Object^>^ dictionary)
-		{
-			if (keys->Count != values->Count)
-			{
-				throw gcnew Exception("keys and values must have the same size");
-			}
-			TopologicSupport::AttributeMap::Ptr pCoreAttributeMap = std::make_shared<TopologicSupport::AttributeMap>();
-			for(int i = 0; i < keys->Count; i++)
-			{
-				AddToCoreAttributeMap(pCoreAttributeMap, keys[i], values[i]);
-			}
-			return gcnew AttributeMap(pCoreAttributeMap);
 		}
+
+		//AttributeMap^ AttributeMap::ByDictionary(List<String^>^ keys, List<Object^>^ values)//Dictionary<String^, Object^>^ dictionary)
+		//{
+		//	if (keys->Count != values->Count)
+		//	{
+		//		throw gcnew Exception("keys and values must have the same size");
+		//	}
+		//	TopologicSupport::AttributeMap::Ptr pCoreAttributeMap = std::make_shared<TopologicSupport::AttributeMap>();
+		//	for(int i = 0; i < keys->Count; i++)
+		//	{
+		//		AddToCoreAttributeMap(pCoreAttributeMap, keys[i], values[i]);
+		//	}
+		//	return gcnew AttributeMap(pCoreAttributeMap);
+		//}
 
 		Dictionary<String^, Object^>^ AttributeMap::GetDictionary()
 		{
@@ -79,6 +80,16 @@ namespace Topologic {
 			{
 
 			}
+			try {
+				String^ i = safe_cast<String^>(value);
+				std::string cppI = msclr::interop::marshal_as<std::string>(i);
+				TopologicSupport::StringAttribute::Ptr stringAttribute = std::make_shared<TopologicSupport::StringAttribute>(cppI);
+				rAttributeMap->Add(cppKey, std::dynamic_pointer_cast<TopologicSupport::Attribute>(stringAttribute));
+			}
+			catch (...)
+			{
+
+			}
 		}
 
 		Object ^ AttributeMap::GetCoreValueToManaged(const TopologicSupport::Attribute::Ptr& kpAttribute)
@@ -93,6 +104,12 @@ namespace Topologic {
 			if (doubleAttribute != nullptr)
 			{
 				return doubleAttribute->Value();
+			}
+
+			TopologicSupport::StringAttribute::Ptr stringAttribute = std::dynamic_pointer_cast<TopologicSupport::StringAttribute>(kpAttribute);
+			if (stringAttribute != nullptr)
+			{
+				return gcnew String(stringAttribute->Value().c_str());
 			}
 
 			return nullptr;

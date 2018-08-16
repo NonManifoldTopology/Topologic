@@ -13,7 +13,7 @@
 
 namespace Topologic
 {
-	CellComplex^ CellComplex::ByCells(IEnumerable<Cell^>^ cells)
+	CellComplex^ CellComplex::ByCells(System::Collections::Generic::IEnumerable<Cell^>^ cells)
 	{
 		std::list<TopologicCore::Cell::Ptr> coreCells;
 		for each(Cell^ pCell in cells)
@@ -25,7 +25,7 @@ namespace Topologic
 		return pCellComplex;
 	}
 
-	CellComplex^ CellComplex::ByFaces(IEnumerable<Face^>^ faces)
+	CellComplex^ CellComplex::ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces)
 	{
 		std::list<TopologicCore::Face::Ptr> coreFaces;
 		for each(Face^ pFace in faces)
@@ -211,8 +211,7 @@ namespace Topologic
 		: Topology()
 		, m_pCoreCellComplex(new TopologicCore::CellComplex::Ptr(kpCoreCellComplex))
 	{
-		// Register the factory
-		RegisterFactory(*m_pCoreCellComplex, gcnew CellComplexFactory());
+
 	}
 
 	std::shared_ptr<TopologicCore::TopologicalQuery> CellComplex::GetCoreTopologicalQuery()

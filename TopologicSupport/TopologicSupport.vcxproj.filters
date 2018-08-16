@@ -20,6 +20,9 @@
     <ClInclude Include="include\DoubleAttribute.h">
       <Filter>Attribute</Filter>
     </ClInclude>
+    <ClInclude Include="include\StringAttribute.h">
+      <Filter>Attribute</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Vector.cpp" />
@@ -35,6 +38,9 @@
       <Filter>Attribute</Filter>
     </ClCompile>
     <ClCompile Include="src\IntAttribute.cpp">
+      <Filter>Attribute</Filter>
+    </ClCompile>
+    <ClCompile Include="src\StringAttribute.cpp">
       <Filter>Attribute</Filter>
     </ClCompile>
   </ItemGroup>

@@ -4,7 +4,7 @@
 
 namespace TopologicSupport
 {
-	void AttributeManager::Add(const TopoDS_Shape& rkOcctShape, const std::string& rkKey, const Attribute::Ptr& kpAttribute)
+	void AttributeManager::AddAttribute(const TopoDS_Shape& rkOcctShape, const std::string& rkKey, const Attribute::Ptr& kpAttribute)
 	{
 		if (m_occtShapeToAttributesMap.find(rkOcctShape) == m_occtShapeToAttributesMap.end())
 		{
@@ -13,6 +13,27 @@ namespace TopologicSupport
 
 		m_occtShapeToAttributesMap[rkOcctShape]->Add(rkKey, kpAttribute);
 	}
+	
+	void AttributeManager::AddAttributeMap(const TopologicCore::Topology::Ptr& kpTopology, const std::shared_ptr<AttributeMap>& rkAttributeMap)
+	{
+		AddAttributeMap(kpTopology->GetOcctShape(), rkAttributeMap);
+	}
+
+	void AttributeManager::AddAttributeMap(const TopoDS_Shape& rkOcctShape, const std::shared_ptr<AttributeMap>& rkAttributeMap)
+	{
+		m_occtShapeToAttributesMap[rkOcctShape] = rkAttributeMap;
+	}
+
+	void AttributeManager::GetAttributeMap(const TopologicCore::Topology::Ptr& kpTopology, std::shared_ptr<AttributeMap>& rAttributeMap)
+	{
+		GetAttributeMap(kpTopology->GetOcctShape(), rAttributeMap);
+	}
+
+	void AttributeManager::GetAttributeMap(const TopoDS_Shape & rkOcctShape, std::shared_ptr<AttributeMap>& rAttributeMap)
+	{
+		rAttributeMap = m_occtShapeToAttributesMap[rkOcctShape];
+	}
+
 
 	void AttributeManager::Remove(const TopoDS_Shape & rkOcctShape, const std::string& rkKey)
 	{

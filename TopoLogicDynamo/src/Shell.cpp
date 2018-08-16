@@ -101,7 +101,7 @@ namespace Topologic
 		return pVertices;
 	}
 
-	Shell^ Shell::ByFaces(IEnumerable<Face^>^ faces)
+	Shell^ Shell::ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces)
 	{
 		std::list<TopologicCore::Face::Ptr> coreFaces;
 		for each(Face^ pFace in faces)
@@ -122,7 +122,7 @@ namespace Topologic
 		return ByFaces(pFaces);
 	}
 
-	Shell^ Shell::ByLoft(IEnumerable<Wire^>^ wires)
+	Shell^ Shell::ByLoft(System::Collections::Generic::IEnumerable<Wire^>^ wires)
 	{
 		std::list<TopologicCore::Wire::Ptr> coreWires;
 		for each(Wire^ pWire in wires)
@@ -140,7 +140,7 @@ namespace Topologic
 		}
 	}
 
-	Shell^ Shell::ByVerticesFaceIndices(IEnumerable<Vertex^>^ vertices, IEnumerable<IEnumerable<int>^>^ faceIndices)
+	Shell^ Shell::ByVerticesFaceIndices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<int>^>^ faceIndices)
 	{
 		std::vector<TopologicCore::Vertex::Ptr> coreVertices;
 		for each(Vertex^ pVertex in vertices)
@@ -197,7 +197,7 @@ namespace Topologic
 		return faces;
 	}
 
-	Dictionary<String^, Object^>^ Shell::ByFacePlanarization(Face^ face, int iteration, int numEdgeSamples, IEnumerable<double>^ uValues, IEnumerable<double>^ vValues, double tolerance, bool capBottom, bool capTop)
+	Dictionary<String^, Object^>^ Shell::ByFacePlanarization(Face^ face, int iteration, int numEdgeSamples, System::Collections::Generic::IEnumerable<double>^ uValues, System::Collections::Generic::IEnumerable<double>^ vValues, double tolerance, bool capBottom, bool capTop)
 	{
 		std::list<TopologicCore::Vertex::Ptr> coreVertices;
 		std::list<TopologicCore::Edge::Ptr> coreIsocurves;

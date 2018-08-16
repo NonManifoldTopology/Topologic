@@ -21,7 +21,7 @@ namespace Topologic
 		/// </summary>
 		/// <param name="faces"></param>
 		/// <returns name="Cell"></returns>
-		static Cell^ ByFaces(IEnumerable<Face^>^ faces);
+		static Cell^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces);
 
 		/// <summary>
 		/// 
@@ -43,14 +43,14 @@ namespace Topologic
 		/// <param name="vertices"></param>
 		/// <param name="faceIndices"></param>
 		/// <returns name="Cell"></returns>
-		static Cell^ ByVerticesFaceIndices(IEnumerable<Vertex^>^ vertices, IEnumerable<IEnumerable<int>^>^ faceIndices);
+		static Cell^ ByVerticesFaceIndices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<int>^>^ faceIndices);
 
 		/// <summary>
 		/// Creates a cell by lofting through a set of wires.
 		/// </summary>
 		/// <param name="wires">A set of wires</param>
 		/// <returns name="Cell">The created cell</returns>
-		static Cell^ ByLoft(IEnumerable<Wire^>^ wires);
+		static Cell^ ByLoft(System::Collections::Generic::IEnumerable<Wire^>^ wires);
 
 		/// <summary>
 		/// 
@@ -162,7 +162,7 @@ namespace Topologic
 		/// 
 		/// </summary>
 		/// <param name="faces"></param>
-		Cell::Cell(IEnumerable<Face^>^ faces);
+		Cell::Cell(System::Collections::Generic::IEnumerable<Face^>^ faces);
 
 		/// <summary>
 		/// 
@@ -183,7 +183,7 @@ namespace Topologic
 		/// 
 		/// </summary>
 		/// <param name="faces"></param>
-		void Init(IEnumerable<Face^>^ faces);
+		void Init(System::Collections::Generic::IEnumerable<Face^>^ faces);
 
 		/// <summary>
 		/// 

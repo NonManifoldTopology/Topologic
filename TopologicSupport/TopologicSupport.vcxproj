@@ -154,6 +154,7 @@
     <ClInclude Include="include\AttributeMap.h" />
     <ClInclude Include="include\DoubleAttribute.h" />
     <ClInclude Include="include\IntAttribute.h" />
+    <ClInclude Include="include\StringAttribute.h" />
     <ClInclude Include="include\TransformationMatrix2D.h" />
     <ClInclude Include="include\Utilities.h" />
     <ClInclude Include="include\Vector.h" />
@@ -164,6 +165,7 @@
     <ClCompile Include="src\Direction.cpp" />
     <ClCompile Include="src\DoubleAttribute.cpp" />
     <ClCompile Include="src\IntAttribute.cpp" />
+    <ClCompile Include="src\StringAttribute.cpp" />
     <ClCompile Include="src\TransformationMatrix2D.cpp" />
     <ClCompile Include="src\Vector.cpp" />
   </ItemGroup>

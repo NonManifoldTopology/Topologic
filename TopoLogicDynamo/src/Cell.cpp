@@ -13,7 +13,7 @@
 
 namespace Topologic
 {
-	Cell^ Cell::ByFaces(IEnumerable<Face^>^ faces)
+	Cell^ Cell::ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces)
 	{
 		return gcnew Cell(faces);
 	}
@@ -29,7 +29,7 @@ namespace Topologic
 		return gcnew Cell(pCoreCell);
 	}
 
-	Cell^ Cell::ByVerticesFaceIndices(IEnumerable<Vertex^>^ vertices, IEnumerable<IEnumerable<int>^>^ faceIndices)
+	Cell^ Cell::ByVerticesFaceIndices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<int>^>^ faceIndices)
 	{
 		std::vector<TopologicCore::Vertex::Ptr> coreVertices;
 		for each(Vertex^ pVertex in vertices)
@@ -38,7 +38,7 @@ namespace Topologic
 		}
 
 		std::list<std::list<int>> coreFaceIndices;
-		for each(IEnumerable<int>^ pFaceIndex in faceIndices)
+		for each(System::Collections::Generic::IEnumerable<int>^ pFaceIndex in faceIndices)
 		{
 			std::list<int> coreFaceIndex;
 			for each(int vertexIndex in pFaceIndex)
@@ -52,7 +52,7 @@ namespace Topologic
 		return pCell;
 	}
 
-	Cell^ Cell::ByLoft(IEnumerable<Wire^>^ wires)
+	Cell^ Cell::ByLoft(System::Collections::Generic::IEnumerable<Wire^>^ wires)
 	{
 
 		std::list<TopologicCore::Wire::Ptr> coreWires;
@@ -402,7 +402,7 @@ namespace Topologic
 		}
 	}
 
-	Cell::Cell(IEnumerable<Face^>^ faces)
+	Cell::Cell(System::Collections::Generic::IEnumerable<Face^>^ faces)
 		: Topology()
 		, m_pCoreCell(nullptr)
 	{
@@ -416,7 +416,7 @@ namespace Topologic
 
 	}
 
-	void Cell::Init(IEnumerable<Face^>^ faces)
+	void Cell::Init(System::Collections::Generic::IEnumerable<Face^>^ faces)
 	{
 		std::list<TopologicCore::Face::Ptr> coreFaces;
 		for each(Face^ pFace in faces)

@@ -48,7 +48,7 @@ namespace Topologic
 
 	}
 
-	DualGraph::DualGraph(IEnumerable<Edge^>^ pEdges)
+	DualGraph::DualGraph(System::Collections::Generic::IEnumerable<Edge^>^ pEdges)
 		: Wire(pEdges)
 	{
 

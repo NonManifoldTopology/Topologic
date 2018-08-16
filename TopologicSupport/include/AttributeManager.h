@@ -1,8 +1,9 @@
 #pragma once
 
-#include <Utilities.h>
+#include "Utilities.h"
 
 #include <TopologicCore/include/Utilities.h>
+#include <TopologicCore/include/Topology.h>
 
 #include <TopoDS_Shape.hxx>
 
@@ -27,7 +28,15 @@ namespace TopologicSupport
 			return instance;
 		}
 
-		TOPOLOGIC_SUPPORT_API void Add(const TopoDS_Shape& rkOcctShape, const std::string& rkKey, const std::shared_ptr<Attribute>& kpAttribute);
+		TOPOLOGIC_SUPPORT_API void AddAttribute(const TopoDS_Shape& rkOcctShape, const std::string& rkKey, const std::shared_ptr<Attribute>& kpAttribute);
+
+		TOPOLOGIC_SUPPORT_API void AddAttributeMap(const TopologicCore::Topology::Ptr& kpTopology, const std::shared_ptr<AttributeMap>& rkAttributeMap);
+		
+		TOPOLOGIC_SUPPORT_API void AddAttributeMap(const TopoDS_Shape& rkOcctShape, const std::shared_ptr<AttributeMap>& rkAttributeMap);
+
+		TOPOLOGIC_SUPPORT_API void GetAttributeMap(const TopologicCore::Topology::Ptr& kpTopology, std::shared_ptr<AttributeMap>& rAttributeMap);
+
+		TOPOLOGIC_SUPPORT_API void GetAttributeMap(const TopoDS_Shape& rkOcctShape, std::shared_ptr<AttributeMap>& rAttributeMap);
 
 		TOPOLOGIC_SUPPORT_API void Remove(const TopoDS_Shape& rkOcctShape, const std::string& rkKey);
 
