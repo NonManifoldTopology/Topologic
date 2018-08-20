@@ -106,4 +106,7 @@
       <UniqueIdentifier>{5d92c990-396d-4e24-87e4-05cd296ee6b4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="resources\Topologic.resx" />
+  </ItemGroup>
 </Project>
