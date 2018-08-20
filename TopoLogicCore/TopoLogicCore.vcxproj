@@ -112,6 +112,12 @@
       <AdditionalDependencies>gpc-2.3.3.lib;ShapeOp.0.1.0.lib;TKCAF.lib;TKLCAF.lib;TKOffset.lib;TKIGES.lib;TKPrim.lib;TKMesh.lib;TKXSBase.lib;TKStep.lib;TKBool.lib;TKBO.lib;TKShHealing.lib;TKG3d.lib;TKG2d.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKTopAlgo.lib;TKernel.lib;TKBrep.lib;TKMath.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)references\ShapeOp-0.1.0\lib\$(Platform)\$(Configuration);$(SolutionDir)references\gpc-2.3.3\lib\$(Platform)\$(Configuration);$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\libd</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>copy "$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\bind\*.dll" "$(SolutionDir)output\$(Platform)\$(Configuration)"
+copy "$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\bind\*.pdb" "$(SolutionDir)output\$(Platform)\$(Configuration)"
+copy "$(SolutionDir)references\ShapeOp-0.1.0\bin\$(Platform)\$(Configuration)\*.dll" "$(SolutionDir)output\$(Platform)\$(Configuration)"
+copy "$(SolutionDir)references\ShapeOp-0.1.0\bin\$(Platform)\$(Configuration)\*.pdb" "$(SolutionDir)output\$(Platform)\$(Configuration)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>

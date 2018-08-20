@@ -107,6 +107,10 @@
       <AdditionalDependencies>TKCAF.lib;TKLCAF.lib;TKIGES.lib;TKPrim.lib;TKMesh.lib;TKXSBase.lib;TKStep.lib;TKBool.lib;TKBO.lib;TKShHealing.lib;TKG3d.lib;TKG2d.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKTopAlgo.lib;TKernel.lib;TKBrep.lib;TKMath.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\libd</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
