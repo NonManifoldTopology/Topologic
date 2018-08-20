@@ -26,8 +26,9 @@ namespace TopologicCore
 		}
 
 		TopTools_ListOfShape occtEdges;
-		if (kUseNonManifoldFaces)
+		if (kUseCells && !kUseNonManifoldFaces && !kUseManifoldFaces)
 		{
+			// Connect the centroids of adjacent cells
 			// Get the non-manifold faces
 			std::list<Face::Ptr> nonManifoldFaces;
 			kpCellComplex->NonManifoldFaces(nonManifoldFaces);
@@ -39,51 +40,135 @@ namespace TopologicCore
 				std::list<Cell::Ptr> adjacentCells;
 				kpNonManifoldFace->Cells(kpCellComplex, adjacentCells);
 
-				// Connect the face centroid with the cell centroid
-				Vertex::Ptr faceCentroid = kpNonManifoldFace->CenterOfMass();
-				for (const Cell::Ptr& kpAdjacentCell : adjacentCells)
+				std::list<Vertex::Ptr> centroids;
+				for (const Cell::Ptr& kpCell : adjacentCells)
 				{
-					Vertex::Ptr cellCentroid = kpAdjacentCell->CenterOfMass();
+					centroids.push_back(kpCell->CenterOfMass());
+				}
 
-					std::list<Vertex::Ptr> vertices;
-					vertices.push_back(faceCentroid);
-					vertices.push_back(cellCentroid);
-					Edge::Ptr pEdge = Edge::ByVertices(vertices);
-					occtEdges.Append(pEdge->GetOcctShape());
+				if (centroids.size() < 2)
+				{
+					return nullptr;
+				}
+
+				std::list<Vertex::Ptr>::iterator endCentroid = centroids.end();
+				for (std::list<Vertex::Ptr>::iterator centroidIterator = centroids.begin();
+					centroidIterator != endCentroid;
+					centroidIterator++)
+				{
+					std::list<Vertex::Ptr>::iterator nextIterator = centroidIterator;
+					nextIterator++;
+
+					for (std::list<Vertex::Ptr>::iterator nextCentroidIterator = nextIterator;
+						nextCentroidIterator != endCentroid;
+						nextCentroidIterator++)
+					{
+						std::list<Vertex::Ptr> vertices;
+						vertices.push_back(*centroidIterator);
+						vertices.push_back(*nextCentroidIterator);
+						Edge::Ptr pEdge = Edge::ByVertices(vertices);
+						occtEdges.Append(pEdge->GetOcctShape());
+					}
 				}
 			}
-		}
 
-		if (kUseManifoldFaces)
-		{
-			// Get the faces
-			std::list<Face::Ptr> manifoldFaces;
-			kpCellComplex->Faces(manifoldFaces);
 
-			// For each face,
-			for (const Face::Ptr& kpManifoldFace : manifoldFaces)
+			/*std::list<Cell::Ptr> cells;
+			kpCellComplex->Cells(cells);
+
+			std::list<Vertex::Ptr> centroids;
+			for (const Cell::Ptr& kpCell : cells)
 			{
-				// If it is manifold, skip it.
-				if (!kpManifoldFace->IsManifold(kpCellComplex.get()))
+				centroids.push_back(kpCell->CenterOfMass());
+			}
+
+			if (centroids.size() < 2)
+			{
+				return nullptr;
+			}
+
+			std::list<Vertex::Ptr>::iterator endCentroid = centroids.end();
+			for (std::list<Vertex::Ptr>::iterator centroidIterator = centroids.begin();
+				centroidIterator != endCentroid;
+				centroidIterator++)
+			{
+				std::list<Vertex::Ptr>::iterator nextIterator = centroidIterator;
+				nextIterator++;
+				
+				for (std::list<Vertex::Ptr>::iterator nextCentroidIterator = nextIterator;
+					nextCentroidIterator != endCentroid;
+					nextCentroidIterator++)
 				{
-					continue;
-				}
-
-				// Get the adjacent cells
-				std::list<Cell::Ptr> adjacentCells;
-				kpManifoldFace->Cells(kpCellComplex, adjacentCells);
-
-				// Connect the face centroid with the cell centroid
-				Vertex::Ptr faceCentroid = kpManifoldFace->CenterOfMass();
-				for (const Cell::Ptr& kpAdjacentCell : adjacentCells)
-				{
-					Vertex::Ptr cellCentroid = kpAdjacentCell->CenterOfMass();
-
 					std::list<Vertex::Ptr> vertices;
-					vertices.push_back(faceCentroid);
-					vertices.push_back(cellCentroid);
+					vertices.push_back(*centroidIterator);
+					vertices.push_back(*nextCentroidIterator);
 					Edge::Ptr pEdge = Edge::ByVertices(vertices);
 					occtEdges.Append(pEdge->GetOcctShape());
+				}
+			}*/
+		}
+		else
+		{
+
+			if (kUseNonManifoldFaces)
+			{
+				// Get the non-manifold faces
+				std::list<Face::Ptr> nonManifoldFaces;
+				kpCellComplex->NonManifoldFaces(nonManifoldFaces);
+
+				// For each non-manifold face,
+				for (const Face::Ptr& kpNonManifoldFace : nonManifoldFaces)
+				{
+					// Get the adjacent cells
+					std::list<Cell::Ptr> adjacentCells;
+					kpNonManifoldFace->Cells(kpCellComplex, adjacentCells);
+
+					// Connect the face centroid with the cell centroid
+					Vertex::Ptr faceCentroid = kpNonManifoldFace->CenterOfMass();
+					for (const Cell::Ptr& kpAdjacentCell : adjacentCells)
+					{
+						Vertex::Ptr cellCentroid = kpAdjacentCell->CenterOfMass();
+
+						std::list<Vertex::Ptr> vertices;
+						vertices.push_back(faceCentroid);
+						vertices.push_back(cellCentroid);
+						Edge::Ptr pEdge = Edge::ByVertices(vertices);
+						occtEdges.Append(pEdge->GetOcctShape());
+					}
+				}
+			}
+
+			if (kUseManifoldFaces)
+			{
+				// Get the faces
+				std::list<Face::Ptr> manifoldFaces;
+				kpCellComplex->Faces(manifoldFaces);
+
+				// For each face,
+				for (const Face::Ptr& kpManifoldFace : manifoldFaces)
+				{
+					// If it is manifold, skip it.
+					if (!kpManifoldFace->IsManifold(kpCellComplex.get()))
+					{
+						continue;
+					}
+
+					// Get the adjacent cells
+					std::list<Cell::Ptr> adjacentCells;
+					kpManifoldFace->Cells(kpCellComplex, adjacentCells);
+
+					// Connect the face centroid with the cell centroid
+					Vertex::Ptr faceCentroid = kpManifoldFace->CenterOfMass();
+					for (const Cell::Ptr& kpAdjacentCell : adjacentCells)
+					{
+						Vertex::Ptr cellCentroid = kpAdjacentCell->CenterOfMass();
+
+						std::list<Vertex::Ptr> vertices;
+						vertices.push_back(faceCentroid);
+						vertices.push_back(cellCentroid);
+						Edge::Ptr pEdge = Edge::ByVertices(vertices);
+						occtEdges.Append(pEdge->GetOcctShape());
+					}
 				}
 			}
 		}

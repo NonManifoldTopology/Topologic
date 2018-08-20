@@ -35,7 +35,7 @@ namespace TopologicCore
 		template <typename T>
 		static std::shared_ptr<T> Downcast(std::shared_ptr<TopologicalQuery>& rTopologicalQuery)
 		{
-			std::shared_ptr<T> pSubclassTopology = std::dynamic_pointer_cast<T>(kpTopologicalQuery);
+			std::shared_ptr<T> pSubclassTopology = std::dynamic_pointer_cast<T>(rTopologicalQuery);
 			if (pSubclassTopology == nullptr)
 			{
 				throw std::exception("Failed downcasting a Topological query");
@@ -57,7 +57,7 @@ namespace TopologicCore
 		template <typename T>
 		static std::shared_ptr<T> Upcast(std::shared_ptr<TopologicalQuery>& rTopologicalQuery)
 		{
-			std::shared_ptr<T> pSuperClassTopology = std::dynamic_pointer_cast<T>(kpTopologicalQuery);
+			std::shared_ptr<T> pSuperClassTopology = std::dynamic_pointer_cast<T>(rTopologicalQuery);
 			if (pSuperClassTopology == nullptr)
 			{
 				throw std::exception("Failed upcasting a Topological query");

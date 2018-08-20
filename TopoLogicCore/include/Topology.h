@@ -43,6 +43,8 @@ namespace TopologicCore
 	class Shell;
 	class Face;
 	class Vertex;
+	class Edge;
+	class Wire;
 	class Context;
 	class TopologyFactory;
 
@@ -575,14 +577,7 @@ namespace TopologicCore
 		/// <returns></returns>
 		TopoDS_Shape FixBooleanOperandFace(const TopoDS_Shape& rkOcctShape, BOPCol_DataMapOfShapeShape& rMapFaceToFixedFace);
 
-		//AttributeMap m_attributeMap; // to be replaced by OCCT OCAF
 		int m_dimensionality;
-		
-
-		// TODO: may cause cyclic dependencies, may need weak_ptr
-		/*std::list<Topology::Ptr> m_contents;
-		std::list<std::shared_ptr<Context>> m_contexts;
-		std::string m_guid;*/
 	};
 
 	template <class Subclass>
