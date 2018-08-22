@@ -1,0 +1,149 @@
+;NSIS Modern User Interface
+;Basic Example Script
+;Written by Joost Verburg
+
+;--------------------------------
+;Include Modern UI
+
+  !include "MUI2.nsh"
+
+;--------------------------------
+;General
+
+  ;Name and file
+  Name "Topologic"
+  OutFile "TopologicInstaller.exe"
+
+  ;Default installation folder
+  InstallDir "$DOCUMENTS\Topologic"
+  
+  ;Request application privileges for Windows Vista
+  RequestExecutionLevel user
+
+;--------------------------------
+;Interface Settings
+
+  !define MUI_ABORTWARNING
+
+;--------------------------------
+;Pages
+  ;!define MUI_WELCOMEPAGE_TITLE "Test"
+  !define MUI_WELCOMEPAGE_TEXT "This Setup will guide you through the installation of Topologic.$\r$\n$\r$\nClick Next to continue."
+  !insertmacro MUI_PAGE_WELCOME
+  !insertmacro MUI_PAGE_LICENSE "Licence.txt"
+  !insertmacro MUI_PAGE_COMPONENTS
+  !insertmacro MUI_PAGE_DIRECTORY
+  !insertmacro MUI_PAGE_INSTFILES
+  
+  !insertmacro MUI_UNPAGE_CONFIRM
+  !insertmacro MUI_UNPAGE_INSTFILES
+  
+;--------------------------------
+;Languages
+ 
+  !insertmacro MUI_LANGUAGE "English"
+
+;--------------------------------
+;Installer Sections
+ 
+Section "TopologicCore" TopologicCore
+
+  SetOutPath "$INSTDIR"
+  
+  File ..\output\x64\Release\TopologicCore.dll
+  ;File ..\output\x64\Release\TK*.dll
+  File ..\output\x64\Release\Topologic.xml
+  File ..\output\x64\Release\ShapeOp.0.1.0.dll
+  
+  ;ADD YOUR OWN FILES HERE...
+  
+SectionEnd
+
+Section "TopologicSupport" TopologicSupport
+
+  SetOutPath "$INSTDIR"
+  
+  File ..\output\x64\Release\TopologicSupport.dll
+  
+  ;ADD YOUR OWN FILES HERE...
+  
+SectionEnd
+
+Section "TopologicDynamo" TopologicDynamo
+
+  SetOutPath "$INSTDIR"
+  
+  ;ADD YOUR OWN FILES HERE...
+  File ..\output\x64\Release\Topologic.dll
+  File vc_redist.x64.exe
+  
+  ;Check if Dynamo exists. If it does not, download and install.
+  IfFileExists "$PROGRAMFILES64\Dynamo\Dynamo Core\2\DynamoSandbox.exe" Next 0
+  NSISdl::download http://dyn-builds-data.s3-us-west-2.amazonaws.com/DynamoInstall2.0.1.exe "$INSTDIR\DynamoInstall2.0.1.exe"
+  Pop $0
+  ${If} $0 == "success"
+    ExecWait "$INSTDIR\DynamoInstall2.0.1.exe"
+    Delete "$INSTDIR\DynamoInstall2.0.1.exe"
+  ${EndIf}
+  
+Next:
+  ExecWait "$INSTDIR\vc_redist.x64.exe"
+  Delete $INSTDIR\vc_redist.x64.exe
+SectionEnd
+
+Section "TopologicEnergy" TopologicEnergy
+
+  SetOutPath "$INSTDIR"
+  
+  ;ADD YOUR OWN FILES HERE...
+  
+SectionEnd
+
+Section #hidden, run after all other sections
+  WriteUninstaller "$INSTDIR\Uninstall.exe"
+  
+  ;Install and run Streams
+  File streams.exe
+  ExecWait "$INSTDIR\streams.exe -s -d *"
+  Delete $INSTDIR\streams.exe
+SectionEnd
+
+Function .onInit
+  IntOp $R0 ${SF_RO} | ${SF_SELECTED}
+  SectionSetFlags ${TopologicCore} $R0
+FunctionEnd
+
+Function .onSelChange
+  ;If TopologicDynamo is selected, also select TopologicSupport
+  SectionGetFlags ${TopologicDynamo} $R0
+  SectionSetFlags ${TopologicSupport} $R0
+FunctionEnd
+
+;--------------------------------
+;Descriptions
+
+  ;Language strings
+  LangString DESC_TopologicCore ${LANG_ENGLISH} "Installs the native core layer of Topologic."
+  LangString DESC_TopologicSupport ${LANG_ENGLISH} "Installs the support package of Topologic."
+  LangString DESC_TopologicDynamo ${LANG_ENGLISH} "Installs the Dynamo layer of Topologic."
+  LangString DESC_TopologicEnergy ${LANG_ENGLISH} "Installs the Energy application layer of Topologic."
+
+  ;Assign language strings to sections
+  !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
+    !insertmacro MUI_DESCRIPTION_TEXT ${TopologicCore} $(DESC_TopologicCore)
+    !insertmacro MUI_DESCRIPTION_TEXT ${TopologicSupport} $(DESC_TopologicSupport)
+    !insertmacro MUI_DESCRIPTION_TEXT ${TopologicDynamo} $(DESC_TopologicDynamo)
+    !insertmacro MUI_DESCRIPTION_TEXT ${TopologicEnergy} $(DESC_TopologicEnergy)
+  !insertmacro MUI_FUNCTION_DESCRIPTION_END
+
+;--------------------------------
+;Uninstaller Section
+
+Section "Uninstall"
+
+  ;ADD YOUR OWN FILES HERE...
+  Delete "$INSTDIR\*"
+  Delete "$INSTDIR\Uninstall.exe"
+  RMDir "$INSTDIR"
+
+SectionEnd
