@@ -129,6 +129,13 @@ namespace Topologic {
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="wires"></param>
+		/// <returns name="Face"></returns>
+		Face^ AddInternalBoundaries(List<Wire^>^ wires);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="vertex"></param>
 		/// <returns name="UV"></returns>
 		Autodesk::DesignScript::Geometry::UV^ UVParameterAtPoint(Vertex^ vertex);

@@ -460,6 +460,24 @@ namespace TopologicCore
 		}
 	}
 
+	void Face::AddInternalBoundary(const std::shared_ptr<Wire>& kpWire)
+	{
+		std::list<Wire::Ptr> wires;
+		wires.push_back(kpWire);
+	}
+
+	void Face::AddInternalBoundaries(const std::list<std::shared_ptr<Wire>>& rkWires)
+	{
+		BRepBuilderAPI_MakeFace occtMakeFace(GetOcctFace());
+
+		for (const Wire::Ptr& kpWire : rkWires)
+		{
+			occtMakeFace.Add(kpWire->GetOcctWire());
+		}
+
+		m_occtFace = occtMakeFace;
+	}
+
 	bool Face::IsManifold(TopologicCore::Topology const * const kpkParentTopology) const
 	{
 		std::list<Cell::Ptr> cells;

@@ -220,6 +220,21 @@ namespace Topologic
 		return pInnerBoundaries;
 	}
 
+	Face^ Face::AddInternalBoundaries(List<Wire^>^ wires)
+	{
+		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
+		TopologicCore::Face::Ptr pCoreCopyFace = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Face>(pCoreFace->Copy());
+
+		std::list<TopologicCore::Wire::Ptr> coreWires;
+		for each(Wire^ wire in wires)
+		{
+			coreWires.push_back(TopologicCore::TopologicalQuery::Downcast<TopologicCore::Wire>(wire->GetCoreTopologicalQuery()));
+		}
+		pCoreCopyFace->AddInternalBoundaries(coreWires);
+
+		return gcnew Face(pCoreCopyFace);
+	}
+
 	Autodesk::DesignScript::Geometry::UV^ Face::UVParameterAtPoint(Vertex^ vertex)
 	{
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
@@ -379,8 +394,7 @@ namespace Topologic
 			throw gcnew ArgumentException("The argument is not a valid Dynamo surface.");
 		}
 
-		// Register the factory
-		RegisterFactory(*m_pCoreFace, gcnew FaceFactory());
+		//RegisterFactory(*m_pCoreFace, gcnew FaceFactory());
 	}
 
 	Autodesk::DesignScript::Geometry::Surface^ Face::Surface()

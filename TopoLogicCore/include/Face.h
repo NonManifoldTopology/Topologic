@@ -233,6 +233,20 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="kpWire"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API void AddInternalBoundary(const std::shared_ptr<Wire>& kpWire);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkWires"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API void AddInternalBoundaries(const std::list<std::shared_ptr<Wire>>& rkWires);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="kpkParentTopology"></param>
 		/// <returns></returns>
 		virtual bool IsManifold(TopologicCore::Topology const * const kpkParentTopology) const;
