@@ -2,7 +2,13 @@
 #include <CellComplexFactory.h>
 #include <FaceFactory.h>
 #include <VertexFactory.h>
+#include <EdgeFactory.h>
+#include <WireFactory.h>
+#include <ShellFactory.h>
+#include <CellFactory.h>
+#include <ClusterFactory.h>
 #include <ApertureFactory.h>
+#include <DualGraphFactory.h>
 
 namespace Topologic
 {
@@ -38,16 +44,16 @@ namespace Topologic
 	{
 		switch (content->GetType())
 		{
-		case TopologicCore::TOPOLOGY_CLUSTER: throw gcnew NotImplementedException();// return gcnew ClusterFactory();
+		case TopologicCore::TOPOLOGY_CLUSTER: return gcnew ClusterFactory();
 		case TopologicCore::TOPOLOGY_CELLCOMPLEX: return gcnew CellComplexFactory();
-		case TopologicCore::TOPOLOGY_CELL: throw gcnew NotImplementedException(); //return std::make_shared<CellFactory>();
-		case TopologicCore::TOPOLOGY_SHELL: throw gcnew NotImplementedException(); //return std::make_shared<ShellFactory>();
+		case TopologicCore::TOPOLOGY_CELL: return gcnew CellFactory();
+		case TopologicCore::TOPOLOGY_SHELL: return gcnew ShellFactory();
 		case TopologicCore::TOPOLOGY_FACE: return gcnew FaceFactory();
-		case TopologicCore::TOPOLOGY_WIRE: throw gcnew NotImplementedException(); //return std::make_shared<WireFactory>();
-		case TopologicCore::TOPOLOGY_EDGE: throw gcnew NotImplementedException(); //return std::make_shared<EdgeFactory>();
+		case TopologicCore::TOPOLOGY_WIRE: return gcnew WireFactory();
+		case TopologicCore::TOPOLOGY_EDGE: return gcnew EdgeFactory();
 		case TopologicCore::TOPOLOGY_VERTEX: return gcnew VertexFactory();
-		case TopologicCore::TOPOLOGY_APERTURE: throw gcnew NotImplementedException(); //return std::make_shared<DualGraphFactory>();
-		case TopologicCore::TOPOLOGY_DUALGRAPH: return gcnew ApertureFactory();
+		case TopologicCore::TOPOLOGY_APERTURE: return gcnew ApertureFactory();
+		case TopologicCore::TOPOLOGY_DUALGRAPH: return gcnew DualGraphFactory();
 		default:
 			throw gcnew Exception("Topology::ByOcctShape: unknown topology.");
 		}

@@ -178,7 +178,7 @@ namespace Topologic
 			RegisterFactory(gcnew String(TopologicCore::VertexGUID::Get().c_str()), gcnew VertexFactory());
 			RegisterFactory(gcnew String(TopologicCore::EdgeGUID::Get().c_str()), gcnew EdgeFactory());
 			RegisterFactory(gcnew String(TopologicCore::WireGUID::Get().c_str()), gcnew WireFactory());
-			RegisterFactory(gcnew String(TopologicCore::ShellGUID::Get().c_str()), gcnew FaceFactory());
+			RegisterFactory(gcnew String(TopologicCore::FaceGUID::Get().c_str()), gcnew FaceFactory());
 			RegisterFactory(gcnew String(TopologicCore::ShellGUID::Get().c_str()), gcnew ShellFactory());
 			RegisterFactory(gcnew String(TopologicCore::CellGUID::Get().c_str()), gcnew CellFactory());
 			RegisterFactory(gcnew String(TopologicCore::CellComplexGUID::Get().c_str()), gcnew CellComplexFactory());

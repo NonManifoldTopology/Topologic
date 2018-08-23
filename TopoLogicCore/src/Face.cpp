@@ -464,6 +464,7 @@ namespace TopologicCore
 	{
 		std::list<Wire::Ptr> wires;
 		wires.push_back(kpWire);
+		AddInternalBoundaries(wires);
 	}
 
 	void Face::AddInternalBoundaries(const std::list<std::shared_ptr<Wire>>& rkWires)
