@@ -421,7 +421,7 @@ namespace TopologicCore
 		if(kAllLevels)
 		{
 			TopAbs_ShapeEnum occtType = GetOcctShape().ShapeType();
-			int occtTypeInt = (int)occtType;
+			int occtTypeInt = (int)occtType + 1; // +1 for the next lower type
 			for (int occtTypeIntIteration = occtTypeInt; occtTypeIntIteration != (int)TopAbs_SHAPE; occtTypeIntIteration++)
 			{
 				// Get members in each level

@@ -261,12 +261,12 @@ namespace TopologicEnergy
 		Wire^ pOuterApertureWire = apertureDesign->OuterBoundary();
 		List<Wire^>^ pApertureWires = apertureDesign->InnerBoundaries();
 
-		List<Face^>^ pFaces = gcnew List<Face^>();
+		List<Topology^>^ pFaces = gcnew List<Topology^>();
 
 		// 2. For each wires, iterate through the edges, sample points, and map them to the 
 		for each(Wire^ pApertureWire in pApertureWires)
 		{
-			List<Edge^>^ pApertureEdges = pApertureWire->Edges();
+			List<Edge^>^ pApertureEdges = pApertureWire->Edges(true);
 			List<Edge^>^ pMappedApertureEdges = gcnew List<Edge^>();
 
 			for each(Edge^ pApertureEdge in pApertureEdges)
@@ -328,12 +328,13 @@ namespace TopologicEnergy
 			pFaces->Add(pMappedApertureFace);
 
 			// and attach it as an aperture to the face.
-			Context^ pFaceContext = Context::ByTopologyParameters(face, 0.0, 0.0, 0.0);
-			Aperture^ pMappedAperture = Aperture::ByTopologyContext(pMappedApertureFace, pFaceContext);
+			/*Context^ pFaceContext = Context::ByTopologyParameters(face, 0.0, 0.0, 0.0);
+			Aperture^ pMappedAperture = Aperture::ByTopologyContext(pMappedApertureFace, pFaceContext);*/
 		}
+		Face^ pCopyFace = safe_cast<Face^>(face->AddApertures(pFaces));
 
 		// TODO: should return a copy
-		return face;
+		return pCopyFace;
 	}
 
 	Face^ EnergyUtility::ApplyApertureV2(Face ^ face, Face ^ apertureDesign, int numEdgeSamples)
@@ -351,7 +352,7 @@ namespace TopologicEnergy
 		// 2. For each wires, iterate through the edges, sample points, and map them to the 
 		for each(Wire^ pApertureWire in pApertureWires)
 		{
-			List<Edge^>^ pApertureEdges = pApertureWire->Edges();
+			List<Edge^>^ pApertureEdges = pApertureWire->Edges(true);
 			List<Edge^>^ pMappedApertureEdges = gcnew List<Edge^>();
 
 			for each(Edge^ pApertureEdge in pApertureEdges)
@@ -415,7 +416,7 @@ namespace TopologicEnergy
 			// and attach it as an aperture to the face.
 			//Context^ pFaceContext = Context::ByTopologyParameters(face, 0.0, 0.0, 0.0);
 			//Aperture^ pMappedAperture = Aperture::ByTopologyContext(pMappedApertureFace, pFaceContext);
-
+			face->AddAperture(pMappedApertureFace);
 		}
 
 		// TODO: should return a copy
@@ -757,7 +758,7 @@ namespace TopologicEnergy
 				//osSurface->setWindowToWallRatio(glazingRatio, 900.0, true);
 
 				// Use the surface apertures
-				List<Topology^>^ pApertures = buildingFace->ContentsV2(true);
+				List<Topology^>^ pApertures = buildingFace->Contents(true);
 				for each(Topology^ pAperture in pApertures)
 				{
 					Face^ pFaceAperture = dynamic_cast<Face^>(pAperture);
@@ -766,7 +767,7 @@ namespace TopologicEnergy
 						continue;
 					}
 					Wire^ pApertureWire = pFaceAperture->OuterBoundary();
-					List<Vertex^>^ pApertureVertices = pApertureWire->Vertices();
+					List<Vertex^>^ pApertureVertices = pApertureWire->Vertices(true);
 					pApertureVertices->Reverse();
 					OpenStudio::Point3dVector^ osWindowFacePoints = gcnew OpenStudio::Point3dVector();
 					for each(Vertex^ pApertureVertex in pApertureVertices)
@@ -823,7 +824,7 @@ namespace TopologicEnergy
 			safe_cast<Autodesk::DesignScript::Geometry::Point^>(faceCentre->Geometry);
 
 		Wire^ pApertureWire = buildingFace->OuterBoundary();
-		List<Vertex^>^ vertices = pApertureWire->Vertices();
+		List<Vertex^>^ vertices = pApertureWire->Vertices(true);
 		vertices->Reverse();
 
 		double sqrtScaleFactor = Math::Sqrt(scaleFactor);
@@ -862,7 +863,7 @@ namespace TopologicEnergy
 	OpenStudio::Point3dVector^ EnergyUtility::GetFacePoints(Face^ buildingFace)
 	{
 		Wire^ buildingOuterWire = buildingFace->OuterBoundary();
-		List<Vertex^>^ vertices = buildingOuterWire->Vertices();
+		List<Vertex^>^ vertices = buildingOuterWire->Vertices(true);
 		// HACK
 		vertices->Reverse();
 		OpenStudio::Point3dVector^ osFacePoints = gcnew OpenStudio::Point3dVector();

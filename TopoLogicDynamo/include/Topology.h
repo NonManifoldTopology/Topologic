@@ -151,6 +151,13 @@ namespace Topologic
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="apertureTopologies"></param>
+		/// <returns name="Topology"></returns>
+		Topology^ AddApertures(System::Collections::Generic::IEnumerable<Topology^>^ apertureTopologies);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="context"></param>
 		/// <returns name="Topology"></returns>
 		Topology^ AddContext(Context^ context);

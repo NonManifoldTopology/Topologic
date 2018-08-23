@@ -448,11 +448,17 @@ namespace TopologicCore
 			endVIterator--;
 		}
 
-		for (const double kU : occtUValues)
+		for (std::list<double>::const_iterator uIterator = occtUValues.begin();
+			uIterator != endUIterator;
+			uIterator++)
 		{
-			for (const double kV : occtVValues)
+			const double& rkU = *uIterator;
+			for (std::list<double>::const_iterator vIterator = occtVValues.begin();
+				vIterator != endVIterator;
+				vIterator++)
 			{
-				gp_Pnt occtPoint = pOcctWallSurface->Value(kU, kV);
+				const double& rkV = *vIterator;
+				gp_Pnt occtPoint = pOcctWallSurface->Value(rkU, rkV);
 				shapeOpMatrix(0, i) = occtPoint.X();
 				shapeOpMatrix(1, i) = occtPoint.Y();
 				shapeOpMatrix(2, i) = occtPoint.Z();

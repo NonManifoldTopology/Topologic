@@ -299,8 +299,29 @@ namespace Topologic
 			pCoreCopyApertureTopology, 
 			pCoreCopyParentTopology);
 
-		// HACK: Add ApertureFactory. TODO: Find a better place.
-		//RegisterFactory(pCoreAperture, gcnew ApertureFactory());
+		// 4. Return the copy parent topology
+		return Topology::ByCoreTopology(pCoreCopyParentTopology);
+	}
+
+	Topology ^ Topology::AddApertures(System::Collections::Generic::IEnumerable<Topology^>^ apertureTopologies)
+	{
+		// 1. Copy this topology
+		TopologicCore::Topology::Ptr pCoreParentTopology =
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		TopologicCore::Topology::Ptr pCoreCopyParentTopology = pCoreParentTopology->Copy();
+
+		// 2. Copy the aperture topology
+		for each(Topology^ apertureTopology in apertureTopologies)
+		{
+			TopologicCore::Topology::Ptr pCoreApertureTopology =
+				TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(apertureTopology->GetCoreTopologicalQuery());
+			TopologicCore::Topology::Ptr pCoreCopyApertureTopology = pCoreApertureTopology->Copy();
+			TopologicCore::Aperture::Ptr pCoreAperture = TopologicCore::Aperture::ByTopologyContext(
+				pCoreCopyApertureTopology,
+				pCoreCopyParentTopology);
+		}
+		
+		// 3. Add the aperture
 
 		// 4. Return the copy parent topology
 		return Topology::ByCoreTopology(pCoreCopyParentTopology);
