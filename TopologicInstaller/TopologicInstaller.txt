@@ -51,7 +51,7 @@ Section "TopologicCore" TopologicCore
   SetOutPath "$INSTDIR"
   
   File ..\output\x64\Release\TopologicCore.dll
-  ;File ..\output\x64\Release\TK*.dll
+  File ..\output\x64\Release\TK*.dll
   File ..\output\x64\Release\Topologic.xml
   File ..\output\x64\Release\ShapeOp.0.1.0.dll
   
