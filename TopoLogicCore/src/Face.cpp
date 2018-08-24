@@ -87,7 +87,9 @@ namespace TopologicCore
 	double Face::Area() const
 	{
 		GProp_GProps occtShapeProperties;
-		BRepGProp::SurfaceProperties(GetOcctShape(), occtShapeProperties);
+		ShapeFix_Face occtShapeFix(GetOcctFace());
+		occtShapeFix.Perform();
+		BRepGProp::SurfaceProperties(occtShapeFix.Face(), occtShapeProperties);
 		return occtShapeProperties.Mass();
 	}
 
