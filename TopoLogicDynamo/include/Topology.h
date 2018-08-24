@@ -103,14 +103,6 @@ namespace Topologic
 		List<Topology^>^ Contents(
 			[Autodesk::DesignScript::Runtime::DefaultArgument("false")] bool allLevels);
 
-		/*/// <summary>
-		/// Returns the Topological entities containing the input topology as a non-constituent member
-		/// </summary>
-		/// <param name="allLevel"></param>
-		/// <returns name="Topology[]">The Topological entities containing the input topology as a non-constituent member</returns>
-		List<Topology^>^ ContentsV2(
-			[Autodesk::DesignScript::Runtime::DefaultArgument("true")] bool allLevel);*/
-
 		/// <summary>
 		/// Returns the non-constituent members of the input Topological entity.
 		/// </summary>

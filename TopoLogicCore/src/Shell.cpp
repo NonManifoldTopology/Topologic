@@ -676,12 +676,10 @@ namespace TopologicCore
 			uIterator++, ++i)
 		{
 			double wallU = *uIterator;
-			//double offsetU = wallU + 0.001; // shrink
 			double offsetU = wallU; // not shrink
 			std::list<double>::const_iterator nextUIterator = uIterator;
 			nextUIterator++;
 			double nextWallU = *nextUIterator;
-			//double nextOffsetU = nextWallU - 0.001; // shrink
 			double nextOffsetU = nextWallU; // not shrink
 
 			int j = 0;
@@ -690,12 +688,10 @@ namespace TopologicCore
 				vIterator++, ++j)
 			{
 				double wallV = *vIterator;
-				//double offsetV = wallV + 0.001;
 				double offsetV = wallV;
 				std::list<double>::const_iterator nextVIterator = vIterator;
 				nextVIterator++;
 				double nextWallV = *nextVIterator;
-				//double nextOffsetV = nextWallV - 0.001;
 				double nextOffsetV = nextWallV;
 
 				// Default values
@@ -923,7 +919,6 @@ namespace TopologicCore
 
 					// The result is in the original surface's UV
 					std::list<std::list<Handle(Geom2d_CartesianPoint)>> clippedApertureSampleVerticesUVOriginalWall;
-					//SutherlandHodgmanClipping(clipPolygons, rkApertureSampleVerticesUV, clippedApertureSampleVerticesUVOriginalWall);
 					VattiClipping(clipPoints, rkApertureSampleVerticesUV, clippedApertureSampleVerticesUVOriginalWall);
 
 					//std::list<TopoDS_Vertex> occtMappedApertureVertices;
@@ -977,7 +972,6 @@ namespace TopologicCore
 								{
 									//DEBUG: draw the polygon
 									BRepBuilderAPI_MakeVertex occtMakeVertex(pOcctPanelSurface->Value(point[0], point[1]));
-									//BRepBuilderAPI_MakeVertex occtMakeVertex(pOcctWallSurface->Value(point[0], point[1]));
 
 									const TopoDS_Vertex& rkOcctVertex = occtMakeVertex.Vertex();
 									testVertices.push_back(rkOcctVertex);
@@ -1128,10 +1122,6 @@ namespace TopologicCore
 		// Reconstruct the shape
 		Shell::Ptr pOutputShell = std::make_shared<Shell>(TopoDS::Shell(occtSewing.SewedShape()));
 
-		// Register the shapes to the OCCT documents.
-		Topology::Ptr pUpcastTopology = TopologicalQuery::Upcast<Topology>(pOutputShell);
-		//GlobalCluster::GetInstance().GetCluster()->AddChildLabel(pUpcastTopology, REL_CONSTITUENT);
-
 		// Iterate through the faces of the shell and attach them as labels of the shell's label.
 		std::list<Face::Ptr> outputFaces;
 		pOutputShell->Faces(outputFaces);
@@ -1172,7 +1162,8 @@ namespace TopologicCore
 				{
 					const TopoDS_Shape& rkOcctAperture = occtApertureIterator.Value();
 					Topology::Ptr aperture = Topology::ByOcctShape(rkOcctAperture, "");
-					//modifiedShape->AddChildLabel(aperture, REL_APERTURE);
+					
+					modifiedShape->AddContent(aperture);
 				}
 			}
 		}

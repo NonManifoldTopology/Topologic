@@ -267,6 +267,20 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="kpAnotherTopology"></param>
+		/// <param name="rOcctCellsBuilder"></param>
+		/// <param name="rOcctMapFaceToFixedFaceA"></param>
+		/// <param name="rOcctMapFaceToFixedFaceB"></param>
+		/// <returns></returns>
+		std::shared_ptr<Topology> ManageBooleanContents(
+			const std::shared_ptr<Topology>& kpAnotherTopology,
+			BOPAlgo_CellsBuilder& rOcctCellsBuilder,
+			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceA,
+			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceB);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="rOcctGeometries"></param>
 		virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const = 0;
 

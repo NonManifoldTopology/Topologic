@@ -88,15 +88,6 @@ namespace TopologicEnergy
 		/// <returns name="Face"></returns>
 		static Face^ ApplyAperture(Face^ face, Face^ apertureDesign, int numEdgeSamples);
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="face"></param>
-		/// <param name="apertureDesign"></param>
-		/// <param name="numEdgeSamples"></param>
-		/// <returns name="Face"></returns>
-		static Face^ ApplyApertureV2(Face^ face, Face^ apertureDesign, int numEdgeSamples);
-
 	private:
 		EnergyUtility() {}
 

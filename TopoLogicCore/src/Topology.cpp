@@ -450,35 +450,6 @@ namespace TopologicCore
 		return IsManifold(kpTopology.get());
 	}
 
-	//void Topology::ContentsV2(const bool kAllLevels, std::list<Topology::Ptr>& rContents) const
-	//{
-	//	//const TDF_Label& rkOcctLabel = GetOcctLabel();
-	//	//if (rkOcctLabel.IsNull())
-	//	//{
-	//	//	return;
-	//	//}
-
-	//	//// Get the list of attribute shapes in the child labels in all levels, therefore no need to iterate hierarchically.
-	//	//for (TDF_ChildIterator occtLabelIterator(rkOcctLabel, kAllLevels); occtLabelIterator.More(); occtLabelIterator.Next())
-	//	//{
-	//	//	TDF_Label childLabel = occtLabelIterator.Value();
-	//	//	// Only care about those labels with aperture or other non-constituent relationships.
-	//	//	Handle(TNaming_NamedShape) occtApertureAttribute;
-	//	//	Handle(TDataStd_Integer) occtRelationshipType;
-	//	//	bool result1 = childLabel.FindAttribute(TNaming_NamedShape::GetID(), occtApertureAttribute);
-	//	//	bool result2 = childLabel.FindAttribute(TDataStd_Integer::GetID(), occtRelationshipType);
-	//	//	int result3 = occtRelationshipType->Get();
-	//	//	if (result1 &&
-	//	//		result2 &&
-	//	//		occtRelationshipType->Get() != REL_CONSTITUENT)
-	//	//	{
-	//	//		Topology::Ptr pTopology = Topology::ByOcctShape(occtApertureAttribute->Get());
-	//	//		pTopology->SetOcctLabel(childLabel);
-	//	//		rContents.push_back(pTopology);
-	//	//	}
-	//	//}
-	//}
-
 	bool Topology::SaveToBrep(const std::string & rkPath) const
 	{
 		return BRepTools::Write(GetOcctShape(), rkPath.c_str());;
@@ -1142,6 +1113,91 @@ namespace TopologicCore
 		}
 	}
 
+	std::shared_ptr<Topology> Topology::ManageBooleanContents(
+		const std::shared_ptr<Topology>& kpAnotherTopology,
+		BOPAlgo_CellsBuilder& rOcctCellsBuilder,
+		BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceA,
+		BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceB)
+	{
+		const TopoDS_Shape& rkBooleanResult = rOcctCellsBuilder.Shape();
+		std::shared_ptr<Topology> pBooleanResult = Topology::ByOcctShape(rkBooleanResult, "");
+
+		// For now, only handle a cell topology
+		Cell* pCell = Topology::Downcast<Cell>(this);
+		std::list<Topology::Ptr> thisContents;
+		Contents(true, thisContents);
+
+		std::list<Topology::Ptr> cellContents;
+		pCell->Contents(true, cellContents);
+
+		BOPCol_ListOfShape occtImmediateMembers;
+		ImmediateMembers(rOcctCellsBuilder.Shape(), occtImmediateMembers);
+		TopoDS_Shape queryShape = rOcctCellsBuilder.Shape();
+		if (occtImmediateMembers.Size() == 1)
+		{
+			BOPCol_ListIteratorOfListOfShape occtImmediateMemberIterator(occtImmediateMembers);
+			//return Topology::ByOcctShape(occtImmediateMemberIterator.Value(), "");
+			queryShape = occtImmediateMemberIterator.Value();
+		}
+
+		// For now, only map the faces and their apertures to the only cell complex in the output cluster.
+		TopTools_MapOfShape occtCompSolids;
+		TopExp_Explorer occtExplorer;
+		for (occtExplorer.Init(queryShape, TopAbs_COMPSOLID); occtExplorer.More(); occtExplorer.Next())
+		{
+			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
+			if (!occtCompSolids.Contains(occtCurrent))
+			{
+				occtCompSolids.Add(occtCurrent);
+			}
+		}
+		if (occtCompSolids.Size() == 0)
+		{
+			return pBooleanResult;
+		}
+
+		const TopoDS_Shape& rkCompSolid = *occtCompSolids.cbegin();
+		std::shared_ptr<Topology> pCellComplex = Topology::ByOcctShape(rkCompSolid, "");
+		//pBooleanResult->AddChildLabel(pCellComplex, REL_CONSTITUENT);
+
+		// Get the input faces. These are the original faces which are not fixed yet, 
+		// so we need to map these faces to the fixed ones.
+		std::list<Face::Ptr> originalFaces;
+		pCell->Faces(originalFaces);
+		for (const Face::Ptr& kpOriginalFace : originalFaces)
+		{
+			// Get the fixed face
+			TopoDS_Shape occtFixedFace;
+			try {
+				occtFixedFace = rOcctMapFaceToFixedFaceA.Find(kpOriginalFace->GetOcctFace());
+			}
+			catch (...)
+			{
+
+			}
+
+			// Get the modified fixed faces
+			TopTools_ListOfShape occtModifiedFixedFaces = rOcctCellsBuilder.Modified(occtFixedFace);
+			for (TopTools_ListIteratorOfListOfShape occtModifiedFixedFaceIterator(occtModifiedFixedFaces);
+				occtModifiedFixedFaceIterator.More();
+				occtModifiedFixedFaceIterator.Next())
+			{
+				const TopoDS_Shape& rkOcctModifiedFixedFace = occtModifiedFixedFaceIterator.Value();
+				std::shared_ptr<Topology> pModifiedFixedFace = Topology::ByOcctShape(rkOcctModifiedFixedFace, "");
+
+				// Transfer the contents from kpOriginalFace to pModifiedFixedFace
+				std::list<Topology::Ptr> contents;
+				kpOriginalFace->Contents(false, contents);
+				for(const Topology::Ptr& kpTopology : contents)
+				{
+					pModifiedFixedFace->AddContent(kpTopology);
+				}
+			}
+		}
+
+		return pBooleanResult;
+	}
+
 	Topology::Ptr Topology::GetBooleanResult(
 		const Topology::Ptr& kpOtherTopology,
 		BOPAlgo_CellsBuilder& rOcctCellsBuilder,
@@ -1149,26 +1205,15 @@ namespace TopologicCore
 		BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceB)
 	{
 		rOcctCellsBuilder.MakeContainers();
-		BOPCol_ListOfShape occtImmediateMembers;
+		/*BOPCol_ListOfShape occtImmediateMembers;
 		ImmediateMembers(rOcctCellsBuilder.Shape(), occtImmediateMembers);
 		if (occtImmediateMembers.Size() == 1)
 		{
 			BOPCol_ListIteratorOfListOfShape occtImmediateMemberIterator(occtImmediateMembers);
-			return Topology::ByOcctShape(occtImmediateMemberIterator.Value(), "");
-		}
+			return Topology::ByOcctShape(occtImmediateMemberIterator.Value(), "")->ManageBooleanLabels(kpOtherTopology, rOcctCellsBuilder, rOcctMapFaceToFixedFaceA, rOcctMapFaceToFixedFaceB);
+		}*/
 
-		return Topology::ByOcctShape(rOcctCellsBuilder.Shape(), "");
-
-		/*Topology::Ptr pTopology;
-		if (occtImmediateMembers.Size() == 1)
-		{
-			pTopology = ManageBooleanLabels(kpOtherTopology, rOcctCellsBuilder, rOcctMapFaceToFixedFaceA, rOcctMapFaceToFixedFaceB);
-		}else
-		{
-			pTopology = ManageBooleanLabels(kpOtherTopology, rOcctCellsBuilder, rOcctMapFaceToFixedFaceA, rOcctMapFaceToFixedFaceB);
-		}
-		
-		return pTopology;*/
+		return ManageBooleanContents(kpOtherTopology, rOcctCellsBuilder, rOcctMapFaceToFixedFaceA, rOcctMapFaceToFixedFaceB);
 	}
 
 	Topology::Ptr Topology::Difference(const Topology::Ptr& kpOtherTopology)
