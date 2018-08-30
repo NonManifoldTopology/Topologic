@@ -27,9 +27,6 @@
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <TopoDS.hxx>
-//#include <TNaming_Builder.hxx>
-//#include <TDF_ChildIterator.hxx>
-//#include <TDataStd_Integer.hxx>
 #include <ShapeAnalysis_ShapeContents.hxx>
 
 #include <BOPAlgo_Builder.hxx>
@@ -1193,26 +1190,6 @@ namespace TopologicCore
 		BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceB)
 	{
 		rOcctCellsBuilder.MakeContainers();
-		/*BOPCol_ListOfShape occtImmediateMembers;
-		ImmediateMembers(rOcctCellsBuilder.Shape(), occtImmediateMembers);
-
-		if (occtImmediateMembers.Size() == 1)
-		{
-			BOPCol_ListIteratorOfListOfShape occtImmediateMemberIterator(occtImmediateMembers);
-			Topology::Ptr immediateMember = Topology::ByOcctShape(occtImmediateMemberIterator.Value(), "");
-
-			std::list<Topology::Ptr> thisContentsC;
-			Contents(true, thisContentsC);
-			std::list<Face::Ptr> facesA;
-			DownwardNavigation(facesA);
-
-			std::list<Topology::Ptr> thisContentsD;
-			immediateMember->Contents(true, thisContentsD);
-			std::list<Face::Ptr> facesB;
-			immediateMember->DownwardNavigation(facesB);
-
-			return TransferBooleanContents(kpOtherTopology, rOcctCellsBuilder, rOcctMapFaceToFixedFaceA, rOcctMapFaceToFixedFaceB);
-		}*/
 
 		return TransferBooleanContents(kpOtherTopology, rOcctCellsBuilder, rOcctMapFaceToFixedFaceA, rOcctMapFaceToFixedFaceB);
 	}
@@ -2065,28 +2042,6 @@ namespace TopologicCore
 			occtIterator.Next())
 		{
 			Topology::Ptr pMemberTopology = Topology::ByOcctShape(occtIterator.Value(), "");
-
-			//if (!GetOcctLabel().IsNull())
-			//{
-			//	// Does this topology have a label in the hierachy under the topology? If yes, set the label.
-			//	for (TDF_ChildIterator occtLabelIterator(GetOcctLabel(), true); occtLabelIterator.More(); occtLabelIterator.Next())
-			//	{
-			//		TDF_Label childLabel = occtLabelIterator.Value();
-			//		Handle(TNaming_NamedShape) occtChildShape;
-			//		Handle(TDataStd_Integer) occtRelationshipType;
-			//		bool result1 = childLabel.FindAttribute(TNaming_NamedShape::GetID(), occtChildShape);
-			//		bool result2 = childLabel.FindAttribute(TDataStd_Integer::GetID(), occtRelationshipType);
-			//		int result3 = occtRelationshipType->Get();
-			//		if (result1 &&
-			//			result2 &&
-			//			occtRelationshipType->Get() == REL_CONSTITUENT &&
-			//			occtChildShape->Get().IsSame(occtIterator.Value()))
-			//		{
-			//			pMemberTopology->SetOcctLabel(childLabel);
-			//		}
-			//	}
-			//}
-
 			rImmediateMembers.push_back(pMemberTopology);
 		}
 	}

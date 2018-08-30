@@ -132,65 +132,6 @@ namespace TopologicCore
 
 		// Manage labels
 		std::shared_ptr<Topology> pUpcastCellComplex = TopologicalQuery::Upcast<Topology>(pMergeCellComplex);
-		//GlobalCluster::GetInstance().GetCluster()->AddChildLabel(pUpcastCellComplex, REL_CONSTITUENT);
-
-		// Get the list of attribute shapes in the child labels in all levels, therefore no need to iterate hierarchically.
-		//for (TDF_ChildIterator occtLabelIterator((*rkCells.begin())->GetOcctLabel()); occtLabelIterator.More(); occtLabelIterator.Next())
-		//{
-		//	TDF_Label childLabel = occtLabelIterator.Value();
-		//	// Only care about those labels with aperture or other non-constituent relationships.
-		//	Handle(TNaming_NamedShape) occtApertureAttribute;
-		//	Handle(TDataStd_Integer) occtRelationshipType;
-		//	bool result1 = childLabel.FindAttribute(TNaming_NamedShape::GetID(), occtApertureAttribute);
-		//	bool result2 = childLabel.FindAttribute(TDataStd_Integer::GetID(), occtRelationshipType);
-		//	int result3 = occtRelationshipType->Get();
-		//	if (result1 &&
-		//		result2 &&
-		//		occtRelationshipType->Get() == REL_CONSTITUENT)
-		//	{
-		//		BOPCol_ListOfShape occtShapes;
-		//		for (TopExp_Explorer occtExplorer(occtCompSolid, TopAbs_FACE); occtExplorer.More(); occtExplorer.Next())
-		//		{
-		//			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-		//			if (!occtShapes.Contains(occtCurrent))
-		//			{
-		//				occtShapes.Append(occtCurrent);
-
-		//				if (occtCurrent.IsSame(occtApertureAttribute->Get()))
-		//				{
-		//					//Add the face
-		//					std::shared_ptr<Topology> childTopology = Topology::ByOcctShape(occtCurrent);
-		//					pMergeCellComplex->AddChildLabel(childTopology, REL_CONSTITUENT);
-
-		//					for (TDF_ChildIterator occtLabelIterator2(childLabel); occtLabelIterator2.More(); occtLabelIterator2.Next())
-		//					{
-		//						TDF_Label grandChildLabel = occtLabelIterator2.Value();
-		//						// Only care about those labels with aperture or other non-constituent relationships.
-		//						Handle(TNaming_NamedShape) occtApertureAttribute;
-		//						Handle(TDataStd_Integer) occtRelationshipType;
-		//						bool result1 = grandChildLabel.FindAttribute(TNaming_NamedShape::GetID(), occtApertureAttribute);
-		//						bool result2 = grandChildLabel.FindAttribute(TDataStd_Integer::GetID(), occtRelationshipType);
-		//						int result3 = occtRelationshipType->Get();
-		//						if (result1 &&
-		//							result2 &&
-		//							occtRelationshipType->Get() == REL_APERTURE)
-		//						{
-		//							std::shared_ptr<Topology> grandChildTopology = Topology::ByOcctShape(occtApertureAttribute->Get());
-		//							childTopology->AddChildLabel(grandChildTopology, REL_APERTURE);
-		//						}
-		//					}
-		//					break;
-		//				}
-		//			}
-		//		}
-		//	}
-		//}
-
-		/*for (const Cell::Ptr& kpCell : rkCells)
-		{
-			kpCell->AddIngredientTo(pMergeCellComplex);
-		}*/
-
 		return pMergeCellComplex;
 	}
 

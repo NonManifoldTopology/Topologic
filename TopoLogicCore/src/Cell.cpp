@@ -24,9 +24,6 @@
 #include <GProp_GProps.hxx>
 #include <ShapeFix_Solid.hxx>
 #include <StdFail_NotDone.hxx>
-//#include <TDataStd_Integer.hxx>
-//#include <TDF_ChildIterator.hxx>
-//#include <TNaming_NamedShape.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
