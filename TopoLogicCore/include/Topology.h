@@ -109,14 +109,15 @@ namespace TopologicCore
 		/// <param name="z"></param>
 		TOPOLOGIC_API void Translate(const double x, const double y, const double z);
 
-		void AddContent(const Topology::Ptr& rkTopology, Topology::Ptr& rClosestSimplestSubshape);
+		void AddContent(const Topology::Ptr& rkTopology, const bool kUseClosestSimplestSubshape, Topology::Ptr& rClosestSimplestSubshape);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkTopology"></param>
+		/// <param name="kUseClosestSimplestSubshape"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API void AddContent(const Topology::Ptr& rkTopology);
+		TOPOLOGIC_API void AddContent(const Topology::Ptr& rkTopology, const bool kUseClosestSimplestSubshape);
 
 		/// <summary>
 		/// 
@@ -272,7 +273,7 @@ namespace TopologicCore
 		/// <param name="rOcctMapFaceToFixedFaceA"></param>
 		/// <param name="rOcctMapFaceToFixedFaceB"></param>
 		/// <returns></returns>
-		std::shared_ptr<Topology> ManageBooleanContents(
+		std::shared_ptr<Topology> TransferBooleanContents(
 			const std::shared_ptr<Topology>& kpAnotherTopology,
 			BOPAlgo_CellsBuilder& rOcctCellsBuilder,
 			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceA,

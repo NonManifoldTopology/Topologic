@@ -257,7 +257,7 @@ namespace Topologic
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(contentTopology->GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreCopyContentTopology = pCoreContentTopology->Copy();
 
-		pCoreCopyParentTopology->AddContent(pCoreCopyContentTopology);
+		pCoreCopyParentTopology->AddContent(pCoreCopyContentTopology, true);
 		// 5. Add contentTopology as the content of the closest simplest topology
 		//closestSimplestSubshape->AddContent(pCoreCopyContentTopology);
 
@@ -350,7 +350,7 @@ namespace Topologic
 		TopologicCore::Context::Ptr pCoreContext = TopologicCore::Context::ByTopologyParameters(pCoreCopyContextTopology, context->U(), context->V(), context->W());
 		pCoreCopyInstanceTopology->AddContext(pCoreContext);
 
-		pCoreCopyContextTopology->AddContent(pCoreCopyInstanceTopology);
+		pCoreCopyContextTopology->AddContent(pCoreCopyInstanceTopology, true);
 
 		// 7. Return the copy topology
 		return Topology::ByCoreTopology(pCoreInstanceTopology);

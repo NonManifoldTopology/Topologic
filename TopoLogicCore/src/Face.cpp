@@ -422,8 +422,14 @@ namespace TopologicCore
 			}
 			i++;
 		}
-		Handle(Geom_Surface) pSurface = GeomAPI_PointsToBSplineSurface(occtPoints).Surface();
-		return Face::BySurface(pSurface);
+		try {
+			Handle(Geom_Surface) pSurface = GeomAPI_PointsToBSplineSurface(occtPoints).Surface();
+			return Face::BySurface(pSurface);
+		}
+		catch (...)
+		{
+			throw std::exception("Fails to create a face by vertices");
+		}
 	}
 
 	Wire::Ptr Face::OuterBoundary() const

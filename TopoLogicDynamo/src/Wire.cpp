@@ -146,7 +146,13 @@ namespace Topologic
 			coreEdges.push_back(TopologicCore::Topology::Downcast<TopologicCore::Edge>(pEdge->GetCoreTopologicalQuery()));
 		}
 
-		m_pCoreWire = new TopologicCore::Wire::Ptr(TopologicCore::Wire::ByEdges(coreEdges));
+		try{
+			m_pCoreWire = new TopologicCore::Wire::Ptr(TopologicCore::Wire::ByEdges(coreEdges));
+		}
+		catch (const std::exception& e)
+		{
+			throw gcnew Exception(gcnew String(e.what()));
+		}
 	}
 
 	Wire::Wire(Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoPolycurve)

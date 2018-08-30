@@ -107,13 +107,11 @@ namespace TopologicCore
 
 		// HACK: add the v1 contents to the current shell faces.
 		Topology::Ptr pUpcastShell = TopologicalQuery::Upcast<Topology>(pShell);
-		//GlobalCluster::GetInstance().GetCluster()->AddChildLabel(pUpcastShell, REL_CONSTITUENT);
 
 		for (const Face::Ptr& kShellFace : rkFaces)
 		{
 			const TopoDS_Shape& rkModifiedShape = occtSewing.Modified(kShellFace->GetOcctShape());
 			Topology::Ptr pChildTopology = Topology::ByOcctShape(rkModifiedShape, "");
-			//pShell->AddChildLabel(pChildTopology, REL_CONSTITUENT);
 
 			// Map the aperture to the modifed shell faces.
 			std::list<Topology::Ptr> contents;
@@ -134,7 +132,6 @@ namespace TopologicCore
 
 				Face::Ptr pApertureFace = TopologicalQuery::Downcast<Face>(aperture->Topology());
 				Topology::Ptr pUpcastApertureFace = TopologicalQuery::Upcast<Topology>(pApertureFace);
-				//pChildTopology->AddChildLabel(pUpcastApertureFace, REL_APERTURE);
 			}
 		}
 
@@ -1163,7 +1160,7 @@ namespace TopologicCore
 					const TopoDS_Shape& rkOcctAperture = occtApertureIterator.Value();
 					Topology::Ptr aperture = Topology::ByOcctShape(rkOcctAperture, "");
 					
-					modifiedShape->AddContent(aperture);
+					modifiedShape->AddContent(aperture, false);
 				}
 			}
 		}

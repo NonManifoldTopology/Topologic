@@ -680,6 +680,13 @@ namespace TopologicEnergy
 					{
 						continue;
 					}
+
+					// skip small triangles
+					double area = pFaceAperture->Area();
+					if (area <= 0.1)
+					{
+						continue;
+					}
 					Wire^ pApertureWire = pFaceAperture->OuterBoundary();
 					List<Vertex^>^ pApertureVertices = pApertureWire->Vertices(true);
 					pApertureVertices->Reverse();

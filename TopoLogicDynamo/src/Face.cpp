@@ -150,8 +150,14 @@ namespace Topologic
 			}
 			coreVertices.push_back(coreVerticesList);
 		}
-		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Face::ByVertices(coreVertices);
-		return gcnew Face(pCoreFace);
+		try {
+			TopologicCore::Face::Ptr pCoreFace = TopologicCore::Face::ByVertices(coreVertices);
+			return gcnew Face(pCoreFace);
+		}
+		catch (const std::exception& e)
+		{
+			throw gcnew Exception(gcnew String(e.what()));
+		}
 	}
 
 	List<Edge^>^ Face::SharedEdges(Face^ face)
@@ -1013,31 +1019,53 @@ namespace Topologic
 		}
 
 		// Do the rest of operations in OpenCascade. Create wires by edges.
-		List<Wire^>^ pWires = gcnew List<Wire^>();
-		for each(List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoCurveGroup in pDynamoCurveGroups)
-		{
-			List<Edge^>^ pEdges = gcnew List<Edge^>();
-			for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoCurve in pDynamoCurveGroup)
+		TopologicCore::Wire::Ptr pCoreOuterWire = nullptr;
+		try{
+			List<Wire^>^ pWires = gcnew List<Wire^>();
+			for each(List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoCurveGroup in pDynamoCurveGroups)
 			{
-				Edge^ pEdge = Edge::ByCurve(pDynamoCurve);
-				pEdges->Add(pEdge);
+				List<Edge^>^ pEdges = gcnew List<Edge^>();
+				for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoCurve in pDynamoCurveGroup)
+				{
+					Edge^ pEdge = Edge::ByCurve(pDynamoCurve);
+					pEdges->Add(pEdge);
+				}
+				Wire^ pWire = Wire::ByEdges(pEdges);
+				pWires->Add(pWire);
 			}
-			Wire^ pWire = Wire::ByEdges(pEdges);
-			pWires->Add(pWire);
+
+
+			std::list<double> surfaceAreas;
+			for each(Wire^ pWire in pWires)
+			{
+				try {
+					Face^ pFace = Face::ByExternalBoundary(pWire);
+					surfaceAreas.push_back(pFace->Area());
+				}
+				catch (...)
+				{
+					surfaceAreas.push_back(0.0);
+				}
+			}
+
+			if (checkWire)
+			{
+				std::list<double>::iterator maxAreaIterator = std::max_element(surfaceAreas.begin(), surfaceAreas.end());
+				int index = 0;
+				for (std::list<double>::iterator areaIterator = surfaceAreas.begin();
+					areaIterator != maxAreaIterator;
+					areaIterator++)
+				{
+					++index;
+				}
+				pOuterPolycurve = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoCurveGroups[index], 0.001);
+				pCoreOuterWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>((gcnew Wire(pOuterPolycurve))->GetCoreTopologicalQuery());
+				pDynamoCurveGroups->RemoveAt(index);
+			}
 		}
-
-
-		std::list<double> surfaceAreas;
-		for each(Wire^ pWire in pWires)
+		catch (...)
 		{
-			try{
-				Face^ pFace = Face::ByExternalBoundary(pWire);
-				surfaceAreas.push_back(pFace->Area());
-			}
-			catch(...)
-			{
-				surfaceAreas.push_back(0.0);
-			}
+
 		}
 
 		// Get the outer polycurve and discard it from the pDynamoCurveGroups
@@ -1062,31 +1090,21 @@ namespace Topologic
 			}
 		}*/
 
-		TopologicCore::Wire::Ptr pCoreOuterWire = nullptr;
-		if (checkWire)
-		{
-			std::list<double>::iterator maxAreaIterator = std::max_element(surfaceAreas.begin(), surfaceAreas.end());
-			int index = 0;
-			for (std::list<double>::iterator areaIterator = surfaceAreas.begin();
-				areaIterator != maxAreaIterator;
-				areaIterator++)
-			{
-				++index;
-			}
-			pOuterPolycurve = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoCurveGroups[index], 0.001);
-			pCoreOuterWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>((gcnew Wire(pOuterPolycurve))->GetCoreTopologicalQuery());
-			pDynamoCurveGroups->RemoveAt(index);
-		}
-
 		// 3. Bounding wires
 		std::list<TopologicCore::Wire::Ptr> coreInnerWires;
 
-		// Create wires and add them to occtMakeFace to create internal wires;
-		for each(List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoConnectedCurves in pDynamoCurveGroups)
+		try{
+			// Create wires and add them to occtMakeFace to create internal wires;
+			for each(List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoConnectedCurves in pDynamoCurveGroups)
+			{
+				Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoPolycurve = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoConnectedCurves, 0.001);
+				Wire^ pWire = gcnew Wire(pDynamoPolycurve);
+				coreInnerWires.push_back(TopologicCore::Topology::Downcast<TopologicCore::Wire>(pWire->GetCoreTopologicalQuery()));
+			}
+		}
+		catch (...)
 		{
-			Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoPolycurve = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoConnectedCurves, 0.001);
-			Wire^ pWire = gcnew Wire(pDynamoPolycurve);
-			coreInnerWires.push_back(TopologicCore::Topology::Downcast<TopologicCore::Wire>(pWire->GetCoreTopologicalQuery()));
+
 		}
 		
 		//=================================================
