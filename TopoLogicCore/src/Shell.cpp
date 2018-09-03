@@ -1146,8 +1146,6 @@ namespace TopologicCore
 				TopoDS_Shape occtModifiedShape = occtSewing.ModifiedSubShape(rkKeyShape);
 				Topology::Ptr modifiedShape = Topology::ByOcctShape(occtModifiedShape, "");
 
-				//pOutputShell->AddChildLabel(modifiedShape, REL_CONSTITUENT);
-
 				// The apertures of the modifiedShape are transferred to 
 				const BOPCol_ListOfShape& rkOcctApertures = iterator.Value();
 				for (BOPCol_ListIteratorOfListOfShape occtApertureIterator(rkOcctApertures);
@@ -1156,8 +1154,9 @@ namespace TopologicCore
 				{
 					const TopoDS_Shape& rkOcctAperture = occtApertureIterator.Value();
 					Topology::Ptr aperture = Topology::ByOcctShape(rkOcctAperture, "");
-					
-					modifiedShape->AddContent(aperture, false);
+					Aperture::ByTopologyContext(
+						aperture,
+						modifiedShape);
 				}
 			}
 		}

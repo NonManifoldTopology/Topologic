@@ -672,15 +672,20 @@ namespace TopologicEnergy
 				//osSurface->setWindowToWallRatio(glazingRatio, 900.0, true);
 
 				// Use the surface apertures
-				List<Topology^>^ pApertures = buildingFace->Contents(true);
-				for each(Topology^ pAperture in pApertures)
+				List<Topology^>^ pContents = buildingFace->Contents(true);
+				for each(Topology^ pContent in pContents)
 				{
-					Face^ pFaceAperture = dynamic_cast<Face^>(pAperture);
-					if (pFaceAperture == nullptr)
+					Aperture^ pAperture = dynamic_cast<Aperture^>(pContent);
+					if (pAperture == nullptr)
 					{
 						continue;
 					}
 
+					Face^ pFaceAperture = dynamic_cast<Face^>(pAperture->Topology());
+					if (pAperture == nullptr)
+					{
+						continue;
+					}
 					// skip small triangles
 					double area = pFaceAperture->Area();
 					if (area <= 0.1)
@@ -689,7 +694,7 @@ namespace TopologicEnergy
 					}
 					Wire^ pApertureWire = pFaceAperture->OuterBoundary();
 					List<Vertex^>^ pApertureVertices = pApertureWire->Vertices(true);
-					pApertureVertices->Reverse();
+					//pApertureVertices->Reverse();
 					OpenStudio::Point3dVector^ osWindowFacePoints = gcnew OpenStudio::Point3dVector();
 					for each(Vertex^ pApertureVertex in pApertureVertices)
 					{
@@ -718,7 +723,7 @@ namespace TopologicEnergy
 					{
 						osWindowSubSurface->setSubSurfaceType("FixedWindow");
 						bool result = osWindowSubSurface->setSurface(osSurface);
-						osWindowSubSurface->setSurface(osSurface);
+						//osWindowSubSurface->setSurface(osSurface);
 						if (result)
 						{
 							osWindowSubSurface->setName(osSurface->name()->get() + "_SUBSURFACE_" + subsurfaceCounter.ToString());

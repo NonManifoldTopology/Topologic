@@ -64,8 +64,8 @@ namespace TopologicCore
 				rVertices.push_back(std::make_shared<Vertex>(rkOcctVertex, VertexGUID::Get()));
 			}
 
-			// Add the last one.
-			if (!lastEdge.IsNull())
+			// If the wire is open, add the last one. This is not needed for a closed wire.
+			if (!IsClosed() && !lastEdge.IsNull())
 			{
 				TopoDS_Vertex occtLastVertex = TopExp::LastVertex(lastEdge);
 				rVertices.push_back(std::make_shared<Vertex>(occtLastVertex));
