@@ -93,6 +93,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>include/;$(SolutionDir);$(SolutionDir)references\opencascade-7.2.0\inc</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>TOPOLOGIC_SUPPORT_EXPORTS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\libd</AdditionalLibraryDirectories>
@@ -139,6 +140,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>include/;$(SolutionDir);$(SolutionDir)references\opencascade-7.2.0\inc</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>TOPOLOGIC_SUPPORT_EXPORTS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

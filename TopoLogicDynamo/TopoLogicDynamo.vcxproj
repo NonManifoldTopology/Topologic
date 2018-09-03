@@ -102,6 +102,7 @@
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>include/;$(SolutionDir);$(SolutionDir)references\opencascade-7.2.0\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <AdditionalDependencies>TKCAF.lib;TKLCAF.lib;TKIGES.lib;TKPrim.lib;TKMesh.lib;TKXSBase.lib;TKStep.lib;TKBool.lib;TKBO.lib;TKShHealing.lib;TKG3d.lib;TKG2d.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKTopAlgo.lib;TKernel.lib;TKBrep.lib;TKMath.lib</AdditionalDependencies>
@@ -139,6 +140,7 @@
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>include/;$(SolutionDir);$(SolutionDir)references\opencascade-7.2.0\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <AdditionalDependencies>TKCAF.lib;TKLCAF.lib;TKIGES.lib;TKPrim.lib;TKMesh.lib;TKXSBase.lib;TKStep.lib;TKBool.lib;TKBO.lib;TKShHealing.lib;TKG3d.lib;TKG2d.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKTopAlgo.lib;TKernel.lib;TKBrep.lib;TKMath.lib</AdditionalDependencies>
