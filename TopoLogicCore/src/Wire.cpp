@@ -98,20 +98,10 @@ namespace TopologicCore
 		try {
 			Wire::Ptr pWire = std::make_shared<Wire>(occtMakeWire);
 
-			// Add the edges to the wire's label. Must do this manually because of the Modified()'s nature to map 
-			// old to new sub-shapes.
-			/*std::list<std::pair<Topology::Ptr, Topology::Ptr>> topologyPairs;
-			std::list<Topology::Ptr> members;
-			pWire->Members(members);
-			for (const Topology::Ptr& kpMember : members)
-			{
-				topologyPairs.push_back(std::make_pair(kpMember, kpMember));
-			}
+			TransferMakeShapeContents(occtMakeWire, occtEdges);
 
-			LabelManager::GetInstance().AddModifiedMembers(
-				pWire->GetOcctLabel(),
-				topologyPairs);*/
-
+			std::list<Edge::Ptr> newEdges;
+			pWire->Edges(newEdges, true);
 			return pWire;
 		}
 		catch (StdFail_NotDone&)

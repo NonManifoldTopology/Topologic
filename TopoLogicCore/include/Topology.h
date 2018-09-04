@@ -7,6 +7,7 @@
 #include <BOPCol_ListOfShape.hxx>
 #include <BOPCol_DataMapOfShapeShape.hxx>
 #include <BOPAlgo_CellsBuilder.hxx>
+#include <BRepBuilderAPI_MakeShape.hxx>
 #include <Standard_Handle.hxx>
 #include <Geom_Geometry.hxx>
 #include <TopoDS_CompSolid.hxx>
@@ -569,6 +570,20 @@ namespace TopologicCore
 			BOPAlgo_CellsBuilder& rOcctCellsBuilder,
 			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceA,
 			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceB);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkOcctMakeShape"></param>
+		/// <param name="rkShapes"></param>
+		static void TransferMakeShapeContents(BRepBuilderAPI_MakeShape & rkOcctMakeShape, const std::list<Topology::Ptr>& rkShapes);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkOcctMakeShape"></param>
+		/// <param name="rkOcctShapes"></param>
+		static void TransferMakeShapeContents(BRepBuilderAPI_MakeShape& rkOcctMakeShape, const BOPCol_ListOfShape& rkOcctShapes);
 
 		/// <summary>
 		/// 

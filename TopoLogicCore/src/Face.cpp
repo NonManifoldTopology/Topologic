@@ -104,28 +104,6 @@ namespace TopologicCore
 
 	Face::Ptr Face::ByExternalBoundary(const Wire::Ptr& kpExternalBoundary)
 	{
-		/*BRepBuilderAPI_MakeFace occtMakeFace(pkWire->GetOcctWire());
-		if (occtMakeFace.Error() != BRepBuilderAPI_FaceDone)
-		{
-			Throw(occtMakeFace);
-		}
-
-		Face::Ptr pFace = std::make_shared<Face>(occtMakeFace);*/
-		
-		// TODO: Add modified mebrs
-		/*std::list<std::pair<Topology::Ptr, Topology::Ptr>> topologyPairs;
-		std::list<Topology::Ptr> members;
-		pFace->Members(members);
-
-		for (const Topology::Ptr& kpMember : members)
-		{
-			topologyPairs.push_back(std::make_pair(kpMember, kpMember));
-		}
-
-		LabelManager::GetInstance().AddModifiedMembers(
-			pFace->GetOcctLabel(),
-			topologyPairs);*/
-
 		std::list<Wire::Ptr> internalBoundaries;
 		return ByExternalInternalBoundaries(kpExternalBoundary, internalBoundaries);
 	}

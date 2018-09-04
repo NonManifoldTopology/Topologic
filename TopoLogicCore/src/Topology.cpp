@@ -1194,6 +1194,45 @@ namespace TopologicCore
 		return TransferBooleanContents(kpOtherTopology, rOcctCellsBuilder, rOcctMapFaceToFixedFaceA, rOcctMapFaceToFixedFaceB);
 	}
 
+	void Topology::TransferMakeShapeContents(BRepBuilderAPI_MakeShape & rkOcctMakeShape, const std::list<Topology::Ptr>& rkShapes)
+	{
+		BOPCol_ListOfShape occtShapes;
+		for (const Topology::Ptr& kpShape : rkShapes)
+		{
+			occtShapes.Append(kpShape->GetOcctShape());
+		}
+		TransferMakeShapeContents(rkOcctMakeShape, occtShapes);
+	}
+
+	void Topology::TransferMakeShapeContents(BRepBuilderAPI_MakeShape & rkOcctMakeShape, const BOPCol_ListOfShape & rkOcctShapes)
+	{
+		// 1. For each shape in rkOcctShapes, find the generated shapes in rkOcctMakeShape
+		for (BOPCol_ListIteratorOfListOfShape kOcctShapeIterator(rkOcctShapes);
+			kOcctShapeIterator.More();
+			kOcctShapeIterator.Next())
+		{
+			const TopoDS_Shape& rkOcctOriginalShape = kOcctShapeIterator.Value();
+			Topology::Ptr pOriginalShape = Topology::ByOcctShape(rkOcctOriginalShape, "");
+			TopTools_ListOfShape occtGeneratedShapes = rkOcctMakeShape.Modified(rkOcctOriginalShape);
+
+			// 2. Transfer the contents from the original shape to the generated shapes
+			std::list<Topology::Ptr> contents;
+			pOriginalShape->Contents(false, contents);
+			for (TopTools_ListIteratorOfListOfShape kOcctGeneratedShapeIterator(occtGeneratedShapes);
+				kOcctGeneratedShapeIterator.More();
+				kOcctGeneratedShapeIterator.Next())
+			{
+				const TopoDS_Shape& rkOcctGeneratedShape = kOcctGeneratedShapeIterator.Value();
+				Topology::Ptr pGeneratedShape = Topology::ByOcctShape(rkOcctGeneratedShape, "");
+
+				for (const Topology::Ptr& kpContent : contents)
+				{
+					pGeneratedShape->AddContent(kpContent, false);
+				}
+			}
+		}
+	}
+
 	Topology::Ptr Topology::Difference(const Topology::Ptr& kpOtherTopology)
 	{
 		BOPCol_ListOfShape occtCellsBuildersOperandsA;
