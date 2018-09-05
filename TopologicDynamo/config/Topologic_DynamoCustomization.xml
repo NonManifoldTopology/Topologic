@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<doc>
+  <assembly>
+    <name>Topologic</name>
+  </assembly>
+  <namespaces>
+    <namespace name="Topologic">
+      <category>Topologic</category>
+    </namespace>
+    <namespace name="Topologic.Support">
+      <category>Topologic.Support</category>
+    </namespace>
+  </namespaces>
+</doc>

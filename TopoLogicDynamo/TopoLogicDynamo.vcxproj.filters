@@ -109,4 +109,7 @@
   <ItemGroup>
     <EmbeddedResource Include="resources\Topologic.resx" />
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="config\Topologic_DynamoCustomization.xml" />
+  </ItemGroup>
 </Project>

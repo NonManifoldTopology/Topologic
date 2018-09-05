@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<doc>
+  <assembly>
+    <name>TopologicEnergy</name>
+  </assembly>
+  <namespaces>
+    <namespace name="TopologicEnergy">
+      <category>TopologicEnergy</category>
+    </namespace>
+  </namespaces>
+</doc>

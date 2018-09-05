@@ -6,4 +6,7 @@
   <ItemGroup>
     <ClCompile Include="src\EnergyUtility.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="config\TopologicEnergy_DynamoCustomization.xml" />
+  </ItemGroup>
 </Project>

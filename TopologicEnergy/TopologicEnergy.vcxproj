@@ -100,12 +100,14 @@
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>include/</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
     </ClCompile>
     <Link>
       <AdditionalDependencies />
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)references\OpenStudio-2.5.0\*.dll" "$(SolutionDir)output\$(Platform)\$(Configuration)"</Command>
+      <Command>copy "$(SolutionDir)references\OpenStudio-2.5.0\*.dll" "$(SolutionDir)output\$(Platform)\$(Configuration)"
+copy "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -135,12 +137,14 @@
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>include/</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
     </ClCompile>
     <Link>
       <AdditionalDependencies />
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)references\OpenStudio-2.5.0\*.dll" "$(SolutionDir)output\$(Platform)\$(Configuration)"</Command>
+      <Command>copy "$(SolutionDir)references\OpenStudio-2.5.0\*.dll" "$(SolutionDir)output\$(Platform)\$(Configuration)"
+copy "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -171,6 +175,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\EnergyUtility.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="config\TopologicEnergy_DynamoCustomization.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
