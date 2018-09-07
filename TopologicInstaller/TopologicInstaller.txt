@@ -6,6 +6,7 @@
 ;Include Modern UI
 
   !include "MUI2.nsh"
+  !include "Sections.nsh"
 
 ;--------------------------------
 ;General
@@ -29,6 +30,13 @@
 ;Pages
   ;!define MUI_WELCOMEPAGE_TITLE "Test"
   !define MUI_WELCOMEPAGE_TEXT "This Setup will guide you through the installation of Topologic.$\r$\n$\r$\nClick Next to continue."
+  
+  !define MUI_ICON "Topologic-Logo-ColourOnWhite.ico"
+  !define MUI_HEADERIMAGE
+  !define MUI_HEADERIMAGE_BITMAP "TopoLogic-Logo.bmp"
+  !define MUI_HEADERIMAGE_UNBITMAP "TopoLogic-Logo.bmp"
+  !define MUI_HEADERIMAGE_RIGHT
+  
   !insertmacro MUI_PAGE_WELCOME
   !insertmacro MUI_PAGE_LICENSE "Licence.txt"
   !insertmacro MUI_PAGE_COMPONENTS
@@ -53,6 +61,9 @@ Section "TopologicCore" TopologicCore
   File ..\output\x64\Release\TopologicCore.dll
   File ..\output\x64\Release\TK*.dll
   File ..\output\x64\Release\Topologic.xml
+  File ..\output\x64\Release\Topologic_DynamoCustomization.xml
+  File ..\output\x64\Release\TopologicEnergy.xml
+  File ..\output\x64\Release\TopologicEnergy_DynamoCustomization.xml
   File ..\output\x64\Release\ShapeOp.0.1.0.dll
   
   ;ADD YOUR OWN FILES HERE...
@@ -78,26 +89,118 @@ Section "TopologicDynamo" TopologicDynamo
   File vc_redist.x64.exe
   
   ;Check if Dynamo exists. If it does not, download and install.
-  IfFileExists "$PROGRAMFILES64\Dynamo\Dynamo Core\2\DynamoSandbox.exe" Next 0
+  ClearErrors
+  SetRegView 64
+  ReadRegStr $0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Dynamo Core 2.0" "Version"
+  ${If} ${Errors}
+    ;Install Dynamo
+	Call InstallDynamo
+  ${Else}
+    ${If} $0 == ""
+      ;Install Dynamo, although this should not happen.
+	  Call InstallDynamo
+    ;${Else}
+      ;Dynamo is installed, do nothing
+    ${EndIf}
+  ${EndIf}
+  
+  ; Check if Visual Studio Redistributable 2017 x64 exists
+  ClearErrors
+  SetRegView 64
+  ReadRegDWORD $0 HKLM "SOFTWARE\WOW6432Node\Microsoft\VisualStudio\14.0\VC\Runtimes\x64" "Installed"
+  ${If} ${Errors}
+    ;Install Redistributable
+	Call InstallVCRedistributable
+  ${Else}
+    ${If} $0 == ""
+      ;Install Redistributable, although this should not happen.
+	  Call InstallVCRedistributable
+    ${Else} ; Compare version
+	  ReadRegDWORD $1 HKLM "SOFTWARE\WOW6432Node\Microsoft\VisualStudio\14.0\VC\Runtimes\x64" "Major"
+	  ${If} $1 < 14
+	    ;Install Redistributable
+	    Call InstallVCRedistributable
+	  ${Else}
+	    ReadRegDWORD $2 HKLM "SOFTWARE\WOW6432Node\Microsoft\VisualStudio\14.0\VC\Runtimes\x64" "Minor"
+		${If} $2 < 14
+	      ;Install Redistributable
+	      Call InstallVCRedistributable
+	    ${EndIf}
+	  ${EndIf}
+    ${EndIf}
+  ${EndIf}
+SectionEnd
+
+Function InstallDynamo
   NSISdl::download http://dyn-builds-data.s3-us-west-2.amazonaws.com/DynamoInstall2.0.1.exe "$INSTDIR\DynamoInstall2.0.1.exe"
   Pop $0
   ${If} $0 == "success"
-    ExecWait "$INSTDIR\DynamoInstall2.0.1.exe"
+    ExecWait "$INSTDIR\DynamoInstall2.0.1.exe" $1
     Delete "$INSTDIR\DynamoInstall2.0.1.exe"
+	${If} $1 <> 0
+	  MessageBox MB_OK "Fails to install Dynamo 2.0.1. Please install it manually."
+	${EndIf}
+  ${Else}
+    MessageBox MB_OK "Fails to download Dynamo 2.0.1. Please install it manually."
   ${EndIf}
-  
-Next:
-  ExecWait "$INSTDIR\vc_redist.x64.exe"
-  Delete $INSTDIR\vc_redist.x64.exe
-SectionEnd
+FunctionEnd
+
+Function InstallVCRedistributable
+  ExecWait "$INSTDIR\vc_redist.x64.exe" $0
+  Delete $INSTDIR\vc_redist.x64.exe ;bug: if the installation halts (e.g. not restarted), this file is not deleted
+  ${If} $0 <> 0
+    MessageBox MB_OK "Fails to install Visual Studio 2017 Redistributable (x64). Please install the redistributable manually."
+  ${EndIf}
+FunctionEnd
 
 Section "TopologicEnergy" TopologicEnergy
 
   SetOutPath "$INSTDIR"
   
-  ;ADD YOUR OWN FILES HERE...
+  File ..\output\x64\Release\TopologicEnergy.dll
+  File ..\output\x64\Release\OpenStudio.dll
+  File ..\output\x64\Release\openstudio_csharp.dll
+  File ..\output\x64\Release\openstudio_translators_csharp.dll
   
+  ;Check if OpenStudio is already installed. Because it uses GUID, which is random, we need to iterate 
+  ;through all GUIDs.
+  ;https://stackoverflow.com/questions/42108679/how-can-i-find-an-application-if-i-dont-know-its-guid
+  StrCpy $0 0
+  Var /GLOBAL installOpenStudio
+  StrCpy $installOpenStudio "0"
+  loop:
+    EnumRegKey $1 HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall" $0
+    StrCmp $1 "" done
+    ReadRegStr $2 HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$1" "DisplayName"
+    ${If} $2 == "OpenStudio"
+        ReadRegStr $2 HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$1" "DisplayVersion"
+        ${If} $2 == "2.6.0"
+		  StrCpy $installOpenStudio "0"
+		  Goto done
+		${EndIf}
+    ${EndIf}
+    IntOp $0 $0 + 1
+    Goto loop
+
+  done:
+    ${If} $installOpenStudio == "0" ;not found
+	  Call InstallOpenStudio
+	${EndIf}
 SectionEnd
+
+Function InstallOpenStudio
+  NSISdl::download https://openstudio-builds.s3.amazonaws.com/2.6.0/OpenStudio-2.6.0.8c81faf8bc-Windows.exe "$INSTDIR\OpenStudio-2.6.0.8c81faf8bc-Windows.exe"
+  Pop $0
+  ${If} $0 == "success"
+    ExecWait "$INSTDIR\OpenStudio-2.6.0.8c81faf8bc-Windows.exe" $1
+    Delete "$INSTDIR\OpenStudio-2.6.0.8c81faf8bc-Windows.exe"
+	${If} $1 <> 0
+	  MessageBox MB_OK "Fails to install OpenStudio 2.6.0. Please install it manually."
+	${EndIf}
+  ${Else}
+    MessageBox MB_OK "Fails to download OpenStudio 2.6.0. Please install it manually."
+  ${EndIf}
+FunctionEnd
 
 Section #hidden, run after all other sections
   WriteUninstaller "$INSTDIR\Uninstall.exe"
@@ -114,9 +217,49 @@ Function .onInit
 FunctionEnd
 
 Function .onSelChange
-  ;If TopologicDynamo is selected, also select TopologicSupport
-  SectionGetFlags ${TopologicDynamo} $R0
-  SectionSetFlags ${TopologicSupport} $R0
+  
+  ${If} $0 == 1 ;TopologicSupport
+    ;If TopologicSupport is deselected, also deselect TopologicDynamo and TopologicEnergy.
+    SectionGetFlags ${TopologicSupport} $R0
+    IntOp $R0 $R0 & ${SF_SELECTED}
+    ${If} $R0 == 0
+      SectionGetFlags ${TopologicDynamo} $R1
+	  IntOp $R1 $R1 & ~${SF_SELECTED}
+	  SectionSetFlags ${TopologicDynamo} $R1
+	
+	 SectionGetFlags ${TopologicEnergy} $R1
+	  IntOp $R1 $R1 & ~${SF_SELECTED}
+	  SectionSetFlags ${TopologicEnergy} $R1
+    ${EndIf}
+  ${ElseIf} $0 == 2 ;TopologicDynamo
+    ;If TopologicDynamo is selected, also select TopologicSupport.
+    SectionGetFlags ${TopologicDynamo} $R0
+    IntOp $R0 $R0 & ${SF_SELECTED}
+    ${If} $R0  != 0
+	  SectionGetFlags ${TopologicSupport} $R1
+	  IntOp $R1 $R1 | ${SF_SELECTED}
+	  SectionSetFlags ${TopologicSupport} $R1
+    ${Else}
+      ;If TopologicDynamo is deselected, also deselect TopologicEnergy.
+      SectionGetFlags ${TopologicEnergy} $R1
+	  IntOp $R1 $R1 & ~${SF_SELECTED}
+	  SectionSetFlags ${TopologicEnergy} $R1
+    ${EndIf}
+  ${ElseIf} $0 == 3 ;TopologicEnergy
+    ;If TopologicEnergy is selected, also select TopologicDynamo and TopologicSupport.
+    SectionGetFlags ${TopologicEnergy} $R0
+    IntOp $R0 $R0 & ${SF_SELECTED}
+    ${If} $R0 != 0
+      SectionGetFlags ${TopologicDynamo} $R1
+	  IntOp $R1 $R1 | ${SF_SELECTED}
+	  SectionSetFlags ${TopologicDynamo} $R1
+	
+	  SectionGetFlags ${TopologicSupport} $R1
+	  IntOp $R1 $R1 | ${SF_SELECTED}
+	  SectionSetFlags ${TopologicSupport} $R1
+    ${EndIf}
+  ${EndIf}
+  
 FunctionEnd
 
 ;--------------------------------
