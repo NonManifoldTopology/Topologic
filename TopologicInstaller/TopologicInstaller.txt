@@ -38,7 +38,7 @@
   !define MUI_HEADERIMAGE_RIGHT
   
   !insertmacro MUI_PAGE_WELCOME
-  !insertmacro MUI_PAGE_LICENSE "Licence.txt"
+  !insertmacro MUI_PAGE_LICENSE "TopologicLicense.rtf"
   !insertmacro MUI_PAGE_COMPONENTS
   !insertmacro MUI_PAGE_DIRECTORY
   !insertmacro MUI_PAGE_INSTFILES
@@ -138,10 +138,10 @@ Function InstallDynamo
     ExecWait "$INSTDIR\DynamoInstall2.0.1.exe" $1
     Delete "$INSTDIR\DynamoInstall2.0.1.exe"
 	${If} $1 <> 0
-	  MessageBox MB_OK "Fails to install Dynamo 2.0.1. Please install it manually."
+	  MessageBox MB_OK "Failed to install Dynamo 2.0.1. Please install it manually."
 	${EndIf}
   ${Else}
-    MessageBox MB_OK "Fails to download Dynamo 2.0.1. Please install it manually."
+    MessageBox MB_OK "Failed to download Dynamo 2.0.1. Please install it manually."
   ${EndIf}
 FunctionEnd
 
@@ -149,7 +149,7 @@ Function InstallVCRedistributable
   ExecWait "$INSTDIR\vc_redist.x64.exe" $0
   Delete $INSTDIR\vc_redist.x64.exe ;bug: if the installation halts (e.g. not restarted), this file is not deleted
   ${If} $0 <> 0
-    MessageBox MB_OK "Fails to install Visual Studio 2017 Redistributable (x64). Please install the redistributable manually."
+    MessageBox MB_OK "Failed to install Visual Studio 2017 Redistributable (x64). Please install the redistributable manually."
   ${EndIf}
 FunctionEnd
 
@@ -189,16 +189,16 @@ Section "TopologicEnergy" TopologicEnergy
 SectionEnd
 
 Function InstallOpenStudio
-  NSISdl::download https://openstudio-builds.s3.amazonaws.com/2.6.0/OpenStudio-2.6.0.8c81faf8bc-Windows.exe "$INSTDIR\OpenStudio-2.6.0.8c81faf8bc-Windows.exe"
+  NSISdl::download http://openstudio-builds.s3.amazonaws.com/2.6.0/OpenStudio-2.6.0.8c81faf8bc-Windows.exe "$INSTDIR\OpenStudio-2.6.0.8c81faf8bc-Windows.exe"
   Pop $0
   ${If} $0 == "success"
     ExecWait "$INSTDIR\OpenStudio-2.6.0.8c81faf8bc-Windows.exe" $1
     Delete "$INSTDIR\OpenStudio-2.6.0.8c81faf8bc-Windows.exe"
 	${If} $1 <> 0
-	  MessageBox MB_OK "Fails to install OpenStudio 2.6.0. Please install it manually."
+	  MessageBox MB_OK "Failed to install OpenStudio 2.6.0. Please install it manually."
 	${EndIf}
   ${Else}
-    MessageBox MB_OK "Fails to download OpenStudio 2.6.0. Please install it manually."
+    MessageBox MB_OK "Failed to download OpenStudio 2.6.0. Please install it manually."
   ${EndIf}
 FunctionEnd
 
