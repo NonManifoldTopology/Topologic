@@ -1,11 +1,13 @@
-#include <EnergyUtility.h>
+#include "TopologicEnergy.h"
+#include <Model.h>
 
 using namespace System::Diagnostics;
 using namespace System::IO;
+using namespace System::Linq;
 
 namespace TopologicEnergy
 {
-	bool EnergyUtility::CreateIdfFile(OpenStudio::Model^ osModel, String^ idfPathName)
+	bool TopologicEnergy::CreateIdfFile(OpenStudio::Model^ osModel, String^ idfPathName)
 	{
 		OpenStudio::EnergyPlusForwardTranslator^ osForwardTranslator = gcnew OpenStudio::EnergyPlusForwardTranslator();
 		OpenStudio::Workspace^ osWorkspace = osForwardTranslator->translateModel(osModel);
@@ -15,7 +17,7 @@ namespace TopologicEnergy
 		return idfSaveCondition;
 	}
 
-	OpenStudio::Model^ EnergyUtility::BuildOsModel(
+	OpenStudio::Model^ TopologicEnergy::BuildOsModel(
 		[Autodesk::DesignScript::Runtime::DefaultArgument("null")] List<Cell^>^ contextBuildings,
 		CellComplex^ buildingCellComplex,
 		String^ buildingType,
@@ -83,7 +85,101 @@ namespace TopologicEnergy
 		return nullptr;
 	}
 
-	void EnergyUtility::PerformEnergyAnalysis(String^ strOsmPath, String^ epwPathName, String^ oswPathName, String^ openStudioExePath)
+	Model^ TopologicEnergy::CreateEnergyModel(
+		Cluster^ contextBuildings, 
+		CellComplex^ buildingCellComplex,
+		String ^ buildingType, 
+		String ^ buildingName, 
+		String ^ spaceType, 
+		List<double>^ floorLevels, 
+		double glazingRatio,
+		String^ epwWeatherPath, 
+		String ^ ddyPath, 
+		String ^ osmTemplatePath,
+		String^ osmOutputPath,
+		double coolingTemp, 
+		double heatingTemp)
+	{
+		numOfApertures = 0;
+		numOfAppliedApertures = 0;
+		subsurfaceCounter = 1;
+
+		// Create an OpenStudio model from the template, EPW, and DDY
+		OpenStudio::Model^ osModel = GetModelFromTemplate(osmTemplatePath, epwWeatherPath, ddyPath);
+
+		double buildingHeight = Enumerable::Max(floorLevels);
+		int numFloors = floorLevels->Count - 1;
+		OpenStudio::Building^ osBuilding = ComputeBuilding(osModel, buildingName, buildingType, buildingHeight, numFloors, spaceType);
+		List<Cell^>^ pBuildingCells = buildingCellComplex->Cells();
+
+		// Create OpenStudio spaces
+		List<OpenStudio::Space^>^ osSpaces = gcnew List<OpenStudio::Space^>();
+		for each(Cell^ buildingCell in pBuildingCells)
+		{
+			int spaceNumber = 1;
+			OpenStudio::Space^ osSpace = AddSpace(
+				spaceNumber,
+				buildingCell,
+				buildingCellComplex,
+				osModel,
+				Autodesk::DesignScript::Geometry::Vector::ZAxis(),
+				buildingHeight,
+				floorLevels,
+				glazingRatio,
+				heatingTemp,
+				coolingTemp
+			);
+
+			for each(OpenStudio::Space^ osExistingSpace in osSpaces)
+			{
+				osSpace->matchSurfaces(osExistingSpace);
+			}
+
+			osSpaces->Add(osSpace);
+		}
+
+		// Create shading surfaces
+		if (contextBuildings != nullptr)
+		{
+			OpenStudio::ShadingSurfaceGroup^ osShadingGroup = gcnew OpenStudio::ShadingSurfaceGroup(osModel);
+			List<Face^>^ contextFaces = contextBuildings->Faces();
+			int faceIndex = 1;
+			for each(Face^ contextFace in contextFaces)
+			{
+				AddShadingSurfaces(contextFace, osModel, osShadingGroup, faceIndex++);
+			}
+		}
+
+		osModel->purgeUnusedResourceObjects();
+
+		// Save model to an OSM file
+		bool saveCondition = SaveModel(osModel, osmOutputPath);
+
+		if (!saveCondition)
+		{
+			throw gcnew Exception("Failed to save the OSM file.");
+		}
+
+		OpenStudio::WorkflowJSON^ workflow = gcnew OpenStudio::WorkflowJSON();
+		try{
+			String^ osmFilename = Path::GetFileNameWithoutExtension(osmOutputPath);
+			String^ osmDirectory = Path::GetDirectoryName(osmOutputPath);
+			String^ oswPath = osmDirectory + "\\" + osmFilename + ".osw";
+			OpenStudio::Path^ osOswPath = gcnew OpenStudio::Path(oswPath);
+			workflow->setSeedFile(gcnew OpenStudio::Path(osmOutputPath));
+			workflow->setWeatherFile(gcnew OpenStudio::Path(epwWeatherPath));
+			workflow->saveAs(osOswPath);
+
+			// Create a TopologicEnergy model
+			return Model::ByOsmPathOswPath(osmOutputPath, oswPath);
+		}
+		catch (...)
+		{
+			throw gcnew Exception("Failed to create the OSW file.");
+		}
+	}
+
+	void TopologicEnergy::PerformEnergyAnalysis(String^ strOsmPath, String^ epwPathName, String^ oswPathName, String^ openStudioExePath)
 	{
 		OpenStudio::WorkflowJSON^ workflow = gcnew OpenStudio::WorkflowJSON();
 		OpenStudio::Path^ osmPath = gcnew OpenStudio::Path(strOsmPath);
@@ -101,7 +197,17 @@ namespace TopologicEnergy
 		Process^ process = Process::Start(startInfo);
 	}
 
-	bool EnergyUtility::SaveModel(OpenStudio::Model^ osModel, String^ osmPathName)
+	void TopologicEnergy::PerformEnergyAnalysis(Model ^ model, String ^ openStudioExePath)
+	{
+		// https://stackoverflow.com/questions/5168612/launch-program-with-parameters
+		String^ args = "run -w \"" + model->OSWFilePath + "\"";
+		System::Diagnostics::ProcessStartInfo^ startInfo = gcnew ProcessStartInfo(openStudioExePath, args);
+		startInfo->WorkingDirectory = Path::GetDirectoryName(model->OSWFilePath);
+
+		Process^ process = Process::Start(startInfo);
+	}
+
+	bool TopologicEnergy::SaveModel(OpenStudio::Model^ osModel, String^ osmPathName)
 	{
 		// Purge unused resources
 		osModel->purgeUnusedResourceObjects();
@@ -112,7 +218,7 @@ namespace TopologicEnergy
 		return osCondition;
 	}
 
-	OpenStudio::Model^ EnergyUtility::GetModelFromTemplate(String^ osmTemplatePath, String^ epwWeatherPath, String^ ddyPath)
+	OpenStudio::Model^ TopologicEnergy::GetModelFromTemplate(String^ osmTemplatePath, String^ epwWeatherPath, String^ ddyPath)
 	{
 		OpenStudio::Path^ osTemplatePath = gcnew OpenStudio::Path(osmTemplatePath);
 
@@ -143,9 +249,9 @@ namespace TopologicEnergy
 		return osModel;
 	}
 
-	OpenStudio::ThermalZone^ EnergyUtility::CreateThermalZone(OpenStudio::Model^ model, OpenStudio::Space^ space, double ceilingHeight, double heatingTemp, double coolingTemp)
+	OpenStudio::ThermalZone^ TopologicEnergy::CreateThermalZone(OpenStudio::Model^ model, OpenStudio::Space^ space, double ceilingHeight, double heatingTemp, double coolingTemp)
 	{
-		//EnergyUtility dsos = new EnergyUtility();
+		//TopologicEnergy dsos = new TopologicEnergy();
 
 		// Create a thermal zone for the space
 		OpenStudio::ThermalZone^ osThermalZone = gcnew OpenStudio::ThermalZone(model);
@@ -178,7 +284,7 @@ namespace TopologicEnergy
 		return osThermalZone;
 	}
 
-	OpenStudio::BuildingStory^ EnergyUtility::AddBuildingStory(OpenStudio::Model^ model, int floorNumber)
+	OpenStudio::BuildingStory^ TopologicEnergy::AddBuildingStory(OpenStudio::Model^ model, int floorNumber)
 	{
 		OpenStudio::BuildingStory^ osBuildingStory = gcnew OpenStudio::BuildingStory(model);
 		osBuildingStory->setName("STORY_" + floorNumber);
@@ -187,7 +293,7 @@ namespace TopologicEnergy
 		return osBuildingStory;
 	}
 
-	OpenStudio::Building^ EnergyUtility::ComputeBuilding(
+	OpenStudio::Building^ TopologicEnergy::ComputeBuilding(
 		OpenStudio::Model^ osModel,
 		String^ buildingName,
 		String^ buildingType,
@@ -220,7 +326,7 @@ namespace TopologicEnergy
 		return osBuilding;
 	}
 
-	List<OpenStudio::BuildingStory^>^ EnergyUtility::CreateBuildingStories(OpenStudio::Model^ osModel, int numFloors)
+	List<OpenStudio::BuildingStory^>^ TopologicEnergy::CreateBuildingStories(OpenStudio::Model^ osModel, int numFloors)
 	{
 		List<OpenStudio::BuildingStory^>^ osBuildingStories = gcnew List<OpenStudio::BuildingStory^>();
 		for (int i = 0; i < numFloors; i++)
@@ -230,7 +336,7 @@ namespace TopologicEnergy
 		return osBuildingStories;
 	}
 
-	OpenStudio::DefaultScheduleSet^ EnergyUtility::getDefaultScheduleSet(OpenStudio::Model^ model)
+	OpenStudio::DefaultScheduleSet^ TopologicEnergy::getDefaultScheduleSet(OpenStudio::Model^ model)
 	{
 		// Get list of default schedule sets
 		OpenStudio::DefaultScheduleSetVector^ defaultScheduleSets = model->getDefaultScheduleSets();
@@ -240,7 +346,7 @@ namespace TopologicEnergy
 		return defaultScheduleSet;
 	}
 
-	OpenStudio::DefaultConstructionSet^ EnergyUtility::getDefaultConstructionSet(OpenStudio::Model ^ model)
+	OpenStudio::DefaultConstructionSet^ TopologicEnergy::getDefaultConstructionSet(OpenStudio::Model ^ model)
 	{
 		// Get list of default construction sets
 		OpenStudio::DefaultConstructionSetVector^ defaultConstructionSets = model->getDefaultConstructionSets();
@@ -251,7 +357,7 @@ namespace TopologicEnergy
 		return defaultConstructionSet;
 	}
 
-	Face^ EnergyUtility::ApplyAperture(Face^ face, Face^ apertureDesign, int numEdgeSamples)
+	Face^ TopologicEnergy::ApplyAperture(Face^ face, Face^ apertureDesign, int numEdgeSamples)
 	{
 		if (numEdgeSamples <= 0)
 		{
@@ -337,7 +443,7 @@ namespace TopologicEnergy
 		return pCopyFace;
 	}
 
-	OpenStudio::Space^ EnergyUtility::AddSpace(
+	OpenStudio::Space^ TopologicEnergy::AddSpace(
 		int spaceNumber,
 		Cell^ cell,
 		CellComplex^ cellComplex,
@@ -399,7 +505,7 @@ namespace TopologicEnergy
 	}
 
 
-	void EnergyUtility::AddShadingSurfaces(Cell^ buildingCell, OpenStudio::Model^ osModel)
+	void TopologicEnergy::AddShadingSurfaces(Cell^ buildingCell, OpenStudio::Model^ osModel)
 	{
 		OpenStudio::ShadingSurfaceGroup^ osShadingGroup = gcnew OpenStudio::ShadingSurfaceGroup(osModel);
 		List<Face^>^ faceList = buildingCell->Faces();
@@ -426,7 +532,26 @@ namespace TopologicEnergy
 		}
 	}
 
-	OpenStudio::Surface^ EnergyUtility::AddSurface(
+	void TopologicEnergy::AddShadingSurfaces(Face ^ buildingFace, OpenStudio::Model ^ osModel, OpenStudio::ShadingSurfaceGroup^ osShadingGroup, int faceIndex)
+	{
+		List<Vertex^>^ vertices = buildingFace->Vertices();
+		OpenStudio::Point3dVector^ facePoints = gcnew OpenStudio::Point3dVector();
+
+		for each(Vertex^ aVertex in vertices)
+		{
+			Autodesk::DesignScript::Geometry::Point^ p = safe_cast<Autodesk::DesignScript::Geometry::Point^>(aVertex->Geometry);
+			OpenStudio::Point3d^ aPoint = gcnew OpenStudio::Point3d(p->X, p->Y, p->Z);
+			facePoints->Add(aPoint);
+		}
+
+		OpenStudio::ShadingSurface^ aShadingSurface = gcnew OpenStudio::ShadingSurface(facePoints, osModel);
+
+		String^ surfaceName = "SHADINGSURFACE_" + (faceIndex.ToString());
+		aShadingSurface->setName(surfaceName);
+		aShadingSurface->setShadingSurfaceGroup(osShadingGroup);
+	}
+
+	OpenStudio::Surface^ TopologicEnergy::AddSurface(
 		int surfaceNumber,
 		Face^ buildingFace,
 		Cell^ buildingSpace,
@@ -742,7 +867,7 @@ namespace TopologicEnergy
 		return osSurface;
 	}
 
-	List<Vertex^>^ EnergyUtility::ScaleFaceVertices(Face^ buildingFace, double scaleFactor)
+	List<Vertex^>^ TopologicEnergy::ScaleFaceVertices(Face^ buildingFace, double scaleFactor)
 	{
 		List<Vertex^>^ scaledVertices = gcnew List<Vertex^>();
 		Vertex^ faceCentre = GetFaceCentre(buildingFace);
@@ -766,7 +891,7 @@ namespace TopologicEnergy
 		return scaledVertices;
 	}
 
-	Vertex^ EnergyUtility::GetFaceCentre(Face^ buildingFace)
+	Vertex^ TopologicEnergy::GetFaceCentre(Face^ buildingFace)
 	{
 		List<Vertex^>^ vertices = buildingFace->Vertices();
 		Autodesk::DesignScript::Geometry::Point^ sumPoint = Autodesk::DesignScript::Geometry::Point::ByCoordinates(0, 0, 0);
@@ -786,7 +911,7 @@ namespace TopologicEnergy
 		return Vertex::ByPoint(safe_cast<Autodesk::DesignScript::Geometry::Point^>(sumPoint->Scale(1.0 / (double)vertices->Count)));
 	}
 
-	OpenStudio::Point3dVector^ EnergyUtility::GetFacePoints(Face^ buildingFace)
+	OpenStudio::Point3dVector^ TopologicEnergy::GetFacePoints(Face^ buildingFace)
 	{
 		Wire^ buildingOuterWire = buildingFace->OuterBoundary();
 		List<Vertex^>^ vertices = buildingOuterWire->Vertices(true);
@@ -809,7 +934,7 @@ namespace TopologicEnergy
 		return osFacePoints;
 	}
 
-	bool EnergyUtility::IsUnderground(Face^ buildingFace)
+	bool TopologicEnergy::IsUnderground(Face^ buildingFace)
 	{
 		List<Vertex^>^ vertices = buildingFace->Vertices();
 
@@ -827,7 +952,7 @@ namespace TopologicEnergy
 		return true;
 	}
 
-	FaceType EnergyUtility::CalculateFaceType(Face^ buildingFace, OpenStudio::Point3dVector^% facePoints, Cell^ buildingSpace, Autodesk::DesignScript::Geometry::Vector^ upVector)
+	FaceType TopologicEnergy::CalculateFaceType(Face^ buildingFace, OpenStudio::Point3dVector^% facePoints, Cell^ buildingSpace, Autodesk::DesignScript::Geometry::Vector^ upVector)
 	{
 		FaceType faceType = FACE_WALL;
 		List<Vertex^>^ vertices = buildingFace->Vertices();
@@ -877,12 +1002,12 @@ namespace TopologicEnergy
 		return faceType;
 	}
 
-	int EnergyUtility::AdjacentCellCount(Face^ buildingFace, CellComplex^ cellComplex)
+	int TopologicEnergy::AdjacentCellCount(Face^ buildingFace, CellComplex^ cellComplex)
 	{
 		return buildingFace->Cells(cellComplex)->Count;
 	}
 
-	int EnergyUtility::StoryNumber(Cell^ buildingCell, double buildingHeight, List<double>^ floorLevels)
+	int TopologicEnergy::StoryNumber(Cell^ buildingCell, double buildingHeight, List<double>^ floorLevels)
 	{
 		double volume = buildingCell->Volume();
 		Vertex^ centreOfMass = buildingCell->CenterOfMass();

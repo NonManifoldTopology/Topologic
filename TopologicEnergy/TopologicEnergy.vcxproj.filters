@@ -1,12 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="include\EnergyUtility.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="src\EnergyUtility.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <Xml Include="config\TopologicEnergy_DynamoCustomization.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\TopologicEnergy.h" />
+    <ClInclude Include="include\Model.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\TopologicEnergy.cpp" />
+    <ClCompile Include="src\Model.cpp" />
   </ItemGroup>
 </Project>

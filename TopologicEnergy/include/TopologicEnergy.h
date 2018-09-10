@@ -13,7 +13,9 @@ namespace TopologicEnergy
 		FACE_ROOFCEILING
 	};
 
-	public ref class EnergyUtility
+	ref class Model;
+
+	public ref class TopologicEnergy
 	{
 	public:
 		/// <summary>
@@ -61,6 +63,41 @@ namespace TopologicEnergy
 			double heatingTemp);
 
 		/// <summary>
+		/// Create a TopologicEnergy model from a Topologic shape.
+		/// </summary>
+		/// <param name="contextBuildings"></param>
+		/// <param name="buildingCellComplex"></param>
+		/// <param name="buildingType"></param>
+		/// <param name="buildingName"></param>
+		/// <param name="spaceType"></param>
+		/// <param name="floorLevels"></param>
+		/// <param name="glazingRatio"></param>
+		/// <param name="epwWeatherPath"></param>
+		/// <param name="ddyPath"></param>
+		/// <param name="osmTemplatePath"></param>
+		/// <param name="osmOutputPath"></param>
+		/// <param name="coolingTemp"></param>
+		/// <param name="heatingTemp"></param>
+		/// <returns name="Model"></returns>
+		static Model^ CreateEnergyModel(
+			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Cluster^ contextBuildings,
+			CellComplex^ buildingCellComplex,
+			[Autodesk::DesignScript::Runtime::DefaultArgument("Commercial")] String^ buildingType,
+			[Autodesk::DesignScript::Runtime::DefaultArgument("Default Building")] String^ buildingName,
+			String^ spaceType,
+			//double buildingHeight,
+			//int numFloors,
+			List<double>^ floorLevels,
+			[Autodesk::DesignScript::Runtime::DefaultArgument("-1")] double glazingRatio,
+			String^ epwWeatherPath,
+			String^ ddyPath,
+			String^ osmTemplatePath,
+			String^ osmOutputPath,
+			double coolingTemp,
+			double heatingTemp
+			);
+
+		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="strOsmPath"></param>
@@ -68,6 +105,13 @@ namespace TopologicEnergy
 		/// <param name="oswPathName"></param>
 		/// <param name="openStudioExePath"></param>
 		static void PerformEnergyAnalysis(String^ strOsmPath, String^ epwPathName, String^ oswPathName, String^ openStudioExePath);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="model"></param>
+		/// <param name="openStudioExePath"></param>
+		static void PerformEnergyAnalysis(Model^ model, String^ openStudioExePath);
 
 		/// <summary>
 		/// 
@@ -89,7 +133,7 @@ namespace TopologicEnergy
 		static Face^ ApplyAperture(Face^ face, Face^ apertureDesign, int numEdgeSamples);
 
 	private:
-		EnergyUtility() {}
+		TopologicEnergy() {}
 
 		static OpenStudio::Space^ AddSpace(
 			int spaceNumber,
@@ -105,6 +149,8 @@ namespace TopologicEnergy
 		);
 
 		static void AddShadingSurfaces(Cell^ buildingCell, OpenStudio::Model^ osModel);
+
+		static void AddShadingSurfaces(Face^ buildingFace, OpenStudio::Model^ osModel, OpenStudio::ShadingSurfaceGroup^ osShadingGroup, int faceIndex);
 
 		static OpenStudio::Surface^ AddSurface(
 			int surfaceNumber,
