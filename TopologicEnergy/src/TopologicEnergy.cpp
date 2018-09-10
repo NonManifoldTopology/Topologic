@@ -17,74 +17,6 @@ namespace TopologicEnergy
 		return idfSaveCondition;
 	}
 
-	OpenStudio::Model^ TopologicEnergy::BuildOsModel(
-		[Autodesk::DesignScript::Runtime::DefaultArgument("null")] List<Cell^>^ contextBuildings,
-		CellComplex^ buildingCellComplex,
-		String^ buildingType,
-		String^ buildingName,
-		String^ spaceType,
-		double buildingHeight,
-		int numFloors,
-		List<double>^ floorLevels,
-		double glazingRatio,
-		String^ epwWeatherPath,
-		String^ ddyPath,
-		String^ osmTemplatePath,
-		String^ osmOutputPath,
-		double coolingTemp,
-		double heatingTemp)
-	{
-		numOfApertures = 0;
-		numOfAppliedApertures = 0;
-		subsurfaceCounter = 1;
-		List<OpenStudio::Space^>^ osSpaces = gcnew List<OpenStudio::Space^>();
-		OpenStudio::Model^ osModel = GetModelFromTemplate(osmTemplatePath, epwWeatherPath, ddyPath);
-		OpenStudio::Building^ osBuilding = ComputeBuilding(osModel, buildingName, buildingType, buildingHeight, numFloors, spaceType);
-		List<Cell^>^ pBuildingCells = buildingCellComplex->Cells();
-		for each(Cell^ buildingCell in pBuildingCells)
-		{
-			int spaceNumber = 1;
-			OpenStudio::Space^ osSpace = AddSpace(
-				spaceNumber,
-				buildingCell,
-				buildingCellComplex,
-				osModel,
-				Autodesk::DesignScript::Geometry::Vector::ZAxis(),
-				buildingHeight,
-				floorLevels,
-				glazingRatio,
-				heatingTemp,
-				coolingTemp
-			);
-
-			for each(OpenStudio::Space^ osExistingSpace in osSpaces)
-			{
-				osSpace->matchSurfaces(osExistingSpace);
-			}
-
-			osSpaces->Add(osSpace);
-		}
-
-		if (contextBuildings != nullptr)
-		{
-			for each(Cell^ contextBuilding in contextBuildings)
-			{
-				AddShadingSurfaces(contextBuilding, osModel);
-			}
-		}
-
-		osModel->purgeUnusedResourceObjects();
-
-		bool saveCondition = SaveModel(osModel, osmOutputPath);
-
-		if (saveCondition)
-		{
-			return osModel;
-		}
-
-		return nullptr;
-	}
-
 	Model^ TopologicEnergy::CreateEnergyModel(
 		Cluster^ contextBuildings, 
 		CellComplex^ buildingCellComplex,
@@ -177,24 +109,6 @@ namespace TopologicEnergy
 		{
 			throw gcnew Exception("Failed to create the OSW file.");
 		}
-	}
-
-	void TopologicEnergy::PerformEnergyAnalysis(String^ strOsmPath, String^ epwPathName, String^ oswPathName, String^ openStudioExePath)
-	{
-		OpenStudio::WorkflowJSON^ workflow = gcnew OpenStudio::WorkflowJSON();
-		OpenStudio::Path^ osmPath = gcnew OpenStudio::Path(strOsmPath);
-		OpenStudio::Path^ osmWeather = gcnew OpenStudio::Path(epwPathName);
-		OpenStudio::Path^ osmOswPath = gcnew OpenStudio::Path(oswPathName);
-		workflow->setSeedFile(osmPath);
-		workflow->setWeatherFile(osmWeather);
-		workflow->saveAs(osmOswPath);
-
-		// https://stackoverflow.com/questions/5168612/launch-program-with-parameters
-		String^ args = "run -w \"" + oswPathName + "\"";
-		System::Diagnostics::ProcessStartInfo^ startInfo = gcnew ProcessStartInfo(openStudioExePath, args);
-		startInfo->WorkingDirectory = Path::GetDirectoryName(oswPathName);
-
-		Process^ process = Process::Start(startInfo);
 	}
 
 	void TopologicEnergy::PerformEnergyAnalysis(Model ^ model, String ^ openStudioExePath)

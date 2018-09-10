@@ -27,42 +27,6 @@ namespace TopologicEnergy
 		static bool CreateIdfFile(OpenStudio::Model^ osModel, String^ idfPathName);
 
 		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="osmTemplatePath"></param>
-		/// <param name="epwWeatherPath"></param>
-		/// <param name="ddyPath"></param>
-		/// <param name="osmOutputPath"></param>
-		/// <param name="buildingCellComplex">The building as a cell complex</param>
-		/// <param name="buildingName"></param>
-		/// <param name="buildingType"></param>
-		/// <param name="spaceType"></param>
-		/// <param name="heatingTemp"></param>
-		/// <param name="coolingTemp"></param>
-		/// <param name="buildingHeight"></param>
-		/// <param name="floorLevels"></param>
-		/// <param name="numFloors"></param>
-		/// <param name="glazingRatio"></param>
-		/// <param name="contextBuildings"></param>
-		/// <returns name="OpenStudio.Model"></returns>
-		static OpenStudio::Model^ BuildOsModel(
-			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] List<Cell^>^ contextBuildings,
-			CellComplex^ buildingCellComplex,
-			[Autodesk::DesignScript::Runtime::DefaultArgument("Commercial")] String^ buildingType,
-			[Autodesk::DesignScript::Runtime::DefaultArgument("Default Building")] String^ buildingName,
-			String^ spaceType,
-			double buildingHeight,
-			int numFloors,
-			List<double>^ floorLevels,
-			double glazingRatio,
-			String^ epwWeatherPath,
-			String^ ddyPath,
-			String^ osmTemplatePath,
-			String^ osmOutputPath,
-			double coolingTemp,
-			double heatingTemp);
-
-		/// <summary>
 		/// Create a TopologicEnergy model from a Topologic shape.
 		/// </summary>
 		/// <param name="contextBuildings"></param>
@@ -96,15 +60,6 @@ namespace TopologicEnergy
 			double coolingTemp,
 			double heatingTemp
 			);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="strOsmPath"></param>
-		/// <param name="epwPathName"></param>
-		/// <param name="oswPathName"></param>
-		/// <param name="openStudioExePath"></param>
-		static void PerformEnergyAnalysis(String^ strOsmPath, String^ epwPathName, String^ oswPathName, String^ openStudioExePath);
 
 		/// <summary>
 		/// 
