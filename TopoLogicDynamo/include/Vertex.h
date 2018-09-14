@@ -12,7 +12,7 @@ namespace Topologic
 	{
 	public:
 		/// <summary>
-		/// Creates a vertex by a point.
+		/// Create a vertex by a point.
 		/// </summary>
 		/// <param name="point">A point.</param>
 		/// <returns name="Vertex">
@@ -21,7 +21,7 @@ namespace Topologic
 		static Vertex^ ByPoint(Autodesk::DesignScript::Geometry::Point^ point);
 
 		/// <summary>
-		/// Creates a vertex by a point.
+		/// Create a vertex by XYZ coordinates.
 		/// </summary>
 		/// <param name="x">The x coordinate.</param>
 		/// <param name="y">The y coordinate.</param>
@@ -32,11 +32,11 @@ namespace Topologic
 		static Vertex^ ByCoordinates(double x, double y, double z);
 
 		/// <summary>
-		/// Gets the list of edges incident to this vertex.
+		/// Get the list of edges incident to the vertex.
 		/// </summary>
-		/// <param name="parentTopology"></param>
+		/// <param name="hostTopology"></param>
 		/// <returns name="Edge[]">The edges incident to this vertex</returns>
-		List<Edge^>^ Edges(Topology^ parentTopology);
+		List<Edge^>^ Edges_(Topology^ hostTopology);
 
 		property Object^ Geometry
 		{
@@ -48,8 +48,8 @@ namespace Topologic
 		}
 
 	public protected:
-		Vertex(Vertex^ pAnotherVertex);
-		Vertex(Autodesk::DesignScript::Geometry::Point^ pDynamoPoint);
+		Vertex(Vertex^ anotherVertex);
+		Vertex(Autodesk::DesignScript::Geometry::Point^ dynamoPoint);
 		Vertex(const std::shared_ptr<TopologicCore::Vertex>& kpCoreVertex);
 
 		Autodesk::DesignScript::Geometry::Point^ Point();

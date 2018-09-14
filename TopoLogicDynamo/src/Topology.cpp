@@ -58,7 +58,7 @@ namespace Topologic
 	//	// TODO: insert return statement here
 	//}
 
-	List<Topology^>^ Topology::ByVertexIndex(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<int>^>^ vertexIndices)
+	List<Topology^>^ Topology::ByVerticesIndices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<int>^>^ vertexIndices)
 	{
 		std::vector<TopologicCore::Vertex::Ptr> coreVertices;
 		for each(Vertex^ pVertex in vertices)
@@ -146,7 +146,7 @@ namespace Topologic
 		return pCoreTopology->Distance(pCoreOtherTopology);
 	}
 
-	String^ Topology::Type()
+	String^ Topology::Type::get()
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		std::string strType = pCoreTopology->GetTypeAsString();
@@ -339,7 +339,7 @@ namespace Topologic
 
 		// 3. Copy the context topology
 		TopologicCore::Topology::Ptr pCoreContextTopology =
-			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(context->Topology()->GetCoreTopologicalQuery());
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(context->Topology->GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreCopyContextTopology = pCoreContextTopology->Copy();
 
 		// 4. Find the closest simplest topology of the copy topology
@@ -572,7 +572,7 @@ namespace Topologic
 		}
 	}
 
-	Topology^ Topology::Intersection(Topology^ topology)
+	Topology^ Topology::Intersect(Topology^ topology)
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		std::shared_ptr<TopologicCore::Topology> pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
@@ -666,7 +666,7 @@ namespace Topologic
 		return Topology::ByCoreTopology(pCoreCopyTopology);
 	}
 
-	List<Topology^>^ Topology::ImmediateMembers()
+	List<Topology^>^ Topology::ImmediateMembers::get()
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 

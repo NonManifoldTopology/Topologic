@@ -102,6 +102,14 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="kpStartVertex"></param>
+		/// <param name="kpEndVertex"></param>
+		/// <returns></returns>
+		static TOPOLOGIC_API Edge::Ptr ByStartVertexEndVertex(const std::shared_ptr<Vertex>& kpStartVertex, const std::shared_ptr<Vertex>& kpEndVertex);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="kpCenterPoint"></param>
 		/// <param name="kRadius"></param>
 		/// <param name="kXAxisX"></param>

@@ -30,12 +30,14 @@ namespace Topologic
 		/// </summary>
 		/// <param name="geometry"></param>
 		/// <returns name="Topology"></returns>
+		[IsVisibleInDynamoLibrary(false)]
 		static Topology^ ByGeometry(Autodesk::DesignScript::Geometry::Geometry^ geometry);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns name="Topology"></returns>
+		[IsVisibleInDynamoLibrary(false)]
 		static Topology^ ByContext();
 
 		/*/// <summary>
@@ -52,7 +54,7 @@ namespace Topologic
 		/// <param name="vertices"></param>
 		/// <param name="vertexIndices"></param>
 		/// <returns name="Topology[]"></returns>
-		static List<Topology^>^ ByVertexIndex(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<int>^>^ vertexIndices);
+		static List<Topology^>^ ByVerticesIndices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<int>^>^ vertexIndices);
 
 		/// <summary>
 		/// Returns the dimensionality of the Topological entity.
@@ -83,6 +85,7 @@ namespace Topologic
 		/// <summary>
 		/// 
 		/// </summary>
+		[IsVisibleInDynamoLibrary(false)]
 		property Support::AttributeMap^ AttributeMap
 		{
 			Support::AttributeMap^ get();
@@ -93,6 +96,7 @@ namespace Topologic
 		/// </summary>
 		/// <param name="attributeMap"></param>
 		/// <returns></returns>
+		[IsVisibleInDynamoLibrary(false)]
 		Topology^ AddAttributeMap(Support::AttributeMap^ attributeMap);
 
 		/// <summary>
@@ -138,6 +142,7 @@ namespace Topologic
 		/// </summary>
 		/// <param name="apertureTopology"></param>
 		/// <returns name="Topology"></returns>
+		[IsVisibleInDynamoLibrary(false)]
 		Topology^ AddAperture(Topology^ apertureTopology);
 
 		/// <summary>
@@ -145,6 +150,7 @@ namespace Topologic
 		/// </summary>
 		/// <param name="apertureTopologies"></param>
 		/// <returns name="Topology"></returns>
+		[IsVisibleInDynamoLibrary(false)]
 		Topology^ AddApertures(System::Collections::Generic::IEnumerable<Topology^>^ apertureTopologies);
 
 		/// <summary>
@@ -166,6 +172,7 @@ namespace Topologic
 		/// </summary>
 		/// <param name="topology"></param>
 		/// <returns name="Topology"></returns>
+		[IsVisibleInDynamoLibrary(false)]
 		List<Topology^>^ SharedTopologies(Topology^ topology);
 
 		/// <summary>
@@ -175,6 +182,7 @@ namespace Topologic
 		/// <param name="maxLevel"></param>
 		/// <param name="maxPaths"></param>
 		/// <returns name="Topology[][]"></returns>
+		[IsVisibleInDynamoLibrary(false)]
 		List<List<Topology^>^>^ PathsTo(Topology^ topology, Topology^ parentTopology, int maxLevel, int maxPaths);
 
 		/*/// <summary>
@@ -230,7 +238,7 @@ namespace Topologic
 		/// </summary>
 		/// <param name="topology"></param>
 		/// <returns name="Topology">The result of the Intersection operation</returns>
-		Topology^ Intersection(Topology^ topology);
+		Topology^ Intersect(Topology^ topology);
 
 		/// <summary>
 		/// Merge the first and the second Topological entities.
@@ -240,7 +248,7 @@ namespace Topologic
 		Topology^ Merge(Topology^ topology);
 
 		/// <summary>
-		/// Self=merge.
+		/// Self-merge.
 		/// </summary>
 		/// <returns name="Topology">The result of the Merge operation</returns>
 		Topology^ SelfMerge();
@@ -260,7 +268,7 @@ namespace Topologic
 		Topology^ Union(Topology^ topology);
 
 		/// <summary>
-		/// Perform the XOR operation between the first and the second Topological entities.
+		/// Perform an XOR operation between the first and the second Topological entities.
 		/// </summary>
 		/// <param name="topology"></param>
 		/// <returns name="Topology">The result of the XOR operation</returns>
@@ -273,17 +281,18 @@ namespace Topologic
 		/// <param name="y"></param>
 		/// <param name="z"></param>
 		/// <returns name="Topology"></returns>
+		[IsVisibleInDynamoLibrary(false)]
 		Topology^ Translate(double x, double y, double z);
 
 		/// <summary>
-		/// Save a Topological entity to a BRep file.
+		/// Save a Topological entity to a BRep file (.brep).
 		/// </summary>
 		/// <param name="path">The path to the BRep file</param>
 		/// <returns name="bool">True if the BRep file is succesffully created, otherwise false</returns>
 		bool SaveToBRep(String^ path);
 
 		/// <summary>
-		/// Load a Topological entity from a BRep file.
+		/// Load a Topological entity from a BRep file (.brep).
 		/// </summary>
 		/// <param name="path">The path to the BRep file</param>
 		/// <returns name="Topology">The loaded topology</returns>
@@ -299,7 +308,10 @@ namespace Topologic
 		/// Returns all sub-entities that have no other parents than this cluster, i.e. do not belong to other entities.
 		/// </summary>
 		/// <returns name="Topology[]">The immediate members</returns>
-		List<Topology^>^ ImmediateMembers();
+		property List<Topology^>^ ImmediateMembers
+		{
+			List<Topology^>^ get();
+		}
 
 		/// <summary>
 		/// 
@@ -320,15 +332,20 @@ namespace Topologic
 		/// </summary>
 		/// <param name="topology"></param>
 		/// <returns></returns>
+		[IsVisibleInDynamoLibrary(false)]
 		double Distance(Topology^ topology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns name="Vertex"></returns>
+		[IsVisibleInDynamoLibrary(false)]
 		Vertex^ CenterOfMass();
 
-		String^ Type();
+		property String^ Type
+		{
+			String^ get();
+		}
 
 		[IsVisibleInDynamoLibrary(false)]
 		void RegisterFactory(const TopologicCore::Topology::Ptr& kpCoreTopology, TopologyFactory^ topologyFactory);

@@ -107,9 +107,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="resources\Topologic.resx" />
+    <Xml Include="config\Topologic_DynamoCustomization.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="config\Topologic_DynamoCustomization.xml" />
+    <EmbeddedResource Include="resources\Topologic.resx" />
   </ItemGroup>
 </Project>

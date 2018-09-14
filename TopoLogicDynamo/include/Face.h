@@ -18,60 +18,70 @@ namespace Topologic {
 	{
 	public:
 		/// <summary>
-		/// Gets the list of faces adjacent to this face.
+		/// Get the faces adjacent to the face.
 		/// </summary>
-		/// <param name="parentTopology"></param>
-		/// <returns name="Face[]">The faces adjacent to this face</returns>
-		List<Face^>^ AdjacentFaces(Topology^ parentTopology);
+		/// <param name="hostTopology"></param>
+		/// <returns name="Face[]">The faces adjacent to the face</returns>
+		List<Face^>^ AdjacentFaces_(Topology^ hostTopology);
 
 		/// <summary>
-		/// Gets the list of cells incident to this face.
+		/// Get the cells incident to the face.
 		/// </summary>
-		/// <param name="parentTopology"></param>
-		/// <returns name="Cell[]">The cells incident to this face</returns>
-		List<Cell^>^ Cells(Topology^ parentTopology);
+		/// <param name="hostTopology"></param>
+		/// <returns name="Cell[]">The cells incident to the face</returns>
+		List<Cell^>^ Cells_(Topology^ hostTopology);
 
 		/// <summary>
-		/// Gets the list of shells incident to this face.
+		/// Gets the shells incident to the face.
 		/// </summary>
-		/// <param name="parentTopology"></param>
-		/// <returns name="Shell[]">The shells incident to this face</returns>
-		List<Shell^>^ Shells(Topology^ parentTopology);
+		/// <param name="hostTopology"></param>
+		/// <returns name="Shell[]">The shells incident to the face</returns>
+		List<Shell^>^ Shells_(Topology^ hostTopology);
 
 		/// <summary>
-		/// Gets the list of vertices constituent to this face. 
+		/// Gets the vertices constituent to the face. 
 		/// </summary>
-		/// <returns name="Vertex[]">The vertices consituent to this face</returns>
-		List<Vertex^>^ Vertices();
+		/// <returns name="Vertex[]">The vertices consituent to the face</returns>
+		property List<Vertex^>^ Vertices
+		{
+			List<Vertex^>^ get();
+		}
 
 		/// <summary>
-		/// Gets the list of edges constituent to this face.
+		/// Get the edges constituent to the face.
 		/// </summary>
-		/// <returns name="Edge[]">The edges consituent to this face</returns>
-		List<Edge^>^ Edges();
+		/// <returns name="Edge[]">The edges consituent to the face</returns>
+		property List<Edge^>^ Edges
+		{
+			List<Edge^>^ get();
+		}
 
 		/// <summary>
-		/// Gets the list of wires constituent to this face.
+		/// Get the wires constituent to the face.
 		/// </summary>
-		/// <returns name="Wire[]">The wires consituent to this face</returns>
-		List<Wire^>^ Wires();
+		/// <returns name="Wire[]">The wires consituent to the face</returns>
+		property List<Wire^>^ Wires
+		{
+			List<Wire^>^ get();
+		}
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns name="double"></returns>
+		[IsVisibleInDynamoLibrary(false)]
 		double Area();
 
 		/// <summary>
-		/// A factory method that creates a face by a closed wire.
+		/// Create a face by a closed wire. NOTE: This node currently can only create a planar face. To create a curved face, please use BySurface().
 		/// </summary>
-		/// <param name="externalBoundary">A closed wire. Must be (and internally verified if it is) a Dynamo polygon or a Topologic wire.</param>
+		/// <param name="wire">A closed wire. Must be (and internally verified if it is) a Dynamo polygon or a Topologic wire.</param>
 		/// <exception cref="ArgumentException">Thrown if any of the arguments is neither a Dynamo polygon nor a Topologic wire</exception>
 		/// <returns name="Face">/// </returns>
-		static Face^ ByExternalBoundary(Wire^ externalBoundary);
+		static Face^ ByWire(Wire^ wire);
 
 		/// <summary>
-		/// 
+		/// Create a face by an external boundary and internal boundaries.
 		/// </summary>
 		/// <param name="externalBoundary"></param>
 		/// <param name="internalBoundaries"></param>
@@ -79,7 +89,7 @@ namespace Topologic {
 		static Face^ ByExternalInternalBoundaries(Wire^ externalBoundary, System::Collections::Generic::IEnumerable<Wire^>^ internalBoundaries);
 
 		/// <summary>
-		/// Creates a face by a list of edges. A wire will be internally created.
+		/// Create a face by a list of edges.
 		/// </summary>
 		/// <param name="edges">The edges. </param>
 		/// <exception cref="ArgumentException">Thrown if any of the arguments is not a Topologic edge</exception>
@@ -87,7 +97,7 @@ namespace Topologic {
 		static Face^ ByEdges(System::Collections::Generic::IEnumerable<Edge^>^ edges);
 
 		/// <summary>
-		/// Creates a face by a surface.
+		/// Create a face by a surface.
 		/// </summary>
 		/// <param name="surface">The surface</param>
 		/// <returns name="Face">The created face</returns>
@@ -98,68 +108,78 @@ namespace Topologic {
 		/// </summary>
 		/// <param name="vertices"></param>
 		/// <returns name="Face"></returns>
+		[IsVisibleInDynamoLibrary(false)]
 		static Face^ ByVertices(System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<Vertex^>^>^ vertices);
 
 		/// <summary>
-		/// Returns the shared edges between two faces. 
+		/// Return the shared edges between two faces. 
 		/// </summary>
 		/// <param name="face">Another face</param>
 		/// <returns name="Edge[]">The shared edges</returns>
 		List<Edge^>^ SharedEdges(Face^ face);
 
 		/// <summary>
-		/// Returns the shared vertices between two faces.
+		/// Return the shared vertices between two faces.
 		/// </summary>
 		/// <param name="face">Another face</param>
 		/// <returns name="Vertex[][]">The shared vertices</returns>
 		List<Vertex^>^ SharedVertices(Face^ face);
 
 		/// <summary>
-		/// 
+		/// Return the outer boundary (wire) of the face.
 		/// </summary>
-		/// <returns name="Wire[]"></returns>
-		Wire^ OuterBoundary();
+		/// <returns name="Wire"></returns>
+		property Wire^ OuterBoundary
+		{
+			Wire^ get();
+		}
 
 		/// <summary>
-		/// 
+		/// Return the inner boundaries (wires) of the face.
 		/// </summary>
 		/// <returns name="Wire[]"></returns>
-		List<Wire^>^ InnerBoundaries();
+		property List<Wire^>^ InnerBoundaries
+		{
+			List<Wire^>^ get();
+		}
 
 		/// <summary>
-		/// 
+		/// Add internal boundaries to a face.
 		/// </summary>
-		/// <param name="wires"></param>
+		/// <param name="internalBoundaries"></param>
 		/// <returns name="Face"></returns>
-		Face^ AddInternalBoundaries(List<Wire^>^ wires);
+		Face^ AddInternalBoundaries(List<Wire^>^ internalBoundaries);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="vertex"></param>
 		/// <returns name="UV"></returns>
-		Autodesk::DesignScript::Geometry::UV^ UVParameterAtPoint(Vertex^ vertex);
+		[IsVisibleInDynamoLibrary(false)]
+		Autodesk::DesignScript::Geometry::UV^ UVParameterAtVertex(Vertex^ vertex);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="uv"></param>
 		/// <returns name="Vertex"></returns>
-		Vertex^ PointAtParameter(Autodesk::DesignScript::Geometry::UV^ uv);
+		[IsVisibleInDynamoLibrary(false)]
+		Vertex^ VertexAtParameter(Autodesk::DesignScript::Geometry::UV^ uv);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="uv"></param>
 		/// <returns></returns>
+		[IsVisibleInDynamoLibrary(false)]
 		Autodesk::DesignScript::Geometry::Vector^ NormalAtParameter(Autodesk::DesignScript::Geometry::UV^ uv);
 
 		/// <summary>
-		/// 
+		/// Trim a face with a wire. The portion of the face inside the wire will be returned.
 		/// </summary>
 		/// <param name="wire"></param>
 		/// <returns name="Face"></returns>
-		Face^ Trim(Wire^ wire);
+		Face^ TrimByWire(Wire^ wire);
 
 		property Object^ Geometry
 		{
@@ -176,18 +196,6 @@ namespace Topologic {
 		/// </summary>
 		/// <param name="kpCoreFace"></param>
 		Face(const std::shared_ptr<TopologicCore::Face>& kpCoreFace);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="pWire"></param>
-		Face(Wire^ pWire);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="pDynamoSurface"></param>
-		Face(Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface);
 
 		/// <summary>
 		/// 
@@ -214,7 +222,8 @@ namespace Topologic {
 		/// Initialises the face given a NurbsSurface argument. Called by the respective constructor.
 		/// </summary>
 		/// <param name="pDynamoNurbsSurface">A Dynamo NURBS surface</param>
-		void Init(Autodesk::DesignScript::Geometry::NurbsSurface^ pDynamoNurbsSurface,
+		/// <returns></returns>
+		static Face^ BySurface(Autodesk::DesignScript::Geometry::NurbsSurface^ pDynamoNurbsSurface,
 			array<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoPerimeterCurves);
 
 		/// <summary>

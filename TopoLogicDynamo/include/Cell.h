@@ -17,21 +17,21 @@ namespace Topologic
 	{
 	public:
 		/// <summary>
-		/// 
+		/// Create a cell by a set of faces.
 		/// </summary>
 		/// <param name="faces"></param>
 		/// <returns name="Cell"></returns>
 		static Cell^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces);
 
 		/// <summary>
-		/// 
+		/// Create a cell by a solid.
 		/// </summary>
 		/// <param name="solid"></param>
 		/// <returns name="Cell"></returns>
 		static Cell^ BySolid(Autodesk::DesignScript::Geometry::Solid^ solid);
 
 		/// <summary>
-		/// 
+		/// Create a cell from a shell. The shell must be closed, otherwise an exception is thrown.
 		/// </summary>
 		/// <param name="shell"></param>
 		/// <returns name="Cell"></returns>
@@ -43,6 +43,7 @@ namespace Topologic
 		/// <param name="vertices"></param>
 		/// <param name="faceIndices"></param>
 		/// <returns name="Cell"></returns>
+		[IsVisibleInDynamoLibrary(false)]
 		static Cell^ ByVerticesFaceIndices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<int>^>^ faceIndices);
 
 		/// <summary>
@@ -50,89 +51,112 @@ namespace Topologic
 		/// </summary>
 		/// <param name="wires">A set of wires</param>
 		/// <returns name="Cell">The created cell</returns>
+		[IsVisibleInDynamoLibrary(false)]
 		static Cell^ ByLoft(System::Collections::Generic::IEnumerable<Wire^>^ wires);
 
 		/// <summary>
-		/// 
+		/// Get the cellComplexes which contain the cell.
 		/// </summary>
-		/// <param name="parentTopology"></param>
+		/// <param name="hostTopology"></param>
 		/// <returns name="CellComplex[]"></returns>
-		List<CellComplex^>^ CellComplexes(Topology^ parentTopology);
+		List<CellComplex^>^ CellComplexes_(Topology^ hostTopology);
 
 		/// <summary>
-		/// 
+		/// Get the shell constituent to the cell.
 		/// </summary>
 		/// <returns name="Shell[]"></returns>
-		List<Shell^>^ Shells();
+		property List<Shell^>^ Shells
+		{
+			List<Shell^>^ get();
+		}
 
 		/// <summary>
-		/// 
+		/// Get the faces constituent to the cell.
 		/// </summary>
 		/// <returns name="Face[]"></returns>
-		List<Face^>^ Faces();
+		property List<Face^>^ Faces
+		{
+			List<Face^>^ get();
+		}
 
 		/// <summary>
-		/// 
+		/// Get the wires constituent to the cell.
 		/// </summary>
 		/// <returns name="Wire[]"></returns>
-		List<Wire^>^ Wires();
+		property List<Wire^>^ Wires
+		{
+			List<Wire^>^ get();
+		}
 
 		/// <summary>
-		/// 
+		/// Get the edges constituent to the cell.
 		/// </summary>
 		/// <returns name="Edge[]"></returns>
-		List<Edge^>^ Edges();
+		property List<Edge^>^ Edges
+		{
+			List<Edge^>^ get();
+		}
 
 		/// <summary>
-		/// 
+		/// Get the vertices constituent to the cell.
 		/// </summary>
 		/// <returns name="Vertex[]"></returns>
-		List<Vertex^>^ Vertices();
+		property List<Vertex^>^ Vertices
+		{
+			List<Vertex^>^ get();
+		}
 
 		/// <summary>
-		/// 
+		/// Get the cells adjacent to the cell.
 		/// </summary>
-		/// <param name="parentTopology"></param>
+		/// <param name="hostTopology"></param>
 		/// <returns name="Cell[]"></returns>
-		List<Cell^>^ AdjacentCells(Topology^ parentTopology);
+		List<Cell^>^ AdjacentCells_(Topology^ hostTopology);
 
 		/// <summary>
-		/// 
+		/// Return the shared faces between two cells. 
 		/// </summary>
 		/// <param name="cell"></param>
 		/// <returns name="Face[]"></returns>
 		List<Face^>^ SharedFaces(Cell^ cell);
 
 		/// <summary>
-		/// 
+		/// Return the shared edges between two cells. 
 		/// </summary>
 		/// <param name="cell"></param>
 		/// <returns name="Face[]"></returns>
 		List<Edge^>^ SharedEdges(Cell^ cell);
 
 		/// <summary>
-		/// 
+		/// Return the shared vertices between two cells. 
 		/// </summary>
 		/// <param name="cell"></param>
 		/// <returns name="Vertex[]"></returns>
 		List<Vertex^>^ SharedVertices(Cell^ cell);
 
 		/// <summary>
-		/// 
+		/// Return the outer boundary (shell) of the cell.
 		/// </summary>
 		/// <returns name="Shell"></returns>
-		Shell^ OuterBoundary();
+		property Shell^ OuterBoundary
+		{
+			Shell^ get();
+		}
 
 		/// <summary>
-		/// 
+		/// Return the inner boundary (shells) of the cell.
 		/// </summary>
 		/// <returns name="Shell[]"></returns>
-		List<Shell^>^ InnerBoundaries();
+		property List<Shell^>^ InnerBoundaries
+		{
+			List<Shell^>^ get();
+		}
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns name="double"></returns>
+		[IsVisibleInDynamoLibrary(false)]
 		double Volume();
 
 		/// <summary>
@@ -140,7 +164,8 @@ namespace Topologic
 		/// </summary>
 		/// <param name="vertex"></param>
 		/// <returns name="bool"></returns>
-		bool DoesContain(Vertex^ vertex);
+		[IsVisibleInDynamoLibrary(false)]
+		bool Contains(Vertex^ vertex);
 
 		property Object^ Geometry
 		{
@@ -152,18 +177,6 @@ namespace Topologic
 		}
 
 	public protected:
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="solid"></param>
-		Cell(Autodesk::DesignScript::Geometry::Solid^ solid);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="faces"></param>
-		Cell::Cell(System::Collections::Generic::IEnumerable<Face^>^ faces);
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -182,14 +195,8 @@ namespace Topologic
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="faces"></param>
-		void Init(System::Collections::Generic::IEnumerable<Face^>^ faces);
-
-		/// <summary>
-		/// 
-		/// </summary>
 		/// <param name="cuboid"></param>
-		void Init(Autodesk::DesignScript::Geometry::Cuboid^ cuboid);
+		static Cell^ ByCuboid(Autodesk::DesignScript::Geometry::Cuboid^ cuboid);
 
 		/// <summary>
 		/// 

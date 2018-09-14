@@ -28,7 +28,7 @@ namespace Topologic
 	{
 		List<Object^>^ dualGraphGeometry = gcnew List<Object^>(); 
 		dualGraphGeometry->Add(Wire::Geometry);
-		List<Vertex^>^ vertices = Vertices(false);
+		List<Vertex^>^ vertices = Vertices_(false);
 		for each (Vertex^ vertex in vertices)
 		{
 			dualGraphGeometry->Add(Autodesk::DesignScript::Geometry::Sphere::ByCenterPointRadius(vertex->Point(), 0.2));
@@ -46,17 +46,6 @@ namespace Topologic
 		: Wire(kpCoreWire)
 	{
 
-	}
-
-	DualGraph::DualGraph(System::Collections::Generic::IEnumerable<Edge^>^ pEdges)
-		: Wire(pEdges)
-	{
-
-	}
-
-	DualGraph::DualGraph(Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoPolycurve)
-		: Wire(pDynamoPolycurve)
-	{
 	}
 
 	DualGraph::~DualGraph()

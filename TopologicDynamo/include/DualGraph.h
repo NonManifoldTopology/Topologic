@@ -47,18 +47,6 @@ namespace Topologic
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="pEdges"></param>
-		DualGraph(System::Collections::Generic::IEnumerable<Edge^>^ pEdges);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="pDynamoPolycurve"></param>
-		DualGraph(Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoPolycurve);
-
-		/// <summary>
-		/// 
-		/// </summary>
 		/// <returns></returns>
 		virtual std::shared_ptr<TopologicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
 

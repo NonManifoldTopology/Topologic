@@ -21,24 +21,24 @@ namespace Topologic
 		return Vertex::ByPoint(Autodesk::DesignScript::Geometry::Point::ByCoordinates(x, y, z));
 	}
 
-	List<Edge^>^ Vertex::Edges(Topology^ parentTopology)
+	List<Edge^>^ Vertex::Edges_(Topology^ hostTopology)
 	{
 		std::list<TopologicCore::Edge::Ptr> coreEdges;
-		std::shared_ptr<TopologicCore::Topology> pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
+		TopologicCore::Topology::Ptr pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(hostTopology->GetCoreTopologicalQuery());
 		TopologicCore::Vertex::Ptr pCoreVertex = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Vertex>(GetCoreTopologicalQuery());
 		pCoreVertex->Edges(pCoreParentTopology, coreEdges);
 
-		List<Edge^>^ pEdges = gcnew List<Edge^>();
+		List<Edge^>^ edges = gcnew List<Edge^>();
 		for (std::list<TopologicCore::Edge::Ptr>::iterator coreEdgeIterator = coreEdges.begin();
 			coreEdgeIterator != coreEdges.end();
 			coreEdgeIterator++)
 		{
 			const TopologicCore::Edge::Ptr& kpCoreEdge = *coreEdgeIterator;
 			Edge^ pEdge = gcnew Edge(kpCoreEdge);
-			pEdges->Add(pEdge);
+			edges->Add(pEdge);
 		}
 
-		return pEdges;
+		return edges;
 	}
 
 	std::shared_ptr<TopologicCore::TopologicalQuery> Vertex::GetCoreTopologicalQuery()

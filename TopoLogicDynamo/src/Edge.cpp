@@ -30,12 +30,12 @@ namespace Topologic
 		return gcnew Edge(pCoreCircleEdge);
 	}
 
-	List<Edge^>^ Edge::AdjacentEdges(Topology ^ parentTopology)
+	List<Edge^>^ Edge::AdjacentEdges_(Topology ^ hostTopology)
 	{
 		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopologicCore::Topology> pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreHostTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(hostTopology->GetCoreTopologicalQuery());
 		std::list<TopologicCore::Edge::Ptr> pAdjacentCoreEdges;
-		pCoreEdge->AdjacentEdges(pCoreParentTopology, pAdjacentCoreEdges);
+		pCoreEdge->AdjacentEdges(pCoreHostTopology, pAdjacentCoreEdges);
 
 		List<Edge^>^ pAdjacentEdges = gcnew List<Edge^>();
 
@@ -51,7 +51,7 @@ namespace Topologic
 		return pAdjacentEdges;
 	}
 
-	List<Vertex^>^ Edge::Vertices()
+	List<Vertex^>^ Edge::Vertices::get()
 	{
 		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Vertex::Ptr> coreVertices;
@@ -70,12 +70,12 @@ namespace Topologic
 		return pVertices;
 	}
 
-	List<Wire^>^ Edge::Wires(Topology^ parentTopology)
+	List<Wire^>^ Edge::Wires_(Topology^ hostTopology)
 	{
 		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopologicCore::Topology> pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreHostTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(hostTopology->GetCoreTopologicalQuery());
 		std::list<TopologicCore::Wire::Ptr> coreWires;
-		pCoreEdge->Wires(pCoreParentTopology, coreWires);
+		pCoreEdge->Wires(pCoreHostTopology, coreWires);
 
 		List<Wire^>^ pWires = gcnew List<Wire^>();
 		for(std::list<TopologicCore::Wire::Ptr>::iterator coreWireIterator = coreWires.begin();
@@ -92,7 +92,50 @@ namespace Topologic
 
 	Edge^ Edge::ByCurve(Autodesk::DesignScript::Geometry::Curve^ curve)
 	{
-		return gcnew Edge(curve);
+		if (curve->GetType() == Autodesk::DesignScript::Geometry::Arc::typeid)
+		{
+			//throw gcnew System::NotImplementedException("Feature not yet implemented.");
+			return ByCurve(curve->ToNurbsCurve());
+		}
+		else if (curve->GetType() == Autodesk::DesignScript::Geometry::Circle::typeid)
+		{
+			return ByCurve(safe_cast<Autodesk::DesignScript::Geometry::Circle^>(curve));
+		}
+		else if (curve->GetType() == Autodesk::DesignScript::Geometry::Ellipse::typeid)
+		{
+			//throw gcnew System::NotImplementedException("Feature not yet implemented.");
+			return ByCurve(curve->ToNurbsCurve());
+		}
+		else if (curve->GetType() == Autodesk::DesignScript::Geometry::EllipseArc::typeid)
+		{
+			//throw gcnew System::NotImplementedException("Feature not yet implemented.");
+			return ByCurve(curve->ToNurbsCurve());
+		}
+		else if (curve->GetType() == Autodesk::DesignScript::Geometry::Helix::typeid)
+		{
+			//throw gcnew System::NotImplementedException("Feature not yet implemented.");
+			return ByCurve(curve->ToNurbsCurve());
+		}
+		else if (curve->GetType() == Autodesk::DesignScript::Geometry::Line::typeid)
+		{
+			return ByCurve(safe_cast<Autodesk::DesignScript::Geometry::Line^>(curve));
+		}
+		else if (curve->GetType() == Autodesk::DesignScript::Geometry::NurbsCurve::typeid)
+		{
+			return ByCurve(safe_cast<Autodesk::DesignScript::Geometry::NurbsCurve^>(curve));
+		}
+		else if (curve->GetType() == Autodesk::DesignScript::Geometry::PolyCurve::typeid)
+		{
+			throw gcnew System::NotImplementedException("Cannot create an Edge from a PolyCurve. Create a wire instead.");
+		}
+		else if (curve->GetType() == Autodesk::DesignScript::Geometry::Curve::typeid) // a generic curve
+		{
+			return ByCurve(curve->ToNurbsCurve());
+		}
+		else
+		{
+			throw gcnew ArgumentException("The argument is not a valid Dynamo curve.");
+		}
 	}
 
 	Edge^ Edge::ByVertices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices)
@@ -103,6 +146,14 @@ namespace Topologic
 			pCoreVertices.push_back(TopologicCore::Topology::Downcast<TopologicCore::Vertex>(pVertex->GetCoreTopologicalQuery()));
 		}
 		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Edge::ByVertices(pCoreVertices);
+		return gcnew Edge(pCoreEdge);
+	}
+
+	Edge ^ Edge::ByStartVertexEndVertex(Vertex ^ startVertex, Vertex ^ endVertex)
+	{
+		TopologicCore::Vertex::Ptr pCoreStartVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(startVertex->GetCoreTopologicalQuery());
+		TopologicCore::Vertex::Ptr pCoreEndVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(endVertex->GetCoreTopologicalQuery());
+		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Edge::ByStartVertexEndVertex(pCoreStartVertex, pCoreEndVertex);
 		return gcnew Edge(pCoreEdge);
 	}
 
@@ -123,13 +174,13 @@ namespace Topologic
 		return Curve(pOcctCurve, u0, u1);
 	}
 
-	double Edge::ParameterAtPoint(Vertex^ vertex)
+	double Edge::ParameterAtVertex(Vertex^ vertex)
 	{
 		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
 		return pCoreEdge->ParameterAtPoint(TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex->GetCoreTopologicalQuery()));
 	}
 
-	Vertex^ Edge::PointAtParameter(double parameter)
+	Vertex^ Edge::VertexAtParameter(double parameter)
 	{
 		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
 		TopologicCore::Vertex::Ptr pCoreVertex = pCoreEdge->PointAtParameter(parameter);
@@ -282,7 +333,7 @@ namespace Topologic
 		// Handle(Geom_Line) pOcctLine = Handle_Geom_Line::DownCast(pOcctCurve);
 
 		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
-		List<Vertex^>^ pVertices = Vertices();
+		List<Vertex^>^ pVertices = Vertices;
 
 		bool onlyTwoVertices = true;
 		if (pVertices->Count != 2)
@@ -324,58 +375,12 @@ namespace Topologic
 
 	}
 
-	Edge::Edge(Autodesk::DesignScript::Geometry::Curve^ curve)
-		: Topology()
-		, m_pCoreEdge(nullptr)
-	{
-		if (curve->GetType() == Autodesk::DesignScript::Geometry::Arc::typeid)
-		{
-			throw gcnew System::NotImplementedException("Feature not yet implemented.");
-		}
-		else if (curve->GetType() == Autodesk::DesignScript::Geometry::Circle::typeid)
-		{
-			Init(safe_cast<Autodesk::DesignScript::Geometry::Circle^>(curve));
-		}
-		else if (curve->GetType() == Autodesk::DesignScript::Geometry::Ellipse::typeid)
-		{
-			throw gcnew System::NotImplementedException("Feature not yet implemented.");
-		}
-		else if (curve->GetType() == Autodesk::DesignScript::Geometry::EllipseArc::typeid)
-		{
-			throw gcnew System::NotImplementedException("Feature not yet implemented.");
-		}
-		else if (curve->GetType() == Autodesk::DesignScript::Geometry::Helix::typeid)
-		{
-			throw gcnew System::NotImplementedException("Feature not yet implemented.");
-		}
-		else if (curve->GetType() == Autodesk::DesignScript::Geometry::Line::typeid)
-		{
-			Init(safe_cast<Autodesk::DesignScript::Geometry::Line^>(curve));
-		}
-		else if (curve->GetType() == Autodesk::DesignScript::Geometry::NurbsCurve::typeid)
-		{
-			Init(safe_cast<Autodesk::DesignScript::Geometry::NurbsCurve^>(curve));
-		}
-		else if (curve->GetType() == Autodesk::DesignScript::Geometry::PolyCurve::typeid)
-		{
-			throw gcnew System::NotImplementedException("Cannot create an Edge from a PolyCurve. Create a wire instead.");
-		}
-		else if (curve->GetType() == Autodesk::DesignScript::Geometry::Curve::typeid) // a generic curve
-		{
-			Init(curve->ToNurbsCurve());
-		}
-		else
-		{
-			throw gcnew ArgumentException("The argument is not a valid Dynamo curve.");
-		}
-	}
-
 	Edge::~Edge()
 	{
 		//delete m_pCoreEdge;
 	}
 
-	void Edge::Init(Autodesk::DesignScript::Geometry::NurbsCurve^ pDynamoNurbsCurve)
+	Edge^ Edge::ByCurve(Autodesk::DesignScript::Geometry::NurbsCurve^ pDynamoNurbsCurve)
 	{
 		// Transfer the poles/control points
 		array<Autodesk::DesignScript::Geometry::Point^>^ pDynamoControlPoints = pDynamoNurbsCurve->ControlPoints();
@@ -433,7 +438,7 @@ namespace Topologic
 		bool isPeriodic = pDynamoNurbsCurve->IsPeriodic;
 		int degree = pDynamoNurbsCurve->Degree;
 
-		m_pCoreEdge = new TopologicCore::Edge::Ptr(TopologicCore::Edge::ByCurve(
+		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Edge::ByCurve(
 			occtPoles,
 			occtWeights,
 			occtKnots,
@@ -441,15 +446,17 @@ namespace Topologic
 			degree,
 			isPeriodic,
 			isRational
-			));
+			);
 
 		for each(Autodesk::DesignScript::Geometry::Point^ pDynamoControlPoint in pDynamoControlPoints)
 		{
 			delete pDynamoControlPoint;
 		}
+
+		return gcnew Edge(pCoreEdge);
 	}
 
-	void Edge::Init(Autodesk::DesignScript::Geometry::Circle^ pDynamoCircle)
+	Edge^ Edge::ByCurve(Autodesk::DesignScript::Geometry::Circle^ pDynamoCircle)
 	{
 		Autodesk::DesignScript::Geometry::Point^ pDynamoCenterPoint = pDynamoCircle->CenterPoint;
 		double radius = pDynamoCircle->Radius;
@@ -468,20 +475,22 @@ namespace Topologic
 			radius
 			);
 
-		m_pCoreEdge = new TopologicCore::Edge::Ptr(
-			TopologicCore::Edge::ByCurve(pOcctCircle));
+		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Edge::ByCurve(pOcctCircle);
 
 		delete pDynamoCenterPoint;
 		delete pDynamoNormal;
 		delete pDynamoCoordinateSystem;
 		delete pDynamoXAxis;
+
+		return gcnew Edge(pCoreEdge);
 	}
 
-	void Edge::Init(Autodesk::DesignScript::Geometry::Line^ pDynamoLine)
+	Edge^ Edge::ByCurve(Autodesk::DesignScript::Geometry::Line^ pDynamoLine)
 	{
 		std::list<TopologicCore::Vertex::Ptr> coreVertices;
 		coreVertices.push_back(TopologicCore::Topology::Downcast<TopologicCore::Vertex>((gcnew Vertex(pDynamoLine->StartPoint))->GetCoreTopologicalQuery()));
 		coreVertices.push_back(TopologicCore::Topology::Downcast<TopologicCore::Vertex>((gcnew Vertex(pDynamoLine->EndPoint))->GetCoreTopologicalQuery()));
-		m_pCoreEdge = new TopologicCore::Edge::Ptr(TopologicCore::Edge::ByVertices(coreVertices));
+		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Edge::ByVertices(coreVertices);
+		return gcnew Edge(pCoreEdge);
 	}
 }

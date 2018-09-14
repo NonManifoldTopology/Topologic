@@ -17,73 +17,100 @@ namespace Topologic
 	{
 	public:
 		/// <summary>
-		/// 
+		/// Create a cellComplex from a set of cells.
 		/// </summary>
 		/// <param name="cells"></param>
 		/// <returns name="CellComplex"></returns>
 		static CellComplex^ ByCells(System::Collections::Generic::IEnumerable<Cell^>^ cells);
 
 		/// <summary>
-		/// 
+		/// Create a cellComplex from the space enclosed by a set of faces. Parts of the faces which do not enclose any space will be discarded.
 		/// </summary>
 		/// <param name="faces"></param>
 		/// <returns name="CellComplex"></returns>
 		static CellComplex^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces);
 
 		/// <summary>
-		/// 
+		/// Get the cells constituent to the cellComplex.
 		/// </summary>
 		/// <returns name="Cell[]"></returns>
-		List<Cell^>^ Cells();
+		property List<Cell^>^ Cells
+		{
+			List<Cell^>^ get();
+		}
 
 		/// <summary>
-		/// 
+		/// Get the faces constituent to the cellComplex.
 		/// </summary>
 		/// <returns name="Face[]"></returns>
-		List<Face^>^ Faces();
+		property List<Face^>^ Faces
+		{
+			List<Face^>^ get();
+		}
 
 		/// <summary>
-		/// 
+		/// Get the shells constituent to the cellComplex.
 		/// </summary>
 		/// <returns name="Shell[]"></returns>
-		List<Shell^>^ Shells();
+		property List<Shell^>^ Shells
+		{
+			List<Shell^>^ get();
+		}
 
 		/// <summary>
-		/// 
+		/// Get the wires constituent to the cellComplex.
 		/// </summary>
 		/// <returns name="Wire[]"></returns>
-		List<Wire^>^ Wires();
+		property List<Wire^>^ Wires
+		{
+			List<Wire^>^ get();
+		}
 
 		/// <summary>
-		/// 
+		/// Get the edges constituent to the cellComplex.
 		/// </summary>
 		/// <returns name="Edge[]"></returns>
-		List<Edge^>^ Edges();
+		property List<Edge^>^ Edges
+		{
+			List<Edge^>^ get();
+		}
 
 		/// <summary>
-		/// 
+		/// Get the vertices constituent to the cellComplex.
 		/// </summary>
 		/// <returns name="Vertex[]"></returns>
-		List<Vertex^>^ Vertices();
+		property List<Vertex^>^ Vertices
+		{
+			List<Vertex^>^ get();
+		}
 
 
 		/// <summary>
-		/// 
+		/// Get the outer boundary (cell) of the cellComplex.
 		/// </summary>
 		/// <returns name="Cell"></returns>
-		Cell^ OuterBoundary();
+		property Cell^ OuterBoundary
+		{
+			Cell^ get();
+		}
 
 		/// <summary>
-		/// 
+		/// Get the inner boundaries (faces) of the cellComplex.
 		/// </summary>
 		/// <returns name="Face[]"></returns>
-		List<Face^>^ InnerBoundaries();
+		property List<Face^>^ InnerBoundaries
+		{
+			List<Face^>^ get();
+		}
 
 		/// <summary>
-		/// 
+		/// Get the non-manifold faces of the cellComplex.
 		/// </summary>
 		/// <returns name="Face[]"></returns>
-		List<Face^>^ NonManifoldFaces();
+		property List<Face^>^ NonManifoldFaces
+		{
+			List<Face^>^ get();
+		}
 
 		property Object^ Geometry
 		{

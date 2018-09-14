@@ -15,20 +15,29 @@ namespace Topologic {
 	{
 	public:
 		/// <summary>
-		/// Creates a curved edge by a Dynamo curve.
+		/// Create a curved edge by a Dynamo curve.
 		/// </summary>
 		/// <param name="curve">A Dynamo curve.</param>
 		/// <returns name="Edge">The created Topologic edge</returns>
 		static Edge^ ByCurve(Autodesk::DesignScript::Geometry::Curve^ curve);
 
 		/// <summary>
-		/// Creates an edge by a list of vertices. If the list only contains two vertices, a straight line will be created.
+		/// Create an edge by a list of vertices. If the list only contains two vertices, a straight line will be created.
 		/// If more than two are given, the edge will be interpolated through the vertices.
 		/// Otherwise, an exception will be raised.
 		/// </summary>
 		/// <param name="vertices">A list of vertices. The created edge will pass all vertices in this list.</param>
 		/// <returns name="Edge">The created Topologic edge</returns>
+		[IsVisibleInDynamoLibrary(false)]
 		static Edge^ ByVertices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices);
+
+		/// <summary>
+		/// Create a straight edge by the startVertex and endVertex.
+		/// </summary>
+		/// <param name="startVertex"></param>
+		/// <param name="endVertex"></param>
+		/// <returns></returns>
+		static Edge^ ByStartVertexEndVertex(Vertex^ startVertex, Vertex^ endVertex);
 
 		/// <summary>
 		/// 
@@ -42,33 +51,36 @@ namespace Topologic {
 		/// <param name="normalY"></param>
 		/// <param name="normalZ"></param>
 		/// <returns></returns>
+		[IsVisibleInDynamoLibrary(false)]
 		static Edge^ ByCircle(
 			Vertex^ centerPoint, double radius, 
 			double xAxisX, double xAxisY, double xAxisZ, 
 			double normalX, double normalY, double normalZ);
 
 		/// <summary>
-		/// Gets the list of edges adjacent to this edge.
+		/// Get the edges adjacent to the edge.
 		/// </summary>
-		/// <param name="parentTopology"></param>
-		/// <returns name="Edge[]">The edges adjacent to this edge</returns>
-		List<Edge^>^ AdjacentEdges(Topology^ parentTopology);
+		/// <param name="hostTopology"></param>
+		/// <returns name="Edge[]">The edges adjacent to the edge</returns>
+		List<Edge^>^ AdjacentEdges_(Topology^ hostTopology);
 
 		/// <summary>
-		/// 
+		/// Get the vertices at the ends of the edge.
 		/// </summary>
 		/// <returns name="Vertex[]"></returns>
-		List<Vertex^>^ Vertices();
+		property List<Vertex^>^ Vertices {
+			List<Vertex^>^ get();
+		}
 
 		/// <summary>
-		/// Gets the list of wires incident to this edge.
+		/// Get the wires incident to the edge.
 		/// </summary>
-		/// <param name="parentTopology"></param>
-		/// <returns name="Wire[]">The list of wires incident to this edge</returns>
-		List<Wire^>^ Wires(Topology^ parentTopology);
+		/// <param name="hostTopology"></param>
+		/// <returns name="Wire[]">The list of wires incident to the edge</returns>
+		List<Wire^>^ Wires_(Topology^ hostTopology);
 
 		/// <summary>
-		/// Returns the shared vertex between two edges.
+		/// Return the shared vertex between two edges.
 		/// </summary>
 		/// <param name="edge">An edge.</param>
 		/// <returns name="Vertex">the shared vertex of an edge</returns>
@@ -79,14 +91,16 @@ namespace Topologic {
 		/// </summary>
 		/// <param name="vertex"></param>
 		/// <returns name="double"></returns>
-		double ParameterAtPoint(Vertex^ vertex);
+		[IsVisibleInDynamoLibrary(false)]
+		double ParameterAtVertex(Vertex^ vertex);
 
 		/// <summary>
-		/// Returns the point at the input parameter
+		/// Return the point at the input parameter
 		/// </summary>
 		/// <param name="parameter">The input parameter</param>
 		/// <returns name="Vertex">The sample point</returns>
-		Vertex^ PointAtParameter(double parameter);
+		[IsVisibleInDynamoLibrary(false)]
+		Vertex^ VertexAtParameter(double parameter);
 
 		property Object^ Geometry
 		{
@@ -103,11 +117,6 @@ namespace Topologic {
 		/// </summary>
 		/// <param name="kpCoreEdge"></param>
 		Edge(const std::shared_ptr<TopologicCore::Edge>& kpCoreEdge);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		Edge(Autodesk::DesignScript::Geometry::Curve^ curve);
 
 		/// <summary>
 		/// 
@@ -132,22 +141,25 @@ namespace Topologic {
 		virtual ~Edge();
 
 		/// <summary>
-		/// Initialises the edge given a NurbsCurve argument. Called by the respective constructor.
+		/// Initialises the edge given a NurbsCurve argument. 
 		/// </summary>
-		/// <param name="pDynamoNurbsCurve">	A Dynamo NURBS curve. </param>
-		void Init(Autodesk::DesignScript::Geometry::NurbsCurve^ pDynamoNurbsCurve);
+		/// <param name="pDynamoNurbsCurve"></param>
+		/// <returns></returns>
+		static Edge^ ByCurve(Autodesk::DesignScript::Geometry::NurbsCurve^ pDynamoNurbsCurve);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="pDynamoCircle"></param>
-		void Init(Autodesk::DesignScript::Geometry::Circle^ pDynamoCircle);
+		/// <returns></returns>
+		static Edge^ ByCurve(Autodesk::DesignScript::Geometry::Circle^ pDynamoCircle);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="pDynamoLine"></param>
-		void Init(Autodesk::DesignScript::Geometry::Line^ pDynamoLine);
+		/// <returns></returns>
+		static Edge^ ByCurve(Autodesk::DesignScript::Geometry::Line^ pDynamoLine);
 
 		/// <summary>
 		/// 

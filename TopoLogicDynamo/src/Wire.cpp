@@ -7,11 +7,11 @@
 
 namespace Topologic
 {
-	List<Edge^>^ Wire::Edges(bool hasOrder)
+	List<Edge^>^ Wire::Edges_(bool ordered)
 	{
 		TopologicCore::Wire::Ptr pCoreWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Edge::Ptr> pCoreEdgeList;
-		pCoreWire->Edges(pCoreEdgeList, hasOrder);
+		pCoreWire->Edges(pCoreEdgeList, ordered);
 		List<Edge^>^ pEdges = gcnew List<Edge^>();
 
 		for (std::list<TopologicCore::Edge::Ptr>::iterator kCoreEdgeIterator = pCoreEdgeList.begin();
@@ -26,12 +26,12 @@ namespace Topologic
 		return pEdges;
 	}
 
-	List<Face^>^ Wire::Faces(Topology^ parentTopology)
+	List<Face^>^ Wire::Faces_(Topology^ hostTopology)
 	{
 		TopologicCore::Wire::Ptr pCoreWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopologicCore::Topology> pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreHostTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(hostTopology->GetCoreTopologicalQuery());
 		std::list<TopologicCore::Face::Ptr> pCoreFaceList;
-		pCoreWire->Faces(pCoreParentTopology, pCoreFaceList);
+		pCoreWire->Faces(pCoreHostTopology, pCoreFaceList);
 		List<Face^>^ pFaces = gcnew List<Face^>();
 
 		for (std::list<TopologicCore::Face::Ptr>::iterator kCoreFaceIterator = pCoreFaceList.begin();
@@ -46,16 +46,16 @@ namespace Topologic
 		return pFaces;
 	}
 
-	bool Wire::IsClosed()
+	bool Wire::IsClosed::get()
 	{
 		return TopologicCore::Topology::Downcast<TopologicCore::Wire>(GetCoreTopologicalQuery())->IsClosed();
 	}
 
-	List<Vertex^>^ Wire::Vertices(bool hasOrder)
+	List<Vertex^>^ Wire::Vertices_(bool ordered)
 	{
 		TopologicCore::Wire::Ptr pCoreWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Vertex::Ptr> pCoreVertexList;
-		pCoreWire->Vertices(pCoreVertexList, hasOrder);
+		pCoreWire->Vertices(pCoreVertexList, ordered);
 		List<Vertex^>^ pVertices = gcnew List<Vertex^>();
 
 		for (std::list<TopologicCore::Vertex::Ptr>::iterator kCoreVertexIterator = pCoreVertexList.begin();
@@ -72,18 +72,45 @@ namespace Topologic
 
 	Wire^ Wire::ByEdges(System::Collections::Generic::IEnumerable<Edge^>^ edges)
 	{
-		return gcnew Wire(edges);
+		std::list<TopologicCore::Edge::Ptr> coreEdges;
+		for each(Edge^ pEdge in edges)
+		{
+			coreEdges.push_back(TopologicCore::Topology::Downcast<TopologicCore::Edge>(pEdge->GetCoreTopologicalQuery()));
+		}
+
+		try {
+			return gcnew Wire(TopologicCore::Wire::ByEdges(coreEdges));
+		}
+		catch (const std::exception& e)
+		{
+			throw gcnew Exception(gcnew String(e.what()));
+		}
 	}
 
 	Wire^ Wire::ByPolyCurve(Autodesk::DesignScript::Geometry::PolyCurve ^ polycurve)
 	{
-		return gcnew Wire(polycurve);
+		array<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoCurves = polycurve->Curves();
+
+		std::list<TopologicCore::Edge::Ptr> coreEdges;
+		for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoCurve in pDynamoCurves)
+		{
+			Edge^ pEdge = Edge::ByCurve(pDynamoCurve);
+			coreEdges.push_back(TopologicCore::Topology::Downcast<TopologicCore::Edge>(pEdge->GetCoreTopologicalQuery()));
+		}
+
+		TopologicCore::Wire::Ptr pCoreWire = TopologicCore::Wire::ByEdges(coreEdges);
+
+		for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoCurve in pDynamoCurves)
+		{
+			delete pDynamoCurve;
+		}
+		return gcnew Wire(pCoreWire);
 	}
 
 	Object^ Wire::Geometry::get()
 	{
 		List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoCurves = gcnew List<Autodesk::DesignScript::Geometry::Curve^>();
-		List<Edge^>^ pEdges = Edges(false);
+		List<Edge^>^ pEdges = Edges_(false);
 		for each(Edge^ pEdge in pEdges)
 		{
 			pDynamoCurves->Add(pEdge->Curve());
@@ -134,46 +161,6 @@ namespace Topologic
 		, m_pCoreWire(new TopologicCore::Wire::Ptr(kpCoreWire))
 	{
 
-	}
-
-	Wire::Wire(System::Collections::Generic::IEnumerable<Edge^>^ pEdges)
-		: Topology()
-		, m_pCoreWire(nullptr)
-	{
-		std::list<TopologicCore::Edge::Ptr> coreEdges;
-		for each(Edge^ pEdge in pEdges)
-		{
-			coreEdges.push_back(TopologicCore::Topology::Downcast<TopologicCore::Edge>(pEdge->GetCoreTopologicalQuery()));
-		}
-
-		try{
-			m_pCoreWire = new TopologicCore::Wire::Ptr(TopologicCore::Wire::ByEdges(coreEdges));
-		}
-		catch (const std::exception& e)
-		{
-			throw gcnew Exception(gcnew String(e.what()));
-		}
-	}
-
-	Wire::Wire(Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoPolycurve)
-		: Topology()
-		, m_pCoreWire(nullptr)
-	{
-		array<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoCurves = pDynamoPolycurve->Curves();
-
-		std::list<TopologicCore::Edge::Ptr> coreEdges;
-		for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoCurve in pDynamoCurves)
-		{
-			Edge^ pEdge = gcnew Edge(pDynamoCurve);
-			coreEdges.push_back(TopologicCore::Topology::Downcast<TopologicCore::Edge>(pEdge->GetCoreTopologicalQuery()));
-		}
-
-		m_pCoreWire = new TopologicCore::Wire::Ptr(TopologicCore::Wire::ByEdges(coreEdges));
-
-		for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoCurve in pDynamoCurves)
-		{
-			delete pDynamoCurve;
-		}
 	}
 
 	Wire::~Wire()

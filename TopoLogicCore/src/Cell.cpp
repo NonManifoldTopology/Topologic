@@ -4,7 +4,6 @@
 #include <Wire.h>
 #include <Face.h>
 #include <Shell.h>
-//#include <GlobalCluster.h>
 #include <CellComplex.h>
 #include <CellFactory.h>
 
@@ -30,6 +29,7 @@
 #include <TopoDS_CompSolid.hxx>
 #include <TopoDS_FrozenShape.hxx>
 #include <TopoDS_UnCompatibleShapes.hxx>
+#include <Message_ProgressIndicator.hxx>
 
 #include <TopTools_MapOfShape.hxx>
 #include <BOPTools_AlgoTools.hxx>
@@ -307,7 +307,9 @@ namespace TopologicCore
 
 	bool Cell::DoesContain(const Vertex::Ptr& kpVertex) const
 	{
-		BRepClass3d_SolidClassifier occtSolidClassifier(GetOcctShape(), kpVertex->Point()->Pnt(), Precision::Confusion());
+		ShapeFix_Solid occtSolidFix(GetOcctSolid());
+		occtSolidFix.Perform();
+		BRepClass3d_SolidClassifier occtSolidClassifier(occtSolidFix.Solid(), kpVertex->Point()->Pnt(), Precision::Confusion());
 		TopAbs_State occtState = occtSolidClassifier.State();
 		return (occtState == TopAbs_IN || occtState == TopAbs_ON);
 	}

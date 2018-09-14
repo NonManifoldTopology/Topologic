@@ -19,17 +19,18 @@ namespace Topologic
 
 	public:
 		/// <summary>
-		/// 
+		/// Create a cluster by a set of topologies. 
 		/// </summary>
-		/// <param name="topology"></param>
-		/// <returns></returns>
-		static Cluster^ ByTopologies(System::Collections::Generic::IEnumerable<Topology^>^ topology);
+		/// <param name="topologies"></param>
+		/// <returns name="Cluster"></returns>
+		static Cluster^ ByTopologies(System::Collections::Generic::IEnumerable<Topology^>^ topologies);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="topology"></param>
 		/// <returns></returns>
+		[IsVisibleInDynamoLibrary(false)]
 		Cluster^ AddTopology(Topology^ topology);
 
 		/// <summary>
@@ -37,6 +38,7 @@ namespace Topologic
 		/// </summary>
 		/// <param name="topology"></param>
 		/// <returns></returns>
+		[IsVisibleInDynamoLibrary(false)]
 		Cluster^ RemoveTopology(Topology^ topology);
 
 		property Object^ Geometry
@@ -49,46 +51,69 @@ namespace Topologic
 		}
 
 		/// <summary>
-		/// 
+		/// Get the shells constituent to the cluster.
 		/// </summary>
 		/// <returns name="Shell[]"></returns>
-		List<Shell^>^ Shells();
+		property List<Shell^>^ Shells
+		{
+			List<Shell^>^ get();
+		}
 
 		/// <summary>
-		/// 
+		/// Get the faces constituent to the cluster.
 		/// </summary>
 		/// <returns name="Face[]"></returns>
-		List<Face^>^ Faces();
+		property List<Face^>^ Faces
+		{
+			List<Face^>^ get();
+		}
 
 		/// <summary>
-		/// 
+		/// Get the wires constituent to the cluster.
 		/// </summary>
 		/// <returns name="Wire[]"></returns>
-		List<Wire^>^ Wires();
+		property List<Wire^>^ Wires
+		{
+			List<Wire^>^ get();
+		}
 
 		/// <summary>
-		/// 
+		/// Get the edges constituent to the cluster.
 		/// </summary>
 		/// <returns name="Edge[]"></returns>
-		List<Edge^>^ Edges();
+		property List<Edge^>^ Edges
+		{
+			List<Edge^>^ get();
+		}
 
 		/// <summary>
-		/// 
+		/// Get the vertices constituent to the cluster.
 		/// </summary>
 		/// <returns name="Vertex[]"></returns>
-		List<Vertex^>^ Vertices();
+		property List<Vertex^>^ Vertices
+		{
+			List<Vertex^>^ get();
+		}
 
 		/// <summary>
-		/// 
+		/// Get the cells constituent to the cluster.
 		/// </summary>
 		/// <returns name="Cell[]"></returns>
-		List<Cell^>^ Cells();
+		property List<Cell^>^ Cells
+		{
+			List<Cell^>^ get();
+		}
 
 		/// <summary>
-		/// 
+		/// Get the cellComplexes constituent to the cluster.
 		/// </summary>
 		/// <returns name="CellComplex[]"></returns>
-		List<CellComplex^>^ CellComplexes();
+		property List<CellComplex^>^ CellComplexes
+		{
+			List<CellComplex^>^ get();
+		}
+
+		static int ClusterType() { return 0; }
 
 	public protected:
 		Cluster();

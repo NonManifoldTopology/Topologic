@@ -59,6 +59,7 @@ Section "TopologicCore" TopologicCore
   SetOutPath "$INSTDIR"
   
   File ..\output\x64\Release\TopologicCore.dll
+  File ..\output\x64\Release\TopologicSupport.dll
   File ..\output\x64\Release\TK*.dll
   File ..\output\x64\Release\Topologic.xml
   File ..\output\x64\Release\Topologic_DynamoCustomization.xml
@@ -70,15 +71,15 @@ Section "TopologicCore" TopologicCore
   
 SectionEnd
 
-Section "TopologicSupport" TopologicSupport
+;Section "TopologicSupport" TopologicSupport
 
-  SetOutPath "$INSTDIR"
+;  SetOutPath "$INSTDIR"
   
-  File ..\output\x64\Release\TopologicSupport.dll
+;  File ..\output\x64\Release\TopologicSupport.dll
   
   ;ADD YOUR OWN FILES HERE...
   
-SectionEnd
+;SectionEnd
 
 Section "TopologicDynamo" TopologicDynamo
 
@@ -86,6 +87,7 @@ Section "TopologicDynamo" TopologicDynamo
   
   ;ADD YOUR OWN FILES HERE...
   File ..\output\x64\Release\Topologic.dll
+  ;File ..\output\x64\Release\Topologic.customization.dll
   File vc_redist.x64.exe
   
   ;Check if Dynamo exists. If it does not, download and install.
@@ -218,7 +220,7 @@ FunctionEnd
 
 Function .onSelChange
   
-  ${If} $0 == 1 ;TopologicSupport
+  /* ${If} $0 == 1 ;TopologicSupport
     ;If TopologicSupport is deselected, also deselect TopologicDynamo and TopologicEnergy.
     SectionGetFlags ${TopologicSupport} $R0
     IntOp $R0 $R0 & ${SF_SELECTED}
@@ -258,6 +260,31 @@ Function .onSelChange
 	  IntOp $R1 $R1 | ${SF_SELECTED}
 	  SectionSetFlags ${TopologicSupport} $R1
     ${EndIf}
+  ${EndIf} */
+  
+  ${If} $0 == 1 ;TopologicDynamo
+    ;If TopologicDynamo is selected, also select TopologicSupport.
+    SectionGetFlags ${TopologicDynamo} $R0
+    IntOp $R0 $R0 & ${SF_SELECTED}
+    ${If} $R0  == 0
+      ;If TopologicDynamo is deselected, also deselect TopologicEnergy.
+      SectionGetFlags ${TopologicEnergy} $R1
+	  IntOp $R1 $R1 & ~${SF_SELECTED}
+	  SectionSetFlags ${TopologicEnergy} $R1
+    ${EndIf}
+  ${ElseIf} $0 == 2 ;TopologicEnergy
+    ;If TopologicEnergy is selected, also select TopologicDynamo and TopologicSupport.
+    SectionGetFlags ${TopologicEnergy} $R0
+    IntOp $R0 $R0 & ${SF_SELECTED}
+    ${If} $R0 != 0
+      SectionGetFlags ${TopologicDynamo} $R1
+	  IntOp $R1 $R1 | ${SF_SELECTED}
+	  SectionSetFlags ${TopologicDynamo} $R1
+	
+	  ;SectionGetFlags ${TopologicSupport} $R1
+	  ;IntOp $R1 $R1 | ${SF_SELECTED}
+	  ;SectionSetFlags ${TopologicSupport} $R1
+    ${EndIf}
   ${EndIf}
   
 FunctionEnd
@@ -267,14 +294,14 @@ FunctionEnd
 
   ;Language strings
   LangString DESC_TopologicCore ${LANG_ENGLISH} "Installs the native core layer of Topologic."
-  LangString DESC_TopologicSupport ${LANG_ENGLISH} "Installs the support package of Topologic."
+  ;LangString DESC_TopologicSupport ${LANG_ENGLISH} "Installs the support package of Topologic."
   LangString DESC_TopologicDynamo ${LANG_ENGLISH} "Installs the Dynamo layer of Topologic."
   LangString DESC_TopologicEnergy ${LANG_ENGLISH} "Installs the Energy application layer of Topologic."
 
   ;Assign language strings to sections
   !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
     !insertmacro MUI_DESCRIPTION_TEXT ${TopologicCore} $(DESC_TopologicCore)
-    !insertmacro MUI_DESCRIPTION_TEXT ${TopologicSupport} $(DESC_TopologicSupport)
+    ;!insertmacro MUI_DESCRIPTION_TEXT ${TopologicSupport} $(DESC_TopologicSupport)
     !insertmacro MUI_DESCRIPTION_TEXT ${TopologicDynamo} $(DESC_TopologicDynamo)
     !insertmacro MUI_DESCRIPTION_TEXT ${TopologicEnergy} $(DESC_TopologicEnergy)
   !insertmacro MUI_FUNCTION_DESCRIPTION_END

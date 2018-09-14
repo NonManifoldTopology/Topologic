@@ -23,7 +23,7 @@ namespace Topologic
 
 		// 2. Copy context
 		TopologicCore::Topology::Ptr pCoreContextTopology =
-			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(context->Topology()->GetCoreTopologicalQuery());
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(context->Topology->GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreCopyContextTopology = pCoreContextTopology->Copy();
 		TopologicCore::Context::Ptr pCoreCopyContext = TopologicCore::Context::ByTopologyParameters(
 			pCoreCopyContextTopology,

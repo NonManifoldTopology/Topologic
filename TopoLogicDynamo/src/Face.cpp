@@ -33,12 +33,12 @@
 
 namespace Topologic
 {
-	List<Face^>^ Face::AdjacentFaces(Topology^ parentTopology)
+	List<Face^>^ Face::AdjacentFaces_(Topology^ hostTopology)
 	{
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopologicCore::Topology> pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreHostTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(hostTopology->GetCoreTopologicalQuery());
 		std::list<TopologicCore::Face::Ptr> pAdjacentCoreFaces;
-		pCoreFace->AdjacentFaces(pCoreParentTopology, pAdjacentCoreFaces);
+		pCoreFace->AdjacentFaces(pCoreHostTopology, pAdjacentCoreFaces);
 
 		List<Face^>^ pAdjacentFaces = gcnew List<Face^>();
 
@@ -54,12 +54,12 @@ namespace Topologic
 		return pAdjacentFaces;
 	}
 
-	List<Cell^>^ Face::Cells(Topology^ parentTopology)
+	List<Cell^>^ Face::Cells_(Topology^ hostTopology)
 	{
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopologicCore::Topology> pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreHostTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(hostTopology->GetCoreTopologicalQuery());
 		std::list<TopologicCore::Cell::Ptr> pCoreCells;
-		pCoreFace->Cells(pCoreParentTopology, pCoreCells);
+		pCoreFace->Cells(pCoreHostTopology, pCoreCells);
 
 		List<Cell^>^ pCells = gcnew List<Cell^>();
 		for (std::list<TopologicCore::Cell::Ptr>::const_iterator kCellIterator = pCoreCells.begin();
@@ -74,12 +74,12 @@ namespace Topologic
 		return pCells;
 	}
 
-	List<Shell^>^ Face::Shells(Topology^ parentTopology)
+	List<Shell^>^ Face::Shells_(Topology^ hostTopology)
 	{
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopologicCore::Topology> pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreHostTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(hostTopology->GetCoreTopologicalQuery());
 		std::list<TopologicCore::Shell::Ptr> pCoreShells;
-		pCoreFace->Shells(pCoreParentTopology, pCoreShells);
+		pCoreFace->Shells(pCoreHostTopology, pCoreShells);
 
 		List<Shell^>^ pShells = gcnew List<Shell^>();
 
@@ -108,9 +108,12 @@ namespace Topologic
 		return gcnew Vertex(pCoreCenterOfMass);
 	}*/
 
-	Face^ Face::ByExternalBoundary(Wire^ wire)
+	Face^ Face::ByWire(Wire^ wire)
 	{
-		return gcnew Face(wire);
+		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Face::ByExternalBoundary(
+			TopologicCore::Topology::Downcast<TopologicCore::Wire>(wire->GetCoreTopologicalQuery())
+		);
+		return gcnew Face(pCoreFace);
 	}
 
 	Face ^ Face::ByExternalInternalBoundaries(Wire ^ externalBoundary, System::Collections::Generic::IEnumerable<Wire^>^ internalBoundaries)
@@ -130,12 +133,27 @@ namespace Topologic
 
 	Face^ Face::ByEdges(System::Collections::Generic::IEnumerable<Edge^>^ edges)
 	{
-		return ByExternalBoundary(gcnew Wire(edges));
+		return ByWire(Wire::ByEdges(edges));
 	}
 
 	Face^ Face::BySurface(Autodesk::DesignScript::Geometry::Surface^ surface)
 	{
-		return gcnew Face(surface);
+		if (surface->GetType() == Autodesk::DesignScript::Geometry::NurbsSurface::typeid)
+		{
+			return BySurface(safe_cast<Autodesk::DesignScript::Geometry::NurbsSurface^>(surface), surface->PerimeterCurves());
+		}
+		else if (surface->GetType() == Autodesk::DesignScript::Geometry::PolySurface::typeid)
+		{
+			throw gcnew System::NotImplementedException("Cannot create an Edge from a PolyCurve. Create a wire instead.");
+		}
+		else if (surface->GetType() == Autodesk::DesignScript::Geometry::Surface::typeid) // a generic surface
+		{
+			return BySurface(surface->ToNurbsSurface(), surface->PerimeterCurves());
+		}
+		else
+		{
+			throw gcnew ArgumentException("The argument is not a valid Dynamo surface.");
+		}
 	}
 
 	Face ^ Face::ByVertices(System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<Vertex^>^>^ vertices)
@@ -202,13 +220,13 @@ namespace Topologic
 		return pSharedVertices;
 	}
 
-	Wire^ Face::OuterBoundary()
+	Wire^ Face::OuterBoundary::get()
 	{
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
 		return gcnew Wire(pCoreFace->OuterBoundary());
 	}
 
-	List<Wire^>^ Face::InnerBoundaries()
+	List<Wire^>^ Face::InnerBoundaries::get()
 	{
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Wire::Ptr> pCoreWires;
@@ -226,13 +244,13 @@ namespace Topologic
 		return pInnerBoundaries;
 	}
 
-	Face^ Face::AddInternalBoundaries(List<Wire^>^ wires)
+	Face^ Face::AddInternalBoundaries(List<Wire^>^ internalBoundaries)
 	{
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
 		TopologicCore::Face::Ptr pCoreCopyFace = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Face>(pCoreFace->Copy());
 
 		std::list<TopologicCore::Wire::Ptr> coreWires;
-		for each(Wire^ wire in wires)
+		for each(Wire^ wire in internalBoundaries)
 		{
 			coreWires.push_back(TopologicCore::TopologicalQuery::Downcast<TopologicCore::Wire>(wire->GetCoreTopologicalQuery()));
 		}
@@ -241,7 +259,7 @@ namespace Topologic
 		return gcnew Face(pCoreCopyFace);
 	}
 
-	Autodesk::DesignScript::Geometry::UV^ Face::UVParameterAtPoint(Vertex^ vertex)
+	Autodesk::DesignScript::Geometry::UV^ Face::UVParameterAtVertex(Vertex^ vertex)
 	{
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
 		double u = 0.0, v = 0.0;
@@ -253,7 +271,7 @@ namespace Topologic
 		return Autodesk::DesignScript::Geometry::UV::ByCoordinates(u, v);
 	}
 
-	Vertex^ Face::PointAtParameter(Autodesk::DesignScript::Geometry::UV^ uv)
+	Vertex^ Face::VertexAtParameter(Autodesk::DesignScript::Geometry::UV^ uv)
 	{
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
 		try{
@@ -275,7 +293,7 @@ namespace Topologic
 		return Autodesk::DesignScript::Geometry::Vector::ByCoordinates(normal.X(), normal.Y(), normal.Z());
 	}
 
-	Face^ Face::Trim(Wire^ wire)
+	Face^ Face::TrimByWire(Wire^ wire)
 	{
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
 		TopologicCore::Wire::Ptr pCoreWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>(wire->GetCoreTopologicalQuery());
@@ -284,7 +302,7 @@ namespace Topologic
 		return safe_cast<Face^>(Topology::ByCoreTopology(pTrimmedFace));
 	}
 
-	List<Vertex^>^ Face::Vertices()
+	List<Vertex^>^ Face::Vertices::get()
 	{
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Vertex::Ptr> pCoreVertices;
@@ -302,7 +320,7 @@ namespace Topologic
 		return pVertices;
 	}
 
-	List<Edge^>^ Face::Edges()
+	List<Edge^>^ Face::Edges::get()
 	{
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Edge::Ptr> pCoreEdges;
@@ -321,7 +339,7 @@ namespace Topologic
 		return pEdges;
 	}
 
-	List<Wire^>^ Face::Wires()
+	List<Wire^>^ Face::Wires::get()
 	{
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Wire::Ptr> pCoreWires;
@@ -367,40 +385,6 @@ namespace Topologic
 		, m_pCoreFace(new TopologicCore::Face::Ptr(kpCoreFace))
 	{
 		
-	}
-
-	Face::Face(Wire^ pWire)
-		: Topology()
-		, m_pCoreFace(new TopologicCore::Face::Ptr(
-			TopologicCore::Face::ByExternalBoundary(
-				TopologicCore::Topology::Downcast<TopologicCore::Wire>(pWire->GetCoreTopologicalQuery())
-			)))
-	{
-
-	}
-
-	Face::Face(Autodesk::DesignScript::Geometry::Surface ^ pDynamoSurface)
-		: Topology()
-		, m_pCoreFace(nullptr)
-	{
-		if (pDynamoSurface->GetType() == Autodesk::DesignScript::Geometry::NurbsSurface::typeid)
-		{
-			Init(safe_cast<Autodesk::DesignScript::Geometry::NurbsSurface^>(pDynamoSurface), pDynamoSurface->PerimeterCurves());
-		}
-		else if (pDynamoSurface->GetType() == Autodesk::DesignScript::Geometry::PolySurface::typeid)
-		{
-			throw gcnew System::NotImplementedException("Feature not yet implemented.");
-		}
-		else if (pDynamoSurface->GetType() == Autodesk::DesignScript::Geometry::Surface::typeid) // a generic surface
-		{
-			Init(pDynamoSurface->ToNurbsSurface(), pDynamoSurface->PerimeterCurves());
-		}
-		else
-		{
-			throw gcnew ArgumentException("The argument is not a valid Dynamo surface.");
-		}
-
-		//RegisterFactory(*m_pCoreFace, gcnew FaceFactory());
 	}
 
 	Autodesk::DesignScript::Geometry::Surface^ Face::Surface()
@@ -527,7 +511,7 @@ namespace Topologic
 			// It needs to be trimmed by the outer wire and inner wires.
 			List<Autodesk::DesignScript::Geometry::PolyCurve^>^ pDynamoEdgeLoops = gcnew List<Autodesk::DesignScript::Geometry::PolyCurve^>();
 
-			List<Wire^>^ pWires = Wires();
+			List<Wire^>^ pWires = Wires;
 			for each(Wire^ pWire in pWires)
 			{
 				try{
@@ -649,8 +633,8 @@ namespace Topologic
 			// In this case, do the following steps.
 
 			// Get the wires and edges.
-			List<Wire^>^ pWires = Wires();
-			List<Edge^>^ pEdges = Edges();
+			List<Wire^>^ pWires = Wires;
+			List<Edge^>^ pEdges = Edges;
 
 			// If there is only one wire, create a surface and return it.
 			if (pWires->Count < 2)
@@ -693,7 +677,7 @@ namespace Topologic
 				{
 					if (TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(pWire->GetCoreTopologicalQuery())->GetOcctShape().IsSame(rkOcctOuterWire))
 					{
-						List<Edge^>^ pOuterEdges = pWire->Edges(true);
+						List<Edge^>^ pOuterEdges = pWire->Edges_(true);
 						List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoOuterCurves = gcnew List<Autodesk::DesignScript::Geometry::Curve^>();
 						for each(Edge^ pOuterEdge in pOuterEdges)
 						{
@@ -781,7 +765,7 @@ namespace Topologic
 			throw gcnew NotImplementedException("Feature not yet implemented");
 		}
 
-		List<Vertex^>^ pVertices = Vertices();
+		List<Vertex^>^ pVertices = Vertices;
 		List<Autodesk::DesignScript::Geometry::Point^>^ pDynamoPoints = gcnew List<Autodesk::DesignScript::Geometry::Point^>();
 		for each(Vertex^ pVertex in pVertices)
 		{
@@ -850,7 +834,7 @@ namespace Topologic
 		//delete m_pCoreFace;
 	}
 
-	void Face::Init(Autodesk::DesignScript::Geometry::NurbsSurface^ pDynamoNurbsSurface,
+	Face^ Face::BySurface(Autodesk::DesignScript::Geometry::NurbsSurface^ pDynamoNurbsSurface,
 		            array<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoPerimeterCurves)
 	{
 		// 1. NURBS parameters
@@ -1039,7 +1023,7 @@ namespace Topologic
 			for each(Wire^ pWire in pWires)
 			{
 				try {
-					Face^ pFace = Face::ByExternalBoundary(pWire);
+					Face^ pFace = Face::ByWire(pWire);
 					surfaceAreas.push_back(pFace->Area());
 				}
 				catch (...)
@@ -1059,7 +1043,7 @@ namespace Topologic
 					++index;
 				}
 				pOuterPolycurve = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoCurveGroups[index], 0.001);
-				pCoreOuterWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>((gcnew Wire(pOuterPolycurve))->GetCoreTopologicalQuery());
+				pCoreOuterWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>((Wire::ByPolyCurve(pOuterPolycurve))->GetCoreTopologicalQuery());
 				pDynamoCurveGroups->RemoveAt(index);
 			}
 		}
@@ -1098,7 +1082,7 @@ namespace Topologic
 			for each(List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoConnectedCurves in pDynamoCurveGroups)
 			{
 				Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoPolycurve = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoConnectedCurves, 0.001);
-				Wire^ pWire = gcnew Wire(pDynamoPolycurve);
+				Wire^ pWire = Wire::ByPolyCurve(pDynamoPolycurve);
 				coreInnerWires.push_back(TopologicCore::Topology::Downcast<TopologicCore::Wire>(pWire->GetCoreTopologicalQuery()));
 			}
 		}
@@ -1108,7 +1092,7 @@ namespace Topologic
 		}
 		
 		//=================================================
-		m_pCoreFace = new TopologicCore::Face::Ptr(TopologicCore::Face::BySurface(
+		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Face::BySurface(
 			occtPoles,
 			occtWeights,
 			occtUKnots,
@@ -1122,7 +1106,7 @@ namespace Topologic
 			isRational,
 			pCoreOuterWire,
 			coreInnerWires
-		));
+		);
 
 
 		for each(array<Autodesk::DesignScript::Geometry::Point^>^ pDynamo1DControlPoints in pDynamoControlPoints)
@@ -1145,5 +1129,7 @@ namespace Topologic
 		{
 			delete pOuterPolycurve;
 		}
+
+		return gcnew Face(pCoreFace);
 	}
 }

@@ -18,17 +18,17 @@ namespace TopologicEnergy
 	}
 
 	Model^ TopologicEnergy::CreateEnergyModel(
-		Cluster^ contextBuildings, 
+		Cluster^ shadingCluster,
 		CellComplex^ buildingCellComplex,
 		String ^ buildingType, 
 		String ^ buildingName, 
 		String ^ spaceType, 
 		List<double>^ floorLevels, 
 		double glazingRatio,
-		String^ epwWeatherPath, 
-		String ^ ddyPath, 
-		String ^ osmTemplatePath,
-		String^ osmOutputPath,
+		String^ weatherFilePath,
+		String ^ designDayFilePath,
+		String ^ openStudioTemplatePath,
+		String^ openStudioOutputPath,
 		double coolingTemp, 
 		double heatingTemp)
 	{
@@ -37,12 +37,12 @@ namespace TopologicEnergy
 		subsurfaceCounter = 1;
 
 		// Create an OpenStudio model from the template, EPW, and DDY
-		OpenStudio::Model^ osModel = GetModelFromTemplate(osmTemplatePath, epwWeatherPath, ddyPath);
+		OpenStudio::Model^ osModel = GetModelFromTemplate(openStudioTemplatePath, weatherFilePath, designDayFilePath);
 
 		double buildingHeight = Enumerable::Max(floorLevels);
 		int numFloors = floorLevels->Count - 1;
 		OpenStudio::Building^ osBuilding = ComputeBuilding(osModel, buildingName, buildingType, buildingHeight, numFloors, spaceType);
-		List<Cell^>^ pBuildingCells = buildingCellComplex->Cells();
+		List<Cell^>^ pBuildingCells = buildingCellComplex->Cells;
 
 		// Create OpenStudio spaces
 		List<OpenStudio::Space^>^ osSpaces = gcnew List<OpenStudio::Space^>();
@@ -71,10 +71,10 @@ namespace TopologicEnergy
 		}
 
 		// Create shading surfaces
-		if (contextBuildings != nullptr)
+		if (shadingCluster != nullptr)
 		{
 			OpenStudio::ShadingSurfaceGroup^ osShadingGroup = gcnew OpenStudio::ShadingSurfaceGroup(osModel);
-			List<Face^>^ contextFaces = contextBuildings->Faces();
+			List<Face^>^ contextFaces = shadingCluster->Faces;
 			int faceIndex = 1;
 			for each(Face^ contextFace in contextFaces)
 			{
@@ -85,7 +85,7 @@ namespace TopologicEnergy
 		osModel->purgeUnusedResourceObjects();
 
 		// Save model to an OSM file
-		bool saveCondition = SaveModel(osModel, osmOutputPath);
+		bool saveCondition = SaveModel(osModel, openStudioOutputPath);
 
 		if (!saveCondition)
 		{
@@ -94,16 +94,16 @@ namespace TopologicEnergy
 
 		OpenStudio::WorkflowJSON^ workflow = gcnew OpenStudio::WorkflowJSON();
 		try{
-			String^ osmFilename = Path::GetFileNameWithoutExtension(osmOutputPath);
-			String^ osmDirectory = Path::GetDirectoryName(osmOutputPath);
+			String^ osmFilename = Path::GetFileNameWithoutExtension(openStudioOutputPath);
+			String^ osmDirectory = Path::GetDirectoryName(openStudioOutputPath);
 			String^ oswPath = osmDirectory + "\\" + osmFilename + ".osw";
 			OpenStudio::Path^ osOswPath = gcnew OpenStudio::Path(oswPath);
-			workflow->setSeedFile(gcnew OpenStudio::Path(osmOutputPath));
-			workflow->setWeatherFile(gcnew OpenStudio::Path(epwWeatherPath));
+			workflow->setSeedFile(gcnew OpenStudio::Path(openStudioOutputPath));
+			workflow->setWeatherFile(gcnew OpenStudio::Path());
 			workflow->saveAs(osOswPath);
 
 			// Create a TopologicEnergy model
-			return Model::ByOsmPathOswPath(osmOutputPath, oswPath);
+			return Model::ByOsmPathOswPath(openStudioOutputPath, oswPath);
 		}
 		catch (...)
 		{
@@ -278,15 +278,15 @@ namespace TopologicEnergy
 			throw gcnew Exception("numEdgeSamples must be positive.");
 		}
 		// 1. Convert the apertures and boundary as faces.
-		Wire^ pOuterApertureWire = apertureDesign->OuterBoundary();
-		List<Wire^>^ pApertureWires = apertureDesign->InnerBoundaries();
+		Wire^ pOuterApertureWire = apertureDesign->OuterBoundary;
+		List<Wire^>^ pApertureWires = apertureDesign->InnerBoundaries;
 
 		List<Topology^>^ pFaces = gcnew List<Topology^>();
 
 		// 2. For each wires, iterate through the edges, sample points, and map them to the 
 		for each(Wire^ pApertureWire in pApertureWires)
 		{
-			List<Edge^>^ pApertureEdges = pApertureWire->Edges(true);
+			List<Edge^>^ pApertureEdges = pApertureWire->Edges_(true);
 			List<Edge^>^ pMappedApertureEdges = gcnew List<Edge^>();
 
 			for each(Edge^ pApertureEdge in pApertureEdges)
@@ -305,10 +305,10 @@ namespace TopologicEnergy
 					}
 
 					// Find the actual point on the edge
-					Vertex^ pSampleVertex = pApertureEdge->PointAtParameter(t);
+					Vertex^ pSampleVertex = pApertureEdge->VertexAtParameter(t);
 
 					// Find the UV-coordinate of the point on the aperture design
-					Autodesk::DesignScript::Geometry::UV^ pUV = apertureDesign->UVParameterAtPoint(pSampleVertex);
+					Autodesk::DesignScript::Geometry::UV^ pUV = apertureDesign->UVParameterAtVertex(pSampleVertex);
 					double checkedU = pUV->U, checkedV = pUV->V;
 					if (checkedU < 0.0)
 					{
@@ -331,7 +331,7 @@ namespace TopologicEnergy
 					pUV = Autodesk::DesignScript::Geometry::UV::ByCoordinates(checkedU, checkedV);
 
 					// Find the point with the same UV-coordinate on the surface, add it to the list
-					Vertex^ pMappedSampleVertex = face->PointAtParameter(pUV);
+					Vertex^ pMappedSampleVertex = face->VertexAtParameter(pUV);
 					pMappedSampleVertices->Add(pMappedSampleVertex);
 				}
 
@@ -344,7 +344,7 @@ namespace TopologicEnergy
 			Wire^ pMappedApertureWire = Wire::ByEdges(pMappedApertureEdges);
 
 			//// Use the wire to make a face on the same supporting surface as the input face's
-			Face^ pMappedApertureFace = face->Trim(pMappedApertureWire);
+			Face^ pMappedApertureFace = face->TrimByWire(pMappedApertureWire);
 			pFaces->Add(pMappedApertureFace);
 
 			// and attach it as an aperture to the face.
@@ -378,7 +378,7 @@ namespace TopologicEnergy
 		osSpace->setDefaultConstructionSet(getDefaultConstructionSet(osModel));
 		osSpace->setDefaultScheduleSet(getDefaultScheduleSet(osModel));
 
-		List<Face^>^ faces = cell->Faces();
+		List<Face^>^ faces = cell->Faces;
 		List<OpenStudio::Point3dVector^>^ facePointsList = gcnew List<OpenStudio::Point3dVector^>();
 		for each(Face^ face in faces)
 		{
@@ -422,11 +422,11 @@ namespace TopologicEnergy
 	void TopologicEnergy::AddShadingSurfaces(Cell^ buildingCell, OpenStudio::Model^ osModel)
 	{
 		OpenStudio::ShadingSurfaceGroup^ osShadingGroup = gcnew OpenStudio::ShadingSurfaceGroup(osModel);
-		List<Face^>^ faceList = buildingCell->Faces();
+		List<Face^>^ faceList = buildingCell->Faces;
 		int faceIndex = 1;
 		for each(Face^ face in faceList)
 		{
-			List<Vertex^>^ vertices = face->Vertices();
+			List<Vertex^>^ vertices = face->Vertices;
 			OpenStudio::Point3dVector^ facePoints = gcnew OpenStudio::Point3dVector();
 
 			for each(Vertex^ aVertex in vertices)
@@ -448,7 +448,7 @@ namespace TopologicEnergy
 
 	void TopologicEnergy::AddShadingSurfaces(Face ^ buildingFace, OpenStudio::Model ^ osModel, OpenStudio::ShadingSurfaceGroup^ osShadingGroup, int faceIndex)
 	{
-		List<Vertex^>^ vertices = buildingFace->Vertices();
+		List<Vertex^>^ vertices = buildingFace->Vertices;
 		OpenStudio::Point3dVector^ facePoints = gcnew OpenStudio::Point3dVector();
 
 		for each(Vertex^ aVertex in vertices)
@@ -731,8 +731,8 @@ namespace TopologicEnergy
 					{
 						continue;
 					}
-					Wire^ pApertureWire = pFaceAperture->OuterBoundary();
-					List<Vertex^>^ pApertureVertices = pApertureWire->Vertices(true);
+					Wire^ pApertureWire = pFaceAperture->OuterBoundary;
+					List<Vertex^>^ pApertureVertices = pApertureWire->Vertices_(true);
 					//pApertureVertices->Reverse();
 					OpenStudio::Point3dVector^ osWindowFacePoints = gcnew OpenStudio::Point3dVector();
 					for each(Vertex^ pApertureVertex in pApertureVertices)
@@ -788,8 +788,8 @@ namespace TopologicEnergy
 		Autodesk::DesignScript::Geometry::Point^ faceCenterPoint =
 			safe_cast<Autodesk::DesignScript::Geometry::Point^>(faceCentre->Geometry);
 
-		Wire^ pApertureWire = buildingFace->OuterBoundary();
-		List<Vertex^>^ vertices = pApertureWire->Vertices(true);
+		Wire^ pApertureWire = buildingFace->OuterBoundary;
+		List<Vertex^>^ vertices = pApertureWire->Vertices_(true);
 		vertices->Reverse();
 
 		double sqrtScaleFactor = Math::Sqrt(scaleFactor);
@@ -807,7 +807,7 @@ namespace TopologicEnergy
 
 	Vertex^ TopologicEnergy::GetFaceCentre(Face^ buildingFace)
 	{
-		List<Vertex^>^ vertices = buildingFace->Vertices();
+		List<Vertex^>^ vertices = buildingFace->Vertices;
 		Autodesk::DesignScript::Geometry::Point^ sumPoint = Autodesk::DesignScript::Geometry::Point::ByCoordinates(0, 0, 0);
 
 		// assume vertices.count > 0
@@ -827,8 +827,8 @@ namespace TopologicEnergy
 
 	OpenStudio::Point3dVector^ TopologicEnergy::GetFacePoints(Face^ buildingFace)
 	{
-		Wire^ buildingOuterWire = buildingFace->OuterBoundary();
-		List<Vertex^>^ vertices = buildingOuterWire->Vertices(true);
+		Wire^ buildingOuterWire = buildingFace->OuterBoundary;
+		List<Vertex^>^ vertices = buildingOuterWire->Vertices_(true);
 		// HACK
 		vertices->Reverse();
 		OpenStudio::Point3dVector^ osFacePoints = gcnew OpenStudio::Point3dVector();
@@ -850,7 +850,7 @@ namespace TopologicEnergy
 
 	bool TopologicEnergy::IsUnderground(Face^ buildingFace)
 	{
-		List<Vertex^>^ vertices = buildingFace->Vertices();
+		List<Vertex^>^ vertices = buildingFace->Vertices;
 
 		for each(Vertex^ aVertex in vertices)
 		{
@@ -869,7 +869,7 @@ namespace TopologicEnergy
 	FaceType TopologicEnergy::CalculateFaceType(Face^ buildingFace, OpenStudio::Point3dVector^% facePoints, Cell^ buildingSpace, Autodesk::DesignScript::Geometry::Vector^ upVector)
 	{
 		FaceType faceType = FACE_WALL;
-		List<Vertex^>^ vertices = buildingFace->Vertices();
+		List<Vertex^>^ vertices = buildingFace->Vertices;
 		Autodesk::DesignScript::Geometry::Point^ p1 =
 			safe_cast<Autodesk::DesignScript::Geometry::Point^>(vertices[0]->Geometry);
 		Autodesk::DesignScript::Geometry::Point^ p2 =
@@ -894,7 +894,7 @@ namespace TopologicEnergy
 
 		if (faceAngle < 5.0 || faceAngle > 175.0)
 		{
-			bool isInside = buildingSpace->DoesContain(pOffsetVertex);
+			bool isInside = buildingSpace->Contains(pOffsetVertex);
 			// The offset vertex has to be false, so if isInside is true, reverse the face.
 
 			if (isInside)
@@ -918,7 +918,7 @@ namespace TopologicEnergy
 
 	int TopologicEnergy::AdjacentCellCount(Face^ buildingFace, CellComplex^ cellComplex)
 	{
-		return buildingFace->Cells(cellComplex)->Count;
+		return buildingFace->Cells_(cellComplex)->Count;
 	}
 
 	int TopologicEnergy::StoryNumber(Cell^ buildingCell, double buildingHeight, List<double>^ floorLevels)

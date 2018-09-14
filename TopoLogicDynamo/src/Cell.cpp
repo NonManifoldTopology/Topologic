@@ -15,12 +15,45 @@ namespace Topologic
 {
 	Cell^ Cell::ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces)
 	{
-		return gcnew Cell(faces);
+		std::list<TopologicCore::Face::Ptr> coreFaces;
+		for each(Face^ pFace in faces)
+		{
+			coreFaces.push_back(TopologicCore::Topology::Downcast<TopologicCore::Face>(pFace->GetCoreTopologicalQuery()));
+		}
+
+		return gcnew Cell(TopologicCore::Cell::ByFaces(coreFaces));
 	}
 
 	Cell^ Cell::BySolid(Autodesk::DesignScript::Geometry::Solid^ solid)
 	{
-		return gcnew Cell(solid);
+		if (solid->GetType() == Autodesk::DesignScript::Geometry::Sphere::typeid)
+		{
+			throw gcnew System::NotImplementedException("Feature not yet implemented.");
+		}
+		else if (solid->GetType() == Autodesk::DesignScript::Geometry::Cuboid::typeid)
+		{
+			return ByCuboid(safe_cast<Autodesk::DesignScript::Geometry::Cuboid^>(solid));
+		}
+		else if (solid->GetType() == Autodesk::DesignScript::Geometry::Cylinder::typeid)
+		{
+			throw gcnew System::NotImplementedException("Feature not yet implemented.");
+		}
+		else if (solid->GetType() == Autodesk::DesignScript::Geometry::Cone::typeid)
+		{
+			throw gcnew System::NotImplementedException("Feature not yet implemented.");
+		}
+		else
+		{
+			Autodesk::DesignScript::Geometry::PolySurface^ pDynamoPolysurface = Autodesk
+				::DesignScript::Geometry::PolySurface::BySolid(solid);
+			List<Face^>^ pFaces = gcnew List<Face^>();
+			for each(Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface in pDynamoPolysurface->Surfaces())
+			{
+				pFaces->Add(Face::BySurface(pDynamoSurface));
+				delete pDynamoSurface;
+			}
+			return ByFaces(pFaces);
+		}
 	}
 
 	Cell^ Cell::ByShell(Shell^ shell)
@@ -71,13 +104,13 @@ namespace Topologic
 		}
 	}
 
-	List<CellComplex^>^ Cell::CellComplexes(Topology^ parentTopology)
+	List<CellComplex^>^ Cell::CellComplexes_(Topology^ hostTopology)
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopologicCore::Topology> pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreHostTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(hostTopology->GetCoreTopologicalQuery());
 
 		std::list<TopologicCore::CellComplex::Ptr> coreCellComplexes;
-		pCoreCell->CellComplexes(pCoreParentTopology, coreCellComplexes);
+		pCoreCell->CellComplexes(pCoreHostTopology, coreCellComplexes);
 
 		List<CellComplex^>^ pCellComplexes = gcnew List<CellComplex^>();
 		for (std::list<TopologicCore::CellComplex::Ptr>::const_iterator kCellComplexIterator = coreCellComplexes.begin();
@@ -91,7 +124,7 @@ namespace Topologic
 		return pCellComplexes;
 	}
 
-	List<Shell^>^ Cell::Shells()
+	List<Shell^>^ Cell::Shells::get()
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 
@@ -110,7 +143,7 @@ namespace Topologic
 		return pShells;
 	}
 
-	List<Face^>^ Cell::Faces()
+	List<Face^>^ Cell::Faces::get()
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 
@@ -129,7 +162,7 @@ namespace Topologic
 		return pFaces;
 	}
 
-	List<Wire^>^ Cell::Wires()
+	List<Wire^>^ Cell::Wires::get()
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 
@@ -148,7 +181,7 @@ namespace Topologic
 		return pWires;
 	}
 
-	List<Edge^>^ Cell::Edges()
+	List<Edge^>^ Cell::Edges::get()
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 
@@ -167,7 +200,7 @@ namespace Topologic
 		return pEdges;
 	}
 
-	List<Vertex^>^ Cell::Vertices()
+	List<Vertex^>^ Cell::Vertices::get()
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 
@@ -186,13 +219,13 @@ namespace Topologic
 		return pVertices;
 	}
 
-	List<Cell^>^ Cell::AdjacentCells(Topology^ parentTopology)
+	List<Cell^>^ Cell::AdjacentCells_(Topology^ hostTopology)
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
+		TopologicCore::Topology::Ptr pCoreHostTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(hostTopology->GetCoreTopologicalQuery());
 
 		std::list<TopologicCore::Cell::Ptr> coreAdjacentCells;
-		pCoreCell->AdjacentCells(pCoreParentTopology, coreAdjacentCells);
+		pCoreCell->AdjacentCells(pCoreHostTopology, coreAdjacentCells);
 
 		List<Cell^>^ pAdjacentCells = gcnew List<Cell^>();
 		for (std::list<TopologicCore::Cell::Ptr>::const_iterator kCellIterator = coreAdjacentCells.begin();
@@ -266,13 +299,13 @@ namespace Topologic
 		return pSharedVertices;
 	}
 
-	Shell^ Cell::OuterBoundary()
+	Shell^ Cell::OuterBoundary::get()
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 		return gcnew Shell(pCoreCell->OuterBoundary());
 	}
 
-	List<Shell^>^ Cell::InnerBoundaries()
+	List<Shell^>^ Cell::InnerBoundaries::get()
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Shell::Ptr> coreInnerShells;
@@ -303,7 +336,7 @@ namespace Topologic
 		return gcnew Vertex(pCoreCenterOfMass);
 	}*/
 
-	bool Cell::DoesContain(Vertex ^ vertex)
+	bool Cell::Contains(Vertex ^ vertex)
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 		TopologicCore::Vertex::Ptr pCoreVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex->GetCoreTopologicalQuery());
@@ -314,7 +347,7 @@ namespace Topologic
 	{
 		List<Autodesk::DesignScript::Geometry::Surface^>^ pDynamoSurfaces = gcnew List<Autodesk::DesignScript::Geometry::Surface^>();
 		List<Object^>^ pDynamoGeometries = gcnew List<Object^>();
-		List<Face^>^ pFaces = Faces();
+		List<Face^>^ pFaces = Faces;
 		bool hasFallbackVisualization = false;
 		for each(Face^ pFace in pFaces)
 		{
@@ -368,47 +401,6 @@ namespace Topologic
 		return *m_pCoreCell;
 	}
 
-	Cell::Cell(Autodesk::DesignScript::Geometry::Solid^ solid)
-		: Topology()
-		, m_pCoreCell(nullptr)
-	{
-		if (solid->GetType() == Autodesk::DesignScript::Geometry::Sphere::typeid)
-		{
-			throw gcnew System::NotImplementedException("Feature not yet implemented.");
-		}
-		else if (solid->GetType() == Autodesk::DesignScript::Geometry::Cuboid::typeid)
-		{
-			Init(safe_cast<Autodesk::DesignScript::Geometry::Cuboid^>(solid));
-		}
-		else if (solid->GetType() == Autodesk::DesignScript::Geometry::Cylinder::typeid)
-		{
-			throw gcnew System::NotImplementedException("Feature not yet implemented.");
-		}
-		else if (solid->GetType() == Autodesk::DesignScript::Geometry::Cone::typeid)
-		{
-			throw gcnew System::NotImplementedException("Feature not yet implemented.");
-		}
-		else
-		{
-			Autodesk::DesignScript::Geometry::PolySurface^ pDynamoPolysurface = Autodesk
-				::DesignScript::Geometry::PolySurface::BySolid(solid);
-			List<Face^>^ pFaces = gcnew List<Face^>();
-			for each(Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface in pDynamoPolysurface->Surfaces())
-			{
-				pFaces->Add(gcnew Face(pDynamoSurface));
-				delete pDynamoSurface;
-			}
-			Init(pFaces);
-		}
-	}
-
-	Cell::Cell(System::Collections::Generic::IEnumerable<Face^>^ faces)
-		: Topology()
-		, m_pCoreCell(nullptr)
-	{
-		Init(faces);
-	}
-
 	Cell::Cell(const TopologicCore::Cell::Ptr& kpCoreCell)
 		: Topology()
 		, m_pCoreCell(new TopologicCore::Cell::Ptr(kpCoreCell))
@@ -416,18 +408,8 @@ namespace Topologic
 
 	}
 
-	void Cell::Init(System::Collections::Generic::IEnumerable<Face^>^ faces)
-	{
-		std::list<TopologicCore::Face::Ptr> coreFaces;
-		for each(Face^ pFace in faces)
-		{
-			coreFaces.push_back(TopologicCore::Topology::Downcast<TopologicCore::Face>(pFace->GetCoreTopologicalQuery()));
-		}
 
-		m_pCoreCell = new TopologicCore::Cell::Ptr(TopologicCore::Cell::ByFaces(coreFaces));
-	}
-
-	void Cell::Init(Autodesk::DesignScript::Geometry::Cuboid^ cuboid)
+	Cell^ Cell::ByCuboid(Autodesk::DesignScript::Geometry::Cuboid^ cuboid)
 	{
 		Autodesk::DesignScript::Geometry::Point^ pDynamoCentroid = cuboid->Centroid();
 		double length = cuboid->Length;
@@ -458,14 +440,15 @@ namespace Topologic
 			canCreateCell = false; 
 		}
 
+		TopologicCore::Cell::Ptr pCoreCell = nullptr;
 		if(canCreateCell)
 		{
-			m_pCoreCell = new TopologicCore::Cell::Ptr(TopologicCore::Cell::ByCuboid(
+			pCoreCell = TopologicCore::Cell::ByCuboid(
 				new Geom_CartesianPoint(pDynamoCentroid->X, pDynamoCentroid->Y, pDynamoCentroid->Z),
 				width,
 				length,
 				height
-			));
+			);
 		}
 
 		delete pDynamoCentroid;
@@ -478,6 +461,8 @@ namespace Topologic
 		{
 			throw gcnew Exception("Cell creation by cuboid does not currently take transformation.");
 		}
+
+		return gcnew Cell(pCoreCell);
 	}
 
 	Cell::~Cell()

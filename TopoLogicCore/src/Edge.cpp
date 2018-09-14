@@ -129,14 +129,7 @@ namespace TopologicCore
 		{
 			const Vertex::Ptr& rkVertex1 = *(rkVertices.begin());
 			const Vertex::Ptr& rkVertex2 = *(++rkVertices.begin());
-			BRepBuilderAPI_MakeEdge occtMakeEdge(
-				rkVertex1->GetOcctVertex(),
-				rkVertex2->GetOcctVertex());
-			pEdge = std::make_shared<Edge>(occtMakeEdge.Edge());
-
-			const Topology::Ptr& rkBaseVertex1 = TopologicalQuery::Upcast<Topology>(rkVertex1);
-			const Topology::Ptr& rkBaseVertex2 = TopologicalQuery::Upcast<Topology>(rkVertex2);
-
+			return ByStartVertexEndVertex(rkVertex1, rkVertex2);
 			// TODO: Add the vertices to the edge's label. Must do this manually because of the Modified()'s nature to map 
 			// old to new sub-shapes.
 			/*// Original --> modified shapes
@@ -187,6 +180,14 @@ namespace TopologicCore
 		}
 
 		return pEdge;
+	}
+
+	Edge::Ptr Edge::ByStartVertexEndVertex(const std::shared_ptr<Vertex>& kpStartVertex, const std::shared_ptr<Vertex>& kpEndVertex)
+	{
+		BRepBuilderAPI_MakeEdge occtMakeEdge(
+			kpStartVertex->GetOcctVertex(),
+			kpEndVertex->GetOcctVertex());
+		return std::make_shared<Edge>(occtMakeEdge.Edge());
 	}
 
 	Edge::Ptr Edge::ByCircle(

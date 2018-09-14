@@ -8,6 +8,7 @@
 using namespace System;
 using namespace System::Collections;
 using namespace System::Collections::Generic;
+using namespace Autodesk::DesignScript::Runtime;
 
 namespace Topologic {
 	namespace Support
@@ -15,9 +16,11 @@ namespace Topologic {
 		public ref class AttributeMap
 		{
 		public:
+			[IsVisibleInDynamoLibrary(false)]
 			static AttributeMap^ ByDictionary(System::Collections::IDictionary^ dictionary);
 			//static AttributeMap^ ByDictionary(List<String^>^ keys, List<Object^>^ values);
 
+			[IsVisibleInDynamoLibrary(false)]
 			Dictionary<String^, Object^>^ GetDictionary();
 
 		public protected:

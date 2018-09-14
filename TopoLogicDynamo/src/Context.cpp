@@ -12,10 +12,10 @@ namespace Topologic
 		return gcnew Context(pCoreContext);
 	}
 
-	Topology^ Context::Topology()
+	Topology^ Context::Topology::get()
 	{
 		std::shared_ptr<TopologicCore::Context> pCoreContext = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Context>(GetCoreTopologicalQuery());
-		return Topology::ByCoreTopology(pCoreContext->Topology());
+		return Topologic::Topology::ByCoreTopology(pCoreContext->Topology());
 	}
 
 	double Context::U()

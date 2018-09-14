@@ -13,7 +13,7 @@ namespace Topologic {
 	{
 	public:
 		/// <summary>
-		/// Creates a wire by a list of edges.
+		/// Create a wire by a list of edges.
 		/// </summary>
 		/// <param name="edges">The edges.</param>
 		/// <exception cref="ArgumentException">Thrown if any of the arguments is not a Topologic edge.</exception>
@@ -21,38 +21,41 @@ namespace Topologic {
 		static Wire^ ByEdges(System::Collections::Generic::IEnumerable<Edge^>^ edges);
 
 		/// <summary>
-		/// Creates a wire by a polycurve (including a polygon)
+		/// Create a wire by a polycurve (including a polygon)
 		/// </summary>
 		/// <param name="polycurve">The polycurve</param>
 		/// <returns name="Wire">The created Topologic wire</returns>
 		static Wire^ ByPolyCurve(Autodesk::DesignScript::Geometry::PolyCurve^ polycurve);
 
 		/// <summary>
-		/// Gets the list of edges constituent to this wire.
+		/// Get the edges constituent to the wire.
 		/// </summary>
-		/// <param name="hasOrder">Does the wire has loop order?</param>
+		/// <param name="ordered">Does the wire has loop order?</param>
 		/// <returns name="Edge[]">The constituent edges</returns>
-		List<Edge^>^ Edges(bool hasOrder);
+		List<Edge^>^ Edges_(bool ordered);
 
 		/// <summary>
-		/// Gets the list of faces that contain to this wire.
+		/// Get the list of faces that contain to the wire.
 		/// </summary>
-		/// <param name="parentTopology"></param>
-		/// <returns name="Face[]">The faces that contain this wire</returns>
-		List<Face^>^ Faces(Topology^ parentTopology);
+		/// <param name="hostTopology"></param>
+		/// <returns name="Face[]">The faces that contain the wire</returns>
+		List<Face^>^ Faces_(Topology^ hostTopology);
 
 		/// <summary>
-		/// Gets the list of vertices constituent to this wire.
+		/// Gets the list of vertices constituent to the wire.
 		/// </summary>
-		/// <param name="hasOrder">Does the wire has loop order?</param>
+		/// <param name="ordered">Does the wire has loop order?</param>
 		/// <returns name="Vertex[]">The constituent vertices</returns>
-		List<Vertex^>^ Vertices(bool hasOrder);
+		List<Vertex^>^ Vertices_(bool ordered);
 
 		/// <summary>
-		/// Checks if the wire is closed.
+		/// Check if the wire is closed.
 		/// </summary>
 		/// <returns name="bool">True if the wire is closed, otherwise false</returns>
-		bool IsClosed();
+		property bool IsClosed
+		{
+			bool get();
+		}
 
 		property Object^ Geometry
 		{
@@ -69,18 +72,6 @@ namespace Topologic {
 		/// </summary>
 		/// <param name="kpCoreWire"></param>
 		Wire(const std::shared_ptr<TopologicCore::Wire>& kpCoreWire);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="pEdges"></param>
-		Wire(System::Collections::Generic::IEnumerable<Edge^>^ pEdges);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="pDynamoPolycurve"></param>
-		Wire(Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoPolycurve);
 
 		/// <summary>
 		/// 

@@ -31,24 +31,30 @@ namespace Topologic
 		/// 
 		/// </summary>
 		/// <returns>The associated topology</returns>
-		Topology^ Topology();
+		property Topology^ Topology
+		{
+			Topologic::Topology^ get();
+		}
 
 		/// <summary>
 		/// Returns the U parameter.
 		/// </summary>
 		/// <returns>The U parameter</returns>
+		[IsVisibleInDynamoLibrary(false)]
 		double U();
 
 		/// <summary>
 		/// Returns the V parameter.
 		/// </summary>
 		/// <returns>The V parameter</returns>
+		[IsVisibleInDynamoLibrary(false)]
 		double V();
 
 		/// <summary>
 		/// Returns the U parameter.
 		/// </summary>
 		/// <returns>The W parameter</returns>
+		[IsVisibleInDynamoLibrary(false)]
 		double W();
 
 	public protected:

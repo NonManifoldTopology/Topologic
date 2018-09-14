@@ -92,8 +92,15 @@ namespace TopologicCore
 			TopTools_MapOfShape occtCells;
 			for (TopExp_Explorer occtExplorer(kOcctThisShape, occtShapeType); occtExplorer.More(); occtExplorer.Next())
 			{
-				const TopoDS_Shape& rkCurrentChildShape = occtExplorer.Current();
-				BRepExtrema_DistShapeShape occtDistanceCalculation(rkCurrentChildShape, kOcctQueryShape);
+				const TopoDS_Shape rkCurrentChildShape = occtExplorer.Current();
+				TopoDS_Shape checkDistanceShape = rkCurrentChildShape;
+				if (i == 3)
+				{
+					ShapeFix_Solid occtSolidFix(TopoDS::Solid(rkCurrentChildShape));
+					occtSolidFix.Perform();
+					checkDistanceShape = occtSolidFix.Shape();
+				}
+				BRepExtrema_DistShapeShape occtDistanceCalculation(checkDistanceShape, kOcctQueryShape);
 				bool isDone = occtDistanceCalculation.Perform();
 				if (isDone)
 				{

@@ -19,44 +19,34 @@ namespace TopologicEnergy
 	{
 	public:
 		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="osModel"></param>
-		/// <param name="idfPathName"></param>
-		/// <returns name="bool"></returns>
-		static bool CreateIdfFile(OpenStudio::Model^ osModel, String^ idfPathName);
-
-		/// <summary>
 		/// Create a TopologicEnergy model from a Topologic shape.
 		/// </summary>
-		/// <param name="contextBuildings"></param>
+		/// <param name="shadingCluster"></param>
 		/// <param name="buildingCellComplex"></param>
 		/// <param name="buildingType"></param>
 		/// <param name="buildingName"></param>
 		/// <param name="spaceType"></param>
 		/// <param name="floorLevels"></param>
 		/// <param name="glazingRatio"></param>
-		/// <param name="epwWeatherPath"></param>
-		/// <param name="ddyPath"></param>
-		/// <param name="osmTemplatePath"></param>
-		/// <param name="osmOutputPath"></param>
+		/// <param name="weatherFilePath">Path to a .epw file</param>
+		/// <param name="designDayFilePath">Path to a .ddy file</param>
+		/// <param name="openStudioTemplatePath">Path to a template .osm file</param>
+		/// <param name="openStudioOutputPath">Path to an output .osm file</param>
 		/// <param name="coolingTemp"></param>
 		/// <param name="heatingTemp"></param>
 		/// <returns name="Model"></returns>
 		static Model^ CreateEnergyModel(
-			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Cluster^ contextBuildings,
+			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Cluster^ shadingCluster,
 			CellComplex^ buildingCellComplex,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("Commercial")] String^ buildingType,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("Default Building")] String^ buildingName,
-			String^ spaceType,
-			//double buildingHeight,
-			//int numFloors,
+			[Autodesk::DesignScript::Runtime::DefaultArgument("defaultSpaceType")] String^ spaceType,
 			List<double>^ floorLevels,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("-1")] double glazingRatio,
-			String^ epwWeatherPath,
-			String^ ddyPath,
-			String^ osmTemplatePath,
-			String^ osmOutputPath,
+			String^ weatherFilePath,
+			String^ designDayFilePath,
+			String^ openStudioTemplatePath,
+			String^ openStudioOutputPath,
 			double coolingTemp,
 			double heatingTemp
 			);
@@ -71,16 +61,6 @@ namespace TopologicEnergy
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="osModel"></param>
-		/// <param name="osmPathName"></param>
-		/// <returns name="bool"></returns>
-		static bool SaveModel(OpenStudio::Model^ osModel, String^ osmPathName);
-
-		static OpenStudio::Model^ GetModelFromTemplate(String^ osmTemplatePath, String^ epwWeatherPath, String^ ddyPath);
-
-		/// <summary>
-		/// 
-		/// </summary>
 		/// <param name="face"></param>
 		/// <param name="apertureDesign"></param>
 		/// <param name="numEdgeSamples"></param>
@@ -89,6 +69,22 @@ namespace TopologicEnergy
 
 	private:
 		TopologicEnergy() {}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="osModel"></param>
+		/// <param name="idfPathName"></param>
+		/// <returns name="bool"></returns>
+		static bool CreateIdfFile(OpenStudio::Model^ osModel, String^ idfPathName);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="osModel"></param>
+		/// <param name="osmPathName"></param>
+		/// <returns name="bool"></returns>
+		static bool SaveModel(OpenStudio::Model^ osModel, String^ osmPathName);
 
 		static OpenStudio::Space^ AddSpace(
 			int spaceNumber,
@@ -117,6 +113,8 @@ namespace TopologicEnergy
 			OpenStudio::Model^ osModel,
 			Autodesk::DesignScript::Geometry::Vector^ upVector,
 			double glazingRatio);
+
+		static OpenStudio::Model^ GetModelFromTemplate(String^ osmTemplatePath, String^ epwWeatherPath, String^ ddyPath);
 
 		static List<Vertex^>^ ScaleFaceVertices(Face^ buildingFace, double scaleFactor);
 

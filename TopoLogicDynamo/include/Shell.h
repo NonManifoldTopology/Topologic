@@ -17,38 +17,50 @@ namespace Topologic
 	{
 	public:
 		/// <summary>
-		/// Gets the cell bounded by this shell.
+		/// Get the cell bounded by the shell.
 		/// </summary>
-		/// <param name="parentTopology"></param>
-		/// <returns name="Cell[]">The cell bounded by this shell</returns>
-		List<Cell^>^ Cells(Topology^ parentTopology);
+		/// <param name="hostTopology"></param>
+		/// <returns name="Cell[]">The cell bounded by the shell</returns>
+		List<Cell^>^ Cells_(Topology^ hostTopology);
 
 		/// <summary>
-		/// Gets the list of faces constituent to this face. 
+		/// Get the faces constituent to the shell. 
 		/// </summary>
-		/// <returns name="Face[]">The faces constituent to this face</returns>
-		List<Face^>^ Faces();
+		/// <returns name="Face[]">The faces constituent to the face</returns>
+		property List<Face^>^ Faces
+		{
+			List<Face^>^ get();
+		}
 
 		/// <summary>
-		/// Gets the list of wires constituent to this shell.
+		/// Get the wires constituent to the shell.
 		/// </summary>
-		/// <returns name="Wire[]">The wires consituent to this shell</returns>
-		List<Wire^>^ Wires();
+		/// <returns name="Wire[]">The wires consituent to the shell</returns>
+		property List<Wire^>^ Wires
+		{
+			List<Wire^>^ get();
+		}
 
 		/// <summary>
-		/// Gets the list of edges constituent to this shell.
+		/// Get the edges constituent to the shell.
 		/// </summary>
-		/// <returns name="Edge[]">The edges consituent to this shell</returns>
-		List<Edge^>^ Edges();
+		/// <returns name="Edge[]">The edges consituent to the shell</returns>
+		property List<Edge^>^ Edges
+		{
+			List<Edge^>^ get();
+		}
 
 		/// <summary>
-		/// Gets the list of vertices constituent to this shell.
+		/// Get the vertices constituent to the shell.
 		/// </summary>
-		/// <returns name="Vertex[]">The vertices consituent to this shell</returns>
-		List<Vertex^>^ Vertices();
+		/// <returns name="Vertex[]">The vertices consituent to the shell</returns>
+		property List<Vertex^>^ Vertices
+		{
+			List<Vertex^>^ get();
+		}
 
 		/// <summary>
-		/// Returns true if the shell is closed and false otherwise.
+		/// Check if the shell is closed.
 		/// </summary>
 		/// <returns name="bool">True if the shell is closed and false otherwise</returns>
 		property bool IsClosed {
@@ -56,36 +68,38 @@ namespace Topologic
 		}
 
 		/// <summary>
-		/// Creates a shell by a set of connected faces.
+		/// Create a shell by a set of connected faces.
 		/// </summary>
 		/// <param name="faces">A set of faces.</param>
 		/// <returns name="Shell">The created shell</returns>
 		static Shell^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces);
 
 		/// <summary>
-		/// Creates a shell by a polysurface.
+		/// Create a shell by a polySurface.
 		/// </summary>
-		/// <param name="polysurface">A Dynamo polysurface</param>
+		/// <param name="polySurface">A Dynamo polySurface</param>
 		/// <returns name="Shell">The created shell</returns>
-		static Shell^ ByPolysurface(Autodesk::DesignScript::Geometry::PolySurface^ polysurface);
+		static Shell^ ByPolySurface(Autodesk::DesignScript::Geometry::PolySurface^ polySurface);
 
 		/// <summary>
-		/// Creates a shell by lofting through a set of wires.
+		/// Create a shell by lofting through a set of wires.
 		/// </summary>
 		/// <param name="wires">A set of wires</param>
 		/// <returns name="Shell">The created shell</returns>
+		[IsVisibleInDynamoLibrary(false)]
 		static Shell^ ByLoft(System::Collections::Generic::IEnumerable<Wire^>^ wires);
 
 		/// <summary>
-		/// Creates a shell by a list of vertices and a list of face indices.
+		/// Create a shell by a list of vertices and a list of face indices.
 		/// </summary>
 		/// <param name="vertices">A list of vertices.</param>
 		/// <param name="faceIndices">A list of face indices. Every element must be within the range of the vertices argument.</param>
 		/// <returns name="Shell">The created shell</returns>
+		[IsVisibleInDynamoLibrary(false)]
 		static Shell^ ByVerticesFaceIndices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<int>^>^ faceIndices);
 		
 		/// <summary>
-		/// 
+		/// Create a shell by subdividing and planarizing a curved face.
 		/// </summary>
 		/// <param name="face"></param>
 		/// <param name="iteration"></param>
@@ -95,10 +109,11 @@ namespace Topologic
 		/// <param name="capBottom">Cap the holes if the surface is closed either in the minimum u- or v-direction but open on the other</param>
 		/// <param name="capTop">Cap the holes if the surface is closed either in the maximum u- or v-direction but open on the other</param>
 		/// <returns name="Face[]"></returns>
-		static List<Face^>^ ByFacePlanarization(Face^ face, int iteration, int numEdgeSamples, int numUPanels, int numVPanels, double tolerance, bool capBottom, bool capTop);
+		[IsVisibleInDynamoLibrary(false)]
+		static List<Face^>^ ByFacePlanarization_(Face^ face, int iteration, int numEdgeSamples, int numUPanels, int numVPanels, double tolerance, bool capBottom, bool capTop);
 
 		/// <summary>
-		/// 
+		/// Create a shell by subdividing and planarizing a curved face.
 		/// </summary>
 		/// <param name="face"></param>
 		/// <param name="iteration"></param>
@@ -108,8 +123,9 @@ namespace Topologic
 		/// <param name="capBottom">Cap the holes if the surface is closed either in the minimum u- or v-direction but open on the other</param>
 		/// <param name="capTop">Cap the holes if the surface is closed either in the maximum u- or v-direction but open on the other</param>
 		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> { "Vertices", "Edges", "Wires", "Faces", "Shell" })]
-		static Dictionary<String^, Object^>^ ByFacePlanarization(Face^ face, int iteration, int numEdgeSamples, System::Collections::Generic::IEnumerable<double>^ uValues, System::Collections::Generic::IEnumerable<double>^ vValues, double tolerance, bool capBottom, bool capTop);
+		//[MultiReturn(gcnew array<String^> { "Vertices", "Edges", "Wires", "Faces", "Shell" })]
+		//static Dictionary<String^, Object^>^ ByFacePlanarization(Face^ face, int iteration, int numEdgeSamples, System::Collections::Generic::IEnumerable<double>^ uValues, System::Collections::Generic::IEnumerable<double>^ vValues, double tolerance, bool capBottom, bool capTop);
+		static Shell^ ByFacePlanarization_(Face^ face, int iteration, int numEdgeSamples, System::Collections::Generic::IEnumerable<double>^ uValues, System::Collections::Generic::IEnumerable<double>^ vValues, double tolerance, bool capBottom, bool capTop);
 
 		property Object^ Geometry
 		{
