@@ -21,8 +21,7 @@ namespace TopologicEnergy
 		/// <summary>
 		/// Create a TopologicEnergy model from a Topologic shape.
 		/// </summary>
-		/// <param name="shadingCluster"></param>
-		/// <param name="buildingCellComplex"></param>
+		/// <param name="building"></param>
 		/// <param name="buildingType"></param>
 		/// <param name="buildingName"></param>
 		/// <param name="spaceType"></param>
@@ -34,10 +33,10 @@ namespace TopologicEnergy
 		/// <param name="openStudioOutputPath">Path to an output .osm file</param>
 		/// <param name="coolingTemp"></param>
 		/// <param name="heatingTemp"></param>
+		/// <param name="shading"></param>
 		/// <returns name="Model"></returns>
 		static Model^ CreateEnergyModel(
-			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Cluster^ shadingCluster,
-			CellComplex^ buildingCellComplex,
+			CellComplex^ building,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("Commercial")] String^ buildingType,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("Default Building")] String^ buildingName,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("defaultSpaceType")] String^ spaceType,
@@ -48,7 +47,8 @@ namespace TopologicEnergy
 			String^ openStudioTemplatePath,
 			String^ openStudioOutputPath,
 			double coolingTemp,
-			double heatingTemp
+			double heatingTemp,
+			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Cluster^ shading
 			);
 
 		/// <summary>

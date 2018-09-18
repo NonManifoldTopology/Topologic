@@ -136,7 +136,7 @@ namespace Topologic
 		return ByWire(Wire::ByEdges(edges));
 	}
 
-	Face^ Face::BySurface(Autodesk::DesignScript::Geometry::Surface^ surface)
+	Face^ Face::BySurface_(Autodesk::DesignScript::Geometry::Surface^ surface)
 	{
 		if (surface->GetType() == Autodesk::DesignScript::Geometry::NurbsSurface::typeid)
 		{
@@ -220,13 +220,13 @@ namespace Topologic
 		return pSharedVertices;
 	}
 
-	Wire^ Face::OuterBoundary::get()
+	Wire^ Face::ExternalBoundary::get()
 	{
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
 		return gcnew Wire(pCoreFace->OuterBoundary());
 	}
 
-	List<Wire^>^ Face::InnerBoundaries::get()
+	List<Wire^>^ Face::InternalBoundaries::get()
 	{
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Wire::Ptr> pCoreWires;
@@ -293,7 +293,7 @@ namespace Topologic
 		return Autodesk::DesignScript::Geometry::Vector::ByCoordinates(normal.X(), normal.Y(), normal.Z());
 	}
 
-	Face^ Face::TrimByWire(Wire^ wire)
+	Face^ Face::TrimByWire_(Wire^ wire)
 	{
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
 		TopologicCore::Wire::Ptr pCoreWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>(wire->GetCoreTopologicalQuery());
@@ -1011,7 +1011,7 @@ namespace Topologic
 				List<Edge^>^ pEdges = gcnew List<Edge^>();
 				for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoCurve in pDynamoCurveGroup)
 				{
-					Edge^ pEdge = Edge::ByCurve(pDynamoCurve);
+					Edge^ pEdge = Edge::ByCurve_(pDynamoCurve);
 					pEdges->Add(pEdge);
 				}
 				Wire^ pWire = Wire::ByEdges(pEdges);
@@ -1043,7 +1043,7 @@ namespace Topologic
 					++index;
 				}
 				pOuterPolycurve = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoCurveGroups[index], 0.001);
-				pCoreOuterWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>((Wire::ByPolyCurve(pOuterPolycurve))->GetCoreTopologicalQuery());
+				pCoreOuterWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>((Wire::ByPolyCurve_(pOuterPolycurve))->GetCoreTopologicalQuery());
 				pDynamoCurveGroups->RemoveAt(index);
 			}
 		}
@@ -1082,7 +1082,7 @@ namespace Topologic
 			for each(List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoConnectedCurves in pDynamoCurveGroups)
 			{
 				Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoPolycurve = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoConnectedCurves, 0.001);
-				Wire^ pWire = Wire::ByPolyCurve(pDynamoPolycurve);
+				Wire^ pWire = Wire::ByPolyCurve_(pDynamoPolycurve);
 				coreInnerWires.push_back(TopologicCore::Topology::Downcast<TopologicCore::Wire>(pWire->GetCoreTopologicalQuery()));
 			}
 		}

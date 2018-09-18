@@ -12,7 +12,7 @@ namespace Topologic
 	ref class Topology;
 
 	/// <summary>
-	/// A Context defines a Topological relationship between two otherwise independent Topologies.
+	/// A Context defines a topological relationship between two otherwise independent Topologies.
 	/// </summary>
 	public ref class Context : public TopologicalQuery
 	{
@@ -25,7 +25,7 @@ namespace Topologic
 		/// <param name="V">The v parameter</param>
 		/// <param name="W">The w parameter</param>
 		/// <returns>A context</returns>
-		static Context^ ByTopologyParameters(Topology^ topology, double U, double V, double W);
+		static Context^ ByTopologyParameters__(Topology^ topology, double U, double V, double W);
 
 		/// <summary>
 		/// 

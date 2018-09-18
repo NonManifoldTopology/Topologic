@@ -151,14 +151,14 @@ namespace Topologic
 		return pVertices;
 	}
 
-	Cell^ CellComplex::OuterBoundary::get()
+	Cell^ CellComplex::ExternalBoundary::get()
 	{
 		TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(GetCoreTopologicalQuery());
 		TopologicCore::Cell::Ptr pCoreEnvelope = pCoreCellComplex->OuterBoundary();
 		return gcnew Cell(pCoreEnvelope);
 	}
 
-	List<Face^>^ CellComplex::InnerBoundaries::get()
+	List<Face^>^ CellComplex::InternalBoundaries::get()
 	{
 		TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(GetCoreTopologicalQuery());
 

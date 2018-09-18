@@ -86,19 +86,19 @@ namespace Topologic
 
 
 		/// <summary>
-		/// Get the outer boundary (cell) of the cellComplex.
+		/// Get the external boundary (cell) of the cellComplex.
 		/// </summary>
 		/// <returns name="Cell"></returns>
-		property Cell^ OuterBoundary
+		property Cell^ ExternalBoundary
 		{
 			Cell^ get();
 		}
 
 		/// <summary>
-		/// Get the inner boundaries (faces) of the cellComplex.
+		/// Get the internal boundaries (faces) of the cellComplex.
 		/// </summary>
 		/// <returns name="Face[]"></returns>
-		property List<Face^>^ InnerBoundaries
+		property List<Face^>^ InternalBoundaries
 		{
 			List<Face^>^ get();
 		}

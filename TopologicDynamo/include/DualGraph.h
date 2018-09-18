@@ -8,7 +8,7 @@ namespace Topologic
 {
 	ref class CellComplex;
 
-	public ref class DualGraph : Wire
+	public ref class DualGraph_ : Wire
 	{
 	public:
 		/// <summary>
@@ -20,7 +20,7 @@ namespace Topologic
 		/// <param name="useManifoldFaces"></param>
 		/// <param name="useApertures"></param>
 		/// <returns></returns>
-		static DualGraph^ ByCellComplex(
+		static DualGraph_^ ByCellComplex(
 			CellComplex^ cellComplex,
 			bool useCells,
 			bool useNonManifoldFaces,
@@ -42,7 +42,7 @@ namespace Topologic
 		/// 
 		/// </summary>
 		/// <param name="kpCoreWire"></param>
-		DualGraph(const std::shared_ptr<TopologicCore::Wire>& kpCoreWire);
+		DualGraph_(const std::shared_ptr<TopologicCore::Wire>& kpCoreWire);
 
 		/// <summary>
 		/// 
@@ -51,7 +51,7 @@ namespace Topologic
 		virtual std::shared_ptr<TopologicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
 
 	protected:
-		virtual ~DualGraph();
+		virtual ~DualGraph_();
 
 	};
 }

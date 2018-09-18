@@ -17,43 +17,43 @@ namespace Topologic
 	{
 	public:
 		/// <summary>
-		/// Get the cell bounded by the shell.
+		/// Get the cell bounded by the shell. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.
 		/// </summary>
 		/// <param name="hostTopology"></param>
 		/// <returns name="Cell[]">The cell bounded by the shell</returns>
 		List<Cell^>^ Cells_(Topology^ hostTopology);
 
 		/// <summary>
-		/// Get the faces constituent to the shell. 
+		/// Get the constituent faces of the shell. 
 		/// </summary>
-		/// <returns name="Face[]">The faces constituent to the face</returns>
+		/// <returns name="Face[]">The constituent faces</returns>
 		property List<Face^>^ Faces
 		{
 			List<Face^>^ get();
 		}
 
 		/// <summary>
-		/// Get the wires constituent to the shell.
+		/// Get the constituent wires of the shell.
 		/// </summary>
-		/// <returns name="Wire[]">The wires consituent to the shell</returns>
+		/// <returns name="Wire[]">The constituent wires</returns>
 		property List<Wire^>^ Wires
 		{
 			List<Wire^>^ get();
 		}
 
 		/// <summary>
-		/// Get the edges constituent to the shell.
+		/// Get the constituent edges of the shell.
 		/// </summary>
-		/// <returns name="Edge[]">The edges consituent to the shell</returns>
+		/// <returns name="Edge[]">The constituent edges</returns>
 		property List<Edge^>^ Edges
 		{
 			List<Edge^>^ get();
 		}
 
 		/// <summary>
-		/// Get the vertices constituent to the shell.
+		/// Get the constituent vertices of the shell.
 		/// </summary>
-		/// <returns name="Vertex[]">The vertices consituent to the shell</returns>
+		/// <returns name="Vertex[]">The constituent vertices</returns>
 		property List<Vertex^>^ Vertices
 		{
 			List<Vertex^>^ get();
@@ -75,11 +75,11 @@ namespace Topologic
 		static Shell^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces);
 
 		/// <summary>
-		/// Create a shell by a polySurface.
+		/// Create a shell by a polySurface. NOTE: This node will be replaced by a single Topology.ByGeometry() node.
 		/// </summary>
 		/// <param name="polySurface">A Dynamo polySurface</param>
 		/// <returns name="Shell">The created shell</returns>
-		static Shell^ ByPolySurface(Autodesk::DesignScript::Geometry::PolySurface^ polySurface);
+		static Shell^ ByPolySurface_(Autodesk::DesignScript::Geometry::PolySurface^ polySurface);
 
 		/// <summary>
 		/// Create a shell by lofting through a set of wires.
@@ -113,7 +113,7 @@ namespace Topologic
 		static List<Face^>^ ByFacePlanarization_(Face^ face, int iteration, int numEdgeSamples, int numUPanels, int numVPanels, double tolerance, bool capBottom, bool capTop);
 
 		/// <summary>
-		/// Create a shell by subdividing and planarizing a curved face.
+		/// Create a shell by subdividing and planarizing a curved face. NOTE: This constructor will be moved to a dedicated package.
 		/// </summary>
 		/// <param name="face"></param>
 		/// <param name="iteration"></param>
@@ -122,9 +122,9 @@ namespace Topologic
 		/// <param name="tolerance"></param>
 		/// <param name="capBottom">Cap the holes if the surface is closed either in the minimum u- or v-direction but open on the other</param>
 		/// <param name="capTop">Cap the holes if the surface is closed either in the maximum u- or v-direction but open on the other</param>
-		/// <returns></returns>
+		/// <returns name="Shell"></returns>
 		//[MultiReturn(gcnew array<String^> { "Vertices", "Edges", "Wires", "Faces", "Shell" })]
-		//static Dictionary<String^, Object^>^ ByFacePlanarization(Face^ face, int iteration, int numEdgeSamples, System::Collections::Generic::IEnumerable<double>^ uValues, System::Collections::Generic::IEnumerable<double>^ vValues, double tolerance, bool capBottom, bool capTop);
+		//static Dictionary<String^, Object^>^ ByFacePlanarization_(Face^ face, int iteration, int numEdgeSamples, System::Collections::Generic::IEnumerable<double>^ uValues, System::Collections::Generic::IEnumerable<double>^ vValues, double tolerance, bool capBottom, bool capTop);
 		static Shell^ ByFacePlanarization_(Face^ face, int iteration, int numEdgeSamples, System::Collections::Generic::IEnumerable<double>^ uValues, System::Collections::Generic::IEnumerable<double>^ vValues, double tolerance, bool capBottom, bool capTop);
 
 		property Object^ Geometry

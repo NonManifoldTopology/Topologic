@@ -6,7 +6,7 @@
 
 namespace Topologic
 {
-	DualGraph^ DualGraph::ByCellComplex(
+	DualGraph_^ DualGraph_::ByCellComplex(
 		CellComplex^ cellComplex,
 		bool useCells,
 		bool useNonManifoldFaces,
@@ -21,10 +21,10 @@ namespace Topologic
 			useManifoldFaces,
 			useApertures);
 
-		return gcnew DualGraph(pCoreDualGraph);
+		return gcnew DualGraph_(pCoreDualGraph);
 	}
 
-	Object^ DualGraph::Geometry::get()
+	Object^ DualGraph_::Geometry::get()
 	{
 		List<Object^>^ dualGraphGeometry = gcnew List<Object^>(); 
 		dualGraphGeometry->Add(Wire::Geometry);
@@ -37,18 +37,18 @@ namespace Topologic
 		return dualGraphGeometry;
 	}
 
-	std::shared_ptr<TopologicCore::TopologicalQuery> DualGraph::GetCoreTopologicalQuery()
+	std::shared_ptr<TopologicCore::TopologicalQuery> DualGraph_::GetCoreTopologicalQuery()
 	{
 		return Wire::GetCoreTopologicalQuery();
 	}
 
-	DualGraph::DualGraph(const TopologicCore::Wire::Ptr& kpCoreWire)
+	DualGraph_::DualGraph_(const TopologicCore::Wire::Ptr& kpCoreWire)
 		: Wire(kpCoreWire)
 	{
 
 	}
 
-	DualGraph::~DualGraph()
+	DualGraph_::~DualGraph_()
 	{
 		//delete m_pCoreWire;
 	}

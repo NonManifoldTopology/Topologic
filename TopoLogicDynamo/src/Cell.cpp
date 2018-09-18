@@ -24,11 +24,11 @@ namespace Topologic
 		return gcnew Cell(TopologicCore::Cell::ByFaces(coreFaces));
 	}
 
-	Cell^ Cell::BySolid(Autodesk::DesignScript::Geometry::Solid^ solid)
+	Cell^ Cell::BySolid_(Autodesk::DesignScript::Geometry::Solid^ solid)
 	{
 		if (solid->GetType() == Autodesk::DesignScript::Geometry::Sphere::typeid)
 		{
-			throw gcnew System::NotImplementedException("Feature not yet implemented.");
+			return BySphere(safe_cast<Autodesk::DesignScript::Geometry::Sphere^>(solid));
 		}
 		else if (solid->GetType() == Autodesk::DesignScript::Geometry::Cuboid::typeid)
 		{
@@ -36,11 +36,11 @@ namespace Topologic
 		}
 		else if (solid->GetType() == Autodesk::DesignScript::Geometry::Cylinder::typeid)
 		{
-			throw gcnew System::NotImplementedException("Feature not yet implemented.");
+			return ByCylinder(safe_cast<Autodesk::DesignScript::Geometry::Cylinder^>(solid));
 		}
 		else if (solid->GetType() == Autodesk::DesignScript::Geometry::Cone::typeid)
 		{
-			throw gcnew System::NotImplementedException("Feature not yet implemented.");
+			return ByCone(safe_cast<Autodesk::DesignScript::Geometry::Cone^>(solid));
 		}
 		else
 		{
@@ -49,7 +49,7 @@ namespace Topologic
 			List<Face^>^ pFaces = gcnew List<Face^>();
 			for each(Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface in pDynamoPolysurface->Surfaces())
 			{
-				pFaces->Add(Face::BySurface(pDynamoSurface));
+				pFaces->Add(Face::BySurface_(pDynamoSurface));
 				delete pDynamoSurface;
 			}
 			return ByFaces(pFaces);
@@ -299,13 +299,13 @@ namespace Topologic
 		return pSharedVertices;
 	}
 
-	Shell^ Cell::OuterBoundary::get()
+	Shell^ Cell::ExternalBoundary::get()
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 		return gcnew Shell(pCoreCell->OuterBoundary());
 	}
 
-	List<Shell^>^ Cell::InnerBoundaries::get()
+	List<Shell^>^ Cell::InternalBoundaries::get()
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Shell::Ptr> coreInnerShells;
@@ -388,6 +388,51 @@ namespace Topologic
 		}
 
 		return pDynamoGeometries;
+	}
+
+	Cell ^ Cell::BySphere(Autodesk::DesignScript::Geometry::Sphere ^ sphere)
+	{
+		TopologicCore::Cell::Ptr pCoreSphere = TopologicCore::Cell::BySphere(
+			sphere->CenterPoint->X,
+			sphere->CenterPoint->Y, 
+			sphere->CenterPoint->Z, 
+			sphere->Radius);
+		return gcnew Cell(pCoreSphere);
+	}
+
+	Cell ^ Cell::ByCylinder(Autodesk::DesignScript::Geometry::Cylinder ^ cylinder)
+	{
+		TopologicCore::Cell::Ptr pCoreCylinder = TopologicCore::Cell::ByCylinder(
+			cylinder->StartPoint->X,
+			cylinder->StartPoint->Y,
+			cylinder->StartPoint->Z,
+			cylinder->ContextCoordinateSystem->ZAxis->X,
+			cylinder->ContextCoordinateSystem->ZAxis->Y,
+			cylinder->ContextCoordinateSystem->ZAxis->Z,
+			cylinder->ContextCoordinateSystem->XAxis->X,
+			cylinder->ContextCoordinateSystem->XAxis->Y,
+			cylinder->ContextCoordinateSystem->XAxis->Z,
+			cylinder->Radius,
+			cylinder->StartPoint->DistanceTo(cylinder->EndPoint));
+		return gcnew Cell(pCoreCylinder);
+	}
+
+	Cell ^ Cell::ByCone(Autodesk::DesignScript::Geometry::Cone ^ cone)
+	{
+		TopologicCore::Cell::Ptr pCoreCone = TopologicCore::Cell::ByCone(
+			cone->StartPoint->X,
+			cone->StartPoint->Y,
+			cone->StartPoint->Z,
+			cone->ContextCoordinateSystem->ZAxis->X,
+			cone->ContextCoordinateSystem->ZAxis->Y,
+			cone->ContextCoordinateSystem->ZAxis->Z,
+			cone->ContextCoordinateSystem->XAxis->X,
+			cone->ContextCoordinateSystem->XAxis->Y,
+			cone->ContextCoordinateSystem->XAxis->Z,
+			cone->StartRadius,
+			cone->EndRadius,
+			cone->StartPoint->DistanceTo(cone->EndPoint));
+		return gcnew Cell(pCoreCone);
 	}
 
 	std::shared_ptr<TopologicCore::TopologicalQuery> Cell::GetCoreTopologicalQuery()

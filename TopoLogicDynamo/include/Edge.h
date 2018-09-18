@@ -15,11 +15,11 @@ namespace Topologic {
 	{
 	public:
 		/// <summary>
-		/// Create a curved edge by a Dynamo curve.
+		/// Create a curved edge by a Dynamo curve. NOTE: This node will be replaced by a single Topology.ByGeometry() node.
 		/// </summary>
 		/// <param name="curve">A Dynamo curve.</param>
 		/// <returns name="Edge">The created Topologic edge</returns>
-		static Edge^ ByCurve(Autodesk::DesignScript::Geometry::Curve^ curve);
+		static Edge^ ByCurve_(Autodesk::DesignScript::Geometry::Curve^ curve);
 
 		/// <summary>
 		/// Create an edge by a list of vertices. If the list only contains two vertices, a straight line will be created.
@@ -36,7 +36,7 @@ namespace Topologic {
 		/// </summary>
 		/// <param name="startVertex"></param>
 		/// <param name="endVertex"></param>
-		/// <returns></returns>
+		/// <returns name="Edge"></returns>
 		static Edge^ ByStartVertexEndVertex(Vertex^ startVertex, Vertex^ endVertex);
 
 		/// <summary>
@@ -58,7 +58,7 @@ namespace Topologic {
 			double normalX, double normalY, double normalZ);
 
 		/// <summary>
-		/// Get the edges adjacent to the edge.
+		/// Get the edges adjacent to the edge. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.
 		/// </summary>
 		/// <param name="hostTopology"></param>
 		/// <returns name="Edge[]">The edges adjacent to the edge</returns>
@@ -73,7 +73,7 @@ namespace Topologic {
 		}
 
 		/// <summary>
-		/// Get the wires incident to the edge.
+		/// Get the wires incident to the edge. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.
 		/// </summary>
 		/// <param name="hostTopology"></param>
 		/// <returns name="Wire[]">The list of wires incident to the edge</returns>
@@ -145,21 +145,21 @@ namespace Topologic {
 		/// </summary>
 		/// <param name="pDynamoNurbsCurve"></param>
 		/// <returns></returns>
-		static Edge^ ByCurve(Autodesk::DesignScript::Geometry::NurbsCurve^ pDynamoNurbsCurve);
+		static Edge^ ByCurve_(Autodesk::DesignScript::Geometry::NurbsCurve^ pDynamoNurbsCurve);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="pDynamoCircle"></param>
 		/// <returns></returns>
-		static Edge^ ByCurve(Autodesk::DesignScript::Geometry::Circle^ pDynamoCircle);
+		static Edge^ ByCurve_(Autodesk::DesignScript::Geometry::Circle^ pDynamoCircle);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="pDynamoLine"></param>
 		/// <returns></returns>
-		static Edge^ ByCurve(Autodesk::DesignScript::Geometry::Line^ pDynamoLine);
+		static Edge^ ByCurve_(Autodesk::DesignScript::Geometry::Line^ pDynamoLine);
 
 		/// <summary>
 		/// 

@@ -20,6 +20,9 @@
 #include <BRepGProp.hxx>
 #include <BRepOffsetAPI_ThruSections.hxx>
 #include <BRepPrimAPI_MakeBox.hxx>
+#include <BRepPrimAPI_MakeCone.hxx>
+#include <BRepPrimAPI_MakeCylinder.hxx>
+#include <BRepPrimAPI_MakeSphere.hxx>
 #include <GProp_GProps.hxx>
 #include <ShapeFix_Solid.hxx>
 #include <StdFail_NotDone.hxx>
@@ -163,6 +166,41 @@ namespace TopologicCore
 		return std::make_shared<Cell>(occtMakeBox.Solid());
 	}
 
+	Cell::Ptr Cell::BySphere(const double kCenterX, const double kCenterY, const double kCenterZ, const double kRadius)
+	{
+		BRepPrimAPI_MakeSphere occtMakeSphere(gp_Pnt(kCenterX, kCenterY, kCenterZ), kRadius);
+		return std::make_shared<Cell>(occtMakeSphere.Solid());
+	}
+
+	Cell::Ptr Cell::ByCylinder(const double kReferencePointX, const double kReferencePointY, const double kReferencePointZ,
+		const double kNormalX, const double kNormalY, const double kNormalZ,
+		const double kXDirectionX, const double kXDirectionY, const double kDirectionZ,
+		const double kRadius, const double kHeight)
+	{
+		BRepPrimAPI_MakeCylinder occtMakeCylinder(
+			gp_Ax2(
+				gp_Pnt(kReferencePointX, kReferencePointY, kReferencePointZ),
+				gp_Dir(kNormalX, kNormalY, kNormalZ),
+				gp_Dir(kXDirectionX, kXDirectionY, kDirectionZ)), 
+			kRadius, kHeight);
+		return std::make_shared<Cell>(occtMakeCylinder.Solid());
+	}
+
+	std::shared_ptr<Cell> Cell::ByCone(
+		const double kReferencePointX, const double kReferencePointY, const double kReferencePointZ,
+		const double kNormalX, const double kNormalY, const double kNormalZ,
+		const double kXDirectionX, const double kXDirectionY, const double kDirectionZ,
+		const double kRadius1, const double kRadius2, const double kHeight)
+	{
+		BRepPrimAPI_MakeCone occtMakeCone(
+			gp_Ax2(
+				gp_Pnt(kReferencePointX, kReferencePointY, kReferencePointZ), 
+				gp_Dir(kNormalX, kNormalY, kNormalZ), 
+				gp_Dir(kXDirectionX, kXDirectionY, kDirectionZ)),
+			kRadius1, kRadius2, kHeight);
+		return std::make_shared<Cell>(occtMakeCone.Solid());
+	}
+
 	Cell::Ptr Cell::ByVerticesFaceIndices(const std::vector<Vertex::Ptr>& rkVertices, const std::list<std::list<int>>& rkFaceIndices)
 	{
 		if (rkVertices.empty())
@@ -232,70 +270,124 @@ namespace TopologicCore
 
 	void Cell::SharedEdges(const Cell::Ptr& kpAnotherCell, std::list<Edge::Ptr>& rEdges) const
 	{
-		// BRepAlgoAPI_Section only returns vertices and edges, so use it to get the shared edges.
-		const TopoDS_Shape& rkOcctShape = BRepAlgoAPI_Section(GetOcctShape(), kpAnotherCell->GetOcctShape()).Shape();
-
-		TopTools_MapOfShape occtEdges;
-		for (TopExp_Explorer occtExplorer(rkOcctShape, TopAbs_EDGE); occtExplorer.More(); occtExplorer.Next())
+		const TopoDS_Shape& rkOcctShape1 = GetOcctShape();
+		TopTools_ListOfShape occtEdges1;
+		for (TopExp_Explorer occtExplorer(rkOcctShape1, TopAbs_EDGE); occtExplorer.More(); occtExplorer.Next())
 		{
 			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-			if (!occtEdges.Contains(occtCurrent))
+			if (!occtEdges1.Contains(occtCurrent))
 			{
-				occtEdges.Add(occtCurrent);
+				occtEdges1.Append(occtCurrent);
 			}
 		}
 
-		for (TopTools_MapIteratorOfMapOfShape occtShapeIterator(occtEdges);
-			occtShapeIterator.More();
-			occtShapeIterator.Next())
+		const TopoDS_Shape& rkOcctShape2 = kpAnotherCell->GetOcctShape();
+		TopTools_ListOfShape occtEdges2;
+		for (TopExp_Explorer occtExplorer(rkOcctShape2, TopAbs_EDGE); occtExplorer.More(); occtExplorer.Next())
 		{
-			rEdges.push_back(std::make_shared<Edge>(TopoDS::Edge(occtShapeIterator.Value())));
+			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
+			if (!occtEdges2.Contains(occtCurrent))
+			{
+				occtEdges2.Append(occtCurrent);
+			}
+		}
+
+		for (TopTools_ListIteratorOfListOfShape occtEdgeIterator1(occtEdges1);
+			occtEdgeIterator1.More();
+			occtEdgeIterator1.Next())
+		{
+			for (TopTools_ListIteratorOfListOfShape occtEdgeIterator2(occtEdges2);
+				occtEdgeIterator2.More();
+				occtEdgeIterator2.Next())
+			{
+				if (occtEdgeIterator1.Value().IsSame(occtEdgeIterator2.Value()))
+				{
+					Edge::Ptr pEdge = std::make_shared<Edge>(TopoDS::Edge(occtEdgeIterator1.Value()));
+					rEdges.push_back(pEdge);
+				}
+			}
 		}
 	}
 
 	void Cell::SharedFaces(const Cell::Ptr& kpAnotherCell, std::list<Face::Ptr>& rFaces) const
 	{
-		// use BRepAlgoAPI_Common
-		const TopoDS_Shape& rkOcctShape = BRepAlgoAPI_Common(GetOcctShape(), kpAnotherCell->GetOcctShape()).Shape();
-
-		TopTools_MapOfShape occtFaces;
-		for (TopExp_Explorer occtExplorer(rkOcctShape, TopAbs_FACE); occtExplorer.More(); occtExplorer.Next())
+		const TopoDS_Shape& rkOcctShape1 = GetOcctShape();
+		TopTools_ListOfShape occtFaces1;
+		for (TopExp_Explorer occtExplorer(rkOcctShape1, TopAbs_FACE); occtExplorer.More(); occtExplorer.Next())
 		{
 			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-			if (!occtFaces.Contains(occtCurrent))
+			if (!occtFaces1.Contains(occtCurrent))
 			{
-				occtFaces.Add(occtCurrent);
+				occtFaces1.Append(occtCurrent);
 			}
 		}
 
-		for (TopTools_MapIteratorOfMapOfShape occtShapeIterator(occtFaces);
-			occtShapeIterator.More();
-			occtShapeIterator.Next())
+		const TopoDS_Shape& rkOcctShape2 = kpAnotherCell->GetOcctShape();
+		TopTools_ListOfShape occtFaces2;
+		for (TopExp_Explorer occtExplorer(rkOcctShape2, TopAbs_FACE); occtExplorer.More(); occtExplorer.Next())
 		{
-			rFaces.push_back(std::make_shared<Face>(TopoDS::Face(occtShapeIterator.Value())));
+			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
+			if (!occtFaces2.Contains(occtCurrent))
+			{
+				occtFaces2.Append(occtCurrent);
+			}
+		}
+
+		for (TopTools_ListIteratorOfListOfShape occtFaceIterator1(occtFaces1);
+			occtFaceIterator1.More();
+			occtFaceIterator1.Next())
+		{
+			for (TopTools_ListIteratorOfListOfShape occtFaceIterator2(occtFaces2);
+				occtFaceIterator2.More();
+				occtFaceIterator2.Next())
+			{
+				if (occtFaceIterator1.Value().IsSame(occtFaceIterator2.Value()))
+				{
+					Face::Ptr pFace = std::make_shared<Face>(TopoDS::Face(occtFaceIterator1.Value()));
+					rFaces.push_back(pFace);
+				}
+			}
 		}
 	}
 
 	void Cell::SharedVertices(const Cell::Ptr& kpAnotherCell, std::list<Vertex::Ptr>& rVertices) const
 	{
-		// BRepAlgoAPI_Section only returns vertices and edges, so use it to get the shared vertices.
-		const TopoDS_Shape& rkOcctShape = BRepAlgoAPI_Section(GetOcctShape(), kpAnotherCell->GetOcctShape()).Shape();
-
-		TopTools_MapOfShape occtVertices;
-		for (TopExp_Explorer occtExplorer(rkOcctShape, TopAbs_VERTEX); occtExplorer.More(); occtExplorer.Next())
+		const TopoDS_Shape& rkOcctShape1 = GetOcctShape();
+		TopTools_ListOfShape occtVertices1;
+		for (TopExp_Explorer occtExplorer(rkOcctShape1, TopAbs_VERTEX); occtExplorer.More(); occtExplorer.Next())
 		{
 			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-			if (!occtVertices.Contains(occtCurrent))
+			if (!occtVertices1.Contains(occtCurrent))
 			{
-				occtVertices.Add(occtCurrent);
+				occtVertices1.Append(occtCurrent);
 			}
 		}
 
-		for (TopTools_MapIteratorOfMapOfShape occtShapeIterator(occtVertices);
-			occtShapeIterator.More();
-			occtShapeIterator.Next())
+		const TopoDS_Shape& rkOcctShape2 = kpAnotherCell->GetOcctShape();
+		TopTools_ListOfShape occtVertices2;
+		for (TopExp_Explorer occtExplorer(rkOcctShape2, TopAbs_VERTEX); occtExplorer.More(); occtExplorer.Next())
 		{
-			rVertices.push_back(std::make_shared<Vertex>(TopoDS::Vertex(occtShapeIterator.Value())));
+			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
+			if (!occtVertices2.Contains(occtCurrent))
+			{
+				occtVertices2.Append(occtCurrent);
+			}
+		}
+
+		for (TopTools_ListIteratorOfListOfShape occtVertexIterator1(occtVertices1);
+			occtVertexIterator1.More();
+			occtVertexIterator1.Next())
+		{
+			for (TopTools_ListIteratorOfListOfShape occtVertexIterator2(occtVertices2);
+				occtVertexIterator2.More();
+				occtVertexIterator2.Next())
+			{
+				if (occtVertexIterator1.Value().IsSame(occtVertexIterator2.Value()))
+				{
+					Vertex::Ptr pVertex = std::make_shared<Vertex>(TopoDS::Vertex(occtVertexIterator1.Value()));
+					rVertices.push_back(pVertex);
+				}
+			}
 		}
 	}
 

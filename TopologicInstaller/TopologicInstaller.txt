@@ -90,19 +90,32 @@ Section "TopologicDynamo" TopologicDynamo
   ;File ..\output\x64\Release\Topologic.customization.dll
   File vc_redist.x64.exe
   
+  ;Check if Revit 2017 exists.
+  ClearErrors
+  SetRegView 64
+  ReadRegStr $0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Autodesk Revit 2017" "DisplayName"
+  ${If} ${Errors}
+    ;If Revit 2017 does not exist, check if Revit 2018 exists.
+	Call CheckRevit2018
+  ${Else}
+    ${If} $0 == ""
+	  Call CheckRevit2018
+    ${Else}
+	  Call CheckDynamoCore
+    ${EndIf}
+  ${EndIf}
+  
   ;Check if Dynamo exists. If it does not, download and install.
   ClearErrors
   SetRegView 64
   ReadRegStr $0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Dynamo Core 2.0" "Version"
   ${If} ${Errors}
     ;Install Dynamo
-	Call InstallDynamo
+	Call InstallDynamoCore
   ${Else}
     ${If} $0 == ""
       ;Install Dynamo, although this should not happen.
-	  Call InstallDynamo
-    ;${Else}
-      ;Dynamo is installed, do nothing
+	  Call InstallDynamoCore
     ${EndIf}
   ${EndIf}
   
@@ -133,17 +146,77 @@ Section "TopologicDynamo" TopologicDynamo
   ${EndIf}
 SectionEnd
 
-Function InstallDynamo
+Function CheckRevit2018
+  ReadRegStr $0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Autodesk Revit 2018" "DisplayName"
+  ${If} ${Errors}
+    Call CheckRevit2019
+  ${Else}
+	${If} $0 == ""
+	  Call CheckRevit2019
+	${Else}
+	  ;Revit 2019 is found. Check Dynamo Core.
+	  Call CheckDynamoCore
+	${EndIf}
+  ${EndIf}
+FunctionEnd 
+
+Function CheckRevit2019
+  ;If Revit 2018 does not exist, check if Revit 2019 exists.
+  ReadRegStr $0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Autodesk Revit 2019" "DisplayName"
+  ${If} ${Errors}
+	;No Revit installation is found. Download and run Dynamo Studio 2017.
+	Call InstallDynamoStudio
+  ${Else}
+	${If} $0 == ""
+	  Call InstallDynamoStudio
+	${Else}
+	  ;Revit 2019 is found. Check Dynamo Core.
+	  Call CheckDynamoCore
+	${EndIf}
+  ${EndIf}
+FunctionEnd 
+
+Function CheckDynamoCore
+  ;Check if Dynamo exists. If it does not, download and install.
+  ClearErrors
+  SetRegView 64
+  ReadRegStr $0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Dynamo Core 2.0" "Version"
+  ${If} ${Errors}
+    ;Install Dynamo
+	Call InstallDynamoCore
+  ${Else}
+    ${If} $0 == ""
+      ;Install Dynamo, although this should not happen.
+	  Call InstallDynamoCore
+    ${EndIf}
+  ${EndIf}
+FunctionEnd
+
+Function InstallDynamoCore
   NSISdl::download http://dyn-builds-data.s3-us-west-2.amazonaws.com/DynamoInstall2.0.1.exe "$INSTDIR\DynamoInstall2.0.1.exe"
   Pop $0
   ${If} $0 == "success"
     ExecWait "$INSTDIR\DynamoInstall2.0.1.exe" $1
     Delete "$INSTDIR\DynamoInstall2.0.1.exe"
 	${If} $1 <> 0
-	  MessageBox MB_OK "Failed to install Dynamo 2.0.1. Please install it manually."
+	  MessageBox MB_OK "Failed to install Dynamo Revit 2.0.1. Please install it manually."
 	${EndIf}
   ${Else}
-    MessageBox MB_OK "Failed to download Dynamo 2.0.1. Please install it manually."
+    MessageBox MB_OK "Failed to download Dynamo Revit 2.0.1. Please install it manually."
+  ${EndIf}
+FunctionEnd
+
+Function InstallDynamoStudio
+  NSISdl::download http://edutrial.autodesk.com/NET17SWDLD/2017/DYNSTD/14D6DC8A-A45C-43B1-B5CF-A1434EF0959A/SFX/Autodesk_Dynamo_Studio_2017_English_Win_64bit_dlm.sfx.exe "$INSTDIR\Autodesk_Dynamo_Studio_2017_English_Win_64bit_dlm.sfx.exe"
+  Pop $0
+  ${If} $0 == "success"
+    ExecWait "$INSTDIR\Autodesk_Dynamo_Studio_2017_English_Win_64bit_dlm.sfx.exe" $1
+    Delete "$INSTDIR\Autodesk_Dynamo_Studio_2017_English_Win_64bit_dlm.sfx.exe"
+	${If} $1 <> 0
+	  MessageBox MB_OK "Failed to install Dynamo Studio 2017. Please install it manually."
+	${EndIf}
+  ${Else}
+    MessageBox MB_OK "Failed to download Dynamo Studio 2017. Please install it manually."
   ${EndIf}
 FunctionEnd
 
@@ -172,12 +245,12 @@ Section "TopologicEnergy" TopologicEnergy
   StrCpy $installOpenStudio "0"
   loop:
     EnumRegKey $1 HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall" $0
-    StrCmp $1 "" done
+    StrCmp $1 "" done 
     ReadRegStr $2 HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$1" "DisplayName"
     ${If} $2 == "OpenStudio"
         ReadRegStr $2 HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$1" "DisplayVersion"
         ${If} $2 == "2.6.0"
-		  StrCpy $installOpenStudio "0"
+		  StrCpy $installOpenStudio "1"
 		  Goto done
 		${EndIf}
     ${EndIf}

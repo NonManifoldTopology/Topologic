@@ -85,7 +85,6 @@ namespace TopologicCore
 		const TopoDS_Shape& kOcctThisShape = GetOcctShape();
 		const TopoDS_Shape& kOcctQueryShape = kpTopology->GetOcctShape();
 		TopAbs_ShapeEnum occtShapeTypes[4] = { TopAbs_VERTEX, TopAbs_EDGE, TopAbs_FACE, TopAbs_SOLID };
-		//for (int i = 0; i < 3; ++i)
 		for (int i = 0; i < 4; ++i)
 		{
 			TopAbs_ShapeEnum occtShapeType = occtShapeTypes[i];
@@ -304,7 +303,7 @@ namespace TopologicCore
 					}
 					else
 					{
-						// Add the opem wire
+						// Add the open wire
 						rTopologies.push_back(std::make_shared<Wire>(rkOcctWire));
 					}
 				}
@@ -1544,46 +1543,50 @@ namespace TopologicCore
 		occtVolumeMaker.SetFuzzyValue(aTol);
 		//
 		occtVolumeMaker.Perform(); //perform the operation
-		if (occtVolumeMaker.HasErrors() || occtVolumeMaker.HasWarnings()) { //check error status
-			std::ostringstream errorStream;
-			occtVolumeMaker.DumpErrors(errorStream);
-			/*throw std::exception(errorStream.str().c_str());*/
-			std::ostringstream warningStream;
-			occtVolumeMaker.DumpWarnings(warningStream);
-			TopoDS_Compound occtCompound;
-			BRep_Builder occtBuilder;
-			occtBuilder.MakeCompound(occtCompound);
-			for (TopTools_ListIteratorOfListOfShape iterator(occtShapes);
-				iterator.More();
-				iterator.Next())
-			{
-				occtBuilder.Add(occtCompound, iterator.Value());
-			}
-			return Topology::ByOcctShape(occtCompound, "");
-			//throw std::exception();
-		}
-		//DEBUG
-		//return Topology::ByOcctShape(occtVolumeMaker.Shape());
 
-		// 6. Get discarded faces from VolumeMaker--> second result
-		TopoDS_Compound occtCompound2;
-		BRep_Builder occtBuilder2;
-		occtBuilder2.MakeCompound(occtCompound2);
-		for (BOPCol_ListIteratorOfListOfShape occtFaceIterator(occtFaces);
-			occtFaceIterator.More();
-			occtFaceIterator.Next())
+		if (occtVolumeMaker.HasErrors() || occtVolumeMaker.HasWarnings()) { //check error status
+			// BUG: Should not quit, but instead 
+			//std::ostringstream errorStream;
+			//occtVolumeMaker.DumpErrors(errorStream);
+			///*throw std::exception(errorStream.str().c_str());*/
+			//std::ostringstream warningStream;
+			//occtVolumeMaker.DumpWarnings(warningStream);
+			//TopoDS_Compound occtCompound;
+			//BRep_Builder occtBuilder;
+			//occtBuilder.MakeCompound(occtCompound);
+			//for (TopTools_ListIteratorOfListOfShape iterator(occtShapes);
+			//	iterator.More();
+			//	iterator.Next())
+			//{
+			//	occtBuilder.Add(occtCompound, iterator.Value());
+			//}
+			//return Topology::ByOcctShape(occtCompound, "");
+			////throw std::exception();
+		}else
 		{
-			TopoDS_Shape& rCurrent = occtFaceIterator.Value();
-			if (occtVolumeMaker.IsDeleted(rCurrent))
+			//DEBUG
+			//return Topology::ByOcctShape(occtVolumeMaker.Shape());
+
+			// 6. Get discarded faces from VolumeMaker--> second result
+			TopoDS_Compound occtCompound2;
+			BRep_Builder occtBuilder2;
+			occtBuilder2.MakeCompound(occtCompound2);
+			for (BOPCol_ListIteratorOfListOfShape occtFaceIterator(occtFaces);
+				occtFaceIterator.More();
+				occtFaceIterator.Next())
 			{
-				occtDiscardedFaces.Append(rCurrent);
-				occtBuilder2.Add(occtCompound2, rCurrent);
+				TopoDS_Shape& rCurrent = occtFaceIterator.Value();
+				if (occtVolumeMaker.IsDeleted(rCurrent))
+				{
+					occtDiscardedFaces.Append(rCurrent);
+					occtBuilder2.Add(occtCompound2, rCurrent);
+				}
 			}
+			//return Topology::ByOcctShape(occtCompound2);
 		}
-		//return Topology::ByOcctShape(occtCompound2);
 
 		// 7. Get the rest from Topology[] --> third result
-		BOPCol_ListOfShape occtOtherShapes;
+		BOPCol_ListOfShape occtOtherShapes; // for step #7
 		for (BOPCol_ListIteratorOfListOfShape occtShapeIterator(occtShapes);
 			occtShapeIterator.More();
 			occtShapeIterator.Next())
@@ -1606,10 +1609,11 @@ namespace TopologicCore
 			occtBuilder4.Add(occtCompound4, rCurrent);
 		}
 		//return Topology::ByOcctShape(occtCompound4);
-
 		// 8. Merge results #1 #2 #3
 		BOPCol_ListOfShape occtFinalArguments;
-		occtFinalArguments.Append(occtVolumeMaker.Shape());
+		if (!occtVolumeMaker.HasErrors() && !occtVolumeMaker.HasWarnings()) { //check error status
+			occtFinalArguments.Append(occtVolumeMaker.Shape());
+		}
 		occtFinalArguments.Append(occtDiscardedFaces);
 		occtFinalArguments.Append(occtOtherShapes);
 

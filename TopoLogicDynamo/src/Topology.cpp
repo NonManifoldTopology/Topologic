@@ -42,8 +42,74 @@ namespace Topologic
 
 	Topology^ Topology::ByGeometry(Autodesk::DesignScript::Geometry::Geometry^ geometry)
 	{
-		throw gcnew System::NotImplementedException();
-		// TODO: insert return statement here
+		Autodesk::DesignScript::Geometry::Point^ dynamoPoint = dynamic_cast<Autodesk::DesignScript::Geometry::Point^>(geometry);
+		if (dynamoPoint != nullptr)
+		{
+			return Vertex::ByPoint_(dynamoPoint);
+		}
+
+		// Do this first so that a polycurve (which is a curve) is not handled by Edge.
+		Autodesk::DesignScript::Geometry::PolyCurve^ dynamoPolyCurve = dynamic_cast<Autodesk::DesignScript::Geometry::PolyCurve^>(geometry);
+		if (dynamoPolyCurve != nullptr)
+		{
+			return Wire::ByPolyCurve_(dynamoPolyCurve);
+		}
+
+		Autodesk::DesignScript::Geometry::Curve^ dynamoCurve = dynamic_cast<Autodesk::DesignScript::Geometry::Curve^>(geometry);
+		if (dynamoCurve != nullptr)
+		{
+			return Edge::ByCurve_(dynamoCurve);
+		}
+
+		// Do this first so that a polysurface (which is a surface) is not handled by Face.
+		Autodesk::DesignScript::Geometry::PolySurface^ dynamoPolySurface = dynamic_cast<Autodesk::DesignScript::Geometry::PolySurface^>(geometry);
+		if (dynamoPolySurface != nullptr)
+		{
+			return Shell::ByPolySurface_(dynamoPolySurface);
+		}
+
+		Autodesk::DesignScript::Geometry::Surface^ dynamoSurface = dynamic_cast<Autodesk::DesignScript::Geometry::Surface^>(geometry);
+		if (dynamoSurface != nullptr)
+		{
+			return Face::BySurface_(dynamoSurface);
+		}
+
+		Autodesk::DesignScript::Geometry::Solid^ dynamoSolid = dynamic_cast<Autodesk::DesignScript::Geometry::Solid^>(geometry);
+		if (dynamoSolid != nullptr)
+		{
+			return Cell::BySolid_(dynamoSolid);
+		}
+
+		throw gcnew NotImplementedException("This geometry is not currently handled.");
+	}
+
+	Topology ^ Topology::ByGeometryA(Autodesk::DesignScript::Geometry::DesignScriptEntity ^ geometry)
+	{
+		Autodesk::DesignScript::Geometry::Geometry^ dynamoGeometry = dynamic_cast<Autodesk::DesignScript::Geometry::Geometry^>(geometry);
+		if (dynamoGeometry != nullptr)
+		{
+			return ByGeometry(dynamoGeometry);
+		}
+
+		Autodesk::DesignScript::Geometry::Vertex^ dynamoVertex = dynamic_cast<Autodesk::DesignScript::Geometry::Vertex^>(geometry);
+		if (dynamoVertex != nullptr)
+		{
+			return Vertex::ByPoint_(dynamoVertex->PointGeometry);
+		}
+
+		Autodesk::DesignScript::Geometry::Edge^ dynamoEdge = dynamic_cast<Autodesk::DesignScript::Geometry::Edge^>(geometry);
+		if (dynamoEdge != nullptr)
+		{
+			return Edge::ByCurve_(dynamoEdge->CurveGeometry);
+		}
+
+		Autodesk::DesignScript::Geometry::Face^ dynamoFace = dynamic_cast<Autodesk::DesignScript::Geometry::Face^>(geometry);
+		if (dynamoFace != nullptr)
+		{
+			return Face::BySurface_(dynamoFace->SurfaceGeometry());
+		}
+
+		throw gcnew NotImplementedException("This geometry is not currently handled.");
 	}
 
 	Topology^ Topology::ByContext()
@@ -58,7 +124,7 @@ namespace Topologic
 	//	// TODO: insert return statement here
 	//}
 
-	List<Topology^>^ Topology::ByVerticesIndices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<int>^>^ vertexIndices)
+	List<Topology^>^ Topology::ByVerticesIndices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::List<int>^>^ vertexIndices)
 	{
 		std::vector<TopologicCore::Vertex::Ptr> coreVertices;
 		for each(Vertex^ pVertex in vertices)
@@ -101,14 +167,14 @@ namespace Topologic
 		return gcnew Support::AttributeMap(pAttributeMap);
 	}
 
-	bool Topology::SaveToBRep(String^ path)
+	bool Topology::ExportToBRep(String^ path)
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		std::string cppPath = msclr::interop::marshal_as<std::string>(path);
 		return pCoreTopology->SaveToBrep(cppPath);
 	}
 
-	Topology^ Topology::LoadFromBRep(String^ path)
+	Topology^ Topology::ImportFromBRep(String^ path)
 	{
 		std::string cppPath = msclr::interop::marshal_as<std::string>(path);
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::Topology::LoadFromBrep(cppPath);
@@ -129,10 +195,10 @@ namespace Topologic
 		return pCoreTopology->IsSame(pOtherCoreTopology);
 	}
 
-	Topology ^ Topology::ClosestSimplestSubshape(Topology^ queryTopology)
+	Topology ^ Topology::ClosestSimplestSubshape(Topology^ selector)
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopologicCore::Topology> pCoreQueryTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(queryTopology->GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreQueryTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(selector->GetCoreTopologicalQuery());
 
 		std::shared_ptr<TopologicCore::Topology> pClosestLowestSubshape = pCoreTopology->ClosestSimplestSubshape(pCoreQueryTopology);
 		return ByCoreTopology(pClosestLowestSubshape);
@@ -167,6 +233,11 @@ namespace Topologic
 	void Topology::RegisterFactory(String^ guid, TopologyFactory^ topologyFactory)
 	{
 		TopologyFactoryManager::Instance->Add(guid, topologyFactory);
+	}
+	
+	List<Topology^>^ Topology::HostTopology__::get()
+	{
+		throw gcnew NotImplementedException("Feature not yet implemented");
 	}
 
 	Topology::Topology()
@@ -237,7 +308,7 @@ namespace Topologic
 		return pContexts;
 	}
 
-	Topology^ Topology::AddContent(Topology^ contentTopology)
+	Topology^ Topology::AddContent(Topology^ topology)
 	{
 		// 1. Copy this topology
 		TopologicCore::Topology::Ptr pCoreParentTopology =
@@ -254,7 +325,7 @@ namespace Topologic
 
 		// 4. Copy the content topology
 		TopologicCore::Topology::Ptr pCoreContentTopology =
-			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(contentTopology->GetCoreTopologicalQuery());
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreCopyContentTopology = pCoreContentTopology->Copy();
 
 		pCoreCopyParentTopology->AddContent(pCoreCopyContentTopology, true);
@@ -666,7 +737,7 @@ namespace Topologic
 		return Topology::ByCoreTopology(pCoreCopyTopology);
 	}
 
-	List<Topology^>^ Topology::ImmediateMembers::get()
+	List<Topology^>^ Topology::SubTopologies::get()
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 

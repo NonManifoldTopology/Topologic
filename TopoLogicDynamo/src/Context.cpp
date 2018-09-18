@@ -4,7 +4,7 @@
 
 namespace Topologic
 {
-	Context^ Context::ByTopologyParameters(Topologic::Topology^ topology, double U, double V, double W)
+	Context^ Context::ByTopologyParameters__(Topologic::Topology^ topology, double U, double V, double W)
 	{
 		std::shared_ptr<TopologicCore::Context> pCoreContext = TopologicCore::Context::ByTopologyParameters(
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery()),

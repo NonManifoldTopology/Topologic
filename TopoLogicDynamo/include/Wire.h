@@ -17,32 +17,32 @@ namespace Topologic {
 		/// </summary>
 		/// <param name="edges">The edges.</param>
 		/// <exception cref="ArgumentException">Thrown if any of the arguments is not a Topologic edge.</exception>
-		/// <returns name="Wire">Te created Topologic wire</returns>
+		/// <returns name="Wire">The created Topologic wire</returns>
 		static Wire^ ByEdges(System::Collections::Generic::IEnumerable<Edge^>^ edges);
 
 		/// <summary>
-		/// Create a wire by a polycurve (including a polygon)
+		/// Create a wire by a polycurve (including a polygon). NOTE: This node will be replaced by a single Topology.ByGeometry() node.
 		/// </summary>
-		/// <param name="polycurve">The polycurve</param>
+		/// <param name="polyCurve">The polycurve</param>
 		/// <returns name="Wire">The created Topologic wire</returns>
-		static Wire^ ByPolyCurve(Autodesk::DesignScript::Geometry::PolyCurve^ polycurve);
+		static Wire^ ByPolyCurve_(Autodesk::DesignScript::Geometry::PolyCurve^ polyCurve);
 
 		/// <summary>
-		/// Get the edges constituent to the wire.
+		/// Get the constituent edges of the wire. NOTE: This method will automatically identify its loop order property.
 		/// </summary>
 		/// <param name="ordered">Does the wire has loop order?</param>
 		/// <returns name="Edge[]">The constituent edges</returns>
 		List<Edge^>^ Edges_(bool ordered);
 
 		/// <summary>
-		/// Get the list of faces that contain to the wire.
+		/// Get the list of faces that contain the wire. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.
 		/// </summary>
 		/// <param name="hostTopology"></param>
 		/// <returns name="Face[]">The faces that contain the wire</returns>
 		List<Face^>^ Faces_(Topology^ hostTopology);
 
 		/// <summary>
-		/// Gets the list of vertices constituent to the wire.
+		/// Gets the list constituent vertices of the wire. NOTE: This method will automatically identify its loop order property.
 		/// </summary>
 		/// <param name="ordered">Does the wire has loop order?</param>
 		/// <returns name="Vertex[]">The constituent vertices</returns>

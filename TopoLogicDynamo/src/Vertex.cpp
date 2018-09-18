@@ -11,14 +11,14 @@
 
 namespace Topologic
 {
-	Vertex^ Vertex::ByPoint(Autodesk::DesignScript::Geometry::Point^ point)
+	Vertex^ Vertex::ByPoint_(Autodesk::DesignScript::Geometry::Point^ point)
 	{
 		return gcnew Vertex(point);
 	}
 
 	Vertex ^ Vertex::ByCoordinates(double x, double y, double z)
 	{
-		return Vertex::ByPoint(Autodesk::DesignScript::Geometry::Point::ByCoordinates(x, y, z));
+		return Vertex::ByPoint_(Autodesk::DesignScript::Geometry::Point::ByCoordinates(x, y, z));
 	}
 
 	List<Edge^>^ Vertex::Edges_(Topology^ hostTopology)

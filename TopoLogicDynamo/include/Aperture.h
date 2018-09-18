@@ -36,6 +36,7 @@ namespace Topologic
 		/// <param name="context">A context</param>
 		/// <param name="openStatus">An open status</param>
 		/// <returns name="Aperture">An aperture</returns>
+		[IsVisibleInDynamoLibrary(false)]
 		static Aperture^ ByTopologyContextStatus(Topology^ topology, Context^ context, bool openStatus);
 
 		/// <summary>
@@ -46,6 +47,7 @@ namespace Topologic
 		/// <param name="link"></param>
 		/// <param name="open"></param>
 		/// <returns name="Aperture"></returns>
+		[IsVisibleInDynamoLibrary(false)]
 		static Aperture^ ByBoundaryWithinHost(Face^ hostFace, Wire^ apertureBoundary, bool link, bool open);
 
 		/// <summary>

@@ -10,7 +10,7 @@ namespace TopologicCore
 	class Topology;
 
 	/// <summary>
-	/// A Context defines a Topological relationship between two otherwise independent Topologies.
+	/// A Context defines a topological relationship between two otherwise independent Topologies.
 	/// </summary>
 	class Context : public TopologicalQuery
 	{

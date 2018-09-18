@@ -21,6 +21,7 @@
 #include <GProp_GProps.hxx>
 #include <ShapeAnalysis.hxx>
 #include <ShapeAnalysis_Surface.hxx>
+#include <ShapeFix_Face.hxx>
 #include <ShapeFix_ShapeTolerance.hxx>
 #include <ShapeFix_Shell.hxx>
 #include <TopExp.hxx>
@@ -379,7 +380,9 @@ namespace TopologicCore
 		// Subdivide the face in the UV space and find the points
 		Handle(Geom_Surface) pOcctWallSurface = kpFace->Surface();
 		double occtUMin = 0.0, occtUMax = 0.0, occtVMin = 0.0, occtVMax = 0.0;
-		ShapeAnalysis::GetFaceUVBounds(kpFace->GetOcctFace(), occtUMin, occtUMax, occtVMin, occtVMax);
+		ShapeFix_Face occtShapeFix(kpFace->GetOcctFace());
+		occtShapeFix.Perform();
+		ShapeAnalysis::GetFaceUVBounds(occtShapeFix.Face(), occtUMin, occtUMax, occtVMin, occtVMax);
 		double occtURange = occtUMax - occtUMin;
 		double occtVRange = occtVMax - occtVMin;
 		int numUPanels = (int) rkUValues.size() - 1;
@@ -838,7 +841,7 @@ namespace TopologicCore
 
 				if (kCapBottom || kCapTop)
 				{
-					if (!isUClosed && j == 0) // Use j == 0 to do this only once
+					if (!isUClosed)// && j == 0) // Use j == 0 to do this only once
 					{
 						if (kCapBottom && i == 0) // Store the edge rkEdge12 to uMin edges 
 						{
@@ -1001,9 +1004,9 @@ namespace TopologicCore
 
 								// apertures before triangulation
 								const TopoDS_Wire& rkMappedApertureWire = occtMakeWire.Wire();
-								wires.push_back(std::make_shared<Wire>(rkMappedApertureWire));
+								//wires.push_back(std::make_shared<Wire>(rkMappedApertureWire));
 								BRepBuilderAPI_MakeFace occtMakeFace(pOcctPanelSurface, rkMappedApertureWire);
-								faces.push_back(std::make_shared<Face>(occtMakeFace));
+								//faces.push_back(std::make_shared<Face>(occtMakeFace));
 							}
 						}
 
@@ -1107,6 +1110,9 @@ namespace TopologicCore
 					BRepBuilderAPI_MakeFace occtMakeFace(TopoDS::Wire(occtMakeWire.Shape()));
 					const TopoDS_Face& rkOcctFace = occtMakeFace.Face();
 					occtSewing.Add(rkOcctFace);
+
+					/*wires.push_back(std::make_shared<Wire>(rkOuterWire));
+					faces.push_back(std::make_shared<Face>(rkOcctFace));*/
 				}
 			}
 		}

@@ -87,14 +87,14 @@ namespace Topologic
 		}
 	}
 
-	Wire^ Wire::ByPolyCurve(Autodesk::DesignScript::Geometry::PolyCurve ^ polycurve)
+	Wire^ Wire::ByPolyCurve_(Autodesk::DesignScript::Geometry::PolyCurve ^ polycurve)
 	{
 		array<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoCurves = polycurve->Curves();
 
 		std::list<TopologicCore::Edge::Ptr> coreEdges;
 		for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoCurve in pDynamoCurves)
 		{
-			Edge^ pEdge = Edge::ByCurve(pDynamoCurve);
+			Edge^ pEdge = Edge::ByCurve_(pDynamoCurve);
 			coreEdges.push_back(TopologicCore::Topology::Downcast<TopologicCore::Edge>(pEdge->GetCoreTopologicalQuery()));
 		}
 

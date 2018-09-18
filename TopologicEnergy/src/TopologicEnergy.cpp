@@ -18,8 +18,7 @@ namespace TopologicEnergy
 	}
 
 	Model^ TopologicEnergy::CreateEnergyModel(
-		Cluster^ shadingCluster,
-		CellComplex^ buildingCellComplex,
+		CellComplex^ building,
 		String ^ buildingType, 
 		String ^ buildingName, 
 		String ^ spaceType, 
@@ -30,7 +29,8 @@ namespace TopologicEnergy
 		String ^ openStudioTemplatePath,
 		String^ openStudioOutputPath,
 		double coolingTemp, 
-		double heatingTemp)
+		double heatingTemp,
+		Cluster^ shadingCluster)
 	{
 		numOfApertures = 0;
 		numOfAppliedApertures = 0;
@@ -42,7 +42,7 @@ namespace TopologicEnergy
 		double buildingHeight = Enumerable::Max(floorLevels);
 		int numFloors = floorLevels->Count - 1;
 		OpenStudio::Building^ osBuilding = ComputeBuilding(osModel, buildingName, buildingType, buildingHeight, numFloors, spaceType);
-		List<Cell^>^ pBuildingCells = buildingCellComplex->Cells;
+		List<Cell^>^ pBuildingCells = building->Cells;
 
 		// Create OpenStudio spaces
 		List<OpenStudio::Space^>^ osSpaces = gcnew List<OpenStudio::Space^>();
@@ -52,7 +52,7 @@ namespace TopologicEnergy
 			OpenStudio::Space^ osSpace = AddSpace(
 				spaceNumber,
 				buildingCell,
-				buildingCellComplex,
+				building,
 				osModel,
 				Autodesk::DesignScript::Geometry::Vector::ZAxis(),
 				buildingHeight,
@@ -278,8 +278,8 @@ namespace TopologicEnergy
 			throw gcnew Exception("numEdgeSamples must be positive.");
 		}
 		// 1. Convert the apertures and boundary as faces.
-		Wire^ pOuterApertureWire = apertureDesign->OuterBoundary;
-		List<Wire^>^ pApertureWires = apertureDesign->InnerBoundaries;
+		Wire^ pOuterApertureWire = apertureDesign->ExternalBoundary;
+		List<Wire^>^ pApertureWires = apertureDesign->InternalBoundaries;
 
 		List<Topology^>^ pFaces = gcnew List<Topology^>();
 
@@ -344,7 +344,7 @@ namespace TopologicEnergy
 			Wire^ pMappedApertureWire = Wire::ByEdges(pMappedApertureEdges);
 
 			//// Use the wire to make a face on the same supporting surface as the input face's
-			Face^ pMappedApertureFace = face->TrimByWire(pMappedApertureWire);
+			Face^ pMappedApertureFace = face->TrimByWire_(pMappedApertureWire);
 			pFaces->Add(pMappedApertureFace);
 
 			// and attach it as an aperture to the face.
@@ -731,7 +731,7 @@ namespace TopologicEnergy
 					{
 						continue;
 					}
-					Wire^ pApertureWire = pFaceAperture->OuterBoundary;
+					Wire^ pApertureWire = pFaceAperture->ExternalBoundary;
 					List<Vertex^>^ pApertureVertices = pApertureWire->Vertices_(true);
 					//pApertureVertices->Reverse();
 					OpenStudio::Point3dVector^ osWindowFacePoints = gcnew OpenStudio::Point3dVector();
@@ -788,7 +788,7 @@ namespace TopologicEnergy
 		Autodesk::DesignScript::Geometry::Point^ faceCenterPoint =
 			safe_cast<Autodesk::DesignScript::Geometry::Point^>(faceCentre->Geometry);
 
-		Wire^ pApertureWire = buildingFace->OuterBoundary;
+		Wire^ pApertureWire = buildingFace->ExternalBoundary;
 		List<Vertex^>^ vertices = pApertureWire->Vertices_(true);
 		vertices->Reverse();
 
@@ -800,7 +800,7 @@ namespace TopologicEnergy
 			Autodesk::DesignScript::Geometry::Point^ scaledVertex = originalPoint->Subtract(faceCenterPoint->AsVector());
 			scaledVertex = safe_cast<Autodesk::DesignScript::Geometry::Point^>(scaledVertex->Scale(sqrtScaleFactor));
 			scaledVertex = scaledVertex->Add(faceCenterPoint->AsVector());
-			scaledVertices->Add(Vertex::ByPoint(scaledVertex));
+			scaledVertices->Add(Vertex::ByPoint_(scaledVertex));
 		}
 		return scaledVertices;
 	}
@@ -822,12 +822,12 @@ namespace TopologicEnergy
 				safe_cast<Autodesk::DesignScript::Geometry::Point^>(v->Geometry);
 			sumPoint = sumPoint->Add(p->AsVector());
 		}
-		return Vertex::ByPoint(safe_cast<Autodesk::DesignScript::Geometry::Point^>(sumPoint->Scale(1.0 / (double)vertices->Count)));
+		return Vertex::ByPoint_(safe_cast<Autodesk::DesignScript::Geometry::Point^>(sumPoint->Scale(1.0 / (double)vertices->Count)));
 	}
 
 	OpenStudio::Point3dVector^ TopologicEnergy::GetFacePoints(Face^ buildingFace)
 	{
-		Wire^ buildingOuterWire = buildingFace->OuterBoundary;
+		Wire^ buildingOuterWire = buildingFace->ExternalBoundary;
 		List<Vertex^>^ vertices = buildingOuterWire->Vertices_(true);
 		// HACK
 		vertices->Reverse();
@@ -890,7 +890,7 @@ namespace TopologicEnergy
 		Autodesk::DesignScript::Geometry::Point^ pDynamoOffsetPoint =
 			dynamic_cast<Autodesk::DesignScript::Geometry::Point^>(centerPoint->Translate(faceNormal->Scale(0.001)));
 
-		Vertex^ pOffsetVertex = Vertex::ByPoint(pDynamoOffsetPoint);
+		Vertex^ pOffsetVertex = Vertex::ByPoint_(pDynamoOffsetPoint);
 
 		if (faceAngle < 5.0 || faceAngle > 175.0)
 		{

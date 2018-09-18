@@ -90,39 +90,39 @@ namespace Topologic
 		return pWires;
 	}
 
-	Edge^ Edge::ByCurve(Autodesk::DesignScript::Geometry::Curve^ curve)
+	Edge^ Edge::ByCurve_(Autodesk::DesignScript::Geometry::Curve^ curve)
 	{
 		if (curve->GetType() == Autodesk::DesignScript::Geometry::Arc::typeid)
 		{
 			//throw gcnew System::NotImplementedException("Feature not yet implemented.");
-			return ByCurve(curve->ToNurbsCurve());
+			return ByCurve_(curve->ToNurbsCurve());
 		}
 		else if (curve->GetType() == Autodesk::DesignScript::Geometry::Circle::typeid)
 		{
-			return ByCurve(safe_cast<Autodesk::DesignScript::Geometry::Circle^>(curve));
+			return ByCurve_(safe_cast<Autodesk::DesignScript::Geometry::Circle^>(curve));
 		}
 		else if (curve->GetType() == Autodesk::DesignScript::Geometry::Ellipse::typeid)
 		{
 			//throw gcnew System::NotImplementedException("Feature not yet implemented.");
-			return ByCurve(curve->ToNurbsCurve());
+			return ByCurve_(curve->ToNurbsCurve());
 		}
 		else if (curve->GetType() == Autodesk::DesignScript::Geometry::EllipseArc::typeid)
 		{
 			//throw gcnew System::NotImplementedException("Feature not yet implemented.");
-			return ByCurve(curve->ToNurbsCurve());
+			return ByCurve_(curve->ToNurbsCurve());
 		}
 		else if (curve->GetType() == Autodesk::DesignScript::Geometry::Helix::typeid)
 		{
 			//throw gcnew System::NotImplementedException("Feature not yet implemented.");
-			return ByCurve(curve->ToNurbsCurve());
+			return ByCurve_(curve->ToNurbsCurve());
 		}
 		else if (curve->GetType() == Autodesk::DesignScript::Geometry::Line::typeid)
 		{
-			return ByCurve(safe_cast<Autodesk::DesignScript::Geometry::Line^>(curve));
+			return ByCurve_(safe_cast<Autodesk::DesignScript::Geometry::Line^>(curve));
 		}
 		else if (curve->GetType() == Autodesk::DesignScript::Geometry::NurbsCurve::typeid)
 		{
-			return ByCurve(safe_cast<Autodesk::DesignScript::Geometry::NurbsCurve^>(curve));
+			return ByCurve_(safe_cast<Autodesk::DesignScript::Geometry::NurbsCurve^>(curve));
 		}
 		else if (curve->GetType() == Autodesk::DesignScript::Geometry::PolyCurve::typeid)
 		{
@@ -130,7 +130,7 @@ namespace Topologic
 		}
 		else if (curve->GetType() == Autodesk::DesignScript::Geometry::Curve::typeid) // a generic curve
 		{
-			return ByCurve(curve->ToNurbsCurve());
+			return ByCurve_(curve->ToNurbsCurve());
 		}
 		else
 		{
@@ -380,7 +380,7 @@ namespace Topologic
 		//delete m_pCoreEdge;
 	}
 
-	Edge^ Edge::ByCurve(Autodesk::DesignScript::Geometry::NurbsCurve^ pDynamoNurbsCurve)
+	Edge^ Edge::ByCurve_(Autodesk::DesignScript::Geometry::NurbsCurve^ pDynamoNurbsCurve)
 	{
 		// Transfer the poles/control points
 		array<Autodesk::DesignScript::Geometry::Point^>^ pDynamoControlPoints = pDynamoNurbsCurve->ControlPoints();
@@ -456,7 +456,7 @@ namespace Topologic
 		return gcnew Edge(pCoreEdge);
 	}
 
-	Edge^ Edge::ByCurve(Autodesk::DesignScript::Geometry::Circle^ pDynamoCircle)
+	Edge^ Edge::ByCurve_(Autodesk::DesignScript::Geometry::Circle^ pDynamoCircle)
 	{
 		Autodesk::DesignScript::Geometry::Point^ pDynamoCenterPoint = pDynamoCircle->CenterPoint;
 		double radius = pDynamoCircle->Radius;
@@ -485,7 +485,7 @@ namespace Topologic
 		return gcnew Edge(pCoreEdge);
 	}
 
-	Edge^ Edge::ByCurve(Autodesk::DesignScript::Geometry::Line^ pDynamoLine)
+	Edge^ Edge::ByCurve_(Autodesk::DesignScript::Geometry::Line^ pDynamoLine)
 	{
 		std::list<TopologicCore::Vertex::Ptr> coreVertices;
 		coreVertices.push_back(TopologicCore::Topology::Downcast<TopologicCore::Vertex>((gcnew Vertex(pDynamoLine->StartPoint))->GetCoreTopologicalQuery()));

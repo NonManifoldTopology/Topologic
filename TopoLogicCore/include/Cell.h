@@ -123,6 +123,59 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="kCenterX"></param>
+		/// <param name="kCenterY"></param>
+		/// <param name="kCenterZ"></param>
+		/// <param name="kRadius"></param>
+		/// <returns></returns>
+		static TOPOLOGIC_API std::shared_ptr<Cell> BySphere(const double kCenterX, const double kCenterY, const double kCenterZ, const double kRadius);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kReferencePointX"></param>
+		/// <param name="kReferencePointY"></param>
+		/// <param name="kReferencePointZ"></param>
+		/// <param name="kNormalX"></param>
+		/// <param name="kNormalY"></param>
+		/// <param name="kNormalZ"></param>
+		/// <param name="kXDirectionX"></param>
+		/// <param name="kXDirectionY"></param>
+		/// <param name="kDirectionZ"></param>
+		/// <param name="kRadius"></param>
+		/// <param name="kHeight"></param>
+		/// <returns></returns>
+		static TOPOLOGIC_API std::shared_ptr<Cell> ByCylinder(
+			const double kReferencePointX, const double kReferencePointY, const double kReferencePointZ,
+			const double kNormalX, const double kNormalY, const double kNormalZ,
+			const double kXDirectionX, const double kXDirectionY, const double kDirectionZ,
+			const double kRadius, const double kHeight);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kReferencePointX"></param>
+		/// <param name="kReferencePointY"></param>
+		/// <param name="kReferencePointZ"></param>
+		/// <param name="kNormalX"></param>
+		/// <param name="kNormalY"></param>
+		/// <param name="kNormalZ"></param>
+		/// <param name="kXDirectionX"></param>
+		/// <param name="kXDirectionY"></param>
+		/// <param name="kDirectionZ"></param>
+		/// <param name="kRadius1"></param>
+		/// <param name="kRadius2"></param>
+		/// <param name="kHeight"></param>
+		/// <returns></returns>
+		static TOPOLOGIC_API std::shared_ptr<Cell> ByCone(
+			const double kReferencePointX, const double kReferencePointY, const double kReferencePointZ,
+			const double kNormalX, const double kNormalY, const double kNormalZ,
+			const double kXDirectionX, const double kXDirectionY, const double kDirectionZ,
+			const double kRadius1, const double kRadius2, const double kHeight);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="rkVertices"></param>
 		/// <param name="rkFaceIndices"></param>
 		/// <returns></returns>

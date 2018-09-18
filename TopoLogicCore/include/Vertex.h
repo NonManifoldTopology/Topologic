@@ -24,7 +24,7 @@ namespace TopologicCore
 	};
 
 	/// <summary>
-	/// The representation of a Topological vertex. This class wraps OCCT's TopoDS_Vertex.
+	/// The representation of a topological vertex. This class wraps OCCT's TopoDS_Vertex.
 	/// </summary>
 	class Vertex : public Topology
 	{

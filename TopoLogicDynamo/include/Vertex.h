@@ -12,13 +12,13 @@ namespace Topologic
 	{
 	public:
 		/// <summary>
-		/// Create a vertex by a point.
+		/// Create a vertex by a point. NOTE: This node will be replaced by a single Topology.ByGeometry() node.
 		/// </summary>
 		/// <param name="point">A point.</param>
 		/// <returns name="Vertex">
 		/// A vertex.
 		/// </returns>
-		static Vertex^ ByPoint(Autodesk::DesignScript::Geometry::Point^ point);
+		static Vertex^ ByPoint_(Autodesk::DesignScript::Geometry::Point^ point);
 
 		/// <summary>
 		/// Create a vertex by XYZ coordinates.
@@ -32,7 +32,7 @@ namespace Topologic
 		static Vertex^ ByCoordinates(double x, double y, double z);
 
 		/// <summary>
-		/// Get the list of edges incident to the vertex.
+		/// Get the list of edges incident to the vertex. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.
 		/// </summary>
 		/// <param name="hostTopology"></param>
 		/// <returns name="Edge[]">The edges incident to this vertex</returns>

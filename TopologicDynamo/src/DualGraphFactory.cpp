@@ -11,6 +11,6 @@ namespace Topologic
 		{
 			return nullptr;
 		}
-		return gcnew DualGraph(pCoreDualGraph);
+		return gcnew DualGraph_(pCoreDualGraph);
 	}
 }

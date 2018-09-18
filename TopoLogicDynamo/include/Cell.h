@@ -24,11 +24,11 @@ namespace Topologic
 		static Cell^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces);
 
 		/// <summary>
-		/// Create a cell by a solid.
+		/// Create a cell by a solid. NOTE: This node will be replaced by a single Topology.ByGeometry() node.
 		/// </summary>
 		/// <param name="solid"></param>
 		/// <returns name="Cell"></returns>
-		static Cell^ BySolid(Autodesk::DesignScript::Geometry::Solid^ solid);
+		static Cell^ BySolid_(Autodesk::DesignScript::Geometry::Solid^ solid);
 
 		/// <summary>
 		/// Create a cell from a shell. The shell must be closed, otherwise an exception is thrown.
@@ -55,14 +55,14 @@ namespace Topologic
 		static Cell^ ByLoft(System::Collections::Generic::IEnumerable<Wire^>^ wires);
 
 		/// <summary>
-		/// Get the cellComplexes which contain the cell.
+		/// Get the cellComplexes which contain the cell. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.
 		/// </summary>
 		/// <param name="hostTopology"></param>
 		/// <returns name="CellComplex[]"></returns>
 		List<CellComplex^>^ CellComplexes_(Topology^ hostTopology);
 
 		/// <summary>
-		/// Get the shell constituent to the cell.
+		/// Get the shells constituent to the cell.
 		/// </summary>
 		/// <returns name="Shell[]"></returns>
 		property List<Shell^>^ Shells
@@ -107,7 +107,7 @@ namespace Topologic
 		}
 
 		/// <summary>
-		/// Get the cells adjacent to the cell.
+		/// Get the cells adjacent to the cell. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.
 		/// </summary>
 		/// <param name="hostTopology"></param>
 		/// <returns name="Cell[]"></returns>
@@ -135,19 +135,19 @@ namespace Topologic
 		List<Vertex^>^ SharedVertices(Cell^ cell);
 
 		/// <summary>
-		/// Return the outer boundary (shell) of the cell.
+		/// Return the external boundary (shell) of the cell.
 		/// </summary>
 		/// <returns name="Shell"></returns>
-		property Shell^ OuterBoundary
+		property Shell^ ExternalBoundary
 		{
 			Shell^ get();
 		}
 
 		/// <summary>
-		/// Return the inner boundary (shells) of the cell.
+		/// Return the internal boundary (shells) of the cell.
 		/// </summary>
 		/// <returns name="Shell[]"></returns>
-		property List<Shell^>^ InnerBoundaries
+		property List<Shell^>^ InternalBoundaries
 		{
 			List<Shell^>^ get();
 		}
@@ -182,6 +182,12 @@ namespace Topologic
 		/// </summary>
 		/// <param name="kpCoreCell"></param>
 		Cell(const std::shared_ptr<TopologicCore::Cell>& kpCoreCell);
+
+		static Cell^ BySphere(Autodesk::DesignScript::Geometry::Sphere^ sphere);
+
+		static Cell^ ByCylinder(Autodesk::DesignScript::Geometry::Cylinder^ cylinder);
+
+		static Cell^ ByCone(Autodesk::DesignScript::Geometry::Cone^ cone);
 
 		/// <summary>
 		/// 

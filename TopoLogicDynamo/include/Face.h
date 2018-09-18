@@ -18,28 +18,28 @@ namespace Topologic {
 	{
 	public:
 		/// <summary>
-		/// Get the faces adjacent to the face.
+		/// Get the faces adjacent to the face. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.
 		/// </summary>
 		/// <param name="hostTopology"></param>
 		/// <returns name="Face[]">The faces adjacent to the face</returns>
 		List<Face^>^ AdjacentFaces_(Topology^ hostTopology);
 
 		/// <summary>
-		/// Get the cells incident to the face.
+		/// Get the cells incident to the face. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.
 		/// </summary>
 		/// <param name="hostTopology"></param>
 		/// <returns name="Cell[]">The cells incident to the face</returns>
 		List<Cell^>^ Cells_(Topology^ hostTopology);
 
 		/// <summary>
-		/// Gets the shells incident to the face.
+		/// Gets the shells incident to the face. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.
 		/// </summary>
 		/// <param name="hostTopology"></param>
 		/// <returns name="Shell[]">The shells incident to the face</returns>
 		List<Shell^>^ Shells_(Topology^ hostTopology);
 
 		/// <summary>
-		/// Gets the vertices constituent to the face. 
+		/// Gets the constituent vertices of the face. 
 		/// </summary>
 		/// <returns name="Vertex[]">The vertices consituent to the face</returns>
 		property List<Vertex^>^ Vertices
@@ -50,7 +50,7 @@ namespace Topologic {
 		/// <summary>
 		/// Get the edges constituent to the face.
 		/// </summary>
-		/// <returns name="Edge[]">The edges consituent to the face</returns>
+		/// <returns name="Edge[]">The constituent edges</returns>
 		property List<Edge^>^ Edges
 		{
 			List<Edge^>^ get();
@@ -59,7 +59,7 @@ namespace Topologic {
 		/// <summary>
 		/// Get the wires constituent to the face.
 		/// </summary>
-		/// <returns name="Wire[]">The wires consituent to the face</returns>
+		/// <returns name="Wire[]">The constituent wires</returns>
 		property List<Wire^>^ Wires
 		{
 			List<Wire^>^ get();
@@ -73,7 +73,7 @@ namespace Topologic {
 		double Area();
 
 		/// <summary>
-		/// Create a face by a closed wire. NOTE: This node currently can only create a planar face. To create a curved face, please use BySurface().
+		/// Create a face by a closed wire. NOTE: This node currently can only create a planar face. To create a curved face, please use Topology.ByGeometry().
 		/// </summary>
 		/// <param name="wire">A closed wire. Must be (and internally verified if it is) a Dynamo polygon or a Topologic wire.</param>
 		/// <exception cref="ArgumentException">Thrown if any of the arguments is neither a Dynamo polygon nor a Topologic wire</exception>
@@ -93,15 +93,15 @@ namespace Topologic {
 		/// </summary>
 		/// <param name="edges">The edges. </param>
 		/// <exception cref="ArgumentException">Thrown if any of the arguments is not a Topologic edge</exception>
-		/// <returns name="Face">the created face</returns>
+		/// <returns name="Face">The created face</returns>
 		static Face^ ByEdges(System::Collections::Generic::IEnumerable<Edge^>^ edges);
 
 		/// <summary>
-		/// Create a face by a surface.
+		/// Create a face by a surface. NOTE: This node will be replaced by a single Topology.ByGeometry() node.
 		/// </summary>
 		/// <param name="surface">The surface</param>
 		/// <returns name="Face">The created face</returns>
-		static Face^ BySurface(Autodesk::DesignScript::Geometry::Surface^ surface);
+		static Face^ BySurface_(Autodesk::DesignScript::Geometry::Surface^ surface);
 
 		/// <summary>
 		/// 
@@ -122,23 +122,23 @@ namespace Topologic {
 		/// Return the shared vertices between two faces.
 		/// </summary>
 		/// <param name="face">Another face</param>
-		/// <returns name="Vertex[][]">The shared vertices</returns>
+		/// <returns name="Vertex[]">The shared vertices</returns>
 		List<Vertex^>^ SharedVertices(Face^ face);
 
 		/// <summary>
-		/// Return the outer boundary (wire) of the face.
+		/// Return the external boundary (wire) of the face.
 		/// </summary>
 		/// <returns name="Wire"></returns>
-		property Wire^ OuterBoundary
+		property Wire^ ExternalBoundary
 		{
 			Wire^ get();
 		}
 
 		/// <summary>
-		/// Return the inner boundaries (wires) of the face.
+		/// Return the internal boundaries (wires) of the face.
 		/// </summary>
 		/// <returns name="Wire[]"></returns>
-		property List<Wire^>^ InnerBoundaries
+		property List<Wire^>^ InternalBoundaries
 		{
 			List<Wire^>^ get();
 		}
@@ -179,7 +179,8 @@ namespace Topologic {
 		/// </summary>
 		/// <param name="wire"></param>
 		/// <returns name="Face"></returns>
-		Face^ TrimByWire(Wire^ wire);
+		[IsVisibleInDynamoLibrary(false)]
+		Face^ TrimByWire_(Wire^ wire);
 
 		property Object^ Geometry
 		{

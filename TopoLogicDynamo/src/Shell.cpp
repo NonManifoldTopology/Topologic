@@ -112,12 +112,12 @@ namespace Topologic
 		return gcnew Shell(TopologicCore::Shell::ByFaces(coreFaces));
 	}
 
-	Shell^ Shell::ByPolySurface(Autodesk::DesignScript::Geometry::PolySurface^ polySurface)
+	Shell^ Shell::ByPolySurface_(Autodesk::DesignScript::Geometry::PolySurface^ polySurface)
 	{
 		List<Face^>^ pFaces = gcnew List<Face^>();
 		for each(Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface in polySurface->Surfaces())
 		{
-			pFaces->Add(Face::BySurface(pDynamoSurface));
+			pFaces->Add(Face::BySurface_(pDynamoSurface));
 		}
 		return ByFaces(pFaces);
 	}
@@ -197,6 +197,7 @@ namespace Topologic
 		return faces;
 	}
 
+	//Dictionary<String^, Object^>^ Shell::ByFacePlanarization_(Face^ face, int iteration, int numEdgeSamples, System::Collections::Generic::IEnumerable<double>^ uValues, System::Collections::Generic::IEnumerable<double>^ vValues, double tolerance, bool capBottom, bool capTop)
 	Shell^ Shell::ByFacePlanarization_(Face^ face, int iteration, int numEdgeSamples, System::Collections::Generic::IEnumerable<double>^ uValues, System::Collections::Generic::IEnumerable<double>^ vValues, double tolerance, bool capBottom, bool capTop)
 	{
 		std::list<TopologicCore::Vertex::Ptr> coreVertices;
@@ -259,7 +260,6 @@ namespace Topologic
 		pDictionary->Add("Shell", pShell);
 		//return pDictionary;
 		return pShell;
-		//return faces;
 	}
 
 	bool Shell::IsClosed::get()
