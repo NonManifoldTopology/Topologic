@@ -101,6 +101,15 @@ namespace TopologicCore
 		}
 
 		occtSewing.Perform();
+		if (occtSewing.SewedShape().IsNull())
+		{
+			throw std::exception("A null shape is created.");
+		}
+		TopAbs_ShapeEnum type = occtSewing.SewedShape().ShapeType();
+		if (type != TopAbs_SHELL)
+		{
+			throw std::exception("Fails to create a shell from faces.");
+		}
 		Shell::Ptr pShell = std::make_shared<Shell>(TopoDS::Shell(occtSewing.SewedShape()));
 
 		// HACK: add the v1 contents to the current shell faces.

@@ -109,7 +109,16 @@ namespace Topologic
 			coreFaces.push_back(TopologicCore::Topology::Downcast<TopologicCore::Face>(pFace->GetCoreTopologicalQuery()));
 		}
 
-		return gcnew Shell(TopologicCore::Shell::ByFaces(coreFaces));
+		TopologicCore::Shell::Ptr pCoreShell = nullptr;
+		try {
+			pCoreShell = TopologicCore::Shell::ByFaces(coreFaces);
+		}
+		catch (const std::exception& rkException)
+		{
+			throw gcnew Exception(gcnew String(rkException.what()));
+		}
+
+		return gcnew Shell(pCoreShell);
 	}
 
 	Shell^ Shell::ByPolySurface_(Autodesk::DesignScript::Geometry::PolySurface^ polySurface)

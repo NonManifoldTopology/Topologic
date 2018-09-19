@@ -21,7 +21,16 @@ namespace Topologic
 			coreFaces.push_back(TopologicCore::Topology::Downcast<TopologicCore::Face>(pFace->GetCoreTopologicalQuery()));
 		}
 
-		return gcnew Cell(TopologicCore::Cell::ByFaces(coreFaces));
+		TopologicCore::Cell::Ptr pCoreCell = nullptr;
+		try {
+			pCoreCell = TopologicCore::Cell::ByFaces(coreFaces);
+		}
+		catch (const std::exception& rkException)
+		{
+			throw gcnew Exception(gcnew String(rkException.what()));
+		}
+
+		return gcnew Cell(pCoreCell);
 	}
 
 	Cell^ Cell::BySolid_(Autodesk::DesignScript::Geometry::Solid^ solid)
