@@ -6,9 +6,11 @@
   <ItemGroup>
     <ClInclude Include="include\TopologicEnergy.h" />
     <ClInclude Include="include\Model.h" />
+    <ClInclude Include="include\SimulationResult.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TopologicEnergy.cpp" />
     <ClCompile Include="src\Model.cpp" />
+    <ClCompile Include="src\SimulationResult.cpp" />
   </ItemGroup>
 </Project>

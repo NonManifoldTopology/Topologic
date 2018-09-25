@@ -98,7 +98,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>include/;$(SolutionDir);</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
     </ClCompile>
@@ -135,7 +135,7 @@ copy "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>include/;$(SolutionDir);</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
     </ClCompile>
@@ -149,6 +149,7 @@ copy "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\Model.h" />
+    <ClInclude Include="include\SimulationResult.h" />
     <ClInclude Include="include\TopologicEnergy.h" />
   </ItemGroup>
   <ItemGroup>
@@ -157,6 +158,9 @@ copy "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="DSCoreNodes">
+      <HintPath>..\references\Dynamo-2.0.1\DSCoreNodes.dll</HintPath>
+    </Reference>
     <Reference Include="DynamoCore">
       <HintPath>..\references\Dynamo-2.0.1\DynamoCore.dll</HintPath>
       <Private>false</Private>
@@ -164,6 +168,9 @@ copy "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"
     <Reference Include="DynamoServices">
       <HintPath>..\references\Dynamo-2.0.1\DynamoServices.dll</HintPath>
       <Private>false</Private>
+    </Reference>
+    <Reference Include="GeometryColor">
+      <HintPath>..\references\Dynamo-2.0.1\GeometryColor.dll</HintPath>
     </Reference>
     <Reference Include="OpenStudio">
       <HintPath>..\references\OpenStudio-2.5.0\OpenStudio.dll</HintPath>
@@ -177,6 +184,7 @@ copy "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Model.cpp" />
+    <ClCompile Include="src\SimulationResult.cpp" />
     <ClCompile Include="src\TopologicEnergy.cpp" />
   </ItemGroup>
   <ItemGroup>

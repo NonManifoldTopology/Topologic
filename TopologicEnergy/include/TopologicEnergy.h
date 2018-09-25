@@ -56,7 +56,8 @@ namespace TopologicEnergy
 		/// </summary>
 		/// <param name="model"></param>
 		/// <param name="openStudioExePath"></param>
-		static void PerformEnergyAnalysis(Model^ model, String^ openStudioExePath);
+		/// <returns></returns>
+		static List<Modifiers::GeometryColor^>^ PerformEnergyAnalysis(Model^ model, String^ openStudioExePath);
 
 		/// <summary>
 		/// 
@@ -153,6 +154,19 @@ namespace TopologicEnergy
 
 		static List<OpenStudio::BuildingStory^>^ CreateBuildingStories(OpenStudio::Model^ osModel, int numFloors);
 
+		static OpenStudio::SqlFile^ CreateSqlFile(OpenStudio::Model^ osModel, String^ sqlFilePath);
+
+		static List<Modifiers::GeometryColor^>^ AnalyzeSqlFile(OpenStudio::SqlFile^ osSqlFile, OpenStudio::Model^ osModel, List<OpenStudio::Space^>^ spaces, List<Cell^>^ buildingCells,
+			String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPUnits);
+			//double minValue, double maxValue);
+
+		static double DoubleValueFromQuery(OpenStudio::SqlFile^ sqlFile, String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPRowName, String^ EPUnits);
+		
+		static String^ StringValueFromQuery(OpenStudio::SqlFile^ sqlFile, String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPRowName, String^ EPUnits);
+		
+		static int IntValueFromQuery(OpenStudio::SqlFile^ sqlFile, String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPRowName, String^ EPUnits);
+
+		static DSCore::Color^ GetColor(double ratio);
 
 		static List<OpenStudio::BuildingStory^>^ buildingStories;
 		static OpenStudio::DefaultConstructionSet^ defaultConstructionSet;
