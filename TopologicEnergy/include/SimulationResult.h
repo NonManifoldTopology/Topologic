@@ -25,7 +25,7 @@ namespace TopologicEnergy
 		/// </summary>
 		/// <param name="cells"></param>
 		/// <param name="oswPath">Used to deduce the SQL path</param>
-		SimulationResult(List<Topologic::Cell^>^ cells, System::String^ oswPath, OpenStudio::Model^ osModel, List<OpenStudio::Space^>^ osSpaces);
+		SimulationResult(List<Topologic::Cell^>^ cells, System::String^ oswPath, OpenStudio::Model^ osModel, List<OpenStudio::Space^>^ osSpaces, String^ timestamp);
 		~SimulationResult();
 
 	protected:

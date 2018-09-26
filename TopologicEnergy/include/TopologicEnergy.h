@@ -23,33 +23,33 @@ namespace TopologicEnergy
 		/// Create a TopologicEnergy model from a Topologic shape.
 		/// </summary>
 		/// <param name="building"></param>
-		/// <param name="buildingType"></param>
-		/// <param name="buildingName"></param>
-		/// <param name="spaceType"></param>
+		/// <param name="shadingSurfaces"></param>
 		/// <param name="floorLevels"></param>
+		/// <param name="buildingName"></param>
+		/// <param name="buildingType"></param>
+		/// <param name="defaultSpaceType"></param>
 		/// <param name="glazingRatio"></param>
+		/// <param name="coolingTemp"></param>
+		/// <param name="heatingTemp"></param>
 		/// <param name="weatherFilePath">Path to a .epw file</param>
 		/// <param name="designDayFilePath">Path to a .ddy file</param>
 		/// <param name="openStudioTemplatePath">Path to a template .osm file</param>
-		/// <param name="openStudioOutputPath">Path to an output .osm file</param>
-		/// <param name="coolingTemp"></param>
-		/// <param name="heatingTemp"></param>
-		/// <param name="shading"></param>
-		/// <returns name="Model"></returns>
+		/// <param name="openStudioOutputPath">Path to an output .osm file. Timestamp will be added to the path.</param>
+		/// <returns></returns>
 		static Model^ CreateEnergyModel(
 			CellComplex^ building,
-			[Autodesk::DesignScript::Runtime::DefaultArgument("Commercial")] String^ buildingType,
-			[Autodesk::DesignScript::Runtime::DefaultArgument("Default Building")] String^ buildingName,
-			[Autodesk::DesignScript::Runtime::DefaultArgument("defaultSpaceType")] String^ spaceType,
+			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Cluster^ shadingSurfaces,
 			List<double>^ floorLevels,
+			[Autodesk::DesignScript::Runtime::DefaultArgument("Building")] String^ buildingName,
+			[Autodesk::DesignScript::Runtime::DefaultArgument("Commercial")] String^ buildingType,
+			[Autodesk::DesignScript::Runtime::DefaultArgument("ASHRAE 189.1-2009 ClimateZone 4-8 MediumOffice")] String^ defaultSpaceType,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("-1")] double glazingRatio,
-			String^ weatherFilePath,
-			String^ designDayFilePath,
-			String^ openStudioTemplatePath,
-			String^ openStudioOutputPath,
 			double coolingTemp,
 			double heatingTemp,
-			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Cluster^ shading
+			[Autodesk::DesignScript::Runtime::DefaultArgument(".\\TopologicEnergy-files\\GBR_London.Gatwick.037760_IWEC.epw")] String^ weatherFilePath,
+			[Autodesk::DesignScript::Runtime::DefaultArgument(".\\TopologicEnergy-files\\GBR_London.Gatwick.037760_IWEC.ddy")] String^ designDayFilePath,
+			[Autodesk::DesignScript::Runtime::DefaultArgument(".\\TopologicEnergy-files\\MinimalTemplate120.osm")] String^ openStudioTemplatePath,
+			[Autodesk::DesignScript::Runtime::DefaultArgument(".\\TopologicEnergy-files\\output.osm")] String^ openStudioOutputPath
 			);
 
 		/// <summary>

@@ -3,13 +3,13 @@
 
 namespace TopologicEnergy
 {
-	SimulationResult::SimulationResult(List<Topologic::Cell^>^ cells, System::String^ oswPath, OpenStudio::Model^ osModel, List<OpenStudio::Space^>^ osSpaces)
+	SimulationResult::SimulationResult(List<Topologic::Cell^>^ cells, System::String^ oswPath, OpenStudio::Model^ osModel, List<OpenStudio::Space^>^ osSpaces, String^ timestamp)
 		: m_cells(cells)
 		, m_osModel(osModel)
 		, m_osSpaces(osSpaces)
 	{
 		System::String^ directory = System::IO::Path::GetDirectoryName(oswPath);
-		System::String^ sqlPath = directory + "\\run\\eplusout.sql";
+		System::String^ sqlPath = directory + "\\run_" + timestamp + "\\eplusout.sql";
 		m_osSqlFile = gcnew OpenStudio::SqlFile(gcnew OpenStudio::Path(sqlPath));
 		m_osModel->setSqlFile(m_osSqlFile);
 	}

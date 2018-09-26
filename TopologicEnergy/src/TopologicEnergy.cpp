@@ -20,18 +20,19 @@ namespace TopologicEnergy
 
 	Model^ TopologicEnergy::CreateEnergyModel(
 		CellComplex^ building,
-		String ^ buildingType, 
-		String ^ buildingName, 
-		String ^ spaceType, 
-		List<double>^ floorLevels, 
+		Cluster^ shadingSurfaces,
+		List<double>^ floorLevels,
+		String^ buildingName,
+		String^ buildingType,
+		String^ defaultSpaceType,
 		double glazingRatio,
-		String^ weatherFilePath,
-		String ^ designDayFilePath,
-		String ^ openStudioTemplatePath,
-		String^ openStudioOutputPath,
-		double coolingTemp, 
+		double coolingTemp,
 		double heatingTemp,
-		Cluster^ shadingCluster)
+		String^ weatherFilePath,
+		String^ designDayFilePath,
+		String^ openStudioTemplatePath,
+		String^ openStudioOutputPath
+	)
 	{
 		numOfApertures = 0;
 		numOfAppliedApertures = 0;
@@ -42,7 +43,7 @@ namespace TopologicEnergy
 
 		double buildingHeight = Enumerable::Max(floorLevels);
 		int numFloors = floorLevels->Count - 1;
-		OpenStudio::Building^ osBuilding = ComputeBuilding(osModel, buildingName, buildingType, buildingHeight, numFloors, spaceType);
+		OpenStudio::Building^ osBuilding = ComputeBuilding(osModel, buildingName, buildingType, buildingHeight, numFloors, defaultSpaceType);
 		List<Cell^>^ pBuildingCells = building->Cells;
 
 		// Create OpenStudio spaces
@@ -72,10 +73,10 @@ namespace TopologicEnergy
 		}
 
 		// Create shading surfaces
-		if (shadingCluster != nullptr)
+		if (shadingSurfaces != nullptr)
 		{
 			OpenStudio::ShadingSurfaceGroup^ osShadingGroup = gcnew OpenStudio::ShadingSurfaceGroup(osModel);
-			List<Face^>^ contextFaces = shadingCluster->Faces;
+			List<Face^>^ contextFaces = shadingSurfaces->Faces;
 			int faceIndex = 1;
 			for each(Face^ contextFace in contextFaces)
 			{
@@ -85,8 +86,13 @@ namespace TopologicEnergy
 
 		osModel->purgeUnusedResourceObjects();
 
+		// Add timestamp to the output file name
+		String^ openStudioOutputTimeStampPath = Path::GetDirectoryName(openStudioOutputPath) + "\\" +
+			Path::GetFileNameWithoutExtension(openStudioOutputPath) + "_" +
+			DateTime::Now.ToString("yyyy-MM-dd_HH-mm-ss-fff") + 
+			Path::GetExtension(openStudioOutputPath);
 		// Save model to an OSM file
-		bool saveCondition = SaveModel(osModel, openStudioOutputPath);
+		bool saveCondition = SaveModel(osModel, openStudioOutputTimeStampPath);
 
 		if (!saveCondition)
 		{
@@ -95,16 +101,16 @@ namespace TopologicEnergy
 
 		OpenStudio::WorkflowJSON^ workflow = gcnew OpenStudio::WorkflowJSON();
 		try{
-			String^ osmFilename = Path::GetFileNameWithoutExtension(openStudioOutputPath);
-			String^ osmDirectory = Path::GetDirectoryName(openStudioOutputPath);
+			String^ osmFilename = Path::GetFileNameWithoutExtension(openStudioOutputTimeStampPath);
+			String^ osmDirectory = Path::GetDirectoryName(openStudioOutputTimeStampPath);
 			String^ oswPath = osmDirectory + "\\" + osmFilename + ".osw";
 			OpenStudio::Path^ osOswPath = gcnew OpenStudio::Path(oswPath);
-			workflow->setSeedFile(gcnew OpenStudio::Path(openStudioOutputPath));
+			workflow->setSeedFile(gcnew OpenStudio::Path(openStudioOutputTimeStampPath));
 			workflow->setWeatherFile(gcnew OpenStudio::Path());
 			workflow->saveAs(osOswPath);
 
 			// Create a TopologicEnergy model
-			return Model::ByOsmPathOswPath(openStudioOutputPath, oswPath, osModel, pBuildingCells, osSpaces);
+			return Model::ByOsmPathOswPath(openStudioOutputTimeStampPath, oswPath, osModel, pBuildingCells, osSpaces);
 		}
 		catch (...)
 		{
@@ -112,7 +118,6 @@ namespace TopologicEnergy
 		}
 	}
 
-	//List<Modifiers::GeometryColor^>^ TopologicEnergy::PerformEnergyAnalysis(Model ^ model, String ^ openStudioExePath)
 	SimulationResult^ TopologicEnergy::PerformEnergyAnalysis(Model ^ model, String ^ openStudioExePath)
 	{
 		// https://stackoverflow.com/questions/5168612/launch-program-with-parameters
@@ -123,26 +128,19 @@ namespace TopologicEnergy
 		Process^ process = Process::Start(startInfo);
 		process->WaitForExit();
 
+		// Rename run and reports directory, add timestamp
+		String^ timestamp = DateTime::Now.ToString("yyyy-MM-dd_HH-mm-ss-fff");
+		Directory::Move(startInfo->WorkingDirectory + "\\run", startInfo->WorkingDirectory + "\\run_" + timestamp);
+		Directory::Move(startInfo->WorkingDirectory + "\\reports", startInfo->WorkingDirectory + "\\reports_" + timestamp);
+
 		SimulationResult^ simulationResult = gcnew SimulationResult(
 			model->BuildingCells,
 			model->OSWFilePath,
 			model->OsModel,
-			model->OsSpaces);
+			model->OsSpaces,
+			timestamp);
 
 		return simulationResult;
-
-		/*List<Modifiers::GeometryColor^>^ dynamoGeometryColors = AnalyzeSqlFile(
-			gcnew OpenStudio::SqlFile(gcnew OpenStudio::Path("C:\\Users\\Nicholas Wardhana\\Documents\\NMT\\2016-NMT-architecture\\files\\OSM\\run\\eplusout.sql")),
-			model->OsModel,
-			model->OsSpaces, 
-			model->BuildingCells,
-			model->EPReportName,
-			model->EPReportForString,
-			model->EPTableName,
-			model->EPColumnName,
-			model->EPUnits);
-
-		return dynamoGeometryColors;*/
 	}
 
 	bool TopologicEnergy::SaveModel(OpenStudio::Model^ osModel, String^ osmPathName)
@@ -276,7 +274,6 @@ namespace TopologicEnergy
 
 	OpenStudio::SqlFile^ TopologicEnergy::CreateSqlFile(OpenStudio::Model ^ osModel, String^ sqlFilePath)
 	{
-		// TODO: Add timestamp to this file path
 		OpenStudio::Path^ osSqlFilePath = gcnew OpenStudio::Path(sqlFilePath);
 		OpenStudio::SqlFile^ osSqlFile = gcnew OpenStudio::SqlFile(osSqlFilePath);
 		if (osSqlFile == nullptr)
