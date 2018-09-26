@@ -1,5 +1,6 @@
 #include "TopologicEnergy.h"
 #include <Model.h>
+#include <SimulationResult.h>
 
 using namespace System::Diagnostics;
 using namespace System::IO;
@@ -92,14 +93,6 @@ namespace TopologicEnergy
 			throw gcnew Exception("Failed to save the OSM file.");
 		}
 
-		OpenStudio::SqlFile^ osSqlFile = CreateSqlFile(osModel, "C:\\Users\\Nicholas Wardhana\\Documents\\Visual Studio 2017\\test.sql");
-
-		String^ EPReportName = gcnew String("HVACSizingSummary");
-		String^ EPReportForString = gcnew String("Entire Facility");
-		String^ EPTableName = gcnew String("Zone Sensible Cooling");
-		String^ EPColumnName = gcnew String("Calculated Design Load");
-		String^ EPUnits = gcnew String("W");
-
 		OpenStudio::WorkflowJSON^ workflow = gcnew OpenStudio::WorkflowJSON();
 		try{
 			String^ osmFilename = Path::GetFileNameWithoutExtension(openStudioOutputPath);
@@ -111,8 +104,7 @@ namespace TopologicEnergy
 			workflow->saveAs(osOswPath);
 
 			// Create a TopologicEnergy model
-			return Model::ByOsmPathOswPath(openStudioOutputPath, oswPath, osModel, pBuildingCells, osSpaces,
-				EPReportName, EPReportForString, EPTableName, EPColumnName, EPUnits);
+			return Model::ByOsmPathOswPath(openStudioOutputPath, oswPath, osModel, pBuildingCells, osSpaces);
 		}
 		catch (...)
 		{
@@ -120,7 +112,8 @@ namespace TopologicEnergy
 		}
 	}
 
-	List<Modifiers::GeometryColor^>^ TopologicEnergy::PerformEnergyAnalysis(Model ^ model, String ^ openStudioExePath)
+	//List<Modifiers::GeometryColor^>^ TopologicEnergy::PerformEnergyAnalysis(Model ^ model, String ^ openStudioExePath)
+	SimulationResult^ TopologicEnergy::PerformEnergyAnalysis(Model ^ model, String ^ openStudioExePath)
 	{
 		// https://stackoverflow.com/questions/5168612/launch-program-with-parameters
 		String^ args = "run -w \"" + model->OSWFilePath + "\"";
@@ -130,7 +123,15 @@ namespace TopologicEnergy
 		Process^ process = Process::Start(startInfo);
 		process->WaitForExit();
 
-		List<Modifiers::GeometryColor^>^ dynamoGeometryColors = AnalyzeSqlFile(
+		SimulationResult^ simulationResult = gcnew SimulationResult(
+			model->BuildingCells,
+			model->OSWFilePath,
+			model->OsModel,
+			model->OsSpaces);
+
+		return simulationResult;
+
+		/*List<Modifiers::GeometryColor^>^ dynamoGeometryColors = AnalyzeSqlFile(
 			gcnew OpenStudio::SqlFile(gcnew OpenStudio::Path("C:\\Users\\Nicholas Wardhana\\Documents\\NMT\\2016-NMT-architecture\\files\\OSM\\run\\eplusout.sql")),
 			model->OsModel,
 			model->OsSpaces, 
@@ -141,7 +142,7 @@ namespace TopologicEnergy
 			model->EPColumnName,
 			model->EPUnits);
 
-		return dynamoGeometryColors;
+		return dynamoGeometryColors;*/
 	}
 
 	bool TopologicEnergy::SaveModel(OpenStudio::Model^ osModel, String^ osmPathName)
@@ -426,7 +427,6 @@ namespace TopologicEnergy
 
 		return dynamoGeometryColors;
 	}
-
 
 	double TopologicEnergy::DoubleValueFromQuery(OpenStudio::SqlFile^ sqlFile, String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPRowName, String^ EPUnits)
 	{
