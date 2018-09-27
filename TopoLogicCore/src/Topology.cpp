@@ -214,16 +214,7 @@ namespace TopologicCore
 
 	Topology::~Topology()
 	{
-		/*m_contents.clear();
-		m_contexts.clear();*/
 
-		/*for (AttributeMapIterator attributeMapIterator = m_attributeMap.begin();
-			attributeMapIterator != m_attributeMap.end();
-			attributeMapIterator++)
-		{
-			delete attributeMapIterator->second;
-		}*/
-		//m_attributeMap.clear();
 	}
 
 	Topology::Ptr Topology::ByGeometry(Handle(Geom_Geometry) pGeometry)

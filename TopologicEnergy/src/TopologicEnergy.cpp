@@ -37,6 +37,7 @@ namespace TopologicEnergy
 		numOfApertures = 0;
 		numOfAppliedApertures = 0;
 		subsurfaceCounter = 1;
+		CellComplex^ buildingCopy = building->Copy<CellComplex^>();
 
 		// Create an OpenStudio model from the template, EPW, and DDY
 		OpenStudio::Model^ osModel = GetModelFromTemplate(openStudioTemplatePath, weatherFilePath, designDayFilePath);
@@ -44,7 +45,7 @@ namespace TopologicEnergy
 		double buildingHeight = Enumerable::Max(floorLevels);
 		int numFloors = floorLevels->Count - 1;
 		OpenStudio::Building^ osBuilding = ComputeBuilding(osModel, buildingName, buildingType, buildingHeight, numFloors, defaultSpaceType);
-		List<Cell^>^ pBuildingCells = building->Cells;
+		List<Cell^>^ pBuildingCells = buildingCopy->Cells;
 
 		// Create OpenStudio spaces
 		List<OpenStudio::Space^>^ osSpaces = gcnew List<OpenStudio::Space^>();
@@ -54,7 +55,7 @@ namespace TopologicEnergy
 			OpenStudio::Space^ osSpace = AddSpace(
 				spaceNumber,
 				buildingCell,
-				building,
+				buildingCopy,
 				osModel,
 				Autodesk::DesignScript::Geometry::Vector::ZAxis(),
 				buildingHeight,
@@ -63,6 +64,10 @@ namespace TopologicEnergy
 				heatingTemp,
 				coolingTemp
 			);
+
+			Dictionary<String^, Object^>^ attributes = gcnew Dictionary<String^, Object^>();
+			attributes->Add("Name", osSpace->nameString());
+			buildingCell->AddAttributesNoCopy(attributes);
 
 			for each(OpenStudio::Space^ osExistingSpace in osSpaces)
 			{
@@ -118,8 +123,13 @@ namespace TopologicEnergy
 		}
 	}
 
-	SimulationResult^ TopologicEnergy::PerformEnergyAnalysis(Model ^ model, String ^ openStudioExePath)
+	SimulationResult^ TopologicEnergy::PerformEnergyAnalysis(bool run, Model ^ model, String ^ openStudioExePath)
 	{
+		if (!run)
+		{
+			return nullptr;
+		}
+
 		// https://stackoverflow.com/questions/5168612/launch-program-with-parameters
 		String^ args = "run -w \"" + model->OSWFilePath + "\"";
 		System::Diagnostics::ProcessStartInfo^ startInfo = gcnew ProcessStartInfo(openStudioExePath, args);

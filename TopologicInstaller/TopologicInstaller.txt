@@ -78,7 +78,7 @@ Section "TopologicDynamo" TopologicDynamo
   
   ;ADD YOUR OWN FILES HERE...
   File ..\output\x64\Release\Topologic.dll
-  File ..\output\x64\Release\Topologic.customization.dll
+  ;File ..\output\x64\Release\Topologic.customization.dll
   File vc_redist.x64.exe
   
   ;Check if Revit 2017 exists.

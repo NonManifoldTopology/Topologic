@@ -3,7 +3,6 @@
 #include "Utilities.h"
 
 #include <TopologicCore/include/Utilities.h>
-#include <TopologicCore/include/Topology.h>
 
 #include <TopoDS_Shape.hxx>
 
@@ -14,7 +13,6 @@
 namespace TopologicSupport
 {
 	class Attribute;
-	class AttributeMap;
 
 	class AttributeManager
 	{
@@ -28,25 +26,21 @@ namespace TopologicSupport
 			return instance;
 		}
 
-		TOPOLOGIC_SUPPORT_API void AddAttribute(const TopoDS_Shape& rkOcctShape, const std::string& rkKey, const std::shared_ptr<Attribute>& kpAttribute);
+		TOPOLOGIC_SUPPORT_API void Add(const TopoDS_Shape& rkOcctShape, const std::string& kAttributeName, const std::shared_ptr<Attribute>& kpAttribute);
 
-		TOPOLOGIC_SUPPORT_API void AddAttributeMap(const TopologicCore::Topology::Ptr& kpTopology, const std::shared_ptr<AttributeMap>& rkAttributeMap);
-		
-		TOPOLOGIC_SUPPORT_API void AddAttributeMap(const TopoDS_Shape& rkOcctShape, const std::shared_ptr<AttributeMap>& rkAttributeMap);
+		TOPOLOGIC_SUPPORT_API void Remove(const TopoDS_Shape& rkOcctShape, const std::string& kAttributeName);
 
-		TOPOLOGIC_SUPPORT_API void GetAttributeMap(const TopologicCore::Topology::Ptr& kpTopology, std::shared_ptr<AttributeMap>& rAttributeMap);
+		TOPOLOGIC_SUPPORT_API std::shared_ptr<Attribute> Find(const TopoDS_Shape& rkOcctShape, const std::string& rkAttributeName);
 
-		TOPOLOGIC_SUPPORT_API void GetAttributeMap(const TopoDS_Shape& rkOcctShape, std::shared_ptr<AttributeMap>& rAttributeMap);
-
-		TOPOLOGIC_SUPPORT_API void Remove(const TopoDS_Shape& rkOcctShape, const std::string& rkKey);
-
-		TOPOLOGIC_SUPPORT_API bool Find(const TopoDS_Shape& rkOcctShape, const std::string& rkKey, std::shared_ptr<Attribute>& rAttributes);
+		TOPOLOGIC_SUPPORT_API bool FindAll(const TopoDS_Shape & rkOcctShape, std::map<std::string, std::shared_ptr<Attribute>>& rAttributes);
 
 		TOPOLOGIC_SUPPORT_API void ClearOne(const TopoDS_Shape& rkOcctShape);
 
 		TOPOLOGIC_SUPPORT_API void ClearAll();
 
+		TOPOLOGIC_SUPPORT_API void CopyAttributes(const TopoDS_Shape& rkOcctShape1, const TopoDS_Shape& rkOcctShape2);
+
 	protected:
-		std::map<TopoDS_Shape, std::shared_ptr<AttributeMap>, OcctShapeComparator> m_occtShapeToAttributesMap;
+		std::map<TopoDS_Shape, std::map<std::string, std::shared_ptr<Attribute>>, OcctShapeComparator> m_occtShapeToAttributesMap;
 	};
 }

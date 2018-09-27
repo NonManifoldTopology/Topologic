@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Topology.h>
-
 #include <TopologicCore/include/Cell.h>
+
+#include "Topology.h"
 
 namespace Topologic
 {

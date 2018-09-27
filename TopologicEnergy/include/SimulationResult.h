@@ -15,9 +15,24 @@ namespace TopologicEnergy
 			List<Topologic::Cell^>^ get();
 		}
 
-		List<Modifiers::GeometryColor^>^ GeometryQuery(String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPUnits);
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="EPReportName"></param>
+		/// <param name="EPReportForString"></param>
+		/// <param name="EPTableName"></param>
+		/// <param name="EPColumnName"></param>
+		/// <param name="EPUnits"></param>
+		/// <returns></returns>
+		List<Topologic::Cell^>^ Query(String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPUnits);
 
-		List<double>^ ValueQuery(String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPUnits);
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="buildingCells"></param>
+		/// <param name="alpha"></param>
+		/// <returns></returns>
+		static List<Modifiers::GeometryColor^>^ Display(List<Topologic::Cell^> buildingCells, int alpha);
 
 	public protected:
 		/// <summary>

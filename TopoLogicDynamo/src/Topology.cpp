@@ -29,8 +29,10 @@
 #include <DualGraphFactory.h>
 #include <ApertureFactory.h>
 
-#include <TopologicSupport/include/AttributeMap.h>
 #include <TopologicSupport/include/AttributeManager.h>
+#include <TopologicSupport/include/IntAttribute.h>
+#include <TopologicSupport/include/DoubleAttribute.h>
+#include <TopologicSupport/include/StringAttribute.h>
 
 namespace Topologic
 {
@@ -158,15 +160,6 @@ namespace Topologic
 		return pTopologies;
 	}
 
-	Support::AttributeMap^ Topology::AttributeMap::get()
-	{
-		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		TopologicSupport::AttributeMap::Ptr pAttributeMap = nullptr;
-		TopologicSupport::AttributeManager::GetInstance().GetAttributeMap(pCoreTopology, pAttributeMap);
-		
-		return gcnew Support::AttributeMap(pAttributeMap);
-	}
-
 	bool Topology::ExportToBRep(String^ path)
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
@@ -225,6 +218,19 @@ namespace Topologic
 		return TopologyFactoryManager::Instance->Find(guid)->Create(TopologicCore::TopologyPtr(kpCoreTopology));
 	}
 
+	generic <class T>
+	T Topology::Copy()
+	{
+		TopologicCore::Topology::Ptr pCoreTopology =
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->Copy();
+
+		TopologicSupport::AttributeManager::GetInstance().CopyAttributes(pCoreTopology->GetOcctShape(), pCoreCopyTopology->GetOcctShape());
+		
+		Topology^ topology = ByCoreTopology(pCoreCopyTopology);
+		return safe_cast<T>(topology);
+	}
+
 	void Topology::RegisterFactory(const TopologicCore::Topology::Ptr & kpCoreTopology, TopologyFactory^ topologyFactory)
 	{
 		TopologyFactoryManager::Instance->Add(kpCoreTopology, topologyFactory);
@@ -265,13 +271,172 @@ namespace Topologic
 
 	}
 
-	Topology^ Topology::AddAttributeMap(Support::AttributeMap ^ attributeMap)
+	Topology^ Topology::AddAttributes(Dictionary<String^, Object^>^ attributes)
 	{
-		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		TopologicSupport::AttributeMap::Ptr supportAttributeMap = *attributeMap->GetSupportAttributeMap();
-		TopologicSupport::AttributeManager::GetInstance().AddAttributeMap(pCoreTopology, supportAttributeMap);
+		// 1. Copy the core topology
+		TopologicCore::Topology::Ptr pCoreTopology =
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->Copy();
+		Topology^ copyTopology = Topology::ByCoreTopology(pCoreCopyTopology);
+		copyTopology->AddAttributesNoCopy(attributes);
+
+		return copyTopology;
+	}
+
+	Topology ^ Topology::AddAttributesNoCopy(Dictionary<String^, Object^>^ attributes)
+	{
+		TopologicCore::Topology::Ptr pCoreTopology =
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+
+		// 1. Check attributes. Can only handle int, double, and String.
+		typedef long long int ^ IntHandle;
+		System::Type^ intHandleType = IntHandle::typeid;
+		typedef byte^ ByteHandle;
+		System::Type^ byteHandleType = ByteHandle::typeid;
+		typedef double ^ DoubleHandle;
+		System::Type^ doubleHandleType = DoubleHandle::typeid;
+		System::Type^ stringHandleType = String::typeid;
+		int i = -1;
+		for each(KeyValuePair<String^, Object^>^ entry in attributes)
+		{
+			i++;
+			System::Type^ entryValueType = entry->Value->GetType();
+			if (entryValueType == intHandleType || entryValueType == byteHandleType)
+			{
+				continue;
+			}
+
+			if (entryValueType == doubleHandleType)
+			{
+				continue;
+			}
+
+			if (entryValueType == stringHandleType)
+			{
+				continue;
+			}
+
+			throw gcnew Exception("Cannot create an attribute from attribute number " + i.ToString());
+		}
+
+		// 3. Add the attributes
+		for each(KeyValuePair<String^, Object^>^ entry in attributes)
+		{
+			std::string cppKey = msclr::interop::marshal_as<std::string>(entry->Key);
+			System::Type^ entryValueType = entry->Value->GetType();
+			if (entryValueType == intHandleType)
+			{
+				long long int value = safe_cast<long long int>(entry->Value);
+				TopologicSupport::AttributeManager::GetInstance().Add(
+					pCoreTopology->GetOcctShape(),
+					cppKey,
+					std::dynamic_pointer_cast<TopologicSupport::Attribute>(std::make_shared<TopologicSupport::IntAttribute>(value)));
+				continue;
+			}
+
+			if (entryValueType == doubleHandleType)
+			{
+				double value = safe_cast<double>(entry->Value);
+				TopologicSupport::AttributeManager::GetInstance().Add(
+					pCoreTopology->GetOcctShape(),
+					cppKey,
+					std::dynamic_pointer_cast<TopologicSupport::Attribute>(std::make_shared<TopologicSupport::DoubleAttribute>(value)));
+				continue;
+			}
+
+			if (entryValueType == stringHandleType)
+			{
+				String^ value = safe_cast<String^>(entry->Value);
+				std::string cppValue = msclr::interop::marshal_as<std::string>(value);
+				TopologicSupport::AttributeManager::GetInstance().Add(
+					pCoreTopology->GetOcctShape(),
+					cppKey,
+					std::dynamic_pointer_cast<TopologicSupport::Attribute>(std::make_shared<TopologicSupport::StringAttribute>(cppValue)));
+				continue;
+			}
+		}
 
 		return this;
+	}
+
+	Object ^ Topology::FindAttribute(String ^ name)
+	{
+		TopologicCore::Topology::Ptr pCoreTopology =
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		std::string cppName = msclr::interop::marshal_as<std::string>(name);
+
+		TopologicSupport::Attribute::Ptr pCoreAttribute = TopologicSupport::AttributeManager::GetInstance().Find(pCoreTopology->GetOcctShape(), cppName);
+		if (pCoreAttribute == nullptr)
+		{
+			return nullptr;
+		}
+
+		void* pCoreValue = pCoreAttribute->Value();
+
+		TopologicSupport::IntAttribute::Ptr pIntAttribute = std::dynamic_pointer_cast<TopologicSupport::IntAttribute>(pCoreAttribute);
+		if (pIntAttribute != nullptr)
+		{
+			long long int value = *static_cast<long long int*>(pCoreValue);
+			return value;
+		}
+
+		TopologicSupport::DoubleAttribute::Ptr pDoubleAttribute = std::dynamic_pointer_cast<TopologicSupport::DoubleAttribute>(pCoreAttribute);
+		if (pDoubleAttribute != nullptr)
+		{
+			double value = *static_cast<double*>(pCoreValue);
+			return value;
+		}
+
+		TopologicSupport::StringAttribute::Ptr pStringAttribute = std::dynamic_pointer_cast<TopologicSupport::StringAttribute>(pCoreAttribute);
+		if (pStringAttribute != nullptr)
+		{
+			String^ value = gcnew String(std::string(*static_cast<std::string*>(pCoreValue)).c_str());
+			return value;
+		}
+
+		throw gcnew Exception("An unrecognized attribute is found.");
+	}
+
+	Dictionary<String^, Object^>^ Topology::Attributes::get()
+	{
+		TopologicCore::Topology::Ptr pCoreTopology =
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+
+		std::map<std::string, std::shared_ptr<TopologicSupport::Attribute>> coreAttributes;
+		bool isFound = TopologicSupport::AttributeManager::GetInstance().FindAll(pCoreTopology->GetOcctShape(), coreAttributes);
+		if (!isFound)
+		{
+			return nullptr;
+		}
+
+		Dictionary<String^, Object^>^ attributes = gcnew Dictionary<String^, Object^>();
+		for (const std::pair<std::string, TopologicSupport::Attribute::Ptr>& rkAttributePair : coreAttributes)
+		{
+			String^ key = gcnew String(rkAttributePair.first.c_str());
+			void* pCoreValue = rkAttributePair.second->Value();
+
+			TopologicSupport::IntAttribute::Ptr pIntAttribute = std::dynamic_pointer_cast<TopologicSupport::IntAttribute>(rkAttributePair.second);
+			if (pIntAttribute != nullptr)
+			{
+				attributes->Add(key, *static_cast<long long int*>(pCoreValue));
+				continue;
+			}
+
+			TopologicSupport::DoubleAttribute::Ptr pDoubleAttribute = std::dynamic_pointer_cast<TopologicSupport::DoubleAttribute>(rkAttributePair.second);
+			if (pDoubleAttribute != nullptr)
+			{
+				attributes->Add(key, *static_cast<double*>(pCoreValue));
+				continue;
+			}
+
+			TopologicSupport::StringAttribute::Ptr pStringAttribute = std::dynamic_pointer_cast<TopologicSupport::StringAttribute>(rkAttributePair.second);
+			if (pStringAttribute != nullptr)
+			{
+				attributes->Add(key, gcnew String(std::string(*static_cast<std::string*>(pCoreValue)).c_str()));
+				continue;
+			}
+		}
+		return attributes;
 	}
 
 	List<Topology^>^ Topology::Contents(bool allLevels)

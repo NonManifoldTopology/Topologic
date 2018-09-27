@@ -50,8 +50,6 @@
     <ClInclude Include="include\EdgeFactory.h">
       <Filter>Factory</Filter>
     </ClInclude>
-    <ClInclude Include="include\AttributeMap.h" />
-    <ClInclude Include="include\ApertureAttribute.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
@@ -99,11 +97,13 @@
     <ClCompile Include="src\WireFactory.cpp">
       <Filter>Factory</Filter>
     </ClCompile>
-    <ClCompile Include="src\AttributeMap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Factory">
       <UniqueIdentifier>{5d92c990-396d-4e24-87e4-05cd296ee6b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Attribute">
+      <UniqueIdentifier>{4f812172-1f64-49db-8ec6-262b0c996221}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

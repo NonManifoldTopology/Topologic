@@ -124,14 +124,6 @@ namespace TopologicCore
 			throw std::exception("CellComplex::ByCells(): Merge operation is not giving a cell complex");
 		}
 
-		std::list<Face::Ptr> cellComplexFaces;
-		pMergeCellComplex->Faces(cellComplexFaces);
-
-		std::list<Face::Ptr> cellFaces;
-		(*rkCells.begin())->Faces(cellFaces);
-
-		// Manage labels
-		std::shared_ptr<Topology> pUpcastCellComplex = TopologicalQuery::Upcast<Topology>(pMergeCellComplex);
 		return pMergeCellComplex;
 	}
 

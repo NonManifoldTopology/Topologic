@@ -55,11 +55,12 @@ namespace TopologicEnergy
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="run"></param>
 		/// <param name="model"></param>
 		/// <param name="openStudioExePath"></param>
 		/// <returns></returns>
 		//static List<Modifiers::GeometryColor^>^ PerformEnergyAnalysis(Model^ model, String^ openStudioExePath);
-		static SimulationResult^ PerformEnergyAnalysis(Model^ model, String^ openStudioExePath);
+		static SimulationResult^ PerformEnergyAnalysis(bool run, Model^ model, String^ openStudioExePath);
 
 		/// <summary>
 		/// 

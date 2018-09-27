@@ -1,7 +1,7 @@
 #pragma once
 
 #include "TopologicalQuery.h"
-#include "AttributeMap.h"
+//#include "AttributeMap.h"
 
 #include <TopologicCore/include/Topology.h>
 
@@ -95,19 +95,29 @@ namespace Topologic
 		/// <summary>
 		/// 
 		/// </summary>
-		[IsVisibleInDynamoLibrary(false)]
-		property Support::AttributeMap^ AttributeMap
-		{
-			Support::AttributeMap^ get();
-		}
+		/// <param name="attributes"></param>
+		/// <returns></returns>
+		Topology^ AddAttributes(Dictionary<String^, Object^>^ attributes);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="attributeMap"></param>
+		/// <param name="attributes"></param>
 		/// <returns></returns>
 		[IsVisibleInDynamoLibrary(false)]
-		Topology^ AddAttributeMap(Support::AttributeMap^ attributeMap);
+		Topology^ AddAttributesNoCopy(Dictionary<String^, Object^>^ attributes);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		Object^ FindAttribute(String^ name);
+
+		property Dictionary<String^, Object^>^ Attributes
+		{
+			Dictionary<String^, Object^>^ get();
+		}
 
 		/// <summary>
 		/// Returns the non-constituent members of the input topological entity.
@@ -336,6 +346,11 @@ namespace Topologic
 		/// <param name="selector"></param>
 		/// <returns></returns>
 		Topology^ ClosestSimplestSubshape(Topology^ selector);
+
+		generic <class T>
+			where T: Topology
+		[IsVisibleInDynamoLibrary(false)]
+		T Copy();
 
 		/// <summary>
 		/// 

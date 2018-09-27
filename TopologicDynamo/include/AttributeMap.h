@@ -1,7 +1,6 @@
 #pragma once
 
 #include <TopologicSupport/include/Attribute.h>
-#include <TopologicSupport/include/AttributeMap.h>
 
 #include <memory>
 

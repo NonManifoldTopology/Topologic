@@ -150,10 +150,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\Attribute.h" />
     <ClInclude Include="include\AttributeManager.h" />
     <ClInclude Include="include\Direction.h" />
-    <ClInclude Include="include\Attribute.h" />
-    <ClInclude Include="include\AttributeMap.h" />
     <ClInclude Include="include\DoubleAttribute.h" />
     <ClInclude Include="include\IntAttribute.h" />
     <ClInclude Include="include\StringAttribute.h" />
@@ -163,7 +162,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\AttributeManager.cpp" />
-    <ClCompile Include="src\AttributeMap.cpp" />
     <ClCompile Include="src\Direction.cpp" />
     <ClCompile Include="src\DoubleAttribute.cpp" />
     <ClCompile Include="src\IntAttribute.cpp" />

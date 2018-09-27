@@ -5,19 +5,16 @@
     <ClInclude Include="include\Direction.h" />
     <ClInclude Include="include\TransformationMatrix2D.h" />
     <ClInclude Include="include\Utilities.h" />
-    <ClInclude Include="include\AttributeManager.h">
-      <Filter>Attribute</Filter>
-    </ClInclude>
     <ClInclude Include="include\Attribute.h">
       <Filter>Attribute</Filter>
     </ClInclude>
-    <ClInclude Include="include\AttributeMap.h">
-      <Filter>Attribute</Filter>
-    </ClInclude>
-    <ClInclude Include="include\IntAttribute.h">
+    <ClInclude Include="include\AttributeManager.h">
       <Filter>Attribute</Filter>
     </ClInclude>
     <ClInclude Include="include\DoubleAttribute.h">
+      <Filter>Attribute</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IntAttribute.h">
       <Filter>Attribute</Filter>
     </ClInclude>
     <ClInclude Include="include\StringAttribute.h">
@@ -29,9 +26,6 @@
     <ClCompile Include="src\Direction.cpp" />
     <ClCompile Include="src\TransformationMatrix2D.cpp" />
     <ClCompile Include="src\AttributeManager.cpp">
-      <Filter>Attribute</Filter>
-    </ClCompile>
-    <ClCompile Include="src\AttributeMap.cpp">
       <Filter>Attribute</Filter>
     </ClCompile>
     <ClCompile Include="src\DoubleAttribute.cpp">
