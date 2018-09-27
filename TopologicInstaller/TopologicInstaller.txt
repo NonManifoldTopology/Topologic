@@ -71,15 +71,6 @@ Section "TopologicCore" TopologicCore
   
 SectionEnd
 
-;Section "TopologicSupport" TopologicSupport
-
-;  SetOutPath "$INSTDIR"
-  
-;  File ..\output\x64\Release\TopologicSupport.dll
-  
-  ;ADD YOUR OWN FILES HERE...
-  
-;SectionEnd
 
 Section "TopologicDynamo" TopologicDynamo
 
@@ -87,7 +78,7 @@ Section "TopologicDynamo" TopologicDynamo
   
   ;ADD YOUR OWN FILES HERE...
   File ..\output\x64\Release\Topologic.dll
-  ;File ..\output\x64\Release\Topologic.customization.dll
+  File ..\output\x64\Release\Topologic.customization.dll
   File vc_redist.x64.exe
   
   ;Check if Revit 2017 exists.
@@ -193,39 +184,48 @@ Function CheckDynamoCore
 FunctionEnd
 
 Function InstallDynamoCore
-  NSISdl::download http://dyn-builds-data.s3-us-west-2.amazonaws.com/DynamoInstall2.0.1.exe "$INSTDIR\DynamoInstall2.0.1.exe"
-  Pop $0
-  ${If} $0 == "success"
-    ExecWait "$INSTDIR\DynamoInstall2.0.1.exe" $1
-    Delete "$INSTDIR\DynamoInstall2.0.1.exe"
-	${If} $1 <> 0
-	  MessageBox MB_OK "Failed to install Dynamo Revit 2.0.1. Please install it manually."
-	${EndIf}
-  ${Else}
-    MessageBox MB_OK "Failed to download Dynamo Revit 2.0.1. Please install it manually."
-  ${EndIf}
+  MessageBox MB_YESNO "No Dynamo Core installation is found. Press Yes to download and install it, otherwise press No to skip this proess (you will need to download and install it separately)." IDYES InstallDynamoCoreYes IDNO InstallDynamoCoreFinish
+  InstallDynamoCoreYes:
+    NSISdl::download http://dyn-builds-data.s3-us-west-2.amazonaws.com/DynamoInstall2.0.1.exe "$INSTDIR\DynamoInstall2.0.1.exe"
+    Pop $0
+    ${If} $0 == "success"
+      ExecWait "$INSTDIR\DynamoInstall2.0.1.exe" $1
+      Delete "$INSTDIR\DynamoInstall2.0.1.exe"
+	  ${If} $1 <> 0
+	    MessageBox MB_OK "Failed to install Dynamo Revit 2.0.1. Please install it manually."
+	  ${EndIf}
+    ${Else}
+      MessageBox MB_OK "Failed to download Dynamo Revit 2.0.1. Please install it manually."
+    ${EndIf}
+  InstallDynamoCoreFinish:
 FunctionEnd
 
 Function InstallDynamoStudio
-  NSISdl::download http://edutrial.autodesk.com/NET17SWDLD/2017/DYNSTD/14D6DC8A-A45C-43B1-B5CF-A1434EF0959A/SFX/Autodesk_Dynamo_Studio_2017_English_Win_64bit_dlm.sfx.exe "$INSTDIR\Autodesk_Dynamo_Studio_2017_English_Win_64bit_dlm.sfx.exe"
-  Pop $0
-  ${If} $0 == "success"
-    ExecWait "$INSTDIR\Autodesk_Dynamo_Studio_2017_English_Win_64bit_dlm.sfx.exe" $1
-    Delete "$INSTDIR\Autodesk_Dynamo_Studio_2017_English_Win_64bit_dlm.sfx.exe"
-	${If} $1 <> 0
-	  MessageBox MB_OK "Failed to install Dynamo Studio 2017. Please install it manually."
-	${EndIf}
-  ${Else}
-    MessageBox MB_OK "Failed to download Dynamo Studio 2017. Please install it manually."
-  ${EndIf}
+  MessageBox MB_YESNO "No Dynamo Studio installation is found. Press Yes to download and install it, otherwise press No to skip this process (you will need to download and install it separately)." IDYES InstallDynamoStudioYes IDNO InstallDynamoStudioFinish
+  InstallDynamoStudioYes:
+    NSISdl::download http://edutrial.autodesk.com/NET17SWDLD/2017/DYNSTD/14D6DC8A-A45C-43B1-B5CF-A1434EF0959A/SFX/Autodesk_Dynamo_Studio_2017_English_Win_64bit_dlm.sfx.exe "$INSTDIR\Autodesk_Dynamo_Studio_2017_English_Win_64bit_dlm.sfx.exe"
+    Pop $0
+    ${If} $0 == "success"
+      ExecWait "$INSTDIR\Autodesk_Dynamo_Studio_2017_English_Win_64bit_dlm.sfx.exe" $1
+      Delete "$INSTDIR\Autodesk_Dynamo_Studio_2017_English_Win_64bit_dlm.sfx.exe"
+	  ${If} $1 <> 0
+	    MessageBox MB_OK "Failed to install Dynamo Studio 2017. Please install it manually."
+	  ${EndIf}
+    ${Else}
+      MessageBox MB_OK "Failed to download Dynamo Studio 2017. Please install it manually."
+    ${EndIf}
+  InstallDynamoStudioFinish:
 FunctionEnd
 
 Function InstallVCRedistributable
-  ExecWait "$INSTDIR\vc_redist.x64.exe" $0
-  Delete $INSTDIR\vc_redist.x64.exe ;bug: if the installation halts (e.g. not restarted), this file is not deleted
-  ${If} $0 <> 0
-    MessageBox MB_OK "Failed to install Visual Studio 2017 Redistributable (x64). Please install the redistributable manually."
-  ${EndIf}
+  MessageBox MB_YESNO "No Visual Studio 2017 Redistributale (x64) installation is found. Press Yes to install it, otherwise press No to skip this process (you will need to download and install it separately)." IDYES InstallVCRedistributableYes IDNO InstallVCRedistributableFinish
+  InstallVCRedistributableYes:
+    ExecWait "$INSTDIR\vc_redist.x64.exe" $0
+    Delete $INSTDIR\vc_redist.x64.exe ;bug: if the installation halts (e.g. not restarted), this file is not deleted
+    ${If} $0 <> 0
+      MessageBox MB_OK "Failed to install Visual Studio 2017 Redistributable (x64). Please install the redistributable manually."
+    ${EndIf}
+  InstallVCRedistributableFinish:
 FunctionEnd
 
 Section "TopologicEnergy" TopologicEnergy
@@ -264,17 +264,20 @@ Section "TopologicEnergy" TopologicEnergy
 SectionEnd
 
 Function InstallOpenStudio
-  NSISdl::download http://openstudio-builds.s3.amazonaws.com/2.6.0/OpenStudio-2.6.0.8c81faf8bc-Windows.exe "$INSTDIR\OpenStudio-2.6.0.8c81faf8bc-Windows.exe"
-  Pop $0
-  ${If} $0 == "success"
-    ExecWait "$INSTDIR\OpenStudio-2.6.0.8c81faf8bc-Windows.exe" $1
-    Delete "$INSTDIR\OpenStudio-2.6.0.8c81faf8bc-Windows.exe"
-	${If} $1 <> 0
-	  MessageBox MB_OK "Failed to install OpenStudio 2.6.0. Please install it manually."
-	${EndIf}
-  ${Else}
-    MessageBox MB_OK "Failed to download OpenStudio 2.6.0. Please install it manually."
-  ${EndIf}
+  MessageBox MB_YESNO "No OpenStudio 2.6.0 installation is found. Press Yes to download and install it, otherwise press No to skip this process (you will need to download and install it separately)." IDYES InstallOpenStudioYes IDNO InstallOpenStudioFinish
+  InstallOpenStudioYes:
+    NSISdl::download http://openstudio-builds.s3.amazonaws.com/2.6.0/OpenStudio-2.6.0.8c81faf8bc-Windows.exe "$INSTDIR\OpenStudio-2.6.0.8c81faf8bc-Windows.exe"
+    Pop $0
+    ${If} $0 == "success"
+      ExecWait "$INSTDIR\OpenStudio-2.6.0.8c81faf8bc-Windows.exe" $1
+      Delete "$INSTDIR\OpenStudio-2.6.0.8c81faf8bc-Windows.exe"
+	  ${If} $1 <> 0
+	    MessageBox MB_OK "Failed to install OpenStudio 2.6.0. Please install it manually."
+	  ${EndIf}
+    ${Else}
+      MessageBox MB_OK "Failed to download OpenStudio 2.6.0. Please install it manually."
+    ${EndIf}
+  InstallOpenStudioFinish:
 FunctionEnd
 
 Section #hidden, run after all other sections
@@ -292,49 +295,6 @@ Function .onInit
 FunctionEnd
 
 Function .onSelChange
-  
-  /* ${If} $0 == 1 ;TopologicSupport
-    ;If TopologicSupport is deselected, also deselect TopologicDynamo and TopologicEnergy.
-    SectionGetFlags ${TopologicSupport} $R0
-    IntOp $R0 $R0 & ${SF_SELECTED}
-    ${If} $R0 == 0
-      SectionGetFlags ${TopologicDynamo} $R1
-	  IntOp $R1 $R1 & ~${SF_SELECTED}
-	  SectionSetFlags ${TopologicDynamo} $R1
-	
-	 SectionGetFlags ${TopologicEnergy} $R1
-	  IntOp $R1 $R1 & ~${SF_SELECTED}
-	  SectionSetFlags ${TopologicEnergy} $R1
-    ${EndIf}
-  ${ElseIf} $0 == 2 ;TopologicDynamo
-    ;If TopologicDynamo is selected, also select TopologicSupport.
-    SectionGetFlags ${TopologicDynamo} $R0
-    IntOp $R0 $R0 & ${SF_SELECTED}
-    ${If} $R0  != 0
-	  SectionGetFlags ${TopologicSupport} $R1
-	  IntOp $R1 $R1 | ${SF_SELECTED}
-	  SectionSetFlags ${TopologicSupport} $R1
-    ${Else}
-      ;If TopologicDynamo is deselected, also deselect TopologicEnergy.
-      SectionGetFlags ${TopologicEnergy} $R1
-	  IntOp $R1 $R1 & ~${SF_SELECTED}
-	  SectionSetFlags ${TopologicEnergy} $R1
-    ${EndIf}
-  ${ElseIf} $0 == 3 ;TopologicEnergy
-    ;If TopologicEnergy is selected, also select TopologicDynamo and TopologicSupport.
-    SectionGetFlags ${TopologicEnergy} $R0
-    IntOp $R0 $R0 & ${SF_SELECTED}
-    ${If} $R0 != 0
-      SectionGetFlags ${TopologicDynamo} $R1
-	  IntOp $R1 $R1 | ${SF_SELECTED}
-	  SectionSetFlags ${TopologicDynamo} $R1
-	
-	  SectionGetFlags ${TopologicSupport} $R1
-	  IntOp $R1 $R1 | ${SF_SELECTED}
-	  SectionSetFlags ${TopologicSupport} $R1
-    ${EndIf}
-  ${EndIf} */
-  
   ${If} $0 == 1 ;TopologicDynamo
     ;If TopologicDynamo is selected, also select TopologicSupport.
     SectionGetFlags ${TopologicDynamo} $R0
@@ -367,14 +327,12 @@ FunctionEnd
 
   ;Language strings
   LangString DESC_TopologicCore ${LANG_ENGLISH} "Installs the native core layer of Topologic."
-  ;LangString DESC_TopologicSupport ${LANG_ENGLISH} "Installs the support package of Topologic."
   LangString DESC_TopologicDynamo ${LANG_ENGLISH} "Installs the Dynamo layer of Topologic."
   LangString DESC_TopologicEnergy ${LANG_ENGLISH} "Installs the Energy application layer of Topologic."
 
   ;Assign language strings to sections
   !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
     !insertmacro MUI_DESCRIPTION_TEXT ${TopologicCore} $(DESC_TopologicCore)
-    ;!insertmacro MUI_DESCRIPTION_TEXT ${TopologicSupport} $(DESC_TopologicSupport)
     !insertmacro MUI_DESCRIPTION_TEXT ${TopologicDynamo} $(DESC_TopologicDynamo)
     !insertmacro MUI_DESCRIPTION_TEXT ${TopologicEnergy} $(DESC_TopologicEnergy)
   !insertmacro MUI_FUNCTION_DESCRIPTION_END
