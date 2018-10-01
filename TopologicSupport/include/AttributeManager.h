@@ -10,6 +10,11 @@
 #include <map>
 #include <memory>
 
+namespace TopologicCore
+{
+	class Topology;
+}
+
 namespace TopologicSupport
 {
 	class Attribute;
@@ -25,6 +30,8 @@ namespace TopologicSupport
 			static AttributeManager instance;
 			return instance;
 		}
+
+		TOPOLOGIC_SUPPORT_API void Add(const std::shared_ptr<TopologicCore::Topology>& kpTopology, const std::string& kAttributeName, const std::shared_ptr<Attribute>& kpAttribute);
 
 		TOPOLOGIC_SUPPORT_API void Add(const TopoDS_Shape& rkOcctShape, const std::string& kAttributeName, const std::shared_ptr<Attribute>& kpAttribute);
 

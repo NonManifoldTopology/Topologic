@@ -1,9 +1,15 @@
 #include <AttributeManager.h>
 #include <Attribute.h>
-#include "..\include\AttributeManager.h"
+
+#include <TopologicCore/include/Topology.h>
 
 namespace TopologicSupport
 {
+	void AttributeManager::Add(const std::shared_ptr<TopologicCore::Topology>& kpTopology, const std::string & kAttributeName, const std::shared_ptr<Attribute>& kpAttribute)
+	{
+		Add(kpTopology->GetOcctShape(), kAttributeName, kpAttribute);
+	}
+
 	void AttributeManager::Add(const TopoDS_Shape& rkOcctShape, const std::string& kAttributeName, const std::shared_ptr<Attribute>& kpAttribute)
 	{
 		if (m_occtShapeToAttributesMap.find(rkOcctShape) == m_occtShapeToAttributesMap.end())

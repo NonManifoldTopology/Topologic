@@ -28,6 +28,7 @@
 #include <ClusterFactory.h>
 #include <DualGraphFactory.h>
 #include <ApertureFactory.h>
+#include <AttributeManager.h>
 
 #include <TopologicSupport/include/AttributeManager.h>
 #include <TopologicSupport/include/IntAttribute.h>
@@ -288,74 +289,11 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreTopology =
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 
-		// 1. Check attributes. Can only handle int, double, and String.
-		typedef long long int ^ IntHandle;
-		System::Type^ intHandleType = IntHandle::typeid;
-		typedef byte^ ByteHandle;
-		System::Type^ byteHandleType = ByteHandle::typeid;
-		typedef double ^ DoubleHandle;
-		System::Type^ doubleHandleType = DoubleHandle::typeid;
-		System::Type^ stringHandleType = String::typeid;
-		int i = -1;
 		for each(KeyValuePair<String^, Object^>^ entry in attributes)
 		{
-			i++;
 			System::Type^ entryValueType = entry->Value->GetType();
-			if (entryValueType == intHandleType || entryValueType == byteHandleType)
-			{
-				continue;
-			}
-
-			if (entryValueType == doubleHandleType)
-			{
-				continue;
-			}
-
-			if (entryValueType == stringHandleType)
-			{
-				continue;
-			}
-
-			throw gcnew Exception("Cannot create an attribute from attribute number " + i.ToString());
+			AttributeManager::Instance->SetAttribute(this, entry->Key, entry->Value); 
 		}
-
-		// 3. Add the attributes
-		for each(KeyValuePair<String^, Object^>^ entry in attributes)
-		{
-			std::string cppKey = msclr::interop::marshal_as<std::string>(entry->Key);
-			System::Type^ entryValueType = entry->Value->GetType();
-			if (entryValueType == intHandleType)
-			{
-				long long int value = safe_cast<long long int>(entry->Value);
-				TopologicSupport::AttributeManager::GetInstance().Add(
-					pCoreTopology->GetOcctShape(),
-					cppKey,
-					std::dynamic_pointer_cast<TopologicSupport::Attribute>(std::make_shared<TopologicSupport::IntAttribute>(value)));
-				continue;
-			}
-
-			if (entryValueType == doubleHandleType)
-			{
-				double value = safe_cast<double>(entry->Value);
-				TopologicSupport::AttributeManager::GetInstance().Add(
-					pCoreTopology->GetOcctShape(),
-					cppKey,
-					std::dynamic_pointer_cast<TopologicSupport::Attribute>(std::make_shared<TopologicSupport::DoubleAttribute>(value)));
-				continue;
-			}
-
-			if (entryValueType == stringHandleType)
-			{
-				String^ value = safe_cast<String^>(entry->Value);
-				std::string cppValue = msclr::interop::marshal_as<std::string>(value);
-				TopologicSupport::AttributeManager::GetInstance().Add(
-					pCoreTopology->GetOcctShape(),
-					cppKey,
-					std::dynamic_pointer_cast<TopologicSupport::Attribute>(std::make_shared<TopologicSupport::StringAttribute>(cppValue)));
-				continue;
-			}
-		}
-
 		return this;
 	}
 

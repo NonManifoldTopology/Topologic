@@ -3,8 +3,18 @@
 #include "Attribute.h"
 #include "Utilities.h"
 
+#include <string>
+
 namespace TopologicSupport
 {
+	class IntAttributeGUID {
+	public:
+		static std::string Get()
+		{
+			return std::string("1a8944c6-23e0-4607-9313-336f4ab3fd53");
+		}
+	};
+
 	class IntAttribute :public Attribute
 	{
 	public:

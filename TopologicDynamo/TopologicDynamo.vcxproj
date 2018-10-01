@@ -152,15 +152,21 @@
   <ItemGroup>
     <ClInclude Include="include\Aperture.h" />
     <ClInclude Include="include\ApertureFactory.h" />
+    <ClInclude Include="include\Attribute.h" />
+    <ClInclude Include="include\AttributeFactory.h" />
+    <ClInclude Include="include\AttributeManager.h" />
     <ClInclude Include="include\Cell.h" />
     <ClInclude Include="include\CellComplex.h" />
     <ClInclude Include="include\CellComplexFactory.h" />
     <ClInclude Include="include\CellFactory.h" />
     <ClInclude Include="include\Cluster.h" />
     <ClInclude Include="include\ClusterFactory.h" />
+    <ClInclude Include="include\DoubleAttributeFactory.h" />
     <ClInclude Include="include\DualGraphFactory.h" />
     <ClInclude Include="include\EdgeFactory.h" />
+    <ClInclude Include="include\IntAttributeFactory.h" />
     <ClInclude Include="include\ShellFactory.h" />
+    <ClInclude Include="include\StringAttributeFactory.h" />
     <ClInclude Include="include\TopologyFactoryManager.h" />
     <ClInclude Include="include\TopologyFactory.h" />
     <ClInclude Include="include\Context.h" />
@@ -179,16 +185,21 @@
   <ItemGroup>
     <ClCompile Include="src\Aperture.cpp" />
     <ClCompile Include="src\ApertureFactory.cpp" />
+    <ClCompile Include="src\Attribute.cpp" />
+    <ClCompile Include="src\AttributeManager.cpp" />
     <ClCompile Include="src\Cell.cpp" />
     <ClCompile Include="src\CellComplex.cpp" />
     <ClCompile Include="src\CellComplexFactory.cpp" />
     <ClCompile Include="src\CellFactory.cpp" />
     <ClCompile Include="src\Cluster.cpp" />
     <ClCompile Include="src\ClusterFactory.cpp" />
+    <ClCompile Include="src\DoubleAttributeFactory.cpp" />
     <ClCompile Include="src\DualGraph.cpp" />
     <ClCompile Include="src\DualGraphFactory.cpp" />
     <ClCompile Include="src\EdgeFactory.cpp" />
+    <ClCompile Include="src\IntAttributeFactory.cpp" />
     <ClCompile Include="src\ShellFactory.cpp" />
+    <ClCompile Include="src\StringAttributeFactory.cpp" />
     <ClCompile Include="src\TopologyFactoryManager.cpp" />
     <ClCompile Include="src\Context.cpp" />
     <ClCompile Include="src\Edge.cpp" />

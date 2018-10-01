@@ -50,6 +50,24 @@
     <ClInclude Include="include\EdgeFactory.h">
       <Filter>Factory</Filter>
     </ClInclude>
+    <ClInclude Include="include\AttributeManager.h">
+      <Filter>Attribute</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AttributeFactory.h">
+      <Filter>Attribute</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Attribute.h">
+      <Filter>Attribute</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IntAttributeFactory.h">
+      <Filter>Attribute</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DoubleAttributeFactory.h">
+      <Filter>Attribute</Filter>
+    </ClInclude>
+    <ClInclude Include="include\StringAttributeFactory.h">
+      <Filter>Attribute</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
@@ -96,6 +114,21 @@
     </ClCompile>
     <ClCompile Include="src\WireFactory.cpp">
       <Filter>Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AttributeManager.cpp">
+      <Filter>Attribute</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IntAttributeFactory.cpp">
+      <Filter>Attribute</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DoubleAttributeFactory.cpp">
+      <Filter>Attribute</Filter>
+    </ClCompile>
+    <ClCompile Include="src\StringAttributeFactory.cpp">
+      <Filter>Attribute</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Attribute.cpp">
+      <Filter>Attribute</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

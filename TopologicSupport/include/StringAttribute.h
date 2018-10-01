@@ -7,6 +7,14 @@
 
 namespace TopologicSupport
 {
+	class StringAttributeGUID {
+	public:
+		static std::string Get()
+		{
+			return std::string("a915eb73-256d-42f3-a3e6-491b020c3954");
+		}
+	};
+
 	class StringAttribute : public Attribute
 	{
 	public:

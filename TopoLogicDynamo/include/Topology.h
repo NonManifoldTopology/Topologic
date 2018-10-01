@@ -1,7 +1,6 @@
 #pragma once
 
 #include "TopologicalQuery.h"
-//#include "AttributeMap.h"
 
 #include <TopologicCore/include/Topology.h>
 
@@ -15,7 +14,6 @@ using namespace Autodesk::DesignScript::Runtime;
 namespace Topologic
 {
 	ref class Vertex;
-	ref class Attribute;
 	ref class Context;
 	ref class TopologyFactory;
 
