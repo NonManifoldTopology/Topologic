@@ -224,19 +224,19 @@ namespace Topologic
 			coreVValues.push_back(v);
 		}
 
-		TopologicCore::Shell::Ptr pCoreTopology = TopologicCore::Shell::ByFacePlanarization(
+		TopologicCore::Shell::Ptr pCoreTopology = TopologicCore::Shell::ByFacePlanarizationV2(
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery()),
 			iteration,
 			numEdgeSamples,
 			coreUValues,
-			coreVValues,
-			tolerance,
-			capBottom,
-			capTop,
-			coreVertices,
+			coreVValues//,
+			//tolerance,
+			/*capBottom,
+			capTop,*/
+			/*coreVertices,
 			coreIsocurves,
 			coreWires,
-			coreFaces
+			coreFaces*/
 		);
 		Shell^ pShell = gcnew Shell(pCoreTopology);
 		//return gcnew Shell(pCoreTopology);

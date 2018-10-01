@@ -276,6 +276,20 @@ namespace TopologicCore
 		/// <returns></returns>
 		TOPOLOGIC_API gp_Dir NormalAtParameter(const double kU, const double kV) const;
 
+		void UVSamplePoints(
+			const std::list<double>& rkUValues,
+			const std::list<double>& rkVValues,
+			std::list<std::list<gp_Pnt>>& rSamplePoints,
+			int& rNumUPoints,
+			int& rNumVPoints,
+			int& rNumUPanels,
+			int& rNumVPanels,
+			bool& rIsUClosed,
+			bool& rIsVClosed);
+			/*,
+			std::list<double>& rOcctUValues,
+			std::list<double>& rOcctVValues);*/
+
 		/// <summary>
 		/// 
 		/// </summary>

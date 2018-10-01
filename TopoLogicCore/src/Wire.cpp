@@ -3,8 +3,6 @@
 #include <Edge.h>
 #include <Face.h>
 #include <WireFactory.h>
-//#include <GlobalCluster.h>
-//#include <OcctCounterAttribute.h>
 
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepCheck_Wire.hxx>

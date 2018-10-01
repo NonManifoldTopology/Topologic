@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Attribute.h"
 #include "Utilities.h"
 #include "TopologicalQuery.h"
 
@@ -55,9 +54,6 @@ namespace TopologicCore
 	class Topology : public TopologicalQuery, public std::enable_shared_from_this<Topology>
 	{
 	public:
-		typedef std::map<std::string, std::shared_ptr<Attribute>> AttributeMap;
-		typedef AttributeMap::iterator AttributeMapIterator;
-		typedef AttributeMap::const_iterator AttributeMapConstIterator;
 		typedef std::shared_ptr<Topology> Ptr;
 
 	public:
@@ -197,7 +193,14 @@ namespace TopologicCore
 			BOPCol_ListOfShape& kOcctToolsImagesInArguments,
 			BOPCol_ListOfShape& kOcctToolsImagesInTools);
 
-
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpOtherTopology"></param>
+		/// <param name="rSpaceBetween_A_A_and_B_A"></param>
+		/// <param name="rSpaceBetween_B_A_and_A_B"></param>
+		/// <param name="rSpaceBetween_A_B_and_B_B"></param>
+		/// <returns></returns>
 		TOPOLOGIC_API void BooleanParts(
 			const Topology::Ptr& kpOtherTopology,
 			std::list<Topology::Ptr>& rSpaceBetween_A_A_and_B_A,
@@ -356,18 +359,6 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="rImmediateMembers">The immediate members</param>
 		TOPOLOGIC_API void ImmediateMembers(std::list<Topology::Ptr>& rImmediateMembers) const;
-
-		/*/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		TOPOLOGIC_API AttributeMap& Attributes() { return m_attributeMap; }
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		TOPOLOGIC_API const AttributeMap& Attributes() const { return m_attributeMap; }*/
 
 		/// <summary>
 		/// 

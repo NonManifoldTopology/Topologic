@@ -190,6 +190,686 @@ namespace TopologicCore
 		return pShell;
 	}
 
+	void SolveShapeOpPlanarization(const std::list<std::list<gp_Pnt>>& rkSamplePoints, 
+		const int kIteration,
+		const int kNumUPoints, const int kNumVPoints,
+		const int kNumUPanels, const int kNumVPanels,
+		const bool kIsUClosed, const bool kIsVClosed,
+		std::vector<gp_Pnt>& rPlanarizedPoints)
+	{
+		int numOfPoints = kNumUPoints * kNumVPoints;
+		ShapeOp::Matrix3X shapeOpMatrix(3, numOfPoints); //column major
+		int i = 0;
+		for (const std::list<gp_Pnt>& rkRowSamplePoints : rkSamplePoints)
+		{
+			for (const gp_Pnt& rkOcctSamplePoints : rkRowSamplePoints)
+			{
+				shapeOpMatrix(0, i) = rkOcctSamplePoints.X();
+				shapeOpMatrix(1, i) = rkOcctSamplePoints.Y();
+				shapeOpMatrix(2, i) = rkOcctSamplePoints.Z();
+				++i;
+			}
+		}
+
+		ShapeOp::Solver shapeOpSolver;
+		shapeOpSolver.setPoints(shapeOpMatrix);
+		ShapeOp::Scalar weight = 1.0;
+
+		// Planarity constraint to the panels
+		// i and j are just used to iterate, the actual indices are the u and v variables.
+		for (int i = 0; i < kNumUPanels; ++i)
+		{
+			for (int j = 0; j < kNumVPanels; ++j)
+			{
+				// Default values
+				int minU = i;		int minV = j;
+				int maxU = i + 1;	int maxV = j + 1;
+
+				// Border values
+				if (kIsUClosed && i == kNumUPanels - 1)
+				{
+					maxU = 0;
+				}
+				if (kIsVClosed && j == kNumVPanels - 1)
+				{
+					maxV = 0;
+				}
+
+				std::vector<int> vertexIDs;
+				vertexIDs.push_back(minU * kNumVPanels + minV);
+				vertexIDs.push_back(minU * kNumVPanels + maxV);
+				vertexIDs.push_back(maxU * kNumVPanels + maxV);
+				vertexIDs.push_back(maxU * kNumVPanels + maxV);
+				auto shapeOpConstraint = std::make_shared<ShapeOp::PlaneConstraint>(vertexIDs, weight, shapeOpSolver.getPoints());
+				shapeOpSolver.addConstraint(shapeOpConstraint);
+			}
+		}
+
+		// Closeness constraints to the vertices on the edges along the u-axis
+		for (int i = 0; i < kNumUPoints; ++i)
+		{
+			{
+				std::vector<int> vertexIDs;
+				vertexIDs.push_back(i * kNumVPoints);
+				auto shapeOpConstraint = std::make_shared<ShapeOp::ClosenessConstraint>(vertexIDs, weight, shapeOpSolver.getPoints());
+				shapeOpSolver.addConstraint(shapeOpConstraint);
+			}
+
+			if (!kIsVClosed)
+			{
+				std::vector<int> vertexIDs;
+				vertexIDs.push_back((i + 1) * kNumVPoints - 1);
+				auto shapeOpConstraint = std::make_shared<ShapeOp::ClosenessConstraint>(vertexIDs, weight, shapeOpSolver.getPoints());
+				shapeOpSolver.addConstraint(shapeOpConstraint);
+			}
+		}
+
+		// Closeness constraints to the vertices on the edge along the v-axis
+		for (int j = 0; j < kNumVPoints; ++j)
+		{
+			{
+				std::vector<int> vertexIDs;
+				vertexIDs.push_back(j);
+				auto shapeOpConstraint = std::make_shared<ShapeOp::ClosenessConstraint>(vertexIDs, weight, shapeOpSolver.getPoints());
+				shapeOpSolver.addConstraint(shapeOpConstraint);
+			}
+
+			if (!kIsUClosed)
+			{
+				std::vector<int> vertexIDs;
+				vertexIDs.push_back((kNumUPoints - 1) * kNumVPoints + j);
+				auto shapeOpConstraint = std::make_shared<ShapeOp::ClosenessConstraint>(vertexIDs, weight, shapeOpSolver.getPoints());
+				shapeOpSolver.addConstraint(shapeOpConstraint);
+			}
+		}
+
+		// Closeness constraints to the vertices not on the surface's edges
+		for (int i = 1; i < kNumUPanels; ++i)
+		{
+			for (int j = 1; j < kNumVPanels; ++j)
+			{
+				std::vector<int> vertexIDs;
+				vertexIDs.push_back(i * kNumVPoints + j);
+				auto shapeOpConstraint = std::make_shared<ShapeOp::ClosenessConstraint>(vertexIDs, 0.1*weight, shapeOpSolver.getPoints());
+				shapeOpSolver.addConstraint(shapeOpConstraint);
+			}
+		}
+
+		bool initialisationResult = shapeOpSolver.initialize();
+		if (!initialisationResult)
+			throw std::exception("Failed to initialize solver.");
+		bool solveResult = shapeOpSolver.solve(kIteration);
+		if (!solveResult)
+			throw std::exception("Failed to solve.");
+		const ShapeOp::Matrix3X& rkShapeOpResult = shapeOpSolver.getPoints();
+		for (int i = 0; i < rkShapeOpResult.size(); ++i)
+		{
+			rPlanarizedPoints.push_back(
+				gp_Pnt(
+					rkShapeOpResult(0, i), rkShapeOpResult(1, i), rkShapeOpResult(2, i)
+				)
+			);
+		}
+	}
+
+	void VattiClipping(
+		const std::list<Handle(Geom2d_CartesianPoint)>& rkClipPoints,
+		const std::list<Handle(Geom2d_CartesianPoint)>& rkSubjectPoints,
+		std::list<std::list<Handle(Geom2d_CartesianPoint)>>& rOutputPoints)
+	{
+		gpc_polygon subjectPolygon = { 0, nullptr, nullptr };;
+		gpc_polygon clipPolygon = { 0, nullptr, nullptr };;
+		gpc_polygon resultPolygon = { 0, nullptr, nullptr };;
+
+		// transfer from Topologic
+		gpc_vertex* pSubjectVertices = new gpc_vertex[rkSubjectPoints.size()];
+		int i = 0;
+		for (const Handle(Geom2d_CartesianPoint)& kpSubjectPoints : rkSubjectPoints)
+		{
+			pSubjectVertices[i] = { kpSubjectPoints->X(), kpSubjectPoints->Y() };
+			++i;
+		}
+		gpc_vertex_list subjectContour = { (int)rkSubjectPoints.size(), pSubjectVertices };
+		gpc_add_contour(&subjectPolygon, &subjectContour, 0);
+
+		gpc_vertex* pClipVertices = new gpc_vertex[rkClipPoints.size()];
+		i = 0;
+		for (const Handle(Geom2d_CartesianPoint)& kpClipVertices : rkClipPoints)
+		{
+			pClipVertices[i] = { kpClipVertices->X(), kpClipVertices->Y() };
+			++i;
+		}
+		gpc_vertex_list clipContour = { (int)rkClipPoints.size(), pClipVertices };
+		gpc_add_contour(&clipPolygon, &clipContour, 0);
+
+		gpc_polygon_clip(GPC_INT, &subjectPolygon, &clipPolygon, &resultPolygon);
+
+		// transfer back to Topologic
+		for (int i = 0; i < resultPolygon.num_contours; ++i)
+		{
+			std::list<Handle(Geom2d_CartesianPoint)> outputContours;
+			for (int j = 0; j < resultPolygon.contour[i].num_vertices; ++j)
+			{
+				outputContours.push_back(new Geom2d_CartesianPoint(
+					resultPolygon.contour[i].vertex[j].x,
+					resultPolygon.contour[i].vertex[j].y
+				));
+			}
+			rOutputPoints.push_back(outputContours);
+		}
+
+		// clean up
+		delete[] pClipVertices;
+		delete[] pSubjectVertices;
+
+		gpc_free_polygon(&resultPolygon);
+		gpc_free_polygon(&clipPolygon);
+		gpc_free_polygon(&subjectPolygon);
+	}
+	std::shared_ptr<Shell> Shell::ByFacePlanarizationV2(
+		const std::shared_ptr<Face>& kpFace,
+		const int kIteration,
+		const int kEdgeSamples,
+		const std::list<double>& rkUValues,
+		const std::list<double>& rkVValues
+	)
+	{
+		// 1. Check that kIteration, kNumUPanels, and kNumVPanels are 1 or more.
+		if (kIteration < 1)
+		{
+			std::string errorMessage = std::string("The number of iteration must be larger than 0.");
+			throw std::exception(errorMessage.c_str());
+		}
+		if (kEdgeSamples < 2)
+		{
+			std::string errorMessage = std::string("The number of sample points on edges must be larger than 1.");
+			throw std::exception(errorMessage.c_str());
+		}
+		if (rkUValues.empty())
+		{
+			std::string errorMessage = std::string("The number of u-panels must be larger than 0.");
+			throw std::exception(errorMessage.c_str());
+		}
+		if (rkVValues.empty())
+		{
+			std::string errorMessage = std::string("The number of v-panels must be larger than 0.");
+			throw std::exception(errorMessage.c_str());
+		}
+
+		// 2. Subdivide the face in the UV space and find the points
+		std::list<std::list<gp_Pnt>> samplePoints;
+		int numUPoints = 0;
+		int numVPoints = 0;
+		int numUPanels = 0;
+		int numVPanels = 0;
+		bool isUClosed = false;
+		bool isVClosed = false;
+		std::list<double> occtUValues;
+		std::list<double> occtVValues;
+		kpFace->UVSamplePoints(rkUValues, rkVValues, samplePoints, numUPoints, numVPoints, numUPanels, numVPanels, isUClosed, isVClosed);
+
+		// 3. Get sample vertices on the aperture edges
+		std::list<Topology::Ptr> contents;
+		kpFace->Contents(false, contents);
+		std::list<std::list<Handle(Geom2d_CartesianPoint)>> allApertureSampleVerticesUV;
+		for (const Topology::Ptr& rkContent : contents)
+		{
+			if (rkContent->GetType() != TOPOLOGY_APERTURE)
+			{
+				continue;
+			}
+
+			std::shared_ptr<Aperture> aperture = TopologicalQuery::Downcast<Aperture>(rkContent);
+
+			if (aperture->Topology()->GetType() != TOPOLOGY_FACE)
+			{
+				continue;
+			}
+
+			Face::Ptr apertureFace = TopologicalQuery::Downcast<Face>(aperture->Topology());
+			Wire::Ptr apertureWire = apertureFace->OuterBoundary();
+			std::list<Edge::Ptr> apertureEdges;
+			apertureWire->Edges(apertureEdges, true);
+
+			std::list<Handle(Geom2d_CartesianPoint)> apertureSampleVerticesUV;
+			for (const Edge::Ptr& kpEdge : apertureEdges)
+			{
+				// HACK: go backward
+				for (int i = kEdgeSamples - 2; i >= 0; --i)
+				{
+					double parameter = (double)i / (double)(kEdgeSamples - 1);
+					Vertex::Ptr apertureSampleVertex = kpEdge->PointAtParameter(parameter);
+
+					// Get the UV coordinate of the aperture sample vertex
+					double apertureSampleVertexU = 0.0, apertureSampleVertexV = 0.0;
+					kpFace->UVParameterAtPoint(apertureSampleVertex, apertureSampleVertexU, apertureSampleVertexV);
+					apertureSampleVerticesUV.push_back(new Geom2d_CartesianPoint(apertureSampleVertexU, apertureSampleVertexV));
+				}
+			}
+			allApertureSampleVerticesUV.push_back(apertureSampleVerticesUV);
+		}
+
+		// 4. Solve ShapeOp planarization
+		std::vector<gp_Pnt> planarizedPoints;
+		SolveShapeOpPlanarization(samplePoints, kIteration, numUPoints, numVPoints, numUPanels, numVPanels, isUClosed, isVClosed, planarizedPoints);
+
+		// Iterate against the wall panels
+		// Create faces from rkShapeOpResult
+		TopTools_ListOfShape borderEdges[4]; // 0 = uMin, 1 = uMax, 2 = vMin, 3 = vMax
+											 // Use array for iteration
+
+		// The u and v values are normalised. These are from the wall.
+		TopTools_DataMapOfShapeListOfShape occtMapFacePanelToApertures;
+		BRepBuilderAPI_Sewing occtSewing;
+		std::list<double>::iterator endUIterator = occtUValues.end();
+		endUIterator--;
+		std::list<double>::iterator endVIterator = occtVValues.end();
+		endVIterator--;
+		int i = 0;
+		BOPCol_ListOfShape panelFaces;
+		for (std::list<double>::const_iterator uIterator = occtUValues.begin();
+			uIterator != endUIterator;
+			uIterator++, ++i)
+		{
+			double wallU = *uIterator;
+			double offsetU = wallU; // not shrink
+			std::list<double>::const_iterator nextUIterator = uIterator;
+			nextUIterator++;
+			double nextWallU = *nextUIterator;
+			double nextOffsetU = nextWallU; // not shrink
+
+			int j = 0;
+			for (std::list<double>::const_iterator vIterator = occtVValues.begin();
+				vIterator != endVIterator;
+				vIterator++, ++j)
+			{
+				double wallV = *vIterator;
+				double offsetV = wallV;
+				std::list<double>::const_iterator nextVIterator = vIterator;
+				nextVIterator++;
+				double nextWallV = *nextVIterator;
+				double nextOffsetV = nextWallV;
+
+				// Default values
+				int minU = i;		int minV = j;
+				int maxU = i + 1;	int maxV = j + 1;
+
+				// Border values for ShapeOp result
+				if (isUClosed && i == numUPanels - 1)
+				{
+					maxU = 0;
+				}
+				if (isVClosed && j == numVPanels - 1)
+				{
+					maxV = 0;
+				}
+
+				// Create the panels to be sewn into a shell.
+				// (0,0)
+				int index1 = minU * numVPoints + minV;
+				gp_Pnt planarizedPoint1 = planarizedPoints[index1];
+				Handle(Geom_Point) pOcctPoint1 = new Geom_CartesianPoint(planarizedPoint1);
+
+				// (0,1)
+				int index2 = minU * numVPoints + maxV;
+				gp_Pnt planarizedPoint2 = planarizedPoints[index2];
+				Handle(Geom_Point) pOcctPoint2 = new Geom_CartesianPoint(planarizedPoint2);
+
+				// (1,1)
+				int index3 = maxU * numVPoints + maxV;
+				gp_Pnt planarizedPoint3 = planarizedPoints[index3];
+				Handle(Geom_Point) pOcctPoint3 = new Geom_CartesianPoint(planarizedPoint3);
+
+				// (1,0)
+				int index4 = maxU * numVPoints + minV;
+				gp_Pnt planarizedPoint4 = planarizedPoints[index4];
+				Handle(Geom_Point) pOcctPoint4 = new Geom_CartesianPoint(planarizedPoint4);
+
+				BRepBuilderAPI_MakeVertex occtMakeVertex1(pOcctPoint1->Pnt());
+				BRepBuilderAPI_MakeVertex occtMakeVertex2(pOcctPoint2->Pnt());
+				BRepBuilderAPI_MakeVertex occtMakeVertex3(pOcctPoint3->Pnt());
+				BRepBuilderAPI_MakeVertex occtMakeVertex4(pOcctPoint4->Pnt());
+
+				const TopoDS_Vertex& rkOcctVertex1 = occtMakeVertex1.Vertex();
+				const TopoDS_Vertex& rkOcctVertex2 = occtMakeVertex2.Vertex();
+				const TopoDS_Vertex& rkOcctVertex3 = occtMakeVertex3.Vertex();
+				const TopoDS_Vertex& rkOcctVertex4 = occtMakeVertex4.Vertex();
+
+				Vertex::Ptr pWallVertex1 = std::make_shared<Vertex>(rkOcctVertex1);
+				Vertex::Ptr pWallVertex2 = std::make_shared<Vertex>(rkOcctVertex2);
+				Vertex::Ptr pWallVertex3 = std::make_shared<Vertex>(rkOcctVertex3);
+				Vertex::Ptr pWallVertex4 = std::make_shared<Vertex>(rkOcctVertex4);
+
+				BRepBuilderAPI_MakeEdge occtMakeEdge12(rkOcctVertex1, rkOcctVertex2);
+				BRepBuilderAPI_MakeEdge occtMakeEdge23(rkOcctVertex2, rkOcctVertex3);
+				BRepBuilderAPI_MakeEdge occtMakeEdge34(rkOcctVertex3, rkOcctVertex4);
+				BRepBuilderAPI_MakeEdge occtMakeEdge41(rkOcctVertex4, rkOcctVertex1);
+
+				const TopoDS_Shape& rkEdge12 = occtMakeEdge12.Shape();
+				const TopoDS_Shape& rkEdge23 = occtMakeEdge23.Shape();
+				const TopoDS_Shape& rkEdge34 = occtMakeEdge34.Shape();
+				const TopoDS_Shape& rkEdge41 = occtMakeEdge41.Shape();
+
+				TopTools_ListOfShape occtEdges;
+				occtEdges.Append(rkEdge34);
+				occtEdges.Append(rkEdge41);
+				occtEdges.Append(rkEdge12);
+				occtEdges.Append(rkEdge23);
+
+				BRepBuilderAPI_MakeWire occtMakeWire;
+				occtMakeWire.Add(occtEdges);
+
+				const TopoDS_Wire& rkPanelWire = occtMakeWire.Wire();
+				ShapeFix_ShapeTolerance occtShapeTolerance;
+				occtShapeTolerance.SetTolerance(rkPanelWire, 0.1, TopAbs_WIRE);
+				BRepBuilderAPI_MakeFace occtMakeFace(rkPanelWire);
+				const TopoDS_Face& rkOcctPanelFace = occtMakeFace.Face();
+
+				//====================
+				// HERE
+				occtSewing.Add(rkOcctPanelFace);
+				panelFaces.Append(rkOcctPanelFace);
+
+				Handle(Geom_Surface) pOcctPanelSurface = BRep_Tool::Surface(rkOcctPanelFace);
+
+				//========================
+				// Map the apertures.
+				ShapeAnalysis_Surface occtSurfaceAnalysis(pOcctPanelSurface);
+				Face::Ptr pPanelFace = std::make_shared<Face>(rkOcctPanelFace);
+
+				// These are all the vertices of (and the UV on) the panel (the shell of flat faces).
+				// The UV are NON-NORMALISED
+				// (0,0)
+				gp_Pnt2d occtUVWallVertex1OnPanel = occtSurfaceAnalysis.ValueOfUV(pWallVertex1->Point()->Pnt(), Precision::Confusion());
+				double panelCorner1U = occtUVWallVertex1OnPanel.X(), panelCorner1V = occtUVWallVertex1OnPanel.Y();
+
+				// (0,1)
+				gp_Pnt2d occtUVWallVertex2OnPanel = occtSurfaceAnalysis.ValueOfUV(pWallVertex2->Point()->Pnt(), Precision::Confusion());
+				double panelCorner2U = occtUVWallVertex2OnPanel.X(), panelCorner2V = occtUVWallVertex2OnPanel.Y();
+
+				// (1,1)
+				gp_Pnt2d occtUVWallVertex3OnPanel = occtSurfaceAnalysis.ValueOfUV(pWallVertex3->Point()->Pnt(), Precision::Confusion());
+				double panelCorner3U = occtUVWallVertex3OnPanel.X(), panelCorner3V = occtUVWallVertex3OnPanel.Y();
+
+				// (1,0)
+				gp_Pnt2d occtUVWallVertex4OnPanel = occtSurfaceAnalysis.ValueOfUV(pWallVertex4->Point()->Pnt(), Precision::Confusion());
+				double panelCorner4U = occtUVWallVertex4OnPanel.X(), panelCorner4V = occtUVWallVertex4OnPanel.Y();
+
+				//Compute deltas
+				double deltaPanelBottomU = panelCorner4U - panelCorner1U;
+				double deltaPanelBottomV = panelCorner4V - panelCorner1V;
+
+				double deltaPanelTopU = panelCorner3U - panelCorner2U;
+				double deltaPanelTopV = panelCorner3V - panelCorner2V;
+
+
+				// Clip the apertures sample points UV against the wall panel's UV using Sutherland-Hodgman.
+				// The clip polygons are offseted.
+				// For Sutherland-Hodgman
+				std::list<std::pair<Handle(Geom2d_CartesianPoint), Handle(Geom2d_CartesianPoint)>> clipPolygons;
+				clipPolygons.push_back(std::make_pair<Handle(Geom2d_CartesianPoint), Handle(Geom2d_CartesianPoint)>(
+					new Geom2d_CartesianPoint(offsetU, offsetV),
+					new Geom2d_CartesianPoint(nextOffsetU, offsetV)));
+				clipPolygons.push_back(std::make_pair<Handle(Geom2d_CartesianPoint), Handle(Geom2d_CartesianPoint)>(
+					new Geom2d_CartesianPoint(nextOffsetU, offsetV),
+					new Geom2d_CartesianPoint(nextOffsetU, nextOffsetV)));
+				clipPolygons.push_back(std::make_pair<Handle(Geom2d_CartesianPoint), Handle(Geom2d_CartesianPoint)>(
+					new Geom2d_CartesianPoint(nextOffsetU, nextOffsetV),
+					new Geom2d_CartesianPoint(offsetU, nextOffsetV)));
+				clipPolygons.push_back(std::make_pair<Handle(Geom2d_CartesianPoint), Handle(Geom2d_CartesianPoint)>(
+					new Geom2d_CartesianPoint(offsetU, nextOffsetV),
+					new Geom2d_CartesianPoint(offsetU, offsetV)));
+
+				// For Vatti
+				std::list<Handle(Geom2d_CartesianPoint)> clipPoints;
+				clipPoints.push_back(new Geom2d_CartesianPoint(offsetU, offsetV));
+				clipPoints.push_back(new Geom2d_CartesianPoint(nextOffsetU, offsetV));
+				clipPoints.push_back(new Geom2d_CartesianPoint(nextOffsetU, nextOffsetV));
+				clipPoints.push_back(new Geom2d_CartesianPoint(offsetU, nextOffsetV));
+
+				// List of apertures mapped to this panel
+				BOPCol_ListOfShape aperturePanels;
+
+				using Coord = double;
+
+				// The index type. Defaults to uint32_t, but you can also pass uint16_t if you know that your
+				// data won't have more than 65536 vertices.
+				using N = uint32_t;
+
+				// Create array
+				using Point = std::array<Coord, 2>;
+
+				// Fill polygon structure with actual data. Any winding order works.
+				// The first polyline defines the main polygon.
+				for (const std::list<Handle(Geom2d_CartesianPoint)>& rkApertureSampleVerticesUV : allApertureSampleVerticesUV)
+				{
+					// The result is in the original surface's UV
+					std::list<std::list<Handle(Geom2d_CartesianPoint)>> clippedApertureSampleVerticesUVOriginalWall;
+					VattiClipping(clipPoints, rkApertureSampleVerticesUV, clippedApertureSampleVerticesUVOriginalWall);
+
+					//std::list<TopoDS_Vertex> occtMappedApertureVertices;
+					for (const std::list<Handle(Geom2d_CartesianPoint)>& kpClippedApertureSampleVertexUVOriginalWallList : clippedApertureSampleVerticesUVOriginalWall)
+					{
+						std::vector<Point> polygon;
+						for (const Handle(Geom2d_CartesianPoint)& kpClippedApertureSampleVertexUVOriginalWall : kpClippedApertureSampleVertexUVOriginalWallList)
+						{
+							// normalised to the panel, use U and V					
+							// However, the panel currently has arbitrary UV, with the min and max values located outside the actual panel (the wire boundary).
+							Handle(Geom2d_CartesianPoint) clippedApertureSampleVerticesUVPanel = new Geom2d_CartesianPoint(
+								(kpClippedApertureSampleVertexUVOriginalWall->X() - wallU) / (nextWallU - wallU),
+								(kpClippedApertureSampleVertexUVOriginalWall->Y() - wallV) / (nextWallV - wallV)
+							);
+
+							// Translate the clipped aperture sample vertices UV to the (NON-NORMALISED) UV coordinate of pOcctPanelSurface,
+							// which now has its own UV coordinate.
+							// Use bilinear mapping.
+
+							// The first step uses X
+							double mappedAperturePointUBottom = panelCorner1U + clippedApertureSampleVerticesUVPanel->X() * deltaPanelBottomU;
+							double mappedAperturePointVBottom = panelCorner1V + clippedApertureSampleVerticesUVPanel->X() * deltaPanelBottomV;
+							double mappedAperturePointUTop = panelCorner2U + clippedApertureSampleVerticesUVPanel->X() * deltaPanelTopU;
+							double mappedAperturePointVTop = panelCorner2V + clippedApertureSampleVerticesUVPanel->X() * deltaPanelTopV;
+
+							double deltaMappedAperturePointU = mappedAperturePointUTop - mappedAperturePointUBottom;
+							double deltaMappedAperturePointV = mappedAperturePointVTop - mappedAperturePointVBottom;
+
+							// 2nd step uses Y
+							double mappedAperturePointU = mappedAperturePointUBottom + clippedApertureSampleVerticesUVPanel->Y() * deltaMappedAperturePointU;
+							double mappedAperturePointV = mappedAperturePointVBottom + clippedApertureSampleVerticesUVPanel->Y() * deltaMappedAperturePointV;
+							polygon.push_back({ mappedAperturePointU, mappedAperturePointV });
+							/*vertices.push_back(Vertex::ByPoint(new Geom_CartesianPoint(pOcctPanelSurface->Value(
+								mappedAperturePointU,
+								mappedAperturePointV)))
+							);*/
+						}
+
+						std::vector<std::vector<Point>> polygons;
+						polygons.push_back(polygon);
+						{
+							if (polygon.size() > 2)
+							{
+								std::list<TopoDS_Vertex> testVertices;
+								for (const Point& point : polygon)
+								{
+									//DEBUG: draw the polygon
+									BRepBuilderAPI_MakeVertex occtMakeVertex(pOcctPanelSurface->Value(point[0], point[1]));
+
+									const TopoDS_Vertex& rkOcctVertex = occtMakeVertex.Vertex();
+									testVertices.push_back(rkOcctVertex);
+									//vertices.push_back(TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctVertex)));
+								}
+
+								std::list<TopoDS_Vertex>::const_iterator endIterator = testVertices.end();
+								endIterator--;
+
+								TopTools_ListOfShape edges;
+								for (std::list<TopoDS_Vertex>::const_iterator vertexIter = testVertices.begin();
+									vertexIter != endIterator;
+									vertexIter++)
+								{
+									std::list<TopoDS_Vertex>::const_iterator nextIter = vertexIter;
+									nextIter++;
+									BRepBuilderAPI_MakeEdge occtMakeEdge(*vertexIter, *nextIter);
+									if (occtMakeEdge.Error() != BRepBuilderAPI_EdgeDone)
+									{
+										continue;
+									}
+									edges.Append(occtMakeEdge);
+								}
+								BRepBuilderAPI_MakeEdge occtMakeEdge(testVertices.back(), testVertices.front());
+								if (occtMakeEdge.Error() != BRepBuilderAPI_EdgeDone)
+								{
+									continue;
+								}
+								edges.Append(occtMakeEdge);
+
+								BRepBuilderAPI_MakeWire occtMakeWire;
+								occtMakeWire.Add(edges);
+
+								// apertures before triangulation
+								const TopoDS_Wire& rkMappedApertureWire = occtMakeWire.Wire();
+								//wires.push_back(std::make_shared<Wire>(rkMappedApertureWire));
+								BRepBuilderAPI_MakeFace occtMakeFace(pOcctPanelSurface, rkMappedApertureWire);
+								//faces.push_back(std::make_shared<Face>(occtMakeFace));
+							}
+						}
+
+						std::vector<N> indices = mapbox::earcut<N>(polygons);
+						int numberOfTriangles = (int)indices.size() / 3;
+						for (int i = 0; i < numberOfTriangles; ++i)
+						{
+							int index1 = i * 3;
+							int index2 = i * 3 + 1;
+							int index3 = i * 3 + 2;
+
+							Point p1 = polygon[indices[index1]];
+							gp_Pnt occtMappedAperturePoint1 = pOcctPanelSurface->Value(p1[0], p1[1]);
+							Point p2 = polygon[indices[index2]];
+							gp_Pnt occtMappedAperturePoint2 = pOcctPanelSurface->Value(p2[0], p2[1]);
+							Point p3 = polygon[indices[index3]];
+							gp_Pnt occtMappedAperturePoint3 = pOcctPanelSurface->Value(p3[0], p3[1]);
+
+
+							//==============
+							//SCALE DOWN HERE
+							double sumX = occtMappedAperturePoint1.X() + occtMappedAperturePoint2.X() + occtMappedAperturePoint3.X();
+							double sumY = occtMappedAperturePoint1.Y() + occtMappedAperturePoint2.Y() + occtMappedAperturePoint3.Y();
+							double sumZ = occtMappedAperturePoint1.Z() + occtMappedAperturePoint2.Z() + occtMappedAperturePoint3.Z();
+
+							gp_Pnt faceCentroid(sumX / 3.0, sumY / 3.0, sumZ / 3.0);
+
+							double sqrtScaleFactor = 0.99;
+
+							gp_Vec vector1(faceCentroid, occtMappedAperturePoint1);
+							gp_Vec vector2(faceCentroid, occtMappedAperturePoint2);
+							gp_Vec vector3(faceCentroid, occtMappedAperturePoint3);
+
+							vector1.Multiply(sqrtScaleFactor);
+							vector2.Multiply(sqrtScaleFactor);
+							vector3.Multiply(sqrtScaleFactor);
+
+							occtMappedAperturePoint1 = gp_Pnt(
+								faceCentroid.X() + vector1.X(),
+								faceCentroid.Y() + vector1.Y(),
+								faceCentroid.Z() + vector1.Z());
+							occtMappedAperturePoint2 = gp_Pnt(
+								faceCentroid.X() + vector2.X(),
+								faceCentroid.Y() + vector2.Y(),
+								faceCentroid.Z() + vector2.Z());
+							occtMappedAperturePoint3 = gp_Pnt(
+								faceCentroid.X() + vector3.X(),
+								faceCentroid.Y() + vector3.Y(),
+								faceCentroid.Z() + vector3.Z());
+							//==========================
+
+							BRepBuilderAPI_MakeVertex occtMakeVertex1(occtMappedAperturePoint1);
+							BRepBuilderAPI_MakeVertex occtMakeVertex2(occtMappedAperturePoint2);
+							BRepBuilderAPI_MakeVertex occtMakeVertex3(occtMappedAperturePoint3);
+
+							BRepBuilderAPI_MakeEdge occtMakeEdge12(occtMakeVertex1.Vertex(), occtMakeVertex2.Vertex());
+							BRepBuilderAPI_MakeEdge occtMakeEdge23(occtMakeVertex2.Vertex(), occtMakeVertex3.Vertex());
+							BRepBuilderAPI_MakeEdge occtMakeEdge31(occtMakeVertex3.Vertex(), occtMakeVertex1.Vertex());
+
+							try {
+								TopTools_ListOfShape occtMappedApertureEdges;
+								occtMappedApertureEdges.Append(occtMakeEdge12.Edge());
+								occtMappedApertureEdges.Append(occtMakeEdge23.Edge());
+								occtMappedApertureEdges.Append(occtMakeEdge31.Edge());
+
+								BRepBuilderAPI_MakeWire occtMakeMappedApertureWire;
+								occtMakeMappedApertureWire.Add(occtMappedApertureEdges);
+								BRepBuilderAPI_MakeFace occtMakeMappedApertureFace(pOcctPanelSurface, occtMakeMappedApertureWire.Wire());
+								Face::Ptr mappedApertureFace = std::make_shared<Face>(occtMakeMappedApertureFace.Face());
+								aperturePanels.Append(occtMakeMappedApertureFace.Shape());
+
+								//faces.push_back(mappedApertureFace);
+							}
+							catch (...)
+							{
+
+							}
+						}
+					}
+				}
+
+				occtMapFacePanelToApertures.Bind(rkOcctPanelFace, aperturePanels);
+			}
+		}
+
+		// Create the planarised shell
+		occtSewing.Perform();
+		Shell::Ptr pOutputShell = std::make_shared<Shell>(TopoDS::Shell(occtSewing.SewedShape()));
+		return pOutputShell;
+
+		// Transfer contents
+		//// Iterate through the faces of the shell and attach them as labels of the shell's label.
+		//std::list<Face::Ptr> outputFaces;
+		//pOutputShell->Faces(outputFaces);
+
+		//TopTools_ListOfShape occtOutputFaces;
+		//for (TopExp_Explorer occtExplorer(pOutputShell->GetOcctShape(), TopAbs_FACE); occtExplorer.More(); occtExplorer.Next())
+		//{
+		//	const TopoDS_Shape& occtCurrent = occtExplorer.Current();
+		//	if (!occtOutputFaces.Contains(occtCurrent))
+		//	{
+		//		occtOutputFaces.Append(occtCurrent);
+		//	}
+		//}
+
+		//int counter = 0;
+		//for (TopTools_DataMapIteratorOfDataMapOfShapeListOfShape iterator(occtMapFacePanelToApertures);
+		//	iterator.More();
+		//	iterator.Next())
+		//{
+		//	bool isModified = occtSewing.IsModifiedSubShape(iterator.Key());
+		//	if (isModified)
+		//	{
+		//		// This is a panel face, which is added to the sewer object.
+		//		const TopoDS_Shape& rkKeyShape = iterator.Key();
+		//		bool isInList = panelFaces.Contains(rkKeyShape);
+
+		//		// This should be a face in the output shell
+		//		TopoDS_Shape occtModifiedShape = occtSewing.ModifiedSubShape(rkKeyShape);
+		//		Topology::Ptr modifiedShape = Topology::ByOcctShape(occtModifiedShape, "");
+
+		//		// The apertures of the modifiedShape are transferred to 
+		//		const BOPCol_ListOfShape& rkOcctApertures = iterator.Value();
+		//		for (BOPCol_ListIteratorOfListOfShape occtApertureIterator(rkOcctApertures);
+		//			occtApertureIterator.More();
+		//			occtApertureIterator.Next())
+		//		{
+		//			const TopoDS_Shape& rkOcctAperture = occtApertureIterator.Value();
+		//			Topology::Ptr aperture = Topology::ByOcctShape(rkOcctAperture, "");
+		//			Aperture::ByTopologyContext(
+		//				aperture,
+		//				modifiedShape);
+		//		}
+		//	}
+		//}
+
+		return pOutputShell;
+	}
+
 	Shell::Ptr Shell::ByFacePlanarization(
 		const Face::Ptr& kpFace,
 		const int kIteration,
@@ -290,60 +970,6 @@ namespace TopologicCore
 	}
 
 
-	void VattiClipping(
-		const std::list<Handle(Geom2d_CartesianPoint)>& rkClipPoints,
-		const std::list<Handle(Geom2d_CartesianPoint)>& rkSubjectPoints,
-		std::list<std::list<Handle(Geom2d_CartesianPoint)>>& rOutputPoints)
-	{
-		gpc_polygon subjectPolygon = { 0, nullptr, nullptr };;
-		gpc_polygon clipPolygon = { 0, nullptr, nullptr };;
-		gpc_polygon resultPolygon = { 0, nullptr, nullptr };;
-
-		// transfer from Topologic
-		gpc_vertex* pSubjectVertices = new gpc_vertex[rkSubjectPoints.size()];
-		int i = 0;
-		for (const Handle(Geom2d_CartesianPoint)& kpSubjectPoints : rkSubjectPoints)
-		{
-			pSubjectVertices[i] = { kpSubjectPoints->X(), kpSubjectPoints ->Y() };
-			++i;
-		}
-		gpc_vertex_list subjectContour = { (int) rkSubjectPoints.size(), pSubjectVertices };
-		gpc_add_contour(&subjectPolygon, &subjectContour, 0);
-
-		gpc_vertex* pClipVertices = new gpc_vertex[rkClipPoints.size()];
-		i = 0;
-		for (const Handle(Geom2d_CartesianPoint)& kpClipVertices : rkClipPoints)
-		{
-			pClipVertices[i] = { kpClipVertices->X(), kpClipVertices->Y() };
-			++i;
-		}
-		gpc_vertex_list clipContour = { (int) rkClipPoints.size(), pClipVertices };
-		gpc_add_contour(&clipPolygon, &clipContour, 0);
-
-		gpc_polygon_clip(GPC_INT, &subjectPolygon, &clipPolygon, &resultPolygon);
-
-		// transfer back to Topologic
-		for (int i = 0; i < resultPolygon.num_contours; ++i)
-		{
-			std::list<Handle(Geom2d_CartesianPoint)> outputContours;
-			for (int j = 0; j < resultPolygon.contour[i].num_vertices; ++j)
-			{
-				outputContours.push_back(new Geom2d_CartesianPoint(
-					resultPolygon.contour[i].vertex[j].x,
-					resultPolygon.contour[i].vertex[j].y
-				));
-			}
-			rOutputPoints.push_back(outputContours);
-		}
-
-		// clean up
-		delete[] pClipVertices;
-		delete[] pSubjectVertices;
-
-		gpc_free_polygon(&resultPolygon);
-		gpc_free_polygon(&clipPolygon);
-		gpc_free_polygon(&subjectPolygon);
-	}
 
 	Shell::Ptr Shell::ByFacePlanarization(
 		const Face::Ptr& kpFace, 

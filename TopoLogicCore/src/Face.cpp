@@ -519,6 +519,106 @@ namespace TopologicCore
 		return occtProperties.Normal();
 	}
 
+	void Face::UVSamplePoints(
+		const std::list<double>& rkUValues,
+		const std::list<double>& rkVValues,
+		std::list<std::list<gp_Pnt>>& rSamplesPoints,
+		int& rNumUPoints,
+		int& rNumVPoints,
+		int& rNumUPanels,
+		int& rNumVPanels,
+		bool& rIsUClosed,
+		bool& rIsVClosed)
+		/*,
+		std::list<double>& rOcctUValues,
+		std::list<double>& rOcctVValues)*/
+	{
+		// Subdivide the face in the UV space and find the points
+		double occtUMin = 0.0, occtUMax = 0.0, occtVMin = 0.0, occtVMax = 0.0;
+		ShapeFix_Face occtShapeFix(GetOcctFace());
+		occtShapeFix.Perform();
+		ShapeAnalysis::GetFaceUVBounds(occtShapeFix.Face(), occtUMin, occtUMax, occtVMin, occtVMax);
+		double occtURange = occtUMax - occtUMin;
+		double occtVRange = occtVMax - occtVMin;
+		rNumUPanels = (int)rkUValues.size() - 1;
+		rNumVPanels = (int)rkVValues.size() - 1;
+
+		Handle(Geom_Surface) pOcctWallSurface = Surface();
+		rIsUClosed = pOcctWallSurface->IsUClosed();
+		rNumUPoints = rNumUPanels;
+		if (!rIsUClosed)
+		{
+			rNumUPoints += 1;
+		}
+		rIsVClosed = pOcctWallSurface->IsVClosed();
+		rNumVPoints = rNumVPanels;
+		if (!rIsVClosed)
+		{
+			rNumVPoints += 1;
+		}
+
+		// Compute OCCT's non-normalized UV values
+		// At the same time, get the isolines
+		BOPCol_ListOfShape occtIsolines;
+		std::list<double> occtUValues;
+		for (double u : rkUValues)
+		{
+			double occtU = occtUMin + occtURange * u;
+			if (occtU < occtUMin) {
+				occtU = occtUMin;
+			}
+			else if (occtU > occtUMax)
+			{
+				occtU = occtUMax;
+			}
+			occtUValues.push_back(occtU);
+		};
+		std::list<double> occtVValues;
+		for (double v : rkVValues)
+		{
+			double occtV = occtVMin + occtVRange * v;
+			if (occtV < occtVMin) {
+				occtV = occtVMin;
+			}
+			else if (occtV > occtVMax)
+			{
+				occtV = occtVMax;
+			}
+			occtVValues.push_back(occtV);
+		};
+
+		// Sample the points
+		int numOfPoints = rNumUPoints * rNumVPoints;
+		int i = 0;
+		std::list<double>::const_iterator endUIterator = occtUValues.end();
+		if (rIsUClosed)
+		{
+			endUIterator--;
+		}
+		std::list<double>::const_iterator endVIterator = occtVValues.end();
+		if (rIsVClosed)
+		{
+			endVIterator--;
+		}
+
+		for (std::list<double>::const_iterator uIterator = occtUValues.begin();
+			uIterator != endUIterator;
+			uIterator++)
+		{
+			std::list<gp_Pnt> rowSamplePoints;
+			const double& rkU = *uIterator;
+			for (std::list<double>::const_iterator vIterator = occtVValues.begin();
+				vIterator != endVIterator;
+				vIterator++)
+			{
+				const double& rkV = *vIterator;
+				gp_Pnt occtPoint = pOcctWallSurface->Value(rkU, rkV);
+				rowSamplePoints.push_back(occtPoint);
+			}
+			rSamplesPoints.push_back(rowSamplePoints);
+		}
+	}
+
 	Face::Ptr Face::Trim(const Wire::Ptr& kpWire) const
 	{
 		Handle(Geom_Surface) pOcctSurface = Surface();

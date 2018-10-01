@@ -188,6 +188,15 @@ namespace TopologicCore
 			std::list<std::shared_ptr<Wire>>& wires,
 			std::list<std::shared_ptr<Face>>& faces);
 
+
+		TOPOLOGIC_API static std::shared_ptr<Shell> ByFacePlanarizationV2(
+			const std::shared_ptr<Face>& kpFace,
+			const int kIteration,
+			const int kEdgeSamples,
+			const std::list<double>& rkUValues,
+			const std::list<double>& rkVValues
+		);
+
 		/// <summary>
 		/// 
 		/// </summary>
