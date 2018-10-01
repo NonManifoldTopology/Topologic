@@ -29,6 +29,7 @@
 #include <DualGraphFactory.h>
 #include <ApertureFactory.h>
 #include <AttributeManager.h>
+#include <AttributeFactory.h>
 
 #include <TopologicSupport/include/AttributeManager.h>
 #include <TopologicSupport/include/IntAttribute.h>
@@ -303,36 +304,9 @@ namespace Topologic
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		std::string cppName = msclr::interop::marshal_as<std::string>(name);
 
-		TopologicSupport::Attribute::Ptr pCoreAttribute = TopologicSupport::AttributeManager::GetInstance().Find(pCoreTopology->GetOcctShape(), cppName);
-		if (pCoreAttribute == nullptr)
-		{
-			return nullptr;
-		}
-
-		void* pCoreValue = pCoreAttribute->Value();
-
-		TopologicSupport::IntAttribute::Ptr pIntAttribute = std::dynamic_pointer_cast<TopologicSupport::IntAttribute>(pCoreAttribute);
-		if (pIntAttribute != nullptr)
-		{
-			long long int value = *static_cast<long long int*>(pCoreValue);
-			return value;
-		}
-
-		TopologicSupport::DoubleAttribute::Ptr pDoubleAttribute = std::dynamic_pointer_cast<TopologicSupport::DoubleAttribute>(pCoreAttribute);
-		if (pDoubleAttribute != nullptr)
-		{
-			double value = *static_cast<double*>(pCoreValue);
-			return value;
-		}
-
-		TopologicSupport::StringAttribute::Ptr pStringAttribute = std::dynamic_pointer_cast<TopologicSupport::StringAttribute>(pCoreAttribute);
-		if (pStringAttribute != nullptr)
-		{
-			String^ value = gcnew String(std::string(*static_cast<std::string*>(pCoreValue)).c_str());
-			return value;
-		}
-
-		throw gcnew Exception("An unrecognized attribute is found.");
+		TopologicSupport::Attribute::Ptr pSupportAttribute = TopologicSupport::AttributeManager::GetInstance().Find(pCoreTopology->GetOcctShape(), cppName);
+		AttributeFactory^ attributeFactory = AttributeManager::Instance->GetFactory(pSupportAttribute);
+		return attributeFactory->CreateValue(pSupportAttribute);
 	}
 
 	Dictionary<String^, Object^>^ Topology::Attributes::get()

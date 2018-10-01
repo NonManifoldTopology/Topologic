@@ -3,6 +3,8 @@
 
 #include <TopologicSupport/include/DoubleAttribute.h>
 
+#include <memory>
+
 namespace Topologic
 {
 	Attribute^ DoubleAttributeFactory::Create(String ^ key, Object ^ value)
@@ -17,5 +19,17 @@ namespace Topologic
 		System::Type^ doubleHandleType = DoubleHandle::typeid;
 
 		return type == doubleHandleType;
+	}
+
+	bool DoubleAttributeFactory::CheckType(const std::shared_ptr<TopologicSupport::Attribute>& kpSupportAttribute)
+	{
+		return std::dynamic_pointer_cast<TopologicSupport::DoubleAttribute>(kpSupportAttribute) != nullptr;
+	}
+
+	Object^ DoubleAttributeFactory::CreateValue(const std::shared_ptr<TopologicSupport::Attribute>& kpSupportAttribute)
+	{
+		void* pValue = kpSupportAttribute->Value();
+		double* pDoubleValue = static_cast<double*>(pValue);
+		return *pDoubleValue;
 	}
 }

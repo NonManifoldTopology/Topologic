@@ -33,6 +33,20 @@ namespace Topologic
 		TopologicSupport::AttributeManager::GetInstance().Add(pCoreTopology, cppKey, attribute->SupportAttribute);
 	}
 
+	AttributeFactory ^ AttributeManager::GetFactory(const std::shared_ptr<TopologicSupport::Attribute> kpSupportAttribute)
+	{
+		for each(KeyValuePair<String^, AttributeFactory^>^ entry in m_attributeFactoryDict)
+		{
+			bool isValueCorrect = entry->Value->CheckType(kpSupportAttribute);
+			if (isValueCorrect)
+			{
+				return entry->Value;
+			}
+		}
+
+		throw gcnew Exception("Attribute is not currently supported.");
+	}
+
 	AttributeFactory ^ AttributeManager::GetFactory(Object ^ value)
 	{
 		System::Type^ entryValueType = value->GetType();
@@ -46,7 +60,5 @@ namespace Topologic
 		}
 
 		throw gcnew Exception("Attribute value of type " + entryValueType->Name + " is not currently supported.");
-
-		return nullptr;
 	}
 }

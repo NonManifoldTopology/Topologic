@@ -1,5 +1,8 @@
 #include <Attribute.h>
 
+#include <AttributeManager.h>
+#include <AttributeFactory.h>
+
 namespace Topologic
 {
 	TopologicSupport::Attribute::Ptr Attribute::SupportAttribute::get()

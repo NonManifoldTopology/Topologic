@@ -3,6 +3,11 @@
 using namespace System;
 using namespace System::Collections::Generic;
 
+namespace TopologicSupport
+{
+	class Attribute;
+}
+
 namespace Topologic
 {
 	ref class Topology;
@@ -16,6 +21,8 @@ namespace Topologic
 		}
 
 		void SetAttribute(Topology^ topology, String^ key, Object^ value);
+
+		AttributeFactory^ GetFactory(const std::shared_ptr<TopologicSupport::Attribute> kpSupportAttribute);
 
 	private:
 		AttributeManager();

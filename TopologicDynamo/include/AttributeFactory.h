@@ -5,6 +5,11 @@ using namespace Autodesk::DesignScript::Runtime;
 
 #include <Attribute.h>
 
+namespace TopologicSupport
+{
+	class Attribute;
+}
+
 namespace Topologic
 {
 	public ref class AttributeFactory abstract
@@ -15,6 +20,11 @@ namespace Topologic
 
 		[IsVisibleInDynamoLibrary(false)]
 		virtual bool CheckType(Type^ type) abstract;
+
+	public protected:
+		virtual bool CheckType(const std::shared_ptr<TopologicSupport::Attribute>& kpSupportAttribute) abstract;
+
+		virtual Object^ CreateValue(const std::shared_ptr<TopologicSupport::Attribute>& kpSupportAttribute) abstract;
 
 	protected:
 		AttributeFactory() {}
