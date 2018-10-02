@@ -93,9 +93,18 @@ namespace Topologic
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="attributes"></param>
+		/// <param name="keys"></param>
+		/// <param name="values"></param>
+		/// <returns name="Topology"></returns>
+		Topology^ SetKeysValues(List<String^>^ keys, List<Object^>^ values);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="topology"></param>
+		/// <param name="key"></param>
 		/// <returns></returns>
-		Topology^ AddAttributes(Dictionary<String^, Object^>^ attributes);
+		Object^ ValueAtKey(Topology^ topology, String^ key);
 
 		/// <summary>
 		/// 
@@ -109,13 +118,23 @@ namespace Topologic
 		/// 
 		/// </summary>
 		/// <param name="name"></param>
-		/// <returns></returns>
-		Object^ FindAttribute(String^ name);
+		/// <returns name="Value"></returns>
+		Object^ AttributeValue(String^ name);
 
-		property Dictionary<String^, Object^>^ Attributes
+		/// <summary>
+		/// 
+		/// </summary>
+		property List<List<Object^>^>^ KeysValues
 		{
-			Dictionary<String^, Object^>^ get();
+			List<List<Object^>^>^ get();
 		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="keys"></param>
+		/// <returns></returns>
+		Topology^ RemoveKeys(List<String^>^ keys);
 
 		/// <summary>
 		/// Returns the non-constituent members of the input topological entity.

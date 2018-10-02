@@ -74,7 +74,7 @@ namespace TopologicEnergy
 		Dictionary<String^, Cell^>^ cellNames = gcnew Dictionary<String^, Cell^>();
 		for each(Cell^ cell in m_cells)
 		{
-			Object^ name = cell->FindAttribute("Name");
+			Object^ name = cell->AttributeValue("Name");
 			if (name == nullptr)
 			{
 				throw gcnew Exception("A cell does not have a name.");
@@ -139,7 +139,7 @@ namespace TopologicEnergy
 		for each(Cell^ buildingCell in buildingCells)
 		{
 			// Get the colors
-			Object^ objR = buildingCell->FindAttribute("r");
+			Object^ objR = buildingCell->AttributeValue("r");
 			if (objR == nullptr)
 			{
 				throw gcnew Exception("A cell does not have a red color.");
@@ -156,7 +156,7 @@ namespace TopologicEnergy
 			}
 
 			// Get the colors
-			Object^ objG = buildingCell->FindAttribute("g");
+			Object^ objG = buildingCell->AttributeValue("g");
 			if (objG == nullptr)
 			{
 				throw gcnew Exception("A cell does not have a green color.");
@@ -173,7 +173,7 @@ namespace TopologicEnergy
 			}
 
 			// Get the colors
-			Object^ objB = buildingCell->FindAttribute("b");
+			Object^ objB = buildingCell->AttributeValue("b");
 			if (objB == nullptr)
 			{
 				throw gcnew Exception("A cell does not have a blue color.");

@@ -21,6 +21,11 @@ namespace TopologicSupport
 		m_occtShapeToAttributesMap[rkOcctShape][kAttributeName] = kpAttribute;
 	}
 
+	void AttributeManager::Remove(const TopologicCore::Topology::Ptr& kpTopology, const std::string& kAttributeName)
+	{
+		Remove(kpTopology->GetOcctShape(), kAttributeName);
+	}
+
 	void AttributeManager::Remove(const TopoDS_Shape& rkOcctShape, const std::string& kAttributeName)
 	{
 		if (m_occtShapeToAttributesMap.find(rkOcctShape) != m_occtShapeToAttributesMap.end())
@@ -71,7 +76,6 @@ namespace TopologicSupport
 
 	void AttributeManager::CopyAttributes(const TopoDS_Shape & rkOcctShape1, const TopoDS_Shape & rkOcctShape2)
 	{
-		// TODO: Do for the sub-shapes
 		std::map<std::string, Attribute::Ptr> attributes;
 		bool isFound = FindAll(rkOcctShape1, attributes);
 		if (isFound)

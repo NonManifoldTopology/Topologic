@@ -273,16 +273,54 @@ namespace Topologic
 
 	}
 
-	Topology^ Topology::AddAttributes(Dictionary<String^, Object^>^ attributes)
+	Topology^ Topology::SetKeysValues(List<String^>^ keys, List<Object^>^ values)
 	{
+		if (keys->Count == 0)
+		{
+			throw gcnew Exception("An empty list of keys is given.");
+		}
+
+		if (values->Count == 0)
+		{
+			throw gcnew Exception("An empty list of values is given.");
+		}
+
+		if (values->Count != keys->Count)
+		{
+			throw gcnew Exception("The keys and values lists do not have the same length.");
+		}
+
+		Dictionary<String^, Object^>^ dictionary = gcnew Dictionary<String^, Object^>();
+		for (int i = 0; i < keys->Count; i++)
+		{
+			dictionary->Add(keys[i], values[i]);
+		}
+
 		// 1. Copy the core topology
 		TopologicCore::Topology::Ptr pCoreTopology =
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->Copy();
 		Topology^ copyTopology = Topology::ByCoreTopology(pCoreCopyTopology);
-		copyTopology->AddAttributesNoCopy(attributes);
+		copyTopology->AddAttributesNoCopy(dictionary);
 
 		return copyTopology;
+	}
+
+
+	Object ^ Topology::ValueAtKey(Topology ^ topology, String ^ key)
+	{
+		TopologicCore::Topology::Ptr pCoreTopology =
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		std::string cppName = msclr::interop::marshal_as<std::string>(key);
+
+		TopologicSupport::Attribute::Ptr pSupportAttribute = TopologicSupport::AttributeManager::GetInstance().Find(pCoreTopology->GetOcctShape(), cppName);
+		if (pSupportAttribute == nullptr)
+		{
+			return nullptr;
+		}
+
+		AttributeFactory^ attributeFactory = AttributeManager::Instance->GetFactory(pSupportAttribute);
+		return attributeFactory->CreateValue(pSupportAttribute);
 	}
 
 	Topology ^ Topology::AddAttributesNoCopy(Dictionary<String^, Object^>^ attributes)
@@ -298,7 +336,7 @@ namespace Topologic
 		return this;
 	}
 
-	Object ^ Topology::FindAttribute(String ^ name)
+	Object ^ Topology::AttributeValue(String ^ name)
 	{
 		TopologicCore::Topology::Ptr pCoreTopology =
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
@@ -309,7 +347,7 @@ namespace Topologic
 		return attributeFactory->CreateValue(pSupportAttribute);
 	}
 
-	Dictionary<String^, Object^>^ Topology::Attributes::get()
+	List<List<Object^>^>^ Topology::KeysValues::get()
 	{
 		TopologicCore::Topology::Ptr pCoreTopology =
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
@@ -321,34 +359,35 @@ namespace Topologic
 			return nullptr;
 		}
 
-		Dictionary<String^, Object^>^ attributes = gcnew Dictionary<String^, Object^>();
+		List<Object^>^ keys = gcnew List<Object^>();
+		List<Object^>^ values = gcnew List<Object^>();
 		for (const std::pair<std::string, TopologicSupport::Attribute::Ptr>& rkAttributePair : coreAttributes)
 		{
 			String^ key = gcnew String(rkAttributePair.first.c_str());
-			void* pCoreValue = rkAttributePair.second->Value();
+			keys->Add(key);
 
-			TopologicSupport::IntAttribute::Ptr pIntAttribute = std::dynamic_pointer_cast<TopologicSupport::IntAttribute>(rkAttributePair.second);
-			if (pIntAttribute != nullptr)
-			{
-				attributes->Add(key, *static_cast<long long int*>(pCoreValue));
-				continue;
-			}
-
-			TopologicSupport::DoubleAttribute::Ptr pDoubleAttribute = std::dynamic_pointer_cast<TopologicSupport::DoubleAttribute>(rkAttributePair.second);
-			if (pDoubleAttribute != nullptr)
-			{
-				attributes->Add(key, *static_cast<double*>(pCoreValue));
-				continue;
-			}
-
-			TopologicSupport::StringAttribute::Ptr pStringAttribute = std::dynamic_pointer_cast<TopologicSupport::StringAttribute>(rkAttributePair.second);
-			if (pStringAttribute != nullptr)
-			{
-				attributes->Add(key, gcnew String(std::string(*static_cast<std::string*>(pCoreValue)).c_str()));
-				continue;
-			}
+			AttributeFactory^ attributeFactory = AttributeManager::Instance->GetFactory(rkAttributePair.second);
+			values->Add(attributeFactory->CreateValue(rkAttributePair.second));
 		}
-		return attributes;
+
+		List<List<Object^>^>^ keysValues = gcnew List<List<Object^>^>();
+		keysValues->Add(keys);
+		keysValues->Add(values);
+		return keysValues;
+	}
+
+	Topology^ Topology::RemoveKeys(List<String^>^ keys)
+	{
+		Topology^ copyTopology = Copy<Topology^>();
+		std::shared_ptr<TopologicCore::Topology> pCoreCopyTopology = 
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(copyTopology->GetCoreTopologicalQuery());
+		for each(String^ key in keys)
+		{
+			std::string cppKey = msclr::interop::marshal_as<std::string>(key);
+			TopologicSupport::AttributeManager::GetInstance().Remove(pCoreCopyTopology, cppKey);
+		}
+
+		return copyTopology;
 	}
 
 	List<Topology^>^ Topology::Contents(bool allLevels)

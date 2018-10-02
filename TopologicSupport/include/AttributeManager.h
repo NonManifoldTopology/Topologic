@@ -35,6 +35,8 @@ namespace TopologicSupport
 
 		TOPOLOGIC_SUPPORT_API void Add(const TopoDS_Shape& rkOcctShape, const std::string& kAttributeName, const std::shared_ptr<Attribute>& kpAttribute);
 
+		TOPOLOGIC_SUPPORT_API void Remove(const std::shared_ptr<TopologicCore::Topology>& kpTopology, const std::string& kAttributeName);
+
 		TOPOLOGIC_SUPPORT_API void Remove(const TopoDS_Shape& rkOcctShape, const std::string& kAttributeName);
 
 		TOPOLOGIC_SUPPORT_API std::shared_ptr<Attribute> Find(const TopoDS_Shape& rkOcctShape, const std::string& rkAttributeName);
