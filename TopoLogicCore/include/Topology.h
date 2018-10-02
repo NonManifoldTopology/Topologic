@@ -210,35 +210,35 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkOtherTopology"></param>
+		/// <param name="kpOtherTopology"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API Topology::Ptr Difference(const Topology::Ptr& kpOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkOtherTopology"></param>
+		/// <param name="kpOtherTopology"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API Topology::Ptr Impose(const Topology::Ptr& kpOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkOtherTopology"></param>
+		/// <param name="kpOtherTopology"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API Topology::Ptr Imprint(const Topology::Ptr& kpOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkOtherTopology"></param>
+		/// <param name="kpOtherTopology"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API Topology::Ptr Intersection(const Topology::Ptr& kpOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkOtherTopology"></param>
+		/// <param name="kpOtherTopology"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API Topology::Ptr Merge(const Topology::Ptr& kpOtherTopology);
 
@@ -251,21 +251,21 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkOtherTopology"></param>
+		/// <param name="kpOtherTopology"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API Topology::Ptr Slice(const Topology::Ptr& kpOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkOtherTopology"></param>
+		/// <param name="kpOtherTopology"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API Topology::Ptr Union(const Topology::Ptr& kpOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkOtherTopology"></param>
+		/// <param name="kpOtherTopology"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API Topology::Ptr XOR(const Topology::Ptr& kpOtherTopology);
 
