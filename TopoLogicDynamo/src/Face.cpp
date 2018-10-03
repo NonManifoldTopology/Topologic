@@ -541,6 +541,11 @@ namespace Topologic
 			delete pDynamoUMaxVMin;
 			delete pDynamoUMaxVMax;
 
+			if (pDynamoEdgeLoops->Count == 0)
+			{
+				return pDynamoUntrimmedSurface;
+			}
+
 			try {
 				Autodesk::DesignScript::Geometry::Surface^ pDynamoTrimmedSurfaceByParameters = 
 					pDynamoUntrimmedSurface->TrimWithEdgeLoops(pDynamoEdgeLoops);
