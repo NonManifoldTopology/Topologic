@@ -101,10 +101,9 @@ namespace Topologic
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="topology"></param>
 		/// <param name="key"></param>
 		/// <returns></returns>
-		Object^ ValueAtKey(Topology^ topology, String^ key);
+		Object^ ValueAtKey(String^ key);
 
 		/// <summary>
 		/// 

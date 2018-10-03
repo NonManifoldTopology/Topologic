@@ -542,7 +542,11 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <param name="kpOtherTopology"></param>
-		/// <param name="kBooleanFlag"></param>
+		/// <param name="rOcctCellsBuilder"></param>
+		/// <param name="rOcctCellsBuildersOperandsA"></param>
+		/// <param name="rOcctCellsBuildersOperandsB"></param>
+		/// <param name="rOcctMapFaceToFixedFaceA"></param>
+		/// <param name="rOcctMapFaceToFixedFaceB"></param>
 		void BooleanOperation(
 			const Topology::Ptr& kpOtherTopology,
 			BOPAlgo_CellsBuilder& rOcctCellsBuilder,

@@ -307,7 +307,7 @@ namespace Topologic
 	}
 
 
-	Object ^ Topology::ValueAtKey(Topology ^ topology, String ^ key)
+	Object ^ Topology::ValueAtKey(String ^ key)
 	{
 		TopologicCore::Topology::Ptr pCoreTopology =
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
