@@ -28,16 +28,7 @@ namespace Topologic
 		/// </summary>
 		/// <param name="geometry"></param>
 		/// <returns name="Topology"></returns>
-		//[IsVisibleInDynamoLibrary(false)]
 		static Topology^ ByGeometry(Autodesk::DesignScript::Geometry::Geometry^ geometry);
-
-		/// <summary>
-		/// Create a topology by geometry.
-		/// </summary>
-		/// <param name="geometry"></param>
-		/// <returns name="Topology"></returns>
-		[IsVisibleInDynamoLibrary(false)]
-		static Topology^ ByGeometryA(Autodesk::DesignScript::Geometry::DesignScriptEntity^ geometry);
 
 		/// <summary>
 		/// 

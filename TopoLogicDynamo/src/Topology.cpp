@@ -52,29 +52,60 @@ namespace Topologic
 			return Vertex::ByPoint_(dynamoPoint);
 		}
 
-		// Do this first so that a polycurve (which is a curve) is not handled by Edge.
-		Autodesk::DesignScript::Geometry::PolyCurve^ dynamoPolyCurve = dynamic_cast<Autodesk::DesignScript::Geometry::PolyCurve^>(geometry);
-		if (dynamoPolyCurve != nullptr)
-		{
-			return Wire::ByPolyCurve_(dynamoPolyCurve);
-		}
-
 		Autodesk::DesignScript::Geometry::Curve^ dynamoCurve = dynamic_cast<Autodesk::DesignScript::Geometry::Curve^>(geometry);
 		if (dynamoCurve != nullptr)
 		{
-			return Edge::ByCurve_(dynamoCurve);
-		}
+			// Do this first so that a polycurve (which is a curve) is not handled by Edge.
+			Autodesk::DesignScript::Geometry::PolyCurve^ dynamoPolyCurve = dynamic_cast<Autodesk::DesignScript::Geometry::PolyCurve^>(geometry);
+			if (dynamoPolyCurve != nullptr)
+			{
+				return Wire::ByPolyCurve_(dynamoPolyCurve);
+			}
 
-		// Do this first so that a polysurface (which is a surface) is not handled by Face.
-		Autodesk::DesignScript::Geometry::PolySurface^ dynamoPolySurface = dynamic_cast<Autodesk::DesignScript::Geometry::PolySurface^>(geometry);
-		if (dynamoPolySurface != nullptr)
-		{
-			return Shell::ByPolySurface_(dynamoPolySurface);
+			// If it is a curve which actually contains more than 1 curves, create a polyCurve first, because it has a NumberOfCurves property.
+			List<Autodesk::DesignScript::Geometry::Curve^>^ dynamoCurves = gcnew List<Autodesk::DesignScript::Geometry::Curve^>();
+			dynamoCurves->Add(dynamoCurve);
+			dynamoPolyCurve = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(dynamoCurves, 0.0001);
+			int numOfCurves = dynamoPolyCurve->NumberOfCurves;
+			if (numOfCurves < 1)
+			{
+				throw gcnew Exception("The geometry is a curve by type but no curve is detected.");
+			}
+			else if (numOfCurves > 1)
+			{
+				Wire^ wire = Wire::ByPolyCurve_(dynamoPolyCurve);
+				delete dynamoPolyCurve;
+				return wire;
+			}
+
+			return Edge::ByCurve_(dynamoCurve);
 		}
 
 		Autodesk::DesignScript::Geometry::Surface^ dynamoSurface = dynamic_cast<Autodesk::DesignScript::Geometry::Surface^>(geometry);
 		if (dynamoSurface != nullptr)
 		{
+			// Do this first so that a polySurface (which is a surface) is not handled by Face.
+			Autodesk::DesignScript::Geometry::PolySurface^ dynamoPolySurface = dynamic_cast<Autodesk::DesignScript::Geometry::PolySurface^>(geometry);
+			if (dynamoPolySurface != nullptr)
+			{
+				return Shell::ByPolySurface_(dynamoPolySurface);
+			}
+
+			// If it is a surface which actually contains more than 1 surfaces, create a polySurface first, because it has a SurfaceCount method.
+			List<Autodesk::DesignScript::Geometry::Surface^>^ surfaces = gcnew List<Autodesk::DesignScript::Geometry::Surface^>();
+			surfaces->Add(dynamoSurface);
+			dynamoPolySurface = Autodesk::DesignScript::Geometry::PolySurface::ByJoinedSurfaces(surfaces);
+			int numOfSurfaces = dynamoPolySurface->SurfaceCount();
+			if (numOfSurfaces < 1)
+			{
+				throw gcnew Exception("The geometry is a surface by type but no surface is detected.");
+			}else if (numOfSurfaces > 1)
+			{
+				Shell^ shell = Shell::ByPolySurface_(dynamoPolySurface);
+				delete dynamoPolySurface;
+				return shell;
+			}
+
 			return Face::BySurface_(dynamoSurface);
 		}
 
@@ -82,35 +113,6 @@ namespace Topologic
 		if (dynamoSolid != nullptr)
 		{
 			return Cell::BySolid_(dynamoSolid);
-		}
-
-		throw gcnew NotImplementedException("This geometry is not currently handled.");
-	}
-
-	Topology ^ Topology::ByGeometryA(Autodesk::DesignScript::Geometry::DesignScriptEntity ^ geometry)
-	{
-		Autodesk::DesignScript::Geometry::Geometry^ dynamoGeometry = dynamic_cast<Autodesk::DesignScript::Geometry::Geometry^>(geometry);
-		if (dynamoGeometry != nullptr)
-		{
-			return ByGeometry(dynamoGeometry);
-		}
-
-		Autodesk::DesignScript::Geometry::Vertex^ dynamoVertex = dynamic_cast<Autodesk::DesignScript::Geometry::Vertex^>(geometry);
-		if (dynamoVertex != nullptr)
-		{
-			return Vertex::ByPoint_(dynamoVertex->PointGeometry);
-		}
-
-		Autodesk::DesignScript::Geometry::Edge^ dynamoEdge = dynamic_cast<Autodesk::DesignScript::Geometry::Edge^>(geometry);
-		if (dynamoEdge != nullptr)
-		{
-			return Edge::ByCurve_(dynamoEdge->CurveGeometry);
-		}
-
-		Autodesk::DesignScript::Geometry::Face^ dynamoFace = dynamic_cast<Autodesk::DesignScript::Geometry::Face^>(geometry);
-		if (dynamoFace != nullptr)
-		{
-			return Face::BySurface_(dynamoFace->SurfaceGeometry());
 		}
 
 		throw gcnew NotImplementedException("This geometry is not currently handled.");
