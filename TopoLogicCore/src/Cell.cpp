@@ -458,6 +458,16 @@ namespace TopologicCore
 		return m_occtSolid;
 	}
 
+	void Cell::SetOcctShape(const TopoDS_Shape & rkOcctShape)
+	{
+		SetOcctSolid(TopoDS::Solid(rkOcctShape));
+	}
+
+	void Cell::SetOcctSolid(const TopoDS_Solid & rkOcctSolid)
+	{
+		m_occtSolid = rkOcctSolid;
+	}
+
 	void Cell::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
 	{
 		// Returns a list of faces

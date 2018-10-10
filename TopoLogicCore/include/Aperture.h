@@ -163,6 +163,12 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="rkOcctShape"></param>
+		virtual void SetOcctShape(const TopoDS_Shape& rkOcctShape);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <returns></returns>
 		virtual const TopoDS_Shape& GetOcctShape() const;
 

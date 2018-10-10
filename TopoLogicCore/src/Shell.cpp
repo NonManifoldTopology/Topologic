@@ -1859,6 +1859,16 @@ namespace TopologicCore
 		return m_occtShell;
 	}
 
+	void Shell::SetOcctShape(const TopoDS_Shape & rkOcctShape)
+	{
+		SetOcctShell(TopoDS::Shell(rkOcctShape));
+	}
+
+	void Shell::SetOcctShell(const TopoDS_Shell & rkOcctShell)
+	{
+		m_occtShell = rkOcctShell;
+	}
+
 	Vertex::Ptr Shell::CenterOfMass() const
 	{
 		GProp_GProps occtShapeProperties;

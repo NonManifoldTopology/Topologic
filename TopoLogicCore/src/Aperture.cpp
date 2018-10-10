@@ -267,6 +267,11 @@ namespace TopologicCore
 		return Topology()->GetOcctShape();
 	}
 
+	void Aperture::SetOcctShape(const TopoDS_Shape & rkOcctShape)
+	{
+		m_pTopology->SetOcctShape(rkOcctShape);
+	}
+
 	const TopoDS_Shape& Aperture::GetOcctShape() const
 	{
 		return Topology()->GetOcctShape();

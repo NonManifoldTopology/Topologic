@@ -330,6 +330,18 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="rkOcctShape"></param>
+		virtual void SetOcctShape(const TopoDS_Shape& rkOcctShape);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkOcctFace"></param>
+		void SetOcctFace(const TopoDS_Face& rkOcctFace);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <returns></returns>
 		TOPOLOGIC_API Handle(Geom_Surface) Surface() const;
 

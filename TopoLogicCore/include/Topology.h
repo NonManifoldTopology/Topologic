@@ -25,16 +25,16 @@ namespace TopologicCore
 {
 	enum TopologyType
 	{
-		TOPOLOGY_VERTEX = 0,
-		TOPOLOGY_EDGE = 1,
-		TOPOLOGY_WIRE = 2,
-		TOPOLOGY_FACE = 3,
-		TOPOLOGY_SHELL = 4,
-		TOPOLOGY_CELL = 5,
-		TOPOLOGY_CELLCOMPLEX = 6,
-		TOPOLOGY_CLUSTER = 7,
-		TOPOLOGY_APERTURE = 8,
-		TOPOLOGY_DUALGRAPH = 9
+		TOPOLOGY_VERTEX = 1,
+		TOPOLOGY_EDGE = 2,
+		TOPOLOGY_WIRE = 4,
+		TOPOLOGY_FACE = 8,
+		TOPOLOGY_SHELL = 16,
+		TOPOLOGY_CELL = 32,
+		TOPOLOGY_CELLCOMPLEX = 64,
+		TOPOLOGY_CLUSTER = 128,
+		TOPOLOGY_APERTURE = 256,
+		TOPOLOGY_DUALGRAPH = 512
 	};
 
 	class Cluster;
@@ -328,6 +328,18 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="rkOcctShape"></param>
+		/// <returns></returns>
+		TopoDS_Shape Simplify(const TopoDS_Shape& rkOcctShape);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		TOPOLOGIC_API void Simplify();
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <returns></returns>
 		TOPOLOGIC_API std::string Analyze();
 
@@ -346,6 +358,8 @@ namespace TopologicCore
 		/// <returns></returns>
 		virtual TopoDS_Shape& GetOcctShape() = 0;
 
+		virtual void SetOcctShape(const TopoDS_Shape& rkOcctShape) = 0;
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -357,8 +371,8 @@ namespace TopologicCore
 		/// <summary>
 		/// Returns all sub-entities that have no other parents than this topology, i.e. do not belong to other entities.
 		/// </summary>
-		/// <param name="rImmediateMembers">The immediate members</param>
-		TOPOLOGIC_API void ImmediateMembers(std::list<Topology::Ptr>& rImmediateMembers) const;
+		/// <param name="rSubTopologies">The sub-topologies</param>
+		TOPOLOGIC_API void SubTopologies(std::list<Topology::Ptr>& rSubTopologies) const;
 
 		/// <summary>
 		/// 
@@ -504,8 +518,8 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <param name="rkShape"></param>
-		/// <param name="rImmediateMembers"></param>
-		static void ImmediateMembers(const TopoDS_Shape& rkShape, BOPCol_ListOfShape& rImmediateMembers);
+		/// <param name="rSubTopologies"></param>
+		static void SubTopologies(const TopoDS_Shape& rkShape, BOPCol_ListOfShape& rSubTopologies);
 
 		/// <summary>
 		/// 

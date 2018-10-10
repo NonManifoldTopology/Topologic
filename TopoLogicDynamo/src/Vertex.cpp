@@ -8,6 +8,7 @@
 #include <TopoDS.hxx>
 
 #include <assert.h>
+#include <tuple>
 
 namespace Topologic
 {
@@ -89,5 +90,37 @@ namespace Topologic
 	Object^ Vertex::Geometry::get()
 	{
 		return Point();
+	}
+
+	double Vertex::X::get()
+	{
+		TopologicCore::Vertex::Ptr pCoreVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(GetCoreTopologicalQuery());
+
+		return pCoreVertex->X();
+	}
+
+	double Vertex::Y::get()
+	{
+		TopologicCore::Vertex::Ptr pCoreVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(GetCoreTopologicalQuery());
+
+		return pCoreVertex->Y();
+	}
+
+	double Vertex::Z::get()
+	{
+		TopologicCore::Vertex::Ptr pCoreVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(GetCoreTopologicalQuery());
+
+		return pCoreVertex->Z();
+	}
+
+	List<double>^ Vertex::Coordinate::get()
+	{
+		List<double>^ coordinate = gcnew List<double>();
+		TopologicCore::Vertex::Ptr pCoreVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(GetCoreTopologicalQuery());
+		std::tuple<double, double, double> coreCoordinate = pCoreVertex->Coordinate();
+		coordinate->Add(std::get<0>(coreCoordinate));
+		coordinate->Add(std::get<1>(coreCoordinate));
+		coordinate->Add(std::get<2>(coreCoordinate));
+		return coordinate;
 	}
 }

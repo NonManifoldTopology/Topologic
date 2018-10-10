@@ -239,7 +239,8 @@ namespace TopologicCore
 				}
 			}
 
-			if (rkOcctPoles.Length() != BSplCLib::NbPoles(kUDegree, kIsUPeriodic, rkOcctUMultiplicities))
+			int occtNumberOfPoles = BSplCLib::NbPoles(kUDegree, kIsUPeriodic, rkOcctUMultiplicities);
+			if (rkOcctPoles.Length() != occtNumberOfPoles)
 			{
 				if (kIsUPeriodic)
 				{
@@ -667,6 +668,16 @@ namespace TopologicCore
 		}
 
 		return m_occtFace;
+	}
+
+	void Face::SetOcctShape(const TopoDS_Shape & rkOcctShape)
+	{
+		SetOcctFace(TopoDS::Face(rkOcctShape));
+	}
+
+	void Face::SetOcctFace(const TopoDS_Face & rkOcctFace)
+	{
+		m_occtFace = rkOcctFace;
 	}
 
 	Face::Face(const TopoDS_Face& rkOcctFace, const std::string& rkGuid)

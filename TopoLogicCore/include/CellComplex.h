@@ -145,6 +145,18 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="rkOcctShape"></param>
+		virtual void SetOcctShape(const TopoDS_Shape& rkOcctShape);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkOcctCompSolid"></param>
+		void SetOcctCompSolid(const TopoDS_CompSolid& rkOcctCompSolid);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		virtual std::shared_ptr<Vertex> CenterOfMass() const;
 
 		/// <summary>
@@ -169,6 +181,6 @@ namespace TopologicCore
 		/// <summary>
 		/// The underlying OCCT cell complex.
 		/// </summary>
-		TopoDS_CompSolid m_pOcctCompSolid;
+		TopoDS_CompSolid m_occtCompSolid;
 	};
 }

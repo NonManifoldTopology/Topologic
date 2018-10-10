@@ -375,6 +375,13 @@ namespace Topologic
 		Vertex^ CenterOfMass();
 
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		Topology^ Simplify();
+
+
+		/// <summary>
 		/// Returns the instance type as a string.
 		/// </summary>
 		property String^ Type

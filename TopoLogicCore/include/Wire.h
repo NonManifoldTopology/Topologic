@@ -100,6 +100,18 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="rkOcctShape"></param>
+		virtual void SetOcctShape(const TopoDS_Shape& rkOcctShape);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkOcctWire"></param>
+		void SetOcctWire(const TopoDS_Wire& rkOcctWire);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <returns></returns>
 		virtual TopoDS_Wire& GetOcctWire();
 

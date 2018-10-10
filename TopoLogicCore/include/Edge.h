@@ -191,6 +191,18 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="rkOcctShape"></param>
+		virtual void SetOcctShape(const TopoDS_Shape& rkOcctShape);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkOcctEdge"></param>
+		void SetOcctEdge(const TopoDS_Edge& rkOcctEdge);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <returns></returns>
 		Handle(Geom_Curve) Curve() const;
 

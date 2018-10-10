@@ -288,24 +288,29 @@ namespace TopologicCore
 
 	TopoDS_CompSolid& CellComplex::GetOcctCompSolid()
 	{
-		assert(!m_pOcctCompSolid.IsNull() && "CellComplex::m_pOcctCompSolid is null.");
-		if (m_pOcctCompSolid.IsNull())
+		assert(!m_occtCompSolid.IsNull() && "CellComplex::m_occtCompSolid is null.");
+		if (m_occtCompSolid.IsNull())
 		{
-			throw std::exception("CellComplex::m_pOcctCompSolid is null.");
+			throw std::exception("CellComplex::m_occtCompSolid is null.");
 		}
 
-		return m_pOcctCompSolid;
+		return m_occtCompSolid;
 	}
 
 	const TopoDS_CompSolid& CellComplex::GetOcctCompSolid() const
 	{
-		assert(!m_pOcctCompSolid.IsNull() && "CellComplex::m_pOcctCompSolid is null.");
-		if (m_pOcctCompSolid.IsNull())
+		assert(!m_occtCompSolid.IsNull() && "CellComplex::m_occtCompSolid is null.");
+		if (m_occtCompSolid.IsNull())
 		{
-			throw std::exception("CellComplex::m_pOcctCompSolid is null.");
+			throw std::exception("CellComplex::m_occtCompSolid is null.");
 		}
 
-		return m_pOcctCompSolid;
+		return m_occtCompSolid;
+	}
+
+	void CellComplex::SetOcctShape(const TopoDS_Shape & rkOcctShape)
+	{
+		SetOcctCompSolid(TopoDS::CompSolid(rkOcctShape));
 	}
 
 	void CellComplex::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
@@ -323,6 +328,11 @@ namespace TopologicCore
 		return std::string("CellComplex");
 	}
 
+	void CellComplex::SetOcctCompSolid(const TopoDS_CompSolid & rkOcctCompSolid)
+	{
+		m_occtCompSolid = rkOcctCompSolid;
+	}
+
 	Vertex::Ptr CellComplex::CenterOfMass() const
 	{
 		GProp_GProps occtShapeProperties;
@@ -332,7 +342,7 @@ namespace TopologicCore
 
 	CellComplex::CellComplex(const TopoDS_CompSolid& rkOcctCompSolid, const std::string& rkGuid)
 		: Topology(3, rkOcctCompSolid, rkGuid.compare("") == 0 ? GetClassGUID() : rkGuid)
-		, m_pOcctCompSolid(rkOcctCompSolid)
+		, m_occtCompSolid(rkOcctCompSolid)
 	{
 		RegisterFactory(GetClassGUID(), std::make_shared<CellComplexFactory>());
 	}

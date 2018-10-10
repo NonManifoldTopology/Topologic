@@ -5,6 +5,7 @@
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRep_Tool.hxx>
 #include <Geom_CartesianPoint.hxx>
+#include <TopoDS.hxx>
 #include <TopoDS_Vertex.hxx>
 
 #include <assert.h>
@@ -48,6 +49,11 @@ namespace TopologicCore
 		return GetOcctVertex();
 	}
 
+	void Vertex::SetOcctShape(const TopoDS_Shape & rkOcctShape)
+	{
+		SetOcctVertex(TopoDS::Vertex(rkOcctShape));
+	}
+
 	const TopoDS_Shape& Vertex::GetOcctShape() const
 	{
 		return GetOcctVertex();
@@ -64,6 +70,11 @@ namespace TopologicCore
 		return m_occtVertex;
 	}
 
+	void Vertex::SetOcctVertex(const TopoDS_Vertex & rkOcctVertex)
+	{
+		m_occtVertex = rkOcctVertex;
+	}
+
 	const TopoDS_Vertex& Vertex::GetOcctVertex() const
 	{
 		assert(!m_occtVertex.IsNull() && "Vertex::m_occtVertex is null.");
@@ -78,6 +89,30 @@ namespace TopologicCore
 	Handle(Geom_Point) Vertex::Point() const
 	{
 		return new Geom_CartesianPoint(BRep_Tool::Pnt(GetOcctVertex()));
+	}
+
+	double Vertex::X() const
+	{
+		Handle(Geom_Point) pOcctPoint = Point();
+		return pOcctPoint->X();
+	}
+
+	double Vertex::Y() const
+	{
+		Handle(Geom_Point) pOcctPoint = Point();
+		return pOcctPoint->Y();
+	}
+
+	double Vertex::Z() const
+	{
+		Handle(Geom_Point) pOcctPoint = Point();
+		return pOcctPoint->Z();
+	}
+
+	std::tuple<double, double, double> Vertex::Coordinate() const
+	{
+		Handle(Geom_Point) pOcctPoint = Point();
+		return std::tuple<double, double, double>(pOcctPoint->X(), pOcctPoint->Y(), pOcctPoint->Z());
 	}
 
 	std::shared_ptr<Vertex> Vertex::CenterOfMass() const

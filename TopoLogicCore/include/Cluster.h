@@ -94,6 +94,18 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="rkOcctShape"></param>
+		virtual void SetOcctShape(const TopoDS_Shape& rkOcctShape);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkOcctCompound"></param>
+		void SetOcctCompound(const TopoDS_Compound& rkOcctCompound);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="rOcctGeometries"></param>
 		virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const;
 

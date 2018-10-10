@@ -53,10 +53,11 @@ namespace Topologic
 		}
 		else
 		{
-			Autodesk::DesignScript::Geometry::PolySurface^ pDynamoPolysurface = Autodesk
-				::DesignScript::Geometry::PolySurface::BySolid(solid);
+			Autodesk::DesignScript::Geometry::PolySurface^ pDynamoPolysurface = 
+				Autodesk::DesignScript::Geometry::PolySurface::BySolid(solid);
 			List<Face^>^ pFaces = gcnew List<Face^>();
-			for each(Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface in pDynamoPolysurface->Surfaces())
+			array<Autodesk::DesignScript::Geometry::Surface^>^ dynamoSurfaces = pDynamoPolysurface->Surfaces();
+			for each(Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface in dynamoSurfaces)
 			{
 				pFaces->Add(Face::BySurface_(pDynamoSurface));
 				delete pDynamoSurface;

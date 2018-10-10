@@ -465,10 +465,44 @@ namespace TopologicCore
 		return Topology::ByOcctShape(occtShape, "");
 	}
 
+	TopoDS_Shape Topology::Simplify(const TopoDS_Shape& rkOcctShape)
+	{
+		// Non-recursive
+		TopoDS_Shape occtCurrentShape = rkOcctShape;
+
+		BOPCol_ListOfShape occtShapes;
+		bool isSimplestShapeFound = false;
+		do
+		{
+			SubTopologies(occtCurrentShape, occtShapes);
+
+			int numOfSubTopologies = occtShapes.Size();
+			if (numOfSubTopologies != 1)
+			{
+				// occtCurrentShape does not change.
+				isSimplestShapeFound = true;
+			}
+			else // if (occtShapes.Size() == 1)
+			{
+				// Go deeper
+				occtCurrentShape = *occtShapes.begin();
+			}
+			occtShapes.Clear();
+		} while (!isSimplestShapeFound);
+
+		return occtCurrentShape;
+	}
+
+	void Topology::Simplify()
+	{
+		TopoDS_Shape occtSimplifiedShape = Simplify(GetOcctShape());
+		SetOcctShape(occtSimplifiedShape);
+	}
+
 	std::string Topology::Analyze(const TopoDS_Shape& rkShape, const int kLevel)
 	{
-		BOPCol_ListOfShape occtImmediateMembers;
-		ImmediateMembers(rkShape, occtImmediateMembers);
+		BOPCol_ListOfShape occtSubTopologies;
+		SubTopologies(rkShape, occtSubTopologies);
 
 		std::array<std::string, 8> occtShapeNameSingular;
 		occtShapeNameSingular[0] = "a cluster";
@@ -498,7 +532,7 @@ namespace TopologicCore
 		}
 		std::string currentIndent = ssCurrentIndent.str();
 		int numberOfSubentities[8] = { 0,0,0,0,0,0,0,0 };
-		for (BOPCol_ListIteratorOfListOfShape kMemberIterator(occtImmediateMembers);
+		for (BOPCol_ListIteratorOfListOfShape kMemberIterator(occtSubTopologies);
 			kMemberIterator.More();
 			kMemberIterator.Next())
 		{
@@ -555,7 +589,7 @@ namespace TopologicCore
 		}
 		ssCurrentResult << currentIndent << "================" << std::endl;
 
-		for (BOPCol_ListIteratorOfListOfShape kMemberIterator(occtImmediateMembers);
+		for (BOPCol_ListIteratorOfListOfShape kMemberIterator(occtSubTopologies);
 			kMemberIterator.More();
 			kMemberIterator.Next())
 		{
@@ -1123,14 +1157,9 @@ namespace TopologicCore
 		std::list<Topology::Ptr> thisContents;
 		Contents(true, thisContents);
 
-		BOPCol_ListOfShape occtImmediateMembers;
-		ImmediateMembers(rOcctCellsBuilder.Shape(), occtImmediateMembers);
-		TopoDS_Shape queryShape = rOcctCellsBuilder.Shape();
-		if (occtImmediateMembers.Size() == 1)
-		{
-			BOPCol_ListIteratorOfListOfShape occtImmediateMemberIterator(occtImmediateMembers);
-			queryShape = occtImmediateMemberIterator.Value();
-		}
+		BOPCol_ListOfShape occtSubTopologies;
+		SubTopologies(rOcctCellsBuilder.Shape(), occtSubTopologies);
+		TopoDS_Shape queryShape = Simplify(rOcctCellsBuilder.Shape());
 
 		Topology::Ptr pBooleanResult = Topology::ByOcctShape(queryShape, "");
 		// queryShape (pBooleanResult) is the member of the Boolean result, it doesn't have any content yet.
@@ -1444,7 +1473,7 @@ namespace TopologicCore
 	{
 		// 1
 		BOPCol_ListOfShape occtShapes;
-		ImmediateMembers(GetOcctShape(), occtShapes);
+		SubTopologies(GetOcctShape(), occtShapes);
 
 		// 2
 		BOPAlgo_CellsBuilder occtCellsBuilder;
@@ -1654,7 +1683,7 @@ namespace TopologicCore
 		}
 		if (clusterCandidates.Size() > 0)
 		{
-			ImmediateMembers(occtCellsBuilder2.Shape(), clusterCandidates);
+			SubTopologies(occtCellsBuilder2.Shape(), clusterCandidates);
 			TopoDS_Compound occtFinalCompound;
 			BRep_Builder occtFinalBuilder;
 			occtFinalBuilder.MakeCompound(occtFinalCompound);
@@ -1740,7 +1769,7 @@ namespace TopologicCore
 		{
 			std::shared_ptr<Cluster> pCluster = Topology::Downcast<Cluster>(pTopology);
 			std::list<Topology::Ptr> immediateMembers;
-			pCluster->ImmediateMembers(immediateMembers);
+			pCluster->SubTopologies(immediateMembers);
 			for (const Topology::Ptr& kpImmediateMember : immediateMembers)
 			{
 				AddUnionInternalStructure(kpImmediateMember->GetOcctShape(), rUnionArguments);
@@ -1901,7 +1930,7 @@ namespace TopologicCore
 		if (typeA == TOPOLOGY_CELLCOMPLEX || typeA == TOPOLOGY_CLUSTER)
 		{
 			std::list<Topology::Ptr> members;
-			ImmediateMembers(members);
+			SubTopologies(members);
 			for (const Topology::Ptr& kpMember : members)
 			{
 				TopoDS_Shape occtNewShape = FixBooleanOperandFace(kpMember->GetOcctShape(), rOcctMapFaceToFixedFaceA);
@@ -1925,7 +1954,7 @@ namespace TopologicCore
 		if (typeB == TOPOLOGY_CELLCOMPLEX || typeB == TOPOLOGY_CLUSTER)
 		{
 			std::list<Topology::Ptr> members;
-			kpOtherTopology->ImmediateMembers(members);
+			kpOtherTopology->SubTopologies(members);
 			for (const Topology::Ptr& kpMember : members)
 			{
 				TopoDS_Shape occtNewShape = FixBooleanOperandFace(kpMember->GetOcctShape(), rOcctMapFaceToFixedFaceA);
@@ -2066,24 +2095,24 @@ namespace TopologicCore
 			occtMapFaceToFixedFaceB);
 	}
 
-	void Topology::ImmediateMembers(const TopoDS_Shape& rkShape, BOPCol_ListOfShape& rImmediateMembers)
+	void Topology::SubTopologies(const TopoDS_Shape& rkShape, BOPCol_ListOfShape& rSubTopologies)
 	{
 		for (TopoDS_Iterator occtShapeIterator(rkShape); occtShapeIterator.More(); occtShapeIterator.Next())
 		{
-			rImmediateMembers.Append(occtShapeIterator.Value());
+			rSubTopologies.Append(occtShapeIterator.Value());
 		}
 	}
 
-	void Topology::ImmediateMembers(std::list<Topology::Ptr>& rImmediateMembers) const
+	void Topology::SubTopologies(std::list<Topology::Ptr>& rSubTopologies) const
 	{
 		BOPCol_ListOfShape occtListMembers;
-		Topology::ImmediateMembers(GetOcctShape(), occtListMembers);
+		Topology::SubTopologies(GetOcctShape(), occtListMembers);
 		for (BOPCol_ListIteratorOfListOfShape occtIterator(occtListMembers);
 			occtIterator.More();
 			occtIterator.Next())
 		{
 			Topology::Ptr pMemberTopology = Topology::ByOcctShape(occtIterator.Value(), "");
-			rImmediateMembers.push_back(pMemberTopology);
+			rSubTopologies.push_back(pMemberTopology);
 		}
 	}
 

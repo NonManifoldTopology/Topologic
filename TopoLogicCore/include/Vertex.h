@@ -50,8 +50,33 @@ namespace TopologicCore
 		/// <summary>
 		/// Returns the list of edges of which this vertex is a constituent member.
 		/// </summary>
+		/// <param name="kpHostTopology"></param>
 		/// <param name="rEdges">The edges containing this vertex as a constituent member</param>
-		void TOPOLOGIC_API Edges(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Edge>>& rEdges);
+		TOPOLOGIC_API void Edges(const std::shared_ptr<Topology>& kpHostTopology, std::list<std::shared_ptr<Edge>>& rEdges);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		TOPOLOGIC_API double X() const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		TOPOLOGIC_API double Y() const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		TOPOLOGIC_API double Z() const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		TOPOLOGIC_API std::tuple<double, double, double> Coordinate() const;
 
 		/// <summary>
 		/// 
@@ -82,8 +107,20 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="rkOcctShape"></param>
+		virtual void SetOcctShape(const TopoDS_Shape& rkOcctShape);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <returns></returns>
 		virtual TopoDS_Vertex& GetOcctVertex();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkOcctVertex"></param>
+		void SetOcctVertex(const TopoDS_Vertex& rkOcctVertex);
 
 		/// <summary>
 		/// 

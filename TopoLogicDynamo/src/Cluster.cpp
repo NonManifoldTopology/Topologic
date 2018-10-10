@@ -53,13 +53,13 @@ namespace Topologic
 	Object^ Cluster::Geometry::get()
 	{
 		TopologicCore::Cluster::Ptr pCoreCluster = TopologicCore::Topology::Downcast<TopologicCore::Cluster>(GetCoreTopologicalQuery());
-		std::list<std::shared_ptr<TopologicCore::Topology>> immediateCoreMembers;
-		pCoreCluster->ImmediateMembers(immediateCoreMembers);
+		std::list<std::shared_ptr<TopologicCore::Topology>> coreSubTopologies;
+		pCoreCluster->SubTopologies(coreSubTopologies);
 
 		List<Object^>^ pTopologies = gcnew List<Object^>();
 
-		for (std::list<std::shared_ptr<TopologicCore::Topology>>::const_iterator kCoreIterator = immediateCoreMembers.begin();
-			kCoreIterator != immediateCoreMembers.end();
+		for (std::list<std::shared_ptr<TopologicCore::Topology>>::const_iterator kCoreIterator = coreSubTopologies.begin();
+			kCoreIterator != coreSubTopologies.end();
 			kCoreIterator++)
 		{
 			pTopologies->Add(Topology::ByCoreTopology(*kCoreIterator)->Geometry);

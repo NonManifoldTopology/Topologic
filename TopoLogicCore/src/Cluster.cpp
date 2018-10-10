@@ -129,6 +129,16 @@ namespace TopologicCore
 		return m_occtCompound;
 	}
 
+	void Cluster::SetOcctShape(const TopoDS_Shape & rkOcctShape)
+	{
+		SetOcctShape(TopoDS::Compound(rkOcctShape));
+	}
+
+	void Cluster::SetOcctCompound(const TopoDS_Compound & rkOcctCompound)
+	{
+		m_occtCompound = rkOcctCompound;
+	}
+
 	void Cluster::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
 	{
 		throw std::exception("No implementation for Cluster entity");

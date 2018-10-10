@@ -218,8 +218,20 @@ namespace Topologic
 
 	Topology^ Topology::ByCoreTopology(const std::shared_ptr<TopologicCore::Topology>& kpCoreTopology)
 	{
+		if (kpCoreTopology == nullptr)
+		{
+			return nullptr;
+		}
 		String^ guid = gcnew String(kpCoreTopology->GetInstanceGUID().c_str());
-		return TopologyFactoryManager::Instance->Find(guid)->Create(TopologicCore::TopologyPtr(kpCoreTopology));
+		TopologyFactory^ topologyFactory = nullptr;
+		try {
+			topologyFactory = TopologyFactoryManager::Instance->Find(guid);
+		}
+		catch (...)
+		{
+			topologyFactory = TopologyFactoryManager::Instance->GetDefaultFactory(kpCoreTopology);
+		}
+		return topologyFactory->Create(TopologicCore::TopologyPtr(kpCoreTopology));
 	}
 
 	generic <class T>
@@ -860,7 +872,7 @@ namespace Topologic
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 
 		std::list<std::shared_ptr<TopologicCore::Topology>> coreTopologies;
-		pCoreTopology->ImmediateMembers(coreTopologies);
+		pCoreTopology->SubTopologies(coreTopologies);
 
 		List<Topology^>^ pTopologies = gcnew List<Topology^>();
 		for (std::list<std::shared_ptr<TopologicCore::Topology>>::const_iterator kTopologyIterator = coreTopologies.begin();
@@ -878,5 +890,13 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Vertex::Ptr pCoreCenterOfMass = pCoreTopology->CenterOfMass();
 		return gcnew Vertex(pCoreCenterOfMass);
+	}
+
+	Topology^ Topology::Simplify()
+	{
+		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		TopologicCore::Topology::Ptr pCoreSimplifiedTopology = pCoreTopology->Copy();
+		pCoreSimplifiedTopology->Simplify();
+		return Topology::ByCoreTopology(pCoreSimplifiedTopology);
 	}
 }

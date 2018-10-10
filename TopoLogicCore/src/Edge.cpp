@@ -17,6 +17,7 @@
 #include <Precision.hxx>
 #include <ShapeAnalysis_Edge.hxx>
 #include <TopExp.hxx>
+#include <TopoDS.hxx>
 
 #include <assert.h>
 
@@ -303,6 +304,16 @@ namespace TopologicCore
 		}
 
 		return m_occtEdge;
+	}
+
+	void Edge::SetOcctShape(const TopoDS_Shape & rkOcctShape)
+	{
+		SetOcctEdge(TopoDS::Edge(rkOcctShape));
+	}
+
+	void Edge::SetOcctEdge(const TopoDS_Edge & rkOcctEdge)
+	{
+		m_occtEdge = rkOcctEdge;
 	}
 
 	Handle(Geom_Curve) Edge::Curve() const

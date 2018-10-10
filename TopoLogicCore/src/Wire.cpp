@@ -136,6 +136,16 @@ namespace TopologicCore
 		return GetOcctWire();
 	}
 
+	void Wire::SetOcctShape(const TopoDS_Shape & rkOcctShape)
+	{
+		SetOcctWire(TopoDS::Wire(rkOcctShape));
+	}
+
+	void Wire::SetOcctWire(const TopoDS_Wire & rkOcctWire)
+	{
+		m_occtWire = rkOcctWire;
+	}
+
 	TopoDS_Wire& Wire::GetOcctWire()
 	{
 		assert(!m_occtWire.IsNull() && "Wire::m_occtWire is null.");
