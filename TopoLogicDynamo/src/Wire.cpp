@@ -94,7 +94,7 @@ namespace Topologic
 		std::list<TopologicCore::Edge::Ptr> coreEdges;
 		for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoCurve in pDynamoCurves)
 		{
-			Edge^ pEdge = Edge::ByCurve_(pDynamoCurve);
+			Edge^ pEdge = Edge::ByCurve(pDynamoCurve);
 			coreEdges.push_back(TopologicCore::Topology::Downcast<TopologicCore::Edge>(pEdge->GetCoreTopologicalQuery()));
 		}
 

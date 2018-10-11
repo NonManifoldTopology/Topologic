@@ -302,7 +302,8 @@ namespace TopologicCore
 		if (!solveResult)
 			throw std::exception("Failed to solve.");
 		const ShapeOp::Matrix3X& rkShapeOpResult = shapeOpSolver.getPoints();
-		for (int i = 0; i < rkShapeOpResult.size(); ++i)
+		Eigen::Index numOfCols = rkShapeOpResult.cols();
+		for (int i = 0; i < numOfCols; ++i)
 		{
 			rPlanarizedPoints.push_back(
 				gp_Pnt(
@@ -406,7 +407,7 @@ namespace TopologicCore
 		bool isVClosed = false;
 		std::list<double> occtUValues;
 		std::list<double> occtVValues;
-		kpFace->UVSamplePoints(rkUValues, rkVValues, samplePoints, numUPoints, numVPoints, numUPanels, numVPanels, isUClosed, isVClosed);
+		kpFace->UVSamplePoints(rkUValues, rkVValues, samplePoints, occtUValues, occtVValues, numUPoints, numVPoints, numUPanels, numVPanels, isUClosed, isVClosed);
 
 		// 3. Get sample vertices on the aperture edges
 		std::list<Topology::Ptr> contents;

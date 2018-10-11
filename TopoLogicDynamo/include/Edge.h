@@ -15,47 +15,12 @@ namespace Topologic {
 	{
 	public:
 		/// <summary>
-		/// Create a curved edge by a Dynamo curve. NOTE: This node will be replaced by a single Topology.ByGeometry() node.
-		/// </summary>
-		/// <param name="curve">A Dynamo curve.</param>
-		/// <returns name="Edge">The created Topologic edge</returns>
-		static Edge^ ByCurve_(Autodesk::DesignScript::Geometry::Curve^ curve);
-
-		/// <summary>
-		/// Create an edge by a list of vertices. If the list only contains two vertices, a straight line will be created.
-		/// If more than two are given, the edge will be interpolated through the vertices.
-		/// Otherwise, an exception will be raised.
-		/// </summary>
-		/// <param name="vertices">A list of vertices. The created edge will pass all vertices in this list.</param>
-		/// <returns name="Edge">The created Topologic edge</returns>
-		[IsVisibleInDynamoLibrary(false)]
-		static Edge^ ByVertices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices);
-
-		/// <summary>
 		/// Create a straight edge by the startVertex and endVertex.
 		/// </summary>
 		/// <param name="startVertex"></param>
 		/// <param name="endVertex"></param>
 		/// <returns name="Edge"></returns>
 		static Edge^ ByStartVertexEndVertex(Vertex^ startVertex, Vertex^ endVertex);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="centerPoint"></param>
-		/// <param name="radius"></param>
-		/// <param name="xAxisX"></param>
-		/// <param name="xAxisY"></param>
-		/// <param name="xAxisZ"></param>
-		/// <param name="normalX"></param>
-		/// <param name="normalY"></param>
-		/// <param name="normalZ"></param>
-		/// <returns></returns>
-		[IsVisibleInDynamoLibrary(false)]
-		static Edge^ ByCircle(
-			Vertex^ centerPoint, double radius, 
-			double xAxisX, double xAxisY, double xAxisZ, 
-			double normalX, double normalY, double normalZ);
 
 		/// <summary>
 		/// Get the edges adjacent to the edge. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.
@@ -85,6 +50,34 @@ namespace Topologic {
 		/// <param name="edge">An edge.</param>
 		/// <returns name="Vertex">the shared vertex of an edge</returns>
 		Vertex^ SharedVertex(Edge^ edge);
+
+		/// <summary>
+		/// Create an edge by a list of vertices. If the list only contains two vertices, a straight line will be created.
+		/// If more than two are given, the edge will be interpolated through the vertices.
+		/// Otherwise, an exception will be raised.
+		/// </summary>
+		/// <param name="vertices">A list of vertices. The created edge will pass all vertices in this list.</param>
+		/// <returns name="Edge">The created Topologic edge</returns>
+		[IsVisibleInDynamoLibrary(false)]
+		static Edge^ ByVertices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="centerPoint"></param>
+		/// <param name="radius"></param>
+		/// <param name="xAxisX"></param>
+		/// <param name="xAxisY"></param>
+		/// <param name="xAxisZ"></param>
+		/// <param name="normalX"></param>
+		/// <param name="normalY"></param>
+		/// <param name="normalZ"></param>
+		/// <returns></returns>
+		[IsVisibleInDynamoLibrary(false)]
+		static Edge^ ByCircle(
+			Vertex^ centerPoint, double radius,
+			double xAxisX, double xAxisY, double xAxisZ,
+			double normalX, double normalY, double normalZ);
 
 		/// <summary>
 		/// 
@@ -137,6 +130,13 @@ namespace Topologic {
 		/// <returns></returns>
 		virtual std::shared_ptr<TopologicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
 
+		/// <summary>
+		/// Create a curved edge by a Dynamo curve. NOTE: This node will be replaced by a single Topology.ByGeometry() node.
+		/// </summary>
+		/// <param name="curve">A Dynamo curve.</param>
+		/// <returns name="Edge">The created Topologic edge</returns>
+		static Edge^ ByCurve(Autodesk::DesignScript::Geometry::Curve^ curve);
+
 	protected:
 		virtual ~Edge();
 
@@ -145,21 +145,21 @@ namespace Topologic {
 		/// </summary>
 		/// <param name="pDynamoNurbsCurve"></param>
 		/// <returns></returns>
-		static Edge^ ByCurve_(Autodesk::DesignScript::Geometry::NurbsCurve^ pDynamoNurbsCurve);
+		static Edge^ ByCurve(Autodesk::DesignScript::Geometry::NurbsCurve^ pDynamoNurbsCurve);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="pDynamoCircle"></param>
 		/// <returns></returns>
-		static Edge^ ByCurve_(Autodesk::DesignScript::Geometry::Circle^ pDynamoCircle);
+		static Edge^ ByCurve(Autodesk::DesignScript::Geometry::Circle^ pDynamoCircle);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="pDynamoLine"></param>
 		/// <returns></returns>
-		static Edge^ ByCurve_(Autodesk::DesignScript::Geometry::Line^ pDynamoLine);
+		static Edge^ ByCurve(Autodesk::DesignScript::Geometry::Line^ pDynamoLine);
 
 		/// <summary>
 		/// 

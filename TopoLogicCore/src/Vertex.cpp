@@ -29,6 +29,11 @@ namespace TopologicCore
 		return std::make_shared<Vertex>(BRepBuilderAPI_MakeVertex(pOcctPoint->Pnt()));
 	}
 
+	Vertex::Ptr Vertex::ByCoordinates(const double kX, const double kY, const double kZ)
+	{
+		return std::make_shared<Vertex>(BRepBuilderAPI_MakeVertex(gp_Pnt(kX, kY, kZ)));
+	}
+
 	void Vertex::Edges(const Topology::Ptr& kpParentTopology, std::list<Edge::Ptr>& rEdges)
 	{
 		UpwardNavigation(kpParentTopology, rEdges);
@@ -51,7 +56,13 @@ namespace TopologicCore
 
 	void Vertex::SetOcctShape(const TopoDS_Shape & rkOcctShape)
 	{
-		SetOcctVertex(TopoDS::Vertex(rkOcctShape));
+		try {
+			SetOcctVertex(TopoDS::Vertex(rkOcctShape));
+		}
+		catch (Standard_Failure e)
+		{
+			throw std::exception(e.GetMessageString());
+		}
 	}
 
 	const TopoDS_Shape& Vertex::GetOcctShape() const

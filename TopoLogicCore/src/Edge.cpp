@@ -23,7 +23,7 @@
 
 namespace TopologicCore
 {
-	void Edge::AdjacentEdges(const Topology::Ptr& kpParentTopology, std::list<Edge::Ptr>& rEdges) const
+	void Edge::AdjacentEdges(const Topology::Ptr& kpHostTopology, std::list<Edge::Ptr>& rEdges) const
 	{
 		std::list<Vertex::Ptr> vertices;
 		Vertices(vertices);
@@ -34,7 +34,7 @@ namespace TopologicCore
 		{
 			// Find the edges
 			std::list<Edge::Ptr> edges;
-			kpVertex->Edges(kpParentTopology, edges);
+			kpVertex->Edges(kpHostTopology, edges);
 
 			for (const Edge::Ptr& kpEdge : edges)
 			{
@@ -59,9 +59,9 @@ namespace TopologicCore
 		rVertices.push_back(std::make_shared<Vertex>(occtVertex2));
 	}
 
-	void Edge::Wires(const Topology::Ptr& kpParentTopology, std::list<Wire::Ptr>& rWires) const
+	void Edge::Wires(const Topology::Ptr& kpHostTopology, std::list<Wire::Ptr>& rWires) const
 	{
-		UpwardNavigation(kpParentTopology, rWires);
+		UpwardNavigation(kpHostTopology, rWires);
 	}
 
 	Edge::Ptr Edge::ByCurve(
@@ -74,19 +74,32 @@ namespace TopologicCore
 		const bool kIsRational)
 	{
 		BRepBuilderAPI_MakeEdge occtMakeEdge;
-		Handle(Geom_BSplineCurve) pOcctBSplineCurve = new Geom_BSplineCurve(
-			rkOcctPoles,
-			rkOcctWeights,
-			rkOcctKnots,
-			rkOcctMultiplicities,
-			kDegree,
-			false,
-			kIsRational);
+		Handle(Geom_BSplineCurve) pOcctBSplineCurve = nullptr;
+		try {
+			pOcctBSplineCurve = new Geom_BSplineCurve(
+				rkOcctPoles,
+				rkOcctWeights,
+				rkOcctKnots,
+				rkOcctMultiplicities,
+				kDegree,
+				false,
+				kIsRational);
+		}
+		catch (Standard_Failure e)
+		{
+			throw std::exception(e.GetMessageString());
+		}
 
 		// Done separately, because SetPeriod() does additional steps to adjust the poles, weights, etc.
 		if (kIsPeriodic)
 		{
-			pOcctBSplineCurve->SetPeriodic();
+			try{
+				pOcctBSplineCurve->SetPeriodic();
+			}
+			catch (Standard_Failure e)
+			{
+				throw std::exception(e.GetMessageString());
+			}
 		}
 
 		return ByCurve(pOcctBSplineCurve);
@@ -109,7 +122,6 @@ namespace TopologicCore
 		}
 
 		Edge::Ptr pEdge = std::make_shared<Edge>(occtMakeEdge);
-		//LabelManager::GetInstance().AddGeneratedMembersToLabel(pEdge->GetOcctLabel());
 		return pEdge;
 	}
 
@@ -131,16 +143,6 @@ namespace TopologicCore
 			const Vertex::Ptr& rkVertex1 = *(rkVertices.begin());
 			const Vertex::Ptr& rkVertex2 = *(++rkVertices.begin());
 			return ByStartVertexEndVertex(rkVertex1, rkVertex2);
-			// TODO: Add the vertices to the edge's label. Must do this manually because of the Modified()'s nature to map 
-			// old to new sub-shapes.
-			/*// Original --> modified shapes
-			std::list<std::pair<Topology::Ptr, Topology::Ptr>> topologyPairs;
-			topologyPairs.push_back(std::make_pair(rkBaseVertex1, rkBaseVertex1));
-			topologyPairs.push_back(std::make_pair(rkBaseVertex2, rkBaseVertex2));
-
-			LabelManager::GetInstance().AddModifiedMembers(
-				pEdge->GetOcctLabel(), 
-				topologyPairs);*/
 
 		}else
 		{
@@ -168,13 +170,8 @@ namespace TopologicCore
 				}
 
 				pEdge = std::make_shared<Edge>(occtMakeEdge);
-				//LabelManager::GetInstance().AddGeneratedMembersToLabel(pEdge->GetOcctLabel());
 			}
-			catch (Standard_ConstructionError e)
-			{
-				throw std::exception(e.GetMessageString());
-			}
-			catch (Standard_OutOfRange e)
+			catch (Standard_Failure e)
 			{
 				throw std::exception(e.GetMessageString());
 			}
@@ -188,6 +185,10 @@ namespace TopologicCore
 		BRepBuilderAPI_MakeEdge occtMakeEdge(
 			kpStartVertex->GetOcctVertex(),
 			kpEndVertex->GetOcctVertex());
+		if (occtMakeEdge.Error() != BRepBuilderAPI_EdgeDone)
+		{
+			Throw(occtMakeEdge.Error());
+		}
 		return std::make_shared<Edge>(occtMakeEdge.Edge());
 	}
 
@@ -308,7 +309,13 @@ namespace TopologicCore
 
 	void Edge::SetOcctShape(const TopoDS_Shape & rkOcctShape)
 	{
-		SetOcctEdge(TopoDS::Edge(rkOcctShape));
+		try {
+			SetOcctEdge(TopoDS::Edge(rkOcctShape));
+		}
+		catch (Standard_Failure e)
+		{
+			throw std::exception(e.GetMessageString());
+		}
 	}
 
 	void Edge::SetOcctEdge(const TopoDS_Edge & rkOcctEdge)

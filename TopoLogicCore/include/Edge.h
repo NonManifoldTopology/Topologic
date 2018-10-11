@@ -44,10 +44,10 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpParentTopology"></param>
+		/// <param name="kpHostTopology"></param>
 		/// <param name="rEdges"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API void AdjacentEdges(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Edge>>& rEdges) const;
+		TOPOLOGIC_API void AdjacentEdges(const std::shared_ptr<Topology>& kpHostTopology, std::list<std::shared_ptr<Edge>>& rEdges) const;
 
 		/// <summary>
 		/// 
@@ -58,10 +58,10 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpParentTopology"></param>
+		/// <param name="kpHostTopology"></param>
 		/// <param name="rWires"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API void Wires(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Wire>>& rWires) const;
+		TOPOLOGIC_API void Wires(const std::shared_ptr<Topology>& kpHostTopology, std::list<std::shared_ptr<Wire>>& rWires) const;
 
 		/// <summary>
 		/// 

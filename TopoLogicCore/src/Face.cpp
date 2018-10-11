@@ -524,6 +524,8 @@ namespace TopologicCore
 		const std::list<double>& rkUValues,
 		const std::list<double>& rkVValues,
 		std::list<std::list<gp_Pnt>>& rSamplesPoints,
+		std::list<double>& rOcctUValues,
+		std::list<double>& rOcctVValues,
 		int& rNumUPoints,
 		int& rNumVPoints,
 		int& rNumUPanels,
@@ -561,7 +563,7 @@ namespace TopologicCore
 		// Compute OCCT's non-normalized UV values
 		// At the same time, get the isolines
 		BOPCol_ListOfShape occtIsolines;
-		std::list<double> occtUValues;
+		//std::list<double> occtUValues;
 		for (double u : rkUValues)
 		{
 			double occtU = occtUMin + occtURange * u;
@@ -572,9 +574,9 @@ namespace TopologicCore
 			{
 				occtU = occtUMax;
 			}
-			occtUValues.push_back(occtU);
+			rOcctUValues.push_back(occtU);
 		};
-		std::list<double> occtVValues;
+		//std::list<double> occtVValues;
 		for (double v : rkVValues)
 		{
 			double occtV = occtVMin + occtVRange * v;
@@ -585,30 +587,30 @@ namespace TopologicCore
 			{
 				occtV = occtVMax;
 			}
-			occtVValues.push_back(occtV);
+			rOcctVValues.push_back(occtV);
 		};
 
 		// Sample the points
 		int numOfPoints = rNumUPoints * rNumVPoints;
 		int i = 0;
-		std::list<double>::const_iterator endUIterator = occtUValues.end();
+		std::list<double>::const_iterator endUIterator = rOcctUValues.end();
 		if (rIsUClosed)
 		{
 			endUIterator--;
 		}
-		std::list<double>::const_iterator endVIterator = occtVValues.end();
+		std::list<double>::const_iterator endVIterator = rOcctVValues.end();
 		if (rIsVClosed)
 		{
 			endVIterator--;
 		}
 
-		for (std::list<double>::const_iterator uIterator = occtUValues.begin();
+		for (std::list<double>::const_iterator uIterator = rOcctUValues.begin();
 			uIterator != endUIterator;
 			uIterator++)
 		{
 			std::list<gp_Pnt> rowSamplePoints;
 			const double& rkU = *uIterator;
-			for (std::list<double>::const_iterator vIterator = occtVValues.begin();
+			for (std::list<double>::const_iterator vIterator = rOcctVValues.begin();
 				vIterator != endVIterator;
 				vIterator++)
 			{

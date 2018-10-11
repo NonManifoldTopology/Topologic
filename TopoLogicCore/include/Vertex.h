@@ -48,6 +48,15 @@ namespace TopologicCore
 		static TOPOLOGIC_API std::shared_ptr<Vertex> ByPoint(Handle(Geom_Point) pOcctPoint);
 
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kX"></param>
+		/// <param name="kY"></param>
+		/// <param name="kZ"></param>
+		/// <returns></returns>
+		static TOPOLOGIC_API std::shared_ptr<Vertex> ByCoordinates(const double kX, const double kY, const double kZ);
+
+		/// <summary>
 		/// Returns the list of edges of which this vertex is a constituent member.
 		/// </summary>
 		/// <param name="kpHostTopology"></param>

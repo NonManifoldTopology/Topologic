@@ -75,8 +75,6 @@ namespace Topologic
 		}
 
 	public protected:
-		Vertex(Vertex^ anotherVertex);
-		Vertex(Autodesk::DesignScript::Geometry::Point^ dynamoPoint);
 		Vertex(const std::shared_ptr<TopologicCore::Vertex>& kpCoreVertex);
 
 		/// <summary>
@@ -86,7 +84,7 @@ namespace Topologic
 		/// <returns name="Vertex">
 		/// A vertex.
 		/// </returns>
-		static Vertex^ ByPoint_(Autodesk::DesignScript::Geometry::Point^ point);
+		static Vertex^ ByPoint(Autodesk::DesignScript::Geometry::Point^ point);
 
 		Autodesk::DesignScript::Geometry::Point^ Point();
 

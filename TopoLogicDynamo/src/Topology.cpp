@@ -46,10 +46,15 @@ namespace Topologic
 
 	Topology^ Topology::ByGeometry(Autodesk::DesignScript::Geometry::Geometry^ geometry)
 	{
+		if (geometry == nullptr)
+		{
+			throw gcnew Exception("A null input is given.");
+		}
+
 		Autodesk::DesignScript::Geometry::Point^ dynamoPoint = dynamic_cast<Autodesk::DesignScript::Geometry::Point^>(geometry);
 		if (dynamoPoint != nullptr)
 		{
-			return Vertex::ByPoint_(dynamoPoint);
+			return Vertex::ByPoint(dynamoPoint);
 		}
 
 		Autodesk::DesignScript::Geometry::Curve^ dynamoCurve = dynamic_cast<Autodesk::DesignScript::Geometry::Curve^>(geometry);
@@ -78,7 +83,7 @@ namespace Topologic
 				return wire;
 			}
 
-			return Edge::ByCurve_(dynamoCurve);
+			return Edge::ByCurve(dynamoCurve);
 		}
 
 		Autodesk::DesignScript::Geometry::Surface^ dynamoSurface = dynamic_cast<Autodesk::DesignScript::Geometry::Surface^>(geometry);

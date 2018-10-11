@@ -1016,7 +1016,7 @@ namespace Topologic
 				List<Edge^>^ pEdges = gcnew List<Edge^>();
 				for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoCurve in pDynamoCurveGroup)
 				{
-					Edge^ pEdge = Edge::ByCurve_(pDynamoCurve);
+					Edge^ pEdge = Edge::ByCurve(pDynamoCurve);
 					pEdges->Add(pEdge);
 				}
 				Wire^ pWire = Wire::ByEdges(pEdges);

@@ -2,24 +2,22 @@
 #include <Edge.h>
 #include <VertexFactory.h>
 
-#include <BRepBuilderAPI_MakeVertex.hxx>
-#include <BRep_Tool.hxx>
-#include <Geom_CartesianPoint.hxx>
-#include <TopoDS.hxx>
-
 #include <assert.h>
 #include <tuple>
 
 namespace Topologic
 {
-	Vertex^ Vertex::ByPoint_(Autodesk::DesignScript::Geometry::Point^ point)
+	Vertex^ Vertex::ByPoint(Autodesk::DesignScript::Geometry::Point^ point)
 	{
-		return gcnew Vertex(point);
+		TopologicCore::Vertex::Ptr pCoreVertex = TopologicCore::Vertex::ByCoordinates(point->X, point->Y, point->Z);
+
+		return gcnew Vertex(pCoreVertex);
 	}
 
 	Vertex ^ Vertex::ByCoordinates(double x, double y, double z)
 	{
-		return Vertex::ByPoint_(Autodesk::DesignScript::Geometry::Point::ByCoordinates(x, y, z));
+		TopologicCore::Vertex::Ptr pCoreVertex = TopologicCore::Vertex::ByCoordinates(x, y, z);
+		return gcnew Vertex(pCoreVertex);
 	}
 
 	List<Edge^>^ Vertex::Edges_(Topology^ hostTopology)
@@ -27,7 +25,12 @@ namespace Topologic
 		std::list<TopologicCore::Edge::Ptr> coreEdges;
 		TopologicCore::Topology::Ptr pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(hostTopology->GetCoreTopologicalQuery());
 		TopologicCore::Vertex::Ptr pCoreVertex = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Vertex>(GetCoreTopologicalQuery());
-		pCoreVertex->Edges(pCoreParentTopology, coreEdges);
+		try {
+			pCoreVertex->Edges(pCoreParentTopology, coreEdges);
+		}catch(const std::exception& e)
+		{
+			throw gcnew Exception(gcnew String(e.what()));
+		}
 
 		List<Edge^>^ edges = gcnew List<Edge^>();
 		for (std::list<TopologicCore::Edge::Ptr>::iterator coreEdgeIterator = coreEdges.begin();
@@ -53,33 +56,17 @@ namespace Topologic
 		return *m_pCoreVertex;
 	}
 
-	Vertex::Vertex(Vertex ^ pAnotherVertex)
-		: Vertex(*pAnotherVertex->m_pCoreVertex)
-	{
-
-	}
-
 	Vertex::Vertex(const TopologicCore::Vertex::Ptr& kpCoreVertex)
 		: Topology()
-		, m_pCoreVertex(new TopologicCore::Vertex::Ptr(kpCoreVertex))
-	{
-
-	}
-
-	Vertex::Vertex(Autodesk::DesignScript::Geometry::Point^ pDynamoPoint)
-		: Vertex(TopologicCore::Vertex::ByPoint(new Geom_CartesianPoint(gp_Pnt(pDynamoPoint->X, pDynamoPoint->Y, pDynamoPoint->Z))))
+		, m_pCoreVertex(kpCoreVertex != nullptr? new TopologicCore::Vertex::Ptr(kpCoreVertex) : throw gcnew Exception("A null vertex is created."))
 	{
 
 	}
 
 	Autodesk::DesignScript::Geometry::Point^ Vertex::Point()
 	{
-		gp_Pnt occtPoint = BRep_Tool::Pnt(
-			TopoDS::Vertex(
-				TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery())->GetOcctShape()
-			)
-		);
-		return Autodesk::DesignScript::Geometry::Point::ByCoordinates(occtPoint.X(), occtPoint.Y(), occtPoint.Z());
+		List<double>^ coordinate = Coordinate;
+		return Autodesk::DesignScript::Geometry::Point::ByCoordinates(coordinate[0], coordinate[1], coordinate[2]);
 	}
 
 	Vertex::~Vertex()

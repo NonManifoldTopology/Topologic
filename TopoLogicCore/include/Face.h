@@ -280,6 +280,8 @@ namespace TopologicCore
 			const std::list<double>& rkUValues,
 			const std::list<double>& rkVValues,
 			std::list<std::list<gp_Pnt>>& rSamplePoints,
+			std::list<double>& rOcctUValues,
+			std::list<double>& rOcctVValues,
 			int& rNumUPoints,
 			int& rNumVPoints,
 			int& rNumUPanels,
