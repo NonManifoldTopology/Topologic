@@ -51,11 +51,11 @@ namespace Topologic
 		return TopologicCore::Topology::Downcast<TopologicCore::Wire>(GetCoreTopologicalQuery())->IsClosed();
 	}
 
-	List<Vertex^>^ Wire::Vertices_(bool ordered)
+	List<Vertex^>^ Wire::Vertices()
 	{
 		TopologicCore::Wire::Ptr pCoreWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Vertex::Ptr> pCoreVertexList;
-		pCoreWire->Vertices(pCoreVertexList, ordered);
+		pCoreWire->Vertices(pCoreVertexList);
 		List<Vertex^>^ pVertices = gcnew List<Vertex^>();
 
 		for (std::list<TopologicCore::Vertex::Ptr>::iterator kCoreVertexIterator = pCoreVertexList.begin();

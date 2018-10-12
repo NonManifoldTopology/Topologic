@@ -43,9 +43,8 @@ namespace Topologic {
 		/// <summary>
 		/// Gets the list constituent vertices of the wire. NOTE: This method will automatically identify its loop order property.
 		/// </summary>
-		/// <param name="ordered">Does the wire has loop order?</param>
 		/// <returns name="Vertex[]">The constituent vertices</returns>
-		List<Vertex^>^ Vertices_(bool ordered);
+		List<Vertex^>^ Vertices();
 
 		/// <summary>
 		/// 

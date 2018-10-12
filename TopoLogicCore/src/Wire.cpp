@@ -5,13 +5,11 @@
 #include <WireFactory.h>
 
 #include <BRepBuilderAPI_MakeWire.hxx>
-#include <BRepCheck_Analyzer.hxx>
 #include <BRepCheck_Wire.hxx>
 #include <BRepGProp.hxx>
 #include <BRepTools_WireExplorer.hxx>
 #include <Geom_CartesianPoint.hxx>
 #include <GProp_GProps.hxx>
-#include <ShapeAnalysis_Wire.hxx>
 #include <ShapeFix_Wire.hxx>
 #include <StdFail_NotDone.hxx>
 #include <TopoDS.hxx>
@@ -52,9 +50,10 @@ namespace TopologicCore
 		return isClosed;
 	}
 
-	void Wire::Vertices(std::list<Vertex::Ptr>& rVertices, const bool kHasOrder) const
+	void Wire::Vertices(std::list<Vertex::Ptr>& rVertices) const
 	{
-		if (kHasOrder)
+		int numOfBranches = GetNumberOfBranches();
+		if (numOfBranches == 0)
 		{
 			TopoDS_Edge lastEdge;
 			for (BRepTools_WireExplorer occtWireExplorer(GetOcctWire()); occtWireExplorer.More(); occtWireExplorer.Next())

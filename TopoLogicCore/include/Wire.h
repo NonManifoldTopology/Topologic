@@ -62,7 +62,7 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <param name="rVertices"></param>
-		void TOPOLOGIC_API Vertices(std::list<std::shared_ptr<Vertex>>& rVertices, const bool kHasOrder) const;
+		void TOPOLOGIC_API Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const;
 
 		/// <summary>
 		/// 

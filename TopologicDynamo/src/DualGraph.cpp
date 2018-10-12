@@ -28,7 +28,7 @@ namespace Topologic
 	{
 		List<Object^>^ dualGraphGeometry = gcnew List<Object^>(); 
 		dualGraphGeometry->Add(Wire::Geometry);
-		List<Vertex^>^ vertices = Vertices_(false);
+		List<Vertex^>^ vertices = Vertices();
 		for each (Vertex^ vertex in vertices)
 		{
 			dualGraphGeometry->Add(Autodesk::DesignScript::Geometry::Sphere::ByCenterPointRadius(vertex->Point(), 0.2));
