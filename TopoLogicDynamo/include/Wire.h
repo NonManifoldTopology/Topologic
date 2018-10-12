@@ -30,9 +30,8 @@ namespace Topologic {
 		/// <summary>
 		/// Get the constituent edges of the wire. NOTE: This method will automatically identify its loop order property.
 		/// </summary>
-		/// <param name="ordered">Does the wire has loop order?</param>
 		/// <returns name="Edge[]">The constituent edges</returns>
-		List<Edge^>^ Edges_(bool ordered);
+		List<Edge^>^ Edges();
 
 		/// <summary>
 		/// Get the list of faces that contain the wire. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.
@@ -47,6 +46,12 @@ namespace Topologic {
 		/// <param name="ordered">Does the wire has loop order?</param>
 		/// <returns name="Vertex[]">The constituent vertices</returns>
 		List<Vertex^>^ Vertices_(bool ordered);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		int GetNumberOfBranches();
 
 		/// <summary>
 		/// Check if the wire is closed.

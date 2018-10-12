@@ -7,11 +7,11 @@
 
 namespace Topologic
 {
-	List<Edge^>^ Wire::Edges_(bool ordered)
+	List<Edge^>^ Wire::Edges()
 	{
 		TopologicCore::Wire::Ptr pCoreWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Edge::Ptr> pCoreEdgeList;
-		pCoreWire->Edges(pCoreEdgeList, ordered);
+		pCoreWire->Edges(pCoreEdgeList);
 		List<Edge^>^ pEdges = gcnew List<Edge^>();
 
 		for (std::list<TopologicCore::Edge::Ptr>::iterator kCoreEdgeIterator = pCoreEdgeList.begin();
@@ -70,6 +70,12 @@ namespace Topologic
 		return pVertices;
 	}
 
+	int Wire::GetNumberOfBranches()
+	{
+		TopologicCore::Wire::Ptr pCoreWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>(GetCoreTopologicalQuery());
+		return pCoreWire->GetNumberOfBranches();
+	}
+
 	Wire^ Wire::ByEdges(System::Collections::Generic::IEnumerable<Edge^>^ edges)
 	{
 		std::list<TopologicCore::Edge::Ptr> coreEdges;
@@ -110,7 +116,7 @@ namespace Topologic
 	Object^ Wire::Geometry::get()
 	{
 		List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoCurves = gcnew List<Autodesk::DesignScript::Geometry::Curve^>();
-		List<Edge^>^ pEdges = Edges_(false);
+		List<Edge^>^ pEdges = Edges();
 		for each(Edge^ pEdge in pEdges)
 		{
 			pDynamoCurves->Add(pEdge->Curve());

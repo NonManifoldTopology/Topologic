@@ -42,16 +42,15 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <param name="rEdges"></param>
-		/// <param name="kHasOrder"></param>
-		void TOPOLOGIC_API Edges(std::list<std::shared_ptr<Edge>>& rEdges, const bool kHasOrder) const;
+		void TOPOLOGIC_API Edges(std::list<std::shared_ptr<Edge>>& rEdges) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpParentTopology"></param>
+		/// <param name="kpHostTopology"></param>
 		/// <param name="rFaces"></param>
 		/// <returns></returns>
-		void TOPOLOGIC_API Faces(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Face>>& rFaces) const;
+		void TOPOLOGIC_API Faces(const std::shared_ptr<Topology>& kpHostTopology, std::list<std::shared_ptr<Face>>& rFaces) const;
 
 		/// <summary>
 		/// 
@@ -78,6 +77,12 @@ namespace TopologicCore
 		/// <param name="kpkParentTopology"></param>
 		/// <returns></returns>
 		virtual bool IsManifold(TopologicCore::Topology const * const kpkParentTopology) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		TOPOLOGIC_API int GetNumberOfBranches() const;
 
 		/// <summary>
 		/// 

@@ -5,6 +5,7 @@
 #include <WireFactory.h>
 
 #include <BRepBuilderAPI_MakeWire.hxx>
+#include <BRepCheck_Analyzer.hxx>
 #include <BRepCheck_Wire.hxx>
 #include <BRepGProp.hxx>
 #include <BRepTools_WireExplorer.hxx>
@@ -21,9 +22,10 @@
 
 namespace TopologicCore
 {
-	void Wire::Edges(std::list<Edge::Ptr>& rEdges, const bool kHasOrder) const
+	void Wire::Edges(std::list<Edge::Ptr>& rEdges) const
 	{
-		if(kHasOrder)
+		int numOfBranches = GetNumberOfBranches();
+		if(numOfBranches == 0)
 		{
 			// This query uses a specialised class BRepTools_WireExplorer 
 			for (BRepTools_WireExplorer occtWireExplorer(GetOcctWire()); occtWireExplorer.More(); occtWireExplorer.Next())
@@ -37,9 +39,9 @@ namespace TopologicCore
 		}
 	}
 
-	void Wire::Faces(const Topology::Ptr& kpParentTopology, std::list<Face::Ptr>& rFaces) const
+	void Wire::Faces(const Topology::Ptr& kpHostTopology, std::list<Face::Ptr>& rFaces) const
 	{
-		UpwardNavigation(kpParentTopology, rFaces);
+		UpwardNavigation(kpHostTopology, rFaces);
 	}
 
 	bool Wire::IsClosed() const
@@ -99,7 +101,7 @@ namespace TopologicCore
 			TransferMakeShapeContents(occtMakeWire, occtEdges);
 
 			std::list<Edge::Ptr> newEdges;
-			pWire->Edges(newEdges, true);
+			pWire->Edges(newEdges);
 			return pWire;
 		}
 		catch (StdFail_NotDone&)
@@ -114,11 +116,30 @@ namespace TopologicCore
 		return false;
 	}
 
+	int Wire::GetNumberOfBranches() const
+	{
+		std::list<Vertex::Ptr> vertices;
+		DownwardNavigation<Vertex>(vertices);
+
+		int numOfBranches = 0;
+		for (const Vertex::Ptr& kpVertex: vertices)
+		{
+			std::list<Edge::Ptr> edges;
+			kpVertex->UpwardNavigation<Edge>(this, edges);
+			if (edges.size() > 2)
+			{
+				numOfBranches++;
+			}
+		}
+
+		return numOfBranches;
+	}
+
 	void Wire::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
 	{
 		// Returns a list of curves
 		std::list<Edge::Ptr> edges;
-		Edges(edges, false);
+		Edges(edges);
 
 		for (const Edge::Ptr& kpEdge : edges)
 		{

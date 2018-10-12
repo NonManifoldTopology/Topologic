@@ -682,7 +682,7 @@ namespace Topologic
 				{
 					if (TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(pWire->GetCoreTopologicalQuery())->GetOcctShape().IsSame(rkOcctOuterWire))
 					{
-						List<Edge^>^ pOuterEdges = pWire->Edges_(true);
+						List<Edge^>^ pOuterEdges = pWire->Edges();
 						List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoOuterCurves = gcnew List<Autodesk::DesignScript::Geometry::Curve^>();
 						for each(Edge^ pOuterEdge in pOuterEdges)
 						{

@@ -430,7 +430,7 @@ namespace TopologicCore
 			Face::Ptr apertureFace = TopologicalQuery::Downcast<Face>(aperture->Topology());
 			Wire::Ptr apertureWire = apertureFace->OuterBoundary();
 			std::list<Edge::Ptr> apertureEdges;
-			apertureWire->Edges(apertureEdges, true);
+			apertureWire->Edges(apertureEdges);
 
 			std::list<Handle(Geom2d_CartesianPoint)> apertureSampleVerticesUV;
 			for (const Edge::Ptr& kpEdge : apertureEdges)
@@ -1121,7 +1121,7 @@ namespace TopologicCore
 			Wire::Ptr apertureWire = apertureFace->OuterBoundary();
 			//wires.push_back(apertureWire);
 			std::list<Edge::Ptr> apertureEdges;
-			apertureWire->Edges(apertureEdges, true);
+			apertureWire->Edges(apertureEdges);
 			
 			for (Edge::Ptr e : apertureEdges)
 			{
