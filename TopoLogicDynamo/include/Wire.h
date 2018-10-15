@@ -21,13 +21,6 @@ namespace Topologic {
 		static Wire^ ByEdges(System::Collections::Generic::IEnumerable<Edge^>^ edges);
 
 		/// <summary>
-		/// Create a wire by a polycurve (including a polygon). NOTE: This node will be replaced by a single Topology.ByGeometry() node.
-		/// </summary>
-		/// <param name="polyCurve">The polycurve</param>
-		/// <returns name="Wire">The created Topologic wire</returns>
-		static Wire^ ByPolyCurve_(Autodesk::DesignScript::Geometry::PolyCurve^ polyCurve);
-
-		/// <summary>
 		/// Get the constituent edges of the wire. NOTE: This method will automatically identify its loop order property.
 		/// </summary>
 		/// <returns name="Edge[]">The constituent edges</returns>
@@ -76,6 +69,13 @@ namespace Topologic {
 		/// </summary>
 		/// <param name="kpCoreWire"></param>
 		Wire(const std::shared_ptr<TopologicCore::Wire>& kpCoreWire);
+
+		/// <summary>
+		/// Create a wire by a polycurve (including a polygon). NOTE: This node will be replaced by a single Topology.ByGeometry() node.
+		/// </summary>
+		/// <param name="polyCurve">The polycurve</param>
+		/// <returns name="Wire">The created Topologic wire</returns>
+		static Wire^ ByPolyCurve(Autodesk::DesignScript::Geometry::PolyCurve^ polyCurve);
 
 		/// <summary>
 		/// 

@@ -108,7 +108,7 @@ namespace Topologic {
 		/// </summary>
 		/// <param name="vertices"></param>
 		/// <returns name="Face"></returns>
-		[IsVisibleInDynamoLibrary(false)]
+		//[IsVisibleInDynamoLibrary(false)]
 		static Face^ ByVertices(System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<Vertex^>^>^ vertices);
 
 		/// <summary>

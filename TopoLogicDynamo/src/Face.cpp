@@ -1048,7 +1048,7 @@ namespace Topologic
 					++index;
 				}
 				pOuterPolycurve = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoCurveGroups[index], 0.001);
-				pCoreOuterWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>((Wire::ByPolyCurve_(pOuterPolycurve))->GetCoreTopologicalQuery());
+				pCoreOuterWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>((Wire::ByPolyCurve(pOuterPolycurve))->GetCoreTopologicalQuery());
 				pDynamoCurveGroups->RemoveAt(index);
 			}
 		}
@@ -1083,11 +1083,11 @@ namespace Topologic
 		std::list<TopologicCore::Wire::Ptr> coreInnerWires;
 
 		try{
-			// Create wires and add them to occtMakeFace to create internal wires;
+			// Create wires and add them to occtMakeFace to create internal wires
 			for each(List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoConnectedCurves in pDynamoCurveGroups)
 			{
 				Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoPolycurve = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoConnectedCurves, 0.001);
-				Wire^ pWire = Wire::ByPolyCurve_(pDynamoPolycurve);
+				Wire^ pWire = Wire::ByPolyCurve(pDynamoPolycurve);
 				coreInnerWires.push_back(TopologicCore::Topology::Downcast<TopologicCore::Wire>(pWire->GetCoreTopologicalQuery()));
 			}
 		}
@@ -1097,22 +1097,29 @@ namespace Topologic
 		}
 		
 		//=================================================
-		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Face::BySurface(
-			occtPoles,
-			occtWeights,
-			occtUKnots,
-			occtVKnots,
-			occtUMultiplicities,
-			occtVMultiplicities,
-			uDegree,
-			vDegree,
-			isUPeriodic,
-			isVPeriodic,
-			isRational,
-			pCoreOuterWire,
-			coreInnerWires
-		);
-
+		Exception^ e = nullptr;
+		TopologicCore::Face::Ptr pCoreFace = nullptr;
+		try{
+			pCoreFace = TopologicCore::Face::BySurface(
+				occtPoles,
+				occtWeights,
+				occtUKnots,
+				occtVKnots,
+				occtUMultiplicities,
+				occtVMultiplicities,
+				uDegree,
+				vDegree,
+				isUPeriodic,
+				isVPeriodic,
+				isRational,
+				pCoreOuterWire,
+				coreInnerWires
+			);
+		}
+		catch (const std::exception& rkException)
+		{
+			e = gcnew Exception(gcnew String(rkException.what()));
+		}
 
 		for each(array<Autodesk::DesignScript::Geometry::Point^>^ pDynamo1DControlPoints in pDynamoControlPoints)
 		{
@@ -1133,6 +1140,11 @@ namespace Topologic
 		if (pOuterPolycurve != nullptr)
 		{
 			delete pOuterPolycurve;
+		}
+
+		if (e != nullptr)
+		{
+			throw e;
 		}
 
 		return gcnew Face(pCoreFace);

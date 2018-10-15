@@ -20,15 +20,15 @@
 
 namespace Topologic
 {
-	Edge^ Edge::ByCircle(
-		Vertex^ centerPoint, double radius,
-		double xAxisX, double xAxisY, double xAxisZ,
-		double normalX, double normalY, double normalZ)
-	{
-		TopologicCore::Vertex::Ptr pCoreCentrePoint = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(centerPoint->GetCoreTopologicalQuery());
-		TopologicCore::Edge::Ptr pCoreCircleEdge = TopologicCore::Edge::ByCircle(pCoreCentrePoint, radius, xAxisX, xAxisY, xAxisZ, normalX, normalY, normalZ);
-		return gcnew Edge(pCoreCircleEdge);
-	}
+	//Edge^ Edge::ByCircle(
+	//	Vertex^ centerPoint, double radius,
+	//	double xAxisX, double xAxisY, double xAxisZ,
+	//	double normalX, double normalY, double normalZ)
+	//{
+	//	TopologicCore::Vertex::Ptr pCoreCentrePoint = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(centerPoint->GetCoreTopologicalQuery());
+	//	TopologicCore::Edge::Ptr pCoreCircleEdge = TopologicCore::Edge::ByCircle(pCoreCentrePoint, radius, xAxisX, xAxisY, xAxisZ, normalX, normalY, normalZ);
+	//	return gcnew Edge(pCoreCircleEdge);
+	//}
 
 	List<Edge^>^ Edge::AdjacentEdges_(Topology ^ hostTopology)
 	{
@@ -138,23 +138,23 @@ namespace Topologic
 		}
 	}
 
-	Edge^ Edge::ByVertices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices)
-	{
-		std::list<TopologicCore::Vertex::Ptr> pCoreVertices;
-		for each(Vertex^ pVertex in vertices)
-		{
-			pCoreVertices.push_back(TopologicCore::Topology::Downcast<TopologicCore::Vertex>(pVertex->GetCoreTopologicalQuery()));
-		}
+	//Edge^ Edge::ByVertices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices)
+	//{
+	//	std::list<TopologicCore::Vertex::Ptr> pCoreVertices;
+	//	for each(Vertex^ pVertex in vertices)
+	//	{
+	//		pCoreVertices.push_back(TopologicCore::Topology::Downcast<TopologicCore::Vertex>(pVertex->GetCoreTopologicalQuery()));
+	//	}
 
-		try{
-			TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Edge::ByVertices(pCoreVertices);
-			return gcnew Edge(pCoreEdge);
-		}
-		catch(const std::exception& rkException)
-		{
-			throw gcnew Exception(gcnew String(rkException.what()));
-		}
-	}
+	//	try{
+	//		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Edge::ByVertices(pCoreVertices);
+	//		return gcnew Edge(pCoreEdge);
+	//	}
+	//	catch(const std::exception& rkException)
+	//	{
+	//		throw gcnew Exception(gcnew String(rkException.what()));
+	//	}
+	//}
 
 	Edge ^ Edge::ByStartVertexEndVertex(Vertex ^ startVertex, Vertex ^ endVertex)
 	{
@@ -197,24 +197,24 @@ namespace Topologic
 		}
 	}
 
-	double Edge::ParameterAtVertex(Vertex^ vertex)
-	{
-		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
-		try{
-			return pCoreEdge->ParameterAtPoint(TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex->GetCoreTopologicalQuery()));
-		}
-		catch (const std::exception& rkException)
-		{
-			throw gcnew Exception(gcnew String(rkException.what()));
-		}
-	}
+	//double Edge::ParameterAtVertex(Vertex^ vertex)
+	//{
+	//	TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
+	//	try{
+	//		return pCoreEdge->ParameterAtPoint(TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex->GetCoreTopologicalQuery()));
+	//	}
+	//	catch (const std::exception& rkException)
+	//	{
+	//		throw gcnew Exception(gcnew String(rkException.what()));
+	//	}
+	//}
 
-	Vertex^ Edge::VertexAtParameter(double parameter)
-	{
-		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
-		TopologicCore::Vertex::Ptr pCoreVertex = pCoreEdge->PointAtParameter(parameter);
-		return gcnew Vertex(pCoreVertex);
-	}
+	//Vertex^ Edge::VertexAtParameter(double parameter)
+	//{
+	//	TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
+	//	TopologicCore::Vertex::Ptr pCoreVertex = pCoreEdge->PointAtParameter(parameter);
+	//	return gcnew Vertex(pCoreVertex);
+	//}
 
 	Object^ Edge::Geometry::get()
 	{
@@ -399,7 +399,7 @@ namespace Topologic
 
 	Edge::Edge(const TopologicCore::Edge::Ptr& kpCoreEdge)
 		: Topology()
-		, m_pCoreEdge(kpCoreEdge != nullptr? new TopologicCore::Edge::Ptr(kpCoreEdge) : throw gcnew Exception("A null edge is created."))
+		, m_pCoreEdge(kpCoreEdge != nullptr? new TopologicCore::Edge::Ptr(kpCoreEdge) : throw gcnew Exception("A null edge was created."))
 	{
 
 	}
@@ -563,12 +563,14 @@ namespace Topologic
 			e = gcnew Exception(gcnew String(rkException.what()));
 		}
 
+		delete dynamoStartPoint;
+		delete dynamoEndPoint;
+		
 		if (e != nullptr)
 		{
 			throw e;
 		}
-		delete dynamoStartPoint;
-		delete dynamoEndPoint;
+		
 		return gcnew Edge(pCoreEdge);
 	}
 }

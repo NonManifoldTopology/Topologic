@@ -164,6 +164,7 @@
     <ClInclude Include="include\DoubleAttributeFactory.h" />
     <ClInclude Include="include\DualGraphFactory.h" />
     <ClInclude Include="include\EdgeFactory.h" />
+    <ClInclude Include="include\EdgeUtility.h" />
     <ClInclude Include="include\IntAttributeFactory.h" />
     <ClInclude Include="include\ShellFactory.h" />
     <ClInclude Include="include\StringAttributeFactory.h" />
@@ -197,6 +198,7 @@
     <ClCompile Include="src\DualGraph.cpp" />
     <ClCompile Include="src\DualGraphFactory.cpp" />
     <ClCompile Include="src\EdgeFactory.cpp" />
+    <ClCompile Include="src\EdgeUtility.cpp" />
     <ClCompile Include="src\IntAttributeFactory.cpp" />
     <ClCompile Include="src\ShellFactory.cpp" />
     <ClCompile Include="src\StringAttributeFactory.cpp" />

@@ -93,7 +93,7 @@ namespace Topologic
 		}
 	}
 
-	Wire^ Wire::ByPolyCurve_(Autodesk::DesignScript::Geometry::PolyCurve ^ polycurve)
+	Wire^ Wire::ByPolyCurve(Autodesk::DesignScript::Geometry::PolyCurve ^ polycurve)
 	{
 		array<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoCurves = polycurve->Curves();
 
@@ -104,12 +104,26 @@ namespace Topologic
 			coreEdges.push_back(TopologicCore::Topology::Downcast<TopologicCore::Edge>(pEdge->GetCoreTopologicalQuery()));
 		}
 
-		TopologicCore::Wire::Ptr pCoreWire = TopologicCore::Wire::ByEdges(coreEdges);
+		Exception^ e = nullptr;
+		TopologicCore::Wire::Ptr pCoreWire = nullptr;
+		try{
+			pCoreWire = TopologicCore::Wire::ByEdges(coreEdges);
+		}
+		catch (const std::exception& rkException)
+		{
+			e = gcnew Exception(gcnew String(rkException.what()));
+		}
 
 		for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoCurve in pDynamoCurves)
 		{
 			delete pDynamoCurve;
 		}
+		
+		if (e != nullptr)
+		{
+			throw e;
+		}
+
 		return gcnew Wire(pCoreWire);
 	}
 
@@ -164,7 +178,7 @@ namespace Topologic
 
 	Wire::Wire(const TopologicCore::Wire::Ptr& kpCoreWire)
 		: Topology()
-		, m_pCoreWire(new TopologicCore::Wire::Ptr(kpCoreWire))
+		, m_pCoreWire(kpCoreWire != nullptr? new TopologicCore::Wire::Ptr(kpCoreWire) : throw gcnew Exception("A null wire was created."))
 	{
 
 	}

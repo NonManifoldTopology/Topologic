@@ -58,7 +58,7 @@ namespace Topologic
 
 	Vertex::Vertex(const TopologicCore::Vertex::Ptr& kpCoreVertex)
 		: Topology()
-		, m_pCoreVertex(kpCoreVertex != nullptr? new TopologicCore::Vertex::Ptr(kpCoreVertex) : throw gcnew Exception("A null vertex is created."))
+		, m_pCoreVertex(kpCoreVertex != nullptr? new TopologicCore::Vertex::Ptr(kpCoreVertex) : throw gcnew Exception("A null vertex was created."))
 	{
 
 	}

@@ -64,7 +64,7 @@ namespace Topologic
 			Autodesk::DesignScript::Geometry::PolyCurve^ dynamoPolyCurve = dynamic_cast<Autodesk::DesignScript::Geometry::PolyCurve^>(geometry);
 			if (dynamoPolyCurve != nullptr)
 			{
-				return Wire::ByPolyCurve_(dynamoPolyCurve);
+				return Wire::ByPolyCurve(dynamoPolyCurve);
 			}
 
 			// If it is a curve which actually contains more than 1 curves, create a polyCurve first, because it has a NumberOfCurves property.
@@ -78,7 +78,7 @@ namespace Topologic
 			}
 			else if (numOfCurves > 1)
 			{
-				Wire^ wire = Wire::ByPolyCurve_(dynamoPolyCurve);
+				Wire^ wire = Wire::ByPolyCurve(dynamoPolyCurve);
 				delete dynamoPolyCurve;
 				return wire;
 			}

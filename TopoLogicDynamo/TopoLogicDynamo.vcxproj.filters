@@ -68,6 +68,7 @@
     <ClInclude Include="include\StringAttributeFactory.h">
       <Filter>Attribute</Filter>
     </ClInclude>
+    <ClInclude Include="include\EdgeUtility.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
@@ -130,6 +131,7 @@
     <ClCompile Include="src\Attribute.cpp">
       <Filter>Attribute</Filter>
     </ClCompile>
+    <ClCompile Include="src\EdgeUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Factory">

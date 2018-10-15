@@ -51,17 +51,17 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpParentTopology"></param>
+		/// <param name="kpHostTopology"></param>
 		/// <param name="rFaces"></param>
-		TOPOLOGIC_API void AdjacentFaces(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Face>>& rFaces) const;
+		TOPOLOGIC_API void AdjacentFaces(const std::shared_ptr<Topology>& kpHostTopology, std::list<std::shared_ptr<Face>>& rFaces) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpParentTopology"></param>
+		/// <param name="kpHostTopology"></param>
 		/// <param name="rCells"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API void Cells(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Cell>>& rCells) const;
+		TOPOLOGIC_API void Cells(const std::shared_ptr<Topology>& kpHostTopology, std::list<std::shared_ptr<Cell>>& rCells) const;
 
 		void Cells(Topology const * kpkParentTopology, std::list<std::shared_ptr<Cell>>& rCells) const;
 
@@ -74,10 +74,10 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpParentTopology"></param>
+		/// <param name="kpHostTopology"></param>
 		/// <param name="rShells"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API void Shells(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Shell>>& rShells) const;
+		TOPOLOGIC_API void Shells(const std::shared_ptr<Topology>& kpHostTopology, std::list<std::shared_ptr<Shell>>& rShells) const;
 
 		/// <summary>
 		/// 

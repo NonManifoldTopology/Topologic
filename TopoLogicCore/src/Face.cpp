@@ -31,7 +31,7 @@
 
 namespace TopologicCore
 {
-	void Face::AdjacentFaces(const Topology::Ptr& kpParentTopology, std::list<Face::Ptr>& rFaces) const
+	void Face::AdjacentFaces(const Topology::Ptr& kpHostTopology, std::list<Face::Ptr>& rFaces) const
 	{
 		std::list<Vertex::Ptr> edges;
 		Vertices(edges);
@@ -40,7 +40,7 @@ namespace TopologicCore
 		for (const Vertex::Ptr& kpEdge : edges)
 		{
 			std::list<Face::Ptr> faces;
-			kpEdge->UpwardNavigation(kpParentTopology, faces);
+			kpEdge->UpwardNavigation(kpHostTopology, faces);
 
 			for (const Face::Ptr& kpFace : faces)
 			{
@@ -54,9 +54,9 @@ namespace TopologicCore
 		}
 	}
 
-	void Face::Cells(const Topology::Ptr& kpParentTopology, std::list<Cell::Ptr>& rCells) const
+	void Face::Cells(const Topology::Ptr& kpHostTopology, std::list<Cell::Ptr>& rCells) const
 	{
-		Cells(kpParentTopology.get(), rCells);
+		Cells(kpHostTopology.get(), rCells);
 	}
 
 	void Face::Cells(Topology const * kpkParentTopology, std::list<std::shared_ptr<Cell>>& rCells) const
@@ -69,9 +69,9 @@ namespace TopologicCore
 		DownwardNavigation(rEdges);
 	}
 
-	void Face::Shells(const Topology::Ptr& kpParentTopology, std::list<Shell::Ptr>& rShells) const
+	void Face::Shells(const Topology::Ptr& kpHostTopology, std::list<Shell::Ptr>& rShells) const
 	{
-		UpwardNavigation(kpParentTopology, rShells);
+		UpwardNavigation(kpHostTopology, rShells);
 	}
 
 	void Face::Vertices(std::list<Vertex::Ptr>& rVertices) const

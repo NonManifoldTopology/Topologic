@@ -158,7 +158,13 @@ namespace TopologicCore
 
 	void Wire::SetOcctShape(const TopoDS_Shape & rkOcctShape)
 	{
-		SetOcctWire(TopoDS::Wire(rkOcctShape));
+		try {
+			SetOcctWire(TopoDS::Wire(rkOcctShape));
+		}
+		catch (Standard_Failure e)
+		{
+			throw std::exception(e.GetMessageString());
+		}
 	}
 
 	void Wire::SetOcctWire(const TopoDS_Wire & rkOcctWire)
