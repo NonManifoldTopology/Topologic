@@ -3,6 +3,7 @@
 ## Your Environment
 <!--- Include as many relevant details about the environment you experienced the bug in -->
 * Library used:
+* Host application and version (if any)
 * Operating System and version (desktop or mobile):
 
 ## Context
