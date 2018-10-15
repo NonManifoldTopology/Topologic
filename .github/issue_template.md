@@ -1,16 +1,19 @@
-<!--- Source: https://github.com/stevemao/github-issue-templates -->
+<!--- Modified from: https://github.com/stevemao/github-issue-templates -->
+
+## Your Environment
+<!--- Include as many relevant details about the environment you experienced the bug in -->
+* Library used:
+* Operating System and version (desktop or mobile):
+
+## Context
+<!--- What are you trying to accomplish? -->
+<!--- Providing context helps us come up with a solution that is most useful in the real world -->
 
 ## Expected Behavior
-<!--- If you're describing a bug, tell us what should happen -->
-<!--- If you're suggesting a change/improvement, tell us how it should work -->
+<!--- Tell us what should happen -->
 
 ## Current Behavior
-<!--- If describing a bug, tell us what happens instead of the expected behavior -->
-<!--- If suggesting a change/improvement, explain the difference from current behavior -->
-
-## Possible Solution
-<!--- Not obligatory, but suggest a fix/reason for the bug, -->
-<!--- or ideas how to implement the addition or change -->
+<!--- Tell us what happens instead of the expected behavior -->
 
 ## Steps to Reproduce (for bugs)
 <!--- Provide a link to a live example, or an unambiguous set of steps to -->
@@ -20,13 +23,6 @@
 3.
 4.
 
-## Context
-<!--- How has this issue affected you? What are you trying to accomplish? -->
-<!--- Providing context helps us come up with a solution that is most useful in the real world -->
-
-## Your Environment
-<!--- Include as many relevant details about the environment you experienced the bug in -->
-* Version used:
-* Browser Name and version:
-* Operating System and version (desktop or mobile):
-* Link to your project:
+## Possible Solution
+<!--- Not obligatory, but suggest a fix/reason for the bug, -->
+<!--- or ideas how to implement the addition or change -->
