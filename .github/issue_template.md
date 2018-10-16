@@ -3,6 +3,7 @@
 ## Your Environment
 <!--- Include as many relevant details about the environment you experienced the bug in -->
 * Library used:
+* Host application and version (if any)
 * Operating System and version (desktop or mobile):
 
 ## Context
@@ -15,7 +16,7 @@
 ## Current Behavior
 <!--- Tell us what happens instead of the expected behavior -->
 
-## Steps to Reproduce (for bugs)
+## Steps to Reproduce
 <!--- Provide a link to a live example, or an unambiguous set of steps to -->
 <!--- reproduce this bug. Include code to reproduce, if relevant -->
 1.
