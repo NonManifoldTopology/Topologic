@@ -66,13 +66,6 @@ namespace Topologic {
 		}
 
 		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns name="double"></returns>
-		[IsVisibleInDynamoLibrary(false)]
-		double Area();
-
-		/// <summary>
 		/// Create a face by a closed wire. NOTE: This node currently can only create a planar face. To create a curved face, please use Topology.ByGeometry().
 		/// </summary>
 		/// <param name="wire">A closed wire. Must be (and internally verified if it is) a Dynamo polygon or a Topologic wire.</param>
@@ -95,21 +88,6 @@ namespace Topologic {
 		/// <exception cref="ArgumentException">Thrown if any of the arguments is not a Topologic edge</exception>
 		/// <returns name="Face">The created face</returns>
 		static Face^ ByEdges(System::Collections::Generic::IEnumerable<Edge^>^ edges);
-
-		/// <summary>
-		/// Create a face by a surface. NOTE: This node will be replaced by a single Topology.ByGeometry() node.
-		/// </summary>
-		/// <param name="surface">The surface</param>
-		/// <returns name="Face">The created face</returns>
-		static Face^ BySurface_(Autodesk::DesignScript::Geometry::Surface^ surface);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="vertices"></param>
-		/// <returns name="Face"></returns>
-		//[IsVisibleInDynamoLibrary(false)]
-		static Face^ ByVertices(System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<Vertex^>^>^ vertices);
 
 		/// <summary>
 		/// Return the shared edges between two faces. 
@@ -150,38 +128,6 @@ namespace Topologic {
 		/// <returns name="Face"></returns>
 		Face^ AddInternalBoundaries(List<Wire^>^ internalBoundaries);
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="vertex"></param>
-		/// <returns name="UV"></returns>
-		[IsVisibleInDynamoLibrary(false)]
-		Autodesk::DesignScript::Geometry::UV^ UVParameterAtVertex(Vertex^ vertex);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="uv"></param>
-		/// <returns name="Vertex"></returns>
-		[IsVisibleInDynamoLibrary(false)]
-		Vertex^ VertexAtParameter(Autodesk::DesignScript::Geometry::UV^ uv);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="uv"></param>
-		/// <returns></returns>
-		[IsVisibleInDynamoLibrary(false)]
-		Autodesk::DesignScript::Geometry::Vector^ NormalAtParameter(Autodesk::DesignScript::Geometry::UV^ uv);
-
-		/// <summary>
-		/// Trim a face with a wire. The portion of the face inside the wire will be returned.
-		/// </summary>
-		/// <param name="wire"></param>
-		/// <returns name="Face"></returns>
-		[IsVisibleInDynamoLibrary(false)]
-		Face^ TrimByWire_(Wire^ wire);
-
 		property Object^ Geometry
 		{
 			/// <summary>
@@ -215,6 +161,13 @@ namespace Topologic {
 		/// </summary>
 		/// <returns></returns>
 		virtual std::shared_ptr<TopologicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
+
+		/// <summary>
+		/// Create a face by a surface. NOTE: This node will be replaced by a single Topology.ByGeometry() node.
+		/// </summary>
+		/// <param name="surface">The surface</param>
+		/// <returns name="Face">The created face</returns>
+		static Face^ BySurface(Autodesk::DesignScript::Geometry::Surface^ surface);
 
 	protected:
 		virtual ~Face();

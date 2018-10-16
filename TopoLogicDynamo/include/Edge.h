@@ -51,50 +51,6 @@ namespace Topologic {
 		/// <returns name="Vertex">the shared vertex of an edge</returns>
 		Vertex^ SharedVertex(Edge^ edge);
 
-		/*/// <summary>
-		/// Create an edge by a list of vertices. If the list only contains two vertices, a straight line will be created.
-		/// If more than two are given, the edge will be interpolated through the vertices.
-		/// Otherwise, an exception will be raised.
-		/// </summary>
-		/// <param name="vertices">A list of vertices. The created edge will pass all vertices in this list.</param>
-		/// <returns name="Edge">The created Topologic edge</returns>
-		[IsVisibleInDynamoLibrary(false)]
-		static Edge^ ByVertices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices);*/
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="centerPoint"></param>
-		/// <param name="radius"></param>
-		/// <param name="xAxisX"></param>
-		/// <param name="xAxisY"></param>
-		/// <param name="xAxisZ"></param>
-		/// <param name="normalX"></param>
-		/// <param name="normalY"></param>
-		/// <param name="normalZ"></param>
-		/// <returns></returns>
-		/*[IsVisibleInDynamoLibrary(false)]
-		static Edge^ ByCircle(
-			Vertex^ centerPoint, double radius,
-			double xAxisX, double xAxisY, double xAxisZ,
-			double normalX, double normalY, double normalZ);*/
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="vertex"></param>
-		/// <returns name="double"></returns>
-		/*[IsVisibleInDynamoLibrary(false)]
-		double ParameterAtVertex(Vertex^ vertex);*/
-
-		/// <summary>
-		/// Return the point at the input parameter
-		/// </summary>
-		/// <param name="parameter">The input parameter</param>
-		/// <returns name="Vertex">The sample point</returns>
-		/*[IsVisibleInDynamoLibrary(false)]
-		Vertex^ VertexAtParameter(double parameter);*/
-
 		property Object^ Geometry
 		{
 			/// <summary>

@@ -24,35 +24,11 @@ namespace Topologic
 		static Cell^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces);
 
 		/// <summary>
-		/// Create a cell by a solid. NOTE: This node will be replaced by a single Topology.ByGeometry() node.
-		/// </summary>
-		/// <param name="solid"></param>
-		/// <returns name="Cell"></returns>
-		static Cell^ BySolid_(Autodesk::DesignScript::Geometry::Solid^ solid);
-
-		/// <summary>
 		/// Create a cell from a shell. The shell must be closed, otherwise an exception is thrown.
 		/// </summary>
 		/// <param name="shell"></param>
 		/// <returns name="Cell"></returns>
 		static Cell^ ByShell(Shell^ shell);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="vertices"></param>
-		/// <param name="faceIndices"></param>
-		/// <returns name="Cell"></returns>
-		[IsVisibleInDynamoLibrary(false)]
-		static Cell^ ByVerticesFaceIndices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<int>^>^ faceIndices);
-
-		/// <summary>
-		/// Creates a cell by lofting through a set of wires.
-		/// </summary>
-		/// <param name="wires">A set of wires</param>
-		/// <returns name="Cell">The created cell</returns>
-		[IsVisibleInDynamoLibrary(false)]
-		static Cell^ ByLoft(System::Collections::Generic::IEnumerable<Wire^>^ wires);
 
 		/// <summary>
 		/// Get the cellComplexes which contain the cell. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.
@@ -152,21 +128,6 @@ namespace Topologic
 			List<Shell^>^ get();
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns name="double"></returns>
-		[IsVisibleInDynamoLibrary(false)]
-		double Volume();
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="vertex"></param>
-		/// <returns name="bool"></returns>
-		[IsVisibleInDynamoLibrary(false)]
-		bool Contains(Vertex^ vertex);
-
 		property Object^ Geometry
 		{
 			/// <summary>
@@ -182,6 +143,13 @@ namespace Topologic
 		/// </summary>
 		/// <param name="kpCoreCell"></param>
 		Cell(const std::shared_ptr<TopologicCore::Cell>& kpCoreCell);
+
+		/// <summary>
+		/// Create a cell by a solid. NOTE: This node will be replaced by a single Topology.ByGeometry() node.
+		/// </summary>
+		/// <param name="solid"></param>
+		/// <returns name="Cell"></returns>
+		static Cell^ BySolid(Autodesk::DesignScript::Geometry::Solid^ solid);
 
 		static Cell^ BySphere(Autodesk::DesignScript::Geometry::Sphere^ sphere);
 

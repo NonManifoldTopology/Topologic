@@ -12,7 +12,7 @@
 #include <Wire.h>
 #include <Edge.h>
 #include <Vertex.h>
-#include <DualGraph.h>
+#include <Graph.h>
 #include <Aperture.h>
 #include <Context.h>
 #include <TopologyFactoryManager.h>
@@ -26,7 +26,7 @@
 #include <CellFactory.h>
 #include <CellComplexFactory.h>
 #include <ClusterFactory.h>
-#include <DualGraphFactory.h>
+#include <GraphFactory.h>
 #include <ApertureFactory.h>
 #include <AttributeManager.h>
 #include <AttributeFactory.h>
@@ -93,7 +93,7 @@ namespace Topologic
 			Autodesk::DesignScript::Geometry::PolySurface^ dynamoPolySurface = dynamic_cast<Autodesk::DesignScript::Geometry::PolySurface^>(geometry);
 			if (dynamoPolySurface != nullptr)
 			{
-				return Shell::ByPolySurface_(dynamoPolySurface);
+				return Shell::ByPolySurface(dynamoPolySurface);
 			}
 
 			// If it is a surface which actually contains more than 1 surfaces, create a polySurface first, because it has a SurfaceCount method.
@@ -106,18 +106,18 @@ namespace Topologic
 				throw gcnew Exception("The geometry is a surface by type but no surface is detected.");
 			}else if (numOfSurfaces > 1)
 			{
-				Shell^ shell = Shell::ByPolySurface_(dynamoPolySurface);
+				Shell^ shell = Shell::ByPolySurface(dynamoPolySurface);
 				delete dynamoPolySurface;
 				return shell;
 			}
 
-			return Face::BySurface_(dynamoSurface);
+			return Face::BySurface(dynamoSurface);
 		}
 
 		Autodesk::DesignScript::Geometry::Solid^ dynamoSolid = dynamic_cast<Autodesk::DesignScript::Geometry::Solid^>(geometry);
 		if (dynamoSolid != nullptr)
 		{
-			return Cell::BySolid_(dynamoSolid);
+			return Cell::BySolid(dynamoSolid);
 		}
 
 		throw gcnew NotImplementedException("This geometry is not currently handled.");
@@ -281,7 +281,7 @@ namespace Topologic
 			RegisterFactory(gcnew String(TopologicCore::CellGUID::Get().c_str()), gcnew CellFactory());
 			RegisterFactory(gcnew String(TopologicCore::CellComplexGUID::Get().c_str()), gcnew CellComplexFactory());
 			RegisterFactory(gcnew String(TopologicCore::ClusterGUID::Get().c_str()), gcnew ClusterFactory());
-			RegisterFactory(gcnew String(TopologicCore::DualGraphGUID::Get().c_str()), gcnew DualGraphFactory());
+			RegisterFactory(gcnew String(TopologicCore::GraphGUID::Get().c_str()), gcnew GraphFactory());
 			RegisterFactory(gcnew String(TopologicCore::ApertureGUID::Get().c_str()), gcnew ApertureFactory());
 			areFactoriesAdded = true;
 		}

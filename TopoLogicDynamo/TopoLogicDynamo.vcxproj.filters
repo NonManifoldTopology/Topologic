@@ -13,7 +13,6 @@
     <ClInclude Include="include\Aperture.h" />
     <ClInclude Include="include\Context.h" />
     <ClInclude Include="include\TopologicalQuery.h" />
-    <ClInclude Include="include\DualGraph.h" />
     <ClInclude Include="include\TopologyFactory.h">
       <Filter>Factory</Filter>
     </ClInclude>
@@ -44,9 +43,6 @@
     <ClInclude Include="include\ClusterFactory.h">
       <Filter>Factory</Filter>
     </ClInclude>
-    <ClInclude Include="include\DualGraphFactory.h">
-      <Filter>Factory</Filter>
-    </ClInclude>
     <ClInclude Include="include\EdgeFactory.h">
       <Filter>Factory</Filter>
     </ClInclude>
@@ -69,6 +65,15 @@
       <Filter>Attribute</Filter>
     </ClInclude>
     <ClInclude Include="include\EdgeUtility.h" />
+    <ClInclude Include="include\FaceUtility.h" />
+    <ClInclude Include="include\ShellUtility.h" />
+    <ClInclude Include="include\CellUtility.h" />
+    <ClInclude Include="include\Graph.h">
+      <Filter>Extension</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GraphFactory.h">
+      <Filter>Factory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
@@ -97,14 +102,10 @@
     <ClCompile Include="src\TopologyFactoryManager.cpp">
       <Filter>Factory</Filter>
     </ClCompile>
-    <ClCompile Include="src\DualGraph.cpp" />
     <ClCompile Include="src\CellFactory.cpp">
       <Filter>Factory</Filter>
     </ClCompile>
     <ClCompile Include="src\ClusterFactory.cpp">
-      <Filter>Factory</Filter>
-    </ClCompile>
-    <ClCompile Include="src\DualGraphFactory.cpp">
       <Filter>Factory</Filter>
     </ClCompile>
     <ClCompile Include="src\EdgeFactory.cpp">
@@ -132,6 +133,15 @@
       <Filter>Attribute</Filter>
     </ClCompile>
     <ClCompile Include="src\EdgeUtility.cpp" />
+    <ClCompile Include="src\ShellUtility.cpp" />
+    <ClCompile Include="src\FaceUtility.cpp" />
+    <ClCompile Include="src\CellUtility.cpp" />
+    <ClCompile Include="src\Graph.cpp">
+      <Filter>Extension</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GraphFactory.cpp">
+      <Filter>Factory</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Factory">
@@ -139,6 +149,9 @@
     </Filter>
     <Filter Include="Attribute">
       <UniqueIdentifier>{4f812172-1f64-49db-8ec6-262b0c996221}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Extension">
+      <UniqueIdentifier>{d4638fb2-7e2b-466a-9ed8-76be45cf42c3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

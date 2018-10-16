@@ -1,10 +1,10 @@
-#include <DualGraph.h>
+#include <Graph.h>
 #include <CellComplex.h>
 #include <Cell.h>
 #include <Face.h>
 #include <Edge.h>
 #include <Vertex.h>
-#include <DualGraphFactory.h>
+#include <GraphFactory.h>
 #include <Aperture.h>
 #include <Context.h>
 
@@ -13,7 +13,7 @@
 
 namespace TopologicCore
 {
-	DualGraph::Ptr DualGraph::ByCellComplex(
+	Graph::Ptr Graph::ByCellComplex(
 		const CellComplex::Ptr& kpCellComplex,
 		const bool kUseCells,
 		const bool kUseNonManifoldFaces,
@@ -233,9 +233,9 @@ namespace TopologicCore
 		}
 
 		try {
-			DualGraph::Ptr pDualGraph = std::make_shared<DualGraph>(occtMakeWire);
+			Graph::Ptr pGraph = std::make_shared<Graph>(occtMakeWire);
 
-			return pDualGraph;
+			return pGraph;
 		}
 		catch (StdFail_NotDone&)
 		{
@@ -245,18 +245,18 @@ namespace TopologicCore
 		return nullptr;
 	}
 
-	DualGraph::DualGraph(const TopoDS_Wire& rkOcctWire, const std::string& rkGuid)
+	Graph::Graph(const TopoDS_Wire& rkOcctWire, const std::string& rkGuid)
 		: Wire(rkOcctWire, rkGuid.compare("") == 0 ? GetClassGUID() : rkGuid)
 	{
-		RegisterFactory(GetClassGUID(), std::make_shared<DualGraphFactory>());
+		RegisterFactory(GetClassGUID(), std::make_shared<GraphFactory>());
 	}
 
-	DualGraph::~DualGraph()
+	Graph::~Graph()
 	{
 
 	}
-	std::string DualGraph::GetTypeAsString() const
+	std::string Graph::GetTypeAsString() const
 	{
-		return std::string("DualGraph");
+		return std::string("Graph");
 	}
 }

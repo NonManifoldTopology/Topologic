@@ -5,6 +5,7 @@
 #include <Shell.h>
 #include <Cell.h>
 #include <FaceFactory.h>
+#include <FaceUtility.h>
 
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepMesh_IncrementalMesh.hxx>
@@ -95,12 +96,6 @@ namespace Topologic
 		return pShells;
 	}
 
-	double Face::Area()
-	{
-		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
-		return pCoreFace->Area();
-	}
-
 	/*Vertex^ Face::CenterOfMass()
 	{
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
@@ -136,7 +131,7 @@ namespace Topologic
 		return ByWire(Wire::ByEdges(edges));
 	}
 
-	Face^ Face::BySurface_(Autodesk::DesignScript::Geometry::Surface^ surface)
+	Face^ Face::BySurface(Autodesk::DesignScript::Geometry::Surface^ surface)
 	{
 		if (surface->GetType() == Autodesk::DesignScript::Geometry::NurbsSurface::typeid)
 		{
@@ -153,28 +148,6 @@ namespace Topologic
 		else
 		{
 			throw gcnew ArgumentException("The argument is not a valid Dynamo surface.");
-		}
-	}
-
-	Face ^ Face::ByVertices(System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<Vertex^>^>^ vertices)
-	{
-		std::list<std::list<TopologicCore::Vertex::Ptr>> coreVertices;
-		for each(System::Collections::Generic::IEnumerable<Vertex^>^ verticesList in vertices)
-		{
-			std::list<TopologicCore::Vertex::Ptr> coreVerticesList;
-			for each(Vertex^ vertex in verticesList)
-			{
-				coreVerticesList.push_back(TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex->GetCoreTopologicalQuery()));
-			}
-			coreVertices.push_back(coreVerticesList);
-		}
-		try {
-			TopologicCore::Face::Ptr pCoreFace = TopologicCore::Face::ByVertices(coreVertices);
-			return gcnew Face(pCoreFace);
-		}
-		catch (const std::exception& e)
-		{
-			throw gcnew Exception(gcnew String(e.what()));
 		}
 	}
 
@@ -257,49 +230,6 @@ namespace Topologic
 		pCoreCopyFace->AddInternalBoundaries(coreWires);
 
 		return gcnew Face(pCoreCopyFace);
-	}
-
-	Autodesk::DesignScript::Geometry::UV^ Face::UVParameterAtVertex(Vertex^ vertex)
-	{
-		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
-		double u = 0.0, v = 0.0;
-		pCoreFace->UVParameterAtPoint(
-			TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex->GetCoreTopologicalQuery()),
-			u,v
-		);
-
-		return Autodesk::DesignScript::Geometry::UV::ByCoordinates(u, v);
-	}
-
-	Vertex^ Face::VertexAtParameter(Autodesk::DesignScript::Geometry::UV^ uv)
-	{
-		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
-		try{
-			TopologicCore::Vertex::Ptr pCoreVertex = pCoreFace->PointAtParameter(uv->U, uv->V);
-			return safe_cast<Vertex^>(Topology::ByCoreTopology(pCoreVertex));
-		}
-		catch (std::exception& e)
-		{
-			throw gcnew Exception(gcnew String(e.what()));
-		}
-		return nullptr;
-	}
-
-	Autodesk::DesignScript::Geometry::Vector^ Face::NormalAtParameter(Autodesk::DesignScript::Geometry::UV^ uv)
-	{
-		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
-		gp_Dir normal = pCoreFace->NormalAtParameter(uv->U, uv->V);
-
-		return Autodesk::DesignScript::Geometry::Vector::ByCoordinates(normal.X(), normal.Y(), normal.Z());
-	}
-
-	Face^ Face::TrimByWire_(Wire^ wire)
-	{
-		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
-		TopologicCore::Wire::Ptr pCoreWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>(wire->GetCoreTopologicalQuery());
-
-		TopologicCore::Face::Ptr pTrimmedFace = pCoreFace->Trim(pCoreWire);
-		return safe_cast<Face^>(Topology::ByCoreTopology(pTrimmedFace));
 	}
 
 	List<Vertex^>^ Face::Vertices::get()
@@ -1029,7 +959,7 @@ namespace Topologic
 			{
 				try {
 					Face^ pFace = Face::ByWire(pWire);
-					surfaceAreas.push_back(pFace->Area());
+					surfaceAreas.push_back(Topologic::Support::FaceUtility::Area(pFace));
 				}
 				catch (...)
 				{

@@ -4,7 +4,7 @@
 
 namespace Topologic
 {
-	ref class DualGraphFactory : TopologyFactory
+	ref class GraphFactory : TopologyFactory
 	{
 	public:
 		[IsVisibleInDynamoLibrary(false)]

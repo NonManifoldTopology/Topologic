@@ -14,7 +14,6 @@
     <ClInclude Include="include\TopologicalQuery.h" />
     <ClInclude Include="include\Aperture.h" />
     <ClInclude Include="include\AperturePath.h" />
-    <ClInclude Include="include\DualGraph.h" />
     <ClInclude Include="include\ContentManager.h" />
     <ClInclude Include="include\InstanceGUIDManager.h" />
     <ClInclude Include="include\Context.h">
@@ -30,9 +29,6 @@
       <Filter>Factory</Filter>
     </ClInclude>
     <ClInclude Include="include\ClusterFactory.h">
-      <Filter>Factory</Filter>
-    </ClInclude>
-    <ClInclude Include="include\DualGraphFactory.h">
       <Filter>Factory</Filter>
     </ClInclude>
     <ClInclude Include="include\EdgeFactory.h">
@@ -59,6 +55,10 @@
     <ClInclude Include="include\TopologyFactoryManager.h">
       <Filter>Factory</Filter>
     </ClInclude>
+    <ClInclude Include="include\Graph.h" />
+    <ClInclude Include="include\GraphFactory.h">
+      <Filter>Factory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
@@ -72,7 +72,6 @@
     <ClCompile Include="src\Wire.cpp" />
     <ClCompile Include="src\Aperture.cpp" />
     <ClCompile Include="src\AperturePath.cpp" />
-    <ClCompile Include="src\DualGraph.cpp" />
     <ClCompile Include="src\ContentManager.cpp" />
     <ClCompile Include="src\InstanceGUIDManager.cpp" />
     <ClCompile Include="src\Context.cpp">
@@ -102,9 +101,6 @@
     <ClCompile Include="src\ClusterFactory.cpp">
       <Filter>Factory</Filter>
     </ClCompile>
-    <ClCompile Include="src\DualGraphFactory.cpp">
-      <Filter>Factory</Filter>
-    </ClCompile>
     <ClCompile Include="src\EdgeFactory.cpp">
       <Filter>Factory</Filter>
     </ClCompile>
@@ -112,6 +108,10 @@
       <Filter>Factory</Filter>
     </ClCompile>
     <ClCompile Include="src\TopologyFactoryManager.cpp">
+      <Filter>Factory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graph.cpp" />
+    <ClCompile Include="src\GraphFactory.cpp">
       <Filter>Factory</Filter>
     </ClCompile>
   </ItemGroup>

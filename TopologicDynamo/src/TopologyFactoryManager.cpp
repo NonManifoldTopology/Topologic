@@ -8,7 +8,7 @@
 #include <CellFactory.h>
 #include <ClusterFactory.h>
 #include <ApertureFactory.h>
-#include <DualGraphFactory.h>
+#include <GraphFactory.h>
 
 namespace Topologic
 {
@@ -53,7 +53,7 @@ namespace Topologic
 		case TopologicCore::TOPOLOGY_EDGE: return gcnew EdgeFactory();
 		case TopologicCore::TOPOLOGY_VERTEX: return gcnew VertexFactory();
 		case TopologicCore::TOPOLOGY_APERTURE: return gcnew ApertureFactory();
-		case TopologicCore::TOPOLOGY_DUALGRAPH: return gcnew DualGraphFactory();
+		case TopologicCore::TOPOLOGY_GRAPH: return gcnew GraphFactory();
 		default:
 			throw gcnew Exception("Topology::ByOcctShape: unknown topology.");
 		}

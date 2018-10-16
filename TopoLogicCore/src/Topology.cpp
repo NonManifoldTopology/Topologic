@@ -1703,10 +1703,10 @@ namespace TopologicCore
 	Topology::Ptr Topology::Slice(const Topology::Ptr& kpOtherTopology)
 	{
 		// Check dimensionality. The second operand must be of lower dimensionality.
-		if (kpOtherTopology->GetType() != TOPOLOGY_CLUSTER && Dimensionality() <= kpOtherTopology->Dimensionality())
+		/*if (kpOtherTopology->GetType() != TOPOLOGY_CLUSTER && Dimensionality() <= kpOtherTopology->Dimensionality())
 		{
 			throw std::exception("Cannot perform slice. The second operand must be of lower dimensionality.");
-		}
+		}*/
 
 		// For now, only handle a cell topology
 		std::list<Topology::Ptr> thisContentsA;

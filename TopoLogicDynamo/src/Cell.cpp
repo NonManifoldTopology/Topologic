@@ -33,7 +33,7 @@ namespace Topologic
 		return gcnew Cell(pCoreCell);
 	}
 
-	Cell^ Cell::BySolid_(Autodesk::DesignScript::Geometry::Solid^ solid)
+	Cell^ Cell::BySolid(Autodesk::DesignScript::Geometry::Solid^ solid)
 	{
 		if (solid->GetType() == Autodesk::DesignScript::Geometry::Sphere::typeid)
 		{
@@ -59,7 +59,7 @@ namespace Topologic
 			array<Autodesk::DesignScript::Geometry::Surface^>^ dynamoSurfaces = pDynamoPolysurface->Surfaces();
 			for each(Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface in dynamoSurfaces)
 			{
-				pFaces->Add(Face::BySurface_(pDynamoSurface));
+				pFaces->Add(Face::BySurface(pDynamoSurface));
 				delete pDynamoSurface;
 			}
 			return ByFaces(pFaces);
@@ -70,48 +70,6 @@ namespace Topologic
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Cell::ByShell(TopologicCore::Topology::Downcast<TopologicCore::Shell>(shell->GetCoreTopologicalQuery()));
 		return gcnew Cell(pCoreCell);
-	}
-
-	Cell^ Cell::ByVerticesFaceIndices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<int>^>^ faceIndices)
-	{
-		std::vector<TopologicCore::Vertex::Ptr> coreVertices;
-		for each(Vertex^ pVertex in vertices)
-		{
-			coreVertices.push_back(TopologicCore::Topology::Downcast<TopologicCore::Vertex>(pVertex->GetCoreTopologicalQuery()));
-		}
-
-		std::list<std::list<int>> coreFaceIndices;
-		for each(System::Collections::Generic::IEnumerable<int>^ pFaceIndex in faceIndices)
-		{
-			std::list<int> coreFaceIndex;
-			for each(int vertexIndex in pFaceIndex)
-			{
-				coreFaceIndex.push_back(vertexIndex);
-			}
-			coreFaceIndices.push_back(coreFaceIndex);
-		}
-
-		Cell^ pCell = gcnew Cell(TopologicCore::Cell::ByVerticesFaceIndices(coreVertices, coreFaceIndices));
-		return pCell;
-	}
-
-	Cell^ Cell::ByLoft(System::Collections::Generic::IEnumerable<Wire^>^ wires)
-	{
-
-		std::list<TopologicCore::Wire::Ptr> coreWires;
-		for each(Wire^ pWire in wires)
-		{
-			coreWires.push_back(TopologicCore::Topology::Downcast<TopologicCore::Wire>(pWire->GetCoreTopologicalQuery()));
-		}
-
-		try {
-			TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Cell::ByLoft(coreWires);
-			return gcnew Cell(pCoreCell);
-		}
-		catch (std::exception&)
-		{
-			throw gcnew Exception("Loft error");
-		}
 	}
 
 	List<CellComplex^>^ Cell::CellComplexes_(Topology^ hostTopology)
@@ -333,25 +291,12 @@ namespace Topologic
 		return pInnerShells;
 	}
 
-	double Cell::Volume()
-	{
-		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
-		return pCoreCell->Volume();
-	}
-
 	/*Vertex^ Cell::CenterOfMass()
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 		TopologicCore::Vertex::Ptr pCoreCenterOfMass = pCoreCell->CenterOfMass();
 		return gcnew Vertex(pCoreCenterOfMass);
 	}*/
-
-	bool Cell::Contains(Vertex ^ vertex)
-	{
-		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
-		TopologicCore::Vertex::Ptr pCoreVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex->GetCoreTopologicalQuery());
-		return pCoreCell->DoesContain(pCoreVertex);
-	}
 
 	Object^ Cell::Geometry::get()
 	{

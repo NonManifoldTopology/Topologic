@@ -174,8 +174,8 @@ copy "$(SolutionDir)references\ShapeOp-0.1.0\bin\$(Platform)\$(Configuration)\*.
     <ClInclude Include="include\ContentManager.h" />
     <ClInclude Include="include\Context.h" />
     <ClInclude Include="include\ContextManager.h" />
-    <ClInclude Include="include\DualGraph.h" />
-    <ClInclude Include="include\DualGraphFactory.h" />
+    <ClInclude Include="include\Graph.h" />
+    <ClInclude Include="include\GraphFactory.h" />
     <ClInclude Include="include\Edge.h" />
     <ClInclude Include="include\EdgeFactory.h" />
     <ClInclude Include="include\Face.h" />
@@ -206,8 +206,8 @@ copy "$(SolutionDir)references\ShapeOp-0.1.0\bin\$(Platform)\$(Configuration)\*.
     <ClCompile Include="src\ContentManager.cpp" />
     <ClCompile Include="src\Context.cpp" />
     <ClCompile Include="src\ContextManager.cpp" />
-    <ClCompile Include="src\DualGraph.cpp" />
-    <ClCompile Include="src\DualGraphFactory.cpp" />
+    <ClCompile Include="src\Graph.cpp" />
+    <ClCompile Include="src\GraphFactory.cpp" />
     <ClCompile Include="src\Edge.cpp" />
     <ClCompile Include="src\EdgeFactory.cpp" />
     <ClCompile Include="src\Face.cpp" />

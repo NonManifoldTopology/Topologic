@@ -4,13 +4,13 @@
 
 namespace TopologicCore
 {
-	class DualGraphFactory : public TopologyFactory
+	class GraphFactory : public TopologyFactory
 	{
 	public:
-		typedef std::shared_ptr<DualGraphFactory> Ptr;
+		typedef std::shared_ptr<GraphFactory> Ptr;
 
 	public:
-		DualGraphFactory() {}
+		GraphFactory() {}
 
 		virtual std::shared_ptr<Topology> Create(const TopoDS_Shape& rkOcctShape);
 	};
