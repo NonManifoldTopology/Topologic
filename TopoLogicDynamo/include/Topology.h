@@ -31,21 +31,6 @@ namespace Topologic
 		static Topology^ ByGeometry(Autodesk::DesignScript::Geometry::Geometry^ geometry);
 
 		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns name="Topology"></returns>
-		[IsVisibleInDynamoLibrary(false)]
-		static Topology^ ByContext();
-
-		/*/// <summary>
-		///
-		/// </summary>
-		/// <param name="vertexCoordinates"></param>
-		/// <param name="vertexIndices"></param>
-		/// <returns name="Topology"></returns>
-		static Topology^ ByVertexIndex(List<array<double, 3>^>^ vertexCoordinates, List<List<int>^>^ vertexIndices);*/
-
-		/// <summary>
 		/// Create a topology by a list of vertices and a 2D list of indices of the vertices in the first argument. An array of 1 index makes a vertex. An array of 2 indices makes an edge. An array of 3 indices either makes a wire, or, when the array has at least 4 vertices and the first index is the same as the last index, a face will be created instead. NOTE: This node currently can only create planar faces.
 		/// </summary>
 		/// <param name="vertices"></param>
@@ -61,16 +46,6 @@ namespace Topologic
 		{
 			int get();
 		}
-
-		/// <para/>Creates the host geometry counterpart of the topological entity. The mapping is as follows. 
-		/// <para/>- Vertex: Point;
-		/// <para/>- Edge: either a Curve or its subclasses, other than Polycurve or its subclasses; 
-		/// <para/>- Wire: PolyCurve or Polygon; 
-		/// <para/>- Face: Surface or NurbsSurface;
-		/// <para/>- Shell: PolySurface; 
-		/// <para/>- Cell: either a Solid or its subclasses; 
-		/// <para/>- CellComplex: a list of Solids; 
-		/// <para/>- Cluster: a list of topological entities without a constituent parent.
 
 		/// <summary>
 		/// Create a geometry from the topology.
@@ -167,17 +142,8 @@ namespace Topologic
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="apertureTopology"></param>
-		/// <returns name="Topology"></returns>
-		[IsVisibleInDynamoLibrary(false)]
-		Topology^ AddAperture(Topology^ apertureTopology);
-
-		/// <summary>
-		/// 
-		/// </summary>
 		/// <param name="apertureTopologies"></param>
 		/// <returns name="Topology"></returns>
-		//[IsVisibleInDynamoLibrary(false)]
 		Topology^ AddApertures(System::Collections::Generic::IEnumerable<Topology^>^ apertureTopologies);
 
 		/// <summary>
@@ -302,16 +268,6 @@ namespace Topologic
 		Topology^ XOR(Topology^ topology);
 
 		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <param name="z"></param>
-		/// <returns name="Topology"></returns>
-		[IsVisibleInDynamoLibrary(false)]
-		Topology^ Translate(double x, double y, double z);
-
-		/// <summary>
 		/// Export the topological entity to a BRep file (.brep).
 		/// </summary>
 		/// <param name="path">The path to the BRep file</param>
@@ -358,21 +314,6 @@ namespace Topologic
 			where T: Topology
 		[IsVisibleInDynamoLibrary(false)]
 		T Copy();
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="topology"></param>
-		/// <returns></returns>
-		[IsVisibleInDynamoLibrary(false)]
-		double Distance(Topology^ topology);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns name="Vertex"></returns>
-		[IsVisibleInDynamoLibrary(false)]
-		Vertex^ CenterOfMass();
 
 		/// <summary>
 		/// 

@@ -1,9 +1,6 @@
 #include "EdgeUtility.h"
 #include "Vertex.h"
 
-#include <TopologicCore/include/Vertex.h>
-#include <TopologicCore/include/Edge.h>
-
 namespace Topologic
 {
 	namespace Support

@@ -181,6 +181,7 @@
     <ClInclude Include="include\Shell.h" />
     <ClInclude Include="include\TopologicalQuery.h" />
     <ClInclude Include="include\Topology.h" />
+    <ClInclude Include="include\TopologyUtility.h" />
     <ClInclude Include="include\Vertex.h" />
     <ClInclude Include="include\VertexFactory.h" />
     <ClInclude Include="include\Wire.h" />
@@ -215,6 +216,7 @@
     <ClCompile Include="src\FaceFactory.cpp" />
     <ClCompile Include="src\Shell.cpp" />
     <ClCompile Include="src\Topology.cpp" />
+    <ClCompile Include="src\TopologyUtility.cpp" />
     <ClCompile Include="src\Vertex.cpp" />
     <ClCompile Include="src\VertexFactory.cpp" />
     <ClCompile Include="src\Wire.cpp" />

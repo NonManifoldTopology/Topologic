@@ -123,12 +123,6 @@ namespace Topologic
 		throw gcnew NotImplementedException("This geometry is not currently handled.");
 	}
 
-	Topology^ Topology::ByContext()
-	{
-		throw gcnew System::NotImplementedException();
-		// TODO: insert return statement here
-	}
-
 	//Topology^ Topology::ByVertexIndex(List<array<double, 3>^>^ vertexCoordinates, List<List<int>^>^ vertexIndices)
 	//{
 	//	throw gcnew System::NotImplementedException();
@@ -204,14 +198,6 @@ namespace Topologic
 
 		std::shared_ptr<TopologicCore::Topology> pClosestLowestSubshape = pCoreTopology->ClosestSimplestSubshape(pCoreQueryTopology);
 		return ByCoreTopology(pClosestLowestSubshape);
-	}
-
-	double Topology::Distance(Topology ^ topology)
-	{
-		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreOtherTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
-
-		return pCoreTopology->Distance(pCoreOtherTopology);
 	}
 
 	String^ Topology::Type::get()
@@ -486,27 +472,6 @@ namespace Topologic
 		return this;*/
 
 		throw gcnew NotImplementedException();
-	}
-
-	Topology^ Topology::AddAperture(Topology ^ apertureTopology)
-	{
-		// 1. Copy this topology
-		TopologicCore::Topology::Ptr pCoreParentTopology =
-			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreCopyParentTopology = pCoreParentTopology->Copy();
-
-		// 2. Copy the aperture topology
-		TopologicCore::Topology::Ptr pCoreApertureTopology =
-			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(apertureTopology->GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreCopyApertureTopology = pCoreApertureTopology->Copy();
-
-		// 3. Add the aperture
-		TopologicCore::Aperture::Ptr pCoreAperture = TopologicCore::Aperture::ByTopologyContext(
-			pCoreCopyApertureTopology, 
-			pCoreCopyParentTopology);
-
-		// 4. Return the copy parent topology
-		return Topology::ByCoreTopology(pCoreCopyParentTopology);
 	}
 
 	Topology ^ Topology::AddApertures(System::Collections::Generic::IEnumerable<Topology^>^ apertureTopologies)
@@ -861,17 +826,6 @@ namespace Topologic
 		}
 	}
 
-	Topology^ Topology::Translate(double x, double y, double z)
-	{
-		// 1. Copy this topology
-		TopologicCore::Topology::Ptr pCoreTopology =
-			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->Copy();
-		pCoreCopyTopology->Translate(x, y, z);
-
-		return Topology::ByCoreTopology(pCoreCopyTopology);
-	}
-
 	List<Topology^>^ Topology::SubTopologies::get()
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
@@ -888,13 +842,6 @@ namespace Topologic
 			pTopologies->Add(pTopology);
 		}
 		return pTopologies;
-	}
-
-	Vertex^ Topology::CenterOfMass()
-	{
-		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		TopologicCore::Vertex::Ptr pCoreCenterOfMass = pCoreTopology->CenterOfMass();
-		return gcnew Vertex(pCoreCenterOfMass);
 	}
 
 	Topology^ Topology::Simplify()
