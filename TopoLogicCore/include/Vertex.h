@@ -141,7 +141,7 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		Handle(Geom_Point) Point() const;
+		TOPOLOGIC_API Handle(Geom_Point) Point() const;
 
 		virtual std::shared_ptr<Vertex> CenterOfMass() const;
 

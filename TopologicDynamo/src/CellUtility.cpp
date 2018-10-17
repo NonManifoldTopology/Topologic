@@ -1,12 +1,11 @@
 #include "CellUtility.h"
 #include "Wire.h"
-#include "Vertex.h"/*
-#include "Face.h"
-#include "Edge.h"*/
+#include "Vertex.h"
+
+#include <TopologicSupport/include/CellUtility.h>
 
 namespace Topologic {
 	namespace Support {
-
 		Cell^ CellUtility::ByVerticesFaceIndices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<int>^>^ faceIndices)
 		{
 			std::vector<TopologicCore::Vertex::Ptr> coreVertices;
@@ -26,7 +25,7 @@ namespace Topologic {
 				coreFaceIndices.push_back(coreFaceIndex);
 			}
 
-			Cell^ pCell = gcnew Cell(TopologicCore::Cell::ByVerticesFaceIndices(coreVertices, coreFaceIndices));
+			Cell^ pCell = gcnew Cell(TopologicSupport::CellUtility::ByVerticesFaceIndices(coreVertices, coreFaceIndices));
 			return pCell;
 		}
 
@@ -40,7 +39,7 @@ namespace Topologic {
 			}
 
 			try {
-				TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Cell::ByLoft(coreWires);
+				TopologicCore::Cell::Ptr pCoreCell = TopologicSupport::CellUtility::ByLoft(coreWires);
 				return gcnew Cell(pCoreCell);
 			}
 			catch (std::exception&)
@@ -52,14 +51,14 @@ namespace Topologic {
 		double CellUtility::Volume(Cell^ cell)
 		{
 			TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(cell->GetCoreTopologicalQuery());
-			return pCoreCell->Volume();
+			return TopologicSupport::CellUtility::Volume(pCoreCell);
 		}
 
 		bool CellUtility::Contains(Cell^ cell, Vertex ^ vertex)
 		{
 			TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(cell->GetCoreTopologicalQuery());
 			TopologicCore::Vertex::Ptr pCoreVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex->GetCoreTopologicalQuery());
-			return pCoreCell->DoesContain(pCoreVertex);
+			return TopologicSupport::CellUtility::DoesContain(pCoreCell, pCoreVertex);
 		}
 
 	}

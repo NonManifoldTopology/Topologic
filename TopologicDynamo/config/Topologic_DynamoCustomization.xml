@@ -10,5 +10,8 @@
     <namespace name="Topologic.Support">
       <category>Topologic.Support</category>
     </namespace>
+    <namespace name="Topologic.Extension">
+      <category>Topologic.Extension</category>
+    </namespace>
   </namespaces>
 </doc>

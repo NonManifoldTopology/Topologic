@@ -44,7 +44,7 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <param name="rkOcctFace"></param>
-		Face(const TopoDS_Face& rkOcctFace, const std::string& rkGuid = "");
+		TOPOLOGIC_API Face(const TopoDS_Face& rkOcctFace, const std::string& rkGuid = "");
 
 		virtual ~Face();
 

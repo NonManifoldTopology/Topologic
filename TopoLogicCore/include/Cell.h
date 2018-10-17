@@ -37,7 +37,7 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="rkOcctSolid"></param>
 		/// <param name="rkOcctLabel"></param>
-		Cell(const TopoDS_Solid& rkOcctSolid, const std::string& rkGuid = "");
+		TOPOLOGIC_API Cell(const TopoDS_Solid& rkOcctSolid, const std::string& rkGuid = "");
 		virtual ~Cell();
 
 		/// <summary>
@@ -85,11 +85,6 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="rWires"></param>
 		TOPOLOGIC_API void Wires(std::list<std::shared_ptr<Wire>>& rWires) const;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		TOPOLOGIC_API double Volume() const;
 
 		/// <summary>
 		/// 
@@ -176,21 +171,6 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="rkVertices"></param>
-		/// <param name="rkFaceIndices"></param>
-		/// <returns></returns>
-		static TOPOLOGIC_API std::shared_ptr<Cell> ByVerticesFaceIndices(const std::vector<std::shared_ptr<Vertex>>& rkVertices, const std::list<std::list<int>>& rkFaceIndices);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="rkWires"></param>
-		/// <returns></returns>
-		static TOPOLOGIC_API std::shared_ptr<Cell> ByLoft(const std::list<std::shared_ptr<Wire>>& rkWires);
-
-		/// <summary>
-		/// 
-		/// </summary>
 		/// <param name="kpAnotherCell"></param>
 		/// <param name="rEdges"></param>
 		TOPOLOGIC_API void SharedEdges(const std::shared_ptr<Cell>& kpAnotherCell, std::list<std::shared_ptr<Edge>>& rEdges) const;
@@ -214,13 +194,6 @@ namespace TopologicCore
 		/// </summary>
 		/// <returns></returns>
 		TOPOLOGIC_API std::shared_ptr<Shell> OuterBoundary() const;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="kpVertex"></param>
-		/// <returns></returns>
-		TOPOLOGIC_API bool DoesContain(const std::shared_ptr<Vertex>& kpVertex) const;
 
 
 		/// <summary>
