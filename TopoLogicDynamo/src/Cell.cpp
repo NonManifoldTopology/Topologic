@@ -403,7 +403,7 @@ namespace Topologic
 
 	Cell::Cell(const TopologicCore::Cell::Ptr& kpCoreCell)
 		: Topology()
-		, m_pCoreCell(new TopologicCore::Cell::Ptr(kpCoreCell))
+		, m_pCoreCell(kpCoreCell != nullptr ? new TopologicCore::Cell::Ptr(kpCoreCell) : throw gcnew Exception("A null cell was created."))
 	{
 
 	}

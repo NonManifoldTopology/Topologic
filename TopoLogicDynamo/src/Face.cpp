@@ -312,7 +312,7 @@ namespace Topologic
 
 	Face::Face(const TopologicCore::Face::Ptr&  kpCoreFace)
 		: Topology()
-		, m_pCoreFace(new TopologicCore::Face::Ptr(kpCoreFace))
+		, m_pCoreFace(kpCoreFace != nullptr ? new TopologicCore::Face::Ptr(kpCoreFace) : throw gcnew Exception("A null face was created."))
 	{
 		
 	}

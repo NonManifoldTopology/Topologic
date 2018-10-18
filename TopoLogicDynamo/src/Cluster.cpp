@@ -69,7 +69,7 @@ namespace Topologic
 
 	Cluster::Cluster(const TopologicCore::Cluster::Ptr& kpCoreCluster)
 		: Topology()
-		, m_pCoreCluster(new TopologicCore::Cluster::Ptr(kpCoreCluster))
+		, m_pCoreCluster(kpCoreCluster != nullptr ? new TopologicCore::Cluster::Ptr(kpCoreCluster) : throw gcnew Exception("A null cluster was created."))
 	{
 
 	}

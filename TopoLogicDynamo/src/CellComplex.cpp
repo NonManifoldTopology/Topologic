@@ -209,7 +209,7 @@ namespace Topologic
 
 	CellComplex::CellComplex(const TopologicCore::CellComplex::Ptr& kpCoreCellComplex)
 		: Topology()
-		, m_pCoreCellComplex(new TopologicCore::CellComplex::Ptr(kpCoreCellComplex))
+		, m_pCoreCellComplex(kpCoreCellComplex != nullptr ? new TopologicCore::CellComplex::Ptr(kpCoreCellComplex) : throw gcnew Exception("A null cellComplex was created."))
 	{
 
 	}

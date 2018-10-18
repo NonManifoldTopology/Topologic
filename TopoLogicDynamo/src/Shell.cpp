@@ -160,7 +160,7 @@ namespace Topologic
 
 	Shell::Shell(const TopologicCore::Shell::Ptr& kpCoreShell)
 		: Topology()
-		, m_pCoreShell(new TopologicCore::Shell::Ptr(kpCoreShell))
+		, m_pCoreShell(kpCoreShell != nullptr ? new TopologicCore::Shell::Ptr(kpCoreShell) : throw gcnew Exception("A null shell was created."))
 	{
 
 	}
