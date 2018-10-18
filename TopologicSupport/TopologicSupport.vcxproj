@@ -91,13 +91,13 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>include/;$(SolutionDir);$(SolutionDir)references\opencascade-7.2.0\inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>include/;$(SolutionDir);$(SolutionDir)references\opencascade-7.2.0\inc;$(SolutionDir)references\ShapeOp-0.1.0\include;$(SolutionDir)references\Eigen\include;$(SolutionDir)references\Earcut\include;$(SolutionDir)references\gpc-2.3.3\include;</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>TOPOLOGIC_SUPPORT_EXPORTS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)output\$(Platform)\$(Configuration);$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\libd</AdditionalLibraryDirectories>
-      <AdditionalDependencies>TopologicCore.lib;TKCAF.lib;TKLCAF.lib;TKOffset.lib;TKIGES.lib;TKPrim.lib;TKMesh.lib;TKXSBase.lib;TKStep.lib;TKBool.lib;TKBO.lib;TKShHealing.lib;TKG3d.lib;TKG2d.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKTopAlgo.lib;TKernel.lib;TKBrep.lib;TKMath.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)output\$(Platform)\$(Configuration);$(SolutionDir)references\ShapeOp-0.1.0\lib\$(Platform)\$(Configuration);$(SolutionDir)references\gpc-2.3.3\lib\$(Platform)\$(Configuration);$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\libd</AdditionalLibraryDirectories>
+      <AdditionalDependencies>TopologicCore.lib;gpc-2.3.3.lib;ShapeOp.0.1.0.lib;TKCAF.lib;TKLCAF.lib;TKOffset.lib;TKIGES.lib;TKPrim.lib;TKMesh.lib;TKXSBase.lib;TKStep.lib;TKBool.lib;TKBO.lib;TKShHealing.lib;TKG3d.lib;TKG2d.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKTopAlgo.lib;TKernel.lib;TKBrep.lib;TKMath.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -138,15 +138,15 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>include/;$(SolutionDir);$(SolutionDir)references\opencascade-7.2.0\inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>include/;$(SolutionDir);$(SolutionDir)references\opencascade-7.2.0\inc;$(SolutionDir)references\ShapeOp-0.1.0\include;$(SolutionDir)references\Eigen\include;$(SolutionDir)references\Earcut\include;$(SolutionDir)references\gpc-2.3.3\include;</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>TOPOLOGIC_SUPPORT_EXPORTS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)output\$(Platform)\$(Configuration);$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>TopologicCore.lib;TKCAF.lib;TKLCAF.lib;TKOffset.lib;TKIGES.lib;TKPrim.lib;TKMesh.lib;TKXSBase.lib;TKStep.lib;TKBool.lib;TKBO.lib;TKShHealing.lib;TKG3d.lib;TKG2d.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKTopAlgo.lib;TKernel.lib;TKBrep.lib;TKMath.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)output\$(Platform)\$(Configuration);$(SolutionDir)references\ShapeOp-0.1.0\lib\$(Platform)\$(Configuration);$(SolutionDir)references\gpc-2.3.3\lib\$(Platform)\$(Configuration);$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>TopologicCore.lib;gpc-2.3.3.lib;ShapeOp.0.1.0.lib;TKCAF.lib;TKLCAF.lib;TKOffset.lib;TKIGES.lib;TKPrim.lib;TKMesh.lib;TKXSBase.lib;TKStep.lib;TKBool.lib;TKBO.lib;TKShHealing.lib;TKG3d.lib;TKG2d.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKTopAlgo.lib;TKernel.lib;TKBrep.lib;TKMath.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -178,6 +178,11 @@
     <ClCompile Include="src\TopologyUtility.cpp" />
     <ClCompile Include="src\TransformationMatrix2D.cpp" />
     <ClCompile Include="src\Vector.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TopologicCore\TopologicCore.vcxproj">
+      <Project>{c2b53661-6d1f-4c1d-9f8d-909737ca2142}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

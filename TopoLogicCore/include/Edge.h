@@ -37,7 +37,7 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <param name="rkOcctEdge"></param>
-		Edge(const TopoDS_Edge& rkOcctEdge, const std::string& rkGuid = "");
+		TOPOLOGIC_API Edge(const TopoDS_Edge& rkOcctEdge, const std::string& rkGuid = "");
 
 		virtual ~Edge();
 
@@ -95,13 +95,6 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="rkVertices"></param>
-		/// <returns></returns>
-		static TOPOLOGIC_API Edge::Ptr ByVertices(const std::list<std::shared_ptr<Vertex>>& rkVertices);
-
-		/// <summary>
-		/// 
-		/// </summary>
 		/// <param name="kpStartVertex"></param>
 		/// <param name="kpEndVertex"></param>
 		/// <returns></returns>
@@ -110,46 +103,9 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpCenterPoint"></param>
-		/// <param name="kRadius"></param>
-		/// <param name="kXAxisX"></param>
-		/// <param name="kXAxisY"></param>
-		/// <param name="kXAxisZ"></param>
-		/// <param name="kNormalX"></param>
-		/// <param name="kNormalY"></param>
-		/// <param name="kNormalZ"></param>
-		/// <returns></returns>
-		static TOPOLOGIC_API Edge::Ptr ByCircle(
-			const std::shared_ptr<Vertex>& kpCenterPoint, const double kRadius,
-			const double kXAxisX, const double kXAxisY, const double kXAxisZ,
-			const double kNormalX, const double kNormalY, const double kNormalZ);
-
-		/// <summary>
-		/// 
-		/// </summary>
 		/// <param name="kpAnotherEdge"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API std::shared_ptr<Vertex> SharedVertex(const Edge::Ptr& kpAnotherEdge) const;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="kpVertex"></param>
-		/// <returns></returns>
-		TOPOLOGIC_API double ParameterAtPoint(const std::shared_ptr<Vertex>& kpVertex) const;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="kParameter"></param>
-		/// <returns></returns>
-		TOPOLOGIC_API std::shared_ptr<Vertex> PointAtParameter(const double kParameter) const;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		TOPOLOGIC_API double Length() const;
 
 		/// <summary>
 		/// 
@@ -204,7 +160,7 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		Handle(Geom_Curve) Curve() const;
+		TOPOLOGIC_API Handle(Geom_Curve) Curve() const;
 
 		/// <summary>
 		/// 
@@ -212,7 +168,7 @@ namespace TopologicCore
 		/// <param name="rU0"></param>
 		/// <param name="rU1"></param>
 		/// <returns></returns>
-		Handle(Geom_Curve) Curve(double& rU0, double& rU1) const;
+		TOPOLOGIC_API Handle(Geom_Curve) Curve(double& rU0, double& rU1) const;
 
 		virtual std::shared_ptr<Vertex> CenterOfMass() const;
 
@@ -228,7 +184,12 @@ namespace TopologicCore
 			return EdgeGUID::Get();
 		}
 
-	protected:
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="occtEdgeError"></param>
+		static TOPOLOGIC_API void Throw(const BRepBuilderAPI_EdgeError occtEdgeError);
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -236,7 +197,7 @@ namespace TopologicCore
 		/// <param name="kOcctMaxParameter"></param>
 		/// <param name="kNonNormalizedParameter"></param>
 		/// <returns></returns>
-		static double NormalizeParameter(const double kOcctMinParameter, const double kOcctMaxParameter, const double kNonNormalizedParameter);
+		static TOPOLOGIC_API double NormalizeParameter(const double kOcctMinParameter, const double kOcctMaxParameter, const double kNonNormalizedParameter);
 
 		/// <summary>
 		/// 
@@ -245,15 +206,9 @@ namespace TopologicCore
 		/// <param name="kOcctMaxParameter"></param>
 		/// <param name="kNormalizedParameter"></param>
 		/// <returns></returns>
-		static double NonNormalizeParameter(const double kOcctMinParameter, const double kOcctMaxParameter, const double kNormalizedParameter);
+		static TOPOLOGIC_API double NonNormalizeParameter(const double kOcctMinParameter, const double kOcctMaxParameter, const double kNormalizedParameter);
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="occtEdgeError"></param>
-		static void Throw(const BRepBuilderAPI_EdgeError occtEdgeError);
-
-
+	protected:
 		/// <summary>
 		/// The underlying OCCT edge.
 		/// </summary>

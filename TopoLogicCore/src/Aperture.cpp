@@ -284,8 +284,9 @@ namespace TopologicCore
 
 	Aperture::Ptr Aperture::ByBoundaryWithinHost(const Face::Ptr& kpHostFace, const Wire::Ptr& kpApertureBoundary, const bool kLink, const bool kOpenStatus)
 	{
-		Face::Ptr trimmedFace = kpHostFace->Trim(kpApertureBoundary);
-		return std::make_shared<Aperture>(trimmedFace, nullptr, kOpenStatus);
+		/*Face::Ptr trimmedFace = kpHostFace->Trim(kpApertureBoundary);
+		return std::make_shared<Aperture>(trimmedFace, nullptr, kOpenStatus);*/
+		return nullptr;
 	}
 
 	Topology::Ptr Aperture::Topology() const

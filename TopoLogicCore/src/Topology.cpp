@@ -131,12 +131,6 @@ namespace TopologicCore
 		return Topology::ByOcctShape(occtClosestSubshape, "");
 	}
 
-	double Topology::Distance(const Topology::Ptr& kpTopology) const
-	{
-		BRepExtrema_DistShapeShape occtDistance(GetOcctShape(), kpTopology->GetOcctShape());
-		return occtDistance.Value();
-	}
-
 	Topology::Topology(const int kDimensionality, const TopoDS_Shape& rkOcctShape, const std::string& rkGuid)
 		: m_dimensionality(kDimensionality)
 	{
@@ -322,13 +316,6 @@ namespace TopologicCore
 				rTopologies.push_back(std::make_shared<Vertex>(occtVertices.front()));
 			}
 		}
-	}
-
-	void Topology::Translate(const double x, const double y, const double z)
-	{
-		gp_Trsf transformation;
-		transformation.SetTranslation(gp_Vec(x, y, z));
-		GetOcctShape().Move(TopLoc_Location(transformation));
 	}
 
 	void Topology::AddContent(const Topology::Ptr & rkTopology, const bool kUseClosestSimplestSubshape, Topology::Ptr& rClosestSimplestSubshape)
@@ -2143,17 +2130,29 @@ namespace TopologicCore
 
 	Topology::Ptr Topology::Copy()
 	{
-		TopoDS_Shape occtShapeCopy = CopyOcct();
-		return Topology::ByOcctShape(occtShapeCopy, GetInstanceGUID());
+		BRepBuilderAPI_Copy occtShapeCopier(GetOcctShape());
+		TopoDS_Shape occtShapeCopy = occtShapeCopier.Shape();
+		Topology::Ptr pShapeCopy = Topology::ByOcctShape(occtShapeCopy, GetInstanceGUID());
+
+		// Copy the contents of the original topology to the copy
+		std::list<Topology::Ptr> contents;
+		Contents(false, contents);
+		
+		for(const Topology::Ptr& kpContent : contents)
+		{
+			pShapeCopy->AddContent(kpContent, false);
+		}
+
+		return pShapeCopy;
 	}
 
-	TopoDS_Shape Topology::CopyOcct() const
+	/*TopoDS_Shape Topology::CopyOcct() const
 	{
 		BRepBuilderAPI_Copy occtShapeCopy(GetOcctShape());
-		return occtShapeCopy.Shape();
+		TopoDS_Shape occtCopyShape = occtShapeCopy.Shape();
 
-		// TODO: Copy the contents of the original topology to the copy
-	}
+		return occtCopyShape;
+	}*/
 
 	void Topology::ReplaceSubentity(const Topology::Ptr& rkOriginalSubshape, const Topology::Ptr& rkNewSubshape)
 	{

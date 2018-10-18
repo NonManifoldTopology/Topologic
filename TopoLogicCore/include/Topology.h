@@ -65,7 +65,7 @@ namespace TopologicCore
 		/// <param name="rkOcctShape"></param>
 		/// <param name="rkInstanceGuid"></param>
 		/// <returns></returns>
-		static Topology::Ptr ByOcctShape(const TopoDS_Shape& rkOcctShape, const std::string& rkInstanceGuid);
+		static TOPOLOGIC_API Topology::Ptr ByOcctShape(const TopoDS_Shape& rkOcctShape, const std::string& rkInstanceGuid);
 
 		/// <summary>
 		/// 
@@ -97,14 +97,6 @@ namespace TopologicCore
 		/// <param name="rTopologies"></param>
 		/// <returns></returns>
 		static TOPOLOGIC_API void ByVertexIndex(const std::vector<std::shared_ptr<Vertex>>& rkVertices, const std::list<std::list<int>>& rkVertexIndices, std::list<Topology::Ptr>& rTopologies);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <param name="z"></param>
-		TOPOLOGIC_API void Translate(const double x, const double y, const double z);
 
 		void AddContent(const Topology::Ptr& rkTopology, const bool kUseClosestSimplestSubshape, Topology::Ptr& rClosestSimplestSubshape);
 
@@ -422,11 +414,11 @@ namespace TopologicCore
 		/// <returns></returns>
 		TOPOLOGIC_API Topology::Ptr Copy();
 
-		/// <summary>
+		/*/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		TopoDS_Shape CopyOcct() const;
+		TopoDS_Shape CopyOcct() const;*/
 
 		/// <summary>
 		/// 
@@ -474,13 +466,6 @@ namespace TopologicCore
 		/// </summary>
 		/// <returns></returns>
 		TOPOLOGIC_API virtual std::shared_ptr<Vertex> CenterOfMass() const = 0;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="kpTopology"></param>
-		/// <returns></returns>
-		TOPOLOGIC_API double Distance(const Topology::Ptr& kpTopology) const;
 
 		/// <summary>
 		/// <para>

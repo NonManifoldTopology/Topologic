@@ -436,24 +436,17 @@ namespace Topologic
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreCopyParentTopology = pCoreParentTopology->Copy();
 		
-		// 2. Get the center of mass of the contentTopology
-		// MOVED to Core
-		/*TopologicCore::Vertex::Ptr pCoreContentCenterOfMass = pCoreContentTopology->CenterOfMass();*/
-
-		// 3. Find the closest simplest topology of the copy topology
-		// MOVED to Core
-		//TopologicCore::Topology::Ptr closestSimplestSubshape = pCoreCopyParentTopology->ClosestSimplestSubshape(pCoreContentCenterOfMass);
-
-		// 4. Copy the content topology
+		// 2. Copy the content topology
 		TopologicCore::Topology::Ptr pCoreContentTopology =
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreCopyContentTopology = pCoreContentTopology->Copy();
 
 		pCoreCopyParentTopology->AddContent(pCoreCopyContentTopology, true);
-		// 5. Add contentTopology as the content of the closest simplest topology
+		
+		// 3. Add contentTopology as the content of the closest simplest topology
 		//closestSimplestSubshape->AddContent(pCoreCopyContentTopology);
 
-		// 6. Add closestSimplestSubshape as the context of pCoreCopyContentTopology
+		// 4. Add closestSimplestSubshape as the context of pCoreCopyContentTopology
 		const double kDefaultParameter = 0.0; // TODO: calculate the parameters
 		pCoreCopyContentTopology->AddContext(
 			TopologicCore::Context::ByTopologyParameters(
@@ -461,7 +454,7 @@ namespace Topologic
 				kDefaultParameter, kDefaultParameter, kDefaultParameter
 			));
 
-		// 7. Return the copy topology
+		// 5. Return the copy topology
 		return Topology::ByCoreTopology(pCoreCopyParentTopology);
 	}
 
@@ -713,10 +706,10 @@ namespace Topologic
 		}
 	}
 
-	Topology^ Topology::Impose(Topology^ topology)
+	Topology^ Topology::Impose(Topology^ tool)
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopologicCore::Topology> pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(tool->GetCoreTopologicalQuery());
 
 		try{
 			std::shared_ptr<TopologicCore::Topology> pImposeCoreTopology = pCoreTopologyA->Impose(pCoreTopologyB); 
@@ -728,10 +721,10 @@ namespace Topologic
 		}
 	}
 
-	Topology^ Topology::Imprint(Topology^ topology)
+	Topology^ Topology::Imprint(Topology^ tool)
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopologicCore::Topology> pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(tool->GetCoreTopologicalQuery());
 
 		try{
 			std::shared_ptr<TopologicCore::Topology> pImprintCoreTopology = pCoreTopologyA->Imprint(pCoreTopologyB);
@@ -796,10 +789,10 @@ namespace Topologic
 		}
 	}
 
-	Topology^ Topology::Slice(Topology^ topology)
+	Topology^ Topology::Slice(Topology^ tool)
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopologicCore::Topology> pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(tool->GetCoreTopologicalQuery());
 
 		try{
 			std::shared_ptr<TopologicCore::Topology> pSliceCoreTopology = pCoreTopologyA->Slice(pCoreTopologyB);
@@ -824,6 +817,12 @@ namespace Topologic
 		{
 			throw gcnew Exception(gcnew String(e.what()));
 		}
+	}
+
+	Topology ^ Topology::Trim(Topology ^ trim)
+	{
+		throw gcnew System::NotImplementedException();
+		// TODO: insert return statement here
 	}
 
 	List<Topology^>^ Topology::SubTopologies::get()

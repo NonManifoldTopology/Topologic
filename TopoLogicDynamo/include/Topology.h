@@ -215,16 +215,16 @@ namespace Topologic
 		/// <summary>
 		/// Impose the second topological entity to the first one.
 		/// </summary>
-		/// <param name="topology">Topologic.Topology</param>
+		/// <param name="tool">Topologic.Topology</param>
 		/// <returns name="Topology">Topologic.Topology</returns>
-		Topology^ Impose(Topologic::Topology^ topology);
+		Topology^ Impose(Topologic::Topology^ tool);
 
 		/// <summary>
 		/// Imprint the second topological entity to the first one.
 		/// </summary>
-		/// <param name="topology">Another topology</param>
+		/// <param name="tool">Another topology</param>
 		/// <returns name="Topology">The result of the Imprint operation</returns>
-		Topology^ Imprint(Topology^ topology);
+		Topology^ Imprint(Topology^ tool);
 
 		/// <summary>
 		/// Perform the Intersection operation between the first and the second topological entities.
@@ -249,9 +249,9 @@ namespace Topologic
 		/// <summary>
 		/// Slice the first topological entity with the second.
 		/// </summary>
-		/// <param name="topology"></param>
+		/// <param name="tool"></param>
 		/// <returns name="Topology">The result of the Slice operation</returns>
-		Topology^ Slice(Topology^ topology);
+		Topology^ Slice(Topology^ tool);
 
 		/// <summary>
 		/// Union the first and the second topological entities.
@@ -266,6 +266,9 @@ namespace Topologic
 		/// <param name="topology"></param>
 		/// <returns name="Topology">The result of the XOR operation</returns>
 		Topology^ XOR(Topology^ topology);
+
+		[IsVisibleInDynamoLibrary(false)]
+		Topology^ Trim(Topology^ trim);
 
 		/// <summary>
 		/// Export the topological entity to a BRep file (.brep).

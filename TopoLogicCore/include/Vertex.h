@@ -36,7 +36,7 @@ namespace TopologicCore
 		/// Creates a vertex by an OCCT vertex.
 		/// </summary>
 		/// <param name="rkOcctVertex">An OCCT vertex</param>
-		Vertex(const TopoDS_Vertex& rkOcctVertex, const std::string& rkGuid = "");
+		TOPOLOGIC_API Vertex(const TopoDS_Vertex& rkOcctVertex, const std::string& rkGuid = "");
 
 		virtual ~Vertex();
 

@@ -94,11 +94,6 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		TOPOLOGIC_API double Area() const;
-
-		/// <summary>
-		/// 
-		/// </summary>
 		virtual std::shared_ptr<Vertex> CenterOfMass() const;
 
 		/// <summary>
@@ -130,7 +125,7 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="pOcctSurface"></param>
 		/// <returns></returns>
-		static std::shared_ptr<Face> BySurface(Handle(Geom_Surface) pOcctSurface);
+		static TOPOLOGIC_API std::shared_ptr<Face> BySurface(Handle(Geom_Surface) pOcctSurface);
 
 		/*/// <summary>
 		/// 
@@ -199,13 +194,6 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="coreVertices"></param>
-		/// <returns></returns>
-		static TOPOLOGIC_API Face::Ptr ByVertices(const std::list<std::list<std::shared_ptr<Vertex>>>& rkVertices);
-
-		/// <summary>
-		/// 
-		/// </summary>
 		/// <param name="kpAnotherFace"></param>
 		/// <param name="rEdges"></param>
 		void TOPOLOGIC_API SharedEdges(const std::shared_ptr<Face>& kpAnotherFace, std::list<std::shared_ptr<Edge>>& rEdges) const;
@@ -250,54 +238,6 @@ namespace TopologicCore
 		/// <param name="kpkParentTopology"></param>
 		/// <returns></returns>
 		virtual bool IsManifold(TopologicCore::Topology const * const kpkParentTopology) const;
-
-		/// <summary>
-		/// Note: Topologic UV values are normalized (from 0 and 1), but OCCT's values are not normalized.
-		/// </summary>
-		/// <param name="kpVertex"></param>
-		/// <param name="rU"></param>
-		/// <param name="rV"></param>
-		/// <returns></returns>
-		TOPOLOGIC_API void UVParameterAtPoint(const std::shared_ptr<Vertex>& kpVertex, double& rU, double &rV) const;
-
-		/// <summary>
-		/// Note: Topologic UV values are normalized (from 0 and 1), but OCCT's values are not normalized.
-		/// </summary>
-		/// <param name="kU"></param>
-		/// <param name="kV"></param>
-		/// <returns></returns>
-		TOPOLOGIC_API std::shared_ptr<Vertex> PointAtParameter(const double kU, const double kV) const;
-
-		/// <summary>
-		/// Note: Topologic UV values are normalized (from 0 and 1), but OCCT's values are not normalized.
-		/// </summary>
-		/// <param name="kU"></param>
-		/// <param name="kV"></param>
-		/// <returns></returns>
-		TOPOLOGIC_API gp_Dir NormalAtParameter(const double kU, const double kV) const;
-
-		void UVSamplePoints(
-			const std::list<double>& rkUValues,
-			const std::list<double>& rkVValues,
-			std::list<std::list<gp_Pnt>>& rSamplePoints,
-			std::list<double>& rOcctUValues,
-			std::list<double>& rOcctVValues,
-			int& rNumUPoints,
-			int& rNumVPoints,
-			int& rNumUPanels,
-			int& rNumVPanels,
-			bool& rIsUClosed,
-			bool& rIsVClosed);
-			/*,
-			std::list<double>& rOcctUValues,
-			std::list<double>& rOcctVValues);*/
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="kpWire"></param>
-		/// <returns></returns>
-		TOPOLOGIC_API std::shared_ptr<Face> Trim(const std::shared_ptr<Wire>& kpWire) const;
 
 		/// <summary>
 		/// 
@@ -359,31 +299,13 @@ namespace TopologicCore
 			return FaceGUID::Get();
 		}
 
-	protected:
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkOcctMakeFace"></param>
-		static void Throw(const BRepBuilderAPI_MakeFace& rkOcctMakeFace);
+		static TOPOLOGIC_API void Throw(const BRepBuilderAPI_MakeFace& rkOcctMakeFace);
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="kNonNormalizedU"></param>
-		/// <param name="kNonNormalizedV"></param>
-		/// <param name="rNormalizedU"></param>
-		/// <param name="rNormalizedV"></param>
-		void NormalizeUV(const double kNonNormalizedU, const double kNonNormalizedV, double& rNormalizedU, double& rNormalizedV) const;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="kNormalizedU"></param>
-		/// <param name="kNormalizedV"></param>
-		/// <param name="rNonNormalizedU"></param>
-		/// <param name="rNonNormalizedV"></param>
-		void NonNormalizeUV(const double kNormalizedU, const double kNormalizedV, double& rNonNormalizedU, double& rNonNormalizedV) const;
-
+	protected:
 		/// <summary>
 		/// The underlying OCCT face.
 		/// </summary>

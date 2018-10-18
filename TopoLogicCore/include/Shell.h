@@ -37,7 +37,7 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <param name="rkOcctShell"></param>
-		Shell(const TopoDS_Shell& rkOcctShell, const std::string& rkGuid = "");
+		TOPOLOGIC_API Shell(const TopoDS_Shell& rkOcctShell, const std::string& rkGuid = "");
 
 		virtual ~Shell();
 
@@ -89,21 +89,6 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="rkVertices"></param>
-		/// <param name="rkFaceIndices"></param>
-		/// <returns></returns>
-		static TOPOLOGIC_API std::shared_ptr<Shell> ByVerticesFaceIndices(const std::vector<std::shared_ptr<Vertex>>& rkVertices, const std::list<std::list<int>>& rkFaceIndices);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="rkWires"></param>
-		/// <returns></returns>
-		static TOPOLOGIC_API std::shared_ptr<Shell> ByLoft(const std::list<std::shared_ptr<Wire>>& rkWires);
-
-		/// <summary>
-		/// 
-		/// </summary>
 		/// <param name="kpkParentTopology"></param>
 		/// <returns></returns>
 		virtual bool IsManifold(TopologicCore::Topology const * const kpkParentTopology) const;
@@ -149,65 +134,6 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="rOcctGeometries"></param>
 		virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const;
-
-		/// <summary>
-		/// Note: Topologic UV values are normalized (from 0 and 1), but OCCT's values are not normalized.
-		/// </summary>
-		/// <param name="kpFace"></param>
-		/// <param name="kIteration"></param>
-		/// <param name="kNumUPanels"></param>
-		/// <param name="kNumVPanels"></param>
-		/// <param name="kTolerance"></param>
-		/// <param name="kCapBottom"></param>
-		/// <param name="kCapTop"></param>
-		/// <returns></returns>
-		TOPOLOGIC_API static std::shared_ptr<Shell> ByFacePlanarization(
-			const std::shared_ptr<Face>& kpFace,
-			const int kIteration,
-			const int kEdgeSamples,
-			const int kNumUPanels,
-			const int kNumVPanels,
-			const double kTolerance,
-			const bool kCapBottom,
-			const bool kCapTop,
-			std::list<std::shared_ptr<Vertex>>& vertices,
-			std::list<std::shared_ptr<Edge>>& edges,
-			std::list<std::shared_ptr<Wire>>& wires,
-			std::list<std::shared_ptr<Face>>& faces);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="kpFace"></param>
-		/// <param name="kIteration"></param>
-		/// <param name="rkUValues"></param>
-		/// <param name="rkVValues"></param>
-		/// <param name="kTolerance"></param>
-		/// <param name="kCapBottom"></param>
-		/// <param name="kCapTop"></param>
-		/// <returns></returns>
-		TOPOLOGIC_API static std::shared_ptr<Shell> ByFacePlanarization(
-			const std::shared_ptr<Face>& kpFace,
-			const int kIteration,
-			const int kEdgeSamples,
-			const std::list<double>& rkUValues,
-			const std::list<double>& rkVValues,
-			const double kTolerance,
-			const bool kCapBottom,
-			const bool kCapTop,
-			std::list<std::shared_ptr<Vertex>>& vertices,
-			std::list<std::shared_ptr<Edge>>& edges,
-			std::list<std::shared_ptr<Wire>>& wires,
-			std::list<std::shared_ptr<Face>>& faces);
-
-
-		TOPOLOGIC_API static std::shared_ptr<Shell> ByFacePlanarizationV2(
-			const std::shared_ptr<Face>& kpFace,
-			const int kIteration,
-			const int kEdgeSamples,
-			const std::list<double>& rkUValues,
-			const std::list<double>& rkVValues
-		);
 
 		/// <summary>
 		/// 
