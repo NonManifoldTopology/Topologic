@@ -71,6 +71,8 @@ namespace TopologicCore
 		/// <returns></returns>
 		static TOPOLOGIC_API std::shared_ptr<Wire> ByEdges(const std::list<std::shared_ptr<Edge>>& rkEdges);
 
+		static TopoDS_Wire ByOcctEdges(const TopTools_ListOfShape& rkOcctEdges);
+
 		/// <summary>
 		/// 
 		/// </summary>

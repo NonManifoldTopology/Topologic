@@ -50,6 +50,6 @@ namespace TopologicSupport
 		TOPOLOGIC_SUPPORT_API void CopyAttributes(const TopoDS_Shape& rkOcctShape1, const TopoDS_Shape& rkOcctShape2);
 
 	protected:
-		std::map<TopoDS_Shape, std::map<std::string, std::shared_ptr<Attribute>>, OcctShapeComparator> m_occtShapeToAttributesMap;
+		std::map<TopoDS_Shape, std::map<std::string, std::shared_ptr<Attribute>>, TopologicCore::OcctShapeComparator> m_occtShapeToAttributesMap;
 	};
 }

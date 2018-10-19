@@ -318,11 +318,11 @@ namespace Topologic
 		[IsVisibleInDynamoLibrary(false)]
 		T Copy();
 
-		/// <summary>
+		/*/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		Topology^ Simplify();
+		Topology^ Simplify();*/
 
 
 		/// <summary>

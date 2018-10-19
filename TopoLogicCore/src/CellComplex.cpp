@@ -61,7 +61,20 @@ namespace TopologicCore
 
 	CellComplex::Ptr CellComplex::ByCells(const std::list<Cell::Ptr>& rkCells)
 	{
-		if (rkCells.empty())
+		TopTools_ListOfShape occtShapes;
+		for (const Cell::Ptr& kpCell : rkCells)
+		{
+			occtShapes.Append(kpCell->GetOcctShape());
+		}
+
+		TopoDS_CompSolid occtCompSolid = ByOcctSolids(occtShapes);
+		CellComplex::Ptr pCellComplex = std::make_shared<CellComplex>(occtCompSolid);
+		return pCellComplex;
+	}
+
+	TopoDS_CompSolid CellComplex::ByOcctSolids(const TopTools_ListOfShape & rkOcctSolids)
+	{
+		if (rkOcctSolids.IsEmpty())
 		{
 			throw std::exception("No cell is passed.");
 		}
@@ -70,12 +83,12 @@ namespace TopologicCore
 		BRep_Builder occtBuilder;
 		occtBuilder.MakeCompSolid(occtCompSolid);
 
-		std::list<Cell::Ptr>::const_iterator rkCellIterator = rkCells.begin();
-		if (rkCells.size() == 1)
+		TopTools_ListOfShape::iterator occtSolidIterator = rkOcctSolids.begin();
+		if (rkOcctSolids.Size() == 1)
 		{
 			// Return a cell complex with only that cells
 			try {
-				occtBuilder.Add(occtCompSolid, (*rkCellIterator)->GetOcctShape());
+				occtBuilder.Add(occtCompSolid, *occtSolidIterator);
 			}
 			catch (TopoDS_FrozenShape&)
 			{
@@ -89,15 +102,16 @@ namespace TopologicCore
 		else
 		{
 			// Merge the first cell with the rest.
+			Topology::Ptr firstTopology = Topology::ByOcctShape(*occtSolidIterator, "");
 			std::list<std::shared_ptr<Topology>> topologies;
 			// Start from the second.
-			rkCellIterator++;
-			for (;rkCellIterator != rkCells.end(); rkCellIterator++)
+			occtSolidIterator++;
+			for (; occtSolidIterator != rkOcctSolids.end(); occtSolidIterator++)
 			{
-				topologies.push_back(*rkCellIterator);
+				topologies.push_back(Topology::ByOcctShape(*occtSolidIterator, ""));
 			}
 			std::shared_ptr<Cluster> otherCellsAsCluster = Cluster::ByTopologies(topologies);
-			std::shared_ptr<Topology> pMergeTopology = (*rkCells.begin())->Merge(otherCellsAsCluster);
+			std::shared_ptr<Topology> pMergeTopology = firstTopology->Merge(otherCellsAsCluster);
 
 			std::list<Cell::Ptr> cells;
 			pMergeTopology->DownwardNavigation(cells);
@@ -118,13 +132,7 @@ namespace TopologicCore
 		}
 
 		// Should get us a CellComplex, otherwise an exception.
-		CellComplex::Ptr pMergeCellComplex = std::make_shared<CellComplex>(occtCompSolid);
-		if (pMergeCellComplex == nullptr)
-		{
-			throw std::exception("CellComplex::ByCells(): Merge operation is not giving a cell complex");
-		}
-
-		return pMergeCellComplex;
+		return occtCompSolid;
 	}
 
 	CellComplex::Ptr CellComplex::ByFaces(const std::list<Face::Ptr>& rkFaces)

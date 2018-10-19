@@ -843,11 +843,11 @@ namespace Topologic
 		return pTopologies;
 	}
 
-	Topology^ Topology::Simplify()
+	/*Topology^ Topology::Simplify()
 	{
 		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreSimplifiedTopology = pCoreTopology->Copy();
 		pCoreSimplifiedTopology->Simplify();
 		return Topology::ByCoreTopology(pCoreSimplifiedTopology);
-	}
+	}*/
 }

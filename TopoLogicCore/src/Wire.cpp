@@ -91,22 +91,25 @@ namespace TopologicCore
 			occtEdges.Append(kpEdge->GetOcctShape());
 		}
 
+		TopoDS_Wire occtWire = ByOcctEdges(occtEdges);
+		Wire::Ptr pWire = std::make_shared<Wire>(occtWire);
+		return pWire;
+	}
+
+	TopoDS_Wire Wire::ByOcctEdges(const TopTools_ListOfShape & rkOcctEdges)
+	{
 		BRepBuilderAPI_MakeWire occtMakeWire;
-		occtMakeWire.Add(occtEdges);
+		occtMakeWire.Add(rkOcctEdges);
 
 		try {
-			Wire::Ptr pWire = std::make_shared<Wire>(occtMakeWire);
+			TransferMakeShapeContents(occtMakeWire, rkOcctEdges);
 
-			TransferMakeShapeContents(occtMakeWire, occtEdges);
-
-			std::list<Edge::Ptr> newEdges;
-			pWire->Edges(newEdges);
-			return pWire;
+			return occtMakeWire;
 		}
 		catch (StdFail_NotDone&)
 		{
 			Throw(occtMakeWire);
-			return nullptr;
+			return TopoDS_Wire();
 		}
 	}
 

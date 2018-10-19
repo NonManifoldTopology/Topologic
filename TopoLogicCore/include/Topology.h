@@ -189,20 +189,6 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <param name="kpOtherTopology"></param>
-		/// <param name="rSpaceBetween_A_A_and_B_A"></param>
-		/// <param name="rSpaceBetween_B_A_and_A_B"></param>
-		/// <param name="rSpaceBetween_A_B_and_B_B"></param>
-		/// <returns></returns>
-		TOPOLOGIC_API void BooleanParts(
-			const Topology::Ptr& kpOtherTopology,
-			std::list<Topology::Ptr>& rSpaceBetween_A_A_and_B_A,
-			std::list<Topology::Ptr>& rSpaceBetween_B_A_and_A_B,
-			std::list<Topology::Ptr>& rSpaceBetween_A_B_and_B_B);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="kpOtherTopology"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API Topology::Ptr Difference(const Topology::Ptr& kpOtherTopology);
 
@@ -322,12 +308,14 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="rkOcctShape"></param>
 		/// <returns></returns>
-		TopoDS_Shape Simplify(const TopoDS_Shape& rkOcctShape);
+		static TopoDS_Shape MakeBooleanContainers(const TopoDS_Shape& rkOcctShape);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		TOPOLOGIC_API void Simplify();
+		/// <param name="rkOcctShape"></param>
+		/// <returns></returns>
+		static TopoDS_Shape Simplify(const TopoDS_Shape& rkOcctShape);
 
 		/// <summary>
 		/// 
@@ -486,6 +474,7 @@ namespace TopologicCore
 			m_guid = rkGuid;
 		}*/
 
+		static TopologyType GetTopologyType(const TopAbs_ShapeEnum& rkOcctType);
 
 	protected:
 		Topology(const int kDimensionality, const TopoDS_Shape& rkOcctShape, const std::string& rkGuid = "");

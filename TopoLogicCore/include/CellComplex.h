@@ -84,6 +84,8 @@ namespace TopologicCore
 		/// <returns></returns>
 		static TOPOLOGIC_API std::shared_ptr<CellComplex> ByCells(const std::list<std::shared_ptr<Cell>>& rkCells);
 
+		static TopoDS_CompSolid ByOcctSolids(const TopTools_ListOfShape& rkOcctSolids);
+
 		/// <summary>
 		/// 
 		/// </summary>

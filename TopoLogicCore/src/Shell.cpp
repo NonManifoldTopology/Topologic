@@ -6,6 +6,7 @@
 #include <Face.h>
 #include <Aperture.h>
 #include <ShellFactory.h>
+#include "ContentManager.h"
 
 //#include <BOPAlgo_Splitter.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
@@ -82,10 +83,25 @@ namespace TopologicCore
 			throw std::exception("No face is passed.");
 		}
 
-		BRepBuilderAPI_Sewing occtSewing;
+		TopTools_ListOfShape occtShapes;
 		for(const Face::Ptr& kpFace : rkFaces)
 		{
-			occtSewing.Add(kpFace->GetOcctShape());
+			occtShapes.Append(kpFace->GetOcctShape());
+		}
+
+		TopoDS_Shell occtShell = ByOcctFaces(occtShapes);
+		Shell::Ptr pShell = std::make_shared<Shell>(TopoDS::Shell(occtShell));
+		return pShell;
+	}
+
+	TopoDS_Shell Shell::ByOcctFaces(const TopTools_ListOfShape & rkOcctFaces)
+	{
+		BRepBuilderAPI_Sewing occtSewing;
+		for (TopTools_ListIteratorOfListOfShape occtEdgeIterator(rkOcctFaces);
+			occtEdgeIterator.More();
+			occtEdgeIterator.Next())
+		{
+			occtSewing.Add(occtEdgeIterator.Value());
 		}
 
 		occtSewing.Perform();
@@ -98,19 +114,22 @@ namespace TopologicCore
 		{
 			throw std::exception("Fails to create a shell from faces.");
 		}
-		Shell::Ptr pShell = std::make_shared<Shell>(TopoDS::Shell(occtSewing.SewedShape()));
+		//Shell::Ptr pShell = std::make_shared<Shell>(TopoDS::Shell(occtSewing.SewedShape()));
 
 		// HACK: add the v1 contents to the current shell faces.
-		Topology::Ptr pUpcastShell = TopologicalQuery::Upcast<Topology>(pShell);
-
-		for (const Face::Ptr& kShellFace : rkFaces)
+		//Topology::Ptr pUpcastShell = TopologicalQuery::Upcast<Topology>(pShell);
+		
+		for (TopTools_ListIteratorOfListOfShape occtEdgeIterator(rkOcctFaces);
+			occtEdgeIterator.More();
+			occtEdgeIterator.Next())
 		{
-			const TopoDS_Shape& rkModifiedShape = occtSewing.Modified(kShellFace->GetOcctShape());
+			const TopoDS_Shape& rkModifiedShape = occtSewing.Modified(occtEdgeIterator.Value());
 			Topology::Ptr pChildTopology = Topology::ByOcctShape(rkModifiedShape, "");
 
 			// Map the aperture to the modifed shell faces.
 			std::list<Topology::Ptr> contents;
-			kShellFace->Contents(false, contents);
+			ContentManager::GetInstance().Find(occtEdgeIterator.Value(), contents);
+			//kShellFace->Contents(false, contents);
 			for (const Topology::Ptr& rkContent : contents)
 			{
 				if (rkContent->GetType() != TOPOLOGY_APERTURE)
@@ -130,7 +149,7 @@ namespace TopologicCore
 			}
 		}
 
-		return pShell;
+		return TopoDS::Shell(occtSewing.SewedShape());
 	}
 
 	bool Shell::IsManifold(TopologicCore::Topology const * const kpkParentTopology) const
