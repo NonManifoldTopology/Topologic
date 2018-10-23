@@ -5,7 +5,7 @@ using namespace Autodesk::DesignScript::Runtime;
 
 #include <Attribute.h>
 
-namespace TopologicSupport
+namespace TopologicUtility
 {
 	class Attribute;
 }
@@ -22,9 +22,9 @@ namespace Topologic
 		virtual bool CheckType(Type^ type) abstract;
 
 	public protected:
-		virtual bool CheckType(const std::shared_ptr<TopologicSupport::Attribute>& kpSupportAttribute) abstract;
+		virtual bool CheckType(const std::shared_ptr<TopologicUtility::Attribute>& kpSupportAttribute) abstract;
 
-		virtual Object^ CreateValue(const std::shared_ptr<TopologicSupport::Attribute>& kpSupportAttribute) abstract;
+		virtual Object^ CreateValue(const std::shared_ptr<TopologicUtility::Attribute>& kpSupportAttribute) abstract;
 
 	protected:
 		AttributeFactory() {}

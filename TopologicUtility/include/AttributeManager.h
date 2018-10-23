@@ -15,7 +15,7 @@ namespace TopologicCore
 	class Topology;
 }
 
-namespace TopologicSupport
+namespace TopologicUtility
 {
 	class Attribute;
 

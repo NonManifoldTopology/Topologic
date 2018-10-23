@@ -226,7 +226,7 @@
     <ProjectReference Include="..\TopologicCore\TopologicCore.vcxproj">
       <Project>{c2b53661-6d1f-4c1d-9f8d-909737ca2142}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\TopologicSupport\TopologicSupport.vcxproj">
+    <ProjectReference Include="..\TopologicUtility\TopologicUtility.vcxproj">
       <Project>{9a74a6d1-9ed7-432f-a415-9c82305053b4}</Project>
     </ProjectReference>
   </ItemGroup>

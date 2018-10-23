@@ -2,14 +2,14 @@
 #include "Vertex.h"
 #include "Wire.h"
 
-#include <TopologicSupport/include/FaceUtility.h>
+#include <TopologicUtility/include/FaceUtility.h>
 
 namespace Topologic {
-	namespace Support {
+	namespace Utility {
 		double FaceUtility::Area(Face^ face)
 		{
 			TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
-			return TopologicSupport::FaceUtility::Area(pCoreFace);
+			return TopologicUtility::FaceUtility::Area(pCoreFace);
 		}
 
 		Face ^ FaceUtility::ByVertices(Face^ face, System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<Vertex^>^>^ vertices)
@@ -25,7 +25,7 @@ namespace Topologic {
 				coreVertices.push_back(coreVerticesList);
 			}
 			try {
-				TopologicCore::Face::Ptr pCoreFace = TopologicSupport::FaceUtility::ByVertices(coreVertices);
+				TopologicCore::Face::Ptr pCoreFace = TopologicUtility::FaceUtility::ByVertices(coreVertices);
 				return gcnew Face(pCoreFace);
 			}
 			catch (const std::exception& e)
@@ -39,7 +39,7 @@ namespace Topologic {
 		{
 			TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
 			double u = 0.0, v = 0.0;
-			TopologicSupport::FaceUtility::UVParameterAtPoint(
+			TopologicUtility::FaceUtility::UVParameterAtPoint(
 				pCoreFace,
 				TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex->GetCoreTopologicalQuery()),
 				u, v
@@ -52,7 +52,7 @@ namespace Topologic {
 		{
 			TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
 			try {
-				TopologicCore::Vertex::Ptr pCoreVertex = TopologicSupport::FaceUtility::PointAtParameter(
+				TopologicCore::Vertex::Ptr pCoreVertex = TopologicUtility::FaceUtility::PointAtParameter(
 					pCoreFace, uv->U, uv->V);
 				return safe_cast<Vertex^>(Topology::ByCoreTopology(pCoreVertex));
 			}
@@ -66,7 +66,7 @@ namespace Topologic {
 		Autodesk::DesignScript::Geometry::Vector^ FaceUtility::NormalAtParameter(Face^ face, Autodesk::DesignScript::Geometry::UV^ uv)
 		{
 			TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
-			gp_Dir normal = TopologicSupport::FaceUtility::NormalAtParameter(pCoreFace, uv->U, uv->V);
+			gp_Dir normal = TopologicUtility::FaceUtility::NormalAtParameter(pCoreFace, uv->U, uv->V);
 
 			return Autodesk::DesignScript::Geometry::Vector::ByCoordinates(normal.X(), normal.Y(), normal.Z());
 		}
@@ -76,7 +76,7 @@ namespace Topologic {
 			TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
 			TopologicCore::Wire::Ptr pCoreWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>(wire->GetCoreTopologicalQuery());
 
-			TopologicCore::Face::Ptr pTrimmedFace = TopologicSupport::FaceUtility::TrimByWire(pCoreFace, pCoreWire);
+			TopologicCore::Face::Ptr pTrimmedFace = TopologicUtility::FaceUtility::TrimByWire(pCoreFace, pCoreWire);
 			return safe_cast<Face^>(Topology::ByCoreTopology(pTrimmedFace));
 		}
 

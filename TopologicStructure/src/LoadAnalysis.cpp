@@ -25,7 +25,7 @@ namespace TopologicStructure
 		//	if(pLoadAttribute != nullptr)
 		//	{
 		//		Topologic::Vertex^ vertex = safe_cast<Topologic::Vertex^>(contentTopology);
-		//		TopologicSupport::Vector::Ptr vector = TopologicSupport::Vector::ByCoordinates(pLoadAttribute->X(), pLoadAttribute->Y(), pLoadAttribute->Z());
+		//		TopologicUtility::Vector::Ptr vector = TopologicUtility::Vector::ByCoordinates(pLoadAttribute->X(), pLoadAttribute->Y(), pLoadAttribute->Z());
 		//		Load^ load = gcnew Load(vertex, vector, false);
 		//		loads->Add(load);
 		//	}

@@ -6,7 +6,7 @@
 
 #include <memory>
 
-namespace TopologicSupport
+namespace TopologicUtility
 {
 	class Vector
 	{

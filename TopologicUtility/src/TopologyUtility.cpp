@@ -2,7 +2,7 @@
 
 #include <BRepExtrema_DistShapeShape.hxx>
 
-namespace TopologicSupport
+namespace TopologicUtility
 {
 	double TopologyUtility::Distance(const TopologicCore::Topology::Ptr& kpTopology, const TopologicCore::Topology::Ptr& kpAnotherTopology)
 	{

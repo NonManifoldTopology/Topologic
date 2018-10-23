@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include <TopologicSupport/include/Vector.h>
+#include <TopologicUtility/include/Vector.h>
 #include <TopologicCore/include/Vertex.h>
 //#include <TopologicCore/include/TopologicalQuery.h>
 
@@ -92,13 +92,13 @@ namespace TopologicStructure
 		}
 
 	public protected:
-		Load(Topologic::Vertex^ vertex, const TopologicSupport::Vector::Ptr& vector, const bool attachAttribute);
+		Load(Topologic::Vertex^ vertex, const TopologicUtility::Vector::Ptr& vector, const bool attachAttribute);
 
 		Load(const TopologicCore::Vertex::Ptr& vertex);
 	protected:
 		virtual ~Load();
 
-		TopologicSupport::Vector::Ptr* m_pVector;
+		TopologicUtility::Vector::Ptr* m_pVector;
 		TopologicStructure::Context^ m_pContext;
 		Topologic::Topology^ m_pTopology;
 	};

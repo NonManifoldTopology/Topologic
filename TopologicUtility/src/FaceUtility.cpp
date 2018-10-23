@@ -17,7 +17,7 @@
 #include <ShapeFix_Face.hxx>
 #include <TopoDS.hxx>
 
-namespace TopologicSupport
+namespace TopologicUtility
 {
 	double FaceUtility::Area(const TopologicCore::Face::Ptr& kpFace)
 	{

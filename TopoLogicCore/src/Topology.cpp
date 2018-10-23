@@ -1092,9 +1092,9 @@ namespace TopologicCore
 
 		BOPCol_ListOfShape occtSubTopologies;
 		SubTopologies(rOcctCellsBuilder.Shape(), occtSubTopologies);
+		TopoDS_Shape queryShape = rOcctCellsBuilder.Shape();
 		//TopoDS_Shape queryShape = Simplify(rOcctCellsBuilder.Shape());
-		TopoDS_Shape queryShape = Simplify(rOcctCellsBuilder.Shape());
-		queryShape = MakeBooleanContainers(queryShape);
+		//queryShape = MakeBooleanContainers(queryShape);
 
 		Topology::Ptr pBooleanResult = Topology::ByOcctShape(queryShape, "");
 		// queryShape (pBooleanResult) is the member of the Boolean result, it doesn't have any content yet.

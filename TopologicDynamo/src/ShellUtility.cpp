@@ -4,10 +4,10 @@
 #include "Edge.h"
 #include "Vertex.h"
 
-#include <TopologicSupport/include/ShellUtility.h>
+#include <TopologicUtility/include/ShellUtility.h>
 
 namespace Topologic {
-	namespace Support {
+	namespace Utility {
 
 		Shell^ ShellUtility::ByLoft(System::Collections::Generic::IEnumerable<Wire^>^ wires)
 		{
@@ -18,7 +18,7 @@ namespace Topologic {
 			}
 
 			try {
-				TopologicCore::Shell::Ptr pCoreShell = TopologicSupport::ShellUtility::ByLoft(coreWires);
+				TopologicCore::Shell::Ptr pCoreShell = TopologicUtility::ShellUtility::ByLoft(coreWires);
 				return gcnew Shell(pCoreShell);
 			}
 			catch (std::exception&)
@@ -46,7 +46,7 @@ namespace Topologic {
 				coreFaceIndices.push_back(coreFaceIndex);
 			}
 
-			return gcnew Shell(TopologicSupport::ShellUtility::ByVerticesFaceIndices(coreVertices, coreFaceIndices));
+			return gcnew Shell(TopologicUtility::ShellUtility::ByVerticesFaceIndices(coreVertices, coreFaceIndices));
 		}
 
 		List<Face^>^ ShellUtility::ByFacePlanarization(Face^ face, int iteration, int numEdgeSamples, int numUPanels, int numVPanels, double tolerance, bool capBottom, bool capTop)
@@ -55,7 +55,7 @@ namespace Topologic {
 			std::list<TopologicCore::Edge::Ptr> coreIsocurves;
 			std::list<TopologicCore::Wire::Ptr> coreWires;
 			std::list<TopologicCore::Face::Ptr> coreFaces;
-			TopologicCore::Shell::Ptr pCoreTopology = TopologicSupport::ShellUtility::ByFacePlanarization(
+			TopologicCore::Shell::Ptr pCoreTopology = TopologicUtility::ShellUtility::ByFacePlanarization(
 				TopologicCore::TopologicalQuery::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery()),
 				iteration,
 				numEdgeSamples,
@@ -102,7 +102,7 @@ namespace Topologic {
 				coreVValues.push_back(v);
 			}
 
-			TopologicCore::Shell::Ptr pCoreTopology = TopologicSupport::ShellUtility::ByFacePlanarizationV2(
+			TopologicCore::Shell::Ptr pCoreTopology = TopologicUtility::ShellUtility::ByFacePlanarizationV2(
 				TopologicCore::TopologicalQuery::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery()),
 				iteration,
 				numEdgeSamples,

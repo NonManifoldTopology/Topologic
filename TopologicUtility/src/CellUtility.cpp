@@ -14,7 +14,7 @@
 #include <ShapeFix_Solid.hxx>
 #include <TopoDS.hxx>
 
-namespace TopologicSupport
+namespace TopologicUtility
 {
 	TopologicCore::Cell::Ptr CellUtility::ByVerticesFaceIndices(const std::vector<TopologicCore::Vertex::Ptr>& rkVertices, const std::list<std::list<int>>& rkFaceIndices)
 	{

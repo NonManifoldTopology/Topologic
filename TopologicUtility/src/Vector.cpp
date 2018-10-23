@@ -1,6 +1,6 @@
 #include <Vector.h>
 
-namespace TopologicSupport
+namespace TopologicUtility
 {
 	Vector::Ptr Vector::ByCoordinates(const double kX, const double kY, const double kZ)
 	{

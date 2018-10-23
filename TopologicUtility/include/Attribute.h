@@ -2,7 +2,7 @@
 
 #include <memory>
 
-namespace TopologicSupport {
+namespace TopologicUtility {
 	class Attribute
 	{
 	public:

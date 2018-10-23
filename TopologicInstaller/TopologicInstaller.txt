@@ -59,7 +59,7 @@ Section "TopologicCore" TopologicCore
   SetOutPath "$INSTDIR"
   
   File ..\output\x64\Release\TopologicCore.dll
-  File ..\output\x64\Release\TopologicSupport.dll
+  File ..\output\x64\Release\TopologicUtility.dll
   File ..\output\x64\Release\TK*.dll
   File ..\output\x64\Release\Topologic.xml
   File ..\output\x64\Release\Topologic_DynamoCustomization.xml
@@ -296,7 +296,7 @@ FunctionEnd
 
 Function .onSelChange
   ${If} $0 == 1 ;TopologicDynamo
-    ;If TopologicDynamo is selected, also select TopologicSupport.
+    ;If TopologicDynamo is selected, also select TopologicUtility.
     SectionGetFlags ${TopologicDynamo} $R0
     IntOp $R0 $R0 & ${SF_SELECTED}
     ${If} $R0  == 0
@@ -306,7 +306,7 @@ Function .onSelChange
 	  SectionSetFlags ${TopologicEnergy} $R1
     ${EndIf}
   ${ElseIf} $0 == 2 ;TopologicEnergy
-    ;If TopologicEnergy is selected, also select TopologicDynamo and TopologicSupport.
+    ;If TopologicEnergy is selected, also select TopologicDynamo and TopologicUtility.
     SectionGetFlags ${TopologicEnergy} $R0
     IntOp $R0 $R0 & ${SF_SELECTED}
     ${If} $R0 != 0
@@ -314,9 +314,9 @@ Function .onSelChange
 	  IntOp $R1 $R1 | ${SF_SELECTED}
 	  SectionSetFlags ${TopologicDynamo} $R1
 	
-	  ;SectionGetFlags ${TopologicSupport} $R1
+	  ;SectionGetFlags ${TopologicUtility} $R1
 	  ;IntOp $R1 $R1 | ${SF_SELECTED}
-	  ;SectionSetFlags ${TopologicSupport} $R1
+	  ;SectionSetFlags ${TopologicUtility} $R1
     ${EndIf}
   ${EndIf}
   

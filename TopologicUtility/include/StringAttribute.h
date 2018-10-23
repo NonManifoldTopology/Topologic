@@ -5,7 +5,7 @@
 
 #include <string>
 
-namespace TopologicSupport
+namespace TopologicUtility
 {
 	class StringAttributeGUID {
 	public:

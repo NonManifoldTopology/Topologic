@@ -1,11 +1,11 @@
 #include "TopologyUtility.h"
 #include "Vertex.h"
 
-#include <TopologicSupport/include/TopologyUtility.h>
+#include <TopologicUtility/include/TopologyUtility.h>
 
 namespace Topologic
 {
-	namespace Support
+	namespace Utility
 	{
 		Topology^ TopologyUtility::Translate(Topology^ topology, double x, double y, double z)
 		{
@@ -13,7 +13,7 @@ namespace Topologic
 			TopologicCore::Topology::Ptr pCoreTopology =
 				TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 			TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->Copy();
-			TopologicSupport::TopologyUtility::Translate(pCoreCopyTopology, x, y, z);
+			TopologicUtility::TopologyUtility::Translate(pCoreCopyTopology, x, y, z);
 
 			return Topology::ByCoreTopology(pCoreCopyTopology);
 		}
@@ -23,7 +23,7 @@ namespace Topologic
 			TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 			TopologicCore::Topology::Ptr pCoreOtherTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(anotherTopology->GetCoreTopologicalQuery());
 
-			return TopologicSupport::TopologyUtility::Distance(pCoreTopology, pCoreOtherTopology);
+			return TopologicUtility::TopologyUtility::Distance(pCoreTopology, pCoreOtherTopology);
 		}
 
 		Vertex^ TopologyUtility::CenterOfMass(Topology^ topology)

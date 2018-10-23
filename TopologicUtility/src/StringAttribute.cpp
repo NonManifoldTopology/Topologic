@@ -1,6 +1,6 @@
 #include <StringAttribute.h>
 
-namespace TopologicSupport
+namespace TopologicUtility
 {
 	StringAttribute::StringAttribute(const std::string& kValue)
 		: m_value(kValue)

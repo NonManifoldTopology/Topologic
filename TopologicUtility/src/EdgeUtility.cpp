@@ -10,7 +10,7 @@
 #include <GProp_GProps.hxx>
 #include <Precision.hxx>
 
-namespace TopologicSupport
+namespace TopologicUtility
 {
 	TopologicCore::Edge::Ptr EdgeUtility::ByVertices(const std::list<TopologicCore::Vertex::Ptr>& rkVertices)
 	{

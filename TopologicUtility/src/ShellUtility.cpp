@@ -34,7 +34,7 @@ extern "C" {
 
 #include <array>
 
-namespace TopologicSupport
+namespace TopologicUtility
 {
 
 	void SolveShapeOpPlanarization(const std::list<std::list<gp_Pnt>>& rkSamplePoints,

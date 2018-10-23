@@ -12,7 +12,7 @@ namespace TopologicStructure
 	{
 		Autodesk::DesignScript::Geometry::Vector^ pNormalizedVector = vector->Normalized();
 		Autodesk::DesignScript::Geometry::Vector^ pScaledVector = pNormalizedVector->Scale(magnitude);
-		Load^ pLoad = gcnew Load(vertex, TopologicSupport::Vector::ByCoordinates(pScaledVector->X, pScaledVector->Y, pScaledVector->Z), true);
+		Load^ pLoad = gcnew Load(vertex, TopologicUtility::Vector::ByCoordinates(pScaledVector->X, pScaledVector->Y, pScaledVector->Z), true);
 		delete pNormalizedVector;
 		delete pScaledVector;
 		return pLoad;
@@ -28,12 +28,12 @@ namespace TopologicStructure
 		Autodesk::DesignScript::Geometry::Vector^ pNormalizedVector = vector->Normalized();
 		Autodesk::DesignScript::Geometry::Vector^ pScaledVector = pNormalizedVector->Scale(magnitude);
 		Topologic::Vertex^ pVertex = edge->PointAtParameter(u);
-		Load^ pLoad = gcnew Load(pVertex, TopologicSupport::Vector::ByCoordinates(pScaledVector->X, pScaledVector->Y, pScaledVector->Z), true);
+		Load^ pLoad = gcnew Load(pVertex, TopologicUtility::Vector::ByCoordinates(pScaledVector->X, pScaledVector->Y, pScaledVector->Z), true);
 		delete pNormalizedVector;
 		delete pScaledVector;
 
 		return pLoad;
-		//return gcnew Load(pVertex, TopologicSupport::Vector::ByCoordinates(vector->X, vector->Y, vector->Z), true);
+		//return gcnew Load(pVertex, TopologicUtility::Vector::ByCoordinates(vector->X, vector->Y, vector->Z), true);
 	}
 
 	Load^ Load::ByFace(Topologic::Face^ face, double u, double v, Autodesk::DesignScript::Geometry::Vector^ vector, bool reverseDefaultNormal, double magnitude)
@@ -46,11 +46,11 @@ namespace TopologicStructure
 
 			if (vector != nullptr)
 			{
-				//return gcnew Load(pVertex, TopologicSupport::Vector::ByCoordinates(vector->X, vector->Y, vector->Z), true);
+				//return gcnew Load(pVertex, TopologicUtility::Vector::ByCoordinates(vector->X, vector->Y, vector->Z), true);
 
 				Autodesk::DesignScript::Geometry::Vector^ pNormalizedVector = vector->Normalized();
 				Autodesk::DesignScript::Geometry::Vector^ pScaledVector = pNormalizedVector->Scale(magnitude);
-				Load^ pLoad = gcnew Load(pVertex, TopologicSupport::Vector::ByCoordinates(pScaledVector->X, pScaledVector->Y, pScaledVector->Z), true);
+				Load^ pLoad = gcnew Load(pVertex, TopologicUtility::Vector::ByCoordinates(pScaledVector->X, pScaledVector->Y, pScaledVector->Z), true);
 				delete pNormalizedVector;
 				delete pScaledVector;
 
@@ -70,9 +70,9 @@ namespace TopologicStructure
 				yDirection = -yDirection;
 				zDirection = -zDirection;
 			}
-			TopologicSupport::Vector::Ptr pVector = TopologicSupport::Vector::ByCoordinates(xDirection, yDirection, zDirection);
+			TopologicUtility::Vector::Ptr pVector = TopologicUtility::Vector::ByCoordinates(xDirection, yDirection, zDirection);
 
-			TopologicSupport::Vector::Ptr pScaledVector = TopologicSupport::Vector::ByScaledVector(pVector, magnitude);
+			TopologicUtility::Vector::Ptr pScaledVector = TopologicUtility::Vector::ByScaledVector(pVector, magnitude);
 			Load^ pLoad = gcnew Load(pVertex, pScaledVector, true);
 			delete pSurfaceNormal;
 			return pLoad;
@@ -93,9 +93,9 @@ namespace TopologicStructure
 	//	//GetCoreTopologicalQuery();
 	//}
 
-	Load::Load(Topologic::Vertex^ vertex, const TopologicSupport::Vector::Ptr& vector, bool attachAttribute)
+	Load::Load(Topologic::Vertex^ vertex, const TopologicUtility::Vector::Ptr& vector, bool attachAttribute)
 		: Topologic::Vertex(vertex)
-		, m_pVector(new TopologicSupport::Vector::Ptr(vector))
+		, m_pVector(new TopologicUtility::Vector::Ptr(vector))
 		, m_pTopology(vertex)
 	{
 		RegisterFactory(LoadFactory::GetGUID(), gcnew LoadFactory());
@@ -126,7 +126,7 @@ namespace TopologicStructure
 
 	Autodesk::DesignScript::Geometry::Vector^ Load::Direction::get()
 	{
-		TopologicSupport::Vector::Ptr pNormalizedVector = TopologicSupport::Vector::ByNormalizedVector(*m_pVector);
+		TopologicUtility::Vector::Ptr pNormalizedVector = TopologicUtility::Vector::ByNormalizedVector(*m_pVector);
 		return Autodesk::DesignScript::Geometry::Vector::ByCoordinates(pNormalizedVector->X(), pNormalizedVector->Y(), pNormalizedVector->Z());
 	}
 
@@ -134,9 +134,9 @@ namespace TopologicStructure
 	{
 		// Draw a cylinder and a cone
 		Autodesk::DesignScript::Geometry::Point^ pLoadEndPoint = Point();
-		TopologicSupport::Vector::Ptr pReverseVector = TopologicSupport::Vector::ByReverseVector(*m_pVector);
+		TopologicUtility::Vector::Ptr pReverseVector = TopologicUtility::Vector::ByReverseVector(*m_pVector);
 		Autodesk::DesignScript::Geometry::Vector^ pDynamoReverseVector = Autodesk::DesignScript::Geometry::Vector::ByCoordinates(pReverseVector->X(), pReverseVector->Y(), pReverseVector->Z());
-		TopologicSupport::Vector::Ptr pScaledReverseVector = TopologicSupport::Vector::ByScaledVector(pReverseVector, 0.1);
+		TopologicUtility::Vector::Ptr pScaledReverseVector = TopologicUtility::Vector::ByScaledVector(pReverseVector, 0.1);
 		Autodesk::DesignScript::Geometry::Vector^ pDynamoScaledReverseVector = Autodesk::DesignScript::Geometry::Vector::ByCoordinates(pScaledReverseVector->X(), pScaledReverseVector->Y(), pScaledReverseVector->Z());
 		Autodesk::DesignScript::Geometry::Point^ pConeStartPoint = safe_cast<Autodesk::DesignScript::Geometry::Point^>(pLoadEndPoint->Translate(pDynamoScaledReverseVector));
 		Autodesk::DesignScript::Geometry::Point^ pCylinderStartPoint = safe_cast<Autodesk::DesignScript::Geometry::Point^>(pLoadEndPoint->Translate(pDynamoReverseVector));

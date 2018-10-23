@@ -159,7 +159,7 @@
     <ProjectReference Include="..\TopoLogicDynamo\TopoLogicDynamo.vcxproj">
       <Project>{21993835-4ec5-4cc3-bcda-47f6209cd349}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\TopologicSupport\TopologicSupport.vcxproj">
+    <ProjectReference Include="..\TopologicUtility\TopologicUtility.vcxproj">
       <Project>{9a74a6d1-9ed7-432f-a415-9c82305053b4}</Project>
     </ProjectReference>
   </ItemGroup>

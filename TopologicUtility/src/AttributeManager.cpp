@@ -3,7 +3,7 @@
 
 #include <TopologicCore/include/Topology.h>
 
-namespace TopologicSupport
+namespace TopologicUtility
 {
 	void AttributeManager::Add(const std::shared_ptr<TopologicCore::Topology>& kpTopology, const std::string & kAttributeName, const std::shared_ptr<Attribute>& kpAttribute)
 	{

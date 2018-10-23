@@ -6,7 +6,7 @@
 
 #include <TopologicCore/include/Topology.h>
 
-namespace TopologicSupport
+namespace TopologicUtility
 {
 	class TopologyUtility
 	{

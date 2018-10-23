@@ -959,7 +959,7 @@ namespace Topologic
 			{
 				try {
 					Face^ pFace = Face::ByWire(pWire);
-					surfaceAreas.push_back(Topologic::Support::FaceUtility::Area(pFace));
+					surfaceAreas.push_back(Topologic::Utility::FaceUtility::Area(pFace));
 				}
 				catch (...)
 				{

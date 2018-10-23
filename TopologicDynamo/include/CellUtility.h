@@ -3,7 +3,7 @@
 #include "Cell.h"
 
 namespace Topologic {
-	namespace Support {
+	namespace Utility {
 
 		/// <summary>
 		/// 

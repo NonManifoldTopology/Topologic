@@ -1,6 +1,6 @@
 #include <Direction.h>
 
-namespace TopologicSupport
+namespace TopologicUtility
 {
 	Direction::Ptr Direction::ByCoordinates(const double kX, const double kY, const double kZ)
 	{
