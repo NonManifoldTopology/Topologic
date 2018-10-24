@@ -25,9 +25,8 @@ namespace Topologic
 		/// <summary>
 		/// Get the list of edges incident to the vertex. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.
 		/// </summary>
-		/// <param name="hostTopology"></param>
 		/// <returns name="Edge[]">The edges incident to this vertex</returns>
-		List<Edge^>^ Edges_(Topology^ hostTopology);
+		List<Edge^>^ Edges_();
 
 		property double X
 		{

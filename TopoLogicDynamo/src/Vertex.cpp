@@ -20,13 +20,13 @@ namespace Topologic
 		return gcnew Vertex(pCoreVertex);
 	}
 
-	List<Edge^>^ Vertex::Edges_(Topology^ hostTopology)
+	List<Edge^>^ Vertex::Edges_()
 	{
 		std::list<TopologicCore::Edge::Ptr> coreEdges;
-		TopologicCore::Topology::Ptr pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(hostTopology->GetCoreTopologicalQuery());
+		//TopologicCore::Topology::Ptr pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(hostTopology->GetCoreTopologicalQuery());
 		TopologicCore::Vertex::Ptr pCoreVertex = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Vertex>(GetCoreTopologicalQuery());
 		try {
-			pCoreVertex->Edges(pCoreParentTopology, coreEdges);
+			pCoreVertex->Edges(coreEdges);
 		}catch(const std::exception& e)
 		{
 			throw gcnew Exception(gcnew String(e.what()));

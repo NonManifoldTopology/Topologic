@@ -476,6 +476,17 @@ namespace TopologicCore
 
 		static TopologyType GetTopologyType(const TopAbs_ShapeEnum& rkOcctType);
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkShape"></param>
+		/// <param name="rSubTopologies"></param>
+		static void SubTopologies(const TopoDS_Shape& rkShape, BOPCol_ListOfShape& rSubTopologies);
+
+#ifdef _DEBUG
+		TOPOLOGIC_API void GlobalClusterSubTopologies(std::list<Topology::Ptr>& rSubTopologies) const;
+#endif
+
 	protected:
 		Topology(const int kDimensionality, const TopoDS_Shape& rkOcctShape, const std::string& rkGuid = "");
 
@@ -487,13 +498,6 @@ namespace TopologicCore
 		/// <param name="rkOcctShape"></param>
 		/// <returns></returns>
 		static TopoDS_CompSolid MakeCompSolid(const TopoDS_Shape& rkOcctShape);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="rkShape"></param>
-		/// <param name="rSubTopologies"></param>
-		static void SubTopologies(const TopoDS_Shape& rkShape, BOPCol_ListOfShape& rSubTopologies);
 
 		/// <summary>
 		/// 

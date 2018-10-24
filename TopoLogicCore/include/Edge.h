@@ -58,10 +58,9 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpHostTopology"></param>
 		/// <param name="rWires"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API void Wires(const std::shared_ptr<Topology>& kpHostTopology, std::list<std::shared_ptr<Wire>>& rWires) const;
+		TOPOLOGIC_API void Wires(std::list<std::shared_ptr<Wire>>& rWires) const;
 
 		/// <summary>
 		/// 

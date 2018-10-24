@@ -75,6 +75,7 @@
       <Filter>Factory</Filter>
     </ClInclude>
     <ClInclude Include="include\TopologyUtility.h" />
+    <ClInclude Include="include\GlobalCluster.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
@@ -144,6 +145,7 @@
       <Filter>Factory</Filter>
     </ClCompile>
     <ClCompile Include="src\TopologyUtility.cpp" />
+    <ClCompile Include="src\GlobalCluster.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Factory">

@@ -1,7 +1,8 @@
-#include <Edge.h>
-#include <Vertex.h>
-#include <Wire.h>
-#include <EdgeFactory.h>
+#include "Edge.h"
+#include "Vertex.h"
+#include "Wire.h"
+#include "EdgeFactory.h"
+#include "GlobalCluster.h"
 
 #include <BRepGProp.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
@@ -29,7 +30,7 @@ namespace TopologicCore
 		{
 			// Find the edges
 			std::list<Edge::Ptr> edges;
-			kpVertex->Edges(kpHostTopology, edges);
+			kpVertex->Edges(edges);
 
 			for (const Edge::Ptr& kpEdge : edges)
 			{
@@ -54,9 +55,9 @@ namespace TopologicCore
 		rVertices.push_back(std::make_shared<Vertex>(occtVertex2));
 	}
 
-	void Edge::Wires(const Topology::Ptr& kpHostTopology, std::list<Wire::Ptr>& rWires) const
+	void Edge::Wires(std::list<Wire::Ptr>& rWires) const
 	{
-		UpwardNavigation(kpHostTopology, rWires);
+		UpwardNavigation(Topology::ByOcctShape(GlobalCluster::GetInstance().GetOcctCompound(), ""), rWires);
 	}
 
 	Edge::Ptr Edge::ByCurve(
@@ -117,19 +118,24 @@ namespace TopologicCore
 		}
 
 		Edge::Ptr pEdge = std::make_shared<Edge>(occtMakeEdge);
+		GlobalCluster::GetInstance().AddTopology(pEdge->GetOcctEdge());
 		return pEdge;
 	}
 
 	Edge::Ptr Edge::ByStartVertexEndVertex(const std::shared_ptr<Vertex>& kpStartVertex, const std::shared_ptr<Vertex>& kpEndVertex)
 	{
+		Vertex::Ptr startVertexCopy = std::dynamic_pointer_cast<Vertex>(kpStartVertex->Copy());
+		Vertex::Ptr endVertexCopy = std::dynamic_pointer_cast<Vertex>(kpEndVertex->Copy());
 		BRepBuilderAPI_MakeEdge occtMakeEdge(
-			kpStartVertex->GetOcctVertex(),
-			kpEndVertex->GetOcctVertex());
+			startVertexCopy->GetOcctVertex(),
+			endVertexCopy->GetOcctVertex());
 		if (occtMakeEdge.Error() != BRepBuilderAPI_EdgeDone)
 		{
 			Throw(occtMakeEdge.Error());
 		}
-		return std::make_shared<Edge>(occtMakeEdge.Edge());
+		Edge::Ptr pEdge = std::make_shared<Edge>(occtMakeEdge.Edge());
+		GlobalCluster::GetInstance().AddTopology(pEdge->GetOcctEdge());
+		return pEdge;
 	}
 
 	Vertex::Ptr Edge::SharedVertex(const Edge::Ptr& kpAnotherEdge) const

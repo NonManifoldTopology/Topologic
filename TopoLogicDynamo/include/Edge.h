@@ -40,9 +40,8 @@ namespace Topologic {
 		/// <summary>
 		/// Get the wires incident to the edge. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.
 		/// </summary>
-		/// <param name="hostTopology"></param>
 		/// <returns name="Wire[]">The list of wires incident to the edge</returns>
-		List<Wire^>^ Wires_(Topology^ hostTopology);
+		List<Wire^>^ Wires_();
 
 		/// <summary>
 		/// Return the shared vertex between two edges.

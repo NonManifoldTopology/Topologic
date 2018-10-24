@@ -13,6 +13,7 @@
 #include <InstanceGUIDManager.h>
 #include <TopologyFactory.h>
 #include <TopologyFactoryManager.h>
+#include "GlobalCluster.h"
 
 #include <ShapeFix_ShapeTolerance.hxx>
 
@@ -2050,6 +2051,21 @@ namespace TopologicCore
 			rSubTopologies.push_back(pMemberTopology);
 		}
 	}
+
+#ifdef _DEBUG
+	void Topology::GlobalClusterSubTopologies(std::list<Topology::Ptr>& rSubTopologies) const
+	{
+		BOPCol_ListOfShape occtListMembers;
+		Topology::SubTopologies(GlobalCluster::GetInstance().GetOcctCompound(), occtListMembers);
+		for (BOPCol_ListIteratorOfListOfShape occtIterator(occtListMembers);
+			occtIterator.More();
+			occtIterator.Next())
+		{
+			Topology::Ptr pMemberTopology = Topology::ByOcctShape(occtIterator.Value(), "");
+			rSubTopologies.push_back(pMemberTopology);
+		}
+	}
+#endif
 
 	void Topology::UpwardNavigation(const TopoDS_Shape & rkOcctShape, const TopoDS_Shape & rkOcctParentShape, const TopAbs_ShapeEnum kShapeEnum, TopTools_ListOfShape & rOcctMembers)
 	{

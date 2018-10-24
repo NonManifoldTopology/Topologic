@@ -59,9 +59,8 @@ namespace TopologicCore
 		/// <summary>
 		/// Returns the list of edges of which this vertex is a constituent member.
 		/// </summary>
-		/// <param name="kpHostTopology"></param>
 		/// <param name="rEdges">The edges containing this vertex as a constituent member</param>
-		TOPOLOGIC_API void Edges(const std::shared_ptr<Topology>& kpHostTopology, std::list<std::shared_ptr<Edge>>& rEdges);
+		TOPOLOGIC_API void Edges(std::list<std::shared_ptr<Edge>>& rEdges);
 
 		/// <summary>
 		/// 

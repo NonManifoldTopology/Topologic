@@ -163,6 +163,7 @@
     <ClInclude Include="include\Cluster.h" />
     <ClInclude Include="include\ClusterFactory.h" />
     <ClInclude Include="include\DoubleAttributeFactory.h" />
+    <ClInclude Include="include\GlobalCluster.h" />
     <ClInclude Include="include\GraphFactory.h" />
     <ClInclude Include="include\EdgeFactory.h" />
     <ClInclude Include="include\EdgeUtility.h" />
@@ -200,6 +201,7 @@
     <ClCompile Include="src\Cluster.cpp" />
     <ClCompile Include="src\ClusterFactory.cpp" />
     <ClCompile Include="src\DoubleAttributeFactory.cpp" />
+    <ClCompile Include="src\GlobalCluster.cpp" />
     <ClCompile Include="src\Graph.cpp" />
     <ClCompile Include="src\GraphFactory.cpp" />
     <ClCompile Include="src\EdgeFactory.cpp" />

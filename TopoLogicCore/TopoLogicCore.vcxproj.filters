@@ -59,6 +59,7 @@
     <ClInclude Include="include\GraphFactory.h">
       <Filter>Factory</Filter>
     </ClInclude>
+    <ClInclude Include="include\GlobalCluster.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
@@ -114,6 +115,7 @@
     <ClCompile Include="src\GraphFactory.cpp">
       <Filter>Factory</Filter>
     </ClCompile>
+    <ClCompile Include="src\GlobalCluster.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Context">

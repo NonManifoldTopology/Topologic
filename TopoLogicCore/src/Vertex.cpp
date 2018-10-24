@@ -1,6 +1,7 @@
-#include <Vertex.h>
-#include <Edge.h>
-#include <VertexFactory.h>
+#include "Vertex.h"
+#include "Edge.h"
+#include "VertexFactory.h"
+#include "GlobalCluster.h"
 
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRep_Tool.hxx>
@@ -26,17 +27,21 @@ namespace TopologicCore
 
 	Vertex::Ptr Vertex::ByPoint(Handle(Geom_Point) pOcctPoint)
 	{
-		return std::make_shared<Vertex>(BRepBuilderAPI_MakeVertex(pOcctPoint->Pnt()));
+		Vertex::Ptr pVertex = std::make_shared<Vertex>(BRepBuilderAPI_MakeVertex(pOcctPoint->Pnt()));
+		GlobalCluster::GetInstance().AddTopology(pVertex->GetOcctVertex());
+		return pVertex;
 	}
 
 	Vertex::Ptr Vertex::ByCoordinates(const double kX, const double kY, const double kZ)
 	{
-		return std::make_shared<Vertex>(BRepBuilderAPI_MakeVertex(gp_Pnt(kX, kY, kZ)));
+		Vertex::Ptr pVertex = std::make_shared<Vertex>(BRepBuilderAPI_MakeVertex(gp_Pnt(kX, kY, kZ)));
+		GlobalCluster::GetInstance().AddTopology(pVertex->GetOcctVertex());
+		return pVertex;
 	}
 
-	void Vertex::Edges(const Topology::Ptr& kpParentTopology, std::list<Edge::Ptr>& rEdges)
+	void Vertex::Edges(std::list<Edge::Ptr>& rEdges)
 	{
-		UpwardNavigation(kpParentTopology, rEdges);
+		UpwardNavigation(Topology::ByOcctShape(GlobalCluster::GetInstance().GetOcctCompound(), ""), rEdges);
 	}
 
 	bool Vertex::IsManifold(TopologicCore::Topology const * const kpkParentTopology) const

@@ -1,8 +1,9 @@
-#include <Wire.h>
-#include <Vertex.h>
-#include <Edge.h>
-#include <Face.h>
-#include <WireFactory.h>
+#include "Wire.h"
+#include "Vertex.h"
+#include "Edge.h"
+#include "Face.h"
+#include "WireFactory.h"
+#include "GlobalCluster.h"
 
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepCheck_Wire.hxx>
@@ -84,15 +85,21 @@ namespace TopologicCore
 			throw std::exception("No edge is passed.");
 		}
 
-		TopTools_ListOfShape occtEdges;
+		std::list<Edge::Ptr> copyEdges;
+		for (const Edge::Ptr& kpEdge : rkEdges)
+		{
+			copyEdges.push_back(std::dynamic_pointer_cast<Edge>(kpEdge->Copy()));
+		}
 
-		for(const Edge::Ptr& kpEdge : rkEdges)
+		TopTools_ListOfShape occtEdges;
+		for(const Edge::Ptr& kpEdge : copyEdges)
 		{
 			occtEdges.Append(kpEdge->GetOcctShape());
 		}
 
 		TopoDS_Wire occtWire = ByOcctEdges(occtEdges);
 		Wire::Ptr pWire = std::make_shared<Wire>(occtWire);
+		GlobalCluster::GetInstance().AddTopology(pWire->GetOcctWire());
 		return pWire;
 	}
 
