@@ -65,7 +65,7 @@ namespace Topologic
 
 	Autodesk::DesignScript::Geometry::Point^ Vertex::Point()
 	{
-		List<double>^ coordinate = Coordinate;
+		List<double>^ coordinate = Coordinates;
 		return Autodesk::DesignScript::Geometry::Point::ByCoordinates(coordinate[0], coordinate[1], coordinate[2]);
 	}
 
@@ -100,11 +100,11 @@ namespace Topologic
 		return pCoreVertex->Z();
 	}
 
-	List<double>^ Vertex::Coordinate::get()
+	List<double>^ Vertex::Coordinates::get()
 	{
 		List<double>^ coordinate = gcnew List<double>();
 		TopologicCore::Vertex::Ptr pCoreVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(GetCoreTopologicalQuery());
-		std::tuple<double, double, double> coreCoordinate = pCoreVertex->Coordinate();
+		std::tuple<double, double, double> coreCoordinate = pCoreVertex->Coordinates();
 		coordinate->Add(std::get<0>(coreCoordinate));
 		coordinate->Add(std::get<1>(coreCoordinate));
 		coordinate->Add(std::get<2>(coreCoordinate));

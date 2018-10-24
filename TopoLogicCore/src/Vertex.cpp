@@ -120,7 +120,7 @@ namespace TopologicCore
 		return pOcctPoint->Z();
 	}
 
-	std::tuple<double, double, double> Vertex::Coordinate() const
+	std::tuple<double, double, double> Vertex::Coordinates() const
 	{
 		Handle(Geom_Point) pOcctPoint = Point();
 		return std::tuple<double, double, double>(pOcctPoint->X(), pOcctPoint->Y(), pOcctPoint->Z());

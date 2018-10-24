@@ -72,7 +72,7 @@ namespace TopologicUtility
 		}
 	}
 
-	void FaceUtility::UVParameterAtPoint(const TopologicCore::Face::Ptr& kpFace, const TopologicCore::Vertex::Ptr& kpVertex, double& rU, double& rV)
+	void FaceUtility::UVParameterAtVertex(const TopologicCore::Face::Ptr& kpFace, const TopologicCore::Vertex::Ptr& kpVertex, double& rU, double& rV)
 	{
 		Handle(Geom_Surface) pOcctSurface = kpFace->Surface();
 		ShapeAnalysis_Surface occtSurfaceAnalysis(pOcctSurface);
@@ -85,7 +85,7 @@ namespace TopologicUtility
 		NormalizeUV(kpFace, occtU, occtV, rU, rV);
 	}
 
-	TopologicCore::Vertex::Ptr FaceUtility::PointAtParameter(const TopologicCore::Face::Ptr& kpFace, const double kU, const double kV)
+	TopologicCore::Vertex::Ptr FaceUtility::VertexAtParameter(const TopologicCore::Face::Ptr& kpFace, const double kU, const double kV)
 	{
 		Handle(Geom_Surface) pOcctSurface = kpFace->Surface();
 		double occtU = 0.0, occtV = 0.0;

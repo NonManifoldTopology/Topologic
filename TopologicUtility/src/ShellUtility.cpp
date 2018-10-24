@@ -387,7 +387,7 @@ namespace TopologicUtility
 
 					// Get the UV coordinate of the aperture sample vertex
 					double apertureSampleVertexU = 0.0, apertureSampleVertexV = 0.0;
-					FaceUtility::UVParameterAtPoint(kpFace, apertureSampleVertex, apertureSampleVertexU, apertureSampleVertexV);
+					FaceUtility::UVParameterAtVertex(kpFace, apertureSampleVertex, apertureSampleVertexU, apertureSampleVertexV);
 					apertureSampleVerticesUV.push_back(new Geom2d_CartesianPoint(apertureSampleVertexU, apertureSampleVertexV));
 				}
 			}
@@ -1033,7 +1033,7 @@ namespace TopologicUtility
 
 					// Get the UV coordinate of the aperture sample vertex
 					double apertureSampleVertexU = 0.0, apertureSampleVertexV = 0.0;
-					FaceUtility::UVParameterAtPoint(kpFace, apertureSampleVertex, apertureSampleVertexU, apertureSampleVertexV);
+					FaceUtility::UVParameterAtVertex(kpFace, apertureSampleVertex, apertureSampleVertexU, apertureSampleVertexV);
 					apertureSampleVerticesUV.push_back(new Geom2d_CartesianPoint(apertureSampleVertexU, apertureSampleVertexV));
 					//vertices.push_back(kpFace->PointAtParameter(apertureSampleVertexU, apertureSampleVertexV));
 				}
@@ -1235,10 +1235,10 @@ namespace TopologicUtility
 
 				{
 					//DEBUG: draw the shrunk faces
-					BRepBuilderAPI_MakeVertex occtMakeVertex1(FaceUtility::PointAtParameter(kpFace, offsetU, offsetV)->Point()->Pnt());
-					BRepBuilderAPI_MakeVertex occtMakeVertex2(FaceUtility::PointAtParameter(kpFace, offsetU, nextOffsetV)->Point()->Pnt());
-					BRepBuilderAPI_MakeVertex occtMakeVertex3(FaceUtility::PointAtParameter(kpFace, nextOffsetU, nextOffsetV)->Point()->Pnt());
-					BRepBuilderAPI_MakeVertex occtMakeVertex4(FaceUtility::PointAtParameter(kpFace, nextOffsetU, offsetV)->Point()->Pnt());
+					BRepBuilderAPI_MakeVertex occtMakeVertex1(FaceUtility::VertexAtParameter(kpFace, offsetU, offsetV)->Point()->Pnt());
+					BRepBuilderAPI_MakeVertex occtMakeVertex2(FaceUtility::VertexAtParameter(kpFace, offsetU, nextOffsetV)->Point()->Pnt());
+					BRepBuilderAPI_MakeVertex occtMakeVertex3(FaceUtility::VertexAtParameter(kpFace, nextOffsetU, nextOffsetV)->Point()->Pnt());
+					BRepBuilderAPI_MakeVertex occtMakeVertex4(FaceUtility::VertexAtParameter(kpFace, nextOffsetU, offsetV)->Point()->Pnt());
 
 					const TopoDS_Vertex& rkOcctVertex1 = occtMakeVertex1.Vertex();
 					const TopoDS_Vertex& rkOcctVertex2 = occtMakeVertex2.Vertex();

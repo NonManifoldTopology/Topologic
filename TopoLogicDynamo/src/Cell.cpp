@@ -6,9 +6,6 @@
 #include <Shell.h>
 #include <CellComplex.h>
 
-#include <Geom_CartesianPoint.hxx>
-#include <Precision.hxx>
-
 #include <assert.h>
 
 namespace Topologic
@@ -422,8 +419,8 @@ namespace Topologic
 		double xScale = pDynamoCoordinateSystem->XScaleFactor;
 		double yScale = pDynamoCoordinateSystem->YScaleFactor;
 		double zScale = pDynamoCoordinateSystem->ZScaleFactor;
-		double oneMinusPrecision = 1.0 - Precision::Confusion();
-		double onePlusPrecision = 1.0 + Precision::Confusion();
+		double oneMinusPrecision = 1.0 - 0.0001;//Precision::Confusion();
+		double onePlusPrecision = 1.0 + 0.0001; //Precision::Confusion();
 
 		Autodesk::DesignScript::Geometry::Vector^ pDynamoXAxis = Autodesk::DesignScript::Geometry::Vector::ByCoordinates(1.0, 0.0, 0.0);
 		Autodesk::DesignScript::Geometry::Vector^ pDynamoYAxis = Autodesk::DesignScript::Geometry::Vector::ByCoordinates(0.0, 1.0, 0.0);

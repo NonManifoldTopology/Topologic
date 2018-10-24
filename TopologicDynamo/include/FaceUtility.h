@@ -35,9 +35,11 @@ namespace Topologic {
 			/// <summary>
 			/// 
 			/// </summary>
-			/// <param name="uv"></param>
+			/// <param name="face"></param>
+			/// <param name="u"></param>
+			/// <param name="v"></param>
 			/// <returns name="Vertex"></returns>
-			static Vertex^ VertexAtParameter(Face^ face, Autodesk::DesignScript::Geometry::UV^ uv);
+			static Vertex^ VertexAtParameter(Face^ face, double u, double v);
 
 			/// <summary>
 			/// 

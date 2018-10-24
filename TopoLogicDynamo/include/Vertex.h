@@ -56,7 +56,7 @@ namespace Topologic
 			virtual double get();
 		}
 
-		property List<double>^ Coordinate
+		property List<double>^ Coordinates
 		{
 			/// <summary>
 			/// 

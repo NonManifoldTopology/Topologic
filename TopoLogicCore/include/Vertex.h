@@ -85,7 +85,7 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		TOPOLOGIC_API std::tuple<double, double, double> Coordinate() const;
+		TOPOLOGIC_API std::tuple<double, double, double> Coordinates() const;
 
 		/// <summary>
 		/// 

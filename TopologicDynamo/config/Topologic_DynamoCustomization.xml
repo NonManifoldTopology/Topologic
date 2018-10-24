@@ -7,8 +7,8 @@
     <namespace name="Topologic">
       <category>Topologic</category>
     </namespace>
-    <namespace name="Topologic.Support">
-      <category>Topologic.Support</category>
+    <namespace name="Topologic.Utility">
+      <category>Topologic.Utility</category>
     </namespace>
     <namespace name="Topologic.Extension">
       <category>Topologic.Extension</category>

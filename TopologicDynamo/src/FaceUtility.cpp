@@ -39,7 +39,7 @@ namespace Topologic {
 		{
 			TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
 			double u = 0.0, v = 0.0;
-			TopologicUtility::FaceUtility::UVParameterAtPoint(
+			TopologicUtility::FaceUtility::UVParameterAtVertex(
 				pCoreFace,
 				TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex->GetCoreTopologicalQuery()),
 				u, v
@@ -48,12 +48,12 @@ namespace Topologic {
 			return Autodesk::DesignScript::Geometry::UV::ByCoordinates(u, v);
 		}
 
-		Vertex^ FaceUtility::VertexAtParameter(Face^ face, Autodesk::DesignScript::Geometry::UV^ uv)
+		Vertex^ FaceUtility::VertexAtParameter(Face^ face, double u, double v)
 		{
 			TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
 			try {
-				TopologicCore::Vertex::Ptr pCoreVertex = TopologicUtility::FaceUtility::PointAtParameter(
-					pCoreFace, uv->U, uv->V);
+				TopologicCore::Vertex::Ptr pCoreVertex = TopologicUtility::FaceUtility::VertexAtParameter(
+					pCoreFace, u, v);
 				return safe_cast<Vertex^>(Topology::ByCoreTopology(pCoreVertex));
 			}
 			catch (std::exception& e)
