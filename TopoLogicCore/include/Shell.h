@@ -44,10 +44,9 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpParentTopology"></param>
 		/// <param name="rCells"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API void Cells(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<Cell>>& rCells) const;
+		TOPOLOGIC_API void Cells(std::list<std::shared_ptr<Cell>>& rCells) const;
 
 		/// <summary>
 		/// 
@@ -91,9 +90,8 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkParentTopology"></param>
 		/// <returns></returns>
-		virtual bool IsManifold(TopologicCore::Topology const * const kpkParentTopology) const;
+		virtual bool IsManifold() const;
 
 		/// <summary>
 		/// 

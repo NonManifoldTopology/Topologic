@@ -144,9 +144,8 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkTopology"></param>
 		/// <returns></returns>
-		virtual bool IsManifold(TopologicCore::Topology const * const kpkParentTopology) const;
+		virtual bool IsManifold() const;
 
 		/// <summary>
 		/// 

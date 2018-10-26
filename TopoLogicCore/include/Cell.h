@@ -43,18 +43,16 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpParentTopology"></param>
 		/// <param name="rCells"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API void AdjacentCells(const Topology::Ptr& kpParentTopology, std::list<std::shared_ptr<Cell>>& rCells) const;
+		TOPOLOGIC_API void AdjacentCells(std::list<std::shared_ptr<Cell>>& rCells) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpParentTopology"></param>
 		/// <param name="rCellComplexes"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API void CellComplexes(const std::shared_ptr<Topology>& kpParentTopology, std::list<std::shared_ptr<CellComplex>>& rCellComplexes) const;
+		TOPOLOGIC_API void CellComplexes(std::list<std::shared_ptr<CellComplex>>& rCellComplexes) const;
 
 		/// <summary>
 		/// 
@@ -108,69 +106,6 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="pOcctCentroid"></param>
-		/// <param name="kXDimension"></param>
-		/// <param name="kYDimension"></param>
-		/// <param name="kZDimension"></param>
-		/// <returns></returns>
-		static TOPOLOGIC_API std::shared_ptr<Cell> ByCuboid(Handle(Geom_CartesianPoint) pOcctCentroid, const double kXDimension, const double kYDimension, const double kZDimension);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="kCenterX"></param>
-		/// <param name="kCenterY"></param>
-		/// <param name="kCenterZ"></param>
-		/// <param name="kRadius"></param>
-		/// <returns></returns>
-		static TOPOLOGIC_API std::shared_ptr<Cell> BySphere(const double kCenterX, const double kCenterY, const double kCenterZ, const double kRadius);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="kReferencePointX"></param>
-		/// <param name="kReferencePointY"></param>
-		/// <param name="kReferencePointZ"></param>
-		/// <param name="kNormalX"></param>
-		/// <param name="kNormalY"></param>
-		/// <param name="kNormalZ"></param>
-		/// <param name="kXDirectionX"></param>
-		/// <param name="kXDirectionY"></param>
-		/// <param name="kDirectionZ"></param>
-		/// <param name="kRadius"></param>
-		/// <param name="kHeight"></param>
-		/// <returns></returns>
-		static TOPOLOGIC_API std::shared_ptr<Cell> ByCylinder(
-			const double kReferencePointX, const double kReferencePointY, const double kReferencePointZ,
-			const double kNormalX, const double kNormalY, const double kNormalZ,
-			const double kXDirectionX, const double kXDirectionY, const double kDirectionZ,
-			const double kRadius, const double kHeight);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="kReferencePointX"></param>
-		/// <param name="kReferencePointY"></param>
-		/// <param name="kReferencePointZ"></param>
-		/// <param name="kNormalX"></param>
-		/// <param name="kNormalY"></param>
-		/// <param name="kNormalZ"></param>
-		/// <param name="kXDirectionX"></param>
-		/// <param name="kXDirectionY"></param>
-		/// <param name="kDirectionZ"></param>
-		/// <param name="kRadius1"></param>
-		/// <param name="kRadius2"></param>
-		/// <param name="kHeight"></param>
-		/// <returns></returns>
-		static TOPOLOGIC_API std::shared_ptr<Cell> ByCone(
-			const double kReferencePointX, const double kReferencePointY, const double kReferencePointZ,
-			const double kNormalX, const double kNormalY, const double kNormalZ,
-			const double kXDirectionX, const double kXDirectionY, const double kDirectionZ,
-			const double kRadius1, const double kRadius2, const double kHeight);
-
-		/// <summary>
-		/// 
-		/// </summary>
 		/// <param name="kpAnotherCell"></param>
 		/// <param name="rEdges"></param>
 		TOPOLOGIC_API void SharedEdges(const std::shared_ptr<Cell>& kpAnotherCell, std::list<std::shared_ptr<Edge>>& rEdges) const;
@@ -208,7 +143,7 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="kpkParentTopology"></param>
 		/// <returns></returns>
-		virtual bool IsManifold(TopologicCore::Topology const * const kpkParentTopology) const;
+		virtual bool IsManifold() const;
 
 		/// <summary>
 		/// 

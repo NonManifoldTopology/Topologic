@@ -41,10 +41,10 @@ namespace TopologicCore
 
 	void Vertex::Edges(std::list<Edge::Ptr>& rEdges)
 	{
-		UpwardNavigation(Topology::ByOcctShape(GlobalCluster::GetInstance().GetOcctCompound(), ""), rEdges);
+		UpwardNavigation(rEdges);
 	}
 
-	bool Vertex::IsManifold(TopologicCore::Topology const * const kpkParentTopology) const
+	bool Vertex::IsManifold() const
 	{
 		throw std::exception("Not implemented yet");
 	}

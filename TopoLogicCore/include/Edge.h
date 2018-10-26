@@ -44,10 +44,9 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpHostTopology"></param>
 		/// <param name="rEdges"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API void AdjacentEdges(const std::shared_ptr<Topology>& kpHostTopology, std::list<std::shared_ptr<Edge>>& rEdges) const;
+		TOPOLOGIC_API void AdjacentEdges(std::list<std::shared_ptr<Edge>>& rEdges) const;
 
 		/// <summary>
 		/// 
@@ -109,9 +108,8 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkParentTopology"></param>
 		/// <returns></returns>
-		virtual bool IsManifold(TopologicCore::Topology const * const kpkParentTopology) const;
+		virtual bool IsManifold() const;
 
 		/// <summary>
 		/// 

@@ -1,12 +1,13 @@
-#include <CellComplex.h>
-#include <Cluster.h>
-#include <Face.h>
-#include <Cell.h>
-#include <Vertex.h>
-#include <Edge.h>
-#include <Wire.h>
-#include <Shell.h>
-#include <CellComplexFactory.h>
+#include "CellComplex.h"
+#include "Cluster.h"
+#include "Face.h"
+#include "Cell.h"
+#include "Vertex.h"
+#include "Edge.h"
+#include "Wire.h"
+#include "Shell.h"
+#include "CellComplexFactory.h"
+#include "GlobalCluster.h"
 
 #include <BRep_Builder.hxx>
 #include <BRepGProp.hxx>
@@ -64,11 +65,13 @@ namespace TopologicCore
 		TopTools_ListOfShape occtShapes;
 		for (const Cell::Ptr& kpCell : rkCells)
 		{
-			occtShapes.Append(kpCell->GetOcctShape());
+			Cell::Ptr pCopyCell = std::dynamic_pointer_cast<Cell>(kpCell);
+			occtShapes.Append(pCopyCell->GetOcctShape());
 		}
 
 		TopoDS_CompSolid occtCompSolid = ByOcctSolids(occtShapes);
 		CellComplex::Ptr pCellComplex = std::make_shared<CellComplex>(occtCompSolid);
+		GlobalCluster::GetInstance().AddTopology(pCellComplex->GetOcctCompSolid());
 		return pCellComplex;
 	}
 
@@ -265,7 +268,7 @@ namespace TopologicCore
 		}
 	}
 
-	bool CellComplex::IsManifold(TopologicCore::Topology const * const kpkParentTopology) const
+	bool CellComplex::IsManifold() const
 	{
 		throw std::exception("Not implemented yet");
 	}
@@ -277,7 +280,7 @@ namespace TopologicCore
 
 		for (const Face::Ptr& kpFace : faces)
 		{
-			if(!kpFace->IsManifold(this))
+			if(!kpFace->IsManifold())
 			{
 				rNonManifoldFaces.push_back(kpFace);
 			}

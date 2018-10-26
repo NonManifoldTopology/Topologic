@@ -28,7 +28,7 @@ namespace TopologicCore
 
 		void AddTopology(const std::shared_ptr<Topology>& rkTopology);
 
-		void AddTopology(const TopoDS_Shape& rkOcctShape);
+		TOPOLOGIC_API void AddTopology(const TopoDS_Shape& rkOcctShape);
 
 		void RemoveTopology(const std::shared_ptr<Topology>& rkTopology);
 

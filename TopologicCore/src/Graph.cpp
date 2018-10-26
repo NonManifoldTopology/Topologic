@@ -38,7 +38,7 @@ namespace TopologicCore
 		//	{
 		//		// Get the adjacent cells
 		//		std::list<Cell::Ptr> adjacentCells;
-		//		kpNonManifoldFace->Cells(kpCellComplex, adjacentCells);
+		//		kpNonManifoldFace->Cells(adjacentCells);
 
 		//		std::list<Vertex::Ptr> centroids;
 		//		for (const Cell::Ptr& kpCell : adjacentCells)
@@ -121,7 +121,7 @@ namespace TopologicCore
 		//		{
 		//			// Get the adjacent cells
 		//			std::list<Cell::Ptr> adjacentCells;
-		//			kpNonManifoldFace->Cells(kpCellComplex, adjacentCells);
+		//			kpNonManifoldFace->Cells(adjacentCells);
 
 		//			// Connect the face centroid with the cell centroid
 		//			Vertex::Ptr faceCentroid = kpNonManifoldFace->CenterOfMass();
@@ -148,14 +148,14 @@ namespace TopologicCore
 		//		for (const Face::Ptr& kpManifoldFace : manifoldFaces)
 		//		{
 		//			// If it is manifold, skip it.
-		//			if (!kpManifoldFace->IsManifold(kpCellComplex.get()))
+		//			if (!kpManifoldFace->IsManifold())
 		//			{
 		//				continue;
 		//			}
 
 		//			// Get the adjacent cells
 		//			std::list<Cell::Ptr> adjacentCells;
-		//			kpManifoldFace->Cells(kpCellComplex, adjacentCells);
+		//			kpManifoldFace->Cells(adjacentCells);
 
 		//			// Connect the face centroid with the cell centroid
 		//			Vertex::Ptr faceCentroid = kpManifoldFace->CenterOfMass();
@@ -205,7 +205,7 @@ namespace TopologicCore
 		//					Face::Ptr pFaceContextTopology = TopologicalQuery::Downcast<Face>(pContextTopology);
 		//					// Get the adjacent cells of the context topology
 		//					std::list<Cell::Ptr> adjacentCells;
-		//					pFaceContextTopology->Cells(kpCellComplex, adjacentCells);
+		//					pFaceContextTopology->Cells(adjacentCells);
 
 		//					for (const Cell::Ptr& kpAdjacentCell : adjacentCells)
 		//					{
@@ -242,9 +242,7 @@ namespace TopologicCore
 		//	Throw(occtMakeWire);
 		//	return nullptr;
 		//}
-		//return nullptr;
-
-return nullptr;
+		return nullptr;
 	}
 
 	Graph::Graph(const TopoDS_Wire& rkOcctWire, const std::string& rkGuid)

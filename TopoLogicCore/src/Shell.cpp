@@ -1,14 +1,14 @@
-#include <Shell.h>
-#include <Cell.h>
-#include <Vertex.h>
-#include <Edge.h>
-#include <Wire.h>
-#include <Face.h>
-#include <Aperture.h>
-#include <ShellFactory.h>
+#include "Shell.h"
+#include "Cell.h"
+#include "Vertex.h"
+#include "Edge.h"
+#include "Wire.h"
+#include "Face.h"
+#include "Aperture.h"
+#include "ShellFactory.h"
 #include "ContentManager.h"
+#include "GlobalCluster.h"
 
-//#include <BOPAlgo_Splitter.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
@@ -31,23 +31,15 @@
 #include <TopoDS_Solid.hxx>
 #include <TopoDS_Wire.hxx>
 #include <TopTools_MapOfShape.hxx>
-//
-//#include <GeomAPI_ProjectPointOnSurf.hxx>
-//#include <Geom_Circle.hxx>
-//#include <BRepAlgoAPI_Common.hxx>
-//#include <BRepCheck_Wire.hxx>
-//#include <Geom2d_Line.hxx>
-//#include <Geom2d_CartesianPoint.hxx>
-//#include <BRepMesh_IncrementalMesh.hxx>
 
 #include <array>
 #include <assert.h>
 
 namespace TopologicCore
 {
-	void Shell::Cells(const Topology::Ptr& kpParentTopology, std::list<Cell::Ptr>& rCells) const
+	void Shell::Cells(std::list<Cell::Ptr>& rCells) const
 	{
-		UpwardNavigation(kpParentTopology, rCells);
+		UpwardNavigation(rCells);
 	}
 
 	void Shell::Edges(std::list<Edge::Ptr>& rEdges) const
@@ -86,11 +78,13 @@ namespace TopologicCore
 		TopTools_ListOfShape occtShapes;
 		for(const Face::Ptr& kpFace : rkFaces)
 		{
-			occtShapes.Append(kpFace->GetOcctShape());
+			Face::Ptr pCopyFace = std::dynamic_pointer_cast<Face>(kpFace->Copy());
+			occtShapes.Append(pCopyFace->GetOcctShape());
 		}
 
 		TopoDS_Shell occtShell = ByOcctFaces(occtShapes);
 		Shell::Ptr pShell = std::make_shared<Shell>(TopoDS::Shell(occtShell));
+		GlobalCluster::GetInstance().AddTopology(pShell->GetOcctShell());
 		return pShell;
 	}
 
@@ -152,7 +146,7 @@ namespace TopologicCore
 		return TopoDS::Shell(occtSewing.SewedShape());
 	}
 
-	bool Shell::IsManifold(TopologicCore::Topology const * const kpkParentTopology) const
+	bool Shell::IsManifold() const
 	{
 		throw std::exception("Not implemented yet");
 	}

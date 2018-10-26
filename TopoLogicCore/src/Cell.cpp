@@ -1,11 +1,12 @@
-#include <Cell.h>
-#include <Vertex.h>
-#include <Edge.h>
-#include <Wire.h>
-#include <Face.h>
-#include <Shell.h>
-#include <CellComplex.h>
-#include <CellFactory.h>
+#include "Cell.h"
+#include "Vertex.h"
+#include "Edge.h"
+#include "Wire.h"
+#include "Face.h"
+#include "Shell.h"
+#include "CellComplex.h"
+#include "CellFactory.h"
+#include "GlobalCluster.h"
 
 #include <BRep_Builder.hxx>
 #include <BRepAlgoAPI_Common.hxx>
@@ -37,11 +38,11 @@
 
 namespace TopologicCore
 {
-	void Cell::AdjacentCells(const Topology::Ptr& kpParentTopology, std::list<Cell::Ptr>& rCells) const
+	void Cell::AdjacentCells(std::list<Cell::Ptr>& rCells) const
 	{
 		// Iterate through the faces and find the incident cells which are not this cell.
 		TopTools_IndexedDataMapOfShapeListOfShape occtFaceSolidMap;
-		TopExp::MapShapesAndUniqueAncestors(kpParentTopology->GetOcctShape(), TopAbs_FACE, TopAbs_SOLID, occtFaceSolidMap);
+		TopExp::MapShapesAndUniqueAncestors(GlobalCluster::GetInstance().GetOcctCompound(), TopAbs_FACE, TopAbs_SOLID, occtFaceSolidMap);
 
 		// Find the constituent faces
 		TopTools_MapOfShape occtFaces;
@@ -75,9 +76,9 @@ namespace TopologicCore
 		}
 	}
 
-	void Cell::CellComplexes(const Topology::Ptr& kpParentTopology, std::list<std::shared_ptr<TopologicCore::CellComplex>>& rCellComplexes) const
+	void Cell::CellComplexes(std::list<std::shared_ptr<TopologicCore::CellComplex>>& rCellComplexes) const
 	{
-		UpwardNavigation(kpParentTopology, rCellComplexes);
+		UpwardNavigation(rCellComplexes);
 	}
 
 	void Cell::Shells(std::list<Shell::Ptr>& rShells) const
@@ -128,7 +129,8 @@ namespace TopologicCore
 	{
 		BRepBuilderAPI_MakeSolid occtMakeSolid;
 		try {
-			occtMakeSolid = BRepBuilderAPI_MakeSolid(kpShell->GetOcctShell());
+			Shell::Ptr pCopyShell = std::dynamic_pointer_cast<Shell>(kpShell);
+			occtMakeSolid = BRepBuilderAPI_MakeSolid(pCopyShell->GetOcctShell());
 		}
 		catch (StdFail_NotDone&)
 		{
@@ -138,56 +140,8 @@ namespace TopologicCore
 		// Create a cell from the shell. The faces are the same and the contents
 		// are automatically passed.
 		Cell::Ptr pCell = std::make_shared<Cell>(occtMakeSolid);
-
+		GlobalCluster::GetInstance().AddTopology(pCell->GetOcctSolid());
 		return pCell;
-	}
-
-	Cell::Ptr Cell::ByCuboid(Handle(Geom_CartesianPoint) pOcctCentroid, const double kXDimension, const double kYDimension, const double kZDimension)
-	{
-		gp_Pnt occtLowCorner(
-			pOcctCentroid->X() - kXDimension / 2.0,
-			pOcctCentroid->Y() - kYDimension / 2.0,
-			pOcctCentroid->Z() - kZDimension / 2.0
-			);
-		BRepPrimAPI_MakeBox occtMakeBox(occtLowCorner, kXDimension, kYDimension, kZDimension);
-		occtMakeBox.Build();
-
-		return std::make_shared<Cell>(occtMakeBox.Solid());
-	}
-
-	Cell::Ptr Cell::BySphere(const double kCenterX, const double kCenterY, const double kCenterZ, const double kRadius)
-	{
-		BRepPrimAPI_MakeSphere occtMakeSphere(gp_Pnt(kCenterX, kCenterY, kCenterZ), kRadius);
-		return std::make_shared<Cell>(occtMakeSphere.Solid());
-	}
-
-	Cell::Ptr Cell::ByCylinder(const double kReferencePointX, const double kReferencePointY, const double kReferencePointZ,
-		const double kNormalX, const double kNormalY, const double kNormalZ,
-		const double kXDirectionX, const double kXDirectionY, const double kDirectionZ,
-		const double kRadius, const double kHeight)
-	{
-		BRepPrimAPI_MakeCylinder occtMakeCylinder(
-			gp_Ax2(
-				gp_Pnt(kReferencePointX, kReferencePointY, kReferencePointZ),
-				gp_Dir(kNormalX, kNormalY, kNormalZ),
-				gp_Dir(kXDirectionX, kXDirectionY, kDirectionZ)), 
-			kRadius, kHeight);
-		return std::make_shared<Cell>(occtMakeCylinder.Solid());
-	}
-
-	std::shared_ptr<Cell> Cell::ByCone(
-		const double kReferencePointX, const double kReferencePointY, const double kReferencePointZ,
-		const double kNormalX, const double kNormalY, const double kNormalZ,
-		const double kXDirectionX, const double kXDirectionY, const double kDirectionZ,
-		const double kRadius1, const double kRadius2, const double kHeight)
-	{
-		BRepPrimAPI_MakeCone occtMakeCone(
-			gp_Ax2(
-				gp_Pnt(kReferencePointX, kReferencePointY, kReferencePointZ), 
-				gp_Dir(kNormalX, kNormalY, kNormalZ), 
-				gp_Dir(kXDirectionX, kXDirectionY, kDirectionZ)),
-			kRadius1, kRadius2, kHeight);
-		return std::make_shared<Cell>(occtMakeCone.Solid());
 	}
 
 	void Cell::SharedEdges(const Cell::Ptr& kpAnotherCell, std::list<Edge::Ptr>& rEdges) const
@@ -334,7 +288,7 @@ namespace TopologicCore
 		}
 	}
 
-	bool Cell::IsManifold(TopologicCore::Topology const * const kpkParentTopology) const
+	bool Cell::IsManifold() const
 	{
 		throw std::exception("Not implemented yet");
 	}

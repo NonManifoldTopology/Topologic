@@ -34,12 +34,11 @@
 
 namespace Topologic
 {
-	List<Face^>^ Face::AdjacentFaces_(Topology^ hostTopology)
+	List<Face^>^ Face::AdjacentFaces::get()
 	{
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopologicCore::Topology> pCoreHostTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(hostTopology->GetCoreTopologicalQuery());
 		std::list<TopologicCore::Face::Ptr> pAdjacentCoreFaces;
-		pCoreFace->AdjacentFaces(pCoreHostTopology, pAdjacentCoreFaces);
+		pCoreFace->AdjacentFaces(pAdjacentCoreFaces);
 
 		List<Face^>^ pAdjacentFaces = gcnew List<Face^>();
 
@@ -55,12 +54,11 @@ namespace Topologic
 		return pAdjacentFaces;
 	}
 
-	List<Cell^>^ Face::Cells_(Topology^ hostTopology)
+	List<Cell^>^ Face::Cells::get()
 	{
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopologicCore::Topology> pCoreHostTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(hostTopology->GetCoreTopologicalQuery());
 		std::list<TopologicCore::Cell::Ptr> pCoreCells;
-		pCoreFace->Cells(pCoreHostTopology, pCoreCells);
+		pCoreFace->Cells(pCoreCells);
 
 		List<Cell^>^ pCells = gcnew List<Cell^>();
 		for (std::list<TopologicCore::Cell::Ptr>::const_iterator kCellIterator = pCoreCells.begin();
@@ -75,12 +73,11 @@ namespace Topologic
 		return pCells;
 	}
 
-	List<Shell^>^ Face::Shells_(Topology^ hostTopology)
+	List<Shell^>^ Face::Shells::get()
 	{
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopologicCore::Topology> pCoreHostTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(hostTopology->GetCoreTopologicalQuery());
 		std::list<TopologicCore::Shell::Ptr> pCoreShells;
-		pCoreFace->Shells(pCoreHostTopology, pCoreShells);
+		pCoreFace->Shells(pCoreShells);
 
 		List<Shell^>^ pShells = gcnew List<Shell^>();
 

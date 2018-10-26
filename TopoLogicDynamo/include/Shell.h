@@ -19,9 +19,11 @@ namespace Topologic
 		/// <summary>
 		/// Get the cell bounded by the shell. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.
 		/// </summary>
-		/// <param name="hostTopology"></param>
 		/// <returns name="Cell[]">The cell bounded by the shell</returns>
-		List<Cell^>^ Cells_(Topology^ hostTopology);
+		property List<Cell^>^ Cells
+		{
+			List<Cell^>^ get();
+		}
 
 		/// <summary>
 		/// Get the constituent faces of the shell. 

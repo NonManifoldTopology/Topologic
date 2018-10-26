@@ -19,7 +19,7 @@
 
 namespace TopologicCore
 {
-	void Edge::AdjacentEdges(const Topology::Ptr& kpHostTopology, std::list<Edge::Ptr>& rEdges) const
+	void Edge::AdjacentEdges(std::list<Edge::Ptr>& rEdges) const
 	{
 		std::list<Vertex::Ptr> vertices;
 		Vertices(vertices);
@@ -57,7 +57,7 @@ namespace TopologicCore
 
 	void Edge::Wires(std::list<Wire::Ptr>& rWires) const
 	{
-		UpwardNavigation(Topology::ByOcctShape(GlobalCluster::GetInstance().GetOcctCompound(), ""), rWires);
+		UpwardNavigation(rWires);
 	}
 
 	Edge::Ptr Edge::ByCurve(
@@ -153,7 +153,7 @@ namespace TopologicCore
 		return pVertex;
 	}
 
-	bool Edge::IsManifold(TopologicCore::Topology const * const kpkParentTopology) const
+	bool Edge::IsManifold() const
 	{
 		throw std::exception("Not implemented yet");
 	}

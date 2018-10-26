@@ -47,10 +47,9 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpHostTopology"></param>
 		/// <param name="rFaces"></param>
 		/// <returns></returns>
-		void TOPOLOGIC_API Faces(const std::shared_ptr<Topology>& kpHostTopology, std::list<std::shared_ptr<Face>>& rFaces) const;
+		void TOPOLOGIC_API Faces(std::list<std::shared_ptr<Face>>& rFaces) const;
 
 		/// <summary>
 		/// 
@@ -76,9 +75,8 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkParentTopology"></param>
 		/// <returns></returns>
-		virtual bool IsManifold(TopologicCore::Topology const * const kpkParentTopology) const;
+		virtual bool IsManifold() const;
 
 		/// <summary>
 		/// 

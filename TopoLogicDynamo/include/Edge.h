@@ -25,9 +25,11 @@ namespace Topologic {
 		/// <summary>
 		/// Get the edges adjacent to the edge. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.
 		/// </summary>
-		/// <param name="hostTopology"></param>
 		/// <returns name="Edge[]">The edges adjacent to the edge</returns>
-		List<Edge^>^ AdjacentEdges_(Topology^ hostTopology);
+		property List<Edge^>^ AdjacentEdges
+		{
+			List<Edge^>^ get();
+		}
 
 		/// <summary>
 		/// Get the vertices at the ends of the edge.
@@ -41,7 +43,10 @@ namespace Topologic {
 		/// Get the wires incident to the edge. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.
 		/// </summary>
 		/// <returns name="Wire[]">The list of wires incident to the edge</returns>
-		List<Wire^>^ Wires_();
+		property List<Wire^>^ Wires
+		{
+			List<Wire^>^ get();
+		}
 
 		/// <summary>
 		/// Return the shared vertex between two edges.

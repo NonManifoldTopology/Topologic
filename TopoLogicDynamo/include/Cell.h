@@ -33,9 +33,11 @@ namespace Topologic
 		/// <summary>
 		/// Get the cellComplexes which contain the cell. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.
 		/// </summary>
-		/// <param name="hostTopology"></param>
 		/// <returns name="CellComplex[]"></returns>
-		List<CellComplex^>^ CellComplexes_(Topology^ hostTopology);
+		property List<CellComplex^>^ CellComplexes
+		{
+			List<CellComplex^>^ get();
+		}
 
 		/// <summary>
 		/// Get the shells constituent to the cell.
@@ -85,9 +87,12 @@ namespace Topologic
 		/// <summary>
 		/// Get the cells adjacent to the cell. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.
 		/// </summary>
-		/// <param name="hostTopology"></param>
 		/// <returns name="Cell[]"></returns>
-		List<Cell^>^ AdjacentCells_(Topology^ hostTopology);
+		/// 
+		property List<Cell^>^ AdjacentCells
+		{
+			List<Cell^>^ get();
+		}
 
 		/// <summary>
 		/// Return the shared faces between two cells. 

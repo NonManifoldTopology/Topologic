@@ -6,6 +6,8 @@
 #include <Shell.h>
 #include <CellComplex.h>
 
+#include <TopologicUtility/include/CellUtility.h>
+
 #include <assert.h>
 
 namespace Topologic
@@ -69,13 +71,11 @@ namespace Topologic
 		return gcnew Cell(pCoreCell);
 	}
 
-	List<CellComplex^>^ Cell::CellComplexes_(Topology^ hostTopology)
+	List<CellComplex^>^ Cell::CellComplexes::get()
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopologicCore::Topology> pCoreHostTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(hostTopology->GetCoreTopologicalQuery());
-
 		std::list<TopologicCore::CellComplex::Ptr> coreCellComplexes;
-		pCoreCell->CellComplexes(pCoreHostTopology, coreCellComplexes);
+		pCoreCell->CellComplexes(coreCellComplexes);
 
 		List<CellComplex^>^ pCellComplexes = gcnew List<CellComplex^>();
 		for (std::list<TopologicCore::CellComplex::Ptr>::const_iterator kCellComplexIterator = coreCellComplexes.begin();
@@ -184,13 +184,11 @@ namespace Topologic
 		return pVertices;
 	}
 
-	List<Cell^>^ Cell::AdjacentCells_(Topology^ hostTopology)
+	List<Cell^>^ Cell::AdjacentCells::get()
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreHostTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(hostTopology->GetCoreTopologicalQuery());
-
 		std::list<TopologicCore::Cell::Ptr> coreAdjacentCells;
-		pCoreCell->AdjacentCells(pCoreHostTopology, coreAdjacentCells);
+		pCoreCell->AdjacentCells(coreAdjacentCells);
 
 		List<Cell^>^ pAdjacentCells = gcnew List<Cell^>();
 		for (std::list<TopologicCore::Cell::Ptr>::const_iterator kCellIterator = coreAdjacentCells.begin();
@@ -344,7 +342,7 @@ namespace Topologic
 
 	Cell ^ Cell::BySphere(Autodesk::DesignScript::Geometry::Sphere ^ sphere)
 	{
-		TopologicCore::Cell::Ptr pCoreSphere = TopologicCore::Cell::BySphere(
+		TopologicCore::Cell::Ptr pCoreSphere = TopologicUtility::CellUtility::BySphere(
 			sphere->CenterPoint->X,
 			sphere->CenterPoint->Y, 
 			sphere->CenterPoint->Z, 
@@ -354,7 +352,7 @@ namespace Topologic
 
 	Cell ^ Cell::ByCylinder(Autodesk::DesignScript::Geometry::Cylinder ^ cylinder)
 	{
-		TopologicCore::Cell::Ptr pCoreCylinder = TopologicCore::Cell::ByCylinder(
+		TopologicCore::Cell::Ptr pCoreCylinder = TopologicUtility::CellUtility::ByCylinder(
 			cylinder->StartPoint->X,
 			cylinder->StartPoint->Y,
 			cylinder->StartPoint->Z,
@@ -371,7 +369,7 @@ namespace Topologic
 
 	Cell ^ Cell::ByCone(Autodesk::DesignScript::Geometry::Cone ^ cone)
 	{
-		TopologicCore::Cell::Ptr pCoreCone = TopologicCore::Cell::ByCone(
+		TopologicCore::Cell::Ptr pCoreCone = TopologicUtility::CellUtility::ByCone(
 			cone->StartPoint->X,
 			cone->StartPoint->Y,
 			cone->StartPoint->Z,
@@ -440,8 +438,10 @@ namespace Topologic
 		TopologicCore::Cell::Ptr pCoreCell = nullptr;
 		if(canCreateCell)
 		{
-			pCoreCell = TopologicCore::Cell::ByCuboid(
-				new Geom_CartesianPoint(pDynamoCentroid->X, pDynamoCentroid->Y, pDynamoCentroid->Z),
+			pCoreCell = TopologicUtility::CellUtility::ByCuboid(
+				pDynamoCentroid->X, 
+				pDynamoCentroid->Y, 
+				pDynamoCentroid->Z,
 				width,
 				length,
 				height

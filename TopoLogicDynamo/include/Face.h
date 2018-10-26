@@ -22,21 +22,28 @@ namespace Topologic {
 		/// </summary>
 		/// <param name="hostTopology"></param>
 		/// <returns name="Face[]">The faces adjacent to the face</returns>
-		List<Face^>^ AdjacentFaces_(Topology^ hostTopology);
+		property List<Face^>^ AdjacentFaces
+		{
+			List<Face^>^ get();
+		}
 
 		/// <summary>
 		/// Get the cells incident to the face. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.
 		/// </summary>
-		/// <param name="hostTopology"></param>
 		/// <returns name="Cell[]">The cells incident to the face</returns>
-		List<Cell^>^ Cells_(Topology^ hostTopology);
+		property List<Cell^>^ Cells
+		{
+			List<Cell^>^ get();
+		}
 
 		/// <summary>
 		/// Gets the shells incident to the face. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.
 		/// </summary>
-		/// <param name="hostTopology"></param>
 		/// <returns name="Shell[]">The shells incident to the face</returns>
-		List<Shell^>^ Shells_(Topology^ hostTopology);
+		property List<Shell^>^ Shells
+		{
+			List<Shell^>^ get();
+		}
 
 		/// <summary>
 		/// Gets the constituent vertices of the face. 

@@ -451,11 +451,6 @@ namespace TopologicCore
 		return ContextManager::GetInstance().Find(GetOcctShape(), rContexts);
 	}
 
-	bool Topology::IsManifold(const std::shared_ptr<Topology>& kpTopology) const
-	{
-		return IsManifold(kpTopology.get());
-	}
-
 	bool Topology::SaveToBrep(const std::string & rkPath) const
 	{
 		return BRepTools::Write(GetOcctShape(), rkPath.c_str());;

@@ -1,11 +1,12 @@
-#include <Face.h>
-#include <Edge.h>
-#include <Cell.h>
-#include <Shell.h>
-#include <Vertex.h>
-#include <Wire.h>
-#include <FaceFactory.h>
-#include <Utilities.h>
+#include "Face.h"
+#include "Edge.h"
+#include "Cell.h"
+#include "Shell.h"
+#include "Vertex.h"
+#include "Wire.h"
+#include "FaceFactory.h"
+#include "Utilities.h"
+#include "GlobalCluster.h"
 
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepAlgoAPI_Section.hxx>
@@ -26,7 +27,7 @@
 
 namespace TopologicCore
 {
-	void Face::AdjacentFaces(const Topology::Ptr& kpHostTopology, std::list<Face::Ptr>& rFaces) const
+	void Face::AdjacentFaces(std::list<Face::Ptr>& rFaces) const
 	{
 		std::list<Vertex::Ptr> edges;
 		Vertices(edges);
@@ -35,7 +36,7 @@ namespace TopologicCore
 		for (const Vertex::Ptr& kpEdge : edges)
 		{
 			std::list<Face::Ptr> faces;
-			kpEdge->UpwardNavigation(kpHostTopology, faces);
+			kpEdge->UpwardNavigation(faces);
 
 			for (const Face::Ptr& kpFace : faces)
 			{
@@ -49,14 +50,9 @@ namespace TopologicCore
 		}
 	}
 
-	void Face::Cells(const Topology::Ptr& kpHostTopology, std::list<Cell::Ptr>& rCells) const
+	void Face::Cells(std::list<Cell::Ptr>& rCells) const
 	{
-		Cells(kpHostTopology.get(), rCells);
-	}
-
-	void Face::Cells(Topology const * kpkParentTopology, std::list<std::shared_ptr<Cell>>& rCells) const
-	{
-		UpwardNavigation(kpkParentTopology, rCells);
+		UpwardNavigation(rCells);
 	}
 
 	void Face::Edges(std::list<Edge::Ptr>& rEdges) const
@@ -64,9 +60,9 @@ namespace TopologicCore
 		DownwardNavigation(rEdges);
 	}
 
-	void Face::Shells(const Topology::Ptr& kpHostTopology, std::list<Shell::Ptr>& rShells) const
+	void Face::Shells(std::list<Shell::Ptr>& rShells) const
 	{
-		UpwardNavigation(kpHostTopology, rShells);
+		UpwardNavigation(rShells);
 	}
 
 	void Face::Vertices(std::list<Vertex::Ptr>& rVertices) const
@@ -98,18 +94,21 @@ namespace TopologicCore
 		const Wire::Ptr& pkExternalBoundary,
 		const std::list<Wire::Ptr>& rkInternalBoundaries)
 	{
+		Wire::Ptr copyExternalBoundary = std::dynamic_pointer_cast<Wire>(pkExternalBoundary->Copy());
 		BRepBuilderAPI_MakeFace occtMakeFace(pkExternalBoundary->GetOcctWire());
 		if (occtMakeFace.Error() != BRepBuilderAPI_FaceDone)
 		{
 			Throw(occtMakeFace);
 		}
 
-		for (const std::shared_ptr<Wire>& kpInternalBoundary : rkInternalBoundaries)
+		for (const Wire::Ptr& kpInternalBoundary : rkInternalBoundaries)
 		{
-			occtMakeFace.Add(kpInternalBoundary->GetOcctWire());
+			Wire::Ptr pCopyInternalBoundary = std::dynamic_pointer_cast<Wire>(kpInternalBoundary->Copy());
+			occtMakeFace.Add(pCopyInternalBoundary->GetOcctWire());
 		}
 
 		Face::Ptr pFace = std::make_shared<Face>(occtMakeFace);
+		GlobalCluster::GetInstance().AddTopology(pFace->GetOcctFace());
 		return pFace;
 	}
 
@@ -137,7 +136,7 @@ namespace TopologicCore
 			Throw(occtMakeFace);
 		}
 		Face::Ptr pFace = std::make_shared<Face>(occtMakeFace);
-		//LabelManager::GetInstance().AddGeneratedMembersToLabel(pFace->GetOcctLabel());
+		GlobalCluster::GetInstance().AddTopology(pFace->GetOcctFace());
 		return pFace;
 	}
 
@@ -260,13 +259,8 @@ namespace TopologicCore
 		}
 
 		Face::Ptr pFace = std::make_shared<Face>(occtMakeFace);
-		std::list<std::pair<Topology::Ptr, Topology::Ptr>> topologyPairs;
-		std::list<Topology::Ptr> members;
-		pFace->Members(members);
+		GlobalCluster::GetInstance().AddTopology(pFace->GetOcctFace());
 
-		/*LabelManager::GetInstance().AddModifiedMembers(
-			pFace->GetOcctLabel(),
-			topologyPairs);*/
 		return pFace;
 	}
 
@@ -397,10 +391,10 @@ namespace TopologicCore
 		m_occtFace = occtMakeFace;
 	}
 
-	bool Face::IsManifold(TopologicCore::Topology const * const kpkParentTopology) const
+	bool Face::IsManifold() const
 	{
 		std::list<Cell::Ptr> cells;
-		Cells(kpkParentTopology, cells);
+		Cells(cells);
 
 		// A manifold face has 0 or 1 cell.
 		if (cells.size() < 2)
@@ -467,8 +461,7 @@ namespace TopologicCore
 
 	Face::~Face()
 	{
-		//GlobalCluster::GetInstance().Remove(this);
-		//DecreaseCounter();
+
 	}
 
 	Handle(Geom_Surface) Face::Surface() const

@@ -9,13 +9,11 @@
 
 namespace Topologic
 {
-	List<Cell^>^ Shell::Cells_(Topology^ hostTopology)
+	List<Cell^>^ Shell::Cells::get()
 	{
 		TopologicCore::Shell::Ptr pCoreShell = TopologicCore::Topology::Downcast<TopologicCore::Shell>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopologicCore::Topology> pCoreHostTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(hostTopology->GetCoreTopologicalQuery());
-
 		std::list<TopologicCore::Cell::Ptr> coreCells;
-		pCoreShell->Cells(pCoreHostTopology, coreCells);
+		pCoreShell->Cells(coreCells);
 
 		List<Topologic::Cell^>^ pCells = gcnew List<Topologic::Cell^>();
 		for (std::list<TopologicCore::Cell::Ptr>::const_iterator kCoreCellIterator = coreCells.begin();

@@ -29,9 +29,11 @@ namespace Topologic {
 		/// <summary>
 		/// Get the list of faces that contain the wire. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.
 		/// </summary>
-		/// <param name="hostTopology"></param>
 		/// <returns name="Face[]">The faces that contain the wire</returns>
-		List<Face^>^ Faces_(Topology^ hostTopology);
+		property List<Face^>^ Faces
+		{
+			List<Face^>^ get();
+		}
 
 		/// <summary>
 		/// Gets the list constituent vertices of the wire. NOTE: This method will automatically identify its loop order property.

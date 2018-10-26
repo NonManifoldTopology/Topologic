@@ -20,10 +20,9 @@ namespace Topologic
 		return gcnew Vertex(pCoreVertex);
 	}
 
-	List<Edge^>^ Vertex::Edges_()
+	List<Edge^>^ Vertex::Edges::get()
 	{
 		std::list<TopologicCore::Edge::Ptr> coreEdges;
-		//TopologicCore::Topology::Ptr pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(hostTopology->GetCoreTopologicalQuery());
 		TopologicCore::Vertex::Ptr pCoreVertex = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Vertex>(GetCoreTopologicalQuery());
 		try {
 			pCoreVertex->Edges(coreEdges);

@@ -283,11 +283,8 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpkParentTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API bool IsManifold(const std::shared_ptr<Topology>& kpkParentTopology) const;
-
-		TOPOLOGIC_API virtual bool IsManifold(Topology const * const kpkParentTopology) const = 0;
+		TOPOLOGIC_API virtual bool IsManifold() const = 0;
 
 		/// <summary>
 		/// 
@@ -363,13 +360,17 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpParentTopology"></param>
 		/// <param name="rAncestors"></param>
 		template <class Subclass>
-		void UpwardNavigation(const Topology::Ptr& kpParentTopology, std::list<std::shared_ptr<Subclass>>& rAncestors) const;
+		void UpwardNavigation(std::list<std::shared_ptr<Subclass>>& rAncestors) const;
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkOcctHostTopology"></param>
+		/// <param name="rAncestors"></param>
 		template <class Subclass>
-		void UpwardNavigation(Topology const * const kpkParentTopology, std::list<std::shared_ptr<Subclass>>& rAncestors) const;
+		void UpwardNavigation(const TopoDS_Shape& rkOcctHostTopology, std::list<std::shared_ptr<Subclass>>& rAncestors) const;
 
 		/// <summary>
 		/// 
@@ -598,23 +599,22 @@ namespace TopologicCore
 	};
 
 	template <class Subclass>
-	void Topology::UpwardNavigation(const Topology::Ptr& kpParentTopology, std::list<std::shared_ptr<Subclass>>& rAncestors) const
+	void Topology::UpwardNavigation(std::list<std::shared_ptr<Subclass>>& rAncestors) const
 	{
-		UpwardNavigation(kpParentTopology.get(), rAncestors);
+		UpwardNavigation(GlobalCluster::GetInstance().GetOcctCompound(), rAncestors);
 	}
 
-	template <class Subclass>
-	void Topology::UpwardNavigation(Topology const * const kpkParentTopology, std::list<std::shared_ptr<Subclass>>& rAncestors) const
+	template<class Subclass>
+	inline void Topology::UpwardNavigation(const TopoDS_Shape& rkOcctHostTopology, std::list<std::shared_ptr<Subclass>>& rAncestors) const
 	{
 		static_assert(std::is_base_of<Topology, Subclass>::value, "Subclass not derived from Topology");
-		
+
 		TopAbs_ShapeEnum occtShapeType = CheckOcctShapeType<Subclass>();
 
 		TopTools_ListOfShape occtAncestorMap;
-		const TopoDS_Shape& rkOcctTopShape = kpkParentTopology->GetOcctShape();
 		TopTools_IndexedDataMapOfShapeListOfShape occtShapeMap;
 		TopExp::MapShapesAndUniqueAncestors(
-			rkOcctTopShape,
+			rkOcctHostTopology,
 			GetOcctShape().ShapeType(),
 			occtShapeType,
 			occtShapeMap);

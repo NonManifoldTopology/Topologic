@@ -1,12 +1,13 @@
-#include <Cluster.h>
-#include <CellComplex.h>
-#include <Cell.h>
-#include <Vertex.h>
-#include <Edge.h>
-#include <Wire.h>
-#include <Face.h>
-#include <Shell.h>
-#include <ClusterFactory.h>
+#include "Cluster.h"
+#include "CellComplex.h"
+#include "Cell.h"
+#include "Vertex.h"
+#include "Edge.h"
+#include "Wire.h"
+#include "Face.h"
+#include "Shell.h"
+#include "ClusterFactory.h"
+#include "GlobalCluster.h"
 
 #include <TopoDS_Builder.hxx>
 #include <TopoDS_UnCompatibleShapes.hxx>
@@ -27,9 +28,6 @@
 #include <TopoDS_FrozenShape.hxx>
 #include <TopoDS_UnCompatibleShapes.hxx>
 
-#include <TopTools_MapOfShape.hxx>
-
-
 #include <assert.h>
 
 namespace TopologicCore
@@ -38,7 +36,7 @@ namespace TopologicCore
 	{
 		if (rkTopologies.empty())
 		{
-			throw std::exception("No topology is passed.");
+			return nullptr;
 		}
 
 		TopoDS_Compound occtCompound;
@@ -47,8 +45,11 @@ namespace TopologicCore
 		Cluster::Ptr pCluster = std::make_shared<Cluster>(occtCompound);
 		for(const Topology::Ptr& kpTopology : rkTopologies)
 		{
-			pCluster->AddTopology(kpTopology.get());
+			Topology::Ptr pCopyTopology = kpTopology->Copy();
+			pCluster->AddTopology(pCopyTopology.get());
 		}
+
+		GlobalCluster::GetInstance().AddTopology(pCluster->GetOcctCompound());
 		return pCluster;
 	}
 
@@ -227,7 +228,7 @@ namespace TopologicCore
 		throw std::exception("Not yet implemented");
 	}
 
-	bool Cluster::IsManifold(TopologicCore::Topology const * const kpkParentTopology) const
+	bool Cluster::IsManifold() const
 	{
 		throw std::exception("Not implemented yet");
 	}

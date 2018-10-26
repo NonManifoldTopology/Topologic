@@ -31,6 +31,64 @@ namespace TopologicUtility
 		/// <returns></returns>
 		static TOPOLOGIC_SUPPORT_API TopologicCore::Cell::Ptr ByLoft(const std::list<TopologicCore::Wire::Ptr>& rkWires);
 
+		//
+		static TOPOLOGIC_SUPPORT_API TopologicCore::Cell::Ptr ByCuboid(
+			const double kCentroidX, const double kCentroidY, const double kCentroidZ, 
+			const double kXDimension, const double kYDimension, const double kZDimension);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kCenterX"></param>
+		/// <param name="kCenterY"></param>
+		/// <param name="kCenterZ"></param>
+		/// <param name="kRadius"></param>
+		/// <returns></returns>
+		static TOPOLOGIC_SUPPORT_API TopologicCore::Cell::Ptr BySphere(const double kCenterX, const double kCenterY, const double kCenterZ, const double kRadius);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kReferencePointX"></param>
+		/// <param name="kReferencePointY"></param>
+		/// <param name="kReferencePointZ"></param>
+		/// <param name="kNormalX"></param>
+		/// <param name="kNormalY"></param>
+		/// <param name="kNormalZ"></param>
+		/// <param name="kXDirectionX"></param>
+		/// <param name="kXDirectionY"></param>
+		/// <param name="kDirectionZ"></param>
+		/// <param name="kRadius"></param>
+		/// <param name="kHeight"></param>
+		/// <returns></returns>
+		static TOPOLOGIC_SUPPORT_API TopologicCore::Cell::Ptr ByCylinder(
+			const double kReferencePointX, const double kReferencePointY, const double kReferencePointZ,
+			const double kNormalX, const double kNormalY, const double kNormalZ,
+			const double kXDirectionX, const double kXDirectionY, const double kDirectionZ,
+			const double kRadius, const double kHeight);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kReferencePointX"></param>
+		/// <param name="kReferencePointY"></param>
+		/// <param name="kReferencePointZ"></param>
+		/// <param name="kNormalX"></param>
+		/// <param name="kNormalY"></param>
+		/// <param name="kNormalZ"></param>
+		/// <param name="kXDirectionX"></param>
+		/// <param name="kXDirectionY"></param>
+		/// <param name="kDirectionZ"></param>
+		/// <param name="kRadius1"></param>
+		/// <param name="kRadius2"></param>
+		/// <param name="kHeight"></param>
+		/// <returns></returns>
+		static TOPOLOGIC_SUPPORT_API TopologicCore::Cell::Ptr ByCone(
+			const double kReferencePointX, const double kReferencePointY, const double kReferencePointZ,
+			const double kNormalX, const double kNormalY, const double kNormalZ,
+			const double kXDirectionX, const double kXDirectionY, const double kDirectionZ,
+			const double kRadius1, const double kRadius2, const double kHeight);
+
 		/// <summary>
 		/// 
 		/// </summary>

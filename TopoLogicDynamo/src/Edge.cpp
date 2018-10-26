@@ -33,12 +33,11 @@ namespace Topologic
 	//	return gcnew Edge(pCoreCircleEdge);
 	//}
 
-	List<Edge^>^ Edge::AdjacentEdges_(Topology ^ hostTopology)
+	List<Edge^>^ Edge::AdjacentEdges::get()
 	{
 		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopologicCore::Topology> pCoreHostTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(hostTopology->GetCoreTopologicalQuery());
 		std::list<TopologicCore::Edge::Ptr> pAdjacentCoreEdges;
-		pCoreEdge->AdjacentEdges(pCoreHostTopology, pAdjacentCoreEdges);
+		pCoreEdge->AdjacentEdges(pAdjacentCoreEdges);
 
 		List<Edge^>^ pAdjacentEdges = gcnew List<Edge^>();
 
@@ -73,12 +72,10 @@ namespace Topologic
 		return pVertices;
 	}
 
-	List<Wire^>^ Edge::Wires_()
+	List<Wire^>^ Edge::Wires::get()
 	{
 		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
-		//std::shared_ptr<TopologicCore::Topology> pCoreHostTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(hostTopology->GetCoreTopologicalQuery());
 		std::list<TopologicCore::Wire::Ptr> coreWires;
-		//pCoreEdge->Wires(pCoreHostTopology, coreWires);
 		pCoreEdge->Wires(coreWires);
 
 		List<Wire^>^ pWires = gcnew List<Wire^>();

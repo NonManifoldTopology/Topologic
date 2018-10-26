@@ -38,9 +38,9 @@ namespace TopologicCore
 		}
 	}
 
-	void Wire::Faces(const Topology::Ptr& kpHostTopology, std::list<Face::Ptr>& rFaces) const
+	void Wire::Faces(std::list<Face::Ptr>& rFaces) const
 	{
-		UpwardNavigation(kpHostTopology, rFaces);
+		UpwardNavigation(rFaces);
 	}
 
 	bool Wire::IsClosed() const
@@ -120,7 +120,7 @@ namespace TopologicCore
 		}
 	}
 
-	bool Wire::IsManifold(TopologicCore::Topology const * const kpkParentTopology) const
+	bool Wire::IsManifold() const
 	{
 		return false;
 	}
@@ -134,7 +134,7 @@ namespace TopologicCore
 		for (const Vertex::Ptr& kpVertex: vertices)
 		{
 			std::list<Edge::Ptr> edges;
-			kpVertex->UpwardNavigation<Edge>(this, edges);
+			kpVertex->UpwardNavigation<Edge>(GetOcctWire(), edges);
 			if (edges.size() > 2)
 			{
 				numOfBranches++;

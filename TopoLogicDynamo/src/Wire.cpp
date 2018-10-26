@@ -26,12 +26,11 @@ namespace Topologic
 		return pEdges;
 	}
 
-	List<Face^>^ Wire::Faces_(Topology^ hostTopology)
+	List<Face^>^ Wire::Faces::get()
 	{
 		TopologicCore::Wire::Ptr pCoreWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopologicCore::Topology> pCoreHostTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(hostTopology->GetCoreTopologicalQuery());
 		std::list<TopologicCore::Face::Ptr> pCoreFaceList;
-		pCoreWire->Faces(pCoreHostTopology, pCoreFaceList);
+		pCoreWire->Faces(pCoreFaceList);
 		List<Face^>^ pFaces = gcnew List<Face^>();
 
 		for (std::list<TopologicCore::Face::Ptr>::iterator kCoreFaceIterator = pCoreFaceList.begin();
