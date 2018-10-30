@@ -4,14 +4,16 @@
 
 namespace Topologic
 {
-	List<Topology^>^ GlobalCluster::SubTopologies(Topology^ topology)
+
+	List<Topology^>^ GlobalCluster::SubTopologies(bool refresh)
 	{
-		List<Topology^>^ pTopologies = gcnew List<Topology^>();
-		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
+		if (!refresh)
+			return nullptr;
 
 		std::list<std::shared_ptr<TopologicCore::Topology>> coreTopologies;
-		pCoreTopology->GlobalClusterSubTopologies(coreTopologies);
+		TopologicCore::GlobalCluster::GetInstance().SubTopologies(coreTopologies);
 
+		List<Topology^>^ pTopologies = gcnew List<Topology^>();
 		for (std::list<std::shared_ptr<TopologicCore::Topology>>::const_iterator kTopologyIterator = coreTopologies.begin();
 			kTopologyIterator != coreTopologies.end();
 			kTopologyIterator++)

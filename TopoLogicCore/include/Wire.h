@@ -34,9 +34,9 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <param name="rkOcctWire"></param>
-		Wire(const TopoDS_Wire& rkOcctWire, const std::string& rkGuid = "");
+		TOPOLOGIC_API Wire(const TopoDS_Wire& rkOcctWire, const std::string& rkGuid = "");
 
-		virtual ~Wire();
+		TOPOLOGIC_API virtual ~Wire();
 
 		/// <summary>
 		/// 
@@ -76,7 +76,7 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		virtual bool IsManifold() const;
+		TOPOLOGIC_API virtual bool IsManifold() const;
 
 		/// <summary>
 		/// 
@@ -88,45 +88,45 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <param name="rOcctGeometries"></param>
-		virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const;
+		TOPOLOGIC_API virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		virtual TopoDS_Shape& GetOcctShape();
+		TOPOLOGIC_API virtual TopoDS_Shape& GetOcctShape();
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		virtual const TopoDS_Shape& GetOcctShape() const;
+		TOPOLOGIC_API virtual const TopoDS_Shape& GetOcctShape() const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkOcctShape"></param>
-		virtual void SetOcctShape(const TopoDS_Shape& rkOcctShape);
+		TOPOLOGIC_API virtual void SetOcctShape(const TopoDS_Shape& rkOcctShape);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkOcctWire"></param>
-		void SetOcctWire(const TopoDS_Wire& rkOcctWire);
+		TOPOLOGIC_API void SetOcctWire(const TopoDS_Wire& rkOcctWire);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		virtual TopoDS_Wire& GetOcctWire();
+		TOPOLOGIC_API virtual TopoDS_Wire& GetOcctWire();
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		virtual const TopoDS_Wire& GetOcctWire() const;
+		TOPOLOGIC_API virtual const TopoDS_Wire& GetOcctWire() const;
 
-		virtual std::shared_ptr<Vertex> CenterOfMass() const;
+		TOPOLOGIC_API virtual std::shared_ptr<Vertex> CenterOfMass() const;
 
 		virtual TopologyType GetType() const { return TOPOLOGY_WIRE; }
 
@@ -145,7 +145,7 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <param name="rkOcctMakeWire"></param>
-		static void Throw(const BRepBuilderAPI_MakeWire& rkOcctMakeWire);
+		static TOPOLOGIC_API void Throw(const BRepBuilderAPI_MakeWire& rkOcctMakeWire);
 
 		/// <summary>
 		/// The underlying OCCT wire.

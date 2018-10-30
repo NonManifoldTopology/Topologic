@@ -10,10 +10,11 @@
 
 ;--------------------------------
 ;General
+  !define /date MyTIMESTAMP "%Y-%m-%d-%H-%M-%S"
 
   ;Name and file
   Name "Topologic"
-  OutFile "TopologicInstaller.exe"
+  OutFile "TopologicInstaller-${MyTIMESTAMP}.exe"
 
   ;Default installation folder
   InstallDir "$DOCUMENTS\Topologic"
@@ -77,6 +78,7 @@ Section "TopologicDynamo" TopologicDynamo
   SetOutPath "$INSTDIR"
   
   ;ADD YOUR OWN FILES HERE...
+  File ..\output\x64\Release\TopologicExtension.dll
   File ..\output\x64\Release\Topologic.dll
   ;File ..\output\x64\Release\Topologic.customization.dll
   File vc_redist.x64.exe

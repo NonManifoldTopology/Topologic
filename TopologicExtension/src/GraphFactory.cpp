@@ -3,9 +3,9 @@
 
 #include <TopoDS.hxx>
 
-namespace TopologicCore
+namespace TopologicExtension
 {
-	std::shared_ptr<Topology> GraphFactory::Create(const TopoDS_Shape& rkOcctShape)
+	std::shared_ptr<TopologicCore::Topology> GraphFactory::Create(const TopoDS_Shape& rkOcctShape)
 	{
 		return std::make_shared<Graph>(TopoDS::Wire(rkOcctShape));
 	}

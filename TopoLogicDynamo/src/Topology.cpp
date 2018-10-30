@@ -267,7 +267,7 @@ namespace Topologic
 			RegisterFactory(gcnew String(TopologicCore::CellGUID::Get().c_str()), gcnew CellFactory());
 			RegisterFactory(gcnew String(TopologicCore::CellComplexGUID::Get().c_str()), gcnew CellComplexFactory());
 			RegisterFactory(gcnew String(TopologicCore::ClusterGUID::Get().c_str()), gcnew ClusterFactory());
-			RegisterFactory(gcnew String(TopologicCore::GraphGUID::Get().c_str()), gcnew GraphFactory());
+			RegisterFactory(gcnew String(TopologicExtension::GraphGUID::Get().c_str()), gcnew GraphFactory());
 			RegisterFactory(gcnew String(TopologicCore::ApertureGUID::Get().c_str()), gcnew ApertureFactory());
 			areFactoriesAdded = true;
 		}

@@ -2,6 +2,7 @@
 #include "TopologyUtility.h"
 
 #include <TopologicCore/include/Vertex.h>
+#include <TopologicCore/include/GlobalCluster.h>
 
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepGProp.hxx>
@@ -236,7 +237,10 @@ namespace TopologicUtility
 		{
 			TopologicCore::Face::Throw(occtTrimMakeFace);
 		}
-		return std::make_shared<TopologicCore::Face>(TopoDS::Face(occtTrimMakeFace.Shape()));
+		TopologicCore::Face::Ptr pFace = std::make_shared<TopologicCore::Face>(TopoDS::Face(occtTrimMakeFace.Shape()));
+
+		TopologicCore::GlobalCluster::GetInstance().AddTopology(pFace->GetOcctFace());
+		return pFace;
 	}
 
 	void FaceUtility::NormalizeUV(const TopologicCore::Face::Ptr& kpFace, const double kNonNormalizedU, const double kNonNormalizedV, double& rNormalizedU, double& rNormalizedV)

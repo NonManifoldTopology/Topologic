@@ -28,6 +28,12 @@ namespace TopologicUtility
 			throw std::exception("No vertex is passed.");
 		}
 
+		std::vector<TopologicCore::Vertex::Ptr> copyVertices;
+		for (const TopologicCore::Vertex::Ptr& kpVertex : rkVertices)
+		{
+			copyVertices.push_back(std::dynamic_pointer_cast<TopologicCore::Vertex>(kpVertex->Copy()));
+		}
+
 		std::list<TopologicCore::Face::Ptr> faces;
 		for (const std::list<int>& rkVertexIndices : rkFaceIndices)
 		{
@@ -59,7 +65,7 @@ namespace TopologicUtility
 			faces.push_back(std::make_shared<TopologicCore::Face>(occtMakeFace));
 		}
 		TopologicCore::Cell::Ptr pCell = TopologicCore::Cell::ByFaces(faces);
-
+		TopologicCore::GlobalCluster::GetInstance().AddTopology(pCell->GetOcctShape());
 		return pCell;
 	}
 
@@ -78,7 +84,9 @@ namespace TopologicUtility
 		{
 			throw std::exception("Loft error");
 		}
-		return std::make_shared<TopologicCore::Cell>(TopoDS::Solid(occtLoft.Shape()));
+		TopologicCore::Cell::Ptr pCell = std::make_shared<TopologicCore::Cell>(TopoDS::Solid(occtLoft.Shape()));
+		TopologicCore::GlobalCluster::GetInstance().AddTopology(pCell->GetOcctShape());
+		return pCell;
 	}
 
 	TopologicCore::Cell::Ptr CellUtility::ByCuboid(

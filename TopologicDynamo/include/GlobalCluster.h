@@ -13,10 +13,11 @@ namespace Topologic
 	{
 	public:
 		/// <summary>
-		/// Returns all sub-topologies under this topology.
+		/// 
 		/// </summary>
-		/// <returns name="Topology[]">The sub-topologies of the input topology</returns>
-		static List<Topology^>^ SubTopologies(Topology^ topology);
+		/// <param name="refresh"></param>
+		/// <returns></returns>
+		static List<Topology^>^ SubTopologies(bool refresh);
 
 	protected:
 		GlobalCluster() {}

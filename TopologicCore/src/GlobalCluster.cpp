@@ -23,6 +23,11 @@ namespace TopologicCore
 		m_occtBuilder.Remove(m_occtCompound, rkOcctShape);
 	}
 
+	void GlobalCluster::Clear()
+	{
+		m_occtBuilder.MakeCompound(m_occtCompound);
+	}
+
 	const TopoDS_Compound& GlobalCluster::GetOcctCompound() const
 	{
 		return m_occtCompound;

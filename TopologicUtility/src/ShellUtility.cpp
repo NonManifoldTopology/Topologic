@@ -3,6 +3,7 @@
 #include "FaceUtility.h"
 
 #include <TopologicCore/include/Aperture.h>
+#include <TopologicCore/include/GlobalCluster.h>
 
 #include <BRep_Tool.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
@@ -267,6 +268,12 @@ namespace TopologicUtility
 
 	TopologicCore::Shell::Ptr ShellUtility::ByVerticesFaceIndices(const std::vector<TopologicCore::Vertex::Ptr>& rkVertices, const std::list<std::list<int>>& rkFaceIndices)
 	{
+		std::vector<TopologicCore::Vertex::Ptr> copyVertices;
+		for (const TopologicCore::Vertex::Ptr& kpVertex : rkVertices)
+		{
+			copyVertices.push_back(std::dynamic_pointer_cast<TopologicCore::Vertex>(kpVertex->Copy()));
+		}
+
 		std::list<TopologicCore::Face::Ptr> faces;
 		for (const std::list<int>& rkVertexIndices : rkFaceIndices)
 		{
@@ -284,13 +291,13 @@ namespace TopologicUtility
 				int nextVertexIndex = *kNextVertexIterator;
 
 				occtMakeWire.Add(BRepBuilderAPI_MakeEdge(
-					TopoDS::Vertex(rkVertices[vertexIndex]->GetOcctShape()),
-					TopoDS::Vertex(rkVertices[nextVertexIndex]->GetOcctShape())
+					TopoDS::Vertex(copyVertices[vertexIndex]->GetOcctShape()),
+					TopoDS::Vertex(copyVertices[nextVertexIndex]->GetOcctShape())
 				));
 			}
 			occtMakeWire.Add(BRepBuilderAPI_MakeEdge(
-				rkVertices[*--rkVertexIndices.end()]->GetOcctVertex(),
-				rkVertices[*rkVertexIndices.begin()]->GetOcctVertex()
+				copyVertices[*--rkVertexIndices.end()]->GetOcctVertex(),
+				copyVertices[*rkVertexIndices.begin()]->GetOcctVertex()
 			));
 
 			TopoDS_Wire pOcctWire(occtMakeWire);
@@ -299,15 +306,8 @@ namespace TopologicUtility
 		}
 
 		TopologicCore::Shell::Ptr pShell = TopologicCore::Shell::ByFaces(faces);
+		TopologicCore::GlobalCluster::GetInstance().AddTopology(pShell->GetOcctShell());
 
-		// Only add the vertices; the faces are dealt with in ByFaces()
-		/*for (std::vector<Vertex::Ptr>::const_iterator kVertexIterator = rkVertices.begin();
-			kVertexIterator != rkVertices.end();
-			kVertexIterator++)
-		{
-			const Vertex::Ptr& kpVertex = *kVertexIterator;
-			kpVertex->AddIngredientTo(pShell);
-		}*/
 		return pShell;
 	}
 
@@ -1712,7 +1712,9 @@ namespace TopologicUtility
 		{
 			throw std::exception("Loft error");
 		}
-		return std::make_shared<TopologicCore::Shell>(TopoDS::Shell(occtLoft.Shape()));
+		TopologicCore::Shell::Ptr pShell = std::make_shared<TopologicCore::Shell>(TopoDS::Shell(occtLoft.Shape()));
+		TopologicCore::GlobalCluster::GetInstance().AddTopology(pShell->GetOcctShell());
+		return pShell;
 	}
 
 }

@@ -15,7 +15,7 @@ namespace Topologic
 			bool useApertures)
 		{
 			TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(cellComplex->GetCoreTopologicalQuery());
-			TopologicCore::Graph::Ptr pCoreGraph = TopologicCore::Graph::ByCellComplex(
+			TopologicExtension::Graph::Ptr pCoreGraph = TopologicExtension::Graph::ByCellComplex(
 				pCoreCellComplex,
 				useCells,
 				useNonManifoldFaces,

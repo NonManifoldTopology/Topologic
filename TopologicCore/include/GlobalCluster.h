@@ -17,7 +17,7 @@ namespace TopologicCore
 		typedef std::shared_ptr<GlobalCluster> Ptr;
 
 	public:
-		static GlobalCluster& GetInstance()
+		TOPOLOGIC_API static GlobalCluster& GetInstance()
 		{
 			static GlobalCluster instance;
 			return instance;
@@ -26,13 +26,15 @@ namespace TopologicCore
 		TOPOLOGIC_API GlobalCluster();
 		TOPOLOGIC_API ~GlobalCluster();
 
-		void AddTopology(const std::shared_ptr<Topology>& rkTopology);
+		TOPOLOGIC_API void AddTopology(const std::shared_ptr<Topology>& rkTopology);
 
 		TOPOLOGIC_API void AddTopology(const TopoDS_Shape& rkOcctShape);
 
 		void RemoveTopology(const std::shared_ptr<Topology>& rkTopology);
 
 		void RemoveTopology(const TopoDS_Shape& rkOcctShape);
+
+		void Clear();
 
 		const TopoDS_Compound& GetOcctCompound() const;
 

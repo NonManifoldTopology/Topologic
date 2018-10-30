@@ -68,6 +68,8 @@
 
 namespace TopologicCore
 {
+	int Topology::m_numOfTopologies = 0;
+
 	void AddOcctListShapeToAnotherList(const BOPCol_ListOfShape& rkAList, BOPCol_ListOfShape& rAnotherList)
 	{
 		for (BOPCol_ListIteratorOfListOfShape kIterator(rkAList);
@@ -154,6 +156,7 @@ namespace TopologicCore
 	{
 		// If no guid is given, use the default class GUID in TopologicCore classes.
 		InstanceGUIDManager::GetInstance().Add(rkOcctShape, rkGuid);
+		m_numOfTopologies++;
 	}
 
 	void Topology::RegisterFactory(const std::string & rkGuid, const TopologyFactory::Ptr & kpTopologyFactory)
@@ -163,6 +166,7 @@ namespace TopologicCore
 
 	Topology::Ptr Topology::ByOcctShape(const TopoDS_Shape& rkOcctShape, const std::string& rkInstanceGuid)
 	{
+		//TopoDS_Shape occtCopyShape = CopyOcct(rkOcctShape);
 		TopologyFactory::Ptr pTopologyFactory = nullptr;
 		if (rkInstanceGuid.compare("") == 0)
 		{
@@ -173,25 +177,10 @@ namespace TopologicCore
 			TopologyFactoryManager::GetInstance().Find(rkInstanceGuid, pTopologyFactory);
 		}
 		assert(pTopologyFactory != nullptr);
-		return pTopologyFactory->Create(rkOcctShape);
-		//if (rkOcctShape.TShape().IsNull()) 
-		//{
-		//	return nullptr;
-		//}
-		//TopAbs_ShapeEnum occtShapeType = rkOcctShape.ShapeType();
-		//switch (occtShapeType)
-		//{
-		//case TopAbs_COMPOUND: return std::make_shared<Cluster>(TopoDS::Compound(rkOcctShape));// , rkOcctLabel);
-		//case TopAbs_COMPSOLID: return std::make_shared<CellComplex>(TopoDS::CompSolid(rkOcctShape));//, rkOcctLabel);
-		//case TopAbs_SOLID: return std::make_shared<Cell>(TopoDS::Solid(rkOcctShape));
-		//case TopAbs_SHELL: return std::make_shared<Shell>(TopoDS::Shell(rkOcctShape));
-		//case TopAbs_FACE: return std::make_shared<Face>(TopoDS::Face(rkOcctShape));
-		//case TopAbs_WIRE: return std::make_shared<Wire>(TopoDS::Wire(rkOcctShape));
-		//case TopAbs_EDGE: return std::make_shared<Edge>(TopoDS::Edge(rkOcctShape));
-		//case TopAbs_VERTEX: return std::make_shared<Vertex>(TopoDS::Vertex(rkOcctShape));
-		//default:
-		//	throw std::exception("Topology::ByOcctShape: unknown topology.");
-		//}
+		Topology::Ptr pTopology = pTopologyFactory->Create(rkOcctShape);
+
+		//GlobalCluster::GetInstance().AddTopology(pTopology->GetOcctShape());
+		return pTopology;
 	}
 
 	TopoDS_CompSolid Topology::MakeCompSolid(const TopoDS_Shape& rkOcctShape)
@@ -226,7 +215,15 @@ namespace TopologicCore
 
 	Topology::~Topology()
 	{
-
+		m_numOfTopologies--;
+		if (m_numOfTopologies < 0)
+		{
+			m_numOfTopologies = 0;
+		}
+		if (m_numOfTopologies == 0)
+		{
+			GlobalCluster::GetInstance().Clear();
+		}
 	}
 
 	Topology::Ptr Topology::ByGeometry(Handle(Geom_Geometry) pGeometry)
@@ -251,6 +248,12 @@ namespace TopologicCore
 			return;
 		}
 
+		std::vector<Vertex::Ptr> copyVertices;
+		for (const Vertex::Ptr& rkVertex : rkVertices)
+		{
+			copyVertices.push_back(std::dynamic_pointer_cast<Vertex>(rkVertex->Copy()));
+		}
+
 		for (const std::list<int>& rkVertex1DIndices : rkVertexIndices)
 		{
 			if (rkVertex1DIndices.empty())
@@ -259,7 +262,7 @@ namespace TopologicCore
 			std::list<TopoDS_Vertex> occtVertices;
 			for (int vertexIndex : rkVertex1DIndices)
 			{
-				occtVertices.push_back(rkVertices[vertexIndex]->GetOcctVertex());
+				occtVertices.push_back(copyVertices[vertexIndex]->GetOcctVertex());
 			}
 
 			if (occtVertices.size() > 2)
@@ -1088,9 +1091,9 @@ namespace TopologicCore
 
 		BOPCol_ListOfShape occtSubTopologies;
 		SubTopologies(rOcctCellsBuilder.Shape(), occtSubTopologies);
-		TopoDS_Shape queryShape = rOcctCellsBuilder.Shape();
-		//TopoDS_Shape queryShape = Simplify(rOcctCellsBuilder.Shape());
-		//queryShape = MakeBooleanContainers(queryShape);
+		//TopoDS_Shape queryShape = rOcctCellsBuilder.Shape();
+		TopoDS_Shape queryShape = Simplify(rOcctCellsBuilder.Shape());
+		queryShape = MakeBooleanContainers(queryShape);
 
 		Topology::Ptr pBooleanResult = Topology::ByOcctShape(queryShape, "");
 		// queryShape (pBooleanResult) is the member of the Boolean result, it doesn't have any content yet.
@@ -2113,13 +2116,13 @@ namespace TopologicCore
 		return pShapeCopy;
 	}
 
-	/*TopoDS_Shape Topology::CopyOcct() const
+	TopoDS_Shape Topology::CopyOcct(const TopoDS_Shape& rkOcctShape)
 	{
-		BRepBuilderAPI_Copy occtShapeCopy(GetOcctShape());
+		BRepBuilderAPI_Copy occtShapeCopy(rkOcctShape);
 		TopoDS_Shape occtCopyShape = occtShapeCopy.Shape();
 
 		return occtCopyShape;
-	}*/
+	}
 
 	void Topology::ReplaceSubentity(const Topology::Ptr& rkOriginalSubshape, const Topology::Ptr& rkNewSubshape)
 	{

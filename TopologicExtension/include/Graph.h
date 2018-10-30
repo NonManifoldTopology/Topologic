@@ -1,9 +1,10 @@
 ﻿#pragma once
 
-//#include "Utilities.h"
-#include "Wire.h"
+#include "Utilities.h"
 
-namespace TopologicCore
+#include <TopologicCore/include/Wire.h>
+
+namespace TopologicExtension
 {
 	class GraphGUID
 	{
@@ -19,7 +20,7 @@ namespace TopologicCore
 	/// A Graph is a Wire that is defined by the topology of a CellComplex or a Shell. It can be manifold or non-manifold.
 	/// </para>
 	/// </summary>
-	class Graph : public Wire
+	class Graph : public TopologicCore::Wire
 	{
 	public:
 		typedef std::shared_ptr<Graph> Ptr;
@@ -33,14 +34,14 @@ namespace TopologicCore
 
 		virtual ~Graph();
 
-		static TOPOLOGIC_API Graph::Ptr ByCellComplex(
-			const std::shared_ptr<CellComplex>& kpCellComplex,
+		static TOPOLOGIC_EXTENSION_API Graph::Ptr ByCellComplex(
+			const std::shared_ptr<TopologicCore::CellComplex>& kpCellComplex,
 			const bool kUseCells,
 			const bool kUseNonManifoldFaces,
 			const bool kUseManifoldFaces,
 			const bool kUseApertures);
 
-		virtual TopologyType GetType() const { return TOPOLOGY_GRAPH; }
+		virtual TopologicCore::TopologyType GetType() const { return TopologicCore::TOPOLOGY_WIRE; }
 
 		/// <summary>
 		/// 

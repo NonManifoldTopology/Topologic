@@ -55,10 +55,6 @@
     <ClInclude Include="include\TopologyFactoryManager.h">
       <Filter>Factory</Filter>
     </ClInclude>
-    <ClInclude Include="include\Graph.h" />
-    <ClInclude Include="include\GraphFactory.h">
-      <Filter>Factory</Filter>
-    </ClInclude>
     <ClInclude Include="include\GlobalCluster.h" />
   </ItemGroup>
   <ItemGroup>
@@ -109,10 +105,6 @@
       <Filter>Factory</Filter>
     </ClCompile>
     <ClCompile Include="src\TopologyFactoryManager.cpp">
-      <Filter>Factory</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Graph.cpp" />
-    <ClCompile Include="src\GraphFactory.cpp">
       <Filter>Factory</Filter>
     </ClCompile>
     <ClCompile Include="src\GlobalCluster.cpp" />

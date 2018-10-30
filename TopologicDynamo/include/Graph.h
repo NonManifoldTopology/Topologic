@@ -2,7 +2,7 @@
 
 #include <Wire.h>
 
-#include <TopologicCore/include/Graph.h>
+#include <TopologicExtension/include/Graph.h>
 
 namespace Topologic
 {

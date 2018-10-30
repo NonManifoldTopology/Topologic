@@ -33,8 +33,7 @@ namespace TopologicCore
 		TOPOLOGY_CELL = 32,
 		TOPOLOGY_CELLCOMPLEX = 64,
 		TOPOLOGY_CLUSTER = 128,
-		TOPOLOGY_APERTURE = 256,
-		TOPOLOGY_GRAPH = 512
+		TOPOLOGY_APERTURE = 256
 	};
 
 	class Cluster;
@@ -403,11 +402,12 @@ namespace TopologicCore
 		/// <returns></returns>
 		TOPOLOGIC_API Topology::Ptr Copy();
 
-		/*/// <summary>
+		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="rkOcctShape"></param>
 		/// <returns></returns>
-		TopoDS_Shape CopyOcct() const;*/
+		static TopoDS_Shape CopyOcct(const TopoDS_Shape& rkOcctShape);
 
 		/// <summary>
 		/// 
@@ -488,10 +488,10 @@ namespace TopologicCore
 		TOPOLOGIC_API void GlobalClusterSubTopologies(std::list<Topology::Ptr>& rSubTopologies) const;
 #endif
 
+		TOPOLOGIC_API void RegisterFactory(const std::string& rkGuid, const std::shared_ptr<TopologyFactory>& kpTopologyFactory);
+
 	protected:
 		Topology(const int kDimensionality, const TopoDS_Shape& rkOcctShape, const std::string& rkGuid = "");
-
-		void RegisterFactory(const std::string& rkGuid, const std::shared_ptr<TopologyFactory>& kpTopologyFactory);
 
 		/// <summary>
 		/// 
@@ -596,6 +596,7 @@ namespace TopologicCore
 		TopoDS_Shape FixBooleanOperandFace(const TopoDS_Shape& rkOcctShape, BOPCol_DataMapOfShapeShape& rMapFaceToFixedFace);
 
 		int m_dimensionality;
+		static int m_numOfTopologies;
 	};
 
 	template <class Subclass>
