@@ -267,21 +267,21 @@ namespace TopologicCore
 		}
 	}
 
-	Shell::Ptr Cell::OuterBoundary() const
+	Shell::Ptr Cell::ExternalBoundary() const
 	{
 		TopoDS_Shell occtOuterShell = BRepClass3d::OuterShell(TopoDS::Solid(GetOcctShape()));
 		return std::make_shared<Shell>(occtOuterShell);
 	}
 
-	void Cell::InnerBoundaries(std::list<Shell::Ptr>& rShells) const
+	void Cell::InternalBoundaries(std::list<Shell::Ptr>& rShells) const
 	{
-		Shell::Ptr pOuterBoundary = OuterBoundary();
+		Shell::Ptr pExternalBoundary = ExternalBoundary();
 
 		std::list<Shell::Ptr> shells;
 		DownwardNavigation(shells);
 		for (const Shell::Ptr& kpShell : shells)
 		{
-			if (!kpShell->IsSame(pOuterBoundary))
+			if (!kpShell->IsSame(pExternalBoundary))
 			{
 				rShells.push_back(kpShell);
 			}

@@ -97,14 +97,14 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		TOPOLOGIC_API std::shared_ptr<Cell> OuterBoundary() const;
+		TOPOLOGIC_API std::shared_ptr<Cell> ExternalBoundary() const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkInternalFaces"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API void InnerBoundaries(std::list<std::shared_ptr<Face>>& rInternalFaces) const;
+		TOPOLOGIC_API void InternalBoundaries(std::list<std::shared_ptr<Face>>& rInternalFaces) const;
 
 		/// <summary>
 		/// 

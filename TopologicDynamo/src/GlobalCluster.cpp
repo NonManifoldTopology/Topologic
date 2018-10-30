@@ -4,7 +4,6 @@
 
 namespace Topologic
 {
-
 	List<Topology^>^ GlobalCluster::SubTopologies(bool refresh)
 	{
 		if (!refresh)

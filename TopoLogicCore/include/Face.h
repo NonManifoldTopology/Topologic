@@ -204,14 +204,14 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		TOPOLOGIC_API std::shared_ptr<Wire> OuterBoundary() const;
+		TOPOLOGIC_API std::shared_ptr<Wire> ExternalBoundary() const;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="rInnerBoundaries"></param>
+		/// <param name="rInternalBoundaries"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API void InnerBoundaries(std::list<std::shared_ptr<Wire>>& rInnerBoundaries) const;
+		TOPOLOGIC_API void InternalBoundaries(std::list<std::shared_ptr<Wire>>& rInternalBoundaries) const;
 
 		/// <summary>
 		/// 

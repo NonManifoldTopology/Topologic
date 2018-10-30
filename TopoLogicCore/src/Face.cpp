@@ -346,14 +346,14 @@ namespace TopologicCore
 		}
 	}
 
-	Wire::Ptr Face::OuterBoundary() const
+	Wire::Ptr Face::ExternalBoundary() const
 	{
 		TopoDS_Wire occtOuterWire = ShapeAnalysis::OuterWire(GetOcctFace());
 
 		return std::make_shared<Wire>(occtOuterWire);
 	}
 
-	void Face::InnerBoundaries(std::list<Wire::Ptr>& rInnerBoundaries) const
+	void Face::InternalBoundaries(std::list<Wire::Ptr>& rInternalBoundaries) const
 	{
 		const TopoDS_Face& rkFace = GetOcctFace();
 		TopoDS_Wire occtOuterWire = ShapeAnalysis::OuterWire(rkFace);
@@ -366,7 +366,7 @@ namespace TopologicCore
 
 			if (!rkWire.IsSame(occtOuterWire))
 			{
-				rInnerBoundaries.push_back(std::make_shared<Wire>(rkWire));
+				rInternalBoundaries.push_back(std::make_shared<Wire>(rkWire));
 			}
 			occtExplorer.Next();
 		}

@@ -265,14 +265,14 @@ namespace Topologic
 	Shell^ Cell::ExternalBoundary::get()
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
-		return gcnew Shell(pCoreCell->OuterBoundary());
+		return gcnew Shell(pCoreCell->ExternalBoundary());
 	}
 
 	List<Shell^>^ Cell::InternalBoundaries::get()
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Shell::Ptr> coreInnerShells;
-		pCoreCell->InnerBoundaries(coreInnerShells);
+		pCoreCell->InternalBoundaries(coreInnerShells);
 
 		List<Shell^>^ pInnerShells = gcnew List<Shell^>();
 		for (std::list<TopologicCore::Shell::Ptr>::const_iterator kShellIterator = coreInnerShells.begin();

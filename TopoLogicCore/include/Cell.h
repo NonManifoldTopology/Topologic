@@ -128,7 +128,7 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		TOPOLOGIC_API std::shared_ptr<Shell> OuterBoundary() const;
+		TOPOLOGIC_API std::shared_ptr<Shell> ExternalBoundary() const;
 
 
 		/// <summary>
@@ -136,7 +136,7 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="rShells"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API void InnerBoundaries(std::list<std::shared_ptr<Shell>>& rShells) const;
+		TOPOLOGIC_API void InternalBoundaries(std::list<std::shared_ptr<Shell>>& rShells) const;
 
 		/// <summary>
 		/// 

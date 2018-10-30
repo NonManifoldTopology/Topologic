@@ -154,7 +154,7 @@ namespace Topologic
 	Cell^ CellComplex::ExternalBoundary::get()
 	{
 		TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(GetCoreTopologicalQuery());
-		TopologicCore::Cell::Ptr pCoreEnvelope = pCoreCellComplex->OuterBoundary();
+		TopologicCore::Cell::Ptr pCoreEnvelope = pCoreCellComplex->ExternalBoundary();
 		return gcnew Cell(pCoreEnvelope);
 	}
 
@@ -163,7 +163,7 @@ namespace Topologic
 		TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(GetCoreTopologicalQuery());
 
 		std::list<TopologicCore::Face::Ptr> coreInternalFaces;
-		pCoreCellComplex->InnerBoundaries(coreInternalFaces);
+		pCoreCellComplex->InternalBoundaries(coreInternalFaces);
 
 		List<Face^>^ pInternalFaces = gcnew List<Face^>();
 		for (std::list<TopologicCore::Face::Ptr>::const_iterator kInternalFaceIterator = coreInternalFaces.begin();

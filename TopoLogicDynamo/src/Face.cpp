@@ -193,25 +193,25 @@ namespace Topologic
 	Wire^ Face::ExternalBoundary::get()
 	{
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
-		return gcnew Wire(pCoreFace->OuterBoundary());
+		return gcnew Wire(pCoreFace->ExternalBoundary());
 	}
 
 	List<Wire^>^ Face::InternalBoundaries::get()
 	{
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Wire::Ptr> pCoreWires;
-		pCoreFace->InnerBoundaries(pCoreWires);
+		pCoreFace->InternalBoundaries(pCoreWires);
 
-		List<Wire^>^ pInnerBoundaries = gcnew List<Wire^>();
+		List<Wire^>^ pInternalBoundaries = gcnew List<Wire^>();
 		for (std::list<TopologicCore::Wire::Ptr>::const_iterator kWireIterator = pCoreWires.begin();
 			kWireIterator != pCoreWires.end();
 			kWireIterator++)
 		{
 			const TopologicCore::Wire::Ptr& pCoreWire = *kWireIterator;
 			Wire^ pWire = gcnew Wire(pCoreWire);
-			pInnerBoundaries->Add(pWire);
+			pInternalBoundaries->Add(pWire);
 		}
-		return pInnerBoundaries;
+		return pInternalBoundaries;
 	}
 
 	Face^ Face::AddInternalBoundaries(List<Wire^>^ internalBoundaries)

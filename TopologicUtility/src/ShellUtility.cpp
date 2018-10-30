@@ -372,7 +372,7 @@ namespace TopologicUtility
 			}
 
 			TopologicCore::Face::Ptr apertureFace = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Face>(aperture->Topology());
-			TopologicCore::Wire::Ptr apertureWire = apertureFace->OuterBoundary();
+			TopologicCore::Wire::Ptr apertureWire = apertureFace->ExternalBoundary();
 			std::list<TopologicCore::Edge::Ptr> apertureEdges;
 			apertureWire->Edges(apertureEdges);
 
@@ -1010,7 +1010,7 @@ namespace TopologicUtility
 			}
 
 			TopologicCore::Face::Ptr apertureFace = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Face>(aperture->Topology());
-			TopologicCore::Wire::Ptr apertureWire = apertureFace->OuterBoundary();
+			TopologicCore::Wire::Ptr apertureWire = apertureFace->ExternalBoundary();
 			//wires.push_back(apertureWire);
 			std::list<TopologicCore::Edge::Ptr> apertureEdges;
 			apertureWire->Edges(apertureEdges);

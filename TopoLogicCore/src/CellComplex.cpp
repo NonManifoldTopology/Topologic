@@ -189,7 +189,7 @@ namespace TopologicCore
 		return ByCells(cells);
 	}
 
-	Cell::Ptr CellComplex::OuterBoundary() const
+	Cell::Ptr CellComplex::ExternalBoundary() const
 	{
 		BOPCol_ListOfShape occtCellsBuildersArguments;
 		std::list<Cell::Ptr> cells;
@@ -233,14 +233,16 @@ namespace TopologicCore
 
 		for (TopExp_Explorer occtExplorer(occtEnvelopeShape, TopAbs_SOLID); occtExplorer.More(); occtExplorer.Next())
 		{
-			return std::make_shared<Cell>(TopoDS::Solid(occtExplorer.Current()));
+			 Cell::Ptr pCell = std::make_shared<Cell>(TopoDS::Solid(occtExplorer.Current()));
+			 GlobalCluster::GetInstance().AddTopology(pCell->GetOcctShape());
+			 return pCell;
 		}
 		return nullptr;
 	}
 
-	void CellComplex::InnerBoundaries(std::list<Face::Ptr>& rInternalFaces) const
+	void CellComplex::InternalBoundaries(std::list<Face::Ptr>& rInternalFaces) const
 	{
-		Cell::Ptr pEnvelopeCell = OuterBoundary();
+		Cell::Ptr pEnvelopeCell = ExternalBoundary();
 
 		std::list<Face::Ptr> envelopeFaces;
 		pEnvelopeCell->Faces(envelopeFaces);

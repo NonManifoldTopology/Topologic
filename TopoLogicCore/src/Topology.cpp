@@ -1711,7 +1711,7 @@ namespace TopologicCore
 		} else if (occtShapeType == TopAbs_COMPSOLID)
 		{
 			CellComplex::Ptr pCellComplex = Topology::Downcast<CellComplex>(pTopology);
-			pCellComplex->InnerBoundaries(faces);
+			pCellComplex->InternalBoundaries(faces);
 			for (const Face::Ptr& kpInternalFace : faces)
 			{
 				rUnionArguments.Append(kpInternalFace->GetOcctShape());
@@ -1721,7 +1721,7 @@ namespace TopologicCore
 		{
 			Cell::Ptr pCell = Topology::Downcast<Cell>(pTopology);
 			std::list<Shell::Ptr> shells;
-			pCell->InnerBoundaries(shells);
+			pCell->InternalBoundaries(shells);
 			for (const Shell::Ptr& kpInternalShell : shells)
 			{
 				rUnionArguments.Append(kpInternalShell->GetOcctShape());
