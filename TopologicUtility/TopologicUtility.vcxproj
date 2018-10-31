@@ -139,7 +139,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>include/;$(SolutionDir);$(SolutionDir)references\opencascade-7.2.0\inc;$(SolutionDir)references\ShapeOp-0.1.0\include;$(SolutionDir)references\Eigen\include;$(SolutionDir)references\Earcut\include;$(SolutionDir)references\gpc-2.3.3\include;</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>TOPOLOGIC_SUPPORT_EXPORTS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>TOPOLOGIC_SUPPORT_EXPORTS;_WINDLL;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>

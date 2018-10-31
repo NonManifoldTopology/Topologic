@@ -106,9 +106,10 @@ namespace Topologic
 				throw gcnew Exception("The geometry is a surface by type but no surface is detected.");
 			}else if (numOfSurfaces > 1)
 			{
-				Shell^ shell = Shell::ByPolySurface(dynamoPolySurface);
+				// This can be a shell or a cluster, so call Topology::ByPolySurface.
+				Topology^ topology = Topology::ByPolySurface(dynamoPolySurface);
 				delete dynamoPolySurface;
-				return shell;
+				return topology;
 			}
 
 			return Face::BySurface(dynamoSurface);
@@ -161,6 +162,36 @@ namespace Topologic
 			pTopologies->Add(Topology::ByCoreTopology(kpCoreTopology));
 		}
 		return pTopologies;
+	}
+
+	Topology ^ Topology::ByPolySurface(Autodesk::DesignScript::Geometry::PolySurface ^ polySurface)
+	{
+		List<Face^>^ pFaces = gcnew List<Face^>();
+		for each(Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface in polySurface->Surfaces())
+		{
+			pFaces->Add(Face::BySurface(pDynamoSurface));
+		}
+		return ByFaces(pFaces);
+	}
+
+	Topology^ Topology::ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces)
+	{
+		std::list<TopologicCore::Face::Ptr> coreFaces;
+		for each(Face^ pFace in faces)
+		{
+			coreFaces.push_back(TopologicCore::Topology::Downcast<TopologicCore::Face>(pFace->GetCoreTopologicalQuery()));
+		}
+
+		TopologicCore::Topology::Ptr pCoreTopology = nullptr;
+		try {
+			pCoreTopology = TopologicCore::Topology::ByFaces(coreFaces);
+		}
+		catch (const std::exception& rkException)
+		{
+			throw gcnew Exception(gcnew String(rkException.what()));
+		}
+
+		return Topology::ByCoreTopology(pCoreTopology);
 	}
 
 	bool Topology::ExportToBRep(String^ path)

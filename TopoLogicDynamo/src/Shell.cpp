@@ -119,16 +119,6 @@ namespace Topologic
 		return gcnew Shell(pCoreShell);
 	}
 
-	Shell^ Shell::ByPolySurface(Autodesk::DesignScript::Geometry::PolySurface^ polySurface)
-	{
-		List<Face^>^ pFaces = gcnew List<Face^>();
-		for each(Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface in polySurface->Surfaces())
-		{
-			pFaces->Add(Face::BySurface(pDynamoSurface));
-		}
-		return ByFaces(pFaces);
-	}
-
 	bool Shell::IsClosed::get()
 	{
 		TopologicCore::Shell::Ptr pCoreShell = TopologicCore::Topology::Downcast<TopologicCore::Shell>(GetCoreTopologicalQuery());

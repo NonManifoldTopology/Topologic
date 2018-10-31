@@ -147,7 +147,7 @@ copy "$(SolutionDir)references\ShapeOp-0.1.0\bin\$(Platform)\$(Configuration)\*.
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>include/;$(SolutionDir)references\opencascade-7.2.0\inc;</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>TOPOLOGIC_EXPORTS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>TOPOLOGIC_EXPORTS;_WINDLL;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>

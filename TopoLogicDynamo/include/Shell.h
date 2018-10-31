@@ -98,13 +98,6 @@ namespace Topologic
 		/// <returns></returns>
 		virtual std::shared_ptr<TopologicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
 
-		/// <summary>
-		/// Create a shell by a polySurface. NOTE: This node will be replaced by a single Topology.ByGeometry() node.
-		/// </summary>
-		/// <param name="polySurface">A Dynamo polySurface</param>
-		/// <returns name="Shell">The created shell</returns>
-		static Shell^ ByPolySurface(Autodesk::DesignScript::Geometry::PolySurface^ polySurface);
-
 	protected:
 		virtual ~Shell();
 

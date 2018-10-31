@@ -97,6 +97,13 @@ namespace TopologicCore
 		/// <returns></returns>
 		static TOPOLOGIC_API void ByVertexIndex(const std::vector<std::shared_ptr<Vertex>>& rkVertices, const std::list<std::list<int>>& rkVertexIndices, std::list<Topology::Ptr>& rTopologies);
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkFaces"></param>
+		/// <returns></returns>
+		static TOPOLOGIC_API std::shared_ptr<Topology> ByFaces(const std::list<std::shared_ptr<Face>>& rkFaces);
+
 		void AddContent(const Topology::Ptr& rkTopology, const bool kUseClosestSimplestSubshape, Topology::Ptr& rClosestSimplestSubshape);
 
 		/// <summary>
@@ -144,6 +151,13 @@ namespace TopologicCore
 		/// <param name="kMaxPaths"></param>
 		/// <param name="rkPaths"></param>
 		TOPOLOGIC_API void PathsTo(const Topology::Ptr& kpTopology, const Topology::Ptr& kpParentTopology, const int kMaxLevels, const int kMaxPaths, std::list<std::list<std::shared_ptr<TopologicalQuery>>>& rkPaths) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkOcctFaces"></param>
+		/// <returns></returns>
+		static TopoDS_Shape OcctSewFaces(const TopTools_ListOfShape& rkOcctFaces);
 
 		/// <summary>
 		/// 

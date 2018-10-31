@@ -13,7 +13,6 @@
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
-#include <BRepBuilderAPI_Sewing.hxx>
 #include <BRepCheck_Shell.hxx>
 #include <BRepGProp.hxx>
 #include <BRepOffsetAPI_ThruSections.hxx>
@@ -82,68 +81,17 @@ namespace TopologicCore
 			occtShapes.Append(pCopyFace->GetOcctShape());
 		}
 
-		TopoDS_Shell occtShell = ByOcctFaces(occtShapes);
-		Shell::Ptr pShell = std::make_shared<Shell>(TopoDS::Shell(occtShell));
-		GlobalCluster::GetInstance().AddTopology(pShell->GetOcctShell());
-		return pShell;
-	}
-
-	TopoDS_Shell Shell::ByOcctFaces(const TopTools_ListOfShape & rkOcctFaces)
-	{
-		BRepBuilderAPI_Sewing occtSewing;
-		for (TopTools_ListIteratorOfListOfShape occtEdgeIterator(rkOcctFaces);
-			occtEdgeIterator.More();
-			occtEdgeIterator.Next())
-		{
-			occtSewing.Add(occtEdgeIterator.Value());
+		TopoDS_Shape occtShape = OcctSewFaces(occtShapes);
+		try{
+			TopoDS_Shell occtShell = TopoDS::Shell(occtShape);
+			Shell::Ptr pShell = std::make_shared<Shell>(occtShell);
+			GlobalCluster::GetInstance().AddTopology(pShell->GetOcctShell());
+			return pShell;
 		}
-
-		occtSewing.Perform();
-		if (occtSewing.SewedShape().IsNull())
+		catch (Standard_TypeMismatch)
 		{
-			throw std::exception("A null shape is created.");
+			throw std::exception("The set of faces does not create a valid shell.");
 		}
-		TopAbs_ShapeEnum type = occtSewing.SewedShape().ShapeType();
-		if (type != TopAbs_SHELL)
-		{
-			throw std::exception("Fails to create a shell from faces.");
-		}
-		//Shell::Ptr pShell = std::make_shared<Shell>(TopoDS::Shell(occtSewing.SewedShape()));
-
-		// HACK: add the v1 contents to the current shell faces.
-		//Topology::Ptr pUpcastShell = TopologicalQuery::Upcast<Topology>(pShell);
-		
-		for (TopTools_ListIteratorOfListOfShape occtEdgeIterator(rkOcctFaces);
-			occtEdgeIterator.More();
-			occtEdgeIterator.Next())
-		{
-			const TopoDS_Shape& rkModifiedShape = occtSewing.Modified(occtEdgeIterator.Value());
-			Topology::Ptr pChildTopology = Topology::ByOcctShape(rkModifiedShape, "");
-
-			// Map the aperture to the modifed shell faces.
-			std::list<Topology::Ptr> contents;
-			ContentManager::GetInstance().Find(occtEdgeIterator.Value(), contents);
-			//kShellFace->Contents(false, contents);
-			for (const Topology::Ptr& rkContent : contents)
-			{
-				if (rkContent->GetType() != TOPOLOGY_APERTURE)
-				{
-					continue;
-				}
-
-				std::shared_ptr<Aperture> aperture = TopologicalQuery::Downcast<Aperture>(rkContent);
-
-				if (aperture->Topology()->GetType() != TOPOLOGY_FACE)
-				{
-					continue;
-				}
-
-				Face::Ptr pApertureFace = TopologicalQuery::Downcast<Face>(aperture->Topology());
-				Topology::Ptr pUpcastApertureFace = TopologicalQuery::Upcast<Topology>(pApertureFace);
-			}
-		}
-
-		return TopoDS::Shell(occtSewing.SewedShape());
 	}
 
 	bool Shell::IsManifold() const

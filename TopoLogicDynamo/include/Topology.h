@@ -13,6 +13,7 @@ using namespace Autodesk::DesignScript::Runtime;
 
 namespace Topologic
 {
+	ref class Face;
 	ref class Vertex;
 	ref class Context;
 	ref class TopologyFactory;
@@ -37,6 +38,20 @@ namespace Topologic
 		/// <param name="vertexIndices"></param>
 		/// <returns name="Topology[]"></returns>
 		static List<Topology^>^ ByVerticesIndices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::List<int>^>^ vertexIndices);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="polySurface"></param>
+		/// <returns></returns>
+		static Topology^ ByPolySurface(Autodesk::DesignScript::Geometry::PolySurface^ polySurface);
+
+		/// <summary>
+		/// Create a shell or a cluster by a set of connected faces.
+		/// </summary>
+		/// <param name="faces">A set of faces.</param>
+		/// <returns name="Topology">The created topology</returns>
+		static Topology^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces);
 
 		/// <summary>
 		/// Returns the dimensionality of the topological entity.

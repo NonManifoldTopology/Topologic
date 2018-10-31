@@ -122,7 +122,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>include/;$(SolutionDir);$(SolutionDir)references\opencascade-7.2.0\inc;</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>TOPOLOGIC_EXTENSION_EXPORTS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>TOPOLOGIC_EXTENSION_EXPORTS;_MBCS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

@@ -85,8 +85,6 @@ namespace TopologicCore
 		/// <returns></returns>
 		static TOPOLOGIC_API std::shared_ptr<Shell> ByFaces(const std::list<std::shared_ptr<Face>>& rkFaces);
 
-		static TopoDS_Shell ByOcctFaces(const TopTools_ListOfShape& rkOcctFaces);
-
 		/// <summary>
 		/// 
 		/// </summary>

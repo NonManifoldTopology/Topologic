@@ -1,21 +1,23 @@
-#include <Topology.h>
-#include <Cluster.h>
-#include <CellComplex.h>
-#include <Cell.h>
-#include <Shell.h>
-#include <Face.h>
-#include <Wire.h>
-#include <Edge.h>
-#include <Vertex.h>
-#include <Context.h>
-#include <ContentManager.h>
-#include <ContextManager.h>
-#include <InstanceGUIDManager.h>
-#include <TopologyFactory.h>
-#include <TopologyFactoryManager.h>
+#include "Topology.h"
+#include "Cluster.h"
+#include "CellComplex.h"
+#include "Cell.h"
+#include "Shell.h"
+#include "Face.h"
+#include "Wire.h"
+#include "Edge.h"
+#include "Vertex.h"
+#include "Aperture.h"
+#include "Context.h"
+#include "ContentManager.h"
+#include "ContextManager.h"
+#include "InstanceGUIDManager.h"
+#include "TopologyFactory.h"
+#include "TopologyFactoryManager.h"
 #include "GlobalCluster.h"
 
 #include <ShapeFix_ShapeTolerance.hxx>
+#include <BRepBuilderAPI_Sewing.hxx>
 
 #include <TopoDS_Vertex.hxx>
 #include <TopoDS_Edge.hxx>
@@ -339,6 +341,26 @@ namespace TopologicCore
 		}
 	}
 
+	std::shared_ptr<Topology> Topology::ByFaces(const std::list<std::shared_ptr<Face>>& rkFaces)
+	{
+		if (rkFaces.empty())
+		{
+			throw std::exception("No face is passed.");
+		}
+
+		TopTools_ListOfShape occtShapes;
+		for (const Face::Ptr& kpFace : rkFaces)
+		{
+			Face::Ptr pCopyFace = std::dynamic_pointer_cast<Face>(kpFace->Copy());
+			occtShapes.Append(pCopyFace->GetOcctShape());
+		}
+
+		TopoDS_Shape occtShape = OcctSewFaces(occtShapes);
+		Topology::Ptr pTopology = Topology::ByOcctShape(occtShape, "");
+		GlobalCluster::GetInstance().AddTopology(pTopology->GetOcctShape());
+		return pTopology;
+	}
+
 	void Topology::AddContent(const Topology::Ptr & rkTopology, const bool kUseClosestSimplestSubshape, Topology::Ptr& rClosestSimplestSubshape)
 	{
 		if(kUseClosestSimplestSubshape)
@@ -418,6 +440,56 @@ namespace TopologicCore
 		//		if()
 		//	}
 		//}
+	}
+
+	TopoDS_Shape Topology::OcctSewFaces(const TopTools_ListOfShape & rkOcctFaces)
+	{
+		BRepBuilderAPI_Sewing occtSewing;
+		for (TopTools_ListIteratorOfListOfShape occtEdgeIterator(rkOcctFaces);
+			occtEdgeIterator.More();
+			occtEdgeIterator.Next())
+		{
+			occtSewing.Add(occtEdgeIterator.Value());
+		}
+
+		occtSewing.Perform();
+		if (occtSewing.SewedShape().IsNull())
+		{
+			throw std::exception("A null shape is created.");
+		}
+		TopAbs_ShapeEnum type = occtSewing.SewedShape().ShapeType();
+
+		for (TopTools_ListIteratorOfListOfShape occtEdgeIterator(rkOcctFaces);
+			occtEdgeIterator.More();
+			occtEdgeIterator.Next())
+		{
+			const TopoDS_Shape& rkModifiedShape = occtSewing.Modified(occtEdgeIterator.Value());
+			Topology::Ptr pChildTopology = Topology::ByOcctShape(rkModifiedShape, "");
+
+			// Map the aperture to the modifed shell faces.
+			std::list<Topology::Ptr> contents;
+			ContentManager::GetInstance().Find(occtEdgeIterator.Value(), contents);
+			//kShellFace->Contents(false, contents);
+			for (const Topology::Ptr& rkContent : contents)
+			{
+				if (rkContent->GetType() != TOPOLOGY_APERTURE)
+				{
+					continue;
+				}
+
+				std::shared_ptr<Aperture> aperture = TopologicalQuery::Downcast<Aperture>(rkContent);
+
+				if (aperture->Topology()->GetType() != TOPOLOGY_FACE)
+				{
+					continue;
+				}
+
+				Face::Ptr pApertureFace = TopologicalQuery::Downcast<Face>(aperture->Topology());
+				Topology::Ptr pUpcastApertureFace = TopologicalQuery::Upcast<Topology>(pApertureFace);
+			}
+		}
+
+		return occtSewing.SewedShape();
 	}
 
 	void Topology::Contents(const bool kAllLevels, std::list<Topology::Ptr>& rContents) const
@@ -632,10 +704,10 @@ namespace TopologicCore
 			return Wire::ByOcctEdges(occtSubTopologies);
 		}
 
-		// If all are faces, create a shell
+		// If all are faces, use OcctSewFaces 
 		if (type == TOPOLOGY_FACE)
 		{
-			return Shell::ByOcctFaces(occtSubTopologies);
+			return OcctSewFaces(occtSubTopologies);
 		}
 
 		// If all are cells, create a cellcomplex
