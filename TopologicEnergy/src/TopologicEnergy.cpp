@@ -2,6 +2,8 @@
 #include <Model.h>
 #include <SimulationResult.h>
 
+//#include <TopologicDynamo/include/EdgeUtility.h>
+
 using namespace System::Diagnostics;
 using namespace System::IO;
 using namespace System::Linq;
@@ -38,6 +40,7 @@ namespace TopologicEnergy
 		numOfAppliedApertures = 0;
 		subsurfaceCounter = 1;
 		CellComplex^ buildingCopy = building->Copy<CellComplex^>();
+		//CellComplex^ buildingCopy = building;
 
 		// Create an OpenStudio model from the template, EPW, and DDY
 		OpenStudio::Model^ osModel = GetModelFromTemplate(openStudioTemplatePath, weatherFilePath, designDayFilePath);
@@ -500,7 +503,7 @@ namespace TopologicEnergy
 		// 2. For each wires, iterate through the edges, sample points, and map them to the 
 		for each(Wire^ pApertureWire in pApertureWires)
 		{
-			List<Edge^>^ pApertureEdges = pApertureWire->Edges_(true);
+			List<Edge^>^ pApertureEdges = pApertureWire->Edges();
 			List<Edge^>^ pMappedApertureEdges = gcnew List<Edge^>();
 
 			for each(Edge^ pApertureEdge in pApertureEdges)
@@ -519,10 +522,10 @@ namespace TopologicEnergy
 					}
 
 					// Find the actual point on the edge
-					Vertex^ pSampleVertex = pApertureEdge->VertexAtParameter(t);
+					Vertex^ pSampleVertex = Topologic::Utility::EdgeUtility::VertexAtParameter(pApertureEdge, t);
 
 					// Find the UV-coordinate of the point on the aperture design
-					Autodesk::DesignScript::Geometry::UV^ pUV = apertureDesign->UVParameterAtVertex(pSampleVertex);
+					Autodesk::DesignScript::Geometry::UV^ pUV = Topologic::Utility::FaceUtility::UVParameterAtVertex(apertureDesign, pSampleVertex);
 					double checkedU = pUV->U, checkedV = pUV->V;
 					if (checkedU < 0.0)
 					{
@@ -542,15 +545,15 @@ namespace TopologicEnergy
 						checkedV = 1.0;
 					}
 
-					pUV = Autodesk::DesignScript::Geometry::UV::ByCoordinates(checkedU, checkedV);
-
 					// Find the point with the same UV-coordinate on the surface, add it to the list
-					Vertex^ pMappedSampleVertex = face->VertexAtParameter(pUV);
+					Vertex^ pMappedSampleVertex = Topologic::Utility::FaceUtility::VertexAtParameter(face, checkedU, checkedV);
 					pMappedSampleVertices->Add(pMappedSampleVertex);
+
+					delete pUV;
 				}
 
 				// Interpolate the mapped vertices to an edge.
-				Edge^ pMappedApertureEdge = Edge::ByVertices(pMappedSampleVertices);
+				Edge^ pMappedApertureEdge = Topologic::Utility::EdgeUtility::ByVertices(pMappedSampleVertices);
 				pMappedApertureEdges->Add(pMappedApertureEdge);
 			}
 
@@ -558,7 +561,7 @@ namespace TopologicEnergy
 			Wire^ pMappedApertureWire = Wire::ByEdges(pMappedApertureEdges);
 
 			//// Use the wire to make a face on the same supporting surface as the input face's
-			Face^ pMappedApertureFace = face->TrimByWire_(pMappedApertureWire);
+			Face^ pMappedApertureFace = Topologic::Utility::FaceUtility::TrimByWire(face, pMappedApertureWire);
 			pFaces->Add(pMappedApertureFace);
 
 			// and attach it as an aperture to the face.
@@ -753,7 +756,7 @@ namespace TopologicEnergy
 		double y = pSurfaceNormal->y();
 		double z = pSurfaceNormal->z();*/
 
-		int adjCount = AdjacentCellCount(buildingFace, cellComplex);
+		int adjCount = AdjacentCellCount(buildingFace);
 
 		if ((faceType == FACE_ROOFCEILING) && (adjCount > 1))
 		{
@@ -940,13 +943,13 @@ namespace TopologicEnergy
 						continue;
 					}
 					// skip small triangles
-					double area = pFaceAperture->Area();
+					double area = Topologic::Utility::FaceUtility::Area(pFaceAperture);
 					if (area <= 0.1)
 					{
 						continue;
 					}
 					Wire^ pApertureWire = pFaceAperture->ExternalBoundary;
-					List<Vertex^>^ pApertureVertices = pApertureWire->Vertices_(true);
+					List<Vertex^>^ pApertureVertices = pApertureWire->Vertices();
 					//pApertureVertices->Reverse();
 					OpenStudio::Point3dVector^ osWindowFacePoints = gcnew OpenStudio::Point3dVector();
 					for each(Vertex^ pApertureVertex in pApertureVertices)
@@ -1003,7 +1006,7 @@ namespace TopologicEnergy
 			safe_cast<Autodesk::DesignScript::Geometry::Point^>(faceCentre->Geometry);
 
 		Wire^ pApertureWire = buildingFace->ExternalBoundary;
-		List<Vertex^>^ vertices = pApertureWire->Vertices_(true);
+		List<Vertex^>^ vertices = pApertureWire->Vertices();
 		vertices->Reverse();
 
 		double sqrtScaleFactor = Math::Sqrt(scaleFactor);
@@ -1014,7 +1017,7 @@ namespace TopologicEnergy
 			Autodesk::DesignScript::Geometry::Point^ scaledVertex = originalPoint->Subtract(faceCenterPoint->AsVector());
 			scaledVertex = safe_cast<Autodesk::DesignScript::Geometry::Point^>(scaledVertex->Scale(sqrtScaleFactor));
 			scaledVertex = scaledVertex->Add(faceCenterPoint->AsVector());
-			scaledVertices->Add(Vertex::ByPoint_(scaledVertex));
+			scaledVertices->Add(safe_cast<Vertex^>(Topology::ByGeometry(scaledVertex)));
 		}
 		return scaledVertices;
 	}
@@ -1036,13 +1039,13 @@ namespace TopologicEnergy
 				safe_cast<Autodesk::DesignScript::Geometry::Point^>(v->Geometry);
 			sumPoint = sumPoint->Add(p->AsVector());
 		}
-		return Vertex::ByPoint_(safe_cast<Autodesk::DesignScript::Geometry::Point^>(sumPoint->Scale(1.0 / (double)vertices->Count)));
+		return safe_cast<Vertex^>(Topology::ByGeometry(safe_cast<Autodesk::DesignScript::Geometry::Point^>(sumPoint->Scale(1.0 / (double)vertices->Count))));
 	}
 
 	OpenStudio::Point3dVector^ TopologicEnergy::GetFacePoints(Face^ buildingFace)
 	{
 		Wire^ buildingOuterWire = buildingFace->ExternalBoundary;
-		List<Vertex^>^ vertices = buildingOuterWire->Vertices_(true);
+		List<Vertex^>^ vertices = buildingOuterWire->Vertices();
 		// HACK
 		vertices->Reverse();
 		OpenStudio::Point3dVector^ osFacePoints = gcnew OpenStudio::Point3dVector();
@@ -1104,11 +1107,11 @@ namespace TopologicEnergy
 		Autodesk::DesignScript::Geometry::Point^ pDynamoOffsetPoint =
 			dynamic_cast<Autodesk::DesignScript::Geometry::Point^>(centerPoint->Translate(faceNormal->Scale(0.001)));
 
-		Vertex^ pOffsetVertex = Vertex::ByPoint_(pDynamoOffsetPoint);
+		Vertex^ pOffsetVertex = safe_cast<Vertex^>(Topology::ByGeometry(pDynamoOffsetPoint));
 
 		if (faceAngle < 5.0 || faceAngle > 175.0)
 		{
-			bool isInside = buildingSpace->Contains(pOffsetVertex);
+			bool isInside = Topologic::Utility::CellUtility::Contains(buildingSpace, pOffsetVertex);
 			// The offset vertex has to be false, so if isInside is true, reverse the face.
 
 			if (isInside)
@@ -1130,15 +1133,15 @@ namespace TopologicEnergy
 		return faceType;
 	}
 
-	int TopologicEnergy::AdjacentCellCount(Face^ buildingFace, CellComplex^ cellComplex)
+	int TopologicEnergy::AdjacentCellCount(Face^ buildingFace)
 	{
-		return buildingFace->Cells_(cellComplex)->Count;
+		return buildingFace->Cells->Count;
 	}
 
 	int TopologicEnergy::StoryNumber(Cell^ buildingCell, double buildingHeight, List<double>^ floorLevels)
 	{
-		double volume = buildingCell->Volume();
-		Vertex^ centreOfMass = buildingCell->CenterOfMass();
+		double volume = Utility::CellUtility::Volume(buildingCell);
+		Vertex^ centreOfMass = Utility::TopologyUtility::CenterOfMass(buildingCell);
 		Autodesk::DesignScript::Geometry::Point^ centrePoint =
 			safe_cast<Autodesk::DesignScript::Geometry::Point^>(centreOfMass->Geometry);
 		for (int i = 0; i < floorLevels->Count - 1; ++i)

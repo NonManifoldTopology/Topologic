@@ -55,6 +55,11 @@ namespace Topologic
 		return *m_pCoreVertex;
 	}
 
+	int Vertex::Type()
+	{
+		return TopologicCore::Vertex::Type();
+	}
+
 	Vertex::Vertex(const TopologicCore::Vertex::Ptr& kpCoreVertex)
 		: Topology()
 		, m_pCoreVertex(kpCoreVertex != nullptr? new TopologicCore::Vertex::Ptr(kpCoreVertex) : throw gcnew Exception("A null vertex was created."))
@@ -70,7 +75,7 @@ namespace Topologic
 
 	Vertex::~Vertex()
 	{
-		//delete m_pCoreVertex;
+		delete m_pCoreVertex;
 	}
 
 	Object^ Vertex::Geometry::get()

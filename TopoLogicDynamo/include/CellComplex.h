@@ -121,6 +121,8 @@ namespace Topologic
 			virtual Object^ get() override;
 		}
 
+		static int Type();
+
 	public protected:
 		/// <summary>
 		/// 

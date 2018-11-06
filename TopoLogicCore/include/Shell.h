@@ -150,6 +150,8 @@ namespace TopologicCore
 			return ShellGUID::Get();
 		}
 
+		static TOPOLOGIC_API int Type() { return TopologicCore::TOPOLOGY_SHELL; }
+
 	protected:
 		/// <summary>
 		/// The underlying OCCT shell.

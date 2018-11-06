@@ -207,6 +207,11 @@ namespace Topologic
 		return pObjects;
 	}
 
+	int CellComplex::Type()
+	{
+		return TopologicCore::CellComplex::Type();
+	}
+
 	CellComplex::CellComplex(const TopologicCore::CellComplex::Ptr& kpCoreCellComplex)
 		: Topology()
 		, m_pCoreCellComplex(kpCoreCellComplex != nullptr ? new TopologicCore::CellComplex::Ptr(kpCoreCellComplex) : throw gcnew Exception("A null cellComplex was created."))
@@ -227,6 +232,6 @@ namespace Topologic
 
 	CellComplex::~CellComplex()
 	{
-		//delete m_pCoreCellComplex;
+		delete m_pCoreCellComplex;
 	}
 }

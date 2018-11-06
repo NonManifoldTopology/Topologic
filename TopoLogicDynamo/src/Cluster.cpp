@@ -67,6 +67,11 @@ namespace Topologic
 		return pTopologies;
 	}
 
+	int Cluster::Type()
+	{
+		return TopologicCore::Cluster::Type();
+	}
+
 	Cluster::Cluster(const TopologicCore::Cluster::Ptr& kpCoreCluster)
 		: Topology()
 		, m_pCoreCluster(kpCoreCluster != nullptr ? new TopologicCore::Cluster::Ptr(kpCoreCluster) : throw gcnew Exception("A null cluster was created."))
@@ -94,7 +99,7 @@ namespace Topologic
 
 	Cluster::~Cluster()
 	{
-		//delete m_pCoreCluster;
+		delete m_pCoreCluster;
 	}
 
 

@@ -139,7 +139,7 @@ namespace TopologicEnergy
 
 		static FaceType CalculateFaceType(Face^ buildingFace, OpenStudio::Point3dVector^% facePoints, Cell^ buildingSpace, Autodesk::DesignScript::Geometry::Vector^ upVector);
 
-		static int AdjacentCellCount(Face^ buildingFace, CellComplex^ cellComplex);
+		static int AdjacentCellCount(Face^ buildingFace);
 
 		static int StoryNumber(
 			Cell^ buildingCell,

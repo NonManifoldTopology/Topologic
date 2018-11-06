@@ -198,25 +198,6 @@ namespace Topologic
 		}
 	}
 
-	//double Edge::ParameterAtVertex(Vertex^ vertex)
-	//{
-	//	TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
-	//	try{
-	//		return pCoreEdge->ParameterAtPoint(TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex->GetCoreTopologicalQuery()));
-	//	}
-	//	catch (const std::exception& rkException)
-	//	{
-	//		throw gcnew Exception(gcnew String(rkException.what()));
-	//	}
-	//}
-
-	//Vertex^ Edge::VertexAtParameter(double parameter)
-	//{
-	//	TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
-	//	TopologicCore::Vertex::Ptr pCoreVertex = pCoreEdge->PointAtParameter(parameter);
-	//	return gcnew Vertex(pCoreVertex);
-	//}
-
 	Object^ Edge::Geometry::get()
 	{
 		return Curve();
@@ -398,6 +379,11 @@ namespace Topologic
 		return *m_pCoreEdge;
 	}
 
+	int Edge::Type()
+	{
+		return TopologicCore::Edge::Type();
+	}
+
 	Edge::Edge(const TopologicCore::Edge::Ptr& kpCoreEdge)
 		: Topology()
 		, m_pCoreEdge(kpCoreEdge != nullptr? new TopologicCore::Edge::Ptr(kpCoreEdge) : throw gcnew Exception("A null edge was created."))
@@ -407,7 +393,7 @@ namespace Topologic
 
 	Edge::~Edge()
 	{
-		//delete m_pCoreEdge;
+		delete m_pCoreEdge;
 	}
 
 	Edge^ Edge::ByCurve(Autodesk::DesignScript::Geometry::NurbsCurve^ pDynamoNurbsCurve)

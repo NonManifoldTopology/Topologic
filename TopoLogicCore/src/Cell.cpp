@@ -147,32 +147,18 @@ namespace TopologicCore
 	void Cell::SharedEdges(const Cell::Ptr& kpAnotherCell, std::list<Edge::Ptr>& rEdges) const
 	{
 		const TopoDS_Shape& rkOcctShape1 = GetOcctShape();
-		TopTools_ListOfShape occtEdges1;
-		for (TopExp_Explorer occtExplorer(rkOcctShape1, TopAbs_EDGE); occtExplorer.More(); occtExplorer.Next())
-		{
-			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-			if (!occtEdges1.Contains(occtCurrent))
-			{
-				occtEdges1.Append(occtCurrent);
-			}
-		}
+		TopTools_MapOfShape occtEdges1;
+		DownwardNavigation(rkOcctShape1, TopAbs_EDGE, occtEdges1);
 
 		const TopoDS_Shape& rkOcctShape2 = kpAnotherCell->GetOcctShape();
-		TopTools_ListOfShape occtEdges2;
-		for (TopExp_Explorer occtExplorer(rkOcctShape2, TopAbs_EDGE); occtExplorer.More(); occtExplorer.Next())
-		{
-			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-			if (!occtEdges2.Contains(occtCurrent))
-			{
-				occtEdges2.Append(occtCurrent);
-			}
-		}
+		TopTools_MapOfShape occtEdges2;
+		DownwardNavigation(rkOcctShape2, TopAbs_EDGE, occtEdges2);
 
-		for (TopTools_ListIteratorOfListOfShape occtEdgeIterator1(occtEdges1);
+		for (TopTools_MapIteratorOfMapOfShape occtEdgeIterator1(occtEdges1);
 			occtEdgeIterator1.More();
 			occtEdgeIterator1.Next())
 		{
-			for (TopTools_ListIteratorOfListOfShape occtEdgeIterator2(occtEdges2);
+			for (TopTools_MapIteratorOfMapOfShape occtEdgeIterator2(occtEdges2);
 				occtEdgeIterator2.More();
 				occtEdgeIterator2.Next())
 			{
@@ -188,32 +174,18 @@ namespace TopologicCore
 	void Cell::SharedFaces(const Cell::Ptr& kpAnotherCell, std::list<Face::Ptr>& rFaces) const
 	{
 		const TopoDS_Shape& rkOcctShape1 = GetOcctShape();
-		TopTools_ListOfShape occtFaces1;
-		for (TopExp_Explorer occtExplorer(rkOcctShape1, TopAbs_FACE); occtExplorer.More(); occtExplorer.Next())
-		{
-			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-			if (!occtFaces1.Contains(occtCurrent))
-			{
-				occtFaces1.Append(occtCurrent);
-			}
-		}
+		TopTools_MapOfShape occtFaces1;
+		DownwardNavigation(rkOcctShape1, TopAbs_FACE, occtFaces1);
 
 		const TopoDS_Shape& rkOcctShape2 = kpAnotherCell->GetOcctShape();
-		TopTools_ListOfShape occtFaces2;
-		for (TopExp_Explorer occtExplorer(rkOcctShape2, TopAbs_FACE); occtExplorer.More(); occtExplorer.Next())
-		{
-			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-			if (!occtFaces2.Contains(occtCurrent))
-			{
-				occtFaces2.Append(occtCurrent);
-			}
-		}
+		TopTools_MapOfShape occtFaces2;
+		DownwardNavigation(rkOcctShape2, TopAbs_VERTEX, occtFaces2);
 
-		for (TopTools_ListIteratorOfListOfShape occtFaceIterator1(occtFaces1);
+		for (TopTools_MapIteratorOfMapOfShape occtFaceIterator1(occtFaces1);
 			occtFaceIterator1.More();
 			occtFaceIterator1.Next())
 		{
-			for (TopTools_ListIteratorOfListOfShape occtFaceIterator2(occtFaces2);
+			for (TopTools_MapIteratorOfMapOfShape occtFaceIterator2(occtFaces2);
 				occtFaceIterator2.More();
 				occtFaceIterator2.Next())
 			{
@@ -229,32 +201,18 @@ namespace TopologicCore
 	void Cell::SharedVertices(const Cell::Ptr& kpAnotherCell, std::list<Vertex::Ptr>& rVertices) const
 	{
 		const TopoDS_Shape& rkOcctShape1 = GetOcctShape();
-		TopTools_ListOfShape occtVertices1;
-		for (TopExp_Explorer occtExplorer(rkOcctShape1, TopAbs_VERTEX); occtExplorer.More(); occtExplorer.Next())
-		{
-			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-			if (!occtVertices1.Contains(occtCurrent))
-			{
-				occtVertices1.Append(occtCurrent);
-			}
-		}
+		TopTools_MapOfShape occtVertices1;
+		DownwardNavigation(rkOcctShape1, TopAbs_VERTEX, occtVertices1);
 
 		const TopoDS_Shape& rkOcctShape2 = kpAnotherCell->GetOcctShape();
-		TopTools_ListOfShape occtVertices2;
-		for (TopExp_Explorer occtExplorer(rkOcctShape2, TopAbs_VERTEX); occtExplorer.More(); occtExplorer.Next())
-		{
-			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-			if (!occtVertices2.Contains(occtCurrent))
-			{
-				occtVertices2.Append(occtCurrent);
-			}
-		}
+		TopTools_MapOfShape occtVertices2;
+		DownwardNavigation(rkOcctShape2, TopAbs_VERTEX, occtVertices2);
 
-		for (TopTools_ListIteratorOfListOfShape occtVertexIterator1(occtVertices1);
+		for (TopTools_MapIteratorOfMapOfShape occtVertexIterator1(occtVertices1);
 			occtVertexIterator1.More();
 			occtVertexIterator1.Next())
 		{
-			for (TopTools_ListIteratorOfListOfShape occtVertexIterator2(occtVertices2);
+			for (TopTools_MapIteratorOfMapOfShape occtVertexIterator2(occtVertices2);
 				occtVertexIterator2.More();
 				occtVertexIterator2.Next())
 			{

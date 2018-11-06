@@ -343,9 +343,14 @@ namespace Topologic
 		/// <summary>
 		/// Returns the instance type as a string.
 		/// </summary>
-		property String^ Type
+		property String^ TypeAsString
 		{
 			String^ get();
+		}
+
+		property int Type
+		{
+			int get();
 		}
 
 		[IsVisibleInDynamoLibrary(false)]

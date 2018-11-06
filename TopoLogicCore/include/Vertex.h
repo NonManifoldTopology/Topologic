@@ -155,6 +155,8 @@ namespace TopologicCore
 			return VertexGUID::Get();
 		}
 
+		static TOPOLOGIC_API int Type() { return TopologicCore::TOPOLOGY_VERTEX; }
+
 	protected:
 		/// <summary>
 		/// The underlying OCCT vertex.

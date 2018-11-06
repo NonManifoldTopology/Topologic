@@ -130,6 +130,7 @@ namespace Topologic
 		/// <returns></returns>
 		virtual std::shared_ptr<TopologicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
 
+		static int Type();
 
 	protected:
 		virtual ~Cluster();

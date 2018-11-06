@@ -180,6 +180,8 @@ namespace TopologicCore
 			return ClusterGUID::Get();
 		}
 
+		static TOPOLOGIC_API int Type() { return TopologicCore::TOPOLOGY_CLUSTER; }
+
 	protected:
 		/// <summary>
 		/// 

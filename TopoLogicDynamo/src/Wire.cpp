@@ -175,6 +175,11 @@ namespace Topologic
 		return *m_pCoreWire;
 	}
 
+	int Wire::Type()
+	{
+		return TopologicCore::Wire::Type();
+	}
+
 	Wire::Wire(const TopologicCore::Wire::Ptr& kpCoreWire)
 		: Topology()
 		, m_pCoreWire(kpCoreWire != nullptr? new TopologicCore::Wire::Ptr(kpCoreWire) : throw gcnew Exception("A null wire was created."))
@@ -184,6 +189,6 @@ namespace Topologic
 
 	Wire::~Wire()
 	{
-		//delete m_pCoreWire;
+		delete m_pCoreWire;
 	}
 }

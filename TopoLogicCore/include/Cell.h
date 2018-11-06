@@ -199,6 +199,8 @@ namespace TopologicCore
 			return CellGUID::Get();
 		}
 
+		static TOPOLOGIC_API int Type() { return TopologicCore::TOPOLOGY_CELL; }
+
 	protected:
 		/// <summary>
 		/// The underlying OCCT cell.

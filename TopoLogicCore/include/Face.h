@@ -299,6 +299,8 @@ namespace TopologicCore
 		/// <param name="rkOcctMakeFace"></param>
 		static TOPOLOGIC_API void Throw(const BRepBuilderAPI_MakeFace& rkOcctMakeFace);
 
+		static TOPOLOGIC_API int Type() { return TopologicCore::TOPOLOGY_FACE; }
+
 	protected:
 		/// <summary>
 		/// The underlying OCCT face.

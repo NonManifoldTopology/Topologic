@@ -190,12 +190,12 @@ namespace Topologic
 	Aperture::Aperture(const std::shared_ptr<TopologicCore::Aperture>& kpCoreAperture)
 		: m_pCoreAperture(kpCoreAperture != nullptr ? new TopologicCore::Aperture::Ptr(kpCoreAperture) : throw gcnew Exception("A null aperture was created."))
 	{
-		//RegisterFactory(kpCoreAperture, gcnew ApertureFactory());
+
 	}
 
 	Aperture::~Aperture()
 	{
-		//delete m_pCoreAperture;
+		delete m_pCoreAperture;
 	}
 
 	std::shared_ptr<TopologicCore::TopologicalQuery> Aperture::GetCoreTopologicalQuery()

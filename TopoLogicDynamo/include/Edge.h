@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Topology.h>
+#include "Topology.h"
 
 #include <TopologicCore/include/Edge.h>
 
@@ -63,6 +63,8 @@ namespace Topologic {
 			/// <returns></returns>
 			virtual Object^ get() override;
 		}
+
+		static int Type();
 
 	public protected:
 		/// <summary>

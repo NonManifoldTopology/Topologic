@@ -231,11 +231,18 @@ namespace Topologic
 		return ByCoreTopology(pClosestLowestSubshape);
 	}
 
-	String^ Topology::Type::get()
+	String^ Topology::TypeAsString::get()
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		std::string strType = pCoreTopology->GetTypeAsString();
 		return gcnew String(strType.c_str());
+	}
+
+	int Topology::Type::get()
+	{
+		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		TopologicCore::TopologyType topologyType = pCoreTopology->GetType();
+		return topologyType;
 	}
 
 	Topology^ Topology::ByCoreTopology(const std::shared_ptr<TopologicCore::Topology>& kpCoreTopology)

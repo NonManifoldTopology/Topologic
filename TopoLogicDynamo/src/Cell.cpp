@@ -396,6 +396,11 @@ namespace Topologic
 		return *m_pCoreCell;
 	}
 
+	int Cell::Type()
+	{
+		return TopologicCore::Cell::Type();
+	}
+
 	Cell::Cell(const TopologicCore::Cell::Ptr& kpCoreCell)
 		: Topology()
 		, m_pCoreCell(kpCoreCell != nullptr ? new TopologicCore::Cell::Ptr(kpCoreCell) : throw gcnew Exception("A null cell was created."))
@@ -464,6 +469,6 @@ namespace Topologic
 
 	Cell::~Cell()
 	{
-		//delete m_pCoreCell;
+		delete m_pCoreCell;
 	}
 }

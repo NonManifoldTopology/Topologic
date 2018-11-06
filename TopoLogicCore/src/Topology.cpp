@@ -16,55 +16,26 @@
 #include "TopologyFactoryManager.h"
 #include "GlobalCluster.h"
 
-#include <ShapeFix_ShapeTolerance.hxx>
+#include <BOPAlgo_MakerVolume.hxx>
+#include <BRep_Builder.hxx>
+#include <BRepAlgoAPI_Fuse.hxx>
+#include <BRepBuilderAPI_Copy.hxx>
 #include <BRepBuilderAPI_Sewing.hxx>
-
-#include <TopoDS_Vertex.hxx>
-#include <TopoDS_Edge.hxx>
-#include <TopoDS_Vertex.hxx>
-#include <TopoDS_Face.hxx>
-#include <BOPAlgo_CellsBuilder.hxx>
-#include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
-#include <BRepBuilderAPI_MakeFace.hxx>
-#include <TopoDS.hxx>
-#include <ShapeAnalysis_ShapeContents.hxx>
-
-#include <BOPAlgo_Builder.hxx>
-#include <BOPAlgo_CellsBuilder.hxx>
-#include <BOPAlgo_Splitter.hxx>
-#include <BOPCol_ListOfShape.hxx>
-#include <BRep_Builder.hxx>
-#include <BRepBuilderAPI_Copy.hxx>
+#include <BRepCheck_Wire.hxx>
+#include <BRepExtrema_DistShapeShape.hxx>
 #include <BRepTools.hxx>
 #include <ShapeAnalysis_ShapeContents.hxx>
 #include <ShapeBuild_ReShape.hxx>
+#include <ShapeFix_Shape.hxx>
+#include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
-#include <TopoDS_Builder.hxx>
-#include <TopoDS_Shape.hxx>
 #include <TopoDS_FrozenShape.hxx>
 #include <TopoDS_UnCompatibleShapes.hxx>
-#include <TopExp.hxx>
-#include <TopExp_Explorer.hxx>
-#include <TopTools_MapOfShape.hxx>
-#include <TNaming_NamedShape.hxx>
-#include <TDataStd_Integer.hxx>
-#include <BRepCheck_Wire.hxx>
-#include <BOPAlgo_MakerVolume.hxx>
-#include <TopTools_DataMapOfShapeInteger.hxx>
-#include <BRepExtrema_DistShapeShape.hxx>
-#include <BRepFill_Filling.hxx>
-
-#include <BRepAdaptor_Surface.hxx>
-
-#include <ShapeFix_Shape.hxx>
 
 #include <array>
-#include <algorithm>
-#include <queue>
-#include <set>
 
 #include <assert.h>
 
@@ -1118,7 +1089,7 @@ namespace TopologicCore
 		}
 	}
 
-	void Topology::BooleanOperation(
+	void Topology::NonRegularBooleanOperation(
 		const Topology::Ptr& kpOtherTopology,
 		BOPAlgo_CellsBuilder& rOcctCellsBuilder,
 		BOPCol_ListOfShape& rOcctCellsBuildersOperandsA,
@@ -1226,6 +1197,16 @@ namespace TopologicCore
 		return TransferBooleanContents(kpOtherTopology, rOcctCellsBuilder, rOcctMapFaceToFixedFaceA, rOcctMapFaceToFixedFaceB);
 	}
 
+	TopoDS_Shape Topology::PostprocessBooleanResult(const Topology::Ptr & kpOtherTopology, const TopoDS_Shape& rkOcctResultShape)
+	{
+		std::list<Topology::Ptr> thisContents;
+		Contents(true, thisContents);
+
+		TopoDS_Shape occtPostprocessedShape = Simplify(rkOcctResultShape);
+		occtPostprocessedShape = MakeBooleanContainers(occtPostprocessedShape);
+		return occtPostprocessedShape;
+	}
+
 	void Topology::TransferMakeShapeContents(BRepBuilderAPI_MakeShape & rkOcctMakeShape, const std::list<Topology::Ptr>& rkShapes)
 	{
 		BOPCol_ListOfShape occtShapes;
@@ -1273,7 +1254,7 @@ namespace TopologicCore
 		BOPCol_DataMapOfShapeShape occtMapFaceToFixedFaceA;
 		BOPCol_DataMapOfShapeShape occtMapFaceToFixedFaceB;
 
-		BooleanOperation(kpOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB, occtMapFaceToFixedFaceA, occtMapFaceToFixedFaceB);
+		NonRegularBooleanOperation(kpOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB, occtMapFaceToFixedFaceA, occtMapFaceToFixedFaceB);
 
 		BOPCol_ListOfShape occtListToTake;
 		BOPCol_ListOfShape occtListToAvoid;
@@ -1309,7 +1290,7 @@ namespace TopologicCore
 		BOPCol_DataMapOfShapeShape occtMapFaceToFixedFaceA;
 		BOPCol_DataMapOfShapeShape occtMapFaceToFixedFaceB;
 
-		BooleanOperation(kpOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB, occtMapFaceToFixedFaceA, occtMapFaceToFixedFaceB);
+		NonRegularBooleanOperation(kpOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB, occtMapFaceToFixedFaceA, occtMapFaceToFixedFaceB);
 
 		BOPCol_ListOfShape occtListToTake;
 		BOPCol_ListOfShape occtListToAvoid;
@@ -1358,7 +1339,7 @@ namespace TopologicCore
 		BOPCol_DataMapOfShapeShape occtMapFaceToFixedFaceA;
 		BOPCol_DataMapOfShapeShape occtMapFaceToFixedFaceB;
 
-		BooleanOperation(kpOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB, occtMapFaceToFixedFaceA, occtMapFaceToFixedFaceB);
+		NonRegularBooleanOperation(kpOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB, occtMapFaceToFixedFaceA, occtMapFaceToFixedFaceB);
 
 		BOPCol_ListOfShape occtListToTake;
 		BOPCol_ListOfShape occtListToAvoid;
@@ -1404,7 +1385,7 @@ namespace TopologicCore
 		BOPCol_DataMapOfShapeShape occtMapFaceToFixedFaceA;
 		BOPCol_DataMapOfShapeShape occtMapFaceToFixedFaceB;
 
-		BooleanOperation(kpOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB, occtMapFaceToFixedFaceA, occtMapFaceToFixedFaceB);
+		NonRegularBooleanOperation(kpOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB, occtMapFaceToFixedFaceA, occtMapFaceToFixedFaceB);
 
 		BOPCol_ListOfShape occtListToTake;
 		BOPCol_ListOfShape occtListToAvoid;
@@ -1441,7 +1422,7 @@ namespace TopologicCore
 		BOPCol_DataMapOfShapeShape occtMapFaceToFixedFaceB;
 
 		// 1. The basic operation using cells builder.
-		BooleanOperation(kpOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB, occtMapFaceToFixedFaceA, occtMapFaceToFixedFaceB);
+		NonRegularBooleanOperation(kpOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB, occtMapFaceToFixedFaceA, occtMapFaceToFixedFaceB);
 
 		// 2. Select the parts to be included in the final result.
 		BOPCol_ListOfShape occtListToTake;
@@ -1726,7 +1707,7 @@ namespace TopologicCore
 		BOPCol_DataMapOfShapeShape occtMapFaceToFixedFaceA;
 		BOPCol_DataMapOfShapeShape occtMapFaceToFixedFaceB;
 
-		BooleanOperation(kpOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB, occtMapFaceToFixedFaceA, occtMapFaceToFixedFaceB);
+		NonRegularBooleanOperation(kpOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB, occtMapFaceToFixedFaceA, occtMapFaceToFixedFaceB);
 
 		// For now, only handle a cell topology
 		std::list<Topology::Ptr> thisContentsB;
@@ -1984,69 +1965,84 @@ namespace TopologicCore
 
 	Topology::Ptr Topology::Union(const Topology::Ptr& kpOtherTopology)
 	{
-		BOPCol_ListOfShape occtCellsBuildersOperandsA;
-		BOPCol_ListOfShape occtCellsBuildersOperandsB;
-		BOPAlgo_CellsBuilder occtCellsBuilder;
-		BOPCol_DataMapOfShapeShape occtMapFaceToFixedFaceA;
-		BOPCol_DataMapOfShapeShape occtMapFaceToFixedFaceB;
+		BRepAlgoAPI_Fuse fuse;
+		TopTools_ListOfShape occtArguments;
+		occtArguments.Append(GetOcctShape());
+		TopTools_ListOfShape occtTools;
+		occtTools.Append(kpOtherTopology->GetOcctShape());
+		fuse.SetArguments(occtArguments);
+		fuse.SetTools(occtTools);
+		fuse.SetNonDestructive(true);
+		fuse.Build();
+		TopoDS_Shape occtPostProcessedShape = PostprocessBooleanResult(kpOtherTopology, fuse.Shape());
 
-		BooleanOperation(kpOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB, occtMapFaceToFixedFaceA, occtMapFaceToFixedFaceB);
-
-		BOPCol_ListOfShape occtListToTake;
-		BOPCol_ListOfShape occtListToAvoid;
-
-		for (BOPCol_ListIteratorOfListOfShape kOcctShapeIterator(occtCellsBuildersOperandsA);
-			kOcctShapeIterator.More();
-			kOcctShapeIterator.Next())
-		{
-			occtListToTake.Clear();
-			occtListToAvoid.Clear();
-			occtListToTake.Append(kOcctShapeIterator.Value());
-			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid, 1, true);
-		}
-
-		for (BOPCol_ListIteratorOfListOfShape kOcctShapeIterator(occtCellsBuildersOperandsB);
-			kOcctShapeIterator.More();
-			kOcctShapeIterator.Next())
-		{
-			occtListToTake.Clear();
-			occtListToAvoid.Clear();
-			occtListToTake.Append(kOcctShapeIterator.Value());
-			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid, 1, true);
-		}
-
-		Topology::Ptr pTopology = GetBooleanResult(
-			kpOtherTopology,
-			occtCellsBuilder,
-			occtMapFaceToFixedFaceA,
-			occtMapFaceToFixedFaceB);
-
-		BOPAlgo_CellsBuilder occtCellsBuilder2;
-		BOPCol_ListOfShape occtCellsBuildersArguments;
-		occtCellsBuildersArguments.Append(pTopology->GetOcctShape());
-
-		// Get the internal boundaries
-		AddUnionInternalStructure(GetOcctShape(), occtCellsBuildersArguments);
-		AddUnionInternalStructure(kpOtherTopology->GetOcctShape(), occtCellsBuildersArguments);
-		
-		if (occtCellsBuildersArguments.Size() < 2)
-		{
-			return Topology::ByOcctShape(occtCellsBuildersArguments.First(), "");
-		}
-
-		occtCellsBuilder2.SetArguments(occtCellsBuildersArguments);
-		occtCellsBuilder2.Perform();
-
-		if (occtCellsBuilder2.HasErrors())
-		{
-			std::ostringstream errorStream;
-			occtCellsBuilder2.DumpErrors(errorStream);
-			throw std::exception(errorStream.str().c_str());
-		}
-		occtCellsBuilder2.AddAllToResult();
-		TopoDS_Shape occtUnionResult = occtCellsBuilder2.Shape();
-		Topology::Ptr pUnionTopology = Topology::ByOcctShape(occtUnionResult, "");
+		Topology::Ptr pUnionTopology = Topology::ByOcctShape(occtPostProcessedShape, "");
 		return pUnionTopology;
+
+
+		//BOPCol_ListOfShape occtCellsBuildersOperandsA;
+		//BOPCol_ListOfShape occtCellsBuildersOperandsB;
+		//BOPAlgo_CellsBuilder occtCellsBuilder;
+		//BOPCol_DataMapOfShapeShape occtMapFaceToFixedFaceA;
+		//BOPCol_DataMapOfShapeShape occtMapFaceToFixedFaceB;
+
+		//NonRegularBooleanOperation(kpOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB, occtMapFaceToFixedFaceA, occtMapFaceToFixedFaceB);
+
+		//BOPCol_ListOfShape occtListToTake;
+		//BOPCol_ListOfShape occtListToAvoid;
+
+		//for (BOPCol_ListIteratorOfListOfShape kOcctShapeIterator(occtCellsBuildersOperandsA);
+		//	kOcctShapeIterator.More();
+		//	kOcctShapeIterator.Next())
+		//{
+		//	occtListToTake.Clear();
+		//	occtListToAvoid.Clear();
+		//	occtListToTake.Append(kOcctShapeIterator.Value());
+		//	occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid, 1, true);
+		//}
+
+		//for (BOPCol_ListIteratorOfListOfShape kOcctShapeIterator(occtCellsBuildersOperandsB);
+		//	kOcctShapeIterator.More();
+		//	kOcctShapeIterator.Next())
+		//{
+		//	occtListToTake.Clear();
+		//	occtListToAvoid.Clear();
+		//	occtListToTake.Append(kOcctShapeIterator.Value());
+		//	occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid, 1, true);
+		//}
+
+		//Topology::Ptr pTopology = GetBooleanResult(
+		//	kpOtherTopology,
+		//	occtCellsBuilder,
+		//	occtMapFaceToFixedFaceA,
+		//	occtMapFaceToFixedFaceB);
+
+		//BOPAlgo_CellsBuilder occtCellsBuilder2;
+		//BOPCol_ListOfShape occtCellsBuildersArguments;
+		//occtCellsBuildersArguments.Append(pTopology->GetOcctShape());
+
+		//// Get the internal boundaries
+		//AddUnionInternalStructure(GetOcctShape(), occtCellsBuildersArguments);
+		//AddUnionInternalStructure(kpOtherTopology->GetOcctShape(), occtCellsBuildersArguments);
+		//
+		//if (occtCellsBuildersArguments.Size() < 2)
+		//{
+		//	return Topology::ByOcctShape(occtCellsBuildersArguments.First(), "");
+		//}
+
+		//occtCellsBuilder2.SetArguments(occtCellsBuildersArguments);
+		//occtCellsBuilder2.Perform();
+
+		//if (occtCellsBuilder2.HasErrors())
+		//{
+		//	std::ostringstream errorStream;
+		//	occtCellsBuilder2.DumpErrors(errorStream);
+		//	throw std::exception(errorStream.str().c_str());
+		//}
+		//occtCellsBuilder2.AddAllToResult();
+		//TopoDS_Shape occtUnionResult = occtCellsBuilder2.Shape();
+		//Topology::Ptr pUnionTopology = Topology::ByOcctShape(occtUnionResult, "");
+		//return pUnionTopology;
 	}
 
 	Topology::Ptr Topology::XOR(const Topology::Ptr& kpOtherTopology)
@@ -2057,7 +2053,7 @@ namespace TopologicCore
 		BOPCol_DataMapOfShapeShape occtMapFaceToFixedFaceA;
 		BOPCol_DataMapOfShapeShape occtMapFaceToFixedFaceB;
 
-		BooleanOperation(kpOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB, occtMapFaceToFixedFaceA, occtMapFaceToFixedFaceB);
+		NonRegularBooleanOperation(kpOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB, occtMapFaceToFixedFaceA, occtMapFaceToFixedFaceB);
 
 		BOPCol_ListOfShape occtListToTake;
 		BOPCol_ListOfShape occtListToAvoid;
@@ -2185,6 +2181,8 @@ namespace TopologicCore
 				));
 		}
 
+		GlobalCluster::GetInstance().AddTopology(occtShapeCopy);
+
 		return pShapeCopy;
 	}
 
@@ -2193,6 +2191,7 @@ namespace TopologicCore
 		BRepBuilderAPI_Copy occtShapeCopy(rkOcctShape);
 		TopoDS_Shape occtCopyShape = occtShapeCopy.Shape();
 
+		GlobalCluster::GetInstance().AddTopology(occtCopyShape);
 		return occtCopyShape;
 	}
 

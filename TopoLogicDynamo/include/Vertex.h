@@ -76,6 +76,8 @@ namespace Topologic
 			virtual Object^ get() override;	
 		}
 
+		static int Type();
+
 	public protected:
 		Vertex(const std::shared_ptr<TopologicCore::Vertex>& kpCoreVertex);
 

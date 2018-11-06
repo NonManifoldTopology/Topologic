@@ -140,6 +140,8 @@ namespace TopologicCore
 			return WireGUID::Get();
 		}
 
+		static TOPOLOGIC_API int Type() { return TopologicCore::TOPOLOGY_WIRE; }
+
 	protected:
 		/// <summary>
 		/// 

@@ -205,6 +205,8 @@ namespace TopologicCore
 		/// <returns></returns>
 		static TOPOLOGIC_API double NonNormalizeParameter(const double kOcctMinParameter, const double kOcctMaxParameter, const double kNormalizedParameter);
 
+		static TOPOLOGIC_API int Type() { return TopologicCore::TOPOLOGY_EDGE; }
+
 	protected:
 		/// <summary>
 		/// The underlying OCCT edge.

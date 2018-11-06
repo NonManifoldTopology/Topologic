@@ -307,6 +307,11 @@ namespace Topologic
 		return *m_pCoreFace;
 	}
 
+	int Face::Type()
+	{
+		return TopologicCore::Face::Type();
+	}
+
 	Face::Face(const TopologicCore::Face::Ptr&  kpCoreFace)
 		: Topology()
 		, m_pCoreFace(kpCoreFace != nullptr ? new TopologicCore::Face::Ptr(kpCoreFace) : throw gcnew Exception("A null face was created."))
@@ -763,7 +768,7 @@ namespace Topologic
 
 	Face::~Face()
 	{
-		//delete m_pCoreFace;
+		delete m_pCoreFace;
 	}
 
 	Face^ Face::BySurface(Autodesk::DesignScript::Geometry::NurbsSurface^ pDynamoNurbsSurface,

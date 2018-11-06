@@ -178,6 +178,8 @@ namespace TopologicCore
 			return CellComplexGUID::Get();
 		}
 
+		static TOPOLOGIC_API int Type() { return TopologicCore::TOPOLOGY_CELLCOMPLEX; }
+
 	protected:
 		/// <summary>
 		/// The underlying OCCT cell complex.

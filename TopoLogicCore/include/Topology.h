@@ -64,7 +64,7 @@ namespace TopologicCore
 		/// <param name="rkOcctShape"></param>
 		/// <param name="rkInstanceGuid"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API Topology::Ptr ByOcctShape(const TopoDS_Shape& rkOcctShape, const std::string& rkInstanceGuid);
+		static TOPOLOGIC_API Topology::Ptr ByOcctShape(const TopoDS_Shape& rkOcctShape, const std::string& rkInstanceGuid = "");
 
 		/// <summary>
 		/// 
@@ -554,7 +554,7 @@ namespace TopologicCore
 		/// <param name="rOcctCellsBuildersOperandsB"></param>
 		/// <param name="rOcctMapFaceToFixedFaceA"></param>
 		/// <param name="rOcctMapFaceToFixedFaceB"></param>
-		void BooleanOperation(
+		void NonRegularBooleanOperation(
 			const Topology::Ptr& kpOtherTopology,
 			BOPAlgo_CellsBuilder& rOcctCellsBuilder,
 			BOPCol_ListOfShape& rOcctCellsBuildersOperandsA,
@@ -572,6 +572,17 @@ namespace TopologicCore
 			BOPAlgo_CellsBuilder& rOcctCellsBuilder,
 			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceA,
 			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceB);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpOtherTopology"></param>
+		/// <param name="rkOcctResultShape"></param>
+		/// <returns></returns>
+		TopoDS_Shape PostprocessBooleanResult(
+			const Topology::Ptr& kpOtherTopology,
+			const TopoDS_Shape& rkOcctResultShape
+			);
 
 		/// <summary>
 		/// 
@@ -626,7 +637,7 @@ namespace TopologicCore
 
 		TopAbs_ShapeEnum occtShapeType = CheckOcctShapeType<Subclass>();
 
-		TopTools_ListOfShape occtAncestorMap;
+		TopTools_MapOfShape occtAncestorMap;
 		TopTools_IndexedDataMapOfShapeListOfShape occtShapeMap;
 		TopExp::MapShapesAndUniqueAncestors(
 			rkOcctHostTopology,
@@ -649,7 +660,7 @@ namespace TopologicCore
 			bool isAncestorAdded = occtAncestorMap.Contains(rkOcctAncestor);
 			if (rkOcctAncestor.ShapeType() == occtShapeType && !isAncestorAdded)
 			{
-				occtAncestorMap.Append(rkOcctAncestor);
+				occtAncestorMap.Add(rkOcctAncestor);
 
 				Topology::Ptr pTopology = ByOcctShape(rkOcctAncestor, "");
 				rAncestors.push_back(Downcast<Subclass>(pTopology));
