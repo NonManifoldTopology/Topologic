@@ -23,19 +23,6 @@ class TopoDS_Shape;
 
 namespace TopologicCore
 {
-	enum TopologyType
-	{
-		TOPOLOGY_VERTEX = 1,
-		TOPOLOGY_EDGE = 2,
-		TOPOLOGY_WIRE = 4,
-		TOPOLOGY_FACE = 8,
-		TOPOLOGY_SHELL = 16,
-		TOPOLOGY_CELL = 32,
-		TOPOLOGY_CELLCOMPLEX = 64,
-		TOPOLOGY_CLUSTER = 128,
-		TOPOLOGY_APERTURE = 256
-	};
-
 	class Cluster;
 	class CellComplex;
 	class Cell;
@@ -463,6 +450,14 @@ namespace TopologicCore
 		/// <param name="kpTopology"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API Topology::Ptr ClosestSimplestSubshape(const Topology::Ptr& kpTopology) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpSelectorTopology"></param>
+		/// <param name="kTypeFilter"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API Topology::Ptr SelectSubtopology(const Topology::Ptr& kpSelectorTopology, const int kTypeFilter = TOPOLOGY_ALL) const;
 
 		/// <summary>
 		/// 

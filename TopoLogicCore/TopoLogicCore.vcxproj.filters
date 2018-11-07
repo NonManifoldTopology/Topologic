@@ -56,6 +56,7 @@
       <Filter>Factory</Filter>
     </ClInclude>
     <ClInclude Include="include\GlobalCluster.h" />
+    <ClInclude Include="include\Bitwise.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
@@ -108,6 +109,8 @@
       <Filter>Factory</Filter>
     </ClCompile>
     <ClCompile Include="src\GlobalCluster.cpp" />
+    <ClCompile Include="src\Utilities.cpp" />
+    <ClCompile Include="src\Bitwise.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Context">

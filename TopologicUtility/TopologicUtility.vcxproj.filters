@@ -25,7 +25,6 @@
     <ClInclude Include="include\TopologyUtility.h" />
     <ClInclude Include="include\EdgeUtility.h" />
     <ClInclude Include="include\CellUtility.h" />
-    <ClInclude Include="include\Bitwise.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Vector.cpp" />
@@ -48,7 +47,6 @@
     <ClCompile Include="src\FaceUtility.cpp" />
     <ClCompile Include="src\ShellUtility.cpp" />
     <ClCompile Include="src\TopologyUtility.cpp" />
-    <ClCompile Include="src\Bitwise.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Attribute">

@@ -165,6 +165,7 @@ copy "$(SolutionDir)references\ShapeOp-0.1.0\bin\$(Platform)\$(Configuration)\*.
     <ClInclude Include="include\Aperture.h" />
     <ClInclude Include="include\ApertureFactory.h" />
     <ClInclude Include="include\AperturePath.h" />
+    <ClInclude Include="include\Bitwise.h" />
     <ClInclude Include="include\Cell.h" />
     <ClInclude Include="include\CellComplex.h" />
     <ClInclude Include="include\CellComplexFactory.h" />
@@ -196,6 +197,7 @@ copy "$(SolutionDir)references\ShapeOp-0.1.0\bin\$(Platform)\$(Configuration)\*.
     <ClCompile Include="src\Aperture.cpp" />
     <ClCompile Include="src\ApertureFactory.cpp" />
     <ClCompile Include="src\AperturePath.cpp" />
+    <ClCompile Include="src\Bitwise.cpp" />
     <ClCompile Include="src\Cell.cpp" />
     <ClCompile Include="src\CellComplex.cpp" />
     <ClCompile Include="src\CellComplexFactory.cpp" />
@@ -215,6 +217,7 @@ copy "$(SolutionDir)references\ShapeOp-0.1.0\bin\$(Platform)\$(Configuration)\*.
     <ClCompile Include="src\ShellFactory.cpp" />
     <ClCompile Include="src\Topology.cpp" />
     <ClCompile Include="src\TopologyFactoryManager.cpp" />
+    <ClCompile Include="src\Utilities.cpp" />
     <ClCompile Include="src\Vertex.cpp" />
     <ClCompile Include="src\VertexFactory.cpp" />
     <ClCompile Include="src\Wire.cpp" />

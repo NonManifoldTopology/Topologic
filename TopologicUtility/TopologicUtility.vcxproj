@@ -152,7 +152,6 @@
   <ItemGroup>
     <ClInclude Include="include\Attribute.h" />
     <ClInclude Include="include\AttributeManager.h" />
-    <ClInclude Include="include\Bitwise.h" />
     <ClInclude Include="include\CellUtility.h" />
     <ClInclude Include="include\Direction.h" />
     <ClInclude Include="include\DoubleAttribute.h" />
@@ -168,7 +167,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\AttributeManager.cpp" />
-    <ClCompile Include="src\Bitwise.cpp" />
     <ClCompile Include="src\CellUtility.cpp" />
     <ClCompile Include="src\Direction.cpp" />
     <ClCompile Include="src\DoubleAttribute.cpp" />

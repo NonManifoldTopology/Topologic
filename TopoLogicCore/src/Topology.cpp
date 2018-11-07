@@ -15,6 +15,7 @@
 #include "TopologyFactory.h"
 #include "TopologyFactoryManager.h"
 #include "GlobalCluster.h"
+#include "Bitwise.h"
 
 #include <BOPAlgo_MakerVolume.hxx>
 #include <BRep_Builder.hxx>
@@ -88,6 +89,68 @@ namespace TopologicCore
 					else if (minDistance <= distance && 
 						     distance <= minDistance + Precision::Confusion() && 
 							 rkCurrentChildShape.ShapeType() > occtClosestSubshape.ShapeType()) // larger value = lower dimension
+					{
+						TopAbs_ShapeEnum closestShapeType = occtClosestSubshape.ShapeType();
+						TopAbs_ShapeEnum currentShapeType = rkCurrentChildShape.ShapeType();
+
+						minDistance = distance;
+						occtClosestSubshape = rkCurrentChildShape;
+					}
+				}
+			}
+		}
+
+		if (occtClosestSubshape.IsNull())
+		{
+			return nullptr;
+		}
+
+		return Topology::ByOcctShape(occtClosestSubshape, "");
+	}
+
+	Topology::Ptr Topology::SelectSubtopology(const Topology::Ptr & kpSelectorTopology, const int kTypeFilter) const
+	{
+		//TopTools_DataMapOfShapeInteger occtShapeToDistanceMap;
+		TopoDS_Shape occtClosestSubshape;
+		double minDistance = std::numeric_limits<double>::max();
+		const TopoDS_Shape& kOcctThisShape = GetOcctShape();
+		const TopoDS_Shape& kOcctSelectorShape = kpSelectorTopology->GetOcctShape();
+		TopAbs_ShapeEnum occtShapeTypes[4] = { TopAbs_VERTEX, TopAbs_EDGE, TopAbs_FACE, TopAbs_SOLID };
+		TopologyType shapeTypes[4] = { TOPOLOGY_VERTEX, TOPOLOGY_EDGE, TOPOLOGY_FACE, TOPOLOGY_CELL };
+		for (int i = 0; i < 4; ++i)
+		{
+			// If this is not the requested topology type, skip.
+			int result = Bitwise::And(kTypeFilter, shapeTypes[i]);
+			if (Bitwise::And(kTypeFilter, shapeTypes[i]) == 0)
+			{
+				continue;
+			}
+			
+			TopAbs_ShapeEnum occtShapeType = occtShapeTypes[i];
+			TopTools_MapOfShape occtCells;
+			for (TopExp_Explorer occtExplorer(kOcctThisShape, occtShapeType); occtExplorer.More(); occtExplorer.Next())
+			{
+				const TopoDS_Shape rkCurrentChildShape = occtExplorer.Current();
+				TopoDS_Shape checkDistanceShape = rkCurrentChildShape;
+				if (i == 3)
+				{
+					ShapeFix_Solid occtSolidFix(TopoDS::Solid(rkCurrentChildShape));
+					occtSolidFix.Perform();
+					checkDistanceShape = occtSolidFix.Shape();
+				}
+				BRepExtrema_DistShapeShape occtDistanceCalculation(checkDistanceShape, kOcctSelectorShape);
+				bool isDone = occtDistanceCalculation.Perform();
+				if (isDone)
+				{
+					double distance = occtDistanceCalculation.Value();
+					if (distance < minDistance)
+					{
+						minDistance = distance;
+						occtClosestSubshape = rkCurrentChildShape;
+					}
+					else if (minDistance <= distance &&
+						distance <= minDistance + Precision::Confusion() &&
+						rkCurrentChildShape.ShapeType() > occtClosestSubshape.ShapeType()) // larger value = lower dimension
 					{
 						TopAbs_ShapeEnum closestShapeType = occtClosestSubshape.ShapeType();
 						TopAbs_ShapeEnum currentShapeType = rkCurrentChildShape.ShapeType();
@@ -1137,6 +1200,7 @@ namespace TopologicCore
 		//TopoDS_Shape queryShape = rOcctCellsBuilder.Shape();
 		TopoDS_Shape queryShape = Simplify(rOcctCellsBuilder.Shape());
 		queryShape = MakeBooleanContainers(queryShape);
+		GlobalCluster::GetInstance().AddTopology(queryShape);
 
 		Topology::Ptr pBooleanResult = Topology::ByOcctShape(queryShape, "");
 		// queryShape (pBooleanResult) is the member of the Boolean result, it doesn't have any content yet.

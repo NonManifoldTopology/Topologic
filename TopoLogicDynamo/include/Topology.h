@@ -328,6 +328,15 @@ namespace Topologic
 		/// <returns></returns>
 		Topology^ ClosestSimplestSubshape(Topology^ selector);
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="selector"></param>
+		/// <param name="typeFilter"></param>
+		/// <returns></returns>
+		Topology^ SelectSubtopology(Topology^ selector,
+			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] int typeFilter);
+
 		generic <class T>
 			where T: Topology
 		[IsVisibleInDynamoLibrary(false)]

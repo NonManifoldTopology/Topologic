@@ -1,6 +1,6 @@
 #pragma once
 
-#include <TopologicUtility/include/Bitwise.h>
+#include <TopologicCore/include/Bitwise.h>
 
 namespace Topologic {
 	namespace Utility {

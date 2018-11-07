@@ -29,7 +29,41 @@ namespace TopologicCore
 {
 	void Face::AdjacentFaces(std::list<Face::Ptr>& rFaces) const
 	{
-		std::list<Edge::Ptr> edges;
+		// Iterate through the edges and find the incident faces which are not this face.
+		TopTools_IndexedDataMapOfShapeListOfShape occtEdgeFaceMap;
+		TopExp::MapShapesAndUniqueAncestors(GlobalCluster::GetInstance().GetOcctCompound(), TopAbs_EDGE, TopAbs_FACE, occtEdgeFaceMap);
+
+		// Find the constituent faces
+		TopTools_MapOfShape occtEdges;
+		for (TopExp_Explorer occtExplorer(GetOcctShape(), TopAbs_EDGE); occtExplorer.More(); occtExplorer.Next())
+		{
+			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
+			if (!occtEdges.Contains(occtCurrent))
+			{
+				occtEdges.Add(occtCurrent);
+			}
+		}
+
+		const TopoDS_Face& rkOcctFace = GetOcctFace();
+		for (TopTools_MapOfShape::const_iterator kOcctEdgeIterator = occtEdges.cbegin();
+			kOcctEdgeIterator != occtEdges.cend();
+			kOcctEdgeIterator++)
+		{
+			const TopoDS_Shape& rkOcctEdge = *kOcctEdgeIterator;
+			const TopTools_ListOfShape& rkIncidentFaces = occtEdgeFaceMap.FindFromKey(rkOcctEdge);
+
+			for (TopTools_ListOfShape::const_iterator kOcctFaceIterator = rkIncidentFaces.cbegin();
+				kOcctFaceIterator != rkIncidentFaces.cend();
+				kOcctFaceIterator++)
+			{
+				const TopoDS_Shape& rkIncidentFace = *kOcctFaceIterator;
+				if (!rkOcctFace.IsSame(rkIncidentFace))
+				{
+					rFaces.push_back(std::make_shared<Face>(TopoDS::Face(rkIncidentFace)));
+				}
+			}
+		}
+		/*std::list<Edge::Ptr> edges;
 		Edges(edges);
 
 		TopTools_ListOfShape occtFaces;
@@ -56,7 +90,7 @@ namespace TopologicCore
 				occtFaces.Append(occtFace);
 				rFaces.push_back(kpFace);
 			}
-		}
+		}*/
 	}
 
 	void Face::Cells(std::list<Cell::Ptr>& rCells) const

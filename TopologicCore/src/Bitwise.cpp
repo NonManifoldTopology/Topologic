@@ -1,6 +1,6 @@
 #include <Bitwise.h>
 
-namespace TopologicUtility
+namespace TopologicCore
 {
 	int Bitwise::And(const int kArgument1, const int kArgument2)
 	{
