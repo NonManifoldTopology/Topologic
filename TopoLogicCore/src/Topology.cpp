@@ -414,6 +414,18 @@ namespace TopologicCore
 		}
 	}
 
+	void Topology::AddContentToSubtopology(const Topology::Ptr& rkTopology, const int kTypeFilter)
+	{
+		// 1. Get the center of mass of the content
+		Vertex::Ptr pCenterOfMass = rkTopology->CenterOfMass();
+
+		// 2. Find the closest simplest topology of the copy topology
+		Topology::Ptr selectedSubtopology = SelectSubtopology(pCenterOfMass, kTypeFilter);
+
+		// 3. Register to ContentManager
+		ContentManager::GetInstance().Add(selectedSubtopology->GetOcctShape(), rkTopology);
+	}
+
 	void Topology::AddContent(const Topology::Ptr& rkTopology, const bool kUseClosestSimplestSubshape)
 	{
 		Topology::Ptr pClosestSimplestSubshape;

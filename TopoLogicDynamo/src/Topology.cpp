@@ -476,7 +476,7 @@ namespace Topologic
 		return pContexts;
 	}
 
-	Topology^ Topology::AddContent(Topology^ topology)
+	Topology^ Topology::AddContent(Topology^ content)
 	{
 		// 1. Copy this topology
 		TopologicCore::Topology::Ptr pCoreParentTopology =
@@ -485,13 +485,36 @@ namespace Topologic
 		
 		// 2. Copy the content topology
 		TopologicCore::Topology::Ptr pCoreContentTopology =
-			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(content->GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreCopyContentTopology = pCoreContentTopology->Copy();
 
 		pCoreCopyParentTopology->AddContent(pCoreCopyContentTopology, true);
 		
-		// 3. Add contentTopology as the content of the closest simplest topology
-		//closestSimplestSubshape->AddContent(pCoreCopyContentTopology);
+		// 4. Add closestSimplestSubshape as the context of pCoreCopyContentTopology
+		const double kDefaultParameter = 0.0; // TODO: calculate the parameters
+		pCoreCopyContentTopology->AddContext(
+			TopologicCore::Context::ByTopologyParameters(
+				pCoreCopyParentTopology,
+				kDefaultParameter, kDefaultParameter, kDefaultParameter
+			));
+
+		// 5. Return the copy topology
+		return Topology::ByCoreTopology(pCoreCopyParentTopology);
+	}
+
+	Topology ^ Topology::AddContentToSubtopology(Topology ^ topology, int typeFilter)
+	{
+		// 1. Copy this topology
+		TopologicCore::Topology::Ptr pCoreParentTopology =
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		TopologicCore::Topology::Ptr pCoreCopyParentTopology = pCoreParentTopology->Copy();
+
+		// 2. Copy the content topology
+		TopologicCore::Topology::Ptr pCoreContentTopology =
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
+		TopologicCore::Topology::Ptr pCoreCopyContentTopology = pCoreContentTopology->Copy();
+
+		pCoreCopyParentTopology->AddContentToSubtopology(pCoreCopyContentTopology, typeFilter);
 
 		// 4. Add closestSimplestSubshape as the context of pCoreCopyContentTopology
 		const double kDefaultParameter = 0.0; // TODO: calculate the parameters
