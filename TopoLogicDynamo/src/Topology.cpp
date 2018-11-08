@@ -840,7 +840,7 @@ namespace Topologic
 	{
 		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 
-		TopologicCore::Topology::Ptr pMergeCoreTopology = pCoreTopology->Merge();
+		TopologicCore::Topology::Ptr pMergeCoreTopology = pCoreTopology->SelfMerge();
 		return Topology::ByCoreTopology(pMergeCoreTopology);
 	}
 

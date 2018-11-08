@@ -158,45 +158,6 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <param name="kpOtherTopology"></param>
-		/// <param name="kArgumentImagesInArguments"></param>
-		/// <param name="kArgumentImagesInTools"></param>
-		/// <param name="kToolsImagesInArguments"></param>
-		/// <param name="kToolsImagesInTools"></param>
-		/// <returns></returns>
-		TOPOLOGIC_API void BooleanImages(
-			const Topology::Ptr& kpOtherTopology,
-			std::list<Topology::Ptr>& kArgumentImagesInArguments,
-			std::list<Topology::Ptr>& kArgumentImagesInTools,
-			std::list<Topology::Ptr>& kToolsImagesInArguments,
-			std::list<Topology::Ptr>& kToolsImagesInTools);
-
-		/// <summary>
-		/// Does not perform cells builder.
-		/// </summary>
-		/// <param name="kpOtherTopology"></param>
-		/// <param name="rOcctCellsBuilder"></param>
-		/// <param name="kOcctArgumentImagesInArguments"></param>
-		/// <param name="kOcctArgumentImagesInTools"></param>
-		/// <param name="kOcctToolsImagesInArguments"></param>
-		/// <param name="kOcctToolsImagesInTools"></param>
-		void BooleanImages(
-			const Topology::Ptr& kpOtherTopology,
-			BOPAlgo_CellsBuilder& rOcctCellsBuilder,
-			BOPCol_ListOfShape& rOcctExclusivelyArgumentImages,
-			BOPCol_ListOfShape& rOcctExclusivelyToolImages,
-			BOPCol_ListOfShape& rOcctSharedImages,
-			BOPCol_ListOfShape& rOcctExclusivelyArgumentImageFaces,
-			BOPCol_ListOfShape& rOcctExclusivelyToolImageFaces,
-			BOPCol_ListOfShape& rOcctSharedImageFaces,
-			BOPCol_ListOfShape& kOcctArgumentImagesInArguments,
-			BOPCol_ListOfShape& kOcctArgumentImagesInTools,
-			BOPCol_ListOfShape& kOcctToolsImagesInArguments,
-			BOPCol_ListOfShape& kOcctToolsImagesInTools);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="kpOtherTopology"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API Topology::Ptr Difference(const Topology::Ptr& kpOtherTopology);
 
@@ -232,7 +193,7 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology::Ptr Merge();
+		TOPOLOGIC_API Topology::Ptr SelfMerge();
 
 		/// <summary>
 		/// 
