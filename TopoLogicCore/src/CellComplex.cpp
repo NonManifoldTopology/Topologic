@@ -114,7 +114,7 @@ namespace TopologicCore
 				topologies.push_back(Topology::ByOcctShape(*occtSolidIterator, ""));
 			}
 			std::shared_ptr<Cluster> otherCellsAsCluster = Cluster::ByTopologies(topologies);
-			std::shared_ptr<Topology> pMergeTopology = firstTopology->Merge(otherCellsAsCluster);
+			std::shared_ptr<Topology> pMergeTopology = firstTopology->MergeOld(otherCellsAsCluster);
 
 			std::list<Cell::Ptr> cells;
 			pMergeTopology->DownwardNavigation(cells);

@@ -181,6 +181,8 @@ namespace TopologicCore
 			return ApertureGUID::Get();
 		}
 
+		virtual bool IsContainerType();
+
 	protected:
 		//std::list<AperturePath> m_occtAperturePaths;
 		std::shared_ptr<Context> m_pMainContext; // the primary context passed in the constructor is stored here

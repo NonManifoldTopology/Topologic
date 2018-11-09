@@ -200,6 +200,8 @@ namespace TopologicCore
 		}
 
 		static TOPOLOGIC_API int Type() { return TopologicCore::TOPOLOGY_CELL; }
+		
+		virtual bool IsContainerType() { return false; }
 
 	protected:
 		/// <summary>

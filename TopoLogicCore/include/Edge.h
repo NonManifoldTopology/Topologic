@@ -207,6 +207,8 @@ namespace TopologicCore
 
 		static TOPOLOGIC_API int Type() { return TopologicCore::TOPOLOGY_EDGE; }
 
+		virtual bool IsContainerType() { return false; }
+
 	protected:
 		/// <summary>
 		/// The underlying OCCT edge.

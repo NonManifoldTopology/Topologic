@@ -152,6 +152,8 @@ namespace TopologicCore
 
 		static TOPOLOGIC_API int Type() { return TopologicCore::TOPOLOGY_SHELL; }
 
+		virtual bool IsContainerType() { return true; }
+
 	protected:
 		/// <summary>
 		/// The underlying OCCT shell.

@@ -157,6 +157,8 @@ namespace TopologicCore
 
 		static TOPOLOGIC_API int Type() { return TopologicCore::TOPOLOGY_VERTEX; }
 
+		virtual bool IsContainerType() { return false; }
+
 	protected:
 		/// <summary>
 		/// The underlying OCCT vertex.

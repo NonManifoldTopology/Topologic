@@ -159,28 +159,28 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="kpOtherTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology::Ptr Difference(const Topology::Ptr& kpOtherTopology);
+		TOPOLOGIC_API Topology::Ptr DifferenceOld(const Topology::Ptr& kpOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpOtherTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology::Ptr Impose(const Topology::Ptr& kpOtherTopology);
+		TOPOLOGIC_API Topology::Ptr ImposeOld(const Topology::Ptr& kpOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpOtherTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology::Ptr Imprint(const Topology::Ptr& kpOtherTopology);
+		TOPOLOGIC_API Topology::Ptr ImprintOld(const Topology::Ptr& kpOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpOtherTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology::Ptr Intersection(const Topology::Ptr& kpOtherTopology);
+		TOPOLOGIC_API Topology::Ptr IntersectionOld(const Topology::Ptr& kpOtherTopology);
 
 		/// <summary>
 		/// 
@@ -188,6 +188,13 @@ namespace TopologicCore
 		/// <param name="kpOtherTopology"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API Topology::Ptr Merge(const Topology::Ptr& kpOtherTopology);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpOtherTopology"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API Topology::Ptr MergeOld(const Topology::Ptr& kpOtherTopology);
 
 		/// <summary>
 		/// 
@@ -200,21 +207,28 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="kpOtherTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology::Ptr Slice(const Topology::Ptr& kpOtherTopology);
+		TOPOLOGIC_API Topology::Ptr SliceOld(const Topology::Ptr& kpOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpOtherTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology::Ptr Union(const Topology::Ptr& kpOtherTopology);
+		TOPOLOGIC_API Topology::Ptr UnionOld(const Topology::Ptr& kpOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpOtherTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology::Ptr XOR(const Topology::Ptr& kpOtherTopology);
+		TOPOLOGIC_API Topology::Ptr XOROld(const Topology::Ptr& kpOtherTopology);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpOtherTopology"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API Topology::Ptr Trim(const Topology::Ptr& kpOtherTopology);
 
 		/// <summary>
 		/// 
@@ -462,6 +476,8 @@ namespace TopologicCore
 		/// <param name="rSubTopologies"></param>
 		static void SubTopologies(const TopoDS_Shape& rkShape, BOPCol_ListOfShape& rSubTopologies);
 
+		virtual bool IsContainerType() = 0;
+
 #ifdef _DEBUG
 		TOPOLOGIC_API void GlobalClusterSubTopologies(std::list<Topology::Ptr>& rSubTopologies) const;
 #endif
@@ -501,6 +517,10 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="kpOtherTopology"></param>
 		/// <param name="rOcctCellsBuilder"></param>
+		/// <param name="rOcctCellsBuildersOperandsA"></param>
+		/// <param name="rOcctCellsBuildersOperandsB"></param>
+		/// <param name="rOcctMapFaceToFixedFaceA"></param>
+		/// <param name="rOcctMapFaceToFixedFaceB"></param>
 		void AddBooleanOperands(
 			const Topology::Ptr& kpOtherTopology,
 			BOPAlgo_CellsBuilder& rOcctCellsBuilder,
@@ -508,6 +528,17 @@ namespace TopologicCore
 			BOPCol_ListOfShape& rOcctCellsBuildersOperandsB,
 			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceA,
 			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceB);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpOtherTopology"></param>
+		/// <param name="rOcctCellsBuildersOperandsA"></param>
+		/// <param name="rOcctCellsBuildersOperandsB"></param>
+		void AddBooleanOperands(
+			const Topology::Ptr& kpOtherTopology,
+			BOPCol_ListOfShape& rOcctCellsBuildersOperandsA,
+			BOPCol_ListOfShape& rOcctCellsBuildersOperandsB);
 
 		/// <summary>
 		/// 
@@ -525,6 +556,11 @@ namespace TopologicCore
 			BOPCol_ListOfShape& rOcctCellsBuildersOperandsB,
 			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceA,
 			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceB);
+
+		static void NonRegularBooleanOperation(
+			const BOPCol_ListOfShape& rkOcctArgumentsA,
+			const BOPCol_ListOfShape& rkOcctArgumentsB,
+			BOPAlgo_CellsBuilder& rOcctCellsBuilder);
 
 		/// <summary>
 		/// 
@@ -547,6 +583,15 @@ namespace TopologicCore
 			const Topology::Ptr& kpOtherTopology,
 			const TopoDS_Shape& rkOcctResultShape
 			);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkOcctBooleanResult"></param>
+		/// <returns></returns>
+		TopoDS_Shape PostprocessBooleanResult(
+			const TopoDS_Shape& rkOcctBooleanResult
+		);
 
 		/// <summary>
 		/// 
@@ -583,6 +628,8 @@ namespace TopologicCore
 		/// <param name="rMapFaceToFixedFace"></param>
 		/// <returns></returns>
 		TopoDS_Shape FixBooleanOperandFace(const TopoDS_Shape& rkOcctShape, BOPCol_DataMapOfShapeShape& rMapFaceToFixedFace);
+
+		TopoDS_Shape FixBooleanOperandFace(const TopoDS_Shape& rkOcctShape);
 
 		int m_dimensionality;
 		static int m_numOfTopologies;

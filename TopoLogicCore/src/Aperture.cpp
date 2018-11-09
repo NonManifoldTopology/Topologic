@@ -282,6 +282,11 @@ namespace TopologicCore
 		return TOPOLOGY_APERTURE;
 	}
 
+	bool Aperture::IsContainerType()
+	{
+		return Topology()->IsContainerType();
+	}
+
 	Aperture::Ptr Aperture::ByBoundaryWithinHost(const Face::Ptr& kpHostFace, const Wire::Ptr& kpApertureBoundary, const bool kLink, const bool kOpenStatus)
 	{
 		/*Face::Ptr trimmedFace = kpHostFace->Trim(kpApertureBoundary);

@@ -182,6 +182,8 @@ namespace TopologicCore
 
 		static TOPOLOGIC_API int Type() { return TopologicCore::TOPOLOGY_CLUSTER; }
 
+		virtual bool IsContainerType() { return true; }
+
 	protected:
 		/// <summary>
 		/// 

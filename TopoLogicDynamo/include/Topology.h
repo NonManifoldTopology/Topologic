@@ -130,16 +130,6 @@ namespace Topologic
 		/// <returns name="Context[]">The non-constituent members of the input topological entity</returns>
 		List<Context^>^ Contexts();
 
-		///// <summary>
-		///// 
-		///// </summary>
-		///// <param name="contentTopology"></param>
-		///// <param name="parentTopology"></param>
-		///// <returns name="Topology"></returns>
-		//[MultiReturn(gcnew array<String^> { "Topology", "ParentTopology" })]
-		//Dictionary<String^, Object^>^ AddContent(Topology^ thisTopology, Topology^ contentTopology, [DefaultArgument("null")] Topology^ parentTopology);
-		////Topology^ AddContent(Topology^ contentTopology, [DefaultArgument("null")] Topology^ parentTopology);
-
 		/// <summary>
 		/// Add this topology as a non-constituent member to another topology.
 		/// </summary>
@@ -201,33 +191,6 @@ namespace Topologic
 		[IsVisibleInDynamoLibrary(false)]
 		List<List<Topology^>^>^ PathsTo(Topology^ topology, Topology^ parentTopology, int maxLevel, int maxPaths);
 
-		/*/// <summary>
-		///
-		/// </summary>
-		/// <param name="topology"></param>
-		/// <returns></returns>
-		[MultiReturn(gcnew array<String^> {
-			"A_A",
-			"A_B",
-			"B_A",
-			"B_B",
-			"Geometry A_A",
-			"Geometry A_B",
-			"Geometry B_A",
-			"Geometry B_B"
-		})]
-		Dictionary<String^, Object^>^ BooleanImages(Topology^ topology);
-
-		[MultiReturn(gcnew array<String^> {
-			"Parts between A_A and B_A",
-			"Parts between B_A and A_B",
-			"Parts between A_B and B_B",
-			"Parts geometry between A_A and B_A",
-			"Parts geometry between B_A and A_B",
-			"Parts geometry between A_B and B_B"
-		})]
-		Dictionary<String^, Object^>^ BooleanParts(Topology^ topology);
-*/
 		/// <summary>
 		/// Perform the Difference operation between the first and second topological entities.
 		/// </summary>

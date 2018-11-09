@@ -142,6 +142,8 @@ namespace TopologicCore
 
 		static TOPOLOGIC_API int Type() { return TopologicCore::TOPOLOGY_WIRE; }
 
+		virtual bool IsContainerType() { return true; }
+
 	protected:
 		/// <summary>
 		/// 

@@ -301,6 +301,8 @@ namespace TopologicCore
 
 		static TOPOLOGIC_API int Type() { return TopologicCore::TOPOLOGY_FACE; }
 
+		virtual bool IsContainerType() { return false; }
+
 	protected:
 		/// <summary>
 		/// The underlying OCCT face.

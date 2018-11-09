@@ -180,6 +180,8 @@ namespace TopologicCore
 
 		static TOPOLOGIC_API int Type() { return TopologicCore::TOPOLOGY_CELLCOMPLEX; }
 
+		virtual bool IsContainerType() { return true; }
+
 	protected:
 		/// <summary>
 		/// The underlying OCCT cell complex.
