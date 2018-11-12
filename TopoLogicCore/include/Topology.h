@@ -91,15 +91,12 @@ namespace TopologicCore
 		/// <returns></returns>
 		static TOPOLOGIC_API std::shared_ptr<Topology> ByFaces(const std::list<std::shared_ptr<Face>>& rkFaces);
 
-		void AddContent(const Topology::Ptr& rkTopology, const bool kUseClosestSimplestSubshape, Topology::Ptr& rClosestSimplestSubshape);
-
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkTopology"></param>
-		/// <param name="kUseClosestSimplestSubshape"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API void AddContent(const Topology::Ptr& rkTopology, const bool kUseClosestSimplestSubshape);
+		TOPOLOGIC_API void AddContent(const Topology::Ptr& rkTopology);
 
 		/// <summary>
 		/// 
@@ -107,8 +104,8 @@ namespace TopologicCore
 		/// <param name="rkTopology"></param>
 		/// <param name="kTypeFilter"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API void AddContentToSubtopology(const Topology::Ptr& rkTopology, const int kTypeFilter);
-	
+		TOPOLOGIC_API void AddSubContent(const Topology::Ptr& rkTopology, const int kTypeFilter);
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -247,15 +244,34 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="rkOcctShape1"></param>
+		/// <param name="kpTopology2"></param>
+		static void TransferContents(const TopoDS_Shape& rkOcctShape1, const Topology::Ptr& kpTopology2);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="rOcctGeometries"></param>
 		virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const = 0;
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kAllLevels"></param>
 		/// <param name="rContents"></param>
-		TOPOLOGIC_API void Contents(const bool kAllLevels, std::list<Topology::Ptr>& rContents) const;
+		TOPOLOGIC_API void Contents(std::list<Topology::Ptr>& rContents) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rSubContents"></param>
+		TOPOLOGIC_API void SubContents(std::list<Topology::Ptr>& rSubContents) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkOcctShape"></param>
+		/// <param name="rSubContents"></param>
+		static void SubContents(const TopoDS_Shape& rkOcctShape, std::list<Topology::Ptr>& rSubContents);
 
 		/// <summary>
 		/// 

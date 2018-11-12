@@ -355,7 +355,7 @@ namespace TopologicUtility
 
 		// 3. Get sample vertices on the aperture edges
 		std::list<TopologicCore::Topology::Ptr> contents;
-		kpFace->Contents(false, contents);
+		kpFace->Contents(contents);
 		std::list<std::list<Handle(Geom2d_CartesianPoint)>> allApertureSampleVerticesUV;
 		for (const TopologicCore::Topology::Ptr& rkContent : contents)
 		{
@@ -993,7 +993,7 @@ namespace TopologicUtility
 		}
 
 		std::list<TopologicCore::Topology::Ptr> contents; 
-		kpFace->Contents(false, contents);
+		kpFace->Contents(contents);
 		std::list<std::list<Handle(Geom2d_CartesianPoint)>> allApertureSampleVerticesUV;
 		for (const TopologicCore::Topology::Ptr& rkContent : contents)
 		{

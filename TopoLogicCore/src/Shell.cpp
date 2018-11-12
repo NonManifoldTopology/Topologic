@@ -6,7 +6,6 @@
 #include "Face.h"
 #include "Aperture.h"
 #include "ShellFactory.h"
-#include "ContentManager.h"
 #include "GlobalCluster.h"
 
 #include <BRepBuilderAPI_MakeVertex.hxx>

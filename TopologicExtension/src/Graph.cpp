@@ -169,7 +169,7 @@ namespace TopologicExtension
 		{
 			// Get the apertures
 			std::list<Topology::Ptr> contents;
-			kpCellComplex->Contents(true, contents);
+			kpCellComplex->SubContents(contents);
 
 			for (const Topology::Ptr& kpContent : contents)
 			{

@@ -55,20 +55,16 @@ namespace TopologicCore
 
 		std::shared_ptr<Aperture> pAperture = std::make_shared<Aperture>(kpTopology, pContext, kDefaultStatus);
 
-		kpContextTopology->AddContent(pAperture, true);
-
-		/*Face::Ptr pFaceContext = TopologicalQuery::Downcast<Face>(kpContextTopology);
-		std::list<Wire::Ptr> wires;
-		pFaceContext->Wires(wires);*/
-
+		kpContextTopology->AddSubContent(pAperture, Face::Type());
+		
 		return pAperture;
 	}
 
 	std::shared_ptr<Aperture> Aperture::ByTopologyContextStatus(const Topology::Ptr& kpTopology, const std::shared_ptr<Context>& kpContext, const bool kOpenStatus)
 	{
 		std::shared_ptr<Aperture> pAperture = std::make_shared<Aperture>(kpTopology, kpContext, kOpenStatus);
-		Topology::Ptr pClosestSimplestSubshape;
-		kpContext->Topology()->AddContent(pAperture, true, pClosestSimplestSubshape);
+		// HACK
+		kpContext->Topology()->AddSubContent(pAperture, Face::Type());
 		pAperture->AddContext(kpContext);
 		return pAperture;
 	}

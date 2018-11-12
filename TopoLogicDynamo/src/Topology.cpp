@@ -442,17 +442,33 @@ namespace Topologic
 		return copyTopology;
 	}
 
-	List<Topology^>^ Topology::Contents(bool allLevels)
+	List<Topology^>^ Topology::Contents::get()
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		std::list<std::shared_ptr<TopologicCore::Topology>> coreContents;
-		pCoreTopology->Contents(allLevels, coreContents);
+		pCoreTopology->Contents(coreContents);
 
 		List<Topology^>^ pTopologies = gcnew List<Topology^>();
 
 		for (const TopologicCore::Topology::Ptr& kpCoreContent : coreContents)
 		{
 			Topology^ topology = Topology::ByCoreTopology(kpCoreContent);
+			pTopologies->Add(topology);
+		}
+		return pTopologies;
+	}
+
+	List<Topology^>^ Topology::SubContents::get()
+	{
+		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		std::list<std::shared_ptr<TopologicCore::Topology>> coreSubContents;
+		pCoreTopology->SubContents(coreSubContents);
+
+		List<Topology^>^ pTopologies = gcnew List<Topology^>();
+
+		for (const TopologicCore::Topology::Ptr& kpCoreSubContent : coreSubContents)
+		{
+			Topology^ topology = Topology::ByCoreTopology(kpCoreSubContent);
 			pTopologies->Add(topology);
 		}
 		return pTopologies;
@@ -488,21 +504,21 @@ namespace Topologic
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(content->GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreCopyContentTopology = pCoreContentTopology->Copy();
 
-		pCoreCopyParentTopology->AddContent(pCoreCopyContentTopology, true);
+		pCoreCopyParentTopology->AddContent(pCoreCopyContentTopology);
 		
 		// 4. Add closestSimplestSubshape as the context of pCoreCopyContentTopology
-		const double kDefaultParameter = 0.0; // TODO: calculate the parameters
-		pCoreCopyContentTopology->AddContext(
-			TopologicCore::Context::ByTopologyParameters(
-				pCoreCopyParentTopology,
-				kDefaultParameter, kDefaultParameter, kDefaultParameter
-			));
+		//const double kDefaultParameter = 0.0; // TODO: calculate the parameters
+		//pCoreCopyContentTopology->AddContext(
+		//	TopologicCore::Context::ByTopologyParameters(
+		//		pCoreCopyParentTopology,
+		//		kDefaultParameter, kDefaultParameter, kDefaultParameter
+		//	));
 
 		// 5. Return the copy topology
 		return Topology::ByCoreTopology(pCoreCopyParentTopology);
 	}
 
-	Topology ^ Topology::AddContentToSubtopology(Topology ^ topology, int typeFilter)
+	Topology ^ Topology::AddSubContent(Topology ^ topology, int typeFilter)
 	{
 		// 1. Copy this topology
 		TopologicCore::Topology::Ptr pCoreParentTopology =
@@ -514,15 +530,7 @@ namespace Topologic
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreCopyContentTopology = pCoreContentTopology->Copy();
 
-		pCoreCopyParentTopology->AddContentToSubtopology(pCoreCopyContentTopology, typeFilter);
-
-		// 4. Add closestSimplestSubshape as the context of pCoreCopyContentTopology
-		const double kDefaultParameter = 0.0; // TODO: calculate the parameters
-		pCoreCopyContentTopology->AddContext(
-			TopologicCore::Context::ByTopologyParameters(
-				pCoreCopyParentTopology,
-				kDefaultParameter, kDefaultParameter, kDefaultParameter
-			));
+		pCoreCopyParentTopology->AddSubContent(pCoreCopyContentTopology, typeFilter);
 
 		// 5. Return the copy topology
 		return Topology::ByCoreTopology(pCoreCopyParentTopology);
@@ -584,14 +592,10 @@ namespace Topologic
 		TopologicCore::Context::Ptr pCoreContext = TopologicCore::Context::ByTopologyParameters(pCoreCopyContextTopology, context->U(), context->V(), context->W());
 		pCoreCopyInstanceTopology->AddContext(pCoreContext);
 
-		pCoreCopyContextTopology->AddContent(pCoreCopyInstanceTopology, true);
+		//pCoreCopyContextTopology->AddContent(pCoreCopyInstanceTopology, true);
 
 		// 7. Return the copy topology
 		return Topology::ByCoreTopology(pCoreInstanceTopology);
-
-		/*std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		pCoreTopology->AddContext(TopologicCore::TopologicalQuery::Downcast<TopologicCore::Context>(context->GetCoreTopologicalQuery()));
-		return this;*/
 	}
 
 	Topology^ Topology::RemoveContext(Context^ context)

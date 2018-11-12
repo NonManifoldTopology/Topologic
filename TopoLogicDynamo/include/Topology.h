@@ -119,10 +119,16 @@ namespace Topologic
 		/// <summary>
 		/// Returns the non-constituent members of the input topological entity.
 		/// </summary>
-		/// <param name="allLevels"></param>
 		/// <returns name="Topology[]">The topological entities containing the input topology as a non-constituent member</returns>
-		List<Topology^>^ Contents(
-			[Autodesk::DesignScript::Runtime::DefaultArgument("false")] bool allLevels);
+		property List<Topology^>^ Contents
+		{
+			List<Topology^>^ get();
+		}
+
+		property List<Topology^>^ SubContents
+		{
+			List<Topology^>^ get();
+		}
 
 		/// <summary>
 		/// Returns the topological entities containing the input topology as a content.
@@ -143,7 +149,7 @@ namespace Topologic
 		/// <param name="content"></param>
 		/// <param name="typeFilter"></param>
 		/// <returns></returns>
-		Topology^ AddContentToSubtopology(Topology^ content, [DefaultArgument("255")] int typeFilter);
+		Topology^ AddSubContent(Topology^ content, [DefaultArgument("255")] int typeFilter);
 
 		/// <summary>
 		/// Remove a non-constituent member from the topology.

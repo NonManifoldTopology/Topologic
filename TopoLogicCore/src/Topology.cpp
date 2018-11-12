@@ -395,26 +395,21 @@ namespace TopologicCore
 		return pTopology;
 	}
 
-	void Topology::AddContent(const Topology::Ptr & rkTopology, const bool kUseClosestSimplestSubshape, Topology::Ptr& rClosestSimplestSubshape)
+	void Topology::AddContent(const Topology::Ptr & rkTopology)
 	{
-		if(kUseClosestSimplestSubshape)
-		{
-			// 1. Get the center of mass of the content
-			Vertex::Ptr pCenterOfMass = rkTopology->CenterOfMass();
+		ContentManager::GetInstance().Add(GetOcctShape(), rkTopology);
 
-			// 2. Find the closest simplest topology of the copy topology
-			rClosestSimplestSubshape = ClosestSimplestSubshape(pCenterOfMass);
-
-			// 3. Register to ContentManager
-			ContentManager::GetInstance().Add(rClosestSimplestSubshape->GetOcctShape(), rkTopology);
-		}
-		else
-		{
-			ContentManager::GetInstance().Add(GetOcctShape(), rkTopology);
-		}
+		const double kDefaultParameter = 0.0;
+		ContextManager::GetInstance().Add(
+			rkTopology->GetOcctShape(),
+			Context::ByTopologyParameters(Topology::ByOcctShape(GetOcctShape()),
+				kDefaultParameter, 
+				kDefaultParameter,
+				kDefaultParameter)
+		);
 	}
 
-	void Topology::AddContentToSubtopology(const Topology::Ptr& rkTopology, const int kTypeFilter)
+	void Topology::AddSubContent(const Topology::Ptr& rkTopology, const int kTypeFilter)
 	{
 		// 1. Get the center of mass of the content
 		Vertex::Ptr pCenterOfMass = rkTopology->CenterOfMass();
@@ -424,17 +419,22 @@ namespace TopologicCore
 
 		// 3. Register to ContentManager
 		ContentManager::GetInstance().Add(selectedSubtopology->GetOcctShape(), rkTopology);
-	}
 
-	void Topology::AddContent(const Topology::Ptr& rkTopology, const bool kUseClosestSimplestSubshape)
-	{
-		Topology::Ptr pClosestSimplestSubshape;
-		AddContent(rkTopology, kUseClosestSimplestSubshape, pClosestSimplestSubshape);
+		// 4. Add closestSimplestSubshape as the context of pCoreCopyContentTopology
+		const double kDefaultParameter = 0.0; // TODO: calculate the parameters
+		ContextManager::GetInstance().Add(
+			rkTopology->GetOcctShape(),
+			TopologicCore::Context::ByTopologyParameters(
+			selectedSubtopology,
+			kDefaultParameter, kDefaultParameter, kDefaultParameter
+		));
 	}
 
 	void Topology::RemoveContent(const Topology::Ptr& rkTopology)
 	{
 		ContentManager::GetInstance().Remove(GetOcctShape(), rkTopology->GetOcctShape());
+
+		ContextManager::GetInstance().Remove(rkTopology->GetOcctShape(), GetOcctShape());
 	}
 
 	void Topology::AddContext(const std::shared_ptr<Context>& rkContext)
@@ -442,19 +442,20 @@ namespace TopologicCore
 		// 1. Get the center of mass of the content
 		Vertex::Ptr pCenterOfMass = CenterOfMass();
 
-		// 2. Find the closest simplest topology of the copy topology
-		Topology::Ptr pClosestSimplestSubshape = rkContext->Topology()->ClosestSimplestSubshape(pCenterOfMass);
+		// 4. Register to ContextManager
+		ContextManager::GetInstance().Add(GetOcctShape(), rkContext);
 
-		// 3. Make another context with only the closest subshape
-		Context::Ptr pClosestSimplestContext = Context::ByTopologyParameters(pClosestSimplestSubshape, rkContext->U(), rkContext->V(), rkContext->W());
-
-		// 4. Register to ContentManager
-		ContextManager::GetInstance().Add(GetOcctShape(), pClosestSimplestContext);
+		// 5. Register to ContentManager
+		ContentManager::GetInstance().Add(rkContext->Topology()->GetOcctShape(), Topology::ByOcctShape(GetOcctShape()));
 	}
 
 	void Topology::RemoveContext(const std::shared_ptr<Context>& rkContext)
 	{
+		// 1. Remove from ContextManager
 		ContextManager::GetInstance().Remove(GetOcctShape(), rkContext->Topology()->GetOcctShape());
+
+		// 2. Remove from ContentManager
+		ContentManager::GetInstance().Remove(rkContext->Topology()->GetOcctShape(), GetOcctShape());
 	}
 
 	void Topology::SharedTopologies(const Topology::Ptr& kpTopology, std::list<Topology::Ptr>& rkSharedTopologies) const
@@ -538,35 +539,38 @@ namespace TopologicCore
 		return occtSewing.SewedShape();
 	}
 
-	void Topology::Contents(const bool kAllLevels, std::list<Topology::Ptr>& rContents) const
+	void Topology::Contents(std::list<Topology::Ptr>& rContents) const
 	{
-		//if (!kAllLevels)
-		//{
 		ContentManager::GetInstance().Find(GetOcctShape(), rContents);
-		//}
-		//else //
-		if(kAllLevels)
+	}
+
+	void Topology::SubContents(std::list<Topology::Ptr>& rSubContents) const
+	{
+		Contents(rSubContents);
+		SubContents(GetOcctShape(), rSubContents);
+	}
+	
+	void Topology::SubContents(const TopoDS_Shape & rkOcctShape, std::list<Topology::Ptr>& rSubContents)
+	{
+		TopAbs_ShapeEnum occtType = rkOcctShape.ShapeType();
+		int occtTypeInt = (int)occtType + 1; // +1 for the next lower type
+		for (int occtTypeIntIteration = occtTypeInt; occtTypeIntIteration != (int)TopAbs_SHAPE; occtTypeIntIteration++)
 		{
-			TopAbs_ShapeEnum occtType = GetOcctShape().ShapeType();
-			int occtTypeInt = (int)occtType + 1; // +1 for the next lower type
-			for (int occtTypeIntIteration = occtTypeInt; occtTypeIntIteration != (int)TopAbs_SHAPE; occtTypeIntIteration++)
+			// Get members in each level
+			TopAbs_ShapeEnum occtTypeIteration = (TopAbs_ShapeEnum)occtTypeIntIteration;
+			TopTools_MapOfShape occtMembers;
+			DownwardNavigation(rkOcctShape, occtTypeIteration, occtMembers);
+
+			// For each member, get the contents
+			for (TopTools_MapIteratorOfMapOfShape occtMemberIterator(occtMembers);
+				occtMemberIterator.More();
+				occtMemberIterator.Next())
 			{
-				// Get members in each level
-				TopAbs_ShapeEnum occtTypeIteration = (TopAbs_ShapeEnum)occtTypeIntIteration;
-				TopTools_MapOfShape occtMembers;
-				DownwardNavigation(GetOcctShape(), occtTypeIteration, occtMembers);
-				
-				// For each member, get the contents
-				for (TopTools_MapIteratorOfMapOfShape occtMemberIterator(occtMembers);
-					occtMemberIterator.More();
-					occtMemberIterator.Next())
-				{
-					ContentManager::GetInstance().Find(occtMemberIterator.Value(), rContents);
-				}
+				ContentManager::GetInstance().Find(occtMemberIterator.Value(), rSubContents);
 			}
 		}
 	}
-	
+
 	bool Topology::Contexts(std::list<std::shared_ptr<Context>>& rContexts) const
 	{
 		return ContextManager::GetInstance().Find(GetOcctShape(), rContexts);
@@ -884,7 +888,7 @@ namespace TopologicCore
 		BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceB)
 	{
 		std::list<Topology::Ptr> thisContents;
-		Contents(true, thisContents);
+		SubContents(thisContents);
 
 		BOPCol_ListOfShape occtSubTopologies;
 		SubTopologies(rOcctCellsBuilder.Shape(), occtSubTopologies);
@@ -930,15 +934,41 @@ namespace TopologicCore
 
 				// Transfer the contents from kpOriginalFace to pModifiedFixedFace
 				std::list<Topology::Ptr> contents;
-				kpOriginalFace->Contents(false, contents);
+				kpOriginalFace->Contents(contents);
 				for(const Topology::Ptr& kpTopology : contents)
 				{
-					pModifiedFixedFace->AddContent(kpTopology, false);
+					pModifiedFixedFace->AddContent(kpTopology);
 				}
 			}
 		}
 
 		return pBooleanResult;
+	}
+
+	void Topology::TransferContents(const TopoDS_Shape& rkOcctShape1, const Topology::Ptr& kpTopology2)
+	{
+		std::list<Topology::Ptr> subContents;
+		SubContents(rkOcctShape1, subContents);
+
+		for (const Topology::Ptr kpSubContent : subContents)
+		{
+			// Attach to the sameF context type
+			int contextType = 0;
+			std::list<Context::Ptr> contexts;
+			kpSubContent->Contexts(contexts);
+			for (const Context::Ptr& kpContext : contexts)
+			{
+				Topology::Ptr pContextTopology = kpContext->Topology();
+				TopologyType contextTopologyType = pContextTopology->GetType();
+				contextType = Bitwise::Or(contextType, contextTopologyType);
+
+				// Remove content from current contexts
+				pContextTopology->RemoveContent(kpSubContent);
+				kpSubContent->RemoveContext(kpContext);
+			}
+
+			kpTopology2->AddSubContent(kpSubContent, contextType);
+		}
 	}
 
 	Topology::Ptr Topology::GetBooleanResult(
@@ -955,7 +985,7 @@ namespace TopologicCore
 	TopoDS_Shape Topology::PostprocessBooleanResult(const Topology::Ptr & kpOtherTopology, const TopoDS_Shape& rkOcctResultShape)
 	{
 		std::list<Topology::Ptr> thisContents;
-		Contents(true, thisContents);
+		SubContents(thisContents);
 
 		TopoDS_Shape occtPostprocessedShape = Simplify(rkOcctResultShape);
 		occtPostprocessedShape = MakeBooleanContainers(occtPostprocessedShape);
@@ -992,7 +1022,7 @@ namespace TopologicCore
 
 			// 2. Transfer the contents from the original shape to the generated shapes
 			std::list<Topology::Ptr> contents;
-			pOriginalShape->Contents(false, contents);
+			pOriginalShape->Contents(contents);
 			for (TopTools_ListIteratorOfListOfShape kOcctGeneratedShapeIterator(occtGeneratedShapes);
 				kOcctGeneratedShapeIterator.More();
 				kOcctGeneratedShapeIterator.Next())
@@ -1002,7 +1032,7 @@ namespace TopologicCore
 
 				for (const Topology::Ptr& kpContent : contents)
 				{
-					pGeneratedShape->AddContent(kpContent, false);
+					pGeneratedShape->AddContent(kpContent);
 				}
 			}
 		}
@@ -1211,9 +1241,10 @@ namespace TopologicCore
 		occtCellsBuilder.MakeContainers();
 
 		TopoDS_Shape occtPostprocessedShape = PostprocessBooleanResult(occtCellsBuilder.Shape());
-
-		Topology::Ptr pBooleanResult = Topology::ByOcctShape(occtPostprocessedShape, "");
-		return pBooleanResult;
+		Topology::Ptr pPostprocessedShape = Topology::ByOcctShape(occtPostprocessedShape, "");
+		TransferContents(GetOcctShape(), pPostprocessedShape);
+		TransferContents(kpOtherTopology->GetOcctShape(), pPostprocessedShape);
+		return pPostprocessedShape;
 	}
 
 	Topology::Ptr Topology::MergeOld(const Topology::Ptr& kpOtherTopology)
@@ -1500,7 +1531,7 @@ namespace TopologicCore
 
 		// For now, only handle a cell topology
 		std::list<Topology::Ptr> thisContentsA;
-		Contents(true, thisContentsA);
+		SubContents(thisContentsA);
 
 		BOPCol_ListOfShape occtCellsBuildersOperandsA;
 		BOPCol_ListOfShape occtCellsBuildersOperandsB;
@@ -1514,7 +1545,7 @@ namespace TopologicCore
 
 		// For now, only handle a cell topology
 		std::list<Topology::Ptr> thisContentsB;
-		Contents(true, thisContentsB);
+		SubContents(thisContentsB);
 
 		BOPCol_ListOfShape occtListToTake;
 		BOPCol_ListOfShape occtListToAvoid;
@@ -1532,7 +1563,7 @@ namespace TopologicCore
 
 		// For now, only handle a cell topology
 		std::list<Topology::Ptr> thisContentsC;
-		Contents(true, thisContentsC);
+		SubContents(thisContentsC);
 
 		Topology::Ptr pResult = GetBooleanResult(
 			kpOtherTopology,
@@ -2037,13 +2068,13 @@ namespace TopologicCore
 
 		// Copy the contents
 		std::list<Topology::Ptr> contents;
-		Contents(false, contents);
+		Contents(contents);
 		
 		for(const Topology::Ptr& kpContent : contents)
 		{
 			// Copy the content
 			Topology::Ptr copyContent = kpContent->Copy();
-			pShapeCopy->AddContent(copyContent, false); 
+			pShapeCopy->AddContent(copyContent); 
 			const double kDefaultParameter = 0.0; // TODO: calculate the parameters
 			copyContent->AddContext(
 				Context::ByTopologyParameters(
