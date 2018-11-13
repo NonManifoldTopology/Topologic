@@ -6,6 +6,7 @@
 #include <BOPCol_ListOfShape.hxx>
 #include <BOPCol_DataMapOfShapeShape.hxx>
 #include <BOPAlgo_CellsBuilder.hxx>
+#include <BRepAlgoAPI_BooleanOperation.hxx>
 #include <BRepBuilderAPI_MakeShape.hxx>
 #include <Standard_Handle.hxx>
 #include <Geom_Geometry.hxx>
@@ -156,28 +157,28 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="kpOtherTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology::Ptr DifferenceOld(const Topology::Ptr& kpOtherTopology);
+		TOPOLOGIC_API Topology::Ptr Difference(const Topology::Ptr& kpOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpOtherTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology::Ptr ImposeOld(const Topology::Ptr& kpOtherTopology);
+		TOPOLOGIC_API Topology::Ptr Impose(const Topology::Ptr& kpOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpOtherTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology::Ptr ImprintOld(const Topology::Ptr& kpOtherTopology);
+		TOPOLOGIC_API Topology::Ptr Imprint(const Topology::Ptr& kpOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpOtherTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology::Ptr IntersectionOld(const Topology::Ptr& kpOtherTopology);
+		TOPOLOGIC_API Topology::Ptr Intersect(const Topology::Ptr& kpOtherTopology);
 
 		/// <summary>
 		/// 
@@ -185,13 +186,6 @@ namespace TopologicCore
 		/// <param name="kpOtherTopology"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API Topology::Ptr Merge(const Topology::Ptr& kpOtherTopology);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="kpOtherTopology"></param>
-		/// <returns></returns>
-		TOPOLOGIC_API Topology::Ptr MergeOld(const Topology::Ptr& kpOtherTopology);
 
 		/// <summary>
 		/// 
@@ -204,21 +198,21 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="kpOtherTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology::Ptr SliceOld(const Topology::Ptr& kpOtherTopology);
+		TOPOLOGIC_API Topology::Ptr Slice(const Topology::Ptr& kpOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpOtherTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology::Ptr UnionOld(const Topology::Ptr& kpOtherTopology);
+		TOPOLOGIC_API Topology::Ptr Union(const Topology::Ptr& kpOtherTopology);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpOtherTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology::Ptr XOROld(const Topology::Ptr& kpOtherTopology);
+		TOPOLOGIC_API Topology::Ptr XOR(const Topology::Ptr& kpOtherTopology);
 
 		/// <summary>
 		/// 
@@ -235,11 +229,11 @@ namespace TopologicCore
 		/// <param name="rOcctMapFaceToFixedFaceA"></param>
 		/// <param name="rOcctMapFaceToFixedFaceB"></param>
 		/// <returns></returns>
-		std::shared_ptr<Topology> TransferBooleanContents(
+		/*std::shared_ptr<Topology> TransferBooleanContents(
 			const std::shared_ptr<Topology>& kpAnotherTopology,
 			BOPAlgo_CellsBuilder& rOcctCellsBuilder,
 			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceA,
-			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceB);
+			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceB);*/
 
 		/// <summary>
 		/// 
@@ -247,6 +241,9 @@ namespace TopologicCore
 		/// <param name="rkOcctShape1"></param>
 		/// <param name="kpTopology2"></param>
 		static void TransferContents(const TopoDS_Shape& rkOcctShape1, const Topology::Ptr& kpTopology2);
+
+		
+		static void TransferContents(const TopoDS_Shape& rkOcctShape1, const Topology::Ptr& kpTopology2, const BOPCol_ListOfShape& rkOcctDeletedSubshapes);
 
 		/// <summary>
 		/// 
@@ -517,13 +514,13 @@ namespace TopologicCore
 		/// <param name="kLevel"></param>
 		/// <returns></returns>
 		static std::string Analyze(const TopoDS_Shape& rkShape, const int kLevel = 0);
-
+/*
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkOcctShape"></param>
 		/// <param name="rUnionArguments"></param>
-		static void AddUnionInternalStructure(const TopoDS_Shape& rkOcctShape, BOPCol_ListOfShape& rUnionArguments);
+		static void AddUnionInternalStructure(const TopoDS_Shape& rkOcctShape, BOPCol_ListOfShape& rUnionArguments);*/
 
 		template <class Subclass>
 		static TopAbs_ShapeEnum CheckOcctShapeType();
@@ -573,6 +570,12 @@ namespace TopologicCore
 			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceA,
 			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceB);
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkOcctArgumentsA"></param>
+		/// <param name="rkOcctArgumentsB"></param>
+		/// <param name="rOcctCellsBuilder"></param>
 		static void NonRegularBooleanOperation(
 			const BOPCol_ListOfShape& rkOcctArgumentsA,
 			const BOPCol_ListOfShape& rkOcctArgumentsB,
@@ -581,13 +584,24 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="rkOcctArgumentsA"></param>
+		/// <param name="rkOcctArgumentsB"></param>
+		/// <param name="rOcctBooleanOperation"></param>
+		static void RegularBooleanOperation(
+			const BOPCol_ListOfShape& rkOcctArgumentsA,
+			const BOPCol_ListOfShape& rkOcctArgumentsB,
+			BRepAlgoAPI_BooleanOperation& rOcctBooleanOperation);
+
+		/*/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="rOcctCellsBuilder"></param>
 		/// <returns></returns>
 		Topology::Ptr GetBooleanResult(
 			const Topology::Ptr& kpOtherTopology,
 			BOPAlgo_CellsBuilder& rOcctCellsBuilder,
 			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceA,
-			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceB);
+			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceB);*/
 
 		/// <summary>
 		/// 
@@ -646,6 +660,10 @@ namespace TopologicCore
 		TopoDS_Shape FixBooleanOperandFace(const TopoDS_Shape& rkOcctShape, BOPCol_DataMapOfShapeShape& rMapFaceToFixedFace);
 
 		TopoDS_Shape FixBooleanOperandFace(const TopoDS_Shape& rkOcctShape);
+
+		void GetDeletedBooleanSubtopologies(const TopoDS_Shape& rkOcctShape, BOPAlgo_CellsBuilder& rOcctCellsBuilder, BOPCol_ListOfShape& rOcctDeletedShapes);
+
+		void GetDeletedBooleanSubtopologies(const TopoDS_Shape& rkOcctShape, BRepAlgoAPI_BooleanOperation& rOcctBooleanOperation, BOPCol_ListOfShape& rOcctDeletedShapes);
 
 		int m_dimensionality;
 		static int m_numOfTopologies;

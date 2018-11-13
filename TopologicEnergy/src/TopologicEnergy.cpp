@@ -928,7 +928,7 @@ namespace TopologicEnergy
 				//osSurface->setWindowToWallRatio(glazingRatio, 900.0, true);
 
 				// Use the surface apertures
-				List<Topology^>^ pContents = buildingFace->Contents(true);
+				List<Topology^>^ pContents = buildingFace->SubContents;
 				for each(Topology^ pContent in pContents)
 				{
 					Aperture^ pAperture = dynamic_cast<Aperture^>(pContent);

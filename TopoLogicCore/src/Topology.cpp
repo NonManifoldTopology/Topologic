@@ -539,6 +539,44 @@ namespace TopologicCore
 		return occtSewing.SewedShape();
 	}
 
+	Topology::Ptr Topology::Difference(const Topology::Ptr & kpOtherTopology)
+	{
+		BOPCol_ListOfShape occtArgumentsA;
+		BOPCol_ListOfShape occtArgumentsB;
+		AddBooleanOperands(kpOtherTopology, occtArgumentsA, occtArgumentsB);
+
+		BOPAlgo_CellsBuilder occtCellsBuilder;
+		NonRegularBooleanOperation(occtArgumentsA, occtArgumentsB, occtCellsBuilder);
+
+		// 2. Select the parts to be included in the final result.
+		BOPCol_ListOfShape occtListToTake;
+		BOPCol_ListOfShape occtListToAvoid;
+
+		for (BOPCol_ListIteratorOfListOfShape kOcctShapeIteratorA(occtArgumentsA);
+			kOcctShapeIteratorA.More();
+			kOcctShapeIteratorA.Next())
+		{
+			occtListToTake.Clear();
+			occtListToAvoid.Clear();
+			occtListToTake.Append(kOcctShapeIteratorA.Value());
+			for (BOPCol_ListIteratorOfListOfShape kOcctShapeIteratorB(occtArgumentsB);
+				kOcctShapeIteratorB.More();
+				kOcctShapeIteratorB.Next())
+			{
+				occtListToAvoid.Append(kOcctShapeIteratorB.Value());
+			}
+			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
+		}
+
+		occtCellsBuilder.MakeContainers();
+
+		TopoDS_Shape occtPostprocessedShape = PostprocessBooleanResult(occtCellsBuilder.Shape());
+		Topology::Ptr pPostprocessedShape = Topology::ByOcctShape(occtPostprocessedShape, "");
+		TransferContents(GetOcctShape(), pPostprocessedShape);
+		TransferContents(kpOtherTopology->GetOcctShape(), pPostprocessedShape);
+		return pPostprocessedShape;
+	}
+
 	void Topology::Contents(std::list<Topology::Ptr>& rContents) const
 	{
 		ContentManager::GetInstance().Find(GetOcctShape(), rContents);
@@ -861,6 +899,7 @@ namespace TopologicCore
 			occtArguments.Append(occtArgumentIteratorB.Value());
 		}
 		rOcctCellsBuilder.SetArguments(occtArguments);
+		//rOcctCellsBuilder.SetNonDestructive(false);
 
 		// Split the arguments and tools
 		try {
@@ -881,69 +920,69 @@ namespace TopologicCore
 		}
 	}
 
-	std::shared_ptr<Topology> Topology::TransferBooleanContents(
-		const std::shared_ptr<Topology>& kpAnotherTopology,
-		BOPAlgo_CellsBuilder& rOcctCellsBuilder,
-		BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceA,
-		BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceB)
-	{
-		std::list<Topology::Ptr> thisContents;
-		SubContents(thisContents);
+	//std::shared_ptr<Topology> Topology::TransferBooleanContents(
+	//	const std::shared_ptr<Topology>& kpAnotherTopology,
+	//	BOPAlgo_CellsBuilder& rOcctCellsBuilder,
+	//	BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceA,
+	//	BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceB)
+	//{
+	//	std::list<Topology::Ptr> thisContents;
+	//	SubContents(thisContents);
 
-		BOPCol_ListOfShape occtSubTopologies;
-		SubTopologies(rOcctCellsBuilder.Shape(), occtSubTopologies);
-		//TopoDS_Shape queryShape = rOcctCellsBuilder.Shape();
-		TopoDS_Shape queryShape = Simplify(rOcctCellsBuilder.Shape());
-		queryShape = MakeBooleanContainers(queryShape);
-		GlobalCluster::GetInstance().AddTopology(queryShape);
+	//	BOPCol_ListOfShape occtSubTopologies;
+	//	SubTopologies(rOcctCellsBuilder.Shape(), occtSubTopologies);
+	//	//TopoDS_Shape queryShape = rOcctCellsBuilder.Shape();
+	//	TopoDS_Shape queryShape = Simplify(rOcctCellsBuilder.Shape());
+	//	queryShape = MakeBooleanContainers(queryShape);
+	//	GlobalCluster::GetInstance().AddTopology(queryShape);
 
-		Topology::Ptr pBooleanResult = Topology::ByOcctShape(queryShape, "");
-		// queryShape (pBooleanResult) is the member of the Boolean result, it doesn't have any content yet.
+	//	Topology::Ptr pBooleanResult = Topology::ByOcctShape(queryShape, "");
+	//	// queryShape (pBooleanResult) is the member of the Boolean result, it doesn't have any content yet.
 
-		// For now, handle the case where queryShape is a cellComplex and t
-		if (GetType() != TOPOLOGY_CELL || pBooleanResult->GetType() != TOPOLOGY_CELLCOMPLEX)
-		{
-			return pBooleanResult;
-		}
+	//	// For now, handle the case where queryShape is a cellComplex and t
+	//	if (GetType() != TOPOLOGY_CELL || pBooleanResult->GetType() != TOPOLOGY_CELLCOMPLEX)
+	//	{
+	//		return pBooleanResult;
+	//	}
 
-		// For now, only handle a cell topology
-		Cell* pCell = Topology::Downcast<Cell>(this);
+	//	// For now, only handle a cell topology
+	//	Cell* pCell = Topology::Downcast<Cell>(this);
 
-		std::list<Face::Ptr> originalFaces;
-		pCell->Faces(originalFaces);
-		for (const Face::Ptr& kpOriginalFace : originalFaces)
-		{
-			// Get the fixed face
-			TopoDS_Shape occtFixedFace;
-			try {
-				occtFixedFace = rOcctMapFaceToFixedFaceA.Find(kpOriginalFace->GetOcctFace());
-			}
-			catch (...)
-			{
-				continue;
-			}
+	//	std::list<Face::Ptr> originalFaces;
+	//	pCell->Faces(originalFaces);
+	//	for (const Face::Ptr& kpOriginalFace : originalFaces)
+	//	{
+	//		// Get the fixed face
+	//		TopoDS_Shape occtFixedFace;
+	//		try {
+	//			occtFixedFace = rOcctMapFaceToFixedFaceA.Find(kpOriginalFace->GetOcctFace());
+	//		}
+	//		catch (...)
+	//		{
+	//			continue;
+	//		}
 
-			// Get the modified fixed faces
-			TopTools_ListOfShape occtModifiedFixedFaces = rOcctCellsBuilder.Modified(occtFixedFace);
-			for (TopTools_ListIteratorOfListOfShape occtModifiedFixedFaceIterator(occtModifiedFixedFaces);
-				occtModifiedFixedFaceIterator.More();
-				occtModifiedFixedFaceIterator.Next())
-			{
-				const TopoDS_Shape& rkOcctModifiedFixedFace = occtModifiedFixedFaceIterator.Value();
-				std::shared_ptr<Topology> pModifiedFixedFace = Topology::ByOcctShape(rkOcctModifiedFixedFace, "");
+	//		// Get the modified fixed faces
+	//		TopTools_ListOfShape occtModifiedFixedFaces = rOcctCellsBuilder.Modified(occtFixedFace);
+	//		for (TopTools_ListIteratorOfListOfShape occtModifiedFixedFaceIterator(occtModifiedFixedFaces);
+	//			occtModifiedFixedFaceIterator.More();
+	//			occtModifiedFixedFaceIterator.Next())
+	//		{
+	//			const TopoDS_Shape& rkOcctModifiedFixedFace = occtModifiedFixedFaceIterator.Value();
+	//			std::shared_ptr<Topology> pModifiedFixedFace = Topology::ByOcctShape(rkOcctModifiedFixedFace, "");
 
-				// Transfer the contents from kpOriginalFace to pModifiedFixedFace
-				std::list<Topology::Ptr> contents;
-				kpOriginalFace->Contents(contents);
-				for(const Topology::Ptr& kpTopology : contents)
-				{
-					pModifiedFixedFace->AddContent(kpTopology);
-				}
-			}
-		}
+	//			// Transfer the contents from kpOriginalFace to pModifiedFixedFace
+	//			std::list<Topology::Ptr> contents;
+	//			kpOriginalFace->Contents(contents);
+	//			for(const Topology::Ptr& kpTopology : contents)
+	//			{
+	//				pModifiedFixedFace->AddContent(kpTopology);
+	//			}
+	//		}
+	//	}
 
-		return pBooleanResult;
-	}
+	//	return pBooleanResult;
+	//}
 
 	void Topology::TransferContents(const TopoDS_Shape& rkOcctShape1, const Topology::Ptr& kpTopology2)
 	{
@@ -952,7 +991,7 @@ namespace TopologicCore
 
 		for (const Topology::Ptr kpSubContent : subContents)
 		{
-			// Attach to the sameF context type
+			// Attach to the same context type
 			int contextType = 0;
 			std::list<Context::Ptr> contexts;
 			kpSubContent->Contexts(contexts);
@@ -971,7 +1010,59 @@ namespace TopologicCore
 		}
 	}
 
-	Topology::Ptr Topology::GetBooleanResult(
+	void Topology::TransferContents(const TopoDS_Shape & rkOcctShape1, const Topology::Ptr & kpTopology2, const BOPCol_ListOfShape & rkOcctDeletedSubshapes)
+	{
+		std::list<Topology::Ptr> subContents;
+		SubContents(rkOcctShape1, subContents);
+
+		for (const Topology::Ptr kpSubContent : subContents)
+		{
+			// Check if the context topology is part of kpTopology2. Use OCCT IsDeleted()
+			bool allContextsDisappear = true;
+			std::list<Context::Ptr> contexts;
+			kpSubContent->Contexts(contexts);
+			for (const Context::Ptr& kpContext : contexts)
+			{
+				if (!rkOcctDeletedSubshapes.Contains(kpContext->Topology()->GetOcctShape()))
+				{
+					allContextsDisappear = false;
+					break;
+				}
+			}
+			if (allContextsDisappear)
+			{
+				continue;
+			}
+			
+			// Attach to the same context type
+			int contextType = 0;
+			for (const Context::Ptr& kpContext : contexts)
+			{
+				Topology::Ptr pContextTopology = kpContext->Topology();
+				TopologyType contextTopologyType = pContextTopology->GetType();
+				contextType = Bitwise::Or(contextType, contextTopologyType);
+
+				// Remove content from current contexts
+				pContextTopology->RemoveContent(kpSubContent);
+				kpSubContent->RemoveContext(kpContext);
+			}
+
+			kpTopology2->AddSubContent(kpSubContent, contextType);
+		}
+	}
+
+	void Topology::RegularBooleanOperation(
+		const BOPCol_ListOfShape & rkOcctArgumentsA, 
+		const BOPCol_ListOfShape & rkOcctArgumentsB, 
+		BRepAlgoAPI_BooleanOperation& rOcctBooleanOperation)
+	{
+		rOcctBooleanOperation.SetArguments(rkOcctArgumentsA);
+		rOcctBooleanOperation.SetTools(rkOcctArgumentsB);
+		rOcctBooleanOperation.SetNonDestructive(true);
+		rOcctBooleanOperation.Build();
+	}
+
+	/*Topology::Ptr Topology::GetBooleanResult(
 		const Topology::Ptr& kpOtherTopology,
 		BOPAlgo_CellsBuilder& rOcctCellsBuilder,
 		BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceA,
@@ -980,7 +1071,7 @@ namespace TopologicCore
 		rOcctCellsBuilder.MakeContainers();
 
 		return TransferBooleanContents(kpOtherTopology, rOcctCellsBuilder, rOcctMapFaceToFixedFaceA, rOcctMapFaceToFixedFaceB);
-	}
+	}*/
 
 	TopoDS_Shape Topology::PostprocessBooleanResult(const Topology::Ptr & kpOtherTopology, const TopoDS_Shape& rkOcctResultShape)
 	{
@@ -1038,64 +1129,28 @@ namespace TopologicCore
 		}
 	}
 
-	Topology::Ptr Topology::DifferenceOld(const Topology::Ptr& kpOtherTopology)
+	Topology::Ptr Topology::Impose(const Topology::Ptr & kpOtherTopology)
 	{
-		BOPCol_ListOfShape occtCellsBuildersOperandsA;
-		BOPCol_ListOfShape occtCellsBuildersOperandsB;
+		BOPCol_ListOfShape occtArgumentsA;
+		BOPCol_ListOfShape occtArgumentsB;
+		AddBooleanOperands(kpOtherTopology, occtArgumentsA, occtArgumentsB);
+
 		BOPAlgo_CellsBuilder occtCellsBuilder;
-		BOPCol_DataMapOfShapeShape occtMapFaceToFixedFaceA;
-		BOPCol_DataMapOfShapeShape occtMapFaceToFixedFaceB;
+		NonRegularBooleanOperation(occtArgumentsA, occtArgumentsB, occtCellsBuilder);
 
-		NonRegularBooleanOperation(kpOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB, occtMapFaceToFixedFaceA, occtMapFaceToFixedFaceB);
-
-		BOPCol_ListOfShape occtListToTake;
-		BOPCol_ListOfShape occtListToAvoid;
-
-		for (BOPCol_ListIteratorOfListOfShape kOcctShapeIteratorA(occtCellsBuildersOperandsA);
-			kOcctShapeIteratorA.More();
-			kOcctShapeIteratorA.Next())
-		{
-			occtListToTake.Clear();
-			occtListToAvoid.Clear();
-			occtListToTake.Append(kOcctShapeIteratorA.Value());
-			for (BOPCol_ListIteratorOfListOfShape kOcctShapeIteratorB(occtCellsBuildersOperandsB);
-				kOcctShapeIteratorB.More();
-				kOcctShapeIteratorB.Next())
-			{
-				occtListToAvoid.Append(kOcctShapeIteratorB.Value());
-			}
-			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
-		}
-
-		return GetBooleanResult(
-			kpOtherTopology,
-			occtCellsBuilder,
-			occtMapFaceToFixedFaceA,
-			occtMapFaceToFixedFaceB);
-	}
-
-	Topology::Ptr Topology::ImposeOld(const Topology::Ptr& kpOtherTopology)
-	{
-		BOPCol_ListOfShape occtCellsBuildersOperandsA;
-		BOPCol_ListOfShape occtCellsBuildersOperandsB;
-		BOPAlgo_CellsBuilder occtCellsBuilder;
-		BOPCol_DataMapOfShapeShape occtMapFaceToFixedFaceA;
-		BOPCol_DataMapOfShapeShape occtMapFaceToFixedFaceB;
-
-		NonRegularBooleanOperation(kpOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB, occtMapFaceToFixedFaceA, occtMapFaceToFixedFaceB);
-
+		// 2. Select the parts to be included in the final result.
 		BOPCol_ListOfShape occtListToTake;
 		BOPCol_ListOfShape occtListToAvoid;
 
 		// Get part of A not in B
-		for (BOPCol_ListIteratorOfListOfShape kOcctShapeIteratorA(occtCellsBuildersOperandsA);
+		for (BOPCol_ListIteratorOfListOfShape kOcctShapeIteratorA(occtArgumentsA);
 			kOcctShapeIteratorA.More();
 			kOcctShapeIteratorA.Next())
 		{
 			occtListToTake.Clear();
 			occtListToAvoid.Clear();
 			occtListToTake.Append(kOcctShapeIteratorA.Value());
-			for (BOPCol_ListIteratorOfListOfShape kOcctShapeIteratorB(occtCellsBuildersOperandsB);
+			for (BOPCol_ListIteratorOfListOfShape kOcctShapeIteratorB(occtArgumentsB);
 				kOcctShapeIteratorB.More();
 				kOcctShapeIteratorB.Next())
 			{
@@ -1106,7 +1161,7 @@ namespace TopologicCore
 
 		// Add B
 		int i = 1;
-		for (BOPCol_ListIteratorOfListOfShape kOcctShapeIteratorB(occtCellsBuildersOperandsB);
+		for (BOPCol_ListIteratorOfListOfShape kOcctShapeIteratorB(occtArgumentsB);
 			kOcctShapeIteratorB.More();
 			kOcctShapeIteratorB.Next())
 		{
@@ -1116,30 +1171,33 @@ namespace TopologicCore
 			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid, i++, true);
 		}
 
-		return GetBooleanResult(
-			kpOtherTopology,
-			occtCellsBuilder,
-			occtMapFaceToFixedFaceA,
-			occtMapFaceToFixedFaceB);
+		occtCellsBuilder.MakeContainers();
+
+		TopoDS_Shape occtPostprocessedShape = PostprocessBooleanResult(occtCellsBuilder.Shape());
+		Topology::Ptr pPostprocessedShape = Topology::ByOcctShape(occtPostprocessedShape, "");
+		TransferContents(GetOcctShape(), pPostprocessedShape);
+		TransferContents(kpOtherTopology->GetOcctShape(), pPostprocessedShape);
+		return pPostprocessedShape;
 	}
 
-	Topology::Ptr Topology::ImprintOld(const Topology::Ptr& kpOtherTopology)
+	Topology::Ptr Topology::Imprint(const Topology::Ptr & kpOtherTopology)
 	{
-		BOPCol_ListOfShape occtCellsBuildersOperandsA;
-		BOPCol_ListOfShape occtCellsBuildersOperandsB;
-		BOPAlgo_CellsBuilder occtCellsBuilder;
-		BOPCol_DataMapOfShapeShape occtMapFaceToFixedFaceA;
-		BOPCol_DataMapOfShapeShape occtMapFaceToFixedFaceB;
+		BOPCol_ListOfShape occtArgumentsA;
+		BOPCol_ListOfShape occtArgumentsB;
+		AddBooleanOperands(kpOtherTopology, occtArgumentsA, occtArgumentsB);
 
-		NonRegularBooleanOperation(kpOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB, occtMapFaceToFixedFaceA, occtMapFaceToFixedFaceB);
+		BOPAlgo_CellsBuilder occtCellsBuilder;
+		NonRegularBooleanOperation(occtArgumentsA, occtArgumentsB, occtCellsBuilder);
+
+		// 2. Select the parts to be included in the final result.
 
 		BOPCol_ListOfShape occtListToTake;
 		BOPCol_ListOfShape occtListToAvoid;
-		for (BOPCol_ListIteratorOfListOfShape kOcctShapeIteratorA(occtCellsBuildersOperandsA);
+		for (BOPCol_ListIteratorOfListOfShape kOcctShapeIteratorA(occtArgumentsA);
 			kOcctShapeIteratorA.More();
 			kOcctShapeIteratorA.Next())
 		{
-			for (BOPCol_ListIteratorOfListOfShape kOcctShapeIteratorB(occtCellsBuildersOperandsB);
+			for (BOPCol_ListIteratorOfListOfShape kOcctShapeIteratorB(occtArgumentsB);
 				kOcctShapeIteratorB.More();
 				kOcctShapeIteratorB.Next())
 			{
@@ -1151,42 +1209,44 @@ namespace TopologicCore
 			}
 		}
 
-		for (BOPCol_ListIteratorOfListOfShape kOcctShapeIteratorA(occtCellsBuildersOperandsA);
+		for (BOPCol_ListIteratorOfListOfShape kOcctShapeIteratorA(occtArgumentsA);
 			kOcctShapeIteratorA.More();
 			kOcctShapeIteratorA.Next())
 		{
 			occtListToTake.Clear();
 			occtListToAvoid.Clear();
 			occtListToTake.Append(kOcctShapeIteratorA.Value());
-			occtListToAvoid.Append(occtCellsBuildersOperandsB);
+			occtListToAvoid.Append(occtArgumentsB);
 			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
 		}
 
-		return GetBooleanResult(
-			kpOtherTopology,
-			occtCellsBuilder,
-			occtMapFaceToFixedFaceA,
-			occtMapFaceToFixedFaceB);
+		occtCellsBuilder.MakeContainers();
+
+		TopoDS_Shape occtPostprocessedShape = PostprocessBooleanResult(occtCellsBuilder.Shape());
+		Topology::Ptr pPostprocessedShape = Topology::ByOcctShape(occtPostprocessedShape, "");
+		TransferContents(GetOcctShape(), pPostprocessedShape);
+		TransferContents(kpOtherTopology->GetOcctShape(), pPostprocessedShape);
+		return pPostprocessedShape;
 	}
 
-	Topology::Ptr Topology::IntersectionOld(const Topology::Ptr& kpOtherTopology)
+	Topology::Ptr Topology::Intersect(const Topology::Ptr & kpOtherTopology)
 	{
-		BOPCol_ListOfShape occtCellsBuildersOperandsA;
-		BOPCol_ListOfShape occtCellsBuildersOperandsB;
-		BOPAlgo_CellsBuilder occtCellsBuilder;
-		BOPCol_DataMapOfShapeShape occtMapFaceToFixedFaceA;
-		BOPCol_DataMapOfShapeShape occtMapFaceToFixedFaceB;
+		BOPCol_ListOfShape occtArgumentsA;
+		BOPCol_ListOfShape occtArgumentsB;
+		AddBooleanOperands(kpOtherTopology, occtArgumentsA, occtArgumentsB);
 
-		NonRegularBooleanOperation(kpOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB, occtMapFaceToFixedFaceA, occtMapFaceToFixedFaceB);
+		BOPAlgo_CellsBuilder occtCellsBuilder;
+		NonRegularBooleanOperation(occtArgumentsA, occtArgumentsB, occtCellsBuilder);
+
+		// 2. Select the parts to be included in the final result.
 
 		BOPCol_ListOfShape occtListToTake;
 		BOPCol_ListOfShape occtListToAvoid;
-
-		for (BOPCol_ListIteratorOfListOfShape kOcctShapeIteratorA(occtCellsBuildersOperandsA);
+		for (BOPCol_ListIteratorOfListOfShape kOcctShapeIteratorA(occtArgumentsA);
 			kOcctShapeIteratorA.More();
 			kOcctShapeIteratorA.Next())
 		{
-			for (BOPCol_ListIteratorOfListOfShape kOcctShapeIteratorB(occtCellsBuildersOperandsB);
+			for (BOPCol_ListIteratorOfListOfShape kOcctShapeIteratorB(occtArgumentsB);
 				kOcctShapeIteratorB.More();
 				kOcctShapeIteratorB.Next())
 			{
@@ -1198,11 +1258,25 @@ namespace TopologicCore
 			}
 		}
 
-		return GetBooleanResult(
-			kpOtherTopology,
-			occtCellsBuilder,
-			occtMapFaceToFixedFaceA,
-			occtMapFaceToFixedFaceB);
+		occtCellsBuilder.MakeContainers();
+
+		TopoDS_Shape occtPostprocessedShape = PostprocessBooleanResult(occtCellsBuilder.Shape());
+		/*BOPCol_ListOfShape occtDeletedSubshapes;
+		GetDeletedBooleanSubtopologies(GetOcctShape(), occtCellsBuilder, occtDeletedSubshapes);
+		GetDeletedBooleanSubtopologies(kpOtherTopology->GetOcctShape(), occtCellsBuilder, occtDeletedSubshapes);*/
+		Topology::Ptr pPostprocessedShape = Topology::ByOcctShape(occtPostprocessedShape, "");
+		TransferContents(GetOcctShape(), pPostprocessedShape);// , occtDeletedSubshapes);
+		TransferContents(kpOtherTopology->GetOcctShape(), pPostprocessedShape);// , occtDeletedSubshapes);
+		return pPostprocessedShape;
+
+		/*std::list<Topology::Ptr> deletedSubshapes;
+		for (BOPCol_ListIteratorOfListOfShape occtDeletedShapeIterator(occtDeletedSubshapes);
+			occtDeletedShapeIterator.More();
+			occtDeletedShapeIterator.Next())
+		{
+			deletedSubshapes.push_back(Topology::ByOcctShape(occtDeletedShapeIterator.Value()));
+		}
+		return Cluster::ByTopologies(deletedSubshapes);*/
 	}
 
 	Topology::Ptr Topology::Merge(const Topology::Ptr & kpOtherTopology)
@@ -1245,49 +1319,6 @@ namespace TopologicCore
 		TransferContents(GetOcctShape(), pPostprocessedShape);
 		TransferContents(kpOtherTopology->GetOcctShape(), pPostprocessedShape);
 		return pPostprocessedShape;
-	}
-
-	Topology::Ptr Topology::MergeOld(const Topology::Ptr& kpOtherTopology)
-	{
-		BOPCol_ListOfShape occtCellsBuildersOperandsA;
-		BOPCol_ListOfShape occtCellsBuildersOperandsB;
-		BOPAlgo_CellsBuilder occtCellsBuilder;
-		BOPCol_DataMapOfShapeShape occtMapFaceToFixedFaceA;
-		BOPCol_DataMapOfShapeShape occtMapFaceToFixedFaceB;
-
-		// 1. The basic operation using cells builder.
-		NonRegularBooleanOperation(kpOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB, occtMapFaceToFixedFaceA, occtMapFaceToFixedFaceB);
-
-		// 2. Select the parts to be included in the final result.
-		BOPCol_ListOfShape occtListToTake;
-		BOPCol_ListOfShape occtListToAvoid;
-
-		for (BOPCol_ListIteratorOfListOfShape kOcctShapeIteratorA(occtCellsBuildersOperandsA);
-			kOcctShapeIteratorA.More();
-			kOcctShapeIteratorA.Next())
-		{
-			occtListToTake.Clear();
-			occtListToAvoid.Clear();
-			occtListToTake.Append(kOcctShapeIteratorA.Value());
-			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
-		}
-
-		for (BOPCol_ListIteratorOfListOfShape kOcctShapeIteratorB(occtCellsBuildersOperandsB);
-			kOcctShapeIteratorB.More();
-			kOcctShapeIteratorB.Next())
-		{
-			occtListToTake.Clear();
-			occtListToAvoid.Clear();
-			occtListToTake.Append(kOcctShapeIteratorB.Value());
-			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
-		}
-
-		// 3. Process and return the result.
-		return GetBooleanResult(
-			kpOtherTopology,
-			occtCellsBuilder,
-			occtMapFaceToFixedFaceA,
-			occtMapFaceToFixedFaceB);
 	}
 
 	Topology::Ptr Topology::SelfMerge()
@@ -1521,36 +1552,20 @@ namespace TopologicCore
 		return Topology::ByOcctShape(occtCellsBuilder2.Shape(), "");
 	}
 
-	Topology::Ptr Topology::SliceOld(const Topology::Ptr& kpOtherTopology)
+	Topology::Ptr Topology::Slice(const Topology::Ptr & kpOtherTopology)
 	{
-		// Check dimensionality. The second operand must be of lower dimensionality.
-		/*if (kpOtherTopology->GetType() != TOPOLOGY_CLUSTER && Dimensionality() <= kpOtherTopology->Dimensionality())
-		{
-			throw std::exception("Cannot perform slice. The second operand must be of lower dimensionality.");
-		}*/
+		BOPCol_ListOfShape occtArgumentsA;
+		BOPCol_ListOfShape occtArgumentsB;
+		AddBooleanOperands(kpOtherTopology, occtArgumentsA, occtArgumentsB);
 
-		// For now, only handle a cell topology
-		std::list<Topology::Ptr> thisContentsA;
-		SubContents(thisContentsA);
-
-		BOPCol_ListOfShape occtCellsBuildersOperandsA;
-		BOPCol_ListOfShape occtCellsBuildersOperandsB;
 		BOPAlgo_CellsBuilder occtCellsBuilder;
+		NonRegularBooleanOperation(occtArgumentsA, occtArgumentsB, occtCellsBuilder);
 
-		// Map the input faces of the topology to the 
-		BOPCol_DataMapOfShapeShape occtMapFaceToFixedFaceA;
-		BOPCol_DataMapOfShapeShape occtMapFaceToFixedFaceB;
-
-		NonRegularBooleanOperation(kpOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB, occtMapFaceToFixedFaceA, occtMapFaceToFixedFaceB);
-
-		// For now, only handle a cell topology
-		std::list<Topology::Ptr> thisContentsB;
-		SubContents(thisContentsB);
-
+		// 2. Select the parts to be included in the final result.
 		BOPCol_ListOfShape occtListToTake;
 		BOPCol_ListOfShape occtListToAvoid;
 
-		for (BOPCol_ListIteratorOfListOfShape kOcctShapeIteratorA(occtCellsBuildersOperandsA);
+		for (BOPCol_ListIteratorOfListOfShape kOcctShapeIteratorA(occtArgumentsA);
 			kOcctShapeIteratorA.More();
 			kOcctShapeIteratorA.Next())
 		{
@@ -1560,91 +1575,110 @@ namespace TopologicCore
 			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
 		}
 
+		occtCellsBuilder.MakeContainers();
 
-		// For now, only handle a cell topology
-		std::list<Topology::Ptr> thisContentsC;
-		SubContents(thisContentsC);
-
-		Topology::Ptr pResult = GetBooleanResult(
-			kpOtherTopology,
-			occtCellsBuilder,
-			occtMapFaceToFixedFaceA,
-			occtMapFaceToFixedFaceB);
-
-		return pResult;
+		TopoDS_Shape occtPostprocessedShape = PostprocessBooleanResult(occtCellsBuilder.Shape());
+		Topology::Ptr pPostprocessedShape = Topology::ByOcctShape(occtPostprocessedShape, "");
+		TransferContents(GetOcctShape(), pPostprocessedShape);
+		return pPostprocessedShape;
 	}
 
-	void Topology::AddUnionInternalStructure(const TopoDS_Shape& rkOcctShape, BOPCol_ListOfShape& rUnionArguments)
+	Topology::Ptr Topology::Union(const Topology::Ptr & kpOtherTopology)
 	{
-		TopAbs_ShapeEnum occtShapeType = rkOcctShape.ShapeType();
-		Topology::Ptr pTopology = Topology::ByOcctShape(rkOcctShape, "");
-		std::list<Face::Ptr> faces;
-		// Cell complex -> faces not part of the envelope
-		// Cell -> inner shells
-		// Shell --> inner wires of the faces
-		// Face --> inner wires
-		// Wire --> n/a
-		// Edge --> n/a
-		// Vertex --> n/a
-		if (occtShapeType == TopAbs_COMPOUND)
-		{
-			std::shared_ptr<Cluster> pCluster = Topology::Downcast<Cluster>(pTopology);
-			std::list<Topology::Ptr> immediateMembers;
-			pCluster->SubTopologies(immediateMembers);
-			for (const Topology::Ptr& kpImmediateMember : immediateMembers)
-			{
-				AddUnionInternalStructure(kpImmediateMember->GetOcctShape(), rUnionArguments);
-			}
-		} else if (occtShapeType == TopAbs_COMPSOLID)
-		{
-			CellComplex::Ptr pCellComplex = Topology::Downcast<CellComplex>(pTopology);
-			pCellComplex->InternalBoundaries(faces);
-			for (const Face::Ptr& kpInternalFace : faces)
-			{
-				rUnionArguments.Append(kpInternalFace->GetOcctShape());
-			}
-		}
-		else if (occtShapeType == TopAbs_SOLID)
-		{
-			Cell::Ptr pCell = Topology::Downcast<Cell>(pTopology);
-			std::list<Shell::Ptr> shells;
-			pCell->InternalBoundaries(shells);
-			for (const Shell::Ptr& kpInternalShell : shells)
-			{
-				rUnionArguments.Append(kpInternalShell->GetOcctShape());
-			}
-		}
-		else if (occtShapeType == TopAbs_SHELL)
-		{
-			for (TopExp_Explorer occtShellExplorer(rkOcctShape, TopAbs_FACE); occtShellExplorer.More(); occtShellExplorer.Next())
-			{
-				const TopoDS_Shape& rkOcctCurrentFace = occtShellExplorer.Current();
-				TopoDS_Wire occtOuterWire = BRepTools::OuterWire(TopoDS::Face(rkOcctCurrentFace));
+		BOPCol_ListOfShape occtArgumentsA;
+		BOPCol_ListOfShape occtArgumentsB;
+		AddBooleanOperands(kpOtherTopology, occtArgumentsA, occtArgumentsB);
 
-				for (TopExp_Explorer occtFaceExplorer(rkOcctShape, TopAbs_WIRE); occtFaceExplorer.More(); occtFaceExplorer.Next())
-				{
-					const TopoDS_Shape& rkOcctCurrentFace = occtFaceExplorer.Current();
-					if (!rUnionArguments.Contains(rkOcctCurrentFace) && !rkOcctCurrentFace.IsSame(occtOuterWire))
-					{
-						rUnionArguments.Append(rkOcctCurrentFace);
-					}
-				}
-			}
-		}
-		else if (occtShapeType == TopAbs_FACE)
-		{
-			TopoDS_Wire occtOuterWire = BRepTools::OuterWire(TopoDS::Face(rkOcctShape));
+		BRepAlgoAPI_Fuse occtFuse;
+		/*TopTools_ListOfShape occtArguments;
+		occtArguments.Append(GetOcctShape());
+		TopTools_ListOfShape occtTools;
+		occtTools.Append(kpOtherTopology->GetOcctShape());
+		fuse.SetArguments(occtArguments);
+		fuse.SetTools(occtTools);
+		fuse.SetNonDestructive(true);
+		fuse.Build();*/
 
-			for (TopExp_Explorer occtExplorer(rkOcctShape, TopAbs_WIRE); occtExplorer.More(); occtExplorer.Next())
-			{
-				const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-				if (!rUnionArguments.Contains(occtCurrent) && !occtCurrent.IsSame(occtOuterWire))
-				{
-					rUnionArguments.Append(occtCurrent);
-				}
-			}
-		}
+		RegularBooleanOperation(occtArgumentsA, occtArgumentsB, occtFuse);
+
+		TopoDS_Shape occtPostprocessedShape = PostprocessBooleanResult(occtFuse.Shape());
+		Topology::Ptr pPostprocessedShape = Topology::ByOcctShape(occtPostprocessedShape, "");
+		TransferContents(GetOcctShape(), pPostprocessedShape);
+		TransferContents(kpOtherTopology->GetOcctShape(), pPostprocessedShape);
+		return pPostprocessedShape;
 	}
+
+	//void Topology::AddUnionInternalStructure(const TopoDS_Shape& rkOcctShape, BOPCol_ListOfShape& rUnionArguments)
+	//{
+	//	TopAbs_ShapeEnum occtShapeType = rkOcctShape.ShapeType();
+	//	Topology::Ptr pTopology = Topology::ByOcctShape(rkOcctShape, "");
+	//	std::list<Face::Ptr> faces;
+	//	// Cell complex -> faces not part of the envelope
+	//	// Cell -> inner shells
+	//	// Shell --> inner wires of the faces
+	//	// Face --> inner wires
+	//	// Wire --> n/a
+	//	// Edge --> n/a
+	//	// Vertex --> n/a
+	//	if (occtShapeType == TopAbs_COMPOUND)
+	//	{
+	//		std::shared_ptr<Cluster> pCluster = Topology::Downcast<Cluster>(pTopology);
+	//		std::list<Topology::Ptr> immediateMembers;
+	//		pCluster->SubTopologies(immediateMembers);
+	//		for (const Topology::Ptr& kpImmediateMember : immediateMembers)
+	//		{
+	//			AddUnionInternalStructure(kpImmediateMember->GetOcctShape(), rUnionArguments);
+	//		}
+	//	} else if (occtShapeType == TopAbs_COMPSOLID)
+	//	{
+	//		CellComplex::Ptr pCellComplex = Topology::Downcast<CellComplex>(pTopology);
+	//		pCellComplex->InternalBoundaries(faces);
+	//		for (const Face::Ptr& kpInternalFace : faces)
+	//		{
+	//			rUnionArguments.Append(kpInternalFace->GetOcctShape());
+	//		}
+	//	}
+	//	else if (occtShapeType == TopAbs_SOLID)
+	//	{
+	//		Cell::Ptr pCell = Topology::Downcast<Cell>(pTopology);
+	//		std::list<Shell::Ptr> shells;
+	//		pCell->InternalBoundaries(shells);
+	//		for (const Shell::Ptr& kpInternalShell : shells)
+	//		{
+	//			rUnionArguments.Append(kpInternalShell->GetOcctShape());
+	//		}
+	//	}
+	//	else if (occtShapeType == TopAbs_SHELL)
+	//	{
+	//		for (TopExp_Explorer occtShellExplorer(rkOcctShape, TopAbs_FACE); occtShellExplorer.More(); occtShellExplorer.Next())
+	//		{
+	//			const TopoDS_Shape& rkOcctCurrentFace = occtShellExplorer.Current();
+	//			TopoDS_Wire occtOuterWire = BRepTools::OuterWire(TopoDS::Face(rkOcctCurrentFace));
+
+	//			for (TopExp_Explorer occtFaceExplorer(rkOcctShape, TopAbs_WIRE); occtFaceExplorer.More(); occtFaceExplorer.Next())
+	//			{
+	//				const TopoDS_Shape& rkOcctCurrentFace = occtFaceExplorer.Current();
+	//				if (!rUnionArguments.Contains(rkOcctCurrentFace) && !rkOcctCurrentFace.IsSame(occtOuterWire))
+	//				{
+	//					rUnionArguments.Append(rkOcctCurrentFace);
+	//				}
+	//			}
+	//		}
+	//	}
+	//	else if (occtShapeType == TopAbs_FACE)
+	//	{
+	//		TopoDS_Wire occtOuterWire = BRepTools::OuterWire(TopoDS::Face(rkOcctShape));
+
+	//		for (TopExp_Explorer occtExplorer(rkOcctShape, TopAbs_WIRE); occtExplorer.More(); occtExplorer.Next())
+	//		{
+	//			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
+	//			if (!rUnionArguments.Contains(occtCurrent) && !occtCurrent.IsSame(occtOuterWire))
+	//			{
+	//				rUnionArguments.Append(occtCurrent);
+	//			}
+	//		}
+	//	}
+	//}
 
 	TopoDS_Shape Topology::FixBooleanOperandCell(const TopoDS_Shape& rkOcctShape)
 	{
@@ -1741,6 +1775,71 @@ namespace TopologicCore
 	{
 		BOPCol_DataMapOfShapeShape mapFaceToFixedFace;
 		return FixBooleanOperandFace(rkOcctShape, mapFaceToFixedFace);
+	}
+
+	void Topology::GetDeletedBooleanSubtopologies(const TopoDS_Shape& rkOcctShape, BOPAlgo_CellsBuilder & rOcctCellsBuilder, BOPCol_ListOfShape & rOcctDeletedShapes)
+	{
+		TopAbs_ShapeEnum subshapeTypes[3] = {TopAbs_VERTEX, TopAbs_EDGE, TopAbs_FACE};
+		for (int i = 0; i < 3; ++i)
+		{
+			if (rkOcctShape.ShapeType() == subshapeTypes[i])
+			{
+				if (rOcctCellsBuilder.IsDeleted(rkOcctShape))
+				{
+					rOcctDeletedShapes.Append(rkOcctShape);
+				}
+
+				const TopTools_ListOfShape& rkOcctModifiedShapes = rOcctCellsBuilder.Modified(rkOcctShape);
+				if (!rkOcctModifiedShapes.IsEmpty())
+				{
+					rOcctDeletedShapes.Append(rkOcctShape);
+				}
+			}
+
+			TopTools_MapOfShape occtSubshapes;
+			DownwardNavigation(rkOcctShape, subshapeTypes[i], occtSubshapes);
+			for (TopTools_MapIteratorOfMapOfShape occtSubshapeIterator(occtSubshapes);
+				occtSubshapeIterator.More();
+				occtSubshapeIterator.Next())
+			{
+				if (rOcctCellsBuilder.IsDeleted(occtSubshapeIterator.Value()))
+				{
+					rOcctDeletedShapes.Append(occtSubshapeIterator.Value());
+				}
+				const TopTools_ListOfShape& rkOcctModifiedShapes = rOcctCellsBuilder.Modified(occtSubshapeIterator.Value());
+				if (!rkOcctModifiedShapes.IsEmpty())
+				{
+					rOcctDeletedShapes.Append(occtSubshapeIterator.Value());
+				}
+			}
+		}
+	}
+
+	void Topology::GetDeletedBooleanSubtopologies(const TopoDS_Shape& rkOcctShape, BRepAlgoAPI_BooleanOperation & rOcctBooleanOperation, BOPCol_ListOfShape & rOcctDeletedShapes)
+	{
+		TopAbs_ShapeEnum subshapeTypes[3] = { TopAbs_VERTEX, TopAbs_EDGE, TopAbs_FACE };
+		for (int i = 0; i < 3; ++i)
+		{
+			if (rkOcctShape.ShapeType() == subshapeTypes[i])
+			{
+				if (rOcctBooleanOperation.IsDeleted(rkOcctShape))
+				{
+					rOcctDeletedShapes.Append(rkOcctShape);
+				}
+			}
+
+			TopTools_MapOfShape occtSubshapes;
+			DownwardNavigation(rkOcctShape, subshapeTypes[i], occtSubshapes);
+			for (TopTools_MapIteratorOfMapOfShape occtSubshapeIterator(occtSubshapes);
+				occtSubshapeIterator.More();
+				occtSubshapeIterator.Next())
+			{
+				if (rOcctBooleanOperation.IsDeleted(occtSubshapeIterator.Value()))
+				{
+					rOcctDeletedShapes.Append(occtSubshapeIterator.Value());
+				}
+			}
+		}
 	}
 
 	void Topology::AddBooleanOperands(
@@ -1860,108 +1959,27 @@ namespace TopologicCore
 		}
 	}
 
-	Topology::Ptr Topology::UnionOld(const Topology::Ptr& kpOtherTopology)
+	Topology::Ptr Topology::XOR(const Topology::Ptr & kpOtherTopology)
 	{
-		BRepAlgoAPI_Fuse fuse;
-		TopTools_ListOfShape occtArguments;
-		occtArguments.Append(GetOcctShape());
-		TopTools_ListOfShape occtTools;
-		occtTools.Append(kpOtherTopology->GetOcctShape());
-		fuse.SetArguments(occtArguments);
-		fuse.SetTools(occtTools);
-		fuse.SetNonDestructive(true);
-		fuse.Build();
-		TopoDS_Shape occtPostProcessedShape = PostprocessBooleanResult(kpOtherTopology, fuse.Shape());
+		BOPCol_ListOfShape occtArgumentsA;
+		BOPCol_ListOfShape occtArgumentsB;
+		AddBooleanOperands(kpOtherTopology, occtArgumentsA, occtArgumentsB);
 
-		Topology::Ptr pUnionTopology = Topology::ByOcctShape(occtPostProcessedShape, "");
-		return pUnionTopology;
-
-
-		//BOPCol_ListOfShape occtCellsBuildersOperandsA;
-		//BOPCol_ListOfShape occtCellsBuildersOperandsB;
-		//BOPAlgo_CellsBuilder occtCellsBuilder;
-		//BOPCol_DataMapOfShapeShape occtMapFaceToFixedFaceA;
-		//BOPCol_DataMapOfShapeShape occtMapFaceToFixedFaceB;
-
-		//NonRegularBooleanOperation(kpOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB, occtMapFaceToFixedFaceA, occtMapFaceToFixedFaceB);
-
-		//BOPCol_ListOfShape occtListToTake;
-		//BOPCol_ListOfShape occtListToAvoid;
-
-		//for (BOPCol_ListIteratorOfListOfShape kOcctShapeIterator(occtCellsBuildersOperandsA);
-		//	kOcctShapeIterator.More();
-		//	kOcctShapeIterator.Next())
-		//{
-		//	occtListToTake.Clear();
-		//	occtListToAvoid.Clear();
-		//	occtListToTake.Append(kOcctShapeIterator.Value());
-		//	occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid, 1, true);
-		//}
-
-		//for (BOPCol_ListIteratorOfListOfShape kOcctShapeIterator(occtCellsBuildersOperandsB);
-		//	kOcctShapeIterator.More();
-		//	kOcctShapeIterator.Next())
-		//{
-		//	occtListToTake.Clear();
-		//	occtListToAvoid.Clear();
-		//	occtListToTake.Append(kOcctShapeIterator.Value());
-		//	occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid, 1, true);
-		//}
-
-		//Topology::Ptr pTopology = GetBooleanResult(
-		//	kpOtherTopology,
-		//	occtCellsBuilder,
-		//	occtMapFaceToFixedFaceA,
-		//	occtMapFaceToFixedFaceB);
-
-		//BOPAlgo_CellsBuilder occtCellsBuilder2;
-		//BOPCol_ListOfShape occtCellsBuildersArguments;
-		//occtCellsBuildersArguments.Append(pTopology->GetOcctShape());
-
-		//// Get the internal boundaries
-		//AddUnionInternalStructure(GetOcctShape(), occtCellsBuildersArguments);
-		//AddUnionInternalStructure(kpOtherTopology->GetOcctShape(), occtCellsBuildersArguments);
-		//
-		//if (occtCellsBuildersArguments.Size() < 2)
-		//{
-		//	return Topology::ByOcctShape(occtCellsBuildersArguments.First(), "");
-		//}
-
-		//occtCellsBuilder2.SetArguments(occtCellsBuildersArguments);
-		//occtCellsBuilder2.Perform();
-
-		//if (occtCellsBuilder2.HasErrors())
-		//{
-		//	std::ostringstream errorStream;
-		//	occtCellsBuilder2.DumpErrors(errorStream);
-		//	throw std::exception(errorStream.str().c_str());
-		//}
-		//occtCellsBuilder2.AddAllToResult();
-		//TopoDS_Shape occtUnionResult = occtCellsBuilder2.Shape();
-		//Topology::Ptr pUnionTopology = Topology::ByOcctShape(occtUnionResult, "");
-		//return pUnionTopology;
-	}
-
-	Topology::Ptr Topology::XOROld(const Topology::Ptr& kpOtherTopology)
-	{
-		BOPCol_ListOfShape occtCellsBuildersOperandsA;
-		BOPCol_ListOfShape occtCellsBuildersOperandsB;
 		BOPAlgo_CellsBuilder occtCellsBuilder;
-		BOPCol_DataMapOfShapeShape occtMapFaceToFixedFaceA;
-		BOPCol_DataMapOfShapeShape occtMapFaceToFixedFaceB;
+		NonRegularBooleanOperation(occtArgumentsA, occtArgumentsB, occtCellsBuilder);
 
-		NonRegularBooleanOperation(kpOtherTopology, occtCellsBuilder, occtCellsBuildersOperandsA, occtCellsBuildersOperandsB, occtMapFaceToFixedFaceA, occtMapFaceToFixedFaceB);
-
+		// 2. Select the parts to be included in the final result.
 		BOPCol_ListOfShape occtListToTake;
 		BOPCol_ListOfShape occtListToAvoid;
-		for (BOPCol_ListIteratorOfListOfShape kOcctShapeIteratorA(occtCellsBuildersOperandsA);
+
+		for (BOPCol_ListIteratorOfListOfShape kOcctShapeIteratorA(occtArgumentsA);
 			kOcctShapeIteratorA.More();
 			kOcctShapeIteratorA.Next())
 		{
 			occtListToTake.Clear();
 			occtListToAvoid.Clear();
 			occtListToTake.Append(kOcctShapeIteratorA.Value());
-			for (BOPCol_ListIteratorOfListOfShape kOcctShapeIteratorB(occtCellsBuildersOperandsB);
+			for (BOPCol_ListIteratorOfListOfShape kOcctShapeIteratorB(occtArgumentsB);
 				kOcctShapeIteratorB.More();
 				kOcctShapeIteratorB.Next())
 			{
@@ -1971,14 +1989,14 @@ namespace TopologicCore
 		}
 
 
-		for (BOPCol_ListIteratorOfListOfShape kOcctShapeIteratorB(occtCellsBuildersOperandsB);
+		for (BOPCol_ListIteratorOfListOfShape kOcctShapeIteratorB(occtArgumentsB);
 			kOcctShapeIteratorB.More();
 			kOcctShapeIteratorB.Next())
 		{
 			occtListToTake.Clear();
 			occtListToAvoid.Clear();
 			occtListToTake.Append(kOcctShapeIteratorB.Value());
-			for (BOPCol_ListIteratorOfListOfShape kOcctShapeIteratorA(occtCellsBuildersOperandsA);
+			for (BOPCol_ListIteratorOfListOfShape kOcctShapeIteratorA(occtArgumentsA);
 				kOcctShapeIteratorA.More();
 				kOcctShapeIteratorA.Next())
 			{
@@ -1987,11 +2005,13 @@ namespace TopologicCore
 			occtCellsBuilder.AddToResult(occtListToTake, occtListToAvoid);
 		}
 
-		return GetBooleanResult(
-			kpOtherTopology,
-			occtCellsBuilder,
-			occtMapFaceToFixedFaceA,
-			occtMapFaceToFixedFaceB);
+		occtCellsBuilder.MakeContainers();
+
+		TopoDS_Shape occtPostprocessedShape = PostprocessBooleanResult(occtCellsBuilder.Shape());
+		Topology::Ptr pPostprocessedShape = Topology::ByOcctShape(occtPostprocessedShape, "");
+		TransferContents(GetOcctShape(), pPostprocessedShape);
+		TransferContents(kpOtherTopology->GetOcctShape(), pPostprocessedShape);
+		return pPostprocessedShape;
 	}
 
 	Topology::Ptr Topology::Trim(const Topology::Ptr & kpOtherTopology)
@@ -2066,22 +2086,40 @@ namespace TopologicCore
 		TopoDS_Shape occtShapeCopy = occtShapeCopier.Shape();
 		Topology::Ptr pShapeCopy = Topology::ByOcctShape(occtShapeCopy, GetInstanceGUID());
 
-		// Copy the contents
-		std::list<Topology::Ptr> contents;
-		Contents(contents);
-		
-		for(const Topology::Ptr& kpContent : contents)
+		std::list<Topology::Ptr> subContents;
+		SubContents(GetOcctShape(), subContents);
+
+		for (const Topology::Ptr& kpSubContent : subContents)
 		{
-			// Copy the content
-			Topology::Ptr copyContent = kpContent->Copy();
-			pShapeCopy->AddContent(copyContent); 
-			const double kDefaultParameter = 0.0; // TODO: calculate the parameters
-			copyContent->AddContext(
-				Context::ByTopologyParameters(
-					pShapeCopy,
-					kDefaultParameter, kDefaultParameter, kDefaultParameter
-				));
+			Topology::Ptr pSubContentCopy = kpSubContent->Copy();
+			int filterType = 0;
+			std::list<Context::Ptr> contexts;
+			kpSubContent->Contexts(contexts);
+			for (const Context::Ptr& pContext : contexts)
+			{
+				int contextType = pContext->Topology()->GetType();
+				filterType = Bitwise::Or(filterType, contextType);
+			}
+			pShapeCopy->AddSubContent(pSubContentCopy, filterType);
 		}
+
+		// Copy the contents
+		//TransferContents(GetOcctShape(), pShapeCopy);
+		//std::list<Topology::Ptr> subContents;
+		//SubContents(subContents);
+		//
+		//for(const Topology::Ptr& kpSubContent : subContents)
+		//{
+		//	// Copy the content
+		//	Topology::Ptr copyContent = kpSubContent->Copy();
+		//	pShapeCopy->AddContent(copyContent); 
+		//	const double kDefaultParameter = 0.0; // TODO: calculate the parameters
+		//	copyContent->AddContext(
+		//		Context::ByTopologyParameters(
+		//			pShapeCopy,
+		//			kDefaultParameter, kDefaultParameter, kDefaultParameter
+		//		));
+		//}
 
 		GlobalCluster::GetInstance().AddTopology(occtShapeCopy);
 
