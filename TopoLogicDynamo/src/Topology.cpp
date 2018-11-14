@@ -194,6 +194,45 @@ namespace Topologic
 		return Topology::ByCoreTopology(pCoreTopology);
 	}
 
+	Object^ Topology::Geometry::get()
+	{
+		List<Object^>^ pDynamoGeometries = gcnew List<Object^>();
+
+		List<Topology^>^ subContents = SubContents;
+		for each(Topology^ subContent in subContents)
+		{
+			DSCore::Color^ color = DSCore::Color::ByARGB(50, 255, 0, 0);
+			Object^ subContentGeometry = subContent->Geometry;
+
+			Autodesk::DesignScript::Geometry::Geometry^ dynamoGeometry = dynamic_cast<Autodesk::DesignScript::Geometry::Geometry^>(subContentGeometry);
+			if (dynamoGeometry != nullptr)
+			{
+				Modifiers::GeometryColor^ dynamoGeometryColor = Modifiers::GeometryColor::ByGeometryColor(dynamoGeometry, color);
+				pDynamoGeometries->Add(dynamoGeometryColor);
+				continue;
+			}
+
+			// 2. Try a list of Dynamo geometry
+			List<Object^>^ listOfObjects = dynamic_cast<List<Object^>^>(subContentGeometry);
+			if (listOfObjects != nullptr)
+			{
+				for each(Object^ object in listOfObjects)
+				{
+					Autodesk::DesignScript::Geometry::Geometry^ dynamoGeometry = dynamic_cast<Autodesk::DesignScript::Geometry::Geometry^>(object);
+					if (dynamoGeometry != nullptr)
+					{
+						Modifiers::GeometryColor^ dynamoGeometryColor = Modifiers::GeometryColor::ByGeometryColor(dynamoGeometry, color);
+						//delete object;
+						pDynamoGeometries->Add(dynamoGeometryColor);
+					}
+				}
+				continue;
+			}
+		}
+
+		return pDynamoGeometries;
+	}
+
 	bool Topology::ExportToBRep(String^ path)
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
@@ -272,6 +311,16 @@ namespace Topologic
 		return topologyFactory->Create(TopologicCore::TopologyPtr(kpCoreTopology));
 	}
 
+	Object ^ Topology::CleanupGeometryOutput(List<Object^>^ geometry)
+	{
+		if (geometry->Count == 1)
+		{
+			return geometry[0];
+		}
+
+		return geometry;
+	}
+
 	generic <class T>
 	T Topology::Copy()
 	{
@@ -295,10 +344,10 @@ namespace Topologic
 		TopologyFactoryManager::Instance->Add(guid, topologyFactory);
 	}
 	
-	List<Topology^>^ Topology::HostTopology__::get()
+	/*List<Topology^>^ Topology::HostTopology__::get()
 	{
 		throw gcnew NotImplementedException("Feature not yet implemented");
-	}
+	}*/
 
 	Topology::Topology()
 	{
@@ -761,6 +810,24 @@ namespace Topologic
 
 		try{
 			std::shared_ptr<TopologicCore::Topology> pSliceCoreTopology = pCoreCopyTopologyA->Slice(pCoreCopyTopologyB);
+			return Topology::ByCoreTopology(pSliceCoreTopology);
+		}
+		catch (std::exception& e)
+		{
+			throw gcnew Exception(gcnew String(e.what()));
+		}
+	}
+
+	Topology ^ Topology::Divide(Topology ^ tool)
+	{
+		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(tool->GetCoreTopologicalQuery());
+
+		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->Copy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->Copy();
+
+		try {
+			std::shared_ptr<TopologicCore::Topology> pSliceCoreTopology = pCoreCopyTopologyA->Divide(pCoreCopyTopologyB);
 			return Topology::ByCoreTopology(pSliceCoreTopology);
 		}
 		catch (std::exception& e)

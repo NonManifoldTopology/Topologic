@@ -287,13 +287,19 @@ namespace Topologic
 
 	Object^ Face::Geometry::get()
 	{
+		List<Object^>^ pDynamoGeometries = gcnew List<Object^>();
 		try {
-			return Surface();
+			pDynamoGeometries->Add(Surface());
 		}
 		catch (Exception^)
 		{
-			return TriangulatedMesh();
+			pDynamoGeometries->Add(TriangulatedMesh());
 		}
+
+		Object^ objColoredSubcontents = Topology::Geometry::get();
+		List<Object^>^ coloredSubcontents = dynamic_cast<List<Object^>^>(objColoredSubcontents);
+		pDynamoGeometries->AddRange(coloredSubcontents);
+		return CleanupGeometryOutput(pDynamoGeometries);
 	}
 
 	std::shared_ptr<TopologicCore::TopologicalQuery> Face::GetCoreTopologicalQuery()

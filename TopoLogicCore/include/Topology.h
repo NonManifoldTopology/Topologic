@@ -224,12 +224,19 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="kpTool"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API Topology::Ptr Divide(const Topology::Ptr& kpTool);
+
+		/*/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="kpAnotherTopology"></param>
 		/// <param name="rOcctCellsBuilder"></param>
 		/// <param name="rOcctMapFaceToFixedFaceA"></param>
 		/// <param name="rOcctMapFaceToFixedFaceB"></param>
 		/// <returns></returns>
-		/*std::shared_ptr<Topology> TransferBooleanContents(
+		std::shared_ptr<Topology> TransferBooleanContents(
 			const std::shared_ptr<Topology>& kpAnotherTopology,
 			BOPAlgo_CellsBuilder& rOcctCellsBuilder,
 			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceA,

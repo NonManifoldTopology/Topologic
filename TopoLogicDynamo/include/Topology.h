@@ -68,7 +68,7 @@ namespace Topologic
 		/// <returns name="Geometry">The host geometry counterpart of the topological entity</returns>
 		property Object^ Geometry
 		{
-			virtual Object^ get() abstract;
+			virtual Object^ get();
 		}
 
 		/// <summary>
@@ -246,6 +246,13 @@ namespace Topologic
 		Topology^ Slice(Topology^ tool);
 
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="tool"></param>
+		/// <returns name="Topology">The result of the Divide operation</returns>
+		Topology^ Divide(Topology^ tool);
+
+		/// <summary>
 		/// Union the first and the second topological entities.
 		/// </summary>
 		/// <param name="topology"></param>
@@ -345,16 +352,18 @@ namespace Topologic
 		[IsVisibleInDynamoLibrary(false)]
 		void RegisterFactory(String^ rkGUID, TopologyFactory^ topologyFactory);
 
-		/// <summary>
+		/*/// <summary>
 		/// Return the host topology of this topology. NOTE: Future feature.
 		/// </summary>
 		property List<Topology^>^ HostTopology__
 		{
 			List<Topology^>^ get();
-		}
+		}*/
 
 	public protected:
 		static Topology^ ByCoreTopology(const std::shared_ptr<TopologicCore::Topology>& kpCoreTopology);
+
+		Object^ CleanupGeometryOutput(List<Object^>^ geometry);
 
 	protected:
 		Topology();

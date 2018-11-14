@@ -238,6 +238,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="DSCoreNodes">
+      <HintPath>..\references\Dynamo-2.0.1\DSCoreNodes.dll</HintPath>
+    </Reference>
     <Reference Include="DynamoCore">
       <HintPath>..\references\Dynamo-2.0.1\DynamoCore.dll</HintPath>
       <Private>false</Private>
@@ -245,6 +248,9 @@
     <Reference Include="DynamoServices">
       <HintPath>..\references\Dynamo-2.0.1\DynamoServices.dll</HintPath>
       <Private>false</Private>
+    </Reference>
+    <Reference Include="GeometryColor">
+      <HintPath>..\references\Dynamo-2.0.1\GeometryColor.dll</HintPath>
     </Reference>
     <Reference Include="ProtoGeometry">
       <HintPath>..\references\Dynamo-2.0.1\ProtoGeometry.dll</HintPath>

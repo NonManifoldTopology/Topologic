@@ -64,7 +64,11 @@ namespace Topologic
 		{
 			pTopologies->Add(Topology::ByCoreTopology(*kCoreIterator)->Geometry);
 		}
-		return pTopologies;
+
+		Object^ objColoredSubcontents = Topology::Geometry::get();
+		List<Object^>^ coloredSubcontents = dynamic_cast<List<Object^>^>(objColoredSubcontents);
+		pTopologies->AddRange(coloredSubcontents);
+		return CleanupGeometryOutput(pTopologies);
 	}
 
 	int Cluster::Type()

@@ -134,16 +134,25 @@ namespace Topologic
 			pDynamoSurfaces->Add(pFace->Surface());
 		}
 
+		List<Object^>^ pDynamoGeometries = gcnew List<Object^>();
 		try {
 			Autodesk::DesignScript::Geometry::PolySurface^ pDynamoPolySurface =
 				Autodesk::DesignScript::Geometry::PolySurface::ByJoinedSurfaces(pDynamoSurfaces);
 
-			return pDynamoPolySurface;
+			pDynamoGeometries->Add(pDynamoPolySurface);
 		}
 		catch (ApplicationException^)
 		{
-			return pDynamoSurfaces;
+			for each(Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface in pDynamoSurfaces)
+			{
+				pDynamoGeometries->Add(pDynamoSurface);
+			}
 		}
+
+		Object^ objColoredSubcontents = Topology::Geometry::get();
+		List<Object^>^ coloredSubcontents = dynamic_cast<List<Object^>^>(objColoredSubcontents);
+		pDynamoGeometries->AddRange(coloredSubcontents);
+		return CleanupGeometryOutput(pDynamoGeometries);
 	}
 
 	int Shell::Type()

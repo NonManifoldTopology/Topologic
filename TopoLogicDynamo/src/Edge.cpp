@@ -200,7 +200,13 @@ namespace Topologic
 
 	Object^ Edge::Geometry::get()
 	{
-		return Curve();
+		List<Object^>^ pDynamoGeometries = gcnew List<Object^>();
+		pDynamoGeometries->Add(Curve());
+
+		Object^ objColoredSubcontents = Topology::Geometry::get();
+		List<Object^>^ coloredSubcontents = dynamic_cast<List<Object^>^>(objColoredSubcontents);
+		pDynamoGeometries->AddRange(coloredSubcontents);
+		return CleanupGeometryOutput(pDynamoGeometries);
 	}
 
 	Autodesk::DesignScript::Geometry::Curve^ DynamoCurveFromBSplineCurve(Handle(Geom_BSplineCurve) pOcctBsplineCurve, const double u0, const double u1)

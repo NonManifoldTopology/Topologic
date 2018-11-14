@@ -2019,6 +2019,32 @@ namespace TopologicCore
 		throw std::exception("Not implemented yet");
 	}
 
+	Topology::Ptr Topology::Divide(const Topology::Ptr & kpTool)
+	{
+		// For now, only works if this topology is a cell
+		if (GetType() != TOPOLOGY_CELL)
+		{
+			return nullptr;
+		}
+
+		// For now, only works if the tool is a face
+		if (kpTool->GetType() != TOPOLOGY_FACE)
+		{
+			return nullptr;
+		}
+
+		Topology::Ptr pSlicedTopology = Slice(kpTool);
+		std::list<Cell::Ptr> cells;
+		pSlicedTopology->DownwardNavigation(cells);
+		for (const Cell::Ptr& kpCell : cells)
+		{
+			AddContent(kpCell);
+		}
+
+		Topology::Ptr thisTopology = shared_from_this();
+		return thisTopology;
+	}
+
 	void Topology::SubTopologies(const TopoDS_Shape& rkShape, BOPCol_ListOfShape& rSubTopologies)
 	{
 		for (TopoDS_Iterator occtShapeIterator(rkShape); occtShapeIterator.More(); occtShapeIterator.Next())
