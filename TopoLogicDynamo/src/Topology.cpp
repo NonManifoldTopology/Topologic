@@ -321,7 +321,9 @@ namespace Topologic
 		return geometry;
 	}
 
-	Topology^ Topology::Copy()
+	generic <class T>
+		where T: Topology
+	T Topology::Copy()
 	{
 		TopologicCore::Topology::Ptr pCoreTopology =
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
@@ -330,8 +332,7 @@ namespace Topologic
 		TopologicUtility::AttributeManager::GetInstance().CopyAttributes(pCoreTopology->GetOcctShape(), pCoreCopyTopology->GetOcctShape());
 		
 		Topology^ topology = ByCoreTopology(pCoreCopyTopology);
-		//return safe_cast<T>(topology);
-		return topology;
+		return safe_cast<T>(topology);
 	}
 
 	/*generic <class T>
@@ -492,7 +493,7 @@ namespace Topologic
 
 	Topology^ Topology::RemoveKeys(List<String^>^ keys)
 	{
-		Topology^ copyTopology = Copy();// Copy<Topology^>();
+		Topology^ copyTopology = Copy<Topology^>();
 		std::shared_ptr<TopologicCore::Topology> pCoreCopyTopology = 
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(copyTopology->GetCoreTopologicalQuery());
 		for each(String^ key in keys)
