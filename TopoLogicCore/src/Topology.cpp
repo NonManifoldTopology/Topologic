@@ -579,17 +579,22 @@ namespace TopologicCore
 
 	void Topology::Contents(std::list<Topology::Ptr>& rContents) const
 	{
-		ContentManager::GetInstance().Find(GetOcctShape(), rContents);
+		Contents(GetOcctShape(), rContents);
+	}
+
+	void Topology::Contents(const TopoDS_Shape & rkOcctShape, std::list<Topology::Ptr>& rContents)
+	{
+		ContentManager::GetInstance().Find(rkOcctShape, rContents);
 	}
 
 	void Topology::SubContents(std::list<Topology::Ptr>& rSubContents) const
 	{
-		Contents(rSubContents);
 		SubContents(GetOcctShape(), rSubContents);
 	}
 	
 	void Topology::SubContents(const TopoDS_Shape & rkOcctShape, std::list<Topology::Ptr>& rSubContents)
 	{
+		Contents(rkOcctShape, rSubContents);
 		TopAbs_ShapeEnum occtType = rkOcctShape.ShapeType();
 		int occtTypeInt = (int)occtType + 1; // +1 for the next lower type
 		for (int occtTypeIntIteration = occtTypeInt; occtTypeIntIteration != (int)TopAbs_SHAPE; occtTypeIntIteration++)
@@ -611,7 +616,12 @@ namespace TopologicCore
 
 	bool Topology::Contexts(std::list<std::shared_ptr<Context>>& rContexts) const
 	{
-		return ContextManager::GetInstance().Find(GetOcctShape(), rContexts);
+		return Contexts(GetOcctShape(), rContexts);
+	}
+
+	bool Topology::Contexts(const TopoDS_Shape & rkOcctShape, std::list<std::shared_ptr<Context>>& rContexts)
+	{
+		return ContextManager::GetInstance().Find(rkOcctShape, rContexts);
 	}
 
 	bool Topology::SaveToBrep(const std::string & rkPath) const
@@ -1842,6 +1852,19 @@ namespace TopologicCore
 		}
 	}
 
+	Topology::Ptr Topology::TrackContextAncestor()
+	{
+		std::list<Context::Ptr> contexts;
+		Contexts(contexts);
+
+		if (contexts.size() == 1)
+		{
+			return (*contexts.begin())->Topology()->TrackContextAncestor();
+		}
+
+		return shared_from_this();
+	}
+
 	void Topology::AddBooleanOperands(
 		const Topology::Ptr& kpOtherTopology,
 		BOPAlgo_CellsBuilder& rOcctCellsBuilder,
@@ -2022,16 +2045,13 @@ namespace TopologicCore
 	Topology::Ptr Topology::Divide(const Topology::Ptr & kpTool)
 	{
 		// For now, only works if this topology is a cell
-		if (GetType() != TOPOLOGY_CELL)
+		TopologyType topologyType = GetType();
+		if (topologyType != TOPOLOGY_CELL && topologyType != TOPOLOGY_FACE && topologyType != TOPOLOGY_EDGE)
 		{
 			return nullptr;
 		}
 
-		// For now, only works if the tool is a face
-		if (kpTool->GetType() != TOPOLOGY_FACE)
-		{
-			return nullptr;
-		}
+		//Topology::Ptr farthestContextTopology = TrackContextAncestor();
 
 		Topology::Ptr pSlicedTopology = Slice(kpTool);
 		std::list<Cell::Ptr> cells;
@@ -2042,6 +2062,8 @@ namespace TopologicCore
 		}
 
 		Topology::Ptr thisTopology = shared_from_this();
+		//Topology::Ptr farthestTopology = TrackContextAncestor();
+
 		return thisTopology;
 	}
 
@@ -2129,26 +2151,61 @@ namespace TopologicCore
 			pShapeCopy->AddSubContent(pSubContentCopy, filterType);
 		}
 
-		// Copy the contents
-		//TransferContents(GetOcctShape(), pShapeCopy);
-		//std::list<Topology::Ptr> subContents;
-		//SubContents(subContents);
-		//
-		//for(const Topology::Ptr& kpSubContent : subContents)
-		//{
-		//	// Copy the content
-		//	Topology::Ptr copyContent = kpSubContent->Copy();
-		//	pShapeCopy->AddContent(copyContent); 
-		//	const double kDefaultParameter = 0.0; // TODO: calculate the parameters
-		//	copyContent->AddContext(
-		//		Context::ByTopologyParameters(
-		//			pShapeCopy,
-		//			kDefaultParameter, kDefaultParameter, kDefaultParameter
-		//		));
-		//}
-
 		GlobalCluster::GetInstance().AddTopology(occtShapeCopy);
 
+		return pShapeCopy;
+	}
+
+	Topology::Ptr DeepCopyImpl(const TopoDS_Shape& rkOcctShape, TopTools_DataMapOfShapeShape& rOcctShapeCopyShapeMap)
+	{
+		BRepBuilderAPI_Copy occtShapeCopier(rkOcctShape);
+		TopoDS_Shape occtShapeCopy = occtShapeCopier.Shape();
+		rOcctShapeCopyShapeMap.Bind(rkOcctShape, occtShapeCopy);
+		Topology::Ptr pShapeCopy = Topology::ByOcctShape(occtShapeCopy, Topology::GetInstanceGUID(rkOcctShape));
+
+		std::list<Context::Ptr> contexts;
+		Topology::Contexts(rkOcctShape, contexts);
+		for (const Context::Ptr& kpContext : contexts)
+		{
+			Topology::Ptr pContextTopology = kpContext->Topology();
+			
+			TopoDS_Shape occtCopyShape;
+			bool isContextCopied = rOcctShapeCopyShapeMap.Find(pContextTopology->GetOcctShape(), occtCopyShape);
+			if(!isContextCopied)
+			{
+				Topology::Ptr pCopyContextTopology = DeepCopyImpl(pContextTopology->GetOcctShape(), rOcctShapeCopyShapeMap);
+				pCopyContextTopology->AddContent(pShapeCopy);
+			}
+		}
+
+		std::list<Topology::Ptr> subContents;
+		Topology::SubContents(rkOcctShape, subContents);
+		for (const Topology::Ptr& kpSubContent : subContents)
+		{
+			TopoDS_Shape occtCopyShape;
+			bool isContentCopied = rOcctShapeCopyShapeMap.Find(kpSubContent->GetOcctShape(), occtCopyShape);
+			if (!isContentCopied)
+			{
+				Topology::Ptr pSubContentCopy = DeepCopyImpl(kpSubContent->GetOcctShape(), rOcctShapeCopyShapeMap);
+				int filterType = 0;
+				std::list<Context::Ptr> contexts;
+				kpSubContent->Contexts(contexts);
+				for (const Context::Ptr& pContext : contexts)
+				{
+					int contextType = pContext->Topology()->GetType();
+					filterType = Bitwise::Or(filterType, contextType);
+				}
+				pShapeCopy->AddSubContent(pSubContentCopy, filterType);
+			}
+		}
+
+		return pShapeCopy;
+	}
+
+	Topology::Ptr Topology::DeepCopy()
+	{
+		TopTools_DataMapOfShapeShape occtShapeCopyShapeMap;
+		Topology::Ptr pShapeCopy = DeepCopyImpl(GetOcctShape(), occtShapeCopyShapeMap);
 		return pShapeCopy;
 	}
 
@@ -2209,8 +2266,13 @@ namespace TopologicCore
 
 	const std::string Topology::GetInstanceGUID() const
 	{
+		return GetInstanceGUID(GetOcctShape());
+	}
+
+	const std::string Topology::GetInstanceGUID(const TopoDS_Shape & rkOcctShape)
+	{
 		std::string guid;
-		bool value = InstanceGUIDManager::GetInstance().Find(GetOcctShape(), guid);
+		bool value = InstanceGUIDManager::GetInstance().Find(rkOcctShape, guid);
 		assert(value);
 		return guid;
 	}

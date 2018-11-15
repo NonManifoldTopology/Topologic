@@ -321,10 +321,12 @@ namespace Topologic
 		Topology^ SelectSubtopology(Topology^ selector,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] int typeFilter);
 
-		generic <class T>
+		//[IsVisibleInDynamoLibrary(false)]
+		Topology^ Copy();
+
+		/*generic <class T>
 			where T: Topology
-		[IsVisibleInDynamoLibrary(false)]
-		T Copy();
+		T DeepCopy();*/
 
 		/*/// <summary>
 		/// 

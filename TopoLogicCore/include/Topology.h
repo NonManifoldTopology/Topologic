@@ -264,6 +264,8 @@ namespace TopologicCore
 		/// <param name="rContents"></param>
 		TOPOLOGIC_API void Contents(std::list<Topology::Ptr>& rContents) const;
 
+		static void Contents(const TopoDS_Shape& rkOcctShape, std::list<Topology::Ptr>& rContents);
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -282,6 +284,8 @@ namespace TopologicCore
 		/// </summary>
 		/// <returns></returns>
 		TOPOLOGIC_API bool Contexts(std::list<std::shared_ptr<Context>>& rContexts) const;
+
+		static bool Contexts(const TopoDS_Shape& rkOcctShape, std::list<std::shared_ptr<Context>>& rContexts);
 
 		/// <summary>
 		/// 
@@ -407,6 +411,12 @@ namespace TopologicCore
 		TOPOLOGIC_API Topology::Ptr Copy();
 
 		/// <summary>
+		/// Copy the whole content/context hierarchy.
+		/// </summary>
+		/// <returns></returns>
+		TOPOLOGIC_API Topology::Ptr DeepCopy();
+
+		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkOcctShape"></param>
@@ -482,6 +492,8 @@ namespace TopologicCore
 		/// </summary>
 		/// <returns>The GUID</returns>
 		TOPOLOGIC_API const std::string GetInstanceGUID() const;
+
+		static const std::string GetInstanceGUID(const TopoDS_Shape& rkOcctShape);
 
 		/*TOPOLOGIC_API void SetInstanceGUID(const std::string& rkGuid) {
 			m_guid = rkGuid;
@@ -671,6 +683,8 @@ namespace TopologicCore
 		void GetDeletedBooleanSubtopologies(const TopoDS_Shape& rkOcctShape, BOPAlgo_CellsBuilder& rOcctCellsBuilder, BOPCol_ListOfShape& rOcctDeletedShapes);
 
 		void GetDeletedBooleanSubtopologies(const TopoDS_Shape& rkOcctShape, BRepAlgoAPI_BooleanOperation& rOcctBooleanOperation, BOPCol_ListOfShape& rOcctDeletedShapes);
+
+		Topology::Ptr TrackContextAncestor();
 
 		int m_dimensionality;
 		static int m_numOfTopologies;

@@ -321,18 +321,31 @@ namespace Topologic
 		return geometry;
 	}
 
-	generic <class T>
-	T Topology::Copy()
+	Topology^ Topology::Copy()
 	{
 		TopologicCore::Topology::Ptr pCoreTopology =
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->Copy();
+		TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->DeepCopy();
 
 		TopologicUtility::AttributeManager::GetInstance().CopyAttributes(pCoreTopology->GetOcctShape(), pCoreCopyTopology->GetOcctShape());
 		
 		Topology^ topology = ByCoreTopology(pCoreCopyTopology);
-		return safe_cast<T>(topology);
+		//return safe_cast<T>(topology);
+		return topology;
 	}
+
+	/*generic <class T>
+	T Topology::DeepCopy()
+	{
+		TopologicCore::Topology::Ptr pCoreTopology =
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->DeepCopy();
+
+		TopologicUtility::AttributeManager::GetInstance().CopyAttributes(pCoreTopology->GetOcctShape(), pCoreCopyTopology->GetOcctShape());
+
+		Topology^ topology = ByCoreTopology(pCoreCopyTopology);
+		return safe_cast<T>(topology);
+	}*/
 
 	void Topology::RegisterFactory(const TopologicCore::Topology::Ptr & kpCoreTopology, TopologyFactory^ topologyFactory)
 	{
@@ -479,7 +492,7 @@ namespace Topologic
 
 	Topology^ Topology::RemoveKeys(List<String^>^ keys)
 	{
-		Topology^ copyTopology = Copy<Topology^>();
+		Topology^ copyTopology = Copy();// Copy<Topology^>();
 		std::shared_ptr<TopologicCore::Topology> pCoreCopyTopology = 
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(copyTopology->GetCoreTopologicalQuery());
 		for each(String^ key in keys)
@@ -546,22 +559,14 @@ namespace Topologic
 		// 1. Copy this topology
 		TopologicCore::Topology::Ptr pCoreParentTopology =
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreCopyParentTopology = pCoreParentTopology->Copy();
+		TopologicCore::Topology::Ptr pCoreCopyParentTopology = pCoreParentTopology->DeepCopy();
 		
 		// 2. Copy the content topology
 		TopologicCore::Topology::Ptr pCoreContentTopology =
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(content->GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreCopyContentTopology = pCoreContentTopology->Copy();
+		TopologicCore::Topology::Ptr pCoreCopyContentTopology = pCoreContentTopology->DeepCopy();
 
 		pCoreCopyParentTopology->AddContent(pCoreCopyContentTopology);
-		
-		// 4. Add closestSimplestSubshape as the context of pCoreCopyContentTopology
-		//const double kDefaultParameter = 0.0; // TODO: calculate the parameters
-		//pCoreCopyContentTopology->AddContext(
-		//	TopologicCore::Context::ByTopologyParameters(
-		//		pCoreCopyParentTopology,
-		//		kDefaultParameter, kDefaultParameter, kDefaultParameter
-		//	));
 
 		// 5. Return the copy topology
 		return Topology::ByCoreTopology(pCoreCopyParentTopology);
@@ -823,8 +828,8 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(tool->GetCoreTopologicalQuery());
 
-		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->Copy();
-		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->Copy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();
 
 		try {
 			std::shared_ptr<TopologicCore::Topology> pSliceCoreTopology = pCoreCopyTopologyA->Divide(pCoreCopyTopologyB);
