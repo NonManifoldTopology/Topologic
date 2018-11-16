@@ -2046,6 +2046,7 @@ namespace TopologicCore
 	{
 		// For now, only works if this topology is a cell
 		TopologyType topologyType = GetType();
+
 		if (topologyType != TOPOLOGY_CELL && topologyType != TOPOLOGY_FACE && topologyType != TOPOLOGY_EDGE)
 		{
 			return nullptr;
@@ -2054,11 +2055,31 @@ namespace TopologicCore
 		//Topology::Ptr farthestContextTopology = TrackContextAncestor();
 
 		Topology::Ptr pSlicedTopology = Slice(kpTool);
-		std::list<Cell::Ptr> cells;
-		pSlicedTopology->DownwardNavigation(cells);
-		for (const Cell::Ptr& kpCell : cells)
+
+		if (topologyType == TOPOLOGY_CELL)
 		{
-			AddContent(kpCell);
+			std::list<Cell::Ptr> cells;
+			pSlicedTopology->DownwardNavigation(cells);
+			for (const Cell::Ptr& kpCell : cells)
+			{
+				AddContent(kpCell);
+			}
+		}else if (topologyType == TOPOLOGY_FACE)
+		{
+			std::list<Face::Ptr> faces;
+			pSlicedTopology->DownwardNavigation(faces);
+			for (const Face::Ptr& kpFace : faces)
+			{
+				AddContent(kpFace);
+			}
+		}else //if (topologyType == TOPOLOGY_EDGE)
+		{
+			std::list<Edge::Ptr> edges;
+			pSlicedTopology->DownwardNavigation(edges);
+			for (const Edge::Ptr& kpEdge : edges)
+			{
+				AddContent(kpEdge);
+			}
 		}
 
 		Topology::Ptr thisTopology = shared_from_this();
@@ -2156,6 +2177,7 @@ namespace TopologicCore
 		return pShapeCopy;
 	}
 
+	// Based on https://stackoverflow.com/questions/14536702/algorithm-to-clone-a-graph
 	Topology::Ptr DeepCopyImpl(const TopoDS_Shape& rkOcctShape, TopTools_DataMapOfShapeShape& rOcctShapeCopyShapeMap)
 	{
 		BRepBuilderAPI_Copy occtShapeCopier(rkOcctShape);
