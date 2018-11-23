@@ -7,7 +7,7 @@
 
 namespace Topologic
 {
-	List<Edge^>^ Wire::Edges()
+	List<Edge^>^ Wire::Edges::get()
 	{
 		TopologicCore::Wire::Ptr pCoreWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Edge::Ptr> pCoreEdgeList;
@@ -50,7 +50,7 @@ namespace Topologic
 		return TopologicCore::Topology::Downcast<TopologicCore::Wire>(GetCoreTopologicalQuery())->IsClosed();
 	}
 
-	List<Vertex^>^ Wire::Vertices()
+	List<Vertex^>^ Wire::Vertices::get()
 	{
 		TopologicCore::Wire::Ptr pCoreWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Vertex::Ptr> pCoreVertexList;
@@ -129,7 +129,7 @@ namespace Topologic
 	Object^ Wire::Geometry::get()
 	{
 		List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoCurves = gcnew List<Autodesk::DesignScript::Geometry::Curve^>();
-		List<Edge^>^ pEdges = Edges();
+		List<Edge^>^ pEdges = Edges;
 		for each(Edge^ pEdge in pEdges)
 		{
 			pDynamoCurves->Add(pEdge->Curve());
@@ -138,10 +138,10 @@ namespace Topologic
 		if (pDynamoCurves->Count == 0)
 			return nullptr;
 
-		List<Object^>^ pDynamoGeometries = gcnew List<Object^>();
+		Object^ pDynamoReturnValue = nullptr;
 		try
 		{
-			pDynamoGeometries->Add(Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoCurves, 0.001));
+			pDynamoReturnValue = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoCurves, 0.001);
 
 			for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoCurve in pDynamoCurves)
 			{
@@ -150,27 +150,18 @@ namespace Topologic
 		}
 		catch (std::exception&)
 		{
-			for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoCurve in pDynamoCurves)
-			{
-				pDynamoGeometries->Add(pDynamoCurve);
-			}
+			pDynamoReturnValue = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoCurves, 0.001);
 		}
 		catch (Exception^)
 		{
-			for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoCurve in pDynamoCurves)
-			{
-				pDynamoGeometries->Add(pDynamoCurve);
-			}
+			pDynamoReturnValue = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoCurves, 0.001);
 		}
 		catch (...)
 		{
 			throw gcnew Exception("An unknown Wire::Geometry exception is encountered.");
 		}
 
-		Object^ objColoredSubcontents = Topology::Geometry::get();
-		List<Object^>^ coloredSubcontents = dynamic_cast<List<Object^>^>(objColoredSubcontents);
-		pDynamoGeometries->AddRange(coloredSubcontents);
-		return CleanupGeometryOutput(pDynamoGeometries);
+		return pDynamoReturnValue;
 	}
 
 	std::shared_ptr<TopologicCore::TopologicalQuery> Wire::GetCoreTopologicalQuery()

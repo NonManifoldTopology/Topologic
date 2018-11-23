@@ -574,6 +574,7 @@ namespace TopologicCore
 		Topology::Ptr pPostprocessedShape = Topology::ByOcctShape(occtPostprocessedShape, "");
 		TransferContents(GetOcctShape(), pPostprocessedShape);
 		TransferContents(kpOtherTopology->GetOcctShape(), pPostprocessedShape);
+		GlobalCluster::GetInstance().AddTopology(occtPostprocessedShape);
 		return pPostprocessedShape;
 	}
 
@@ -1187,6 +1188,7 @@ namespace TopologicCore
 		Topology::Ptr pPostprocessedShape = Topology::ByOcctShape(occtPostprocessedShape, "");
 		TransferContents(GetOcctShape(), pPostprocessedShape);
 		TransferContents(kpOtherTopology->GetOcctShape(), pPostprocessedShape);
+		GlobalCluster::GetInstance().AddTopology(occtPostprocessedShape);
 		return pPostprocessedShape;
 	}
 
@@ -1236,6 +1238,7 @@ namespace TopologicCore
 		Topology::Ptr pPostprocessedShape = Topology::ByOcctShape(occtPostprocessedShape, "");
 		TransferContents(GetOcctShape(), pPostprocessedShape);
 		TransferContents(kpOtherTopology->GetOcctShape(), pPostprocessedShape);
+		GlobalCluster::GetInstance().AddTopology(occtPostprocessedShape);
 		return pPostprocessedShape;
 	}
 
@@ -1277,6 +1280,7 @@ namespace TopologicCore
 		Topology::Ptr pPostprocessedShape = Topology::ByOcctShape(occtPostprocessedShape, "");
 		TransferContents(GetOcctShape(), pPostprocessedShape);// , occtDeletedSubshapes);
 		TransferContents(kpOtherTopology->GetOcctShape(), pPostprocessedShape);// , occtDeletedSubshapes);
+		GlobalCluster::GetInstance().AddTopology(occtPostprocessedShape);
 		return pPostprocessedShape;
 
 		/*std::list<Topology::Ptr> deletedSubshapes;
@@ -1328,6 +1332,8 @@ namespace TopologicCore
 		Topology::Ptr pPostprocessedShape = Topology::ByOcctShape(occtPostprocessedShape, "");
 		TransferContents(GetOcctShape(), pPostprocessedShape);
 		TransferContents(kpOtherTopology->GetOcctShape(), pPostprocessedShape);
+
+		GlobalCluster::GetInstance().AddTopology(occtPostprocessedShape);
 		return pPostprocessedShape;
 	}
 
@@ -1590,6 +1596,7 @@ namespace TopologicCore
 		TopoDS_Shape occtPostprocessedShape = PostprocessBooleanResult(occtCellsBuilder.Shape());
 		Topology::Ptr pPostprocessedShape = Topology::ByOcctShape(occtPostprocessedShape, "");
 		TransferContents(GetOcctShape(), pPostprocessedShape);
+		GlobalCluster::GetInstance().AddTopology(occtPostprocessedShape);
 		return pPostprocessedShape;
 	}
 
@@ -1615,6 +1622,7 @@ namespace TopologicCore
 		Topology::Ptr pPostprocessedShape = Topology::ByOcctShape(occtPostprocessedShape, "");
 		TransferContents(GetOcctShape(), pPostprocessedShape);
 		TransferContents(kpOtherTopology->GetOcctShape(), pPostprocessedShape);
+		GlobalCluster::GetInstance().AddTopology(occtPostprocessedShape);
 		return pPostprocessedShape;
 	}
 
@@ -1859,9 +1867,11 @@ namespace TopologicCore
 
 		if (contexts.size() == 1)
 		{
+			// Go farther
 			return (*contexts.begin())->Topology()->TrackContextAncestor();
 		}
 
+		// If empty or > 2
 		return shared_from_this();
 	}
 
@@ -2034,6 +2044,7 @@ namespace TopologicCore
 		Topology::Ptr pPostprocessedShape = Topology::ByOcctShape(occtPostprocessedShape, "");
 		TransferContents(GetOcctShape(), pPostprocessedShape);
 		TransferContents(kpOtherTopology->GetOcctShape(), pPostprocessedShape);
+		GlobalCluster::GetInstance().AddTopology(occtPostprocessedShape);
 		return pPostprocessedShape;
 	}
 
@@ -2082,10 +2093,10 @@ namespace TopologicCore
 			}
 		}
 
-		Topology::Ptr thisTopology = shared_from_this();
-		//Topology::Ptr farthestTopology = TrackContextAncestor();
+		//Topology::Ptr thisTopology = shared_from_this();
+		Topology::Ptr farthestTopology = TrackContextAncestor();
 
-		return thisTopology;
+		return farthestTopology;
 	}
 
 	void Topology::SubTopologies(const TopoDS_Shape& rkShape, BOPCol_ListOfShape& rSubTopologies)
@@ -2220,7 +2231,7 @@ namespace TopologicCore
 				pShapeCopy->AddSubContent(pSubContentCopy, filterType);
 			}
 		}
-
+		GlobalCluster::GetInstance().AddTopology(pShapeCopy);
 		return pShapeCopy;
 	}
 

@@ -194,44 +194,44 @@ namespace Topologic
 		return Topology::ByCoreTopology(pCoreTopology);
 	}
 
-	Object^ Topology::Geometry::get()
-	{
-		List<Object^>^ pDynamoGeometries = gcnew List<Object^>();
+	//Object^ Topology::Geometry::get()
+	//{
+	//	List<Object^>^ pDynamoGeometries = gcnew List<Object^>();
 
-		List<Topology^>^ subContents = SubContents;
-		for each(Topology^ subContent in subContents)
-		{
-			DSCore::Color^ color = DSCore::Color::ByARGB(50, 255, 0, 0);
-			Object^ subContentGeometry = subContent->Geometry;
+	//	List<Topology^>^ subContents = SubContents;
+	//	for each(Topology^ subContent in subContents)
+	//	{
+	//		DSCore::Color^ color = DSCore::Color::ByARGB(50, 255, 0, 0);
+	//		Object^ subContentGeometry = subContent->Geometry;
 
-			Autodesk::DesignScript::Geometry::Geometry^ dynamoGeometry = dynamic_cast<Autodesk::DesignScript::Geometry::Geometry^>(subContentGeometry);
-			if (dynamoGeometry != nullptr)
-			{
-				Modifiers::GeometryColor^ dynamoGeometryColor = Modifiers::GeometryColor::ByGeometryColor(dynamoGeometry, color);
-				pDynamoGeometries->Add(dynamoGeometryColor);
-				continue;
-			}
+	//		Autodesk::DesignScript::Geometry::Geometry^ dynamoGeometry = dynamic_cast<Autodesk::DesignScript::Geometry::Geometry^>(subContentGeometry);
+	//		if (dynamoGeometry != nullptr)
+	//		{
+	//			Modifiers::GeometryColor^ dynamoGeometryColor = Modifiers::GeometryColor::ByGeometryColor(dynamoGeometry, color);
+	//			pDynamoGeometries->Add(dynamoGeometryColor);
+	//			continue;
+	//		}
 
-			// 2. Try a list of Dynamo geometry
-			List<Object^>^ listOfObjects = dynamic_cast<List<Object^>^>(subContentGeometry);
-			if (listOfObjects != nullptr)
-			{
-				for each(Object^ object in listOfObjects)
-				{
-					Autodesk::DesignScript::Geometry::Geometry^ dynamoGeometry = dynamic_cast<Autodesk::DesignScript::Geometry::Geometry^>(object);
-					if (dynamoGeometry != nullptr)
-					{
-						Modifiers::GeometryColor^ dynamoGeometryColor = Modifiers::GeometryColor::ByGeometryColor(dynamoGeometry, color);
-						//delete object;
-						pDynamoGeometries->Add(dynamoGeometryColor);
-					}
-				}
-				continue;
-			}
-		}
+	//		// 2. Try a list of Dynamo geometry
+	//		List<Object^>^ listOfObjects = dynamic_cast<List<Object^>^>(subContentGeometry);
+	//		if (listOfObjects != nullptr)
+	//		{
+	//			for each(Object^ object in listOfObjects)
+	//			{
+	//				Autodesk::DesignScript::Geometry::Geometry^ dynamoGeometry = dynamic_cast<Autodesk::DesignScript::Geometry::Geometry^>(object);
+	//				if (dynamoGeometry != nullptr)
+	//				{
+	//					Modifiers::GeometryColor^ dynamoGeometryColor = Modifiers::GeometryColor::ByGeometryColor(dynamoGeometry, color);
+	//					//delete object;
+	//					pDynamoGeometries->Add(dynamoGeometryColor);
+	//				}
+	//			}
+	//			continue;
+	//		}
+	//	}
 
-		return pDynamoGeometries;
-	}
+	//	return pDynamoGeometries;
+	//}
 
 	bool Topology::ExportToBRep(String^ path)
 	{
@@ -537,7 +537,7 @@ namespace Topologic
 		return pTopologies;
 	}
 
-	List<Context^>^ Topology::Contexts()
+	List<Context^>^ Topology::Contexts::get()
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		std::list<std::shared_ptr<TopologicCore::Context>> rkCoreContexts;

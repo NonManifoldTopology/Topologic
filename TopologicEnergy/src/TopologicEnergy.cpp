@@ -503,7 +503,7 @@ namespace TopologicEnergy
 		// 2. For each wires, iterate through the edges, sample points, and map them to the 
 		for each(Wire^ pApertureWire in pApertureWires)
 		{
-			List<Edge^>^ pApertureEdges = pApertureWire->Edges();
+			List<Edge^>^ pApertureEdges = pApertureWire->Edges;
 			List<Edge^>^ pMappedApertureEdges = gcnew List<Edge^>();
 
 			for each(Edge^ pApertureEdge in pApertureEdges)
@@ -949,7 +949,7 @@ namespace TopologicEnergy
 						continue;
 					}
 					Wire^ pApertureWire = pFaceAperture->ExternalBoundary;
-					List<Vertex^>^ pApertureVertices = pApertureWire->Vertices();
+					List<Vertex^>^ pApertureVertices = pApertureWire->Vertices;
 					//pApertureVertices->Reverse();
 					OpenStudio::Point3dVector^ osWindowFacePoints = gcnew OpenStudio::Point3dVector();
 					for each(Vertex^ pApertureVertex in pApertureVertices)
@@ -1006,7 +1006,7 @@ namespace TopologicEnergy
 			safe_cast<Autodesk::DesignScript::Geometry::Point^>(faceCentre->Geometry);
 
 		Wire^ pApertureWire = buildingFace->ExternalBoundary;
-		List<Vertex^>^ vertices = pApertureWire->Vertices();
+		List<Vertex^>^ vertices = pApertureWire->Vertices;
 		vertices->Reverse();
 
 		double sqrtScaleFactor = Math::Sqrt(scaleFactor);
@@ -1045,7 +1045,7 @@ namespace TopologicEnergy
 	OpenStudio::Point3dVector^ TopologicEnergy::GetFacePoints(Face^ buildingFace)
 	{
 		Wire^ buildingOuterWire = buildingFace->ExternalBoundary;
-		List<Vertex^>^ vertices = buildingOuterWire->Vertices();
+		List<Vertex^>^ vertices = buildingOuterWire->Vertices;
 		// HACK
 		vertices->Reverse();
 		OpenStudio::Point3dVector^ osFacePoints = gcnew OpenStudio::Point3dVector();

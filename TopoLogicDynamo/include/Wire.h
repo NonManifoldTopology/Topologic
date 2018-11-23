@@ -24,7 +24,10 @@ namespace Topologic {
 		/// Get the constituent edges of the wire. NOTE: This method will automatically identify its loop order property.
 		/// </summary>
 		/// <returns name="Edge[]">The constituent edges</returns>
-		List<Edge^>^ Edges();
+		property List<Edge^>^ Edges
+		{
+			List<Edge^>^ get();
+		}
 
 		/// <summary>
 		/// Get the list of faces that contain the wire. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.
@@ -39,7 +42,10 @@ namespace Topologic {
 		/// Gets the list constituent vertices of the wire. NOTE: This method will automatically identify its loop order property.
 		/// </summary>
 		/// <returns name="Vertex[]">The constituent vertices</returns>
-		List<Vertex^>^ Vertices();
+		property List<Vertex^>^ Vertices
+		{
+			List<Vertex^>^ get();
+		}
 
 		/// <summary>
 		/// 

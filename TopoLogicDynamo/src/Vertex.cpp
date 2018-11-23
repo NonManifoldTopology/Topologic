@@ -80,13 +80,7 @@ namespace Topologic
 
 	Object^ Vertex::Geometry::get()
 	{
-		List<Object^>^ pDynamoGeometries = gcnew List<Object^>();
-		pDynamoGeometries->Add(Point());
-
-		Object^ objColoredSubcontents = Topology::Geometry::get();
-		List<Object^>^ coloredSubcontents = dynamic_cast<List<Object^>^>(objColoredSubcontents);
-		pDynamoGeometries->AddRange(coloredSubcontents);
-		return CleanupGeometryOutput(pDynamoGeometries);
+		return Point();
 	}
 
 	double Vertex::X::get()

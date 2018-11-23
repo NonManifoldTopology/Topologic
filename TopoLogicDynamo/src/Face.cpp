@@ -287,19 +287,13 @@ namespace Topologic
 
 	Object^ Face::Geometry::get()
 	{
-		List<Object^>^ pDynamoGeometries = gcnew List<Object^>();
 		try {
-			pDynamoGeometries->Add(Surface());
+			return Surface();
 		}
 		catch (Exception^)
 		{
-			pDynamoGeometries->Add(TriangulatedMesh());
+			return TriangulatedMesh();
 		}
-
-		Object^ objColoredSubcontents = Topology::Geometry::get();
-		List<Object^>^ coloredSubcontents = dynamic_cast<List<Object^>^>(objColoredSubcontents);
-		pDynamoGeometries->AddRange(coloredSubcontents);
-		return CleanupGeometryOutput(pDynamoGeometries);
 	}
 
 	std::shared_ptr<TopologicCore::TopologicalQuery> Face::GetCoreTopologicalQuery()
@@ -620,7 +614,7 @@ namespace Topologic
 				{
 					if (TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(pWire->GetCoreTopologicalQuery())->GetOcctShape().IsSame(rkOcctOuterWire))
 					{
-						List<Edge^>^ pOuterEdges = pWire->Edges();
+						List<Edge^>^ pOuterEdges = pWire->Edges;
 						List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoOuterCurves = gcnew List<Autodesk::DesignScript::Geometry::Curve^>();
 						for each(Edge^ pOuterEdge in pOuterEdges)
 						{

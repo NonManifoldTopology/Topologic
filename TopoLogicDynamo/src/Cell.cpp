@@ -325,26 +325,20 @@ namespace Topologic
 					{
 						delete pDynamoGeometry;
 					}
-					//return pDynamoSolid;
-					pDynamoGeometries->Clear();
-					pDynamoGeometries->Add(pDynamoSolid);
+					return pDynamoSolid;
 				}
 				else
 				{
-					//return pDynamoSurfaces;
-					pDynamoGeometries->Clear();
-					pDynamoGeometries->Add(pDynamoSurfaces);
+					return pDynamoSurfaces;
 				}
 			}
 			catch (Exception^)
 			{
+
 			}
 		}
 
-		Object^ objColoredSubcontents = Topology::Geometry::get();
-		List<Object^>^ coloredSubcontents = dynamic_cast<List<Object^>^>(objColoredSubcontents);
-		pDynamoGeometries->AddRange(coloredSubcontents);
-		return CleanupGeometryOutput(pDynamoGeometries);
+		return pDynamoGeometries;
 	}
 
 	Cell ^ Cell::BySphere(Autodesk::DesignScript::Geometry::Sphere ^ sphere)

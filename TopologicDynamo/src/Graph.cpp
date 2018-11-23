@@ -27,15 +27,15 @@ namespace Topologic
 
 		Object^ Graph::Geometry::get()
 		{
-			List<Object^>^ GraphGeometry = gcnew List<Object^>();
-			GraphGeometry->Add(Wire::Geometry);
-			List<Vertex^>^ vertices = Vertices();
+			List<Object^>^ graphGeometry = gcnew List<Object^>();
+			graphGeometry->Add(Wire::Geometry);
+			List<Vertex^>^ vertices = Vertices;
 			for each (Vertex^ vertex in vertices)
 			{
-				GraphGeometry->Add(Autodesk::DesignScript::Geometry::Sphere::ByCenterPointRadius(vertex->Point(), 0.2));
+				graphGeometry->Add(Autodesk::DesignScript::Geometry::Sphere::ByCenterPointRadius(vertex->Point(), 0.2));
 			}
 
-			return GraphGeometry;
+			return graphGeometry;
 		}
 
 		std::shared_ptr<TopologicCore::TopologicalQuery> Graph::GetCoreTopologicalQuery()

@@ -204,10 +204,7 @@ namespace Topologic
 		{
 			pObjects->Add(pCell->Geometry);
 		}
-		Object^ objColoredSubcontents = Topology::Geometry::get();
-		List<Object^>^ coloredSubcontents = dynamic_cast<List<Object^>^>(objColoredSubcontents);
-		pObjects->AddRange(coloredSubcontents);
-		return CleanupGeometryOutput(pObjects);
+		return pObjects;
 	}
 
 	int CellComplex::Type()

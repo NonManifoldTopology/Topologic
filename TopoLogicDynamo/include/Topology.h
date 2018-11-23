@@ -68,7 +68,7 @@ namespace Topologic
 		/// <returns name="Geometry">The host geometry counterpart of the topological entity</returns>
 		property Object^ Geometry
 		{
-			virtual Object^ get();
+			virtual Object^ get() abstract;
 		}
 
 		/// <summary>
@@ -125,6 +125,7 @@ namespace Topologic
 			List<Topology^>^ get();
 		}
 
+		[IsVisibleInDynamoLibrary(false)]
 		property List<Topology^>^ SubContents
 		{
 			List<Topology^>^ get();
@@ -134,7 +135,10 @@ namespace Topologic
 		/// Returns the topological entities containing the input topology as a content.
 		/// </summary>
 		/// <returns name="Context[]">The non-constituent members of the input topological entity</returns>
-		List<Context^>^ Contexts();
+		property List<Context^>^ Contexts
+		{
+			List<Context^>^ get();
+		}
 
 		/// <summary>
 		/// Add this topology as a non-constituent member to another topology.
