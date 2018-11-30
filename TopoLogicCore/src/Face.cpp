@@ -157,9 +157,9 @@ namespace TopologicCore
 
 	Face::Ptr Face::ByEdges(const std::list<Edge::Ptr>& rkEdges)
 	{
-		if (rkEdges.size())
+		if (rkEdges.size() < 3)
 		{
-			throw std::exception("No edge is passed.");
+			throw std::exception("Fewer than 3 edges are passed.");
 		}
 
 		Wire::Ptr pWire = Wire::ByEdges(rkEdges);
@@ -378,7 +378,11 @@ namespace TopologicCore
 	Wire::Ptr Face::ExternalBoundary() const
 	{
 		TopoDS_Wire occtOuterWire = ShapeAnalysis::OuterWire(GetOcctFace());
-
+		if (GetOcctFace().Orientation() == TopAbs_REVERSED)
+		{
+			TopoDS_Wire occtReversedOuterWire = TopoDS::Wire(occtOuterWire.Reversed());
+			return std::make_shared<Wire>(occtReversedOuterWire);
+		}
 		return std::make_shared<Wire>(occtOuterWire);
 	}
 

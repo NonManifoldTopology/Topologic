@@ -55,6 +55,8 @@ namespace Topologic {
 			/// <returns name="Face"></returns>
 			static Face^ TrimByWire(Face^ face, Wire^ wire);
 
+			static List<Face^>^ Triangulate(Face^ face, double deflection);
+
 		public protected:
 			FaceUtility() {}
 		};

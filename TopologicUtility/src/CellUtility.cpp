@@ -164,4 +164,12 @@ namespace TopologicUtility
 		return (occtState == TopAbs_IN || occtState == TopAbs_ON);
 	}
 
+	void CellUtility::GetMinMax(const TopologicCore::Cell::Ptr & kpCell, double & rMinX, double & rMaxX, double & rMinY, double & rMaxY, double & rMinZ, double & rMaxZ)
+	{
+		Bnd_Box occtBoundingBox;
+
+		BRepBndLib::Add(kpCell->GetOcctShape(), occtBoundingBox);
+		occtBoundingBox.Get(rMinX, rMinY, rMinZ, rMaxX, rMaxY, rMaxZ);
+	}
+
 }

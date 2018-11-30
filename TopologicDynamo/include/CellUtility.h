@@ -41,6 +41,8 @@ namespace Topologic {
 			/// <returns></returns>
 			static bool Contains(Cell^ cell, Vertex^ vertex);
 
+			static List<double>^ GetMinMax(Cell^ cell);
+
 		public protected:
 			CellUtility() {}
 		};

@@ -38,7 +38,7 @@ namespace TopologicEnergy
 	{
 		numOfApertures = 0;
 		numOfAppliedApertures = 0;
-		subsurfaceCounter = 1;
+		//subsurfaceCounter = 1;
 		CellComplex^ buildingCopy = building->Copy<CellComplex^>();
 		//CellComplex^ buildingCopy = building;
 
@@ -48,7 +48,7 @@ namespace TopologicEnergy
 		double buildingHeight = Enumerable::Max(floorLevels);
 		int numFloors = floorLevels->Count - 1;
 		OpenStudio::Building^ osBuilding = ComputeBuilding(osModel, buildingName, buildingType, buildingHeight, numFloors, defaultSpaceType);
-		List<Cell^>^ pBuildingCells = buildingCopy->Cells;
+		List<Cell^>^ pBuildingCells = building->Cells;
 
 		// Create OpenStudio spaces
 		List<OpenStudio::Space^>^ osSpaces = gcnew List<OpenStudio::Space^>();
@@ -58,7 +58,7 @@ namespace TopologicEnergy
 			OpenStudio::Space^ osSpace = AddSpace(
 				spaceNumber,
 				buildingCell,
-				buildingCopy,
+				building,
 				osModel,
 				Autodesk::DesignScript::Geometry::Vector::ZAxis(),
 				buildingHeight,
@@ -169,6 +169,18 @@ namespace TopologicEnergy
 
 	OpenStudio::Model^ TopologicEnergy::GetModelFromTemplate(String^ osmTemplatePath, String^ epwWeatherPath, String^ ddyPath)
 	{
+		if (!File::Exists(osmTemplatePath))
+		{
+			throw gcnew FileNotFoundException("OSM file not found.");
+		}
+		if (!File::Exists(epwWeatherPath))
+		{
+			throw gcnew FileNotFoundException("EPW file not found.");
+		}
+		if (!File::Exists(ddyPath))
+		{
+			throw gcnew FileNotFoundException("DDY file not found.");
+		}
 		OpenStudio::Path^ osTemplatePath = gcnew OpenStudio::Path(osmTemplatePath);
 
 		// Create an abstract model
@@ -240,6 +252,29 @@ namespace TopologicEnergy
 		osBuildingStory->setDefaultConstructionSet(getDefaultConstructionSet(model));
 		osBuildingStory->setDefaultScheduleSet(getDefaultScheduleSet(model));
 		return osBuildingStory;
+	}
+
+	OpenStudio::SubSurface ^ TopologicEnergy::CreateSubSurface(List<Topologic::Vertex^>^ vertices, OpenStudio::Model^ osModel)
+	{
+		OpenStudio::Point3dVector^ osWindowFacePoints = gcnew OpenStudio::Point3dVector();
+		for each(Vertex^ vertex in vertices)
+		{
+			Object^ pVertexGeometry = vertex->Geometry;
+			Autodesk::DesignScript::Geometry::Point^ pAperturePoint =
+				dynamic_cast<Autodesk::DesignScript::Geometry::Point^>(pVertexGeometry);
+			if (pAperturePoint == nullptr)
+			{
+				continue;
+			}
+			OpenStudio::Point3d^ osPoint = gcnew OpenStudio::Point3d(
+				pAperturePoint->X,
+				pAperturePoint->Y,
+				pAperturePoint->Z);
+			osWindowFacePoints->Add(osPoint);
+		}
+
+		OpenStudio::SubSurface^ osWindowSubSurface = gcnew OpenStudio::SubSurface(osWindowFacePoints, osModel);
+		return osWindowSubSurface;
 	}
 
 	OpenStudio::Building^ TopologicEnergy::ComputeBuilding(
@@ -623,12 +658,16 @@ namespace TopologicEnergy
 			}
 		}
 
-		Autodesk::DesignScript::Geometry::Solid^ solid = safe_cast<Autodesk::DesignScript::Geometry::Solid^>(cell->Geometry);
+		/*Autodesk::DesignScript::Geometry::Solid^ solid = safe_cast<Autodesk::DesignScript::Geometry::Solid^>(cell->Geometry);
 		List<Autodesk::DesignScript::Geometry::Geometry^>^ solids = gcnew List<Autodesk::DesignScript::Geometry::Geometry^>();
 		solids->Add(solid);
 		Autodesk::DesignScript::Geometry::BoundingBox^ boundingBox =
 			Autodesk::DesignScript::Geometry::BoundingBox::ByGeometry(solids);
-		double ceilingHeight = Math::Abs(boundingBox->MaxPoint->Z - boundingBox->MinPoint->Z);
+		double ceilingHeight = Math::Abs(boundingBox->MaxPoint->Z - boundingBox->MinPoint->Z);*/
+		List<double>^ minMax = Topologic::Utility::CellUtility::GetMinMax(cell);
+		double minZ = minMax[4];
+		double maxZ = minMax[5];
+		double ceilingHeight = Math::Abs(maxZ - minZ);
 
 		OpenStudio::ThermalZone^ thermalZone = CreateThermalZone(osModel, osSpace, ceilingHeight, heatingTemp, coolingTemp);
 
@@ -700,6 +739,7 @@ namespace TopologicEnergy
 		OpenStudio::Construction^ osExteriorDoorType = nullptr;
 		OpenStudio::Construction^ osExteriorWallType = nullptr;
 		OpenStudio::Construction^ osExteriorWindowType = nullptr;
+		int subsurfaceCounter = 1;
 
 		OpenStudio::ConstructionVector^ osConstructionTypes = osModel->getConstructions();
 		OpenStudio::ConstructionVector::ConstructionVectorEnumerator^ osConstructionTypesEnumerator =
@@ -741,22 +781,26 @@ namespace TopologicEnergy
 			}
 		} // while (osConstructionTypesEnumerator.MoveNext())
 
-		bool isUnderground = IsUnderground(buildingFace);
-		FaceType faceType = CalculateFaceType(buildingFace, osFacePoints, buildingSpace, upVector);
+		int adjCount = AdjacentCellCount(buildingFace);
+		//HACK
+		/*if (adjCount > 1)
+		{
+			osFacePoints->Reverse();
+		}*/
 
 		OpenStudio::Surface^ osSurface = gcnew OpenStudio::Surface(osFacePoints, osModel);
 		osSurface->setSpace(osSpace);
 		OpenStudio::OptionalString^ osSpaceOptionalString = osSpace->name();
 		String^ spaceName = osSpace->name()->get();
 		String^ surfaceName = osSpace->name()->get() + "_SURFACE_" + surfaceNumber.ToString();
+		bool isUnderground = IsUnderground(buildingFace);
+		FaceType faceType = CalculateFaceType(buildingFace, osFacePoints, buildingSpace, upVector);
 		osSurface->setName(surfaceName);
 		/*OpenStudio::Vector3d^ pSurfaceNormal = osSurface->outwardNormal();
 
 		double x = pSurfaceNormal->x();
 		double y = pSurfaceNormal->y();
 		double z = pSurfaceNormal->z();*/
-
-		int adjCount = AdjacentCellCount(buildingFace);
 
 		if ((faceType == FACE_ROOFCEILING) && (adjCount > 1))
 		{
@@ -925,10 +969,8 @@ namespace TopologicEnergy
 			}
 			else
 			{
-				//osSurface->setWindowToWallRatio(glazingRatio, 900.0, true);
-
 				// Use the surface apertures
-				List<Topology^>^ pContents = buildingFace->SubContents;
+				List<Topology^>^ pContents = buildingFace->Contents;
 				for each(Topology^ pContent in pContents)
 				{
 					Aperture^ pAperture = dynamic_cast<Aperture^>(pContent);
@@ -950,27 +992,22 @@ namespace TopologicEnergy
 					}
 					Wire^ pApertureWire = pFaceAperture->ExternalBoundary;
 					List<Vertex^>^ pApertureVertices = pApertureWire->Vertices;
-					//pApertureVertices->Reverse();
-					OpenStudio::Point3dVector^ osWindowFacePoints = gcnew OpenStudio::Point3dVector();
-					for each(Vertex^ pApertureVertex in pApertureVertices)
+					//OpenStudio::SubSurface^ osWindowSubSurface = gcnew OpenStudio::SubSurface(osWindowFacePoints, osModel);
+					OpenStudio::SubSurface^ osWindowSubSurface = CreateSubSurface(pApertureVertices, osModel);
+					double dotProduct = osWindowSubSurface->outwardNormal()->dot(osSurface->outwardNormal());
+					if (dotProduct < -0.99) // flipped
 					{
-						Object^ pVertexGeometry = pApertureVertex->Geometry;
-						Autodesk::DesignScript::Geometry::Point^ pAperturePoint =
-							dynamic_cast<Autodesk::DesignScript::Geometry::Point^>(pVertexGeometry);
-						if (pAperturePoint == nullptr)
-						{
-							continue;
-						}
-						OpenStudio::Point3d^ osPoint = gcnew OpenStudio::Point3d(
-							pAperturePoint->X,
-							pAperturePoint->Y,
-							pAperturePoint->Z);
-						osWindowFacePoints->Add(osPoint);
+						pApertureVertices->Reverse();
+						osWindowSubSurface->remove();
+						osWindowSubSurface = CreateSubSurface(pApertureVertices, osModel);
+					}
+					else if (dotProduct > -0.99 && dotProduct < 0.99)
+					{
+						throw gcnew Exception("There is a non-coplanar subsurface.");
 					}
 
 					numOfApertures++;
 
-					OpenStudio::SubSurface^ osWindowSubSurface = gcnew OpenStudio::SubSurface(osWindowFacePoints, osModel);
 					double grossSubsurfaceArea = osWindowSubSurface->grossArea();
 					double netSubsurfaceArea = osWindowSubSurface->netArea();
 					double grossSurfaceArea = osSurface->grossArea();
@@ -979,7 +1016,6 @@ namespace TopologicEnergy
 					{
 						osWindowSubSurface->setSubSurfaceType("FixedWindow");
 						bool result = osWindowSubSurface->setSurface(osSurface);
-						//osWindowSubSurface->setSurface(osSurface);
 						if (result)
 						{
 							osWindowSubSurface->setName(osSurface->name()->get() + "_SUBSURFACE_" + subsurfaceCounter.ToString());
@@ -1046,8 +1082,7 @@ namespace TopologicEnergy
 	{
 		Wire^ buildingOuterWire = buildingFace->ExternalBoundary;
 		List<Vertex^>^ vertices = buildingOuterWire->Vertices;
-		// HACK
-		vertices->Reverse();
+
 		OpenStudio::Point3dVector^ osFacePoints = gcnew OpenStudio::Point3dVector();
 
 		for each(Vertex^ v in vertices)
@@ -1086,6 +1121,17 @@ namespace TopologicEnergy
 	FaceType TopologicEnergy::CalculateFaceType(Face^ buildingFace, OpenStudio::Point3dVector^% facePoints, Cell^ buildingSpace, Autodesk::DesignScript::Geometry::Vector^ upVector)
 	{
 		FaceType faceType = FACE_WALL;
+		List<Face^>^ faces = Topologic::Utility::FaceUtility::Triangulate(buildingFace, 0.01);
+		if (faces->Count == 0)
+		{
+			throw gcnew Exception("Failed to triangulate a face.");
+		}
+
+		Face^ firstFace = faces[0];
+		Vertex^ centerPoint = Topologic::Utility::TopologyUtility::CenterOfMass(firstFace);
+		Autodesk::DesignScript::Geometry::Point^ dynamoCenterPoint =
+			safe_cast<Autodesk::DesignScript::Geometry::Point^>(centerPoint->Geometry);
+
 		List<Vertex^>^ vertices = buildingFace->Vertices;
 		Autodesk::DesignScript::Geometry::Point^ p1 =
 			safe_cast<Autodesk::DesignScript::Geometry::Point^>(vertices[0]->Geometry);
@@ -1097,15 +1143,15 @@ namespace TopologicEnergy
 		Autodesk::DesignScript::Geometry::Vector^ faceNormal = dir->Normalized();
 		double faceAngle = faceNormal->AngleWithVector(upVector);
 
-		Autodesk::DesignScript::Geometry::Point^ centerPoint =
+		/*Autodesk::DesignScript::Geometry::Point^ centerPoint =
 			Autodesk::DesignScript::Geometry::Point::ByCoordinates(
 			(p1->X + p2->X + p3->X) / 3.0,
 				(p1->Y + p2->Y + p3->Y) / 3.0,
 				(p1->Z + p2->Z + p3->Z) / 3.0
-			);
+			);*/
 
 		Autodesk::DesignScript::Geometry::Point^ pDynamoOffsetPoint =
-			dynamic_cast<Autodesk::DesignScript::Geometry::Point^>(centerPoint->Translate(faceNormal->Scale(0.001)));
+			dynamic_cast<Autodesk::DesignScript::Geometry::Point^>(dynamoCenterPoint->Translate(faceNormal->Scale(0.001)));
 
 		Vertex^ pOffsetVertex = safe_cast<Vertex^>(Topology::ByGeometry(pDynamoOffsetPoint));
 
@@ -1113,6 +1159,8 @@ namespace TopologicEnergy
 		{
 			bool isInside = Topologic::Utility::CellUtility::Contains(buildingSpace, pOffsetVertex);
 			// The offset vertex has to be false, so if isInside is true, reverse the face.
+
+			//bool isFaceInsideOutWithRespectToTheCell = ;
 
 			if (isInside)
 			{

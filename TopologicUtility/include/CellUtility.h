@@ -103,5 +103,7 @@ namespace TopologicUtility
 		/// <param name="kpVertex"></param>
 		/// <returns></returns>
 		static TOPOLOGIC_SUPPORT_API bool DoesContain(const TopologicCore::Cell::Ptr & kpCell, const TopologicCore::Vertex::Ptr& kpVertex);
+
+		static TOPOLOGIC_SUPPORT_API void GetMinMax(const TopologicCore::Cell::Ptr & kpCell, double &rMinX, double &rMaxX, double &rMinY, double &rMaxY, double &rMinZ, double &rMaxZ);
 	};
 }

@@ -55,7 +55,7 @@ namespace TopologicCore
 
 		std::shared_ptr<Aperture> pAperture = std::make_shared<Aperture>(kpTopology, pContext, kDefaultStatus);
 
-		kpContextTopology->AddSubContent(pAperture, Face::Type());
+		//kpContextTopology->AddSubContent(pAperture, Face::Type());
 		
 		return pAperture;
 	}
@@ -64,7 +64,7 @@ namespace TopologicCore
 	{
 		std::shared_ptr<Aperture> pAperture = std::make_shared<Aperture>(kpTopology, kpContext, kOpenStatus);
 		// HACK
-		kpContext->Topology()->AddSubContent(pAperture, Face::Type());
+		kpContext->Topology()->AddContent(pAperture, Face::Type());
 		pAperture->AddContext(kpContext);
 		return pAperture;
 	}

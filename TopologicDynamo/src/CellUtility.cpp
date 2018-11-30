@@ -61,5 +61,20 @@ namespace Topologic {
 			return TopologicUtility::CellUtility::DoesContain(pCoreCell, pCoreVertex);
 		}
 
+		List<double>^ CellUtility::GetMinMax(Cell ^ cell)
+		{
+			TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(cell->GetCoreTopologicalQuery());
+			double minX = 0.0, maxX = 0.0, minY = 0.0, maxY = 0.0, minZ = 0.0, maxZ = 0.0;
+			TopologicUtility::CellUtility::GetMinMax(pCoreCell, minX, maxX, minY, maxY, minZ, maxZ);
+			List<double>^ minMaxes = gcnew List<double>();
+			minMaxes->Add(minX);
+			minMaxes->Add(maxX);
+			minMaxes->Add(minY);
+			minMaxes->Add(maxY);
+			minMaxes->Add(minZ);
+			minMaxes->Add(maxZ);
+			return minMaxes;
+		}
+
 	}
 }

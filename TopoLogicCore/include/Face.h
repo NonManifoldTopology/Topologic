@@ -113,7 +113,7 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="rkEdges"></param>
 		/// <returns></returns>
-		static std::shared_ptr<Face> ByEdges(const std::list<std::shared_ptr<Edge>>& rkEdges);
+		static TOPOLOGIC_API std::shared_ptr<Face> ByEdges(const std::list<std::shared_ptr<Edge>>& rkEdges);
 
 		/// <summary>
 		/// 

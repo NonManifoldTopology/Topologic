@@ -1,10 +1,12 @@
 #include "FaceUtility.h"
 #include "TopologyUtility.h"
 
+#include <TopologicCore/include/Edge.h>
 #include <TopologicCore/include/Vertex.h>
 #include <TopologicCore/include/GlobalCluster.h>
 
 #include <BRepBuilderAPI_MakeFace.hxx>
+#include <BRepMesh_IncrementalMesh.hxx>
 #include <BRepGProp.hxx>
 #include <Geom_BSplineSurface.hxx>
 #include <Geom_CartesianPoint.hxx>
@@ -241,6 +243,38 @@ namespace TopologicUtility
 
 		TopologicCore::GlobalCluster::GetInstance().AddTopology(pFace->GetOcctFace());
 		return pFace;
+	}
+
+	void FaceUtility::Triangulate(const TopologicCore::Face::Ptr & kpFace, const double kDeflection, std::list<TopologicCore::Face::Ptr>& rTriangles)
+	{
+		BRepMesh_IncrementalMesh occtIncrementalMesh(kpFace->GetOcctFace(), kDeflection);
+		occtIncrementalMesh.Perform();
+		TopLoc_Location occtLocation;
+		Handle(Poly_Triangulation) pOcctTriangulation = BRep_Tool::Triangulation(kpFace->GetOcctFace(), occtLocation);
+		int numOfTriangles = pOcctTriangulation->NbTriangles();
+		for (int i = 1; i <= numOfTriangles; ++i)
+		{
+			int index1 = 0, index2 = 0, index3 = 0;
+			pOcctTriangulation->Triangle(i).Get(index1, index2, index3);
+			gp_Pnt point1 = pOcctTriangulation->Node(index1);
+			gp_Pnt point2 = pOcctTriangulation->Node(index2);
+			gp_Pnt point3 = pOcctTriangulation->Node(index3);
+
+			TopologicCore::Vertex::Ptr vertex1 = TopologicCore::Vertex::ByPoint(new Geom_CartesianPoint(point1));
+			TopologicCore::Vertex::Ptr vertex2 = TopologicCore::Vertex::ByPoint(new Geom_CartesianPoint(point2));
+			TopologicCore::Vertex::Ptr vertex3 = TopologicCore::Vertex::ByPoint(new Geom_CartesianPoint(point3));
+
+			TopologicCore::Edge::Ptr edge1 = TopologicCore::Edge::ByStartVertexEndVertex(vertex1, vertex2);
+			TopologicCore::Edge::Ptr edge2 = TopologicCore::Edge::ByStartVertexEndVertex(vertex2, vertex3);
+			TopologicCore::Edge::Ptr edge3 = TopologicCore::Edge::ByStartVertexEndVertex(vertex3, vertex1);
+			std::list<TopologicCore::Edge::Ptr> edges;
+			edges.push_back(edge1);
+			edges.push_back(edge2);
+			edges.push_back(edge3);
+
+			TopologicCore::Face::Ptr face = TopologicCore::Face::ByEdges(edges);
+			rTriangles.push_back(face);
+		}
 	}
 
 	void FaceUtility::NormalizeUV(const TopologicCore::Face::Ptr& kpFace, const double kNonNormalizedU, const double kNonNormalizedV, double& rNormalizedU, double& rNormalizedV)

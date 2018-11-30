@@ -153,7 +153,7 @@ namespace Topologic
 		/// <param name="content"></param>
 		/// <param name="typeFilter"></param>
 		/// <returns></returns>
-		Topology^ AddSubContent(Topology^ content, [DefaultArgument("255")] int typeFilter);
+		Topology^ AddContent(Topology^ content, [DefaultArgument("255")] int typeFilter);
 
 		/// <summary>
 		/// Remove a non-constituent member from the topology.

@@ -105,7 +105,7 @@ namespace TopologicCore
 		/// <param name="rkTopology"></param>
 		/// <param name="kTypeFilter"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API void AddSubContent(const Topology::Ptr& rkTopology, const int kTypeFilter);
+		TOPOLOGIC_API void AddContent(const Topology::Ptr& rkTopology, const int kTypeFilter);
 
 		/// <summary>
 		/// 

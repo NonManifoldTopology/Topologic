@@ -80,5 +80,20 @@ namespace Topologic {
 			return safe_cast<Face^>(Topology::ByCoreTopology(pTrimmedFace));
 		}
 
+		List<Face^>^ FaceUtility::Triangulate(Face ^ face, double deflection)
+		{
+			TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
+			std::list<TopologicCore::Face::Ptr> triangulation;
+			TopologicUtility::FaceUtility::Triangulate(pCoreFace, deflection, triangulation);
+			
+			List<Face^>^ faces = gcnew List<Face^>();
+			for (const TopologicCore::Face::Ptr& kpFace : triangulation)
+			{
+				faces->Add(safe_cast<Face^>(Topology::ByCoreTopology(kpFace)));
+			}
+
+			return faces;
+		}
+
 	}
 }

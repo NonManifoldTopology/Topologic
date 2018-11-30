@@ -573,7 +573,7 @@ namespace Topologic
 		return Topology::ByCoreTopology(pCoreCopyParentTopology);
 	}
 
-	Topology ^ Topology::AddSubContent(Topology ^ topology, int typeFilter)
+	Topology ^ Topology::AddContent(Topology ^ topology, int typeFilter)
 	{
 		// 1. Copy this topology
 		TopologicCore::Topology::Ptr pCoreParentTopology =
@@ -585,7 +585,7 @@ namespace Topologic
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreCopyContentTopology = pCoreContentTopology->Copy();
 
-		pCoreCopyParentTopology->AddSubContent(pCoreCopyContentTopology, typeFilter);
+		pCoreCopyParentTopology->AddContent(pCoreCopyContentTopology, typeFilter);
 
 		// 5. Return the copy topology
 		return Topology::ByCoreTopology(pCoreCopyParentTopology);

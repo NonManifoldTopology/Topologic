@@ -151,6 +151,8 @@ namespace TopologicEnergy
 
 		static OpenStudio::BuildingStory^ AddBuildingStory(OpenStudio::Model^ model, int floorNumber);
 
+		static OpenStudio::SubSurface^ CreateSubSurface(List<Topologic::Vertex^>^ vertices, OpenStudio::Model^ osModel);
+
 		static OpenStudio::Building^ ComputeBuilding(
 			OpenStudio::Model^ osModel,
 			String^ buildingName,
@@ -178,6 +180,6 @@ namespace TopologicEnergy
 
 		static int numOfApertures;
 		static int numOfAppliedApertures;
-		static int subsurfaceCounter;
+		//static int subsurfaceCounter;
 	};
 }

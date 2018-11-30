@@ -409,7 +409,7 @@ namespace TopologicCore
 		);
 	}
 
-	void Topology::AddSubContent(const Topology::Ptr& rkTopology, const int kTypeFilter)
+	void Topology::AddContent(const Topology::Ptr& rkTopology, const int kTypeFilter)
 	{
 		// 1. Get the center of mass of the content
 		Vertex::Ptr pCenterOfMass = rkTopology->CenterOfMass();
@@ -446,7 +446,7 @@ namespace TopologicCore
 		ContextManager::GetInstance().Add(GetOcctShape(), rkContext);
 
 		// 5. Register to ContentManager
-		ContentManager::GetInstance().Add(rkContext->Topology()->GetOcctShape(), Topology::ByOcctShape(GetOcctShape()));
+		ContentManager::GetInstance().Add(rkContext->Topology()->GetOcctShape(), Topology::ByOcctShape(GetOcctShape(), GetInstanceGUID()));
 	}
 
 	void Topology::RemoveContext(const std::shared_ptr<Context>& rkContext)
@@ -1017,7 +1017,7 @@ namespace TopologicCore
 				kpSubContent->RemoveContext(kpContext);
 			}
 
-			kpTopology2->AddSubContent(kpSubContent, contextType);
+			kpTopology2->AddContent(kpSubContent, contextType);
 		}
 	}
 
@@ -1058,7 +1058,7 @@ namespace TopologicCore
 				kpSubContent->RemoveContext(kpContext);
 			}
 
-			kpTopology2->AddSubContent(kpSubContent, contextType);
+			kpTopology2->AddContent(kpSubContent, contextType);
 		}
 	}
 
@@ -2180,7 +2180,7 @@ namespace TopologicCore
 				int contextType = pContext->Topology()->GetType();
 				filterType = Bitwise::Or(filterType, contextType);
 			}
-			pShapeCopy->AddSubContent(pSubContentCopy, filterType);
+			pShapeCopy->AddContent(pSubContentCopy, filterType);
 		}
 
 		GlobalCluster::GetInstance().AddTopology(occtShapeCopy);
@@ -2194,6 +2194,7 @@ namespace TopologicCore
 		BRepBuilderAPI_Copy occtShapeCopier(rkOcctShape);
 		TopoDS_Shape occtShapeCopy = occtShapeCopier.Shape();
 		rOcctShapeCopyShapeMap.Bind(rkOcctShape, occtShapeCopy);
+		rOcctShapeCopyShapeMap.Bind(occtShapeCopy, rkOcctShape); // 2-way
 		Topology::Ptr pShapeCopy = Topology::ByOcctShape(occtShapeCopy, Topology::GetInstanceGUID(rkOcctShape));
 
 		std::list<Context::Ptr> contexts;
@@ -2228,7 +2229,7 @@ namespace TopologicCore
 					int contextType = pContext->Topology()->GetType();
 					filterType = Bitwise::Or(filterType, contextType);
 				}
-				pShapeCopy->AddSubContent(pSubContentCopy, filterType);
+				pShapeCopy->AddContent(pSubContentCopy, filterType);
 			}
 		}
 		GlobalCluster::GetInstance().AddTopology(pShapeCopy);

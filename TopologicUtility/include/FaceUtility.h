@@ -81,6 +81,7 @@ namespace TopologicUtility
 		/// <returns></returns>
 		static TOPOLOGIC_SUPPORT_API TopologicCore::Face::Ptr TrimByWire(const TopologicCore::Face::Ptr& kpFace, const TopologicCore::Wire::Ptr& kpWire);
 
+		static TOPOLOGIC_SUPPORT_API void Triangulate(const TopologicCore::Face::Ptr& kpFace, const double kDeflection, std::list<TopologicCore::Face::Ptr>& rTriangles);
 
 		/// <summary>
 		/// 
