@@ -279,6 +279,14 @@ namespace Topologic
 		return ByCoreTopology(pSelectedSubtopology);
 	}
 
+	Topology ^ Topology::ShallowCopy()
+	{
+		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Topology> pCoreCopyTopology = pCoreTopology->ShallowCopy();
+		return Topology::ByCoreTopology(pCoreCopyTopology);
+
+	}
+
 	String^ Topology::TypeAsString::get()
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());

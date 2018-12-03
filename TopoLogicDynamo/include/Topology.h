@@ -330,6 +330,8 @@ namespace Topologic
 		[IsVisibleInDynamoLibrary(false)]
 		T Copy();
 
+		Topology^ ShallowCopy();
+
 		/*generic <class T>
 			where T: Topology
 		T DeepCopy();*/

@@ -48,7 +48,7 @@ namespace TopologicEnergy
 		double buildingHeight = Enumerable::Max(floorLevels);
 		int numFloors = floorLevels->Count - 1;
 		OpenStudio::Building^ osBuilding = ComputeBuilding(osModel, buildingName, buildingType, buildingHeight, numFloors, defaultSpaceType);
-		List<Cell^>^ pBuildingCells = building->Cells;
+		List<Cell^>^ pBuildingCells = buildingCopy->Cells;
 
 		// Create OpenStudio spaces
 		List<OpenStudio::Space^>^ osSpaces = gcnew List<OpenStudio::Space^>();
@@ -58,7 +58,7 @@ namespace TopologicEnergy
 			OpenStudio::Space^ osSpace = AddSpace(
 				spaceNumber,
 				buildingCell,
-				building,
+				buildingCopy,
 				osModel,
 				Autodesk::DesignScript::Geometry::Vector::ZAxis(),
 				buildingHeight,

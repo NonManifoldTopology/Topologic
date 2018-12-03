@@ -397,6 +397,12 @@ namespace TopologicCore
 
 	void Topology::AddContent(const Topology::Ptr & rkTopology)
 	{
+		bool hasContent = ContentManager::GetInstance().HasContent(GetOcctShape(), rkTopology->GetOcctShape());
+		if (hasContent)
+		{
+			return;
+		}
+
 		ContentManager::GetInstance().Add(GetOcctShape(), rkTopology);
 
 		const double kDefaultParameter = 0.0;
@@ -416,6 +422,11 @@ namespace TopologicCore
 
 		// 2. Find the closest simplest topology of the copy topology
 		Topology::Ptr selectedSubtopology = SelectSubtopology(pCenterOfMass, kTypeFilter);
+		bool hasContent = ContentManager::GetInstance().HasContent(selectedSubtopology->GetOcctShape(), rkTopology->GetOcctShape());
+		if (hasContent)
+		{
+			return;
+		}
 
 		// 3. Register to ContentManager
 		ContentManager::GetInstance().Add(selectedSubtopology->GetOcctShape(), rkTopology);
@@ -2188,13 +2199,37 @@ namespace TopologicCore
 		return pShapeCopy;
 	}
 
+	void DeepCopyExplodeShape(const TopoDS_Shape& rkOcctOriginalShape, BRepBuilderAPI_Copy& rOcctCopy, TopTools_DataMapOfShapeShape& rOcctShapeCopyShapeMap)
+	{
+		rOcctShapeCopyShapeMap.Bind(rkOcctOriginalShape, rOcctCopy.Shape());
+		rOcctShapeCopyShapeMap.Bind(rOcctCopy.Shape(), rkOcctOriginalShape); // 2-way
+
+		TopTools_ListOfShape occtMembers;
+		Topology::Members(rkOcctOriginalShape, occtMembers);
+		for (TopTools_ListIteratorOfListOfShape occtMemberIterator(occtMembers);
+			occtMemberIterator.More();
+			occtMemberIterator.Next())
+		{
+			TopoDS_Shape& rOcctMember = occtMemberIterator.Value();
+			try{
+				TopoDS_Shape occtMemberCopy = rOcctCopy.ModifiedShape(rOcctMember);
+				rOcctShapeCopyShapeMap.Bind(rOcctMember, occtMemberCopy);
+				rOcctShapeCopyShapeMap.Bind(occtMemberCopy, rOcctMember);
+			}
+			catch (Standard_NoSuchObject)
+			{
+
+			}
+		}
+	}
+
 	// Based on https://stackoverflow.com/questions/14536702/algorithm-to-clone-a-graph
 	Topology::Ptr DeepCopyImpl(const TopoDS_Shape& rkOcctShape, TopTools_DataMapOfShapeShape& rOcctShapeCopyShapeMap)
 	{
 		BRepBuilderAPI_Copy occtShapeCopier(rkOcctShape);
 		TopoDS_Shape occtShapeCopy = occtShapeCopier.Shape();
-		rOcctShapeCopyShapeMap.Bind(rkOcctShape, occtShapeCopy);
-		rOcctShapeCopyShapeMap.Bind(occtShapeCopy, rkOcctShape); // 2-way
+		DeepCopyExplodeShape(rkOcctShape, occtShapeCopier, rOcctShapeCopyShapeMap);
+		// Explode
 		Topology::Ptr pShapeCopy = Topology::ByOcctShape(occtShapeCopy, Topology::GetInstanceGUID(rkOcctShape));
 
 		std::list<Context::Ptr> contexts;
@@ -2205,11 +2240,16 @@ namespace TopologicCore
 			
 			TopoDS_Shape occtCopyShape;
 			bool isContextCopied = rOcctShapeCopyShapeMap.Find(pContextTopology->GetOcctShape(), occtCopyShape);
-			if(!isContextCopied)
+			Topology::Ptr pCopyContextTopology;
+			if (isContextCopied)
 			{
-				Topology::Ptr pCopyContextTopology = DeepCopyImpl(pContextTopology->GetOcctShape(), rOcctShapeCopyShapeMap);
-				pCopyContextTopology->AddContent(pShapeCopy);
+				pCopyContextTopology = Topology::ByOcctShape(occtCopyShape, Topology::GetInstanceGUID(pContextTopology->GetOcctShape()));
+			}else
+			{
+				pCopyContextTopology = DeepCopyImpl(pContextTopology->GetOcctShape(), rOcctShapeCopyShapeMap);
 			}
+
+			pCopyContextTopology->AddContent(pShapeCopy);
 		}
 
 		std::list<Topology::Ptr> subContents;
@@ -2218,19 +2258,23 @@ namespace TopologicCore
 		{
 			TopoDS_Shape occtCopyShape;
 			bool isContentCopied = rOcctShapeCopyShapeMap.Find(kpSubContent->GetOcctShape(), occtCopyShape);
-			if (!isContentCopied)
+			Topology::Ptr pCopyContentTopology;
+			if (isContentCopied)
 			{
-				Topology::Ptr pSubContentCopy = DeepCopyImpl(kpSubContent->GetOcctShape(), rOcctShapeCopyShapeMap);
-				int filterType = 0;
-				std::list<Context::Ptr> contexts;
-				kpSubContent->Contexts(contexts);
-				for (const Context::Ptr& pContext : contexts)
-				{
-					int contextType = pContext->Topology()->GetType();
-					filterType = Bitwise::Or(filterType, contextType);
-				}
-				pShapeCopy->AddContent(pSubContentCopy, filterType);
+				pCopyContentTopology = Topology::ByOcctShape(occtCopyShape, Topology::GetInstanceGUID(pCopyContentTopology->GetOcctShape()));
+			}else
+			{
+				pCopyContentTopology = DeepCopyImpl(kpSubContent->GetOcctShape(), rOcctShapeCopyShapeMap);
 			}
+			int filterType = 0;
+			std::list<Context::Ptr> contexts;
+			kpSubContent->Contexts(contexts);
+			for (const Context::Ptr& pContext : contexts)
+			{
+				int contextType = pContext->Topology()->GetType();
+				filterType = Bitwise::Or(filterType, contextType);
+			}
+			pShapeCopy->AddContent(pCopyContentTopology, filterType);
 		}
 		GlobalCluster::GetInstance().AddTopology(pShapeCopy);
 		return pShapeCopy;
@@ -2241,6 +2285,12 @@ namespace TopologicCore
 		TopTools_DataMapOfShapeShape occtShapeCopyShapeMap;
 		Topology::Ptr pShapeCopy = DeepCopyImpl(GetOcctShape(), occtShapeCopyShapeMap);
 		return pShapeCopy;
+	}
+
+	Topology::Ptr Topology::ShallowCopy()
+	{
+		BRepBuilderAPI_Copy occtShapeCopier(GetOcctShape());
+		return Topology::ByOcctShape(occtShapeCopier.Shape(), GetInstanceGUID());
 	}
 
 	TopoDS_Shape Topology::CopyOcct(const TopoDS_Shape& rkOcctShape)
@@ -2273,6 +2323,21 @@ namespace TopologicCore
 	void Topology::Members(TopTools_ListOfShape& rOcctMembers) const
 	{
 		const TopoDS_Shape& rkOcctShape = GetOcctShape();
+		Members(rkOcctShape, rOcctMembers);
+	}
+
+	void Topology::Members(std::list<Topology::Ptr>& rMembers) const
+	{
+		TopTools_ListOfShape occtMembers;
+		Members(occtMembers);
+		for (TopTools_ListIteratorOfListOfShape occtMemberIterator(occtMembers); occtMemberIterator.More(); occtMemberIterator.Next())
+		{
+			rMembers.push_back(Topology::ByOcctShape(occtMemberIterator.Value(), ""));
+		}
+	}
+
+	void Topology::Members(const TopoDS_Shape & rkOcctShape, TopTools_ListOfShape & rOcctMembers)
+	{
 		// Store the children
 		for (int i = ((int)rkOcctShape.ShapeType()) + 1; i < (int)TopAbs_SHAPE; ++i)
 		{
@@ -2285,16 +2350,6 @@ namespace TopologicCore
 			{
 				rOcctMembers.Append(occtMembersIterator.Value());
 			}
-		}
-	}
-
-	void Topology::Members(std::list<Topology::Ptr>& rMembers) const
-	{
-		TopTools_ListOfShape occtMembers;
-		Members(occtMembers);
-		for (TopTools_ListIteratorOfListOfShape occtMemberIterator(occtMembers); occtMemberIterator.More(); occtMemberIterator.Next())
-		{
-			rMembers.push_back(Topology::ByOcctShape(occtMemberIterator.Value(), ""));
 		}
 	}
 

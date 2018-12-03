@@ -33,6 +33,8 @@ namespace TopologicCore
 
 		bool Find(const TopoDS_Shape& rkOcctShape, std::list<std::shared_ptr<Topology>>& rContents);
 
+		bool HasContent(const TopoDS_Shape& rkOcctShape, const TopoDS_Shape& rkOcctContentTopology);
+
 		void ClearOne(const TopoDS_Shape& rkOcctShape);
 
 		void ClearAll();

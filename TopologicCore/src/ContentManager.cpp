@@ -3,6 +3,8 @@
 
 #include <Topology.h>
 
+#include <algorithm>
+
 namespace TopologicCore
 {
 	void ContentManager::Add(const TopoDS_Shape& rkOcctShape, const std::shared_ptr<Topology>& kpContentTopology)
@@ -37,6 +39,21 @@ namespace TopologicCore
 		}
 
 		return false;
+	}
+
+	bool ContentManager::HasContent(const TopoDS_Shape & rkOcctShape, const TopoDS_Shape& rkOcctContentTopology)
+	{
+		std::list<Topology::Ptr> contents;
+		bool hasContents = Find(rkOcctShape, contents);
+		if (!hasContents)
+			return false;
+
+		std::list<Topology::Ptr>::iterator contentIterator = std::find_if(contents.begin(), contents.end(), 
+			[&](const Topology::Ptr& kpContent) { 
+			return kpContent->GetOcctShape().IsSame(rkOcctContentTopology);
+		});
+
+		return contentIterator != contents.end();
 	}
 
 	void ContentManager::ClearOne(const TopoDS_Shape & rkOcctShape)

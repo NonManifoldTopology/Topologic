@@ -417,6 +417,12 @@ namespace TopologicCore
 		TOPOLOGIC_API Topology::Ptr DeepCopy();
 
 		/// <summary>
+		/// Copy the whole content/context hierarchy.
+		/// </summary>
+		/// <returns></returns>
+		TOPOLOGIC_API Topology::Ptr ShallowCopy();
+
+		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkOcctShape"></param>
@@ -456,6 +462,8 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="rMembers"></param>
 		void Members(std::list<Topology::Ptr>& rMembers) const;
+
+		static void Members(const TopoDS_Shape& rkOcctShape, TopTools_ListOfShape& rOcctMembers);
 
 		/// <summary>
 		/// 
