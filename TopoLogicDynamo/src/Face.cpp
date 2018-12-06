@@ -6,6 +6,7 @@
 #include <Cell.h>
 #include <FaceFactory.h>
 #include <FaceUtility.h>
+#include <EdgeUtility.h>
 
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepMesh_IncrementalMesh.hxx>
@@ -769,6 +770,91 @@ namespace Topologic
 	Face::~Face()
 	{
 		delete m_pCoreFace;
+	}
+
+	Face^ Face::AddAperture(Face^ face, Face^ apertureDesign, int numEdgeSamples)
+	{
+		if (numEdgeSamples <= 0)
+		{
+			throw gcnew Exception("numEdgeSamples must be positive.");
+		}
+		// 1. Convert the apertures and boundary as faces.
+		Wire^ pOuterApertureWire = apertureDesign->ExternalBoundary;
+		List<Wire^>^ pApertureWires = apertureDesign->InternalBoundaries;
+
+		List<Topology^>^ pFaces = gcnew List<Topology^>();
+
+		// 2. For each wires, iterate through the edges, sample points, and map them to the 
+		for each(Wire^ pApertureWire in pApertureWires)
+		{
+			List<Edge^>^ pApertureEdges = pApertureWire->Edges;
+			List<Edge^>^ pMappedApertureEdges = gcnew List<Edge^>();
+
+			for each(Edge^ pApertureEdge in pApertureEdges)
+			{
+				List<Vertex^>^ pMappedSampleVertices = gcnew List<Vertex^>();
+				for (int i = 0; i < numEdgeSamples; ++i)
+				{
+					double t = (double)i / (double)(numEdgeSamples - 1);
+					if (t < 0.0)
+					{
+						t = 0.0;
+					}
+					else if (t > 1.0)
+					{
+						t = 1.0;
+					}
+
+					// Find the actual point on the edge
+					Vertex^ pSampleVertex = Topologic::Utility::EdgeUtility::VertexAtParameter(pApertureEdge, t);
+
+					// Find the UV-coordinate of the point on the aperture design
+					Autodesk::DesignScript::Geometry::UV^ pUV = Topologic::Utility::FaceUtility::UVParameterAtVertex(apertureDesign, pSampleVertex);
+					double checkedU = pUV->U, checkedV = pUV->V;
+					if (checkedU < 0.0)
+					{
+						checkedU = 0.0;
+					}
+					else if (checkedU > 1.0)
+					{
+						checkedU = 1.0;
+					}
+
+					if (checkedV < 0.0)
+					{
+						checkedV = 0.0;
+					}
+					else if (checkedV > 1.0)
+					{
+						checkedV = 1.0;
+					}
+
+					// Find the point with the same UV-coordinate on the surface, add it to the list
+					Vertex^ pMappedSampleVertex = Topologic::Utility::FaceUtility::VertexAtParameter(face, checkedU, checkedV);
+					pMappedSampleVertices->Add(pMappedSampleVertex);
+
+					delete pUV;
+				}
+
+				// Interpolate the mapped vertices to an edge.
+				Edge^ pMappedApertureEdge = Topologic::Utility::EdgeUtility::ByVertices(pMappedSampleVertices);
+				pMappedApertureEdges->Add(pMappedApertureEdge);
+			}
+
+			// Connect the mapped edges to a wire
+			Wire^ pMappedApertureWire = Wire::ByEdges(pMappedApertureEdges);
+
+			//// Use the wire to make a face on the same supporting surface as the input face's
+			Face^ pMappedApertureFace = Topologic::Utility::FaceUtility::TrimByWire(face, pMappedApertureWire);
+			pFaces->Add(pMappedApertureFace);
+
+			// and attach it as an aperture to the face.
+			/*Context^ pFaceContext = Context::ByTopologyParameters(face, 0.0, 0.0, 0.0);
+			Aperture^ pMappedAperture = Aperture::ByTopologyContext(pMappedApertureFace, pFaceContext);*/
+		}
+		Face^ pCopyFace = safe_cast<Face^>(face->AddApertures(pFaces));
+
+		return pCopyFace;
 	}
 
 	Face^ Face::BySurface(Autodesk::DesignScript::Geometry::NurbsSurface^ pDynamoNurbsSurface,

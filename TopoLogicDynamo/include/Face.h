@@ -135,6 +135,15 @@ namespace Topologic {
 		/// <returns name="Face"></returns>
 		Face^ AddInternalBoundaries(List<Wire^>^ internalBoundaries);
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="face"></param>
+		/// <param name="apertureDesign"></param>
+		/// <param name="numEdgeSamples"></param>
+		/// <returns name="Face"></returns>
+		static Face^ AddAperture(Face^ face, Face^ apertureDesign, int numEdgeSamples);
+
 		property Object^ Geometry
 		{
 			/// <summary>

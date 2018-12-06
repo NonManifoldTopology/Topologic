@@ -4,13 +4,11 @@
     <Xml Include="config\TopologicEnergy_DynamoCustomization.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\TopologicEnergy.h" />
-    <ClInclude Include="include\Model.h" />
-    <ClInclude Include="include\SimulationResult.h" />
+    <ClInclude Include="include\EnergyModel.h" />
+    <ClInclude Include="include\Simulation.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\TopologicEnergy.cpp" />
-    <ClCompile Include="src\Model.cpp" />
-    <ClCompile Include="src\SimulationResult.cpp" />
+    <ClCompile Include="src\EnergyModel.cpp" />
+    <ClCompile Include="src\Simulation.cpp" />
   </ItemGroup>
 </Project>

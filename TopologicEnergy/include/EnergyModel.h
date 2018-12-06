@@ -3,6 +3,7 @@
 using namespace System;
 using namespace System::Collections::Generic;
 using namespace Topologic;
+using namespace Autodesk::DesignScript::Runtime;
 
 namespace TopologicEnergy
 {
@@ -14,11 +15,12 @@ namespace TopologicEnergy
 	};
 
 	ref class Model;
-	ref class SimulationResult;
+	ref class Simulation;
 
-	public ref class TopologicEnergy
+	public ref class EnergyModel
 	{
 	public:
+
 		/// <summary>
 		/// Create a TopologicEnergy model from a Topologic shape.
 		/// </summary>
@@ -34,9 +36,9 @@ namespace TopologicEnergy
 		/// <param name="weatherFilePath">Path to a .epw file</param>
 		/// <param name="designDayFilePath">Path to a .ddy file</param>
 		/// <param name="openStudioTemplatePath">Path to a template .osm file</param>
-		/// <param name="openStudioOutputPath">Path to an output .osm file. Timestamp will be added to the path.</param>
-		/// <returns></returns>
-		static Model^ CreateEnergyModel(
+		////// <param name="openStudioOutputPath">Path to an output .osm file. Timestamp will be added to the path.</param>
+		/// <returns name="energyModel"></returns>
+		static EnergyModel^ Create(
 			CellComplex^ building,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Cluster^ shadingSurfaces,
 			List<double>^ floorLevels,
@@ -48,28 +50,20 @@ namespace TopologicEnergy
 			double heatingTemp,
 			[Autodesk::DesignScript::Runtime::DefaultArgument(".\\TopologicEnergy-files\\GBR_London.Gatwick.037760_IWEC.epw")] String^ weatherFilePath,
 			[Autodesk::DesignScript::Runtime::DefaultArgument(".\\TopologicEnergy-files\\GBR_London.Gatwick.037760_IWEC.ddy")] String^ designDayFilePath,
-			[Autodesk::DesignScript::Runtime::DefaultArgument(".\\TopologicEnergy-files\\MinimalTemplate120.osm")] String^ openStudioTemplatePath,
-			[Autodesk::DesignScript::Runtime::DefaultArgument(".\\TopologicEnergy-files\\output.osm")] String^ openStudioOutputPath
+			[Autodesk::DesignScript::Runtime::DefaultArgument(".\\TopologicEnergy-files\\MinimalTemplate120.osm")] String^ openStudioTemplatePath
 			);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="run"></param>
-		/// <param name="model"></param>
+		/// <param name="energyModel"></param>
 		/// <param name="openStudioExePath"></param>
+		/// <param name="openStudioOutputDirectory"></param>
+		/// <param name="run"></param>
 		/// <returns name="SimulationResult"></returns>
-		//static List<Modifiers::GeometryColor^>^ PerformEnergyAnalysis(Model^ model, String^ openStudioExePath);
-		static SimulationResult^ PerformEnergyAnalysis(bool run, Model^ model, String^ openStudioExePath);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="face"></param>
-		/// <param name="apertureDesign"></param>
-		/// <param name="numEdgeSamples"></param>
-		/// <returns name="Face"></returns>
-		static Face^ ApplyAperture(Face^ face, Face^ apertureDesign, int numEdgeSamples);
+		static Simulation^ Analyze(EnergyModel^ energyModel, String^ openStudioExePath, String ^ openStudioOutputDirectory, bool run);
+		
+		static void Export(EnergyModel^ energyModel, String^ openStudioOutputDirectory);
 
 	public protected:
 		static DSCore::Color^ GetColor(double ratio);
@@ -79,9 +73,28 @@ namespace TopologicEnergy
 
 		static int IntValueFromQuery(OpenStudio::SqlFile^ sqlFile, String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPRowName, String^ EPUnits);
 
+		static void Export(EnergyModel^ energyModel, String^ openStudioOutputDirectory, String^% oswPath);
+
+		property OpenStudio::Model^ OsModel {
+			OpenStudio::Model^ get() { return m_osModel; }
+		}
+
+		property List<Topologic::Cell^>^ BuildingCells {
+			List<Topologic::Cell^>^ get() { return m_buildingCells; }
+		}
+
+		property List<OpenStudio::Space^>^ OsSpaces {
+			List<OpenStudio::Space^>^ get() { return m_osSpaces; }
+		}
+
+		property String^ BuildingName {
+			String^ get();
+		}
+
 
 	private:
-		TopologicEnergy() {}
+		EnergyModel(OpenStudio::Model^ osModel, OpenStudio::Building^ osBuilding, List<Topologic::Cell^>^ pBuildingCells, List<OpenStudio::Space^>^ osSpaces);
+		~EnergyModel() {}
 
 		/// <summary>
 		/// 
@@ -172,7 +185,6 @@ namespace TopologicEnergy
 
 		static List<Modifiers::GeometryColor^>^ AnalyzeSqlFile(OpenStudio::SqlFile^ osSqlFile, OpenStudio::Model^ osModel, List<OpenStudio::Space^>^ spaces, List<Cell^>^ buildingCells,
 			String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPUnits);
-			//double minValue, double maxValue);
 
 		static List<OpenStudio::BuildingStory^>^ buildingStories;
 		static OpenStudio::DefaultConstructionSet^ defaultConstructionSet;
@@ -180,6 +192,10 @@ namespace TopologicEnergy
 
 		static int numOfApertures;
 		static int numOfAppliedApertures;
-		//static int subsurfaceCounter;
+
+		List<Topologic::Cell^>^ m_buildingCells;
+		List<OpenStudio::Space^>^ m_osSpaces;
+		OpenStudio::Model^ m_osModel;
+		OpenStudio::Building^ m_osBuilding;
 	};
 }

@@ -6,7 +6,9 @@ using namespace Autodesk::DesignScript::Runtime;
 
 namespace TopologicEnergy
 {
-	public ref class SimulationResult
+	ref class EnergyModel;
+
+	public ref class Simulation
 	{
 	public:
 
@@ -22,17 +24,18 @@ namespace TopologicEnergy
 		/// <param name="EPReportForString"></param>
 		/// <param name="EPTableName"></param>
 		/// <param name="EPColumnName"></param>
+		/// <param name="EPColumnName"></param>
 		/// <param name="EPUnits"></param>
-		/// <returns></returns>
-		List<Topologic::Cell^>^ Query(String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPUnits);
+		/// <returns name="Data"></returns>
+		Dictionary<String^, Dictionary<String^, Object^>^>^ Query(String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPUnits);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="buildingCells"></param>
-		/// <param name="alpha"></param>
-		/// <returns></returns>
-		static List<Modifiers::GeometryColor^>^ Display(List<Topologic::Cell^> buildingCells, int alpha);
+		/// <param name="energyModel"></param>
+		/// <param name="data"></param>
+		/// <returns name="GeometryColor[]"></returns>
+		static List<Modifiers::GeometryColor^>^ Display(EnergyModel^ energyModel, Dictionary<String^, Dictionary<String^, Object^>^>^ data);
 
 	public protected:
 		/// <summary>
@@ -40,8 +43,8 @@ namespace TopologicEnergy
 		/// </summary>
 		/// <param name="cells"></param>
 		/// <param name="oswPath">Used to deduce the SQL path</param>
-		SimulationResult(List<Topologic::Cell^>^ cells, System::String^ oswPath, OpenStudio::Model^ osModel, List<OpenStudio::Space^>^ osSpaces, String^ timestamp);
-		~SimulationResult();
+		Simulation(List<Topologic::Cell^>^ cells, System::String^ oswPath, OpenStudio::Model^ osModel, List<OpenStudio::Space^>^ osSpaces, String^ timestamp);
+		~Simulation();
 
 	protected:
 		// The cells. The geometry is deduced from here.

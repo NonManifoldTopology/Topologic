@@ -148,9 +148,8 @@ copy "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="include\Model.h" />
-    <ClInclude Include="include\SimulationResult.h" />
-    <ClInclude Include="include\TopologicEnergy.h" />
+    <ClInclude Include="include\Simulation.h" />
+    <ClInclude Include="include\EnergyModel.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TopologicDynamo\TopologicDynamo.vcxproj">
@@ -183,9 +182,8 @@ copy "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Model.cpp" />
-    <ClCompile Include="src\SimulationResult.cpp" />
-    <ClCompile Include="src\TopologicEnergy.cpp" />
+    <ClCompile Include="src\Simulation.cpp" />
+    <ClCompile Include="src\EnergyModel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="config\TopologicEnergy_DynamoCustomization.xml" />
