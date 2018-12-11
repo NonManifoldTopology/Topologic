@@ -126,7 +126,7 @@ namespace Topologic
 		return gcnew Wire(pCoreWire);
 	}
 
-	Object^ Wire::Geometry::get()
+	Object^ Wire::Geometry_::get()
 	{
 		List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoCurves = gcnew List<Autodesk::DesignScript::Geometry::Curve^>();
 		List<Edge^>^ pEdges = Edges;

@@ -310,16 +310,16 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="rkOcctShape"></param>
+		/// <param name="rOcctShape"></param>
 		/// <returns></returns>
-		static TopoDS_Shape MakeBooleanContainers(const TopoDS_Shape& rkOcctShape);
+		static TopoDS_Shape Simplify(TopoDS_Shape& rOcctShape);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="rkOcctShape"></param>
+		/// <param name="rOcctShape"></param>
 		/// <returns></returns>
-		static TopoDS_Shape Simplify(const TopoDS_Shape& rkOcctShape);
+		static TopoDS_Shape BooleanSubTopologyContainment(TopoDS_Shape& rOcctShape);
 
 		/// <summary>
 		/// 
@@ -518,6 +518,8 @@ namespace TopologicCore
 
 		virtual bool IsContainerType() = 0;
 
+		static bool IsContainerType(const TopoDS_Shape& rkOcctShape);
+
 #ifdef _DEBUG
 		TOPOLOGIC_API void GlobalClusterSubTopologies(std::list<Topology::Ptr>& rSubTopologies) const;
 #endif
@@ -633,21 +635,10 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpOtherTopology"></param>
-		/// <param name="rkOcctResultShape"></param>
+		/// <param name="rOcctBooleanResult"></param>
 		/// <returns></returns>
 		TopoDS_Shape PostprocessBooleanResult(
-			const Topology::Ptr& kpOtherTopology,
-			const TopoDS_Shape& rkOcctResultShape
-			);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="rkOcctBooleanResult"></param>
-		/// <returns></returns>
-		TopoDS_Shape PostprocessBooleanResult(
-			const TopoDS_Shape& rkOcctBooleanResult
+			TopoDS_Shape& rOcctBooleanResult
 		);
 
 		/// <summary>

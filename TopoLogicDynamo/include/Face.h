@@ -144,7 +144,7 @@ namespace Topologic {
 		/// <returns name="Face"></returns>
 		static Face^ AddAperture(Face^ face, Face^ apertureDesign, int numEdgeSamples);
 
-		property Object^ Geometry
+		property Object^ Geometry_
 		{
 			/// <summary>
 			/// 

@@ -247,10 +247,15 @@ namespace TopologicUtility
 
 	void FaceUtility::Triangulate(const TopologicCore::Face::Ptr & kpFace, const double kDeflection, std::list<TopologicCore::Face::Ptr>& rTriangles)
 	{
-		BRepMesh_IncrementalMesh occtIncrementalMesh(kpFace->GetOcctFace(), kDeflection);
-		occtIncrementalMesh.Perform();
+		TopoDS_Face occtFace = kpFace->GetOcctFace();
+		BRepMesh_IncrementalMesh occtIncrementalMesh(occtFace, kDeflection);
+		//occtIncrementalMesh.Perform();
 		TopLoc_Location occtLocation;
-		Handle(Poly_Triangulation) pOcctTriangulation = BRep_Tool::Triangulation(kpFace->GetOcctFace(), occtLocation);
+		Handle(Poly_Triangulation) pOcctTriangulation = BRep_Tool::Triangulation(occtFace, occtLocation);
+		if (pOcctTriangulation.IsNull())
+		{
+			throw std::exception("No triangulation was produced.");
+		}
 		int numOfTriangles = pOcctTriangulation->NbTriangles();
 		for (int i = 1; i <= numOfTriangles; ++i)
 		{

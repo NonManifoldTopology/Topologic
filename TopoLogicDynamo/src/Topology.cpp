@@ -194,44 +194,33 @@ namespace Topologic
 		return Topology::ByCoreTopology(pCoreTopology);
 	}
 
-	//Object^ Topology::Geometry::get()
-	//{
-	//	List<Object^>^ pDynamoGeometries = gcnew List<Object^>();
+	void RecursiveGeometry(Topology^ topology, List<Object^>^% output)
+	{
+		List<Object^>^ objects = gcnew List<Object^>();
+		objects->Add(topology->Geometry_);
 
-	//	List<Topology^>^ subContents = SubContents;
-	//	for each(Topology^ subContent in subContents)
-	//	{
-	//		DSCore::Color^ color = DSCore::Color::ByARGB(50, 255, 0, 0);
-	//		Object^ subContentGeometry = subContent->Geometry;
+		List<Topology^>^ subContents = topology->SubContents;
+		List<Object^>^ subContentGeometries = gcnew List<Object^>();
+		for each(Topology^ subContent in subContents)
+		{
+			List<Object^>^ dynamoThisGeometries = gcnew List<Object^>();
+			RecursiveGeometry(subContent, subContentGeometries);
+		}
 
-	//		Autodesk::DesignScript::Geometry::Geometry^ dynamoGeometry = dynamic_cast<Autodesk::DesignScript::Geometry::Geometry^>(subContentGeometry);
-	//		if (dynamoGeometry != nullptr)
-	//		{
-	//			Modifiers::GeometryColor^ dynamoGeometryColor = Modifiers::GeometryColor::ByGeometryColor(dynamoGeometry, color);
-	//			pDynamoGeometries->Add(dynamoGeometryColor);
-	//			continue;
-	//		}
+		if (subContentGeometries->Count > 0)
+		{
+			objects->Add(subContentGeometries);
+		}
 
-	//		// 2. Try a list of Dynamo geometry
-	//		List<Object^>^ listOfObjects = dynamic_cast<List<Object^>^>(subContentGeometry);
-	//		if (listOfObjects != nullptr)
-	//		{
-	//			for each(Object^ object in listOfObjects)
-	//			{
-	//				Autodesk::DesignScript::Geometry::Geometry^ dynamoGeometry = dynamic_cast<Autodesk::DesignScript::Geometry::Geometry^>(object);
-	//				if (dynamoGeometry != nullptr)
-	//				{
-	//					Modifiers::GeometryColor^ dynamoGeometryColor = Modifiers::GeometryColor::ByGeometryColor(dynamoGeometry, color);
-	//					//delete object;
-	//					pDynamoGeometries->Add(dynamoGeometryColor);
-	//				}
-	//			}
-	//			continue;
-	//		}
-	//	}
+		output->Add(objects);
+	}
 
-	//	return pDynamoGeometries;
-	//}
+	Object^ Topology::Geometry::get()
+	{
+		List<Object^>^ output = gcnew List<Object^>();
+		RecursiveGeometry(this, output);
+		return output;
+	}
 
 	bool Topology::ExportToBRep(String^ path)
 	{

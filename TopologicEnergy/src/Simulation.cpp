@@ -146,7 +146,8 @@ namespace TopologicEnergy
 
 			{
 				bool hasGeometry = false;
-				System::Object^ cellGeometry = cell->Geometry; Autodesk::DesignScript::Geometry::Geometry^ dynamoGeometry = dynamic_cast<Autodesk::DesignScript::Geometry::Geometry^>(cellGeometry);
+				System::Object^ cellGeometry = cell->Geometry_; 
+				Autodesk::DesignScript::Geometry::Geometry^ dynamoGeometry = dynamic_cast<Autodesk::DesignScript::Geometry::Geometry^>(cellGeometry);
 				if (dynamoGeometry != nullptr)
 				{
 					Modifiers::GeometryColor^ dynamoGeometryColor = Modifiers::GeometryColor::ByGeometryColor(dynamoGeometry, color);
@@ -179,7 +180,7 @@ namespace TopologicEnergy
 			for each(Topologic::Topology^ subcontent in subcontents)
 			{
 				bool hasContentGeometry = false;
-				System::Object^ contentGeometry = subcontent->Geometry;
+				System::Object^ contentGeometry = subcontent->Geometry_;
 				Autodesk::DesignScript::Geometry::Geometry^ dynamoContentGeometry = dynamic_cast<Autodesk::DesignScript::Geometry::Geometry^>(contentGeometry);
 				if (dynamoContentGeometry!= nullptr)
 				{

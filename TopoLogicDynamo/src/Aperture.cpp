@@ -209,8 +209,8 @@ namespace Topologic
 		return *m_pCoreAperture;
 	}
 
-	Object^ Aperture::Geometry::get()
+	Object^ Aperture::Geometry_::get()
 	{
-		return Topology()->Geometry;
+		return Topology()->Geometry_;
 	}
 }

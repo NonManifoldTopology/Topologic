@@ -226,7 +226,7 @@ namespace TopologicEnergy
 		OpenStudio::Point3dVector^ osWindowFacePoints = gcnew OpenStudio::Point3dVector();
 		for each(Vertex^ vertex in vertices)
 		{
-			Object^ pVertexGeometry = vertex->Geometry;
+			Object^ pVertexGeometry = vertex->Geometry_;
 			Autodesk::DesignScript::Geometry::Point^ pAperturePoint =
 				dynamic_cast<Autodesk::DesignScript::Geometry::Point^>(pVertexGeometry);
 			if (pAperturePoint == nullptr)
@@ -383,7 +383,7 @@ namespace TopologicEnergy
 			// Map the outputVariable to a ratio between 0 and 1
 			double ratio = (outputVariable - minValue) / (maxValue - minValue);
 			DSCore::Color^ aColor = GetColor(ratio);
-			System::Object^ cellGeometry = selectedCell->Geometry;
+			System::Object^ cellGeometry = selectedCell->Geometry_;
 			
 			// 1. Try a Dynamo geometry
 			Autodesk::DesignScript::Geometry::Geometry^ dynamoGeometry = dynamic_cast<Autodesk::DesignScript::Geometry::Geometry^>(cellGeometry);
@@ -573,7 +573,7 @@ namespace TopologicEnergy
 
 			for each(Vertex^ aVertex in vertices)
 			{
-				Autodesk::DesignScript::Geometry::Point^ p = safe_cast<Autodesk::DesignScript::Geometry::Point^>(aVertex->Geometry);
+				Autodesk::DesignScript::Geometry::Point^ p = safe_cast<Autodesk::DesignScript::Geometry::Point^>(aVertex->Geometry_);
 				OpenStudio::Point3d^ aPoint = gcnew OpenStudio::Point3d(p->X, p->Y, p->Z);
 				facePoints->Add(aPoint);
 			}
@@ -595,7 +595,7 @@ namespace TopologicEnergy
 
 		for each(Vertex^ aVertex in vertices)
 		{
-			Autodesk::DesignScript::Geometry::Point^ p = safe_cast<Autodesk::DesignScript::Geometry::Point^>(aVertex->Geometry);
+			Autodesk::DesignScript::Geometry::Point^ p = safe_cast<Autodesk::DesignScript::Geometry::Point^>(aVertex->Geometry_);
 			OpenStudio::Point3d^ aPoint = gcnew OpenStudio::Point3d(p->X, p->Y, p->Z);
 			facePoints->Add(aPoint);
 		}
@@ -806,21 +806,21 @@ namespace TopologicEnergy
 					OpenStudio::Point3dVector^ osWindowFacePoints = gcnew OpenStudio::Point3dVector();
 
 					Autodesk::DesignScript::Geometry::Point^ pDynamoPoint1 =
-						safe_cast<Autodesk::DesignScript::Geometry::Point^>(scaledVertices[0]->Geometry);
+						safe_cast<Autodesk::DesignScript::Geometry::Point^>(scaledVertices[0]->Geometry_);
 					OpenStudio::Point3d^ p1 = gcnew OpenStudio::Point3d(
 						pDynamoPoint1->X,
 						pDynamoPoint1->Y,
 						pDynamoPoint1->Z);
 
 					Autodesk::DesignScript::Geometry::Point^ pDynamoPoint2 =
-						safe_cast<Autodesk::DesignScript::Geometry::Point^>(scaledVertices[i + 1]->Geometry);
+						safe_cast<Autodesk::DesignScript::Geometry::Point^>(scaledVertices[i + 1]->Geometry_);
 					OpenStudio::Point3d^ p2 = gcnew OpenStudio::Point3d(
 						pDynamoPoint2->X,
 						pDynamoPoint2->Y,
 						pDynamoPoint2->Z);
 
 					Autodesk::DesignScript::Geometry::Point^ pDynamoPoint3 =
-						safe_cast<Autodesk::DesignScript::Geometry::Point^>(scaledVertices[i + 2]->Geometry);
+						safe_cast<Autodesk::DesignScript::Geometry::Point^>(scaledVertices[i + 2]->Geometry_);
 					OpenStudio::Point3d^ p3 = gcnew OpenStudio::Point3d(
 						pDynamoPoint3->X,
 						pDynamoPoint3->Y,
@@ -914,7 +914,7 @@ namespace TopologicEnergy
 		List<Vertex^>^ scaledVertices = gcnew List<Vertex^>();
 		Vertex^ faceCentre = GetFaceCentre(buildingFace);
 		Autodesk::DesignScript::Geometry::Point^ faceCenterPoint =
-			safe_cast<Autodesk::DesignScript::Geometry::Point^>(faceCentre->Geometry);
+			safe_cast<Autodesk::DesignScript::Geometry::Point^>(faceCentre->Geometry_);
 
 		Wire^ pApertureWire = buildingFace->ExternalBoundary;
 		List<Vertex^>^ vertices = pApertureWire->Vertices;
@@ -924,7 +924,7 @@ namespace TopologicEnergy
 		for each(Vertex^ aVertex in vertices)
 		{
 			Autodesk::DesignScript::Geometry::Point^ originalPoint =
-				safe_cast<Autodesk::DesignScript::Geometry::Point^>(aVertex->Geometry);
+				safe_cast<Autodesk::DesignScript::Geometry::Point^>(aVertex->Geometry_);
 			Autodesk::DesignScript::Geometry::Point^ scaledVertex = originalPoint->Subtract(faceCenterPoint->AsVector());
 			scaledVertex = safe_cast<Autodesk::DesignScript::Geometry::Point^>(scaledVertex->Scale(sqrtScaleFactor));
 			scaledVertex = scaledVertex->Add(faceCenterPoint->AsVector());
@@ -947,7 +947,7 @@ namespace TopologicEnergy
 		for each(Vertex^ v in vertices)
 		{
 			Autodesk::DesignScript::Geometry::Point^ p =
-				safe_cast<Autodesk::DesignScript::Geometry::Point^>(v->Geometry);
+				safe_cast<Autodesk::DesignScript::Geometry::Point^>(v->Geometry_);
 			sumPoint = sumPoint->Add(p->AsVector());
 		}
 		return safe_cast<Vertex^>(Topology::ByGeometry(safe_cast<Autodesk::DesignScript::Geometry::Point^>(sumPoint->Scale(1.0 / (double)vertices->Count))));
@@ -963,7 +963,7 @@ namespace TopologicEnergy
 		for each(Vertex^ v in vertices)
 		{
 			Autodesk::DesignScript::Geometry::Point^ point =
-				safe_cast<Autodesk::DesignScript::Geometry::Point^>(v->Geometry);
+				safe_cast<Autodesk::DesignScript::Geometry::Point^>(v->Geometry_);
 			OpenStudio::Point3d^ osPoint = gcnew OpenStudio::Point3d(
 				point->X,
 				point->Y,
@@ -982,7 +982,7 @@ namespace TopologicEnergy
 		for each(Vertex^ aVertex in vertices)
 		{
 			Autodesk::DesignScript::Geometry::Point^ point =
-				safe_cast<Autodesk::DesignScript::Geometry::Point^>(aVertex->Geometry);
+				safe_cast<Autodesk::DesignScript::Geometry::Point^>(aVertex->Geometry_);
 
 			if (point->Z > 0.0)
 			{
@@ -1005,15 +1005,15 @@ namespace TopologicEnergy
 		Face^ firstFace = faces[0];
 		Vertex^ centerPoint = Topologic::Utility::TopologyUtility::CenterOfMass(firstFace);
 		Autodesk::DesignScript::Geometry::Point^ dynamoCenterPoint =
-			safe_cast<Autodesk::DesignScript::Geometry::Point^>(centerPoint->Geometry);
+			safe_cast<Autodesk::DesignScript::Geometry::Point^>(centerPoint->Geometry_);
 
 		List<Vertex^>^ vertices = buildingFace->Vertices;
 		Autodesk::DesignScript::Geometry::Point^ p1 =
-			safe_cast<Autodesk::DesignScript::Geometry::Point^>(vertices[0]->Geometry);
+			safe_cast<Autodesk::DesignScript::Geometry::Point^>(vertices[0]->Geometry_);
 		Autodesk::DesignScript::Geometry::Point^ p2 =
-			safe_cast<Autodesk::DesignScript::Geometry::Point^>(vertices[1]->Geometry);
+			safe_cast<Autodesk::DesignScript::Geometry::Point^>(vertices[1]->Geometry_);
 		Autodesk::DesignScript::Geometry::Point^ p3 =
-			safe_cast<Autodesk::DesignScript::Geometry::Point^>(vertices[2]->Geometry);
+			safe_cast<Autodesk::DesignScript::Geometry::Point^>(vertices[2]->Geometry_);
 		Autodesk::DesignScript::Geometry::Vector^ dir = (p2->Subtract(p1->AsVector()))->AsVector()->Cross((p3->Subtract(p1->AsVector()))->AsVector());
 		Autodesk::DesignScript::Geometry::Vector^ faceNormal = dir->Normalized();
 		double faceAngle = faceNormal->AngleWithVector(upVector);
@@ -1058,7 +1058,7 @@ namespace TopologicEnergy
 		double volume = Utility::CellUtility::Volume(buildingCell);
 		Vertex^ centreOfMass = Utility::TopologyUtility::CenterOfMass(buildingCell);
 		Autodesk::DesignScript::Geometry::Point^ centrePoint =
-			safe_cast<Autodesk::DesignScript::Geometry::Point^>(centreOfMass->Geometry);
+			safe_cast<Autodesk::DesignScript::Geometry::Point^>(centreOfMass->Geometry_);
 		for (int i = 0; i < floorLevels->Count - 1; ++i)
 		{
 			if (centrePoint->Z > floorLevels[i] && centrePoint->Z < floorLevels[i + 1])

@@ -25,10 +25,10 @@ namespace Topologic
 			return gcnew Graph(pCoreGraph);
 		}
 
-		Object^ Graph::Geometry::get()
+		Object^ Graph::Geometry_::get()
 		{
 			List<Object^>^ graphGeometry = gcnew List<Object^>();
-			graphGeometry->Add(Wire::Geometry);
+			graphGeometry->Add(Wire::Geometry_);
 			List<Vertex^>^ vertices = Vertices;
 			for each (Vertex^ vertex in vertices)
 			{

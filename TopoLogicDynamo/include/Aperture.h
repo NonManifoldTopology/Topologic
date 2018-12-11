@@ -109,7 +109,7 @@ namespace Topologic
 		/// <returns name="Aperture">An aperture</returns>
 		Aperture^ Close(List<Topologic::Topology^>^ topologies);*/
 
-		property Object^ Geometry
+		property Object^ Geometry_
 		{
 			/// <summary>
 			/// 

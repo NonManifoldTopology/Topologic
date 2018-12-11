@@ -30,7 +30,7 @@ namespace Topologic
 				bool useApertures);
 
 
-			property Object^ Geometry
+			property Object^ Geometry_
 			{
 				/// <summary>
 				/// 

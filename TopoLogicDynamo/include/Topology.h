@@ -66,9 +66,15 @@ namespace Topologic
 		/// Create a geometry from the topology.
 		/// </summary>
 		/// <returns name="Geometry">The host geometry counterpart of the topological entity</returns>
-		property Object^ Geometry
+		[IsVisibleInDynamoLibrary(false)]
+		property Object^ Geometry_
 		{
 			virtual Object^ get() abstract;
+		}
+
+		property Object^ Geometry
+		{
+			virtual Object^ get();
 		}
 
 		/// <summary>
@@ -332,16 +338,6 @@ namespace Topologic
 
 		Topology^ ShallowCopy();
 
-		/*generic <class T>
-			where T: Topology
-		T DeepCopy();*/
-
-		/*/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		Topology^ Simplify();*/
-
 
 		/// <summary>
 		/// Returns the instance type as a string.
@@ -361,14 +357,6 @@ namespace Topologic
 
 		[IsVisibleInDynamoLibrary(false)]
 		void RegisterFactory(String^ rkGUID, TopologyFactory^ topologyFactory);
-
-		/*/// <summary>
-		/// Return the host topology of this topology. NOTE: Future feature.
-		/// </summary>
-		property List<Topology^>^ HostTopology__
-		{
-			List<Topology^>^ get();
-		}*/
 
 	public protected:
 		static Topology^ ByCoreTopology(const std::shared_ptr<TopologicCore::Topology>& kpCoreTopology);

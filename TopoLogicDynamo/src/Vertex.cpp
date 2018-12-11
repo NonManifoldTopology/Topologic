@@ -78,7 +78,7 @@ namespace Topologic
 		delete m_pCoreVertex;
 	}
 
-	Object^ Vertex::Geometry::get()
+	Object^ Vertex::Geometry_::get()
 	{
 		return Point();
 	}

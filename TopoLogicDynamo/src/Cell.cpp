@@ -293,7 +293,7 @@ namespace Topologic
 		return gcnew Vertex(pCoreCenterOfMass);
 	}*/
 
-	Object^ Cell::Geometry::get()
+	Object^ Cell::Geometry_::get()
 	{
 		List<Autodesk::DesignScript::Geometry::Surface^>^ pDynamoSurfaces = gcnew List<Autodesk::DesignScript::Geometry::Surface^>();
 		List<Object^>^ pDynamoGeometries = gcnew List<Object^>();
@@ -301,7 +301,7 @@ namespace Topologic
 		bool hasFallbackVisualization = false;
 		for each(Face^ pFace in pFaces)
 		{
-			Object^ pFaceGeometry = pFace->Geometry;
+			Object^ pFaceGeometry = pFace->Geometry_;
 			Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface = dynamic_cast<Autodesk::DesignScript::Geometry::Surface^>(pFaceGeometry);
 			pDynamoGeometries->Add(pFaceGeometry);
 			if(pDynamoSurface != nullptr)
@@ -357,12 +357,9 @@ namespace Topologic
 			cylinder->StartPoint->X,
 			cylinder->StartPoint->Y,
 			cylinder->StartPoint->Z,
-			cylinder->ContextCoordinateSystem->ZAxis->X,
-			cylinder->ContextCoordinateSystem->ZAxis->Y,
-			cylinder->ContextCoordinateSystem->ZAxis->Z,
-			cylinder->ContextCoordinateSystem->XAxis->X,
-			cylinder->ContextCoordinateSystem->XAxis->Y,
-			cylinder->ContextCoordinateSystem->XAxis->Z,
+			cylinder->Axis->X,
+			cylinder->Axis->Y,
+			cylinder->Axis->Z,
 			cylinder->Radius,
 			cylinder->StartPoint->DistanceTo(cylinder->EndPoint));
 		return gcnew Cell(pCoreCylinder);

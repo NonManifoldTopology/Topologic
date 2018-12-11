@@ -41,7 +41,7 @@ namespace Topologic
 		[IsVisibleInDynamoLibrary(false)]
 		Cluster^ RemoveTopology(Topology^ topology);
 
-		property Object^ Geometry
+		property Object^ Geometry_
 		{
 			/// <summary>
 			/// 

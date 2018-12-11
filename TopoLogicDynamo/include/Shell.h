@@ -76,7 +76,7 @@ namespace Topologic
 		/// <returns name="Shell">The created shell</returns>
 		static Shell^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces);
 
-		property Object^ Geometry
+		property Object^ Geometry_
 		{
 			/// <summary>
 			/// 

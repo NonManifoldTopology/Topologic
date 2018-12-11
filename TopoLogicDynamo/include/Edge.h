@@ -55,7 +55,7 @@ namespace Topologic {
 		/// <returns name="Vertex">the shared vertex of an edge</returns>
 		Vertex^ SharedVertex(Edge^ edge);
 
-		property Object^ Geometry
+		property Object^ Geometry_
 		{
 			/// <summary>
 			/// 

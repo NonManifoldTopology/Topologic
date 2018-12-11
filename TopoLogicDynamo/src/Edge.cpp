@@ -198,7 +198,7 @@ namespace Topologic
 		}
 	}
 
-	Object^ Edge::Geometry::get()
+	Object^ Edge::Geometry_::get()
 	{
 		return Curve();
 	}
@@ -352,8 +352,8 @@ namespace Topologic
 			onlyTwoVertices = false;
 		}
 
-		Autodesk::DesignScript::Geometry::Point^ pDynamoPoint1 = safe_cast<Autodesk::DesignScript::Geometry::Point^>(pVertices[0]->Geometry);
-		Autodesk::DesignScript::Geometry::Point^ pDynamoPoint2 = safe_cast<Autodesk::DesignScript::Geometry::Point^>(pVertices[1]->Geometry);
+		Autodesk::DesignScript::Geometry::Point^ pDynamoPoint1 = safe_cast<Autodesk::DesignScript::Geometry::Point^>(pVertices[0]->Geometry_);
+		Autodesk::DesignScript::Geometry::Point^ pDynamoPoint2 = safe_cast<Autodesk::DesignScript::Geometry::Point^>(pVertices[1]->Geometry_);
 
 		Autodesk::DesignScript::Geometry::Line^ pDynamoLine =
 			Autodesk::DesignScript::Geometry::Line::ByStartPointEndPoint(pDynamoPoint1, pDynamoPoint2);

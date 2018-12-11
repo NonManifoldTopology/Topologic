@@ -55,16 +55,12 @@ namespace TopologicUtility
 		/// <param name="kNormalX"></param>
 		/// <param name="kNormalY"></param>
 		/// <param name="kNormalZ"></param>
-		/// <param name="kXDirectionX"></param>
-		/// <param name="kXDirectionY"></param>
-		/// <param name="kDirectionZ"></param>
 		/// <param name="kRadius"></param>
 		/// <param name="kHeight"></param>
 		/// <returns></returns>
 		static TOPOLOGIC_SUPPORT_API TopologicCore::Cell::Ptr ByCylinder(
 			const double kReferencePointX, const double kReferencePointY, const double kReferencePointZ,
 			const double kNormalX, const double kNormalY, const double kNormalZ,
-			const double kXDirectionX, const double kXDirectionY, const double kDirectionZ,
 			const double kRadius, const double kHeight);
 
 		/// <summary>

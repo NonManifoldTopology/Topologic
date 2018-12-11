@@ -133,7 +133,7 @@ namespace Topologic
 			List<Shell^>^ get();
 		}
 
-		property Object^ Geometry
+		property Object^ Geometry_
 		{
 			/// <summary>
 			/// 

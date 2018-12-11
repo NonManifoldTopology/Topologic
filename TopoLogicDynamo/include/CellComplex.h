@@ -112,7 +112,7 @@ namespace Topologic
 			List<Face^>^ get();
 		}
 
-		property Object^ Geometry
+		property Object^ Geometry_
 		{
 			/// <summary>
 			/// 

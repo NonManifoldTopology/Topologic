@@ -117,14 +117,12 @@ namespace TopologicUtility
 
 	TopologicCore::Cell::Ptr CellUtility::ByCylinder(const double kReferencePointX, const double kReferencePointY, const double kReferencePointZ,
 		const double kNormalX, const double kNormalY, const double kNormalZ,
-		const double kXDirectionX, const double kXDirectionY, const double kDirectionZ,
 		const double kRadius, const double kHeight)
 	{
 		BRepPrimAPI_MakeCylinder occtMakeCylinder(
 			gp_Ax2(
 				gp_Pnt(kReferencePointX, kReferencePointY, kReferencePointZ),
-				gp_Dir(kNormalX, kNormalY, kNormalZ),
-				gp_Dir(kXDirectionX, kXDirectionY, kDirectionZ)),
+				gp_Dir(kNormalX, kNormalY, kNormalZ)),
 			kRadius, kHeight);
 		TopologicCore::Cell::Ptr pCell = std::make_shared<TopologicCore::Cell>(occtMakeCylinder.Solid());
 		TopologicCore::GlobalCluster::GetInstance().AddTopology(pCell->GetOcctSolid());

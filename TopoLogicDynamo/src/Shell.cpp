@@ -125,7 +125,7 @@ namespace Topologic
 		return pCoreShell->IsClosed();
 	}
 
-	Object^ Shell::Geometry::get()
+	Object^ Shell::Geometry_::get()
 	{
 		List<Autodesk::DesignScript::Geometry::Surface^>^ pDynamoSurfaces = gcnew List<Autodesk::DesignScript::Geometry::Surface^>();
 		List<Face^>^ pFaces = Faces;

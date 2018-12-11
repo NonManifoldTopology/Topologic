@@ -286,7 +286,7 @@ namespace Topologic
 		return pWires;
 	}
 
-	Object^ Face::Geometry::get()
+	Object^ Face::Geometry_::get()
 	{
 		try {
 			return Surface();
@@ -448,7 +448,7 @@ namespace Topologic
 			for each(Wire^ pWire in pWires)
 			{
 				try{
-					Object^ pWireGeometry = pWire->Geometry;
+					Object^ pWireGeometry = pWire->Geometry_;
 					Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoWireGeometry = safe_cast<Autodesk::DesignScript::Geometry::PolyCurve^>(pWireGeometry);
 					if(pDynamoWireGeometry != nullptr)
 					{
@@ -634,7 +634,7 @@ namespace Topologic
 				}
 
 				Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoPolycurve = 
-					safe_cast<Autodesk::DesignScript::Geometry::PolyCurve^>(pWire->Geometry);
+					safe_cast<Autodesk::DesignScript::Geometry::PolyCurve^>(pWire->Geometry_);
 				if (pDynamoPolycurve != nullptr)
 				{
 					pDynamoEdgeLoops->Add(pDynamoPolycurve);
@@ -707,7 +707,7 @@ namespace Topologic
 		List<Autodesk::DesignScript::Geometry::Point^>^ pDynamoPoints = gcnew List<Autodesk::DesignScript::Geometry::Point^>();
 		for each(Vertex^ pVertex in pVertices)
 		{
-			pDynamoPoints->Add(safe_cast<Autodesk::DesignScript::Geometry::Point^>(pVertex->Geometry));
+			pDynamoPoints->Add(safe_cast<Autodesk::DesignScript::Geometry::Point^>(pVertex->Geometry_));
 		}
 
 		Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface = Autodesk::DesignScript::Geometry::Surface::ByPerimeterPoints(pDynamoPoints);
