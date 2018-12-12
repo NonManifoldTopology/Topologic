@@ -405,12 +405,6 @@ namespace TopologicCore
 		static void DownwardNavigation(const TopoDS_Shape& rkOcctShape, const TopAbs_ShapeEnum& rkShapeEnum, TopTools_MapOfShape& rOcctMembers);
 
 		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		TOPOLOGIC_API Topology::Ptr Copy();
-
-		/// <summary>
 		/// Copy the whole content/context hierarchy.
 		/// </summary>
 		/// <returns></returns>

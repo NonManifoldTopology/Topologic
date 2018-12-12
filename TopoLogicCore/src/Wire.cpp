@@ -88,7 +88,7 @@ namespace TopologicCore
 		std::list<Edge::Ptr> copyEdges;
 		for (const Edge::Ptr& kpEdge : rkEdges)
 		{
-			copyEdges.push_back(std::dynamic_pointer_cast<Edge>(kpEdge->Copy()));
+			copyEdges.push_back(std::dynamic_pointer_cast<Edge>(kpEdge->DeepCopy()));
 		}
 
 		TopTools_ListOfShape occtEdges;

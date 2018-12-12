@@ -137,7 +137,7 @@ namespace TopologicCore
 		const Wire::Ptr& pkExternalBoundary,
 		const std::list<Wire::Ptr>& rkInternalBoundaries)
 	{
-		Wire::Ptr copyExternalBoundary = std::dynamic_pointer_cast<Wire>(pkExternalBoundary->Copy());
+		Wire::Ptr copyExternalBoundary = std::dynamic_pointer_cast<Wire>(pkExternalBoundary->DeepCopy());
 		BRepBuilderAPI_MakeFace occtMakeFace(pkExternalBoundary->GetOcctWire());
 		if (occtMakeFace.Error() != BRepBuilderAPI_FaceDone)
 		{
@@ -146,7 +146,7 @@ namespace TopologicCore
 
 		for (const Wire::Ptr& kpInternalBoundary : rkInternalBoundaries)
 		{
-			Wire::Ptr pCopyInternalBoundary = std::dynamic_pointer_cast<Wire>(kpInternalBoundary->Copy());
+			Wire::Ptr pCopyInternalBoundary = std::dynamic_pointer_cast<Wire>(kpInternalBoundary->DeepCopy());
 			occtMakeFace.Add(pCopyInternalBoundary->GetOcctWire());
 		}
 

@@ -411,7 +411,7 @@ namespace Topologic
 		// 1. Copy the core topology
 		TopologicCore::Topology::Ptr pCoreTopology =
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->Copy();
+		TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->DeepCopy();
 		Topology^ copyTopology = Topology::ByCoreTopology(pCoreCopyTopology);
 		copyTopology->AddAttributesNoCopy(dictionary);
 
@@ -575,12 +575,12 @@ namespace Topologic
 		// 1. Copy this topology
 		TopologicCore::Topology::Ptr pCoreParentTopology =
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreCopyParentTopology = pCoreParentTopology->Copy();
+		TopologicCore::Topology::Ptr pCoreCopyParentTopology = pCoreParentTopology->DeepCopy();
 
 		// 2. Copy the content topology
 		TopologicCore::Topology::Ptr pCoreContentTopology =
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreCopyContentTopology = pCoreContentTopology->Copy();
+		TopologicCore::Topology::Ptr pCoreCopyContentTopology = pCoreContentTopology->DeepCopy();
 
 		pCoreCopyParentTopology->AddContent(pCoreCopyContentTopology, typeFilter);
 
@@ -602,14 +602,14 @@ namespace Topologic
 		// 1. Copy this topology
 		TopologicCore::Topology::Ptr pCoreParentTopology =
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreCopyParentTopology = pCoreParentTopology->Copy();
+		TopologicCore::Topology::Ptr pCoreCopyParentTopology = pCoreParentTopology->DeepCopy();
 
 		// 2. Copy the aperture topology
 		for each(Topology^ apertureTopology in apertureTopologies)
 		{
 			TopologicCore::Topology::Ptr pCoreApertureTopology =
 				TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(apertureTopology->GetCoreTopologicalQuery());
-			TopologicCore::Topology::Ptr pCoreCopyApertureTopology = pCoreApertureTopology->Copy();
+			TopologicCore::Topology::Ptr pCoreCopyApertureTopology = pCoreApertureTopology->DeepCopy();
 			TopologicCore::Aperture::Ptr pCoreAperture = TopologicCore::Aperture::ByTopologyContext(
 				pCoreCopyApertureTopology,
 				pCoreCopyParentTopology);
@@ -626,7 +626,7 @@ namespace Topologic
 		// 1. Copy this topology
 		TopologicCore::Topology::Ptr pCoreInstanceTopology =
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreCopyInstanceTopology = pCoreInstanceTopology->Copy();
+		TopologicCore::Topology::Ptr pCoreCopyInstanceTopology = pCoreInstanceTopology->DeepCopy();
 
 		// 2. Get the center of mass of the instanceTopology
 		//TopologicCore::Vertex::Ptr pCoreInstanceCenterOfMass = pCoreInstanceTopology->CenterOfMass();
@@ -634,7 +634,7 @@ namespace Topologic
 		// 3. Copy the context topology
 		TopologicCore::Topology::Ptr pCoreContextTopology =
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(context->Topology->GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreCopyContextTopology = pCoreContextTopology->Copy();
+		TopologicCore::Topology::Ptr pCoreCopyContextTopology = pCoreContextTopology->DeepCopy();
 
 		// 4. Find the closest simplest topology of the copy topology
 		//TopologicCore::Topology::Ptr closestSimplestSubshape = pCoreCopyContextTopology->ClosestSimplestSubshape(pCoreInstanceCenterOfMass);
@@ -692,8 +692,8 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 
-		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->Copy();
-		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->Copy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();
 
 		try{
 			std::shared_ptr<TopologicCore::Topology> pDifferenceCoreTopology = pCoreCopyTopologyA->Difference(pCoreCopyTopologyB);
@@ -710,8 +710,8 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(tool->GetCoreTopologicalQuery());
 
-		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->Copy();
-		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->Copy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();
 
 		try{
 			std::shared_ptr<TopologicCore::Topology> pImposeCoreTopology = pCoreCopyTopologyA->Impose(pCoreCopyTopologyB);
@@ -728,8 +728,8 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(tool->GetCoreTopologicalQuery());
 
-		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->Copy();
-		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->Copy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();
 
 		try{
 			std::shared_ptr<TopologicCore::Topology> pImprintCoreTopology = pCoreCopyTopologyA->Imprint(pCoreCopyTopologyB);
@@ -746,8 +746,8 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 
-		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->Copy();
-		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->Copy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();
 
 		try {
 			std::shared_ptr<TopologicCore::Topology> pIntersectionCoreTopology = pCoreCopyTopologyA->Intersect(pCoreCopyTopologyB);
@@ -764,8 +764,8 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 
-		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->Copy();
-		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->Copy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();
 
 		try{
 			std::shared_ptr<TopologicCore::Topology> pUnionCoreTopology = pCoreCopyTopologyA->Union(pCoreCopyTopologyB);
@@ -790,8 +790,8 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 
-		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->Copy();
-		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->Copy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();
 		
 		try{
 			std::shared_ptr<TopologicCore::Topology> pMergeCoreTopology = pCoreCopyTopologyA->Merge(pCoreCopyTopologyB);
@@ -808,8 +808,8 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(tool->GetCoreTopologicalQuery());
 
-		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->Copy();
-		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->Copy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();
 
 		try{
 			std::shared_ptr<TopologicCore::Topology> pSliceCoreTopology = pCoreCopyTopologyA->Slice(pCoreCopyTopologyB);
@@ -844,8 +844,8 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 
-		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->Copy();
-		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->Copy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();
 
 		try{
 			std::shared_ptr<TopologicCore::Topology> pSliceCoreTopology = pCoreCopyTopologyA->XOR(pCoreCopyTopologyB);
@@ -884,7 +884,7 @@ namespace Topologic
 	/*Topology^ Topology::Simplify()
 	{
 		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreSimplifiedTopology = pCoreTopology->Copy();
+		TopologicCore::Topology::Ptr pCoreSimplifiedTopology = pCoreTopology->DeepCopy();
 		pCoreSimplifiedTopology->Simplify();
 		return Topology::ByCoreTopology(pCoreSimplifiedTopology);
 	}*/

@@ -218,7 +218,7 @@ namespace Topologic
 	Face^ Face::AddInternalBoundaries(List<Wire^>^ internalBoundaries)
 	{
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
-		TopologicCore::Face::Ptr pCoreCopyFace = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Face>(pCoreFace->Copy());
+		TopologicCore::Face::Ptr pCoreCopyFace = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Face>(pCoreFace->DeepCopy());
 
 		std::list<TopologicCore::Wire::Ptr> coreWires;
 		for each(Wire^ wire in internalBoundaries)

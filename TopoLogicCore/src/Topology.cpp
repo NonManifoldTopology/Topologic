@@ -202,6 +202,10 @@ namespace TopologicCore
 
 	Topology::Ptr Topology::ByOcctShape(const TopoDS_Shape& rkOcctShape, const std::string& rkInstanceGuid)
 	{
+		if (rkOcctShape.IsNull())
+		{
+			return nullptr;
+		}
 		// If there is no subtopologies, return null.
 		BOPCol_ListOfShape occtSubTopologies;
 		SubTopologies(rkOcctShape, occtSubTopologies);
@@ -293,7 +297,7 @@ namespace TopologicCore
 		std::vector<Vertex::Ptr> copyVertices;
 		for (const Vertex::Ptr& rkVertex : rkVertices)
 		{
-			copyVertices.push_back(std::dynamic_pointer_cast<Vertex>(rkVertex->Copy()));
+			copyVertices.push_back(std::dynamic_pointer_cast<Vertex>(rkVertex->DeepCopy()));
 		}
 
 		for (const std::list<int>& rkVertex1DIndices : rkVertexIndices)
@@ -391,7 +395,7 @@ namespace TopologicCore
 		TopTools_ListOfShape occtShapes;
 		for (const Face::Ptr& kpFace : rkFaces)
 		{
-			Face::Ptr pCopyFace = std::dynamic_pointer_cast<Face>(kpFace->Copy());
+			Face::Ptr pCopyFace = std::dynamic_pointer_cast<Face>(kpFace->DeepCopy());
 			occtShapes.Append(pCopyFace->GetOcctShape());
 		}
 
@@ -1226,8 +1230,14 @@ namespace TopologicCore
 	TopoDS_Shape Topology::PostprocessBooleanResult(TopoDS_Shape & rOcctBooleanResult)
 	{
 		TopoDS_Shape occtPostprocessedShape = Simplify(rOcctBooleanResult);
-		occtPostprocessedShape = BooleanSubTopologyContainment(rOcctBooleanResult);
-		occtPostprocessedShape = Simplify(occtPostprocessedShape);
+		if (!occtPostprocessedShape.IsNull())
+		{
+			occtPostprocessedShape = BooleanSubTopologyContainment(occtPostprocessedShape);
+		}
+		if (!occtPostprocessedShape.IsNull())
+		{
+			occtPostprocessedShape = Simplify(occtPostprocessedShape);
+		}
 		//occtPostprocessedShape = MakeBooleanContainers(occtPostprocessedShape);
 		return occtPostprocessedShape;
 	}
@@ -1412,9 +1422,12 @@ namespace TopologicCore
 		GetDeletedBooleanSubtopologies(GetOcctShape(), occtCellsBuilder, occtDeletedSubshapes);
 		GetDeletedBooleanSubtopologies(kpOtherTopology->GetOcctShape(), occtCellsBuilder, occtDeletedSubshapes);*/
 		Topology::Ptr pPostprocessedShape = Topology::ByOcctShape(occtPostprocessedShape, "");
-		TransferContents(GetOcctShape(), pPostprocessedShape);// , occtDeletedSubshapes);
-		TransferContents(kpOtherTopology->GetOcctShape(), pPostprocessedShape);// , occtDeletedSubshapes);
-		GlobalCluster::GetInstance().AddTopology(occtPostprocessedShape);
+		if (pPostprocessedShape != nullptr)
+		{
+			TransferContents(GetOcctShape(), pPostprocessedShape);// , occtDeletedSubshapes);
+			TransferContents(kpOtherTopology->GetOcctShape(), pPostprocessedShape);// , occtDeletedSubshapes);
+			GlobalCluster::GetInstance().AddTopology(occtPostprocessedShape);
+		}
 		return pPostprocessedShape;
 
 		/*std::list<Topology::Ptr> deletedSubshapes;
@@ -2307,34 +2320,6 @@ namespace TopologicCore
 				rOcctMembers.Add(occtCurrent);
 			}
 		}
-	}
-
-	Topology::Ptr Topology::Copy()
-	{
-		BRepBuilderAPI_Copy occtShapeCopier(GetOcctShape());
-		TopoDS_Shape occtShapeCopy = occtShapeCopier.Shape();
-		Topology::Ptr pShapeCopy = Topology::ByOcctShape(occtShapeCopy, GetInstanceGUID());
-
-		std::list<Topology::Ptr> subContents;
-		SubContents(GetOcctShape(), subContents);
-
-		for (const Topology::Ptr& kpSubContent : subContents)
-		{
-			Topology::Ptr pSubContentCopy = kpSubContent->Copy();
-			int filterType = 0;
-			std::list<Context::Ptr> contexts;
-			kpSubContent->Contexts(contexts);
-			for (const Context::Ptr& pContext : contexts)
-			{
-				int contextType = pContext->Topology()->GetType();
-				filterType = Bitwise::Or(filterType, contextType);
-			}
-			pShapeCopy->AddContent(pSubContentCopy, filterType);
-		}
-
-		GlobalCluster::GetInstance().AddTopology(occtShapeCopy);
-
-		return pShapeCopy;
 	}
 
 	void DeepCopyExplodeShape(const TopoDS_Shape& rkOcctOriginalShape, BRepBuilderAPI_Copy& rOcctCopy, TopTools_DataMapOfShapeShape& rOcctShapeCopyShapeMap)

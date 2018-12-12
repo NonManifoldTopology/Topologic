@@ -76,7 +76,7 @@ namespace TopologicCore
 		TopTools_ListOfShape occtShapes;
 		for(const Face::Ptr& kpFace : rkFaces)
 		{
-			Face::Ptr pCopyFace = std::dynamic_pointer_cast<Face>(kpFace->Copy());
+			Face::Ptr pCopyFace = std::dynamic_pointer_cast<Face>(kpFace->DeepCopy());
 			occtShapes.Append(pCopyFace->GetOcctShape());
 		}
 

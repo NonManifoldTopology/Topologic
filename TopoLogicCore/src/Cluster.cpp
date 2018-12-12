@@ -45,7 +45,7 @@ namespace TopologicCore
 		Cluster::Ptr pCluster = std::make_shared<Cluster>(occtCompound);
 		for(const Topology::Ptr& kpTopology : rkTopologies)
 		{
-			Topology::Ptr pCopyTopology = kpTopology->Copy();
+			Topology::Ptr pCopyTopology = kpTopology->DeepCopy();
 			pCluster->AddTopology(pCopyTopology.get());
 		}
 
