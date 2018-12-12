@@ -46,14 +46,7 @@ namespace TopologicCore
 
 		// Find the constituent faces
 		TopTools_MapOfShape occtFaces;
-		for (TopExp_Explorer occtExplorer(GetOcctShape(), TopAbs_FACE); occtExplorer.More(); occtExplorer.Next())
-		{
-			const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-			if (!occtFaces.Contains(occtCurrent))
-			{
-				occtFaces.Add(occtCurrent);
-			}
-		}
+		DownwardNavigation(GetOcctShape(), TopAbs_FACE, occtFaces);
 
 		const TopoDS_Solid& rkOcctSolid = GetOcctSolid();
 		for (TopTools_MapOfShape::const_iterator kOcctFaceIterator = occtFaces.cbegin();
@@ -179,7 +172,7 @@ namespace TopologicCore
 
 		const TopoDS_Shape& rkOcctShape2 = kpAnotherCell->GetOcctShape();
 		TopTools_MapOfShape occtFaces2;
-		DownwardNavigation(rkOcctShape2, TopAbs_VERTEX, occtFaces2);
+		DownwardNavigation(rkOcctShape2, TopAbs_FACE, occtFaces2);
 
 		for (TopTools_MapIteratorOfMapOfShape occtFaceIterator1(occtFaces1);
 			occtFaceIterator1.More();
