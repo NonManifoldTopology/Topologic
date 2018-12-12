@@ -24,10 +24,10 @@ namespace Topologic
 			/// <returns></returns>
 			static Graph^ ByCellComplex(
 				CellComplex^ cellComplex,
-				bool useCells,
-				bool useNonManifoldFaces,
-				bool useManifoldFaces,
-				bool useApertures);
+				[DefaultArgument("true")] bool useCells,
+				[DefaultArgument("true")] bool useNonManifoldFaces,
+				[DefaultArgument("false")] bool useManifoldFaces,
+				[DefaultArgument("false")] bool useApertures);
 
 
 			property Object^ Geometry_

@@ -150,11 +150,11 @@ namespace Topologic
 		}
 		catch (std::exception&)
 		{
-			pDynamoReturnValue = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoCurves, 0.001);
+			pDynamoReturnValue = pDynamoCurves;
 		}
 		catch (Exception^)
 		{
-			pDynamoReturnValue = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoCurves, 0.001);
+			pDynamoReturnValue = pDynamoCurves;
 		}
 		catch (...)
 		{

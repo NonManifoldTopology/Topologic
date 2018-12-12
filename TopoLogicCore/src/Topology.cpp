@@ -1418,9 +1418,6 @@ namespace TopologicCore
 
 		TopoDS_Shape occtResultShape = occtCellsBuilder.Shape();
 		TopoDS_Shape occtPostprocessedShape = PostprocessBooleanResult(occtResultShape);
-		/*BOPCol_ListOfShape occtDeletedSubshapes;
-		GetDeletedBooleanSubtopologies(GetOcctShape(), occtCellsBuilder, occtDeletedSubshapes);
-		GetDeletedBooleanSubtopologies(kpOtherTopology->GetOcctShape(), occtCellsBuilder, occtDeletedSubshapes);*/
 		Topology::Ptr pPostprocessedShape = Topology::ByOcctShape(occtPostprocessedShape, "");
 		if (pPostprocessedShape != nullptr)
 		{
