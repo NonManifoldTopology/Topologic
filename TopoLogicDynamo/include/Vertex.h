@@ -20,7 +20,10 @@ namespace Topologic
 		/// <returns name="Vertex">
 		/// A vertex.
 		/// </returns>
-		static Vertex^ ByCoordinates(double x, double y, double z);
+		static Vertex^ ByCoordinates(
+			[DefaultArgument("0")] double x, 
+			[DefaultArgument("0")] double y, 
+			[DefaultArgument("0")] double z);
 
 		/// <summary>
 		/// Get the list of edges incident to the vertex. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.

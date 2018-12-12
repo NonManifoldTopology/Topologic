@@ -106,6 +106,7 @@ namespace TopologicCore
 		{
 			// Merge the first cell with the rest.
 			Topology::Ptr firstTopology = Topology::ByOcctShape(*occtSolidIterator, "");
+			Topology::Ptr copyFirstTopology = firstTopology->DeepCopy();
 			std::list<std::shared_ptr<Topology>> topologies;
 			// Start from the second.
 			occtSolidIterator++;
@@ -115,6 +116,7 @@ namespace TopologicCore
 			}
 			std::shared_ptr<Cluster> otherCellsAsCluster = Cluster::ByTopologies(topologies);
 			std::shared_ptr<Topology> pMergeTopology = firstTopology->Merge(otherCellsAsCluster);
+			//std::shared_ptr<Topology> pMergeTopology = copyFirstTopology->Merge(otherCellsAsCluster);
 
 			std::list<Cell::Ptr> cells;
 			pMergeTopology->DownwardNavigation(cells);
