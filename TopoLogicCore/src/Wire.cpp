@@ -99,8 +99,10 @@ namespace TopologicCore
 
 		TopoDS_Wire occtWire = ByOcctEdges(occtEdges);
 		Wire::Ptr pWire = std::make_shared<Wire>(occtWire);
-		GlobalCluster::GetInstance().AddTopology(pWire->GetOcctWire());
-		return pWire;
+		Wire::Ptr pCopyWire = std::dynamic_pointer_cast<Wire>(pWire->DeepCopy());
+
+		GlobalCluster::GetInstance().AddTopology(pCopyWire->GetOcctWire());
+		return pCopyWire;
 	}
 
 	TopoDS_Wire Wire::ByOcctEdges(const TopTools_ListOfShape & rkOcctEdges)

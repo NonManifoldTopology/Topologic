@@ -71,8 +71,9 @@ namespace TopologicCore
 
 		TopoDS_CompSolid occtCompSolid = ByOcctSolids(occtShapes);
 		CellComplex::Ptr pCellComplex = std::make_shared<CellComplex>(occtCompSolid);
-		GlobalCluster::GetInstance().AddTopology(pCellComplex->GetOcctCompSolid());
-		return pCellComplex;
+		CellComplex::Ptr pCopyCellComplex = std::dynamic_pointer_cast<CellComplex>(pCellComplex->DeepCopy());
+		GlobalCluster::GetInstance().AddTopology(pCopyCellComplex->GetOcctCompSolid());
+		return pCopyCellComplex;
 	}
 
 	TopoDS_CompSolid CellComplex::ByOcctSolids(const TopTools_ListOfShape & rkOcctSolids)

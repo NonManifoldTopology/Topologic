@@ -84,8 +84,9 @@ namespace TopologicCore
 		try{
 			TopoDS_Shell occtShell = TopoDS::Shell(occtShape);
 			Shell::Ptr pShell = std::make_shared<Shell>(occtShell);
-			GlobalCluster::GetInstance().AddTopology(pShell->GetOcctShell());
-			return pShell;
+			Shell::Ptr pCopyShell = std::dynamic_pointer_cast<Shell>(pShell->DeepCopy());
+			GlobalCluster::GetInstance().AddTopology(pCopyShell);
+			return pCopyShell;
 		}
 		catch (Standard_TypeMismatch)
 		{

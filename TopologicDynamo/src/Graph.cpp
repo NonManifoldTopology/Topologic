@@ -15,14 +15,20 @@ namespace Topologic
 			bool useApertures)
 		{
 			TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(cellComplex->GetCoreTopologicalQuery());
-			TopologicExtension::Graph::Ptr pCoreGraph = TopologicExtension::Graph::ByCellComplex(
-				pCoreCellComplex,
-				useCells,
-				useNonManifoldFaces,
-				useManifoldFaces,
-				useApertures);
+			try {
+				TopologicExtension::Graph::Ptr pCoreGraph = TopologicExtension::Graph::ByCellComplex(
+					pCoreCellComplex,
+					useCells,
+					useNonManifoldFaces,
+					useManifoldFaces,
+					useApertures);
 
-			return gcnew Graph(pCoreGraph);
+				return gcnew Graph(pCoreGraph);
+			}
+			catch (std::exception& e)
+			{
+				throw gcnew Exception(gcnew String(e.what()));
+			}
 		}
 
 		Object^ Graph::Geometry_::get()

@@ -512,7 +512,7 @@ namespace TopologicCore
 
 	TopoDS_Shape Topology::OcctSewFaces(const TopTools_ListOfShape & rkOcctFaces)
 	{
-		BRepBuilderAPI_Sewing occtSewing;
+		BRepBuilderAPI_Sewing occtSewing(1e-5);
 		for (TopTools_ListIteratorOfListOfShape occtEdgeIterator(rkOcctFaces);
 			occtEdgeIterator.More();
 			occtEdgeIterator.Next())
