@@ -12,7 +12,7 @@
 
 namespace Topologic
 {
-	Cell^ Cell::ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces)
+	Cell^ Cell::ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces, double tolerance)
 	{
 		std::list<TopologicCore::Face::Ptr> coreFaces;
 		for each(Face^ pFace in faces)
@@ -22,7 +22,7 @@ namespace Topologic
 
 		TopologicCore::Cell::Ptr pCoreCell = nullptr;
 		try {
-			pCoreCell = TopologicCore::Cell::ByFaces(coreFaces);
+			pCoreCell = TopologicCore::Cell::ByFaces(coreFaces, tolerance);
 		}
 		catch (const std::exception& rkException)
 		{
@@ -32,7 +32,7 @@ namespace Topologic
 		return gcnew Cell(pCoreCell);
 	}
 
-	Cell^ Cell::BySolid(Autodesk::DesignScript::Geometry::Solid^ solid)
+	Cell^ Cell::BySolid(Autodesk::DesignScript::Geometry::Solid^ solid, double tolerance)
 	{
 		if (solid->GetType() == Autodesk::DesignScript::Geometry::Sphere::typeid)
 		{
@@ -61,7 +61,7 @@ namespace Topologic
 				pFaces->Add(Face::BySurface(pDynamoSurface));
 				delete pDynamoSurface;
 			}
-			return ByFaces(pFaces);
+			return ByFaces(pFaces, tolerance);
 		}
 	}
 

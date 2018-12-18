@@ -44,7 +44,7 @@ namespace Topologic
 		return pCoreTopology->Dimensionality();
 	}
 
-	Topology^ Topology::ByGeometry(Autodesk::DesignScript::Geometry::Geometry^ geometry)
+	Topology^ Topology::ByGeometry(Autodesk::DesignScript::Geometry::Geometry^ geometry, double tolerance)
 	{
 		if (geometry == nullptr)
 		{
@@ -118,7 +118,7 @@ namespace Topologic
 		Autodesk::DesignScript::Geometry::Solid^ dynamoSolid = dynamic_cast<Autodesk::DesignScript::Geometry::Solid^>(geometry);
 		if (dynamoSolid != nullptr)
 		{
-			return Cell::BySolid(dynamoSolid);
+			return Cell::BySolid(dynamoSolid, tolerance);
 		}
 
 		throw gcnew NotImplementedException("This geometry is not currently handled.");

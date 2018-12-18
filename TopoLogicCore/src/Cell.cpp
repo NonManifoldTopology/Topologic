@@ -106,14 +106,14 @@ namespace TopologicCore
 		return Vertex::ByPoint(new Geom_CartesianPoint(occtShapeProperties.CentreOfMass()));
 	}
 
-	Cell::Ptr Cell::ByFaces(const std::list<Face::Ptr>& rkFaces)
+	Cell::Ptr Cell::ByFaces(const std::list<Face::Ptr>& rkFaces, double kTolerance)
 	{
 		if (rkFaces.empty())
 		{
 			throw std::exception("No face is passed.");
 		}
 
-		Shell::Ptr pShell = Shell::ByFaces(rkFaces);
+		Shell::Ptr pShell = Shell::ByFaces(rkFaces, kTolerance);
 		Cell::Ptr pCell = ByShell(pShell);
 		return pCell;
 	}

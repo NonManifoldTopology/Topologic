@@ -928,7 +928,7 @@ namespace TopologicEnergy
 			Autodesk::DesignScript::Geometry::Point^ scaledVertex = originalPoint->Subtract(faceCenterPoint->AsVector());
 			scaledVertex = safe_cast<Autodesk::DesignScript::Geometry::Point^>(scaledVertex->Scale(sqrtScaleFactor));
 			scaledVertex = scaledVertex->Add(faceCenterPoint->AsVector());
-			scaledVertices->Add(safe_cast<Vertex^>(Topology::ByGeometry(scaledVertex)));
+			scaledVertices->Add(safe_cast<Vertex^>(Topology::ByGeometry(scaledVertex, 0.001))); // tolerance does not matter as it's just a vertex
 		}
 		return scaledVertices;
 	}
@@ -950,7 +950,8 @@ namespace TopologicEnergy
 				safe_cast<Autodesk::DesignScript::Geometry::Point^>(v->Geometry_);
 			sumPoint = sumPoint->Add(p->AsVector());
 		}
-		return safe_cast<Vertex^>(Topology::ByGeometry(safe_cast<Autodesk::DesignScript::Geometry::Point^>(sumPoint->Scale(1.0 / (double)vertices->Count))));
+		Autodesk::DesignScript::Geometry::Point^ dynamoPoint = safe_cast<Autodesk::DesignScript::Geometry::Point^>(sumPoint->Scale(1.0 / (double)vertices->Count));
+		return safe_cast<Vertex^>(Topology::ByGeometry(dynamoPoint, 0.001)); // tolerance does not matter as it's just a vertex
 	}
 
 	OpenStudio::Point3dVector^ EnergyModel::GetFacePoints(Face^ buildingFace)
@@ -1020,7 +1021,7 @@ namespace TopologicEnergy
 		Autodesk::DesignScript::Geometry::Point^ pDynamoOffsetPoint =
 			dynamic_cast<Autodesk::DesignScript::Geometry::Point^>(dynamoCenterPoint->Translate(faceNormal->Scale(0.001)));
 
-		Vertex^ pOffsetVertex = safe_cast<Vertex^>(Topology::ByGeometry(pDynamoOffsetPoint));
+		Vertex^ pOffsetVertex = safe_cast<Vertex^>(Topology::ByGeometry(pDynamoOffsetPoint, 0.001)); // tolerance does not matter as it's just a vertex
 
 		if (faceAngle < 5.0 || faceAngle > 175.0)
 		{

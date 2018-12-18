@@ -28,8 +28,9 @@ namespace Topologic
 		/// Create a topology by geometry.
 		/// </summary>
 		/// <param name="geometry"></param>
+		/// <param name="tolerance"></param>
 		/// <returns name="Topology"></returns>
-		static Topology^ ByGeometry(Autodesk::DesignScript::Geometry::Geometry^ geometry);
+		static Topology^ ByGeometry(Autodesk::DesignScript::Geometry::Geometry^ geometry, [DefaultArgument("0.001")] double tolerance);
 
 		/// <summary>
 		/// Create a topology by a list of vertices and a 2D list of indices of the vertices in the first argument. An array of 1 index makes a vertex. An array of 2 indices makes an edge. An array of 3 indices either makes a wire, or, when the array has at least 4 vertices and the first index is the same as the last index, a face will be created instead. NOTE: This node currently can only create planar faces.

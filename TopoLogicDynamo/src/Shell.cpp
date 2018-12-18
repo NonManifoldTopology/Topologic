@@ -99,7 +99,7 @@ namespace Topologic
 		return pVertices;
 	}
 
-	Shell^ Shell::ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces)
+	Shell^ Shell::ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces, double tolerance)
 	{
 		std::list<TopologicCore::Face::Ptr> coreFaces;
 		for each(Face^ pFace in faces)
@@ -109,7 +109,7 @@ namespace Topologic
 
 		TopologicCore::Shell::Ptr pCoreShell = nullptr;
 		try {
-			pCoreShell = TopologicCore::Shell::ByFaces(coreFaces);
+			pCoreShell = TopologicCore::Shell::ByFaces(coreFaces, tolerance);
 		}
 		catch (const std::exception& rkException)
 		{

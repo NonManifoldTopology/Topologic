@@ -385,7 +385,7 @@ namespace TopologicCore
 		}
 	}
 
-	std::shared_ptr<Topology> Topology::ByFaces(const std::list<std::shared_ptr<Face>>& rkFaces)
+	std::shared_ptr<Topology> Topology::ByFaces(const std::list<std::shared_ptr<Face>>& rkFaces, const double kTolerance)
 	{
 		if (rkFaces.empty())
 		{
@@ -399,7 +399,7 @@ namespace TopologicCore
 			occtShapes.Append(pCopyFace->GetOcctShape());
 		}
 
-		TopoDS_Shape occtShape = OcctSewFaces(occtShapes);
+		TopoDS_Shape occtShape = OcctSewFaces(occtShapes, kTolerance);
 		Topology::Ptr pTopology = Topology::ByOcctShape(occtShape, "");
 		GlobalCluster::GetInstance().AddTopology(pTopology->GetOcctShape());
 		return pTopology;
@@ -510,9 +510,9 @@ namespace TopologicCore
 		//}
 	}
 
-	TopoDS_Shape Topology::OcctSewFaces(const TopTools_ListOfShape & rkOcctFaces)
+	TopoDS_Shape Topology::OcctSewFaces(const TopTools_ListOfShape & rkOcctFaces, const double kTolerance)
 	{
-		BRepBuilderAPI_Sewing occtSewing(1e-5);
+		BRepBuilderAPI_Sewing occtSewing(kTolerance);
 		for (TopTools_ListIteratorOfListOfShape occtEdgeIterator(rkOcctFaces);
 			occtEdgeIterator.More();
 			occtEdgeIterator.Next())

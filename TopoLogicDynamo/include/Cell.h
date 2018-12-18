@@ -20,8 +20,9 @@ namespace Topologic
 		/// Create a cell by a set of faces.
 		/// </summary>
 		/// <param name="faces"></param>
+		/// <param name="tolerance"></param>
 		/// <returns name="Cell"></returns>
-		static Cell^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces);
+		static Cell^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces, [DefaultArgument("0.001")] double tolerance);
 
 		/// <summary>
 		/// Create a cell from a shell. The shell must be closed, otherwise an exception is thrown.
@@ -155,8 +156,9 @@ namespace Topologic
 		/// Create a cell by a solid. NOTE: This node will be replaced by a single Topology.ByGeometry() node.
 		/// </summary>
 		/// <param name="solid"></param>
+		/// <param name="tolerance"></param>
 		/// <returns name="Cell"></returns>
-		static Cell^ BySolid(Autodesk::DesignScript::Geometry::Solid^ solid);
+		static Cell^ BySolid(Autodesk::DesignScript::Geometry::Solid^ solid, [DefaultArgument("0.001")] double tolerance);
 
 		static Cell^ BySphere(Autodesk::DesignScript::Geometry::Sphere^ sphere);
 

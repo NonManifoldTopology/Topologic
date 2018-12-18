@@ -73,8 +73,9 @@ namespace Topologic
 		/// Create a shell by a set of connected faces.
 		/// </summary>
 		/// <param name="faces">A set of faces.</param>
+		/// <param name="tolerance"></param>
 		/// <returns name="Shell">The created shell</returns>
-		static Shell^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces);
+		static Shell^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces, [DefaultArgument("0.001")] double tolerance);
 
 		property Object^ Geometry_
 		{
