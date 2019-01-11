@@ -1235,7 +1235,7 @@ namespace TopologicUtility
 
 				{
 					//DEBUG: draw the shrunk faces
-					BRepBuilderAPI_MakeVertex occtMakeVertex1(FaceUtility::VertexAtParameter(kpFace, offsetU, offsetV)->Point()->Pnt());
+					/*BRepBuilderAPI_MakeVertex occtMakeVertex1(FaceUtility::VertexAtParameter(kpFace, offsetU, offsetV)->Point()->Pnt());
 					BRepBuilderAPI_MakeVertex occtMakeVertex2(FaceUtility::VertexAtParameter(kpFace, offsetU, nextOffsetV)->Point()->Pnt());
 					BRepBuilderAPI_MakeVertex occtMakeVertex3(FaceUtility::VertexAtParameter(kpFace, nextOffsetU, nextOffsetV)->Point()->Pnt());
 					BRepBuilderAPI_MakeVertex occtMakeVertex4(FaceUtility::VertexAtParameter(kpFace, nextOffsetU, offsetV)->Point()->Pnt());
@@ -1269,7 +1269,7 @@ namespace TopologicUtility
 					BRepBuilderAPI_MakeWire occtMakeWire;
 					occtMakeWire.Add(occtEdges);
 
-					const TopoDS_Wire& rkPanelWire = occtMakeWire.Wire();
+					const TopoDS_Wire& rkPanelWire = occtMakeWire.Wire();*/
 					//wires.push_back(TopologicalQuery::Downcast<Wire>(Topology::ByOcctShape(rkPanelWire)));
 				}
 

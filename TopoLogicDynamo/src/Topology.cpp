@@ -30,11 +30,15 @@
 #include <ApertureFactory.h>
 #include <AttributeManager.h>
 #include <AttributeFactory.h>
+#include <LicenseManager.h>
 
 #include <TopologicUtility/include/AttributeManager.h>
 #include <TopologicUtility/include/IntAttribute.h>
 #include <TopologicUtility/include/DoubleAttribute.h>
 #include <TopologicUtility/include/StringAttribute.h>
+
+using namespace System::Xml;
+using namespace System::Reflection;
 
 namespace Topologic
 {
@@ -43,9 +47,40 @@ namespace Topologic
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		return pCoreTopology->Dimensionality();
 	}
+	void CheckLicence()
+	{
+		License license;
+		try {
+			String^ dllPath = System::IO::Path::GetDirectoryName(Assembly::GetExecutingAssembly()->Location);
+			String^ licenseFile = dllPath + "\\license.file";
+			std::string cppLicenseFile = msclr::interop::marshal_as<std::string>(licenseFile);
+			std::string signature = "representation";
+
+			LicenseManager licenseManager;
+			if (license.loadFromFile(cppLicenseFile)) {
+				if (!licenseManager.validate(&license, true, signature)) {
+					throw gcnew Exception("License is not valid");
+				}
+				/*else {
+					std::cout << "Licensed to " << license.licensee() << std::endl;
+					std::cout << "Subscription is active until " << license.formattedExpiry() << std::endl << std::endl;
+				}*/
+			}
+			else
+			{
+				throw gcnew Exception("No active license is found.");
+			}
+		}
+		catch (LicenseException& e) {
+			throw gcnew Exception(gcnew String(e.what()));
+		}
+	}
 
 	Topology^ Topology::ByGeometry(Autodesk::DesignScript::Geometry::Geometry^ geometry, double tolerance)
 	{
+		// Check licence
+		CheckLicence();
+
 		if (geometry == nullptr)
 		{
 			throw gcnew Exception("A null input is given.");
@@ -715,7 +750,8 @@ namespace Topologic
 
 		try{
 			std::shared_ptr<TopologicCore::Topology> pImposeCoreTopology = pCoreCopyTopologyA->Impose(pCoreCopyTopologyB);
-			return Topology::ByCoreTopology(pImposeCoreTopology);
+			TopologicCore::Topology::Ptr pCoreCopyResultTopology = pImposeCoreTopology->DeepCopy();
+			return Topology::ByCoreTopology(pCoreCopyResultTopology);
 		}
 		catch (std::exception& e)
 		{
@@ -795,7 +831,8 @@ namespace Topologic
 		
 		try{
 			std::shared_ptr<TopologicCore::Topology> pMergeCoreTopology = pCoreCopyTopologyA->Merge(pCoreCopyTopologyB);
-			return Topology::ByCoreTopology(pMergeCoreTopology);
+			TopologicCore::Topology::Ptr pCoreCopyResultTopology = pMergeCoreTopology->DeepCopy();
+			return Topology::ByCoreTopology(pCoreCopyResultTopology);
 		}
 		catch (std::exception& e)
 		{

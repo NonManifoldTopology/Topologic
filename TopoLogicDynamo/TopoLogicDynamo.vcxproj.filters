@@ -89,6 +89,7 @@
     <ClInclude Include="include\Bitwise.h">
       <Filter>Utility</Filter>
     </ClInclude>
+    <ClInclude Include="include\LicenseManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
