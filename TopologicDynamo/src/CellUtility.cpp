@@ -2,10 +2,10 @@
 #include "Wire.h"
 #include "Vertex.h"
 
-#include <TopologicUtility/include/CellUtility.h>
+#include <TopologicUtilities/include/CellUtility.h>
 
 namespace Topologic {
-	namespace Utility {
+	namespace Utilities {
 		Cell^ CellUtility::ByVerticesFaceIndices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<int>^>^ faceIndices)
 		{
 			std::vector<TopologicCore::Vertex::Ptr> coreVertices;
@@ -25,7 +25,7 @@ namespace Topologic {
 				coreFaceIndices.push_back(coreFaceIndex);
 			}
 
-			Cell^ pCell = gcnew Cell(TopologicUtility::CellUtility::ByVerticesFaceIndices(coreVertices, coreFaceIndices));
+			Cell^ pCell = gcnew Cell(TopologicUtilities::CellUtility::ByVerticesFaceIndices(coreVertices, coreFaceIndices));
 			return pCell;
 		}
 
@@ -39,7 +39,7 @@ namespace Topologic {
 			}
 
 			try {
-				TopologicCore::Cell::Ptr pCoreCell = TopologicUtility::CellUtility::ByLoft(coreWires);
+				TopologicCore::Cell::Ptr pCoreCell = TopologicUtilities::CellUtility::ByLoft(coreWires);
 				return gcnew Cell(pCoreCell);
 			}
 			catch (std::exception&)
@@ -51,21 +51,21 @@ namespace Topologic {
 		double CellUtility::Volume(Cell^ cell)
 		{
 			TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(cell->GetCoreTopologicalQuery());
-			return TopologicUtility::CellUtility::Volume(pCoreCell);
+			return TopologicUtilities::CellUtility::Volume(pCoreCell);
 		}
 
 		bool CellUtility::Contains(Cell^ cell, Vertex ^ vertex)
 		{
 			TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(cell->GetCoreTopologicalQuery());
 			TopologicCore::Vertex::Ptr pCoreVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex->GetCoreTopologicalQuery());
-			return TopologicUtility::CellUtility::DoesContain(pCoreCell, pCoreVertex);
+			return TopologicUtilities::CellUtility::DoesContain(pCoreCell, pCoreVertex);
 		}
 
 		List<double>^ CellUtility::GetMinMax(Cell ^ cell)
 		{
 			TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(cell->GetCoreTopologicalQuery());
 			double minX = 0.0, maxX = 0.0, minY = 0.0, maxY = 0.0, minZ = 0.0, maxZ = 0.0;
-			TopologicUtility::CellUtility::GetMinMax(pCoreCell, minX, maxX, minY, maxY, minZ, maxZ);
+			TopologicUtilities::CellUtility::GetMinMax(pCoreCell, minX, maxX, minY, maxY, minZ, maxZ);
 			List<double>^ minMaxes = gcnew List<double>();
 			minMaxes->Add(minX);
 			minMaxes->Add(maxX);

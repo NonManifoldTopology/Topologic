@@ -1,7 +1,7 @@
 #include <msclr/marshal_cppstd.h>
 #include "StringAttributeFactory.h"
 
-#include <TopologicUtility/include/StringAttribute.h>
+#include <TopologicUtilities/include/StringAttribute.h>
 
 namespace Topologic
 {
@@ -9,7 +9,7 @@ namespace Topologic
 	{
 		String^ strValue = safe_cast<String^>(value);
 		std::string cppStrValue = msclr::interop::marshal_as<std::string>(strValue);
-		return gcnew Attribute(std::dynamic_pointer_cast<TopologicUtility::Attribute>(std::make_shared<TopologicUtility::StringAttribute>(cppStrValue)));
+		return gcnew Attribute(std::dynamic_pointer_cast<TopologicUtilities::Attribute>(std::make_shared<TopologicUtilities::StringAttribute>(cppStrValue)));
 	}
 
 	bool StringAttributeFactory::CheckType(Type ^ type)
@@ -19,12 +19,12 @@ namespace Topologic
 		return type == stringHandleType;
 	}
 
-	bool StringAttributeFactory::CheckType(const std::shared_ptr<TopologicUtility::Attribute>& kpSupportAttribute)
+	bool StringAttributeFactory::CheckType(const std::shared_ptr<TopologicUtilities::Attribute>& kpSupportAttribute)
 	{
-		return std::dynamic_pointer_cast<TopologicUtility::StringAttribute>(kpSupportAttribute) != nullptr;
+		return std::dynamic_pointer_cast<TopologicUtilities::StringAttribute>(kpSupportAttribute) != nullptr;
 	}
 
-	Object^ StringAttributeFactory::CreateValue(const std::shared_ptr<TopologicUtility::Attribute>& kpSupportAttribute)
+	Object^ StringAttributeFactory::CreateValue(const std::shared_ptr<TopologicUtilities::Attribute>& kpSupportAttribute)
 	{
 		void* pValue = kpSupportAttribute->Value();
 		std::string* pStringValue = static_cast<std::string*>(pValue);

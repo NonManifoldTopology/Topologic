@@ -6,8 +6,8 @@
 
 namespace Topologic
 {
-	namespace Extension {
-		Graph^ Graph::ByCellComplex(
+	namespace Extensions {
+		DualGraph_^ DualGraph_::ByCellComplex(
 			CellComplex^ cellComplex,
 			bool useCells,
 			bool useNonManifoldFaces,
@@ -16,14 +16,14 @@ namespace Topologic
 		{
 			TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(cellComplex->GetCoreTopologicalQuery());
 			try {
-				TopologicExtension::Graph::Ptr pCoreGraph = TopologicExtension::Graph::ByCellComplex(
+				TopologicExtensions::DualGraph_::Ptr pCoreGraph = TopologicExtensions::DualGraph_::ByCellComplex(
 					pCoreCellComplex,
 					useCells,
 					useNonManifoldFaces,
 					useManifoldFaces,
 					useApertures);
 
-				return gcnew Graph(pCoreGraph);
+				return gcnew DualGraph_(pCoreGraph);
 			}
 			catch (std::exception& e)
 			{
@@ -31,31 +31,26 @@ namespace Topologic
 			}
 		}
 
-		Object^ Graph::Geometry_::get()
+		/*Object^ Graph::Geometry_::get()
 		{
 			List<Object^>^ graphGeometry = gcnew List<Object^>();
-			graphGeometry->Add(Wire::Geometry_);
-			List<Vertex^>^ vertices = Vertices;
-			for each (Vertex^ vertex in vertices)
-			{
-				graphGeometry->Add(Autodesk::DesignScript::Geometry::Sphere::ByCenterPointRadius(vertex->Point(), 0.2));
-			}
+			graphGeometry->Add(Cluster::Geometry_);
 
 			return graphGeometry;
-		}
+		}*/
 
-		std::shared_ptr<TopologicCore::TopologicalQuery> Graph::GetCoreTopologicalQuery()
+		std::shared_ptr<TopologicCore::TopologicalQuery> DualGraph_::GetCoreTopologicalQuery()
 		{
-			return Wire::GetCoreTopologicalQuery();
+			return Cluster::GetCoreTopologicalQuery();
 		}
 
-		Graph::Graph(const TopologicCore::Wire::Ptr& kpCoreWire)
-			: Wire(kpCoreWire)
+		DualGraph_::DualGraph_(const TopologicCore::Cluster::Ptr& kpCoreCluster)
+			: Cluster(kpCoreCluster)
 		{
 
 		}
 
-		Graph::~Graph()
+		DualGraph_::~DualGraph_()
 		{
 			//delete m_pCoreWire;
 		}

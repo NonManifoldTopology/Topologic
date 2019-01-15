@@ -3,7 +3,7 @@
 #include "Shell.h"
 
 namespace Topologic {
-	namespace Utility {
+	namespace Utilities {
 
 		/// <summary>
 		/// 

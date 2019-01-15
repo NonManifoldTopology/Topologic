@@ -1,13 +1,13 @@
 #include "IntAttributeFactory.h"
 
-#include <TopologicUtility/include/IntAttribute.h>
+#include <TopologicUtilities/include/IntAttribute.h>
 
 namespace Topologic
 {
 	Attribute^ IntAttributeFactory::Create(String ^ key, Object ^ value)
 	{
 		long long int intValue = safe_cast<long long int>(value);
-		return gcnew Attribute(std::dynamic_pointer_cast<TopologicUtility::Attribute>(std::make_shared<TopologicUtility::IntAttribute>(intValue)));
+		return gcnew Attribute(std::dynamic_pointer_cast<TopologicUtilities::Attribute>(std::make_shared<TopologicUtilities::IntAttribute>(intValue)));
 	}
 
 	bool IntAttributeFactory::CheckType(Type ^ type)
@@ -18,12 +18,12 @@ namespace Topologic
 		return type == intHandleType;
 	}
 
-	bool IntAttributeFactory::CheckType(const std::shared_ptr<TopologicUtility::Attribute>& kpSupportAttribute)
+	bool IntAttributeFactory::CheckType(const std::shared_ptr<TopologicUtilities::Attribute>& kpSupportAttribute)
 	{
-		return std::dynamic_pointer_cast<TopologicUtility::IntAttribute>(kpSupportAttribute) != nullptr;
+		return std::dynamic_pointer_cast<TopologicUtilities::IntAttribute>(kpSupportAttribute) != nullptr;
 	}
 
-	Object^ IntAttributeFactory::CreateValue(const std::shared_ptr<TopologicUtility::Attribute>& kpSupportAttribute)
+	Object^ IntAttributeFactory::CreateValue(const std::shared_ptr<TopologicUtilities::Attribute>& kpSupportAttribute)
 	{
 		void* pValue = kpSupportAttribute->Value();
 		long long int* pIntValue = static_cast<long long int*>(pValue);

@@ -1,21 +1,21 @@
 #pragma once
 
-#include <TopologicUtility/include/Attribute.h>
+#include <TopologicUtilities/include/Attribute.h>
 
 namespace Topologic
 {
 	public ref class Attribute
 	{
 	public protected:
-		property std::shared_ptr<TopologicUtility::Attribute> SupportAttribute
+		property std::shared_ptr<TopologicUtilities::Attribute> SupportAttribute
 		{
-			std::shared_ptr<TopologicUtility::Attribute> get();
+			std::shared_ptr<TopologicUtilities::Attribute> get();
 		}
 
-		Attribute(const std::shared_ptr<TopologicUtility::Attribute>& kpSupportAttribute);
+		Attribute(const std::shared_ptr<TopologicUtilities::Attribute>& kpSupportAttribute);
 		~Attribute();
 
 	protected:
-		std::shared_ptr<TopologicUtility::Attribute>* m_pSupportAttribute;
+		std::shared_ptr<TopologicUtilities::Attribute>* m_pSupportAttribute;
 	};
 }

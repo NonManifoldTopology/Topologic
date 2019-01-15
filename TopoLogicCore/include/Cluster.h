@@ -41,9 +41,9 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <param name="rkOcctCompound"></param>x
-		Cluster(const TopoDS_Compound& rkOcctCompound, const std::string& rkGuid = "");
+		TOPOLOGIC_API Cluster(const TopoDS_Compound& rkOcctCompound, const std::string& rkGuid = "");
 
-		virtual ~Cluster();
+		TOPOLOGIC_API virtual ~Cluster();
 
 		/// <summary>
 		/// 
@@ -71,31 +71,31 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		virtual TopoDS_Shape& GetOcctShape();
+		TOPOLOGIC_API virtual TopoDS_Shape& GetOcctShape();
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		virtual const TopoDS_Shape& GetOcctShape() const;
+		TOPOLOGIC_API virtual const TopoDS_Shape& GetOcctShape() const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		virtual TopoDS_Compound& GetOcctCompound();
+		TOPOLOGIC_API virtual TopoDS_Compound& GetOcctCompound();
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		virtual const TopoDS_Compound& GetOcctCompound() const;
+		TOPOLOGIC_API virtual const TopoDS_Compound& GetOcctCompound() const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkOcctShape"></param>
-		virtual void SetOcctShape(const TopoDS_Shape& rkOcctShape);
+		TOPOLOGIC_API virtual void SetOcctShape(const TopoDS_Shape& rkOcctShape);
 
 		/// <summary>
 		/// 
@@ -107,7 +107,7 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <param name="rOcctGeometries"></param>
-		virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const;
+		TOPOLOGIC_API virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const;
 
 		/// <summary>
 		/// 
@@ -160,13 +160,13 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		virtual std::shared_ptr<Vertex> CenterOfMass() const;
+		TOPOLOGIC_API virtual std::shared_ptr<Vertex> CenterOfMass() const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		virtual bool IsManifold() const;
+		TOPOLOGIC_API virtual bool IsManifold() const;
 
 		virtual TopologyType GetType() const { return TOPOLOGY_CLUSTER; }
 

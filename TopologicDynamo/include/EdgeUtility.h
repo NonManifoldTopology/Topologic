@@ -3,7 +3,7 @@
 #include "Edge.h"
 
 namespace Topologic {
-	namespace Utility {
+	namespace Utilities {
 
 		/// <summary>
 		/// 

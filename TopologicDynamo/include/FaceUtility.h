@@ -3,7 +3,7 @@
 #include "Face.h"
 
 namespace Topologic {
-	namespace Utility {
+	namespace Utilities {
 
 		/// <summary>
 		/// 

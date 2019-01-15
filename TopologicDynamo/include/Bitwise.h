@@ -3,7 +3,7 @@
 #include <TopologicCore/include/Bitwise.h>
 
 namespace Topologic {
-	namespace Utility {
+	namespace Utilities {
 		public ref class Bitwise
 		{
 		public:

@@ -6,7 +6,7 @@
 #include <Shell.h>
 #include <CellComplex.h>
 
-#include <TopologicUtility/include/CellUtility.h>
+#include <TopologicUtilities/include/CellUtility.h>
 
 #include <assert.h>
 
@@ -343,7 +343,7 @@ namespace Topologic
 
 	Cell ^ Cell::BySphere(Autodesk::DesignScript::Geometry::Sphere ^ sphere)
 	{
-		TopologicCore::Cell::Ptr pCoreSphere = TopologicUtility::CellUtility::BySphere(
+		TopologicCore::Cell::Ptr pCoreSphere = TopologicUtilities::CellUtility::BySphere(
 			sphere->CenterPoint->X,
 			sphere->CenterPoint->Y, 
 			sphere->CenterPoint->Z, 
@@ -353,7 +353,7 @@ namespace Topologic
 
 	Cell ^ Cell::ByCylinder(Autodesk::DesignScript::Geometry::Cylinder ^ cylinder)
 	{
-		TopologicCore::Cell::Ptr pCoreCylinder = TopologicUtility::CellUtility::ByCylinder(
+		TopologicCore::Cell::Ptr pCoreCylinder = TopologicUtilities::CellUtility::ByCylinder(
 			cylinder->StartPoint->X,
 			cylinder->StartPoint->Y,
 			cylinder->StartPoint->Z,
@@ -367,7 +367,7 @@ namespace Topologic
 
 	Cell ^ Cell::ByCone(Autodesk::DesignScript::Geometry::Cone ^ cone)
 	{
-		TopologicCore::Cell::Ptr pCoreCone = TopologicUtility::CellUtility::ByCone(
+		TopologicCore::Cell::Ptr pCoreCone = TopologicUtilities::CellUtility::ByCone(
 			cone->StartPoint->X,
 			cone->StartPoint->Y,
 			cone->StartPoint->Z,
@@ -441,7 +441,7 @@ namespace Topologic
 		TopologicCore::Cell::Ptr pCoreCell = nullptr;
 		if(canCreateCell)
 		{
-			pCoreCell = TopologicUtility::CellUtility::ByCuboid(
+			pCoreCell = TopologicUtilities::CellUtility::ByCuboid(
 				pDynamoCentroid->X, 
 				pDynamoCentroid->Y, 
 				pDynamoCentroid->Z,

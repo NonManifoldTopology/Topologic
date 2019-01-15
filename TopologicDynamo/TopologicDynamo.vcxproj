@@ -231,10 +231,10 @@
     <ProjectReference Include="..\TopologicCore\TopologicCore.vcxproj">
       <Project>{c2b53661-6d1f-4c1d-9f8d-909737ca2142}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\TopologicExtension\TopologicExtension.vcxproj">
+    <ProjectReference Include="..\TopologicExtensions\TopologicExtensions.vcxproj">
       <Project>{d18ec187-9ceb-4a7f-b163-39762ccf8569}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\TopologicUtility\TopologicUtility.vcxproj">
+    <ProjectReference Include="..\TopologicUtilities\TopologicUtilities.vcxproj">
       <Project>{9a74a6d1-9ed7-432f-a415-9c82305053b4}</Project>
     </ProjectReference>
   </ItemGroup>

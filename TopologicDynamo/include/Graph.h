@@ -1,16 +1,16 @@
 #pragma once
 
-#include <Wire.h>
+#include <Cluster.h>
 
-#include <TopologicExtension/include/Graph.h>
+#include <TopologicExtensions/include/Graph.h>
 
 namespace Topologic
 {
 	ref class CellComplex;
 
-	namespace Extension
+	namespace Extensions
 	{
-		public ref class Graph : Wire
+		public ref class DualGraph_ : Cluster
 		{
 		public:
 			/// <summary>
@@ -22,7 +22,7 @@ namespace Topologic
 			/// <param name="useManifoldFaces"></param>
 			/// <param name="useApertures"></param>
 			/// <returns></returns>
-			static Graph^ ByCellComplex(
+			static DualGraph_^ ByCellComplex(
 				CellComplex^ cellComplex,
 				[DefaultArgument("true")] bool useCells,
 				[DefaultArgument("true")] bool useNonManifoldFaces,
@@ -30,21 +30,21 @@ namespace Topologic
 				[DefaultArgument("false")] bool useApertures);
 
 
-			property Object^ Geometry_
+			/*property Object^ Geometry_
 			{
 				/// <summary>
 				/// 
 				/// </summary>
 				/// <returns></returns>
 				virtual Object^ get() override;
-			}
+			}*/
 
 		public protected:
 			/// <summary>
 			/// 
 			/// </summary>
-			/// <param name="kpCoreWire"></param>
-			Graph(const std::shared_ptr<TopologicCore::Wire>& kpCoreWire);
+			/// <param name="kpCoreCluster"></param>
+			DualGraph_(const std::shared_ptr<TopologicCore::Cluster>& kpCoreCluster);
 
 			/// <summary>
 			/// 
@@ -53,7 +53,7 @@ namespace Topologic
 			virtual std::shared_ptr<TopologicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
 
 		protected:
-			virtual ~Graph();
+			virtual ~DualGraph_();
 
 		};
 	}

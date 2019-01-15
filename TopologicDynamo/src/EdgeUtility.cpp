@@ -1,11 +1,11 @@
 #include "EdgeUtility.h"
 #include "Vertex.h"
 
-#include <TopologicUtility/include/EdgeUtility.h>
+#include <TopologicUtilities/include/EdgeUtility.h>
 
 namespace Topologic
 {
-	namespace Utility
+	namespace Utilities
 	{
 		Edge ^ EdgeUtility::ByVertices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices)
 		{
@@ -16,7 +16,7 @@ namespace Topologic
 			}
 
 			try {
-				TopologicCore::Edge::Ptr pCoreEdge = TopologicUtility::EdgeUtility::ByVertices(pCoreVertices);
+				TopologicCore::Edge::Ptr pCoreEdge = TopologicUtilities::EdgeUtility::ByVertices(pCoreVertices);
 				return gcnew Edge(pCoreEdge);
 			}
 			catch (const std::exception& rkException)
@@ -28,7 +28,7 @@ namespace Topologic
 		Edge ^ EdgeUtility::ByCircle(Vertex ^ centerPoint, double radius, double xAxisX, double xAxisY, double xAxisZ, double normalX, double normalY, double normalZ)
 		{
 			TopologicCore::Vertex::Ptr pCoreCentrePoint = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(centerPoint->GetCoreTopologicalQuery());
-			TopologicCore::Edge::Ptr pCoreCircleEdge = TopologicUtility::EdgeUtility::ByCircle(pCoreCentrePoint, radius, xAxisX, xAxisY, xAxisZ, normalX, normalY, normalZ);
+			TopologicCore::Edge::Ptr pCoreCircleEdge = TopologicUtilities::EdgeUtility::ByCircle(pCoreCentrePoint, radius, xAxisX, xAxisY, xAxisZ, normalX, normalY, normalZ);
 			return gcnew Edge(pCoreCircleEdge);
 		}
 
@@ -36,7 +36,7 @@ namespace Topologic
 		{
 			TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(edge->GetCoreTopologicalQuery());
 			try {
-				return TopologicUtility::EdgeUtility::ParameterAtPoint(pCoreEdge, TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex->GetCoreTopologicalQuery()));
+				return TopologicUtilities::EdgeUtility::ParameterAtPoint(pCoreEdge, TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex->GetCoreTopologicalQuery()));
 			}
 			catch (const std::exception& rkException)
 			{
@@ -47,7 +47,7 @@ namespace Topologic
 		Vertex ^ EdgeUtility::VertexAtParameter(Edge ^ edge, double parameter)
 		{
 			TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(edge->GetCoreTopologicalQuery());
-			TopologicCore::Vertex::Ptr pCoreVertex = TopologicUtility::EdgeUtility::PointAtParameter(pCoreEdge, parameter);
+			TopologicCore::Vertex::Ptr pCoreVertex = TopologicUtilities::EdgeUtility::PointAtParameter(pCoreEdge, parameter);
 			return gcnew Vertex(pCoreVertex);
 		}
 	}

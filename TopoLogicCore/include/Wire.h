@@ -144,13 +144,13 @@ namespace TopologicCore
 
 		virtual bool IsContainerType() { return true; }
 
-	protected:
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkOcctMakeWire"></param>
 		static TOPOLOGIC_API void Throw(const BRepBuilderAPI_MakeWire& rkOcctMakeWire);
 
+	protected:
 		/// <summary>
 		/// The underlying OCCT wire.
 		/// </summary>
