@@ -12,10 +12,10 @@ namespace Topologic
 			// 1. Copy this topology
 			TopologicCore::Topology::Ptr pCoreTopology =
 				TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
-			TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->DeepCopy();
-			TopologicUtility::TopologyUtility::Translate(pCoreCopyTopology, x, y, z);
+			//TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->DeepCopy();
+			TopologicUtility::TopologyUtility::Translate(pCoreTopology, x, y, z);
 
-			return Topology::ByCoreTopology(pCoreCopyTopology);
+			return Topology::ByCoreTopology(pCoreTopology);
 		}
 
 		double TopologyUtility::Distance(Topology ^ topology, Topology ^ anotherTopology)

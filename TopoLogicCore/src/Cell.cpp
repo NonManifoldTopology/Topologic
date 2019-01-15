@@ -122,8 +122,7 @@ namespace TopologicCore
 	{
 		BRepBuilderAPI_MakeSolid occtMakeSolid;
 		try {
-			Shell::Ptr pCopyShell = std::dynamic_pointer_cast<Shell>(kpShell);
-			occtMakeSolid = BRepBuilderAPI_MakeSolid(pCopyShell->GetOcctShell());
+			occtMakeSolid = BRepBuilderAPI_MakeSolid(kpShell->GetOcctShell());
 		}
 		catch (StdFail_NotDone&)
 		{
@@ -133,8 +132,9 @@ namespace TopologicCore
 		// Create a cell from the shell. The faces are the same and the contents
 		// are automatically passed.
 		Cell::Ptr pCell = std::make_shared<Cell>(occtMakeSolid);
-		GlobalCluster::GetInstance().AddTopology(pCell->GetOcctSolid());
-		return pCell;
+		Cell::Ptr pCellCopy = std::dynamic_pointer_cast<Cell>(pCell->DeepCopy());
+		GlobalCluster::GetInstance().AddTopology(pCellCopy->GetOcctSolid());
+		return pCellCopy;
 	}
 
 	void Cell::SharedEdges(const Cell::Ptr& kpAnotherCell, std::list<Edge::Ptr>& rEdges) const

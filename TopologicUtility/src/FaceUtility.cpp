@@ -241,8 +241,9 @@ namespace TopologicUtility
 		}
 		TopologicCore::Face::Ptr pFace = std::make_shared<TopologicCore::Face>(TopoDS::Face(occtTrimMakeFace.Shape()));
 
-		TopologicCore::GlobalCluster::GetInstance().AddTopology(pFace->GetOcctFace());
-		return pFace;
+		TopologicCore::Face::Ptr pCopyFace = std::dynamic_pointer_cast<TopologicCore::Face>(pFace->DeepCopy());
+		TopologicCore::GlobalCluster::GetInstance().AddTopology(pCopyFace->GetOcctFace());
+		return pCopyFace;
 	}
 
 	void FaceUtility::Triangulate(const TopologicCore::Face::Ptr & kpFace, const double kDeflection, std::list<TopologicCore::Face::Ptr>& rTriangles)

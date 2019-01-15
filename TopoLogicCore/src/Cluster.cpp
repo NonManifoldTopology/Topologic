@@ -45,12 +45,13 @@ namespace TopologicCore
 		Cluster::Ptr pCluster = std::make_shared<Cluster>(occtCompound);
 		for(const Topology::Ptr& kpTopology : rkTopologies)
 		{
-			Topology::Ptr pCopyTopology = kpTopology->DeepCopy();
-			pCluster->AddTopology(pCopyTopology.get());
+			//Topology::Ptr pCopyTopology = kpTopology->DeepCopy();
+			pCluster->AddTopology(kpTopology.get());
 		}
 
-		GlobalCluster::GetInstance().AddTopology(pCluster->GetOcctCompound());
-		return pCluster;
+		Cluster::Ptr pCopyCluster = std::dynamic_pointer_cast<Cluster>(pCluster->DeepCopy());
+		GlobalCluster::GetInstance().AddTopology(pCopyCluster->GetOcctCompound());
+		return pCopyCluster;
 	}
 
 	// Use raw pointer because 1) called from the individual instance, 2) does not need a smart pointer

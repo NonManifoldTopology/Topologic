@@ -124,18 +124,17 @@ namespace TopologicCore
 
 	Edge::Ptr Edge::ByStartVertexEndVertex(const std::shared_ptr<Vertex>& kpStartVertex, const std::shared_ptr<Vertex>& kpEndVertex)
 	{
-		Vertex::Ptr startVertexCopy = std::dynamic_pointer_cast<Vertex>(kpStartVertex->DeepCopy());
-		Vertex::Ptr endVertexCopy = std::dynamic_pointer_cast<Vertex>(kpEndVertex->DeepCopy());
 		BRepBuilderAPI_MakeEdge occtMakeEdge(
-			startVertexCopy->GetOcctVertex(),
-			endVertexCopy->GetOcctVertex());
+			kpStartVertex->GetOcctVertex(),
+			kpEndVertex->GetOcctVertex());
 		if (occtMakeEdge.Error() != BRepBuilderAPI_EdgeDone)
 		{
 			Throw(occtMakeEdge.Error());
 		}
 		Edge::Ptr pEdge = std::make_shared<Edge>(occtMakeEdge.Edge());
-		GlobalCluster::GetInstance().AddTopology(pEdge->GetOcctEdge());
-		return pEdge;
+		Edge::Ptr pCopyEdge = std::dynamic_pointer_cast<Edge>(pEdge->DeepCopy());
+		GlobalCluster::GetInstance().AddTopology(pCopyEdge->GetOcctEdge());
+		return pCopyEdge;
 	}
 
 	Vertex::Ptr Edge::SharedVertex(const Edge::Ptr& kpAnotherEdge) const

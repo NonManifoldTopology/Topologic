@@ -17,7 +17,7 @@
   OutFile "TopologicInstaller-${MyTIMESTAMP}.exe"
 
   ;Default installation folder
-  InstallDir "$DOCUMENTS\Topologic"
+  InstallDir "$PROGRAMFILES64\Topologic"
   
   ;Request application privileges for Windows Vista
   RequestExecutionLevel user
@@ -67,6 +67,7 @@ Section "TopologicCore" TopologicCore
   File ..\output\x64\Release\TopologicEnergy.xml
   File ..\output\x64\Release\TopologicEnergy_DynamoCustomization.xml
   File ..\output\x64\Release\ShapeOp.0.1.0.dll
+  File ..\output\x64\Release\license.file
   
   ;ADD YOUR OWN FILES HERE...
   

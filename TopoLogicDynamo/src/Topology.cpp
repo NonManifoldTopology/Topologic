@@ -727,11 +727,11 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 
-		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
-		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();
+		/*TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();*/
 
 		try{
-			std::shared_ptr<TopologicCore::Topology> pDifferenceCoreTopology = pCoreCopyTopologyA->Difference(pCoreCopyTopologyB);
+			std::shared_ptr<TopologicCore::Topology> pDifferenceCoreTopology = pCoreTopologyA->Difference(pCoreTopologyB);
 			return Topology::ByCoreTopology(pDifferenceCoreTopology);
 		}
 		catch (std::exception& e)
@@ -745,13 +745,13 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(tool->GetCoreTopologicalQuery());
 
-		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
-		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();
+		/*TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();*/
 
 		try{
-			std::shared_ptr<TopologicCore::Topology> pImposeCoreTopology = pCoreCopyTopologyA->Impose(pCoreCopyTopologyB);
-			TopologicCore::Topology::Ptr pCoreCopyResultTopology = pImposeCoreTopology->DeepCopy();
-			return Topology::ByCoreTopology(pCoreCopyResultTopology);
+			std::shared_ptr<TopologicCore::Topology> pImposeCoreTopology = pCoreTopologyA->Impose(pCoreTopologyB);
+			//TopologicCore::Topology::Ptr pCoreCopyResultTopology = pImposeCoreTopology->DeepCopy();
+			return Topology::ByCoreTopology(pImposeCoreTopology);
 		}
 		catch (std::exception& e)
 		{
@@ -764,11 +764,11 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(tool->GetCoreTopologicalQuery());
 
-		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
-		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();
+		/*TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();*/
 
 		try{
-			std::shared_ptr<TopologicCore::Topology> pImprintCoreTopology = pCoreCopyTopologyA->Imprint(pCoreCopyTopologyB);
+			std::shared_ptr<TopologicCore::Topology> pImprintCoreTopology = pCoreTopologyA->Imprint(pCoreTopologyB);
 			return Topology::ByCoreTopology(pImprintCoreTopology);
 		}
 		catch (std::exception& e)
@@ -782,11 +782,11 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 
-		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
-		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();
+		/*TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();*/
 
 		try {
-			std::shared_ptr<TopologicCore::Topology> pIntersectionCoreTopology = pCoreCopyTopologyA->Intersect(pCoreCopyTopologyB);
+			std::shared_ptr<TopologicCore::Topology> pIntersectionCoreTopology = pCoreTopologyA->Intersect(pCoreTopologyB);
 			return Topology::ByCoreTopology(pIntersectionCoreTopology);
 		}
 		catch (std::exception& e)
@@ -800,11 +800,11 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 
-		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
-		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();
+		/*TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();*/
 
 		try{
-			std::shared_ptr<TopologicCore::Topology> pUnionCoreTopology = pCoreCopyTopologyA->Union(pCoreCopyTopologyB);
+			std::shared_ptr<TopologicCore::Topology> pUnionCoreTopology = pCoreTopologyA->Union(pCoreTopologyB);
 			return Topology::ByCoreTopology(pUnionCoreTopology);
 		}
 		catch (std::exception& e)
@@ -826,13 +826,13 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 
-		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
-		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();
+		/*TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();*/
 		
 		try{
-			std::shared_ptr<TopologicCore::Topology> pMergeCoreTopology = pCoreCopyTopologyA->Merge(pCoreCopyTopologyB);
-			TopologicCore::Topology::Ptr pCoreCopyResultTopology = pMergeCoreTopology->DeepCopy();
-			return Topology::ByCoreTopology(pCoreCopyResultTopology);
+			std::shared_ptr<TopologicCore::Topology> pMergeCoreTopology = pCoreTopologyA->Merge(pCoreTopologyB);
+			//TopologicCore::Topology::Ptr pCoreCopyResultTopology = pMergeCoreTopology->DeepCopy();
+			return Topology::ByCoreTopology(pMergeCoreTopology);
 		}
 		catch (std::exception& e)
 		{
@@ -845,11 +845,11 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(tool->GetCoreTopologicalQuery());
 
-		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
-		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();
+		/*TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();*/
 
 		try{
-			std::shared_ptr<TopologicCore::Topology> pSliceCoreTopology = pCoreCopyTopologyA->Slice(pCoreCopyTopologyB);
+			std::shared_ptr<TopologicCore::Topology> pSliceCoreTopology = pCoreTopologyA->Slice(pCoreTopologyB);
 			return Topology::ByCoreTopology(pSliceCoreTopology);
 		}
 		catch (std::exception& e)
@@ -863,11 +863,11 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(tool->GetCoreTopologicalQuery());
 
-		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
-		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();
+		/*TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();*/
 
 		try {
-			std::shared_ptr<TopologicCore::Topology> pSliceCoreTopology = pCoreCopyTopologyA->Divide(pCoreCopyTopologyB);
+			std::shared_ptr<TopologicCore::Topology> pSliceCoreTopology = pCoreTopologyA->Divide(pCoreTopologyB);
 			return Topology::ByCoreTopology(pSliceCoreTopology);
 		}
 		catch (std::exception& e)
@@ -881,11 +881,11 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 
-		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
-		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();
+		/*TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();*/
 
 		try{
-			std::shared_ptr<TopologicCore::Topology> pSliceCoreTopology = pCoreCopyTopologyA->XOR(pCoreCopyTopologyB);
+			std::shared_ptr<TopologicCore::Topology> pSliceCoreTopology = pCoreTopologyA->XOR(pCoreTopologyB);
 			return Topology::ByCoreTopology(pSliceCoreTopology);
 		}
 		catch (std::exception& e)

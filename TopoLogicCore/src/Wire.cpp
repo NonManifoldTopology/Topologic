@@ -85,14 +85,8 @@ namespace TopologicCore
 			throw std::exception("No edge is passed.");
 		}
 
-		std::list<Edge::Ptr> copyEdges;
-		for (const Edge::Ptr& kpEdge : rkEdges)
-		{
-			copyEdges.push_back(std::dynamic_pointer_cast<Edge>(kpEdge->DeepCopy()));
-		}
-
 		TopTools_ListOfShape occtEdges;
-		for(const Edge::Ptr& kpEdge : copyEdges)
+		for(const Edge::Ptr& kpEdge : rkEdges)
 		{
 			occtEdges.Append(kpEdge->GetOcctShape());
 		}

@@ -306,9 +306,10 @@ namespace TopologicUtility
 		}
 
 		TopologicCore::Shell::Ptr pShell = TopologicCore::Shell::ByFaces(faces);
-		TopologicCore::GlobalCluster::GetInstance().AddTopology(pShell->GetOcctShell());
+		TopologicCore::Shell::Ptr pCopyShell = std::dynamic_pointer_cast<TopologicCore::Shell>(pShell->DeepCopy());
+		TopologicCore::GlobalCluster::GetInstance().AddTopology(pCopyShell);
 
-		return pShell;
+		return pCopyShell;
 	}
 
 	TopologicCore::Shell::Ptr ShellUtility::ByFacePlanarizationV2(
@@ -1713,8 +1714,9 @@ namespace TopologicUtility
 			throw std::exception("Loft error");
 		}
 		TopologicCore::Shell::Ptr pShell = std::make_shared<TopologicCore::Shell>(TopoDS::Shell(occtLoft.Shape()));
-		TopologicCore::GlobalCluster::GetInstance().AddTopology(pShell->GetOcctShell());
-		return pShell;
+		TopologicCore::Shell::Ptr pCopyShell = std::dynamic_pointer_cast<TopologicCore::Shell>(pShell->DeepCopy());
+		TopologicCore::GlobalCluster::GetInstance().AddTopology(pCopyShell);
+		return pCopyShell;
 	}
 
 }

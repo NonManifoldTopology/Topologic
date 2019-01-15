@@ -28,11 +28,11 @@ namespace TopologicUtility
 			throw std::exception("No vertex is passed.");
 		}
 
-		std::vector<TopologicCore::Vertex::Ptr> copyVertices;
+		/*std::vector<TopologicCore::Vertex::Ptr> copyVertices;
 		for (const TopologicCore::Vertex::Ptr& kpVertex : rkVertices)
 		{
 			copyVertices.push_back(std::dynamic_pointer_cast<TopologicCore::Vertex>(kpVertex->DeepCopy()));
-		}
+		}*/
 
 		std::list<TopologicCore::Face::Ptr> faces;
 		for (const std::list<int>& rkVertexIndices : rkFaceIndices)
@@ -65,8 +65,9 @@ namespace TopologicUtility
 			faces.push_back(std::make_shared<TopologicCore::Face>(occtMakeFace));
 		}
 		TopologicCore::Cell::Ptr pCell = TopologicCore::Cell::ByFaces(faces);
-		TopologicCore::GlobalCluster::GetInstance().AddTopology(pCell->GetOcctShape());
-		return pCell;
+		TopologicCore::Cell::Ptr pCopyCell = std::dynamic_pointer_cast<TopologicCore::Cell>(pCell->DeepCopy());
+		TopologicCore::GlobalCluster::GetInstance().AddTopology(pCopyCell->GetOcctShape());
+		return pCopyCell;
 	}
 
 

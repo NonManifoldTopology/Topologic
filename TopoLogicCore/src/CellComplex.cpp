@@ -65,8 +65,7 @@ namespace TopologicCore
 		TopTools_ListOfShape occtShapes;
 		for (const Cell::Ptr& kpCell : rkCells)
 		{
-			Cell::Ptr pCopyCell = std::dynamic_pointer_cast<Cell>(kpCell);
-			occtShapes.Append(pCopyCell->GetOcctShape());
+			occtShapes.Append(kpCell->GetOcctShape());
 		}
 
 		TopoDS_CompSolid occtCompSolid = ByOcctSolids(occtShapes);
@@ -107,7 +106,7 @@ namespace TopologicCore
 		{
 			// Merge the first cell with the rest.
 			Topology::Ptr firstTopology = Topology::ByOcctShape(*occtSolidIterator, "");
-			Topology::Ptr copyFirstTopology = firstTopology->DeepCopy();
+			//Topology::Ptr copyFirstTopology = firstTopology->DeepCopy();
 			std::list<std::shared_ptr<Topology>> topologies;
 			// Start from the second.
 			occtSolidIterator++;
@@ -138,7 +137,9 @@ namespace TopologicCore
 		}
 
 		// Should get us a CellComplex, otherwise an exception.
-		return occtCompSolid;
+		CellComplex::Ptr pCellComplex = std::make_shared<CellComplex>(occtCompSolid);
+		CellComplex::Ptr pCopyCellComplex = std::dynamic_pointer_cast<CellComplex>(pCellComplex->DeepCopy());
+		return pCopyCellComplex->GetOcctCompSolid();
 	}
 
 	CellComplex::Ptr CellComplex::ByFaces(const std::list<Face::Ptr>& rkFaces)
