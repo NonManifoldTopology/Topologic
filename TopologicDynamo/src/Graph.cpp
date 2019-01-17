@@ -20,6 +20,9 @@ namespace Topologic
 					toExteriorFaces,
 					toExteriorApertures);
 
+				if (pCoreGraph == nullptr)
+					return nullptr;
+
 				return gcnew DualGraph_(pCoreGraph);
 			}
 			catch (std::exception& e)
@@ -39,6 +42,9 @@ namespace Topologic
 					viaSharedApertures,
 					toExteriorEdges,
 					toExteriorApertures);
+
+				if (pCoreGraph == nullptr)
+					return nullptr;
 
 				return gcnew DualGraph_(pCoreGraph);
 			}

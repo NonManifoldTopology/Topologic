@@ -508,7 +508,7 @@ namespace TopologicCore
 
 	TopoDS_Shape Topology::OcctSewFaces(const TopTools_ListOfShape & rkOcctFaces, const double kTolerance)
 	{
-		BRepBuilderAPI_Sewing occtSewing(kTolerance);
+		BRepBuilderAPI_Sewing occtSewing(kTolerance, true, true, true, true);
 		for (TopTools_ListIteratorOfListOfShape occtEdgeIterator(rkOcctFaces);
 			occtEdgeIterator.More();
 			occtEdgeIterator.Next())
@@ -653,8 +653,10 @@ namespace TopologicCore
 		TopoDS_Shape occtShape;
 		BRep_Builder occtBRepBuilder;
 		bool returnValue = BRepTools::Read(occtShape, rkPath.c_str(), occtBRepBuilder);
+		Topology::Ptr pTopology = Topology::ByOcctShape(occtShape, "");
 
-		return Topology::ByOcctShape(occtShape, "");
+		GlobalCluster::GetInstance().AddTopology(pTopology);
+		return pTopology;
 	}
 
 	std::string Topology::Analyze(const TopoDS_Shape& rkShape, const int kLevel)
