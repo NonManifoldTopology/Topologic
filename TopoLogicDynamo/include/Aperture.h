@@ -13,16 +13,16 @@ namespace Topologic
 	ref class Context;
 
 	/// <summary>
-	/// <para>
-	/// An Aperture defines a connection path between two Topologies that share a common Topology or between a
+	/// An Aperture is any designed opening in a building including but not limited to any door, gate, window, skylight, or hatch.
+	/// An Aperture also defines a connection path between two Topologies that share a common Topology or between a
 	/// Topology and the outside space. A connection path can be uni-directional or bi-directional.
-	/// </para>
 	/// </summary>
+
 	public ref class Aperture : public Topology
 	{
 	public:
 		/// <summary>
-		/// Creates an aperture by a topology and a context.
+		/// Create an aperture by a topology and a context.
 		/// </summary>
 		/// <param name="topology">A topology</param>
 		/// <param name="context">A context</param>
@@ -30,7 +30,7 @@ namespace Topologic
 		static Aperture^ ByTopologyContext(Topology^ topology, Context^ context);
 
 		/// <summary>
-		/// Creates an aperture by a topology, a context, and an open status.
+		/// Create an aperture by a topology, a context, and an open status.
 		/// </summary>
 		/// <param name="topology">A topology</param>
 		/// <param name="context">A context</param>

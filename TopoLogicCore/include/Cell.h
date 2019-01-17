@@ -33,7 +33,7 @@ namespace TopologicCore
 
 	public:
 		/// <summary>
-		/// 
+		/// <para></para>
 		/// </summary>
 		/// <param name="rkOcctSolid"></param>
 		/// <param name="rkOcctLabel"></param>

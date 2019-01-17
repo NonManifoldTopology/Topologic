@@ -13,6 +13,10 @@ namespace Topologic
 	ref class Shell;
 	ref class CellComplex;
 
+	/// <summary>
+	/// A Cell is a three-dimensional region defined by a collection of closed Shells. It may be manifold or non-manifold.
+	/// </summary>
+
 	public ref class Cell : Topology
 	{
 	public:
@@ -32,7 +36,7 @@ namespace Topologic
 		static Cell^ ByShell(Shell^ shell);
 
 		/// <summary>
-		/// Get the cellComplexes which contain the cell. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.
+		/// Get the cellComplexes which contain the cell.
 		/// </summary>
 		/// <returns name="CellComplex[]"></returns>
 		property List<CellComplex^>^ CellComplexes
@@ -86,7 +90,7 @@ namespace Topologic
 		}
 
 		/// <summary>
-		/// Get the cells adjacent to the cell. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.
+		/// Get the cells adjacent to the cell.
 		/// </summary>
 		/// <returns name="Cell[]"></returns>
 		/// 
@@ -153,7 +157,7 @@ namespace Topologic
 		Cell(const std::shared_ptr<TopologicCore::Cell>& kpCoreCell);
 
 		/// <summary>
-		/// Create a cell by a solid. NOTE: This node will be replaced by a single Topology.ByGeometry() node.
+		/// Create a cell by a solid.
 		/// </summary>
 		/// <param name="solid"></param>
 		/// <param name="tolerance"></param>

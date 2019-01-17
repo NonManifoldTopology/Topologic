@@ -8,6 +8,10 @@ namespace Topologic
 {
 	ref class Edge;
 
+	/// <summary>
+	/// A Vertex is a zero-dimensional entity equivalent to a geometry point.
+	/// </summary>
+
 	public ref class Vertex : Topology
 	{
 	public:
@@ -26,7 +30,7 @@ namespace Topologic
 			[DefaultArgument("0")] double z);
 
 		/// <summary>
-		/// Get the list of edges incident to the vertex. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.
+		/// Get the list of edges incident to the vertex.
 		/// </summary>
 		/// <returns name="Edge[]">The edges incident to this vertex</returns>
 		property List<Edge^>^ Edges
@@ -85,7 +89,7 @@ namespace Topologic
 		Vertex(const std::shared_ptr<TopologicCore::Vertex>& kpCoreVertex);
 
 		/// <summary>
-		/// Create a vertex by a point. NOTE: This node will be replaced by a single Topology.ByGeometry() node.
+		/// Create a vertex by a point.
 		/// </summary>
 		/// <param name="point">A point.</param>
 		/// <returns name="Vertex">

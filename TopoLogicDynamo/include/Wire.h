@@ -9,6 +9,10 @@ namespace Topologic {
 	ref class Edge;
 	ref class Face;
 
+	/// <summary>
+	/// A Wire is a contiguous collection of Edges where adjacent Edges are connected by shared Vertices. It may be open or closed and may be manifold or non-manifold. 
+	/// </summary>
+
 	public ref class Wire : Topology
 	{
 	public:
@@ -30,7 +34,7 @@ namespace Topologic {
 		}
 
 		/// <summary>
-		/// Get the list of faces that contain the wire. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.
+		/// Get the list of faces that contain the wire.
 		/// </summary>
 		/// <returns name="Face[]">The faces that contain the wire</returns>
 		property List<Face^>^ Faces
@@ -81,7 +85,7 @@ namespace Topologic {
 		Wire(const std::shared_ptr<TopologicCore::Wire>& kpCoreWire);
 
 		/// <summary>
-		/// Create a wire by a polycurve (including a polygon). NOTE: This node will be replaced by a single Topology.ByGeometry() node.
+		/// Create a wire by a polycurve (including a polygon).
 		/// </summary>
 		/// <param name="polyCurve">The polycurve</param>
 		/// <returns name="Wire">The created Topologic wire</returns>

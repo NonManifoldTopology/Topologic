@@ -4,6 +4,14 @@
 
 namespace Topologic {
 	namespace Utilities {
+	/// <summary>
+	/// Utility provides extended functionality including further topologic and geometric methods and properties. These include the Bitwise, CellUtility, EdgeUtility, FaceUtility, ShellUtility and TopologyUtility classes.
+	/// </summary>
+		
+		/// <summary>
+		/// Bitwise operators such as AND, OR, XOR and NOT are included in this class.
+		/// </summary>
+
 		public ref class Bitwise
 		{
 		public:

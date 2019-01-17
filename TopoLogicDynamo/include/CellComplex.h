@@ -13,6 +13,10 @@ namespace Topologic
 	ref class Shell;
 	ref class Cell;
 
+	/// <summary>
+	/// A CellComplex is a contiguous collection of Cells where adjacent Cells are connected by shared Faces. It is non-manifold.
+	/// </summary>
+
 	public ref class CellComplex : Topology
 	{
 	public:

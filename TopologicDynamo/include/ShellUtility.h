@@ -4,9 +4,12 @@
 
 namespace Topologic {
 	namespace Utilities {
+	/// <summary>
+	/// Utility provides extended functionality including further topologic and geometric methods and properties. These include the Bitwise, CellUtility, EdgeUtility, FaceUtility, ShellUtility and TopologyUtility classes.
+	/// </summary>
 
 		/// <summary>
-		/// 
+		/// ShellUtility includes geometric methods relevant to a Shell.
 		/// </summary>
 		public ref class ShellUtility
 		{

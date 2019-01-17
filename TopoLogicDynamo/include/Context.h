@@ -14,11 +14,12 @@ namespace Topologic
 	/// <summary>
 	/// A Context defines a topological relationship between two otherwise independent Topologies.
 	/// </summary>
+
 	public ref class Context : public TopologicalQuery
 	{
 	public:
 		/// <summary>
-		/// Creates a context by a topology and three parameters
+		/// Creates a context by a topology and three parameters.
 		/// </summary>
 		/// <param name="topology"></param>
 		/// <param name="U">The u parameter</param>
