@@ -9,8 +9,9 @@ namespace Topologic {
 	ref class Wire;
 
 	/// <summary>
-	/// 
+	/// An Edge is a one-dimensional entity defined by two vertices. It is important to note that while a topologic edge is made of two vertices, its geometry can be a curve with multiple control vertices.
 	/// </summary>
+
 	public ref class Edge : Topology
 	{
 	public:
@@ -23,7 +24,7 @@ namespace Topologic {
 		static Edge^ ByStartVertexEndVertex(Vertex^ startVertex, Vertex^ endVertex);
 
 		/// <summary>
-		/// Get the edges adjacent to the edge. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.
+		/// Get the edges adjacent to the edge.
 		/// </summary>
 		/// <returns name="Edge[]">The edges adjacent to the edge</returns>
 		property List<Edge^>^ AdjacentEdges
@@ -40,7 +41,7 @@ namespace Topologic {
 		}
 
 		/// <summary>
-		/// Get the wires incident to the edge. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.
+		/// Get the wires incident to the edge.
 		/// </summary>
 		/// <returns name="Wire[]">The list of wires incident to the edge</returns>
 		property List<Wire^>^ Wires
@@ -93,7 +94,7 @@ namespace Topologic {
 		virtual std::shared_ptr<TopologicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
 
 		/// <summary>
-		/// Create a curved edge by a Dynamo curve. NOTE: This node will be replaced by a single Topology.ByGeometry() node.
+		/// Create a curved edge by a Dynamo curve.
 		/// </summary>
 		/// <param name="curve">A Dynamo curve.</param>
 		/// <returns name="Edge">The created Topologic edge</returns>

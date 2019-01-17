@@ -16,9 +16,7 @@ namespace TopologicExtension
 	};
 
 	/// <summary>
-	/// <para>
-	/// A Graph is a Wire that is defined by the topology of a CellComplex or a Shell. It can be manifold or non-manifold.
-	/// </para>
+	/// 
 	/// </summary>
 	class Graph : public TopologicCore::Wire
 	{

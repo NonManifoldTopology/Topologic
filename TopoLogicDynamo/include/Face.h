@@ -12,13 +12,13 @@ namespace Topologic {
 	ref class Cell;
 
 	/// <summary>
-	/// 
+	/// A Face is a two-dimensional region defined by a collection of closed Wires. The geometry of a face can be flat or undulating.
 	/// </summary>
 	public ref class Face : Topology
 	{
 	public:
 		/// <summary>
-		/// Get the faces adjacent to the face. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.
+		/// Get the faces adjacent to the face.
 		/// </summary>
 		/// <param name="hostTopology"></param>
 		/// <returns name="Face[]">The faces adjacent to the face</returns>
@@ -28,7 +28,7 @@ namespace Topologic {
 		}
 
 		/// <summary>
-		/// Get the cells incident to the face. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.
+		/// Get the cells incident to the face.
 		/// </summary>
 		/// <returns name="Cell[]">The cells incident to the face</returns>
 		property List<Cell^>^ Cells
@@ -37,7 +37,7 @@ namespace Topologic {
 		}
 
 		/// <summary>
-		/// Gets the shells incident to the face. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.
+		/// Gets the shells incident to the face.
 		/// </summary>
 		/// <returns name="Shell[]">The shells incident to the face</returns>
 		property List<Shell^>^ Shells
@@ -181,7 +181,7 @@ namespace Topologic {
 		virtual std::shared_ptr<TopologicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
 
 		/// <summary>
-		/// Create a face by a surface. NOTE: This node will be replaced by a single Topology.ByGeometry() node.
+		/// Create a face by a surface.
 		/// </summary>
 		/// <param name="surface">The surface</param>
 		/// <returns name="Face">The created face</returns>

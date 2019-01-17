@@ -19,7 +19,7 @@ namespace Topologic
 	ref class TopologyFactory;
 
 	/// <summary>
-	/// A Topology is an abstract superclass that constructors, properties and methods used by other subclasses that extend it.
+	/// A Topology is an abstract superclass that includes constructors, properties and methods used by other subclasses that extend it.
 	/// </summary>
 	public ref class Topology abstract : public TopologicalQuery
 	{
@@ -40,7 +40,7 @@ namespace Topologic
 		static List<Topology^>^ ByVerticesIndices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::List<int>^>^ vertexIndices);
 
 		/// <summary>
-		/// 
+		/// Create a shell by a polysurface.
 		/// </summary>
 		/// <param name="polySurface"></param>
 		/// <returns></returns>

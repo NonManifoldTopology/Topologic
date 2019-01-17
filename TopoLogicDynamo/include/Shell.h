@@ -13,11 +13,15 @@ namespace Topologic
 	ref class Face;
 	ref class Cell;
 
+	/// <summary>
+	/// A Shell is a contiguous collection of Faces, where adjacent Faces are connected by shared Edges. It may be open or closed and may be manifold or non-manifold. 
+	/// </summary>
+
 	public ref class Shell : Topology
 	{
 	public:
 		/// <summary>
-		/// Get the cell bounded by the shell. NOTE: This instance method will be converted to a property, and the hostTopology argument will be removed.
+		/// Get the cell bounded by the shell.
 		/// </summary>
 		/// <returns name="Cell[]">The cell bounded by the shell</returns>
 		property List<Cell^>^ Cells
