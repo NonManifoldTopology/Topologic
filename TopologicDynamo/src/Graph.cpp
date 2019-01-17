@@ -1,5 +1,6 @@
 #include <Graph.h>
 #include <CellComplex.h>
+#include <Shell.h>
 #include <Vertex.h>
 
 #include <assert.h>
@@ -7,21 +8,37 @@
 namespace Topologic
 {
 	namespace Extensions {
-		DualGraph_^ DualGraph_::ByCellComplex(
-			CellComplex^ cellComplex,
-			bool useCells,
-			bool useNonManifoldFaces,
-			bool useManifoldFaces,
-			bool useApertures)
+		DualGraph_ ^ DualGraph_::ByCellComplex(CellComplex ^ cellComplex, bool direct, bool viaSharedFaces, bool viaSharedApertures, bool toExteriorFaces, bool toExteriorApertures)
 		{
 			TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(cellComplex->GetCoreTopologicalQuery());
 			try {
 				TopologicExtensions::DualGraph_::Ptr pCoreGraph = TopologicExtensions::DualGraph_::ByCellComplex(
 					pCoreCellComplex,
-					useCells,
-					useNonManifoldFaces,
-					useManifoldFaces,
-					useApertures);
+					direct,
+					viaSharedFaces,
+					viaSharedApertures,
+					toExteriorFaces,
+					toExteriorApertures);
+
+				return gcnew DualGraph_(pCoreGraph);
+			}
+			catch (std::exception& e)
+			{
+				throw gcnew Exception(gcnew String(e.what()));
+			}
+		}
+
+		DualGraph_ ^ DualGraph_::ByShell(Shell ^ shell, bool direct, bool viaSharedEdges, bool viaSharedApertures, bool toExteriorEdges, bool toExteriorApertures)
+		{
+			TopologicCore::Shell::Ptr pCoreShell = TopologicCore::Topology::Downcast<TopologicCore::Shell>(shell->GetCoreTopologicalQuery());
+			try {
+				TopologicExtensions::DualGraph_::Ptr pCoreGraph = TopologicExtensions::DualGraph_::ByShell(
+					pCoreShell,
+					direct,
+					viaSharedEdges,
+					viaSharedApertures,
+					toExteriorEdges,
+					toExteriorApertures);
 
 				return gcnew DualGraph_(pCoreGraph);
 			}

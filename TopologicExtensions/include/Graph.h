@@ -37,10 +37,19 @@ namespace TopologicExtensions
 
 		static TOPOLOGIC_EXTENSIONS_API DualGraph_::Ptr ByCellComplex(
 			const std::shared_ptr<TopologicCore::CellComplex>& kpCellComplex,
-			const bool kUseCells,
-			const bool kUseNonManifoldFaces,
-			const bool kUseManifoldFaces,
-			const bool kUseApertures);
+			const bool kDirect,
+			const bool kViaSharedFaces,
+			const bool kViaSharedApertures,
+			const bool kToExteriorFaces,
+			const bool kToExteriorApertures);
+
+		static TOPOLOGIC_EXTENSIONS_API DualGraph_::Ptr ByShell(
+			const std::shared_ptr<TopologicCore::Shell>& kpShell,
+			const bool kDirect,
+			const bool kViaSharedEdges,
+			const bool kViaSharedApertures,
+			const bool kToExteriorEdges,
+			const bool kToExteriorApertures);
 
 		virtual TopologicCore::TopologyType GetType() const { return TopologicCore::TOPOLOGY_WIRE; }
 

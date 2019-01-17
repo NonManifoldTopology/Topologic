@@ -5,6 +5,7 @@
 #include <TopologicCore/include/Cell.h>
 #include <TopologicCore/include/Face.h>
 #include <TopologicCore/include/Edge.h>
+#include <TopologicCore/include/Shell.h>
 #include <TopologicCore/include/Vertex.h>
 #include <TopologicCore/include/Wire.h>
 #include <TopologicCore/include/Aperture.h>
@@ -15,163 +16,60 @@
 
 namespace TopologicExtensions
 {
-	DualGraph_::Ptr DualGraph_::ByCellComplex(
-		const TopologicCore::CellComplex::Ptr& kpCellComplex,
-		const bool kUseCells,
-		const bool kUseNonManifoldFaces,
-		const bool kUseManifoldFaces,
-		const bool kUseApertures)
+	DualGraph_::Ptr DualGraph_::ByCellComplex(const std::shared_ptr<TopologicCore::CellComplex>& kpCellComplex, const bool kDirect, const bool kViaSharedFaces, const bool kViaSharedApertures, const bool kToExteriorFaces, const bool kToExteriorApertures)
 	{
-		if (!kUseCells)
+		if (kpCellComplex == nullptr)
 		{
 			return nullptr;
 		}
 
-		TopTools_ListOfShape occtEdges;
-		if (kUseCells && !kUseNonManifoldFaces && !kUseManifoldFaces)
-		{
-			// Connect the centroids of adjacent cells
-			// Get the non-manifold faces
-			std::list<TopologicCore::Face::Ptr> nonManifoldFaces;
-			kpCellComplex->NonManifoldFaces(nonManifoldFaces);
+		// 1. Get the vertices mapped to their original topologies
+		//    - Cell --> centroid
+		//   Occt shapes must be used as the keys. Topologic shapes cannot be used because there can be many shapes representing the same OCCT shapes.
+		std::map<TopoDS_Solid, TopologicCore::Vertex::Ptr, TopologicCore::OcctShapeComparator> cellCentroids;
 
-			// For each non-manifold face,
-			for (const TopologicCore::Face::Ptr& kpNonManifoldFace : nonManifoldFaces)
+		std::list<TopologicCore::Cell::Ptr> cells;
+		kpCellComplex->Cells(cells);
+		for (const TopologicCore::Cell::Ptr& kpCell : cells)
+		{
+			TopologicCore::Vertex::Ptr pCentroid = kpCell->CenterOfMass();
+			cellCentroids.insert(std::make_pair(kpCell->GetOcctSolid(), pCentroid));
+		}
+
+		// 2. Check the configurations. Add the edges to a cluster.
+		std::list<TopologicCore::Topology::Ptr> edges;
+		if (kDirect)
+		{
+			// Iterate through all cells and check for adjacency.
+			// For each adjacent cells, connect the centroids
+			for (const TopologicCore::Cell::Ptr& kpCell : cells)
 			{
-				// Get the adjacent cells
 				std::list<TopologicCore::Cell::Ptr> adjacentCells;
-				kpNonManifoldFace->Cells(adjacentCells);
+				kpCell->AdjacentCells(adjacentCells);
 
-				std::list<TopologicCore::Vertex::Ptr> centroids;
-				for (const TopologicCore::Cell::Ptr& kpCell : adjacentCells)
+				for (const TopologicCore::Cell::Ptr& kpAdjacentCell : adjacentCells)
 				{
-					centroids.push_back(kpCell->CenterOfMass());
-				}
-
-				if (centroids.size() < 2)
-				{
-					return nullptr;
-				}
-
-				std::list<TopologicCore::Vertex::Ptr>::iterator endCentroid = centroids.end();
-				for (std::list<TopologicCore::Vertex::Ptr>::iterator centroidIterator = centroids.begin();
-					centroidIterator != endCentroid;
-					centroidIterator++)
-				{
-					std::list<TopologicCore::Vertex::Ptr>::iterator nextIterator = centroidIterator;
-					nextIterator++;
-
-					for (std::list<TopologicCore::Vertex::Ptr>::iterator nextCentroidIterator = nextIterator;
-						nextCentroidIterator != endCentroid;
-						nextCentroidIterator++)
-					{
-						TopologicCore::Edge::Ptr pEdge = TopologicCore::Edge::ByStartVertexEndVertex(*centroidIterator, *nextCentroidIterator);
-						occtEdges.Append(pEdge->GetOcctShape());
-					}
-				}
-			}
-
-
-			/*std::list<Cell::Ptr> cells;
-			kpCellComplex->Cells(cells);
-
-			std::list<Vertex::Ptr> centroids;
-			for (const Cell::Ptr& kpCell : cells)
-			{
-				centroids.push_back(kpCell->CenterOfMass());
-			}
-
-			if (centroids.size() < 2)
-			{
-				return nullptr;
-			}
-
-			std::list<Vertex::Ptr>::iterator endCentroid = centroids.end();
-			for (std::list<Vertex::Ptr>::iterator centroidIterator = centroids.begin();
-				centroidIterator != endCentroid;
-				centroidIterator++)
-			{
-				std::list<Vertex::Ptr>::iterator nextIterator = centroidIterator;
-				nextIterator++;
-				
-				for (std::list<Vertex::Ptr>::iterator nextCentroidIterator = nextIterator;
-					nextCentroidIterator != endCentroid;
-					nextCentroidIterator++)
-				{
-					std::list<Vertex::Ptr> vertices;
-					vertices.push_back(*centroidIterator);
-					vertices.push_back(*nextCentroidIterator);
-					Edge::Ptr pEdge = Edge::ByVertices(vertices);
-					occtEdges.Append(pEdge->GetOcctShape());
-				}
-			}*/
-		}
-		else
-		{
-
-			if (kUseNonManifoldFaces)
-			{
-				// Get the non-manifold faces
-				std::list<TopologicCore::Face::Ptr> nonManifoldFaces;
-				kpCellComplex->NonManifoldFaces(nonManifoldFaces);
-
-				// For each non-manifold face,
-				for (const TopologicCore::Face::Ptr& kpNonManifoldFace : nonManifoldFaces)
-				{
-					// Get the adjacent cells
-					std::list<TopologicCore::Cell::Ptr> adjacentCells;
-					kpNonManifoldFace->Cells(adjacentCells);
-
-					// Connect the face centroid with the cell centroid
-					TopologicCore::Vertex::Ptr faceCentroid = kpNonManifoldFace->CenterOfMass();
-					for (const TopologicCore::Cell::Ptr& kpAdjacentCell : adjacentCells)
-					{
-						TopologicCore::Vertex::Ptr cellCentroid = kpAdjacentCell->CenterOfMass();
-
-						TopologicCore::Edge::Ptr pEdge = TopologicCore::Edge::ByStartVertexEndVertex(faceCentroid, cellCentroid);
-						occtEdges.Append(pEdge->GetOcctShape());
-					}
-				}
-			}
-
-			if (kUseManifoldFaces)
-			{
-				// Get the faces
-				std::list<TopologicCore::Face::Ptr> manifoldFaces;
-				kpCellComplex->Faces(manifoldFaces);
-
-				// For each face,
-				for (const TopologicCore::Face::Ptr& kpManifoldFace : manifoldFaces)
-				{
-					// If it is manifold, skip it.
-					if (!kpManifoldFace->IsManifold())
-					{
-						continue;
-					}
-
-					// Get the adjacent cells
-					std::list<TopologicCore::Cell::Ptr> adjacentCells;
-					kpManifoldFace->Cells(adjacentCells);
-
-					// Connect the face centroid with the cell centroid
-					TopologicCore::Vertex::Ptr faceCentroid = kpManifoldFace->CenterOfMass();
-					for (const TopologicCore::Cell::Ptr& kpAdjacentCell : adjacentCells)
-					{
-						TopologicCore::Vertex::Ptr cellCentroid = kpAdjacentCell->CenterOfMass();
-
-						TopologicCore::Edge::Ptr pEdge = TopologicCore::Edge::ByStartVertexEndVertex(faceCentroid, cellCentroid);
-						occtEdges.Append(pEdge->GetOcctShape());
-					}
+					TopologicCore::Edge::Ptr pEdge = TopologicCore::Edge::ByStartVertexEndVertex(cellCentroids[kpCell->GetOcctSolid()], cellCentroids[kpAdjacentCell->GetOcctSolid()]);
+					edges.push_back(pEdge);
 				}
 			}
 		}
 
-		if (kUseApertures)
+		std::list<TopologicCore::Face::Ptr> faces;
+		kpCellComplex->Faces(faces);
+		for (const TopologicCore::Face::Ptr& kpFace : faces)
 		{
-			// Get the apertures
+			TopologicCore::Vertex::Ptr pCentroid = kpFace->CenterOfMass();
+			bool isManifold = kpFace->IsManifold();
+			std::list<TopologicCore::Cell::Ptr> adjacentCells;
+			kpFace->Cells(adjacentCells);
+
 			std::list<Topology::Ptr> contents;
-			kpCellComplex->SubContents(contents);
+			kpFace->Contents(contents);
 
+			// Get the apertures and calculate their centroids
+			//std::map<TopoDS_Shape, TopologicCore::Vertex::Ptr, TopologicCore::OcctShapeComparator> apertureCentroids;
+			std::list<TopologicCore::Vertex::Ptr> apertureCentroids;
 			for (const Topology::Ptr& kpContent : contents)
 			{
 				// If this is not an aperture, skip it
@@ -181,62 +79,173 @@ namespace TopologicExtensions
 				}
 				TopologicCore::Aperture::Ptr pAperture = TopologicalQuery::Downcast<TopologicCore::Aperture>(kpContent);
 				Topology::Ptr pApertureTopology = pAperture->Topology();
-				
-				// Connect the face centroid with the cell centroid
-				TopologicCore::Vertex::Ptr faceCentroid = pApertureTopology->CenterOfMass();
-				
-				// For now, do only faces which have faces as context
-				std::list<TopologicCore::Context::Ptr> contexts;
-				pAperture->Contexts(contexts);
-				if (pApertureTopology->GetType() == TopologicCore::TOPOLOGY_FACE)
+				TopologicCore::Vertex::Ptr pApertureCentroid = pApertureTopology->CenterOfMass();
+
+				apertureCentroids.push_back(pApertureCentroid);
+			}
+
+			// Check 
+			for (const TopologicCore::Cell::Ptr& kpAdjacentCell : adjacentCells)
+			{
+				if ((!isManifold && kViaSharedFaces) // i.e. non-manifold faces
+					||
+					(isManifold && kToExteriorFaces))
 				{
-					for (const TopologicCore::Context::Ptr& kpContext : contexts)
+					TopologicCore::Edge::Ptr pEdge = TopologicCore::Edge::ByStartVertexEndVertex(pCentroid, cellCentroids[kpAdjacentCell->GetOcctSolid()]);
+					edges.push_back(pEdge);
+				}
+
+				for (const TopologicCore::Vertex::Ptr& rkApertureCentroid : apertureCentroids)
+				{
+					if ((!isManifold && kViaSharedApertures) // i.e. non-manifold apertures
+						||
+						(isManifold && kToExteriorApertures))
 					{
-						Topology::Ptr pContextTopology = kpContext->Topology();
-						if (pContextTopology->GetType() == TopologicCore::TOPOLOGY_FACE)
-						{
-							TopologicCore::Face::Ptr pFaceContextTopology = TopologicalQuery::Downcast<TopologicCore::Face>(pContextTopology);
-							// Get the adjacent cells of the context topology
-							std::list<TopologicCore::Cell::Ptr> adjacentCells;
-							pFaceContextTopology->Cells(adjacentCells);
-
-							for (const TopologicCore::Cell::Ptr& kpAdjacentCell : adjacentCells)
-							{
-								TopologicCore::Vertex::Ptr cellCentroid = kpAdjacentCell->CenterOfMass();
-
-								TopologicCore::Edge::Ptr pEdge = TopologicCore::Edge::ByStartVertexEndVertex(faceCentroid, cellCentroid);
-								occtEdges.Append(pEdge->GetOcctShape());
-							}
-						}
+						TopologicCore::Edge::Ptr pEdge = TopologicCore::Edge::ByStartVertexEndVertex(rkApertureCentroid, cellCentroids[kpAdjacentCell->GetOcctSolid()]);
+						edges.push_back(pEdge);
 					}
-					
 				}
 			}
 		}
 
-		BRepBuilderAPI_MakeWire occtMakeWire;
-		occtMakeWire.Add(occtEdges);
-
-		if (occtEdges.IsEmpty())
+		// 3. Self-merge the cluster
+		if (edges.empty())
 		{
 			return nullptr;
 		}
 
-		try {
-			TopologicCore::Wire::Ptr pCoreWire = std::make_shared<TopologicCore::Wire>(occtMakeWire);
-			TopoDS_Compound occtCompound;
-			TopoDS_Builder occtBuilder;
-			occtBuilder.MakeCompound(occtCompound);
-			DualGraph_::Ptr pGraph = std::make_shared<DualGraph_>(occtCompound);
-			pGraph->AddTopology(pCoreWire.get());
-			return pGraph;
-		}
-		catch (StdFail_NotDone&)
+		TopologicCore::Cluster::Ptr pTopologiesAsCluster = TopologicCore::Cluster::ByTopologies(edges);
+		TopologicCore::Topology::Ptr pSelfMergedTopologies = pTopologiesAsCluster->SelfMerge();
+		
+		// If this is a cluster, use it to create a dual graph. Otherwise, add it to a cluster to be used to create a dual graph.
+		TopologicCore::Cluster::Ptr pSelfMergedTopologiesAsCluster = std::dynamic_pointer_cast<Cluster>(pSelfMergedTopologies);
+		if (pSelfMergedTopologiesAsCluster != nullptr)
 		{
-			TopologicCore::Wire::Throw(occtMakeWire);
+			return std::make_shared<DualGraph_>(pSelfMergedTopologiesAsCluster->GetOcctCompound());
+		}
+		else
+		{
+			std::list<TopologicCore::Topology::Ptr> topologies;
+			topologies.push_back(pSelfMergedTopologies);
+			TopologicCore::Cluster::Ptr pDualGraphAsCluster = TopologicCore::Cluster::ByTopologies(topologies);
+			return std::make_shared<DualGraph_>(pDualGraphAsCluster->GetOcctCompound());
+		}
+	}
+
+	DualGraph_::Ptr DualGraph_::ByShell(const std::shared_ptr<TopologicCore::Shell>& kpShell, const bool kDirect, const bool kViaSharedEdges, const bool kViaSharedApertures, const bool kToExteriorEdges, const bool kToExteriorApertures)
+	{
+		if (kpShell == nullptr)
+		{
 			return nullptr;
 		}
-		return nullptr;
+
+		// 1. Get the vertices mapped to their original topologies
+		//    - Face --> centroid
+		//   Occt shapes must be used as the keys. Topologic shapes cannot be used because there can be many shapes representing the same OCCT shapes.
+		std::map<TopoDS_Face, TopologicCore::Vertex::Ptr, TopologicCore::OcctShapeComparator> faceCentroids;
+
+		std::list<TopologicCore::Face::Ptr> faces;
+		kpShell->Faces(faces);
+		for (const TopologicCore::Face::Ptr& kpFace : faces)
+		{
+			TopologicCore::Vertex::Ptr pCentroid = kpFace->CenterOfMass();
+			faceCentroids.insert(std::make_pair(kpFace->GetOcctFace(), pCentroid));
+		}
+
+		// 2. Check the configurations. Add the edges to a cluster.
+		std::list<TopologicCore::Topology::Ptr> graphEdges;
+		if (kDirect)
+		{
+			// Iterate through all faces and check for adjacency.
+			// For each adjacent faces, connect the centroids
+			for (const TopologicCore::Face::Ptr& kpFace : faces)
+			{
+				std::list<TopologicCore::Face::Ptr> adjacentFaces;
+				kpFace->AdjacentFaces(adjacentFaces);
+
+				for (const TopologicCore::Face::Ptr& kpAdjacentFace : adjacentFaces)
+				{
+					TopologicCore::Edge::Ptr pEdge = TopologicCore::Edge::ByStartVertexEndVertex(faceCentroids[kpFace->GetOcctFace()], faceCentroids[kpAdjacentFace->GetOcctFace()]);
+					graphEdges.push_back(pEdge);
+				}
+			}
+		}
+
+		std::list<TopologicCore::Edge::Ptr> edges;
+		kpShell->Edges(edges);
+		for (const TopologicCore::Edge::Ptr& kpEdge : edges)
+		{
+			TopologicCore::Vertex::Ptr pCentroid = kpEdge->CenterOfMass();
+			bool isManifold = kpEdge->IsManifold();
+			std::list<TopologicCore::Face::Ptr> adjacentFaces;
+			kpEdge->Faces(adjacentFaces);
+			
+			std::list<Topology::Ptr> contents;
+			kpEdge->Contents(contents);
+
+			// Get the apertures and calculate their centroids
+			//std::map<TopoDS_Shape, TopologicCore::Vertex::Ptr, TopologicCore::OcctShapeComparator> apertureCentroids;
+			std::list<TopologicCore::Vertex::Ptr> apertureCentroids;
+			for (const Topology::Ptr& kpContent : contents)
+			{
+				// If this is not an aperture, skip it
+				if (kpContent->GetType() != TopologicCore::TOPOLOGY_APERTURE)
+				{
+					continue;
+				}
+				TopologicCore::Aperture::Ptr pAperture = TopologicalQuery::Downcast<TopologicCore::Aperture>(kpContent);
+				Topology::Ptr pApertureTopology = pAperture->Topology();
+				TopologicCore::Vertex::Ptr pApertureCentroid = pApertureTopology->CenterOfMass();
+
+				apertureCentroids.push_back(pApertureCentroid);
+			}
+
+			// Check 
+			for (const TopologicCore::Face::Ptr& kpAdjacentFace : adjacentFaces)
+			{
+				if ((!isManifold && kViaSharedEdges) // i.e. non-manifold faces
+					||
+					(isManifold && kToExteriorEdges))
+				{
+					TopologicCore::Edge::Ptr pEdge = TopologicCore::Edge::ByStartVertexEndVertex(pCentroid, faceCentroids[kpAdjacentFace->GetOcctFace()]);
+					graphEdges.push_back(pEdge);
+				}
+
+				for (const TopologicCore::Vertex::Ptr& rkApertureCentroid : apertureCentroids)
+				{
+					if ((!isManifold && kViaSharedApertures) // i.e. non-manifold apertures
+						||
+						(isManifold && kToExteriorApertures))
+					{
+						TopologicCore::Edge::Ptr pEdge = TopologicCore::Edge::ByStartVertexEndVertex(rkApertureCentroid, faceCentroids[kpAdjacentFace->GetOcctFace()]);
+						graphEdges.push_back(pEdge);
+					}
+				}
+			}
+		}
+
+		// 3. Self-merge the cluster
+		if (graphEdges.empty())
+		{
+			return nullptr;
+		}
+
+		TopologicCore::Cluster::Ptr pTopologiesAsCluster = TopologicCore::Cluster::ByTopologies(graphEdges);
+		TopologicCore::Topology::Ptr pSelfMergedTopologies = pTopologiesAsCluster->SelfMerge();
+
+		// If this is a cluster, use it to create a dual graph. Otherwise, add it to a cluster to be used to create a dual graph.
+		TopologicCore::Cluster::Ptr pSelfMergedTopologiesAsCluster = std::dynamic_pointer_cast<Cluster>(pSelfMergedTopologies);
+		if (pSelfMergedTopologiesAsCluster != nullptr)
+		{
+			return std::make_shared<DualGraph_>(pSelfMergedTopologiesAsCluster->GetOcctCompound());
+		}
+		else
+		{
+			std::list<TopologicCore::Topology::Ptr> topologies;
+			topologies.push_back(pSelfMergedTopologies);
+			TopologicCore::Cluster::Ptr pDualGraphAsCluster = TopologicCore::Cluster::ByTopologies(topologies);
+			return std::make_shared<DualGraph_>(pDualGraphAsCluster->GetOcctCompound());
+		}
 	}
 
 	DualGraph_::DualGraph_(const TopoDS_Compound& rkOcctCompound, const std::string& rkGuid)
@@ -249,6 +258,7 @@ namespace TopologicExtensions
 	{
 
 	}
+
 	std::string DualGraph_::GetTypeAsString() const
 	{
 		return std::string("Graph");

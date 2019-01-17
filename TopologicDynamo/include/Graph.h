@@ -17,18 +17,37 @@ namespace Topologic
 			/// 
 			/// </summary>
 			/// <param name="cellComplex"></param>
-			/// <param name="useCells"></param>
-			/// <param name="useNonManifoldFaces"></param>
-			/// <param name="useManifoldFaces"></param>
-			/// <param name="useApertures"></param>
+			/// <param name="direct"></param>
+			/// <param name="viaSharedFaces"></param>
+			/// <param name="viaSharedApertures"></param>
+			/// <param name="toExteriorFaces"></param>
+			/// <param name="toExteriorApertures"></param>
 			/// <returns></returns>
 			static DualGraph_^ ByCellComplex(
 				CellComplex^ cellComplex,
-				[DefaultArgument("true")] bool useCells,
-				[DefaultArgument("true")] bool useNonManifoldFaces,
-				[DefaultArgument("false")] bool useManifoldFaces,
-				[DefaultArgument("false")] bool useApertures);
+				[DefaultArgument("true")] bool direct,
+				[DefaultArgument("false")] bool viaSharedFaces,
+				[DefaultArgument("false")] bool viaSharedApertures,
+				[DefaultArgument("false")] bool toExteriorFaces,
+				[DefaultArgument("false")] bool toExteriorApertures);
 
+			/// <summary>
+			/// 
+			/// </summary>
+			/// <param name="cellComplex"></param>
+			/// <param name="direct"></param>
+			/// <param name="viaSharedEdges"></param>
+			/// <param name="viaSharedApertures"></param>
+			/// <param name="toExteriorEdges"></param>
+			/// <param name="toExteriorApertures"></param>
+			/// <returns></returns>
+			static DualGraph_^ ByShell(
+				Shell^ shell,
+				[DefaultArgument("true")] bool direct,
+				[DefaultArgument("false")] bool viaSharedEdges,
+				[DefaultArgument("false")] bool viaSharedApertures,
+				[DefaultArgument("false")] bool toExteriorEdges,
+				[DefaultArgument("false")] bool toExteriorApertures);
 
 			/*property Object^ Geometry_
 			{
