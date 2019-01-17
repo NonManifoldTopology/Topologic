@@ -3,10 +3,10 @@
 #include "Shell.h"
 
 namespace Topologic {
+	namespace Utilities {
 	/// <summary>
 	/// Utility provides extended functionality including further topologic and geometric methods and properties. These include the Bitwise, CellUtility, EdgeUtility, FaceUtility, ShellUtility and TopologyUtility classes.
 	/// </summary>
-	namespace Utility {
 
 		/// <summary>
 		/// ShellUtility includes geometric methods relevant to a Shell.

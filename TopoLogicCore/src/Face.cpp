@@ -137,7 +137,7 @@ namespace TopologicCore
 		const Wire::Ptr& pkExternalBoundary,
 		const std::list<Wire::Ptr>& rkInternalBoundaries)
 	{
-		Wire::Ptr copyExternalBoundary = std::dynamic_pointer_cast<Wire>(pkExternalBoundary->DeepCopy());
+		//Wire::Ptr copyExternalBoundary = std::dynamic_pointer_cast<Wire>(pkExternalBoundary->DeepCopy());
 		BRepBuilderAPI_MakeFace occtMakeFace(pkExternalBoundary->GetOcctWire());
 		if (occtMakeFace.Error() != BRepBuilderAPI_FaceDone)
 		{
@@ -146,13 +146,14 @@ namespace TopologicCore
 
 		for (const Wire::Ptr& kpInternalBoundary : rkInternalBoundaries)
 		{
-			Wire::Ptr pCopyInternalBoundary = std::dynamic_pointer_cast<Wire>(kpInternalBoundary->DeepCopy());
-			occtMakeFace.Add(pCopyInternalBoundary->GetOcctWire());
+			//Wire::Ptr pCopyInternalBoundary = std::dynamic_pointer_cast<Wire>(kpInternalBoundary->DeepCopy());
+			occtMakeFace.Add(kpInternalBoundary->GetOcctWire());
 		}
 
 		Face::Ptr pFace = std::make_shared<Face>(occtMakeFace);
-		GlobalCluster::GetInstance().AddTopology(pFace->GetOcctFace());
-		return pFace;
+		Face::Ptr pCopyFace = std::dynamic_pointer_cast<Face>(pFace->DeepCopy());
+		GlobalCluster::GetInstance().AddTopology(pCopyFace->GetOcctFace());
+		return pCopyFace;
 	}
 
 	Face::Ptr Face::ByEdges(const std::list<Edge::Ptr>& rkEdges)

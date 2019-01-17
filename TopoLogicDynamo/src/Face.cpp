@@ -806,10 +806,10 @@ namespace Topologic
 					}
 
 					// Find the actual point on the edge
-					Vertex^ pSampleVertex = Topologic::Utility::EdgeUtility::VertexAtParameter(pApertureEdge, t);
+					Vertex^ pSampleVertex = Topologic::Utilities::EdgeUtility::VertexAtParameter(pApertureEdge, t);
 
 					// Find the UV-coordinate of the point on the aperture design
-					Autodesk::DesignScript::Geometry::UV^ pUV = Topologic::Utility::FaceUtility::UVParameterAtVertex(apertureDesign, pSampleVertex);
+					Autodesk::DesignScript::Geometry::UV^ pUV = Topologic::Utilities::FaceUtility::UVParameterAtVertex(apertureDesign, pSampleVertex);
 					double checkedU = pUV->U, checkedV = pUV->V;
 					if (checkedU < 0.0)
 					{
@@ -830,14 +830,14 @@ namespace Topologic
 					}
 
 					// Find the point with the same UV-coordinate on the surface, add it to the list
-					Vertex^ pMappedSampleVertex = Topologic::Utility::FaceUtility::VertexAtParameter(face, checkedU, checkedV);
+					Vertex^ pMappedSampleVertex = Topologic::Utilities::FaceUtility::VertexAtParameter(face, checkedU, checkedV);
 					pMappedSampleVertices->Add(pMappedSampleVertex);
 
 					delete pUV;
 				}
 
 				// Interpolate the mapped vertices to an edge.
-				Edge^ pMappedApertureEdge = Topologic::Utility::EdgeUtility::ByVertices(pMappedSampleVertices);
+				Edge^ pMappedApertureEdge = Topologic::Utilities::EdgeUtility::ByVertices(pMappedSampleVertices);
 				pMappedApertureEdges->Add(pMappedApertureEdge);
 			}
 
@@ -845,7 +845,7 @@ namespace Topologic
 			Wire^ pMappedApertureWire = Wire::ByEdges(pMappedApertureEdges);
 
 			//// Use the wire to make a face on the same supporting surface as the input face's
-			Face^ pMappedApertureFace = Topologic::Utility::FaceUtility::TrimByWire(face, pMappedApertureWire);
+			Face^ pMappedApertureFace = Topologic::Utilities::FaceUtility::TrimByWire(face, pMappedApertureWire);
 			pFaces->Add(pMappedApertureFace);
 
 			// and attach it as an aperture to the face.
@@ -1047,7 +1047,7 @@ namespace Topologic
 			{
 				try {
 					Face^ pFace = Face::ByWire(pWire);
-					surfaceAreas.push_back(Topologic::Utility::FaceUtility::Area(pFace));
+					surfaceAreas.push_back(Topologic::Utilities::FaceUtility::Area(pFace));
 				}
 				catch (...)
 				{

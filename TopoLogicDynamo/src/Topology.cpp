@@ -30,11 +30,15 @@
 #include <ApertureFactory.h>
 #include <AttributeManager.h>
 #include <AttributeFactory.h>
+#include <LicenseManager.h>
 
-#include <TopologicUtility/include/AttributeManager.h>
-#include <TopologicUtility/include/IntAttribute.h>
-#include <TopologicUtility/include/DoubleAttribute.h>
-#include <TopologicUtility/include/StringAttribute.h>
+#include <TopologicUtilities/include/AttributeManager.h>
+#include <TopologicUtilities/include/IntAttribute.h>
+#include <TopologicUtilities/include/DoubleAttribute.h>
+#include <TopologicUtilities/include/StringAttribute.h>
+
+using namespace System::Xml;
+using namespace System::Reflection;
 
 namespace Topologic
 {
@@ -43,9 +47,40 @@ namespace Topologic
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		return pCoreTopology->Dimensionality();
 	}
-
-	Topology^ Topology::ByGeometry(Autodesk::DesignScript::Geometry::Geometry^ geometry)
+	void CheckLicence()
 	{
+		License license;
+		try {
+			String^ dllPath = System::IO::Path::GetDirectoryName(Assembly::GetExecutingAssembly()->Location);
+			String^ licenseFile = dllPath + "\\license.file";
+			std::string cppLicenseFile = msclr::interop::marshal_as<std::string>(licenseFile);
+			std::string signature = "representation";
+
+			LicenseManager licenseManager;
+			if (license.loadFromFile(cppLicenseFile)) {
+				if (!licenseManager.validate(&license, true, signature)) {
+					throw gcnew Exception("License is not valid");
+				}
+				/*else {
+					std::cout << "Licensed to " << license.licensee() << std::endl;
+					std::cout << "Subscription is active until " << license.formattedExpiry() << std::endl << std::endl;
+				}*/
+			}
+			else
+			{
+				throw gcnew Exception("No active license is found.");
+			}
+		}
+		catch (LicenseException& e) {
+			throw gcnew Exception(gcnew String(e.what()));
+		}
+	}
+
+	Topology^ Topology::ByGeometry(Autodesk::DesignScript::Geometry::Geometry^ geometry, double tolerance)
+	{
+		// Check licence
+		CheckLicence();
+
 		if (geometry == nullptr)
 		{
 			throw gcnew Exception("A null input is given.");
@@ -118,7 +153,7 @@ namespace Topologic
 		Autodesk::DesignScript::Geometry::Solid^ dynamoSolid = dynamic_cast<Autodesk::DesignScript::Geometry::Solid^>(geometry);
 		if (dynamoSolid != nullptr)
 		{
-			return Cell::BySolid(dynamoSolid);
+			return Cell::BySolid(dynamoSolid, tolerance);
 		}
 
 		throw gcnew NotImplementedException("This geometry is not currently handled.");
@@ -326,7 +361,7 @@ namespace Topologic
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->DeepCopy();
 
-		TopologicUtility::AttributeManager::GetInstance().CopyAttributes(pCoreTopology->GetOcctShape(), pCoreCopyTopology->GetOcctShape());
+		TopologicUtilities::AttributeManager::GetInstance().CopyAttributes(pCoreTopology->GetOcctShape(), pCoreCopyTopology->GetOcctShape());
 		
 		Topology^ topology = ByCoreTopology(pCoreCopyTopology);
 		return safe_cast<T>(topology);
@@ -339,7 +374,7 @@ namespace Topologic
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->DeepCopy();
 
-		TopologicUtility::AttributeManager::GetInstance().CopyAttributes(pCoreTopology->GetOcctShape(), pCoreCopyTopology->GetOcctShape());
+		TopologicUtilities::AttributeManager::GetInstance().CopyAttributes(pCoreTopology->GetOcctShape(), pCoreCopyTopology->GetOcctShape());
 
 		Topology^ topology = ByCoreTopology(pCoreCopyTopology);
 		return safe_cast<T>(topology);
@@ -374,7 +409,7 @@ namespace Topologic
 			RegisterFactory(gcnew String(TopologicCore::CellGUID::Get().c_str()), gcnew CellFactory());
 			RegisterFactory(gcnew String(TopologicCore::CellComplexGUID::Get().c_str()), gcnew CellComplexFactory());
 			RegisterFactory(gcnew String(TopologicCore::ClusterGUID::Get().c_str()), gcnew ClusterFactory());
-			RegisterFactory(gcnew String(TopologicExtension::GraphGUID::Get().c_str()), gcnew GraphFactory());
+			RegisterFactory(gcnew String(TopologicExtensions::GraphGUID::Get().c_str()), gcnew GraphFactory());
 			RegisterFactory(gcnew String(TopologicCore::ApertureGUID::Get().c_str()), gcnew ApertureFactory());
 			areFactoriesAdded = true;
 		}
@@ -425,7 +460,7 @@ namespace Topologic
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		std::string cppName = msclr::interop::marshal_as<std::string>(key);
 
-		TopologicUtility::Attribute::Ptr pSupportAttribute = TopologicUtility::AttributeManager::GetInstance().Find(pCoreTopology->GetOcctShape(), cppName);
+		TopologicUtilities::Attribute::Ptr pSupportAttribute = TopologicUtilities::AttributeManager::GetInstance().Find(pCoreTopology->GetOcctShape(), cppName);
 		if (pSupportAttribute == nullptr)
 		{
 			return nullptr;
@@ -454,7 +489,7 @@ namespace Topologic
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		std::string cppName = msclr::interop::marshal_as<std::string>(name);
 
-		TopologicUtility::Attribute::Ptr pSupportAttribute = TopologicUtility::AttributeManager::GetInstance().Find(pCoreTopology->GetOcctShape(), cppName);
+		TopologicUtilities::Attribute::Ptr pSupportAttribute = TopologicUtilities::AttributeManager::GetInstance().Find(pCoreTopology->GetOcctShape(), cppName);
 		AttributeFactory^ attributeFactory = AttributeManager::Instance->GetFactory(pSupportAttribute);
 		return attributeFactory->CreateValue(pSupportAttribute);
 	}
@@ -464,8 +499,8 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreTopology =
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 
-		std::map<std::string, std::shared_ptr<TopologicUtility::Attribute>> coreAttributes;
-		bool isFound = TopologicUtility::AttributeManager::GetInstance().FindAll(pCoreTopology->GetOcctShape(), coreAttributes);
+		std::map<std::string, std::shared_ptr<TopologicUtilities::Attribute>> coreAttributes;
+		bool isFound = TopologicUtilities::AttributeManager::GetInstance().FindAll(pCoreTopology->GetOcctShape(), coreAttributes);
 		if (!isFound)
 		{
 			return nullptr;
@@ -473,7 +508,7 @@ namespace Topologic
 
 		List<Object^>^ keys = gcnew List<Object^>();
 		List<Object^>^ values = gcnew List<Object^>();
-		for (const std::pair<std::string, TopologicUtility::Attribute::Ptr>& rkAttributePair : coreAttributes)
+		for (const std::pair<std::string, TopologicUtilities::Attribute::Ptr>& rkAttributePair : coreAttributes)
 		{
 			String^ key = gcnew String(rkAttributePair.first.c_str());
 			keys->Add(key);
@@ -496,7 +531,7 @@ namespace Topologic
 		for each(String^ key in keys)
 		{
 			std::string cppKey = msclr::interop::marshal_as<std::string>(key);
-			TopologicUtility::AttributeManager::GetInstance().Remove(pCoreCopyTopology, cppKey);
+			TopologicUtilities::AttributeManager::GetInstance().Remove(pCoreCopyTopology, cppKey);
 		}
 
 		return copyTopology;
@@ -692,11 +727,11 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 
-		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
-		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();
+		/*TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();*/
 
 		try{
-			std::shared_ptr<TopologicCore::Topology> pDifferenceCoreTopology = pCoreCopyTopologyA->Difference(pCoreCopyTopologyB);
+			std::shared_ptr<TopologicCore::Topology> pDifferenceCoreTopology = pCoreTopologyA->Difference(pCoreTopologyB);
 			return Topology::ByCoreTopology(pDifferenceCoreTopology);
 		}
 		catch (std::exception& e)
@@ -710,11 +745,12 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(tool->GetCoreTopologicalQuery());
 
-		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
-		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();
+		/*TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();*/
 
 		try{
-			std::shared_ptr<TopologicCore::Topology> pImposeCoreTopology = pCoreCopyTopologyA->Impose(pCoreCopyTopologyB);
+			std::shared_ptr<TopologicCore::Topology> pImposeCoreTopology = pCoreTopologyA->Impose(pCoreTopologyB);
+			//TopologicCore::Topology::Ptr pCoreCopyResultTopology = pImposeCoreTopology->DeepCopy();
 			return Topology::ByCoreTopology(pImposeCoreTopology);
 		}
 		catch (std::exception& e)
@@ -728,11 +764,11 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(tool->GetCoreTopologicalQuery());
 
-		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
-		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();
+		/*TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();*/
 
 		try{
-			std::shared_ptr<TopologicCore::Topology> pImprintCoreTopology = pCoreCopyTopologyA->Imprint(pCoreCopyTopologyB);
+			std::shared_ptr<TopologicCore::Topology> pImprintCoreTopology = pCoreTopologyA->Imprint(pCoreTopologyB);
 			return Topology::ByCoreTopology(pImprintCoreTopology);
 		}
 		catch (std::exception& e)
@@ -746,11 +782,11 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 
-		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
-		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();
+		/*TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();*/
 
 		try {
-			std::shared_ptr<TopologicCore::Topology> pIntersectionCoreTopology = pCoreCopyTopologyA->Intersect(pCoreCopyTopologyB);
+			std::shared_ptr<TopologicCore::Topology> pIntersectionCoreTopology = pCoreTopologyA->Intersect(pCoreTopologyB);
 			return Topology::ByCoreTopology(pIntersectionCoreTopology);
 		}
 		catch (std::exception& e)
@@ -764,11 +800,11 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 
-		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
-		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();
+		/*TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();*/
 
 		try{
-			std::shared_ptr<TopologicCore::Topology> pUnionCoreTopology = pCoreCopyTopologyA->Union(pCoreCopyTopologyB);
+			std::shared_ptr<TopologicCore::Topology> pUnionCoreTopology = pCoreTopologyA->Union(pCoreTopologyB);
 			return Topology::ByCoreTopology(pUnionCoreTopology);
 		}
 		catch (std::exception& e)
@@ -790,11 +826,12 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 
-		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
-		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();
+		/*TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();*/
 		
 		try{
-			std::shared_ptr<TopologicCore::Topology> pMergeCoreTopology = pCoreCopyTopologyA->Merge(pCoreCopyTopologyB);
+			std::shared_ptr<TopologicCore::Topology> pMergeCoreTopology = pCoreTopologyA->Merge(pCoreTopologyB);
+			//TopologicCore::Topology::Ptr pCoreCopyResultTopology = pMergeCoreTopology->DeepCopy();
 			return Topology::ByCoreTopology(pMergeCoreTopology);
 		}
 		catch (std::exception& e)
@@ -808,11 +845,11 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(tool->GetCoreTopologicalQuery());
 
-		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
-		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();
+		/*TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();*/
 
 		try{
-			std::shared_ptr<TopologicCore::Topology> pSliceCoreTopology = pCoreCopyTopologyA->Slice(pCoreCopyTopologyB);
+			std::shared_ptr<TopologicCore::Topology> pSliceCoreTopology = pCoreTopologyA->Slice(pCoreTopologyB);
 			return Topology::ByCoreTopology(pSliceCoreTopology);
 		}
 		catch (std::exception& e)
@@ -826,11 +863,11 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(tool->GetCoreTopologicalQuery());
 
-		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
-		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();
+		/*TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();*/
 
 		try {
-			std::shared_ptr<TopologicCore::Topology> pSliceCoreTopology = pCoreCopyTopologyA->Divide(pCoreCopyTopologyB);
+			std::shared_ptr<TopologicCore::Topology> pSliceCoreTopology = pCoreTopologyA->Divide(pCoreTopologyB);
 			return Topology::ByCoreTopology(pSliceCoreTopology);
 		}
 		catch (std::exception& e)
@@ -844,11 +881,11 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 
-		TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
-		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();
+		/*TopologicCore::Topology::Ptr pCoreCopyTopologyA = pCoreTopologyA->DeepCopy();
+		TopologicCore::Topology::Ptr pCoreCopyTopologyB = pCoreTopologyB->DeepCopy();*/
 
 		try{
-			std::shared_ptr<TopologicCore::Topology> pSliceCoreTopology = pCoreCopyTopologyA->XOR(pCoreCopyTopologyB);
+			std::shared_ptr<TopologicCore::Topology> pSliceCoreTopology = pCoreTopologyA->XOR(pCoreTopologyB);
 			return Topology::ByCoreTopology(pSliceCoreTopology);
 		}
 		catch (std::exception& e)

@@ -17,6 +17,7 @@ namespace TopologicCore
 {
 	class Vertex;
 	class Wire;
+	class Face;
 
 	class EdgeGUID
 	{
@@ -60,6 +61,13 @@ namespace TopologicCore
 		/// <param name="rWires"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API void Wires(std::list<std::shared_ptr<Wire>>& rWires) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rFaces"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API void Faces(std::list<std::shared_ptr<Face>>& rFaces) const;
 
 		/// <summary>
 		/// 

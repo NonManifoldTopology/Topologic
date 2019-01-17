@@ -5,13 +5,13 @@
   </assembly>
   <namespaces>
     <namespace name="Topologic">
-      <category>Topologic</category>
+      <category>Topologic.Core</category>
     </namespace>
-    <namespace name="Topologic.Utility">
-      <category>Topologic.Utility</category>
+    <namespace name="Topologic.Utilities">
+      <category>Topologic.Utilities</category>
     </namespace>
-    <namespace name="Topologic.Extension">
-      <category>Topologic.Extension</category>
+    <namespace name="Topologic.Extensions">
+      <category>Topologic.Extensions</category>
     </namespace>
   </namespaces>
 </doc>

@@ -1,55 +1,73 @@
 #include <Graph.h>
 #include <CellComplex.h>
+#include <Shell.h>
 #include <Vertex.h>
 
 #include <assert.h>
 
 namespace Topologic
 {
-	namespace Extension {
-		Graph^ Graph::ByCellComplex(
-			CellComplex^ cellComplex,
-			bool useCells,
-			bool useNonManifoldFaces,
-			bool useManifoldFaces,
-			bool useApertures)
+	namespace Extensions {
+		DualGraph_ ^ DualGraph_::ByCellComplex(CellComplex ^ cellComplex, bool direct, bool viaSharedFaces, bool viaSharedApertures, bool toExteriorFaces, bool toExteriorApertures)
 		{
 			TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(cellComplex->GetCoreTopologicalQuery());
-			TopologicExtension::Graph::Ptr pCoreGraph = TopologicExtension::Graph::ByCellComplex(
-				pCoreCellComplex,
-				useCells,
-				useNonManifoldFaces,
-				useManifoldFaces,
-				useApertures);
+			try {
+				TopologicExtensions::DualGraph_::Ptr pCoreGraph = TopologicExtensions::DualGraph_::ByCellComplex(
+					pCoreCellComplex,
+					direct,
+					viaSharedFaces,
+					viaSharedApertures,
+					toExteriorFaces,
+					toExteriorApertures);
 
-			return gcnew Graph(pCoreGraph);
+				return gcnew DualGraph_(pCoreGraph);
+			}
+			catch (std::exception& e)
+			{
+				throw gcnew Exception(gcnew String(e.what()));
+			}
 		}
 
-		Object^ Graph::Geometry_::get()
+		DualGraph_ ^ DualGraph_::ByShell(Shell ^ shell, bool direct, bool viaSharedEdges, bool viaSharedApertures, bool toExteriorEdges, bool toExteriorApertures)
+		{
+			TopologicCore::Shell::Ptr pCoreShell = TopologicCore::Topology::Downcast<TopologicCore::Shell>(shell->GetCoreTopologicalQuery());
+			try {
+				TopologicExtensions::DualGraph_::Ptr pCoreGraph = TopologicExtensions::DualGraph_::ByShell(
+					pCoreShell,
+					direct,
+					viaSharedEdges,
+					viaSharedApertures,
+					toExteriorEdges,
+					toExteriorApertures);
+
+				return gcnew DualGraph_(pCoreGraph);
+			}
+			catch (std::exception& e)
+			{
+				throw gcnew Exception(gcnew String(e.what()));
+			}
+		}
+
+		/*Object^ Graph::Geometry_::get()
 		{
 			List<Object^>^ graphGeometry = gcnew List<Object^>();
-			graphGeometry->Add(Wire::Geometry_);
-			List<Vertex^>^ vertices = Vertices;
-			for each (Vertex^ vertex in vertices)
-			{
-				graphGeometry->Add(Autodesk::DesignScript::Geometry::Sphere::ByCenterPointRadius(vertex->Point(), 0.2));
-			}
+			graphGeometry->Add(Cluster::Geometry_);
 
 			return graphGeometry;
-		}
+		}*/
 
-		std::shared_ptr<TopologicCore::TopologicalQuery> Graph::GetCoreTopologicalQuery()
+		std::shared_ptr<TopologicCore::TopologicalQuery> DualGraph_::GetCoreTopologicalQuery()
 		{
-			return Wire::GetCoreTopologicalQuery();
+			return Cluster::GetCoreTopologicalQuery();
 		}
 
-		Graph::Graph(const TopologicCore::Wire::Ptr& kpCoreWire)
-			: Wire(kpCoreWire)
+		DualGraph_::DualGraph_(const TopologicCore::Cluster::Ptr& kpCoreCluster)
+			: Cluster(kpCoreCluster)
 		{
 
 		}
 
-		Graph::~Graph()
+		DualGraph_::~DualGraph_()
 		{
 			//delete m_pCoreWire;
 		}

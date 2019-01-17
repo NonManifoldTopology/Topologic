@@ -19,20 +19,20 @@ namespace Topologic
 		// 1. Copy topology
 		TopologicCore::Topology::Ptr pCoreTopology = 
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->DeepCopy();
+		//TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->DeepCopy();
 
 		// 2. Copy context
 		TopologicCore::Topology::Ptr pCoreContextTopology =
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(context->Topology->GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreCopyContextTopology = pCoreContextTopology->DeepCopy();
-		TopologicCore::Context::Ptr pCoreCopyContext = TopologicCore::Context::ByTopologyParameters(
-			pCoreCopyContextTopology,
+		//TopologicCore::Topology::Ptr pCoreCopyContextTopology = pCoreContextTopology->DeepCopy();
+		TopologicCore::Context::Ptr pCoreContext = TopologicCore::Context::ByTopologyParameters(
+			pCoreContextTopology,
 			context->U(), context->V(), context->W());
 		
 		// 3. Copy topology becomes the content of copy context's topology
 		std::shared_ptr<TopologicCore::Aperture> pCoreAperture = TopologicCore::Aperture::ByTopologyContext(
-			pCoreCopyTopology,
-			pCoreCopyContext
+			pCoreTopology,
+			pCoreContext
 			);
 
 		return gcnew Aperture(pCoreAperture);
@@ -64,17 +64,17 @@ namespace Topologic
 		// 1. Copy topology
 		TopologicCore::Topology::Ptr pCoreTopology =
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->DeepCopy();
+		//TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->DeepCopy();
 
 		// 2. Copy contextTopology
 		TopologicCore::Topology::Ptr pCoreContextTopology =
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(contextTopology->GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreCopyContextTopology = pCoreContextTopology->DeepCopy();
+		//TopologicCore::Topology::Ptr pCoreCopyContextTopology = pCoreContextTopology->DeepCopy();
 
 		// 3. Copy topology becomes the content of copy context's topology
 		std::shared_ptr<TopologicCore::Aperture> pCoreAperture = TopologicCore::Aperture::ByTopologyContext(
-			pCoreCopyTopology,
-			pCoreCopyContextTopology
+			pCoreTopology,
+			pCoreContextTopology
 		);
 
 		return gcnew Aperture(pCoreAperture);

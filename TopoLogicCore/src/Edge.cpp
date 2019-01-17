@@ -1,6 +1,7 @@
 #include "Edge.h"
 #include "Vertex.h"
 #include "Wire.h"
+#include "Face.h"
 #include "EdgeFactory.h"
 #include "GlobalCluster.h"
 
@@ -58,6 +59,11 @@ namespace TopologicCore
 	void Edge::Wires(std::list<Wire::Ptr>& rWires) const
 	{
 		UpwardNavigation(rWires);
+	}
+
+	void Edge::Faces(std::list<std::shared_ptr<Face>>& rFaces) const
+	{
+		UpwardNavigation(rFaces);
 	}
 
 	Edge::Ptr Edge::ByCurve(
@@ -124,18 +130,21 @@ namespace TopologicCore
 
 	Edge::Ptr Edge::ByStartVertexEndVertex(const std::shared_ptr<Vertex>& kpStartVertex, const std::shared_ptr<Vertex>& kpEndVertex)
 	{
-		Vertex::Ptr startVertexCopy = std::dynamic_pointer_cast<Vertex>(kpStartVertex->DeepCopy());
-		Vertex::Ptr endVertexCopy = std::dynamic_pointer_cast<Vertex>(kpEndVertex->DeepCopy());
+		if (kpStartVertex == nullptr)
+		{
+			throw std::exception();
+		}
 		BRepBuilderAPI_MakeEdge occtMakeEdge(
-			startVertexCopy->GetOcctVertex(),
-			endVertexCopy->GetOcctVertex());
+			kpStartVertex->GetOcctVertex(),
+			kpEndVertex->GetOcctVertex());
 		if (occtMakeEdge.Error() != BRepBuilderAPI_EdgeDone)
 		{
 			Throw(occtMakeEdge.Error());
 		}
 		Edge::Ptr pEdge = std::make_shared<Edge>(occtMakeEdge.Edge());
-		GlobalCluster::GetInstance().AddTopology(pEdge->GetOcctEdge());
-		return pEdge;
+		Edge::Ptr pCopyEdge = std::dynamic_pointer_cast<Edge>(pEdge->DeepCopy());
+		GlobalCluster::GetInstance().AddTopology(pCopyEdge->GetOcctEdge());
+		return pCopyEdge;
 	}
 
 	Vertex::Ptr Edge::SharedVertex(const Edge::Ptr& kpAnotherEdge) const
@@ -155,7 +164,16 @@ namespace TopologicCore
 
 	bool Edge::IsManifold() const
 	{
-		throw std::exception("Not implemented yet");
+		std::list<Wire::Ptr> wires;
+		Wires(wires);
+
+		// A manifold edge has 0 or 1 wires.
+		if (wires.size() < 2)
+		{
+			return true;
+		}
+
+		return false;
 	}
 
 	void Edge::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const

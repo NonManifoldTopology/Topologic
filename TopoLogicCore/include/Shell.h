@@ -82,8 +82,9 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <param name="rkFaces"></param>
+		/// <param name="kTolerance"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API std::shared_ptr<Shell> ByFaces(const std::list<std::shared_ptr<Face>>& rkFaces);
+		static TOPOLOGIC_API std::shared_ptr<Shell> ByFaces(const std::list<std::shared_ptr<Face>>& rkFaces, const double kTolerance = 0.001);
 
 		/// <summary>
 		/// 

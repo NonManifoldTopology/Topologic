@@ -65,30 +65,31 @@
       <Filter>Attribute</Filter>
     </ClInclude>
     <ClInclude Include="include\Graph.h">
-      <Filter>Extension</Filter>
+      <Filter>Extensions</Filter>
     </ClInclude>
     <ClInclude Include="include\GraphFactory.h">
       <Filter>Factory</Filter>
     </ClInclude>
     <ClInclude Include="include\GlobalCluster.h" />
     <ClInclude Include="include\CellUtility.h">
-      <Filter>Utility</Filter>
+      <Filter>Utilities</Filter>
     </ClInclude>
     <ClInclude Include="include\EdgeUtility.h">
-      <Filter>Utility</Filter>
+      <Filter>Utilities</Filter>
     </ClInclude>
     <ClInclude Include="include\FaceUtility.h">
-      <Filter>Utility</Filter>
+      <Filter>Utilities</Filter>
     </ClInclude>
     <ClInclude Include="include\ShellUtility.h">
-      <Filter>Utility</Filter>
+      <Filter>Utilities</Filter>
     </ClInclude>
     <ClInclude Include="include\TopologyUtility.h">
-      <Filter>Utility</Filter>
+      <Filter>Utilities</Filter>
     </ClInclude>
     <ClInclude Include="include\Bitwise.h">
-      <Filter>Utility</Filter>
+      <Filter>Utilities</Filter>
     </ClInclude>
+    <ClInclude Include="include\LicenseManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
@@ -148,29 +149,29 @@
       <Filter>Attribute</Filter>
     </ClCompile>
     <ClCompile Include="src\Graph.cpp">
-      <Filter>Extension</Filter>
+      <Filter>Extensions</Filter>
     </ClCompile>
     <ClCompile Include="src\GraphFactory.cpp">
       <Filter>Factory</Filter>
     </ClCompile>
     <ClCompile Include="src\GlobalCluster.cpp" />
     <ClCompile Include="src\CellUtility.cpp">
-      <Filter>Utility</Filter>
+      <Filter>Utilities</Filter>
     </ClCompile>
     <ClCompile Include="src\EdgeUtility.cpp">
-      <Filter>Utility</Filter>
+      <Filter>Utilities</Filter>
     </ClCompile>
     <ClCompile Include="src\FaceUtility.cpp">
-      <Filter>Utility</Filter>
+      <Filter>Utilities</Filter>
     </ClCompile>
     <ClCompile Include="src\ShellUtility.cpp">
-      <Filter>Utility</Filter>
+      <Filter>Utilities</Filter>
     </ClCompile>
     <ClCompile Include="src\TopologyUtility.cpp">
-      <Filter>Utility</Filter>
+      <Filter>Utilities</Filter>
     </ClCompile>
     <ClCompile Include="src\Bitwise.cpp">
-      <Filter>Utility</Filter>
+      <Filter>Utilities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -180,11 +181,11 @@
     <Filter Include="Attribute">
       <UniqueIdentifier>{4f812172-1f64-49db-8ec6-262b0c996221}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Extension">
-      <UniqueIdentifier>{d4638fb2-7e2b-466a-9ed8-76be45cf42c3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Utility">
+    <Filter Include="Utilities">
       <UniqueIdentifier>{90d86c48-21c1-4fc3-986c-6246b22e9a3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Extensions">
+      <UniqueIdentifier>{d4638fb2-7e2b-466a-9ed8-76be45cf42c3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

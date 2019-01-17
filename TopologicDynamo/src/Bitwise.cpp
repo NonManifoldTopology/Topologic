@@ -2,7 +2,7 @@
 
 namespace Topologic
 {
-	namespace Utility
+	namespace Utilities
 	{
 		int Bitwise::And(int argument1, int argument2)
 		{

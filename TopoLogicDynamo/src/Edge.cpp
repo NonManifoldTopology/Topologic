@@ -2,7 +2,7 @@
 #include <Vertex.h>
 #include <Wire.h>
 
-#include <TopologicUtility/include/EdgeUtility.h>
+#include <TopologicUtilities/include/EdgeUtility.h>
 
 #include <BRep_Tool.hxx>
 #include <Geom_BSplineCurve.hxx>
@@ -543,7 +543,7 @@ namespace Topologic
 		Exception^ e = nullptr;
 		TopologicCore::Edge::Ptr pCoreEdge = nullptr;
 		try {
-			pCoreEdge = TopologicUtility::EdgeUtility::ByVertices(coreVertices);
+			pCoreEdge = TopologicUtilities::EdgeUtility::ByVertices(coreVertices);
 		}
 		catch (const std::exception& rkException)
 		{

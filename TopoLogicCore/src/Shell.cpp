@@ -66,7 +66,7 @@ namespace TopologicCore
 		DownwardNavigation(rVertices);
 	}
 
-	Shell::Ptr Shell::ByFaces(const std::list<Face::Ptr>& rkFaces)
+	Shell::Ptr Shell::ByFaces(const std::list<Face::Ptr>& rkFaces, const double kTolerance)
 	{
 		if (rkFaces.empty())
 		{
@@ -76,16 +76,17 @@ namespace TopologicCore
 		TopTools_ListOfShape occtShapes;
 		for(const Face::Ptr& kpFace : rkFaces)
 		{
-			Face::Ptr pCopyFace = std::dynamic_pointer_cast<Face>(kpFace->DeepCopy());
-			occtShapes.Append(pCopyFace->GetOcctShape());
+			//Face::Ptr pCopyFace = std::dynamic_pointer_cast<Face>(kpFace->DeepCopy());
+			occtShapes.Append(kpFace->GetOcctShape());
 		}
 
-		TopoDS_Shape occtShape = OcctSewFaces(occtShapes);
+		TopoDS_Shape occtShape = OcctSewFaces(occtShapes, kTolerance);
 		try{
 			TopoDS_Shell occtShell = TopoDS::Shell(occtShape);
 			Shell::Ptr pShell = std::make_shared<Shell>(occtShell);
-			GlobalCluster::GetInstance().AddTopology(pShell->GetOcctShell());
-			return pShell;
+			Shell::Ptr pCopyShell = std::dynamic_pointer_cast<Shell>(pShell->DeepCopy());
+			GlobalCluster::GetInstance().AddTopology(pCopyShell);
+			return pCopyShell;
 		}
 		catch (Standard_TypeMismatch)
 		{

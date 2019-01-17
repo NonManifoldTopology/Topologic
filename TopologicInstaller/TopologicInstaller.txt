@@ -17,10 +17,10 @@
   OutFile "TopologicInstaller-${MyTIMESTAMP}.exe"
 
   ;Default installation folder
-  InstallDir "$DOCUMENTS\Topologic"
+  InstallDir "$PROGRAMFILES64\Topologic"
   
   ;Request application privileges for Windows Vista
-  RequestExecutionLevel user
+  RequestExecutionLevel admin 
 
 ;--------------------------------
 ;Interface Settings
@@ -60,13 +60,14 @@ Section "TopologicCore" TopologicCore
   SetOutPath "$INSTDIR"
   
   File ..\output\x64\Release\TopologicCore.dll
-  File ..\output\x64\Release\TopologicUtility.dll
+  File ..\output\x64\Release\TopologicUtilities.dll
   File ..\output\x64\Release\TK*.dll
   File ..\output\x64\Release\Topologic.xml
   File ..\output\x64\Release\Topologic_DynamoCustomization.xml
   File ..\output\x64\Release\TopologicEnergy.xml
   File ..\output\x64\Release\TopologicEnergy_DynamoCustomization.xml
   File ..\output\x64\Release\ShapeOp.0.1.0.dll
+  File ..\output\x64\Release\license.file
   
   ;ADD YOUR OWN FILES HERE...
   
@@ -78,7 +79,7 @@ Section "TopologicDynamo" TopologicDynamo
   SetOutPath "$INSTDIR"
   
   ;ADD YOUR OWN FILES HERE...
-  File ..\output\x64\Release\TopologicExtension.dll
+  File ..\output\x64\Release\TopologicExtensions.dll
   File ..\output\x64\Release\Topologic.dll
   ;File ..\output\x64\Release\Topologic.customization.dll
   File vc_redist.x64.exe

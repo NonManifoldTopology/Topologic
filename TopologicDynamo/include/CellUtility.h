@@ -3,10 +3,10 @@
 #include "Cell.h"
 
 namespace Topologic {
+	namespace Utilities {
 	/// <summary>
 	/// Utility provides extended functionality including further geometric methods and properties. These include the Bitwise, CellUtility, EdgeUtility, FaceUtility, ShellUtility and TopologyUtility classes.
 	/// </summary>
-	namespace Utility {
 
 		/// <summary>
 		/// CellUtility includes geometric methods relevant to a Cell.

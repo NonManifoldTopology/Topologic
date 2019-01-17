@@ -550,7 +550,7 @@ namespace TopologicEnergy
 			}
 		}
 
-		List<double>^ minMax = Topologic::Utility::CellUtility::GetMinMax(cell);
+		List<double>^ minMax = Topologic::Utilities::CellUtility::GetMinMax(cell);
 		double minZ = minMax[4];
 		double maxZ = minMax[5];
 		double ceilingHeight = Math::Abs(maxZ - minZ);
@@ -860,7 +860,7 @@ namespace TopologicEnergy
 						continue;
 					}
 					// skip small triangles
-					double area = Topologic::Utility::FaceUtility::Area(pFaceAperture);
+					double area = Topologic::Utilities::FaceUtility::Area(pFaceAperture);
 					if (area <= 0.1)
 					{
 						continue;
@@ -928,7 +928,7 @@ namespace TopologicEnergy
 			Autodesk::DesignScript::Geometry::Point^ scaledVertex = originalPoint->Subtract(faceCenterPoint->AsVector());
 			scaledVertex = safe_cast<Autodesk::DesignScript::Geometry::Point^>(scaledVertex->Scale(sqrtScaleFactor));
 			scaledVertex = scaledVertex->Add(faceCenterPoint->AsVector());
-			scaledVertices->Add(safe_cast<Vertex^>(Topology::ByGeometry(scaledVertex)));
+			scaledVertices->Add(safe_cast<Vertex^>(Topology::ByGeometry(scaledVertex, 0.001))); // tolerance does not matter as it's just a vertex
 		}
 		return scaledVertices;
 	}
@@ -950,7 +950,8 @@ namespace TopologicEnergy
 				safe_cast<Autodesk::DesignScript::Geometry::Point^>(v->Geometry_);
 			sumPoint = sumPoint->Add(p->AsVector());
 		}
-		return safe_cast<Vertex^>(Topology::ByGeometry(safe_cast<Autodesk::DesignScript::Geometry::Point^>(sumPoint->Scale(1.0 / (double)vertices->Count))));
+		Autodesk::DesignScript::Geometry::Point^ dynamoPoint = safe_cast<Autodesk::DesignScript::Geometry::Point^>(sumPoint->Scale(1.0 / (double)vertices->Count));
+		return safe_cast<Vertex^>(Topology::ByGeometry(dynamoPoint, 0.001)); // tolerance does not matter as it's just a vertex
 	}
 
 	OpenStudio::Point3dVector^ EnergyModel::GetFacePoints(Face^ buildingFace)
@@ -996,14 +997,14 @@ namespace TopologicEnergy
 	FaceType EnergyModel::CalculateFaceType(Face^ buildingFace, OpenStudio::Point3dVector^% facePoints, Cell^ buildingSpace, Autodesk::DesignScript::Geometry::Vector^ upVector)
 	{
 		FaceType faceType = FACE_WALL;
-		List<Face^>^ faces = Topologic::Utility::FaceUtility::Triangulate(buildingFace, 0.01);
+		List<Face^>^ faces = Topologic::Utilities::FaceUtility::Triangulate(buildingFace, 0.01);
 		if (faces->Count == 0)
 		{
 			throw gcnew Exception("Failed to triangulate a face.");
 		}
 
 		Face^ firstFace = faces[0];
-		Vertex^ centerPoint = Topologic::Utility::TopologyUtility::CenterOfMass(firstFace);
+		Vertex^ centerPoint = Topologic::Utilities::TopologyUtility::CenterOfMass(firstFace);
 		Autodesk::DesignScript::Geometry::Point^ dynamoCenterPoint =
 			safe_cast<Autodesk::DesignScript::Geometry::Point^>(centerPoint->Geometry_);
 
@@ -1020,11 +1021,11 @@ namespace TopologicEnergy
 		Autodesk::DesignScript::Geometry::Point^ pDynamoOffsetPoint =
 			dynamic_cast<Autodesk::DesignScript::Geometry::Point^>(dynamoCenterPoint->Translate(faceNormal->Scale(0.001)));
 
-		Vertex^ pOffsetVertex = safe_cast<Vertex^>(Topology::ByGeometry(pDynamoOffsetPoint));
+		Vertex^ pOffsetVertex = safe_cast<Vertex^>(Topology::ByGeometry(pDynamoOffsetPoint, 0.001)); // tolerance does not matter as it's just a vertex
 
 		if (faceAngle < 5.0 || faceAngle > 175.0)
 		{
-			bool isInside = Topologic::Utility::CellUtility::Contains(buildingSpace, pOffsetVertex);
+			bool isInside = Topologic::Utilities::CellUtility::Contains(buildingSpace, pOffsetVertex);
 			// The offset vertex has to be false, so if isInside is true, reverse the face.
 
 			//bool isFaceInsideOutWithRespectToTheCell = ;
@@ -1055,8 +1056,8 @@ namespace TopologicEnergy
 
 	int EnergyModel::StoryNumber(Cell^ buildingCell, double buildingHeight, List<double>^ floorLevels)
 	{
-		double volume = Utility::CellUtility::Volume(buildingCell);
-		Vertex^ centreOfMass = Utility::TopologyUtility::CenterOfMass(buildingCell);
+		double volume = Utilities::CellUtility::Volume(buildingCell);
+		Vertex^ centreOfMass = Utilities::TopologyUtility::CenterOfMass(buildingCell);
 		Autodesk::DesignScript::Geometry::Point^ centrePoint =
 			safe_cast<Autodesk::DesignScript::Geometry::Point^>(centreOfMass->Geometry_);
 		for (int i = 0; i < floorLevels->Count - 1; ++i)
