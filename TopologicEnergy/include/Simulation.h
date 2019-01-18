@@ -34,8 +34,16 @@ namespace TopologicEnergy
 		/// </summary>
 		/// <param name="energyModel"></param>
 		/// <param name="data"></param>
+		/// <param name="alpha"></param>
 		/// <returns name="GeometryColor[]"></returns>
-		static List<Modifiers::GeometryColor^>^ Display(EnergyModel^ energyModel, Dictionary<String^, Dictionary<String^, Object^>^>^ data);
+		static List<Modifiers::GeometryColor^>^ Display(EnergyModel^ energyModel, Dictionary<String^, Dictionary<String^, Object^>^>^ data, int alpha);
+
+		/// <summary>
+		/// This outputs the color range of the data. The first element is the colors, the second element is the normalised position within the spectrum. The colors are sorted by the values.
+		/// </summary>
+		/// <param name="data"></param>
+		/// <returns name="ColorRangeData"></returns>
+		static List<List<Object^>^>^ GetColorRange(Dictionary<String^, Dictionary<String^, Object^>^>^ data);
 
 	public protected:
 		/// <summary>

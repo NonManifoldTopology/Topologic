@@ -1,6 +1,9 @@
 #include "Simulation.h"
 #include "EnergyModel.h"
 
+using namespace System;
+using namespace System::Linq;
+
 namespace TopologicEnergy
 {
 	Simulation::Simulation(List<Topologic::Cell^>^ cells, System::String^ oswPath, OpenStudio::Model^ osModel, List<OpenStudio::Space^>^ osSpaces, String^ timestamp)
@@ -99,7 +102,6 @@ namespace TopologicEnergy
 			attributes->Add("r", (long long int)color->Red);
 			attributes->Add("g", (long long int)color->Green);
 			attributes->Add("b", (long long int)color->Blue);
-			attributes->Add("a", (long long int)50);
 			delete color;
 			data->Add(spaceName, attributes);
 		}
@@ -107,7 +109,54 @@ namespace TopologicEnergy
 		return data;
 	}
 
-	List<Modifiers::GeometryColor^>^ Simulation::Display(EnergyModel ^ energyModel, Dictionary<String^, Dictionary<String^, Object^>^>^ data)
+	List<List<Object^>^>^ Simulation::GetColorRange(Dictionary<String^, Dictionary<String^, Object^>^>^ data)
+	{
+		/// Value, color --> Normalized value, color
+		List<Object^>^ values = gcnew List<Object^>();
+		List<Object^>^ colors = gcnew List<Object^>();
+		for each(KeyValuePair<String^, Dictionary<String^, Object^>^>^ entry in data)
+		{
+			Dictionary<String^, Object^>^ attributes = entry->Value;
+			try{
+				double value = (double)attributes["Value"];
+				values->Add(value);
+
+				long long int r = (long long int)attributes["r"];
+				long long int g = (long long int)attributes["g"];
+				long long int b = (long long int)attributes["b"];
+				DSCore::Color^ color = DSCore::Color::ByARGB(50, (int)r, (int)g, (int)b);
+				colors->Add(color);
+			}
+			catch (...)
+			{
+
+			}
+		}
+
+		double minValue = (double)Enumerable::Min(values);
+		double maxValue = (double)Enumerable::Max(values);
+		double deltaValue = maxValue - minValue;
+
+		List<List<Object^>^>^ output = gcnew List<List<Object^>^>();
+		output->Add(colors);
+		if(deltaValue > 0.00001)
+		{
+			List<Object^>^ normalizedValues = gcnew List<Object^>();
+			for each(Object^ value in values)
+			{
+				double normalizedValue = ((double)value - minValue) / deltaValue;
+				normalizedValues->Add(normalizedValue);
+			}
+			output->Add(normalizedValues);
+		}
+		else
+		{
+			output->Add(values);
+		}
+		return output;
+	}
+
+	List<Modifiers::GeometryColor^>^ Simulation::Display(EnergyModel ^ energyModel, Dictionary<String^, Dictionary<String^, Object^>^>^ data, int alpha)
 	{
 		List<Modifiers::GeometryColor^>^ dynamoGeometryColors = gcnew List<Modifiers::GeometryColor^>();
 		List<Modifiers::GeometryColor^>^ dynamoApertures = gcnew List<Modifiers::GeometryColor^>();
@@ -134,14 +183,13 @@ namespace TopologicEnergy
 			if (hasKey)
 			{
 				Dictionary<String^, Object^>^ attributes = data[strName];
-				long long int a = (long long int)attributes["a"];
 				long long int r = (long long int)attributes["r"];
 				long long int g = (long long int)attributes["g"];
 				long long int b = (long long int)attributes["b"];
-				color = DSCore::Color::ByARGB((int)a, (int)r, (int)g, (int)b);
+				color = DSCore::Color::ByARGB(alpha, (int)r, (int)g, (int)b);
 			}else
 			{
-				color = DSCore::Color::ByARGB(50, 128, 128, 128);
+				color = DSCore::Color::ByARGB(alpha, 128, 128, 128);
 			}
 
 			{
