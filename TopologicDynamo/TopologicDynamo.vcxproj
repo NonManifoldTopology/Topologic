@@ -150,6 +150,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\About.h" />
     <ClInclude Include="include\Aperture.h" />
     <ClInclude Include="include\ApertureFactory.h" />
     <ClInclude Include="include\Attribute.h" />
@@ -191,6 +192,7 @@
     <ClInclude Include="include\WireFactory.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\About.cpp" />
     <ClCompile Include="src\Aperture.cpp" />
     <ClCompile Include="src\ApertureFactory.cpp" />
     <ClCompile Include="src\Attribute.cpp" />

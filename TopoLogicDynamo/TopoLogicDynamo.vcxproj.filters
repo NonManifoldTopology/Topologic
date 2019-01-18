@@ -90,6 +90,7 @@
       <Filter>Utilities</Filter>
     </ClInclude>
     <ClInclude Include="include\LicenseManager.h" />
+    <ClInclude Include="include\About.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
@@ -173,6 +174,7 @@
     <ClCompile Include="src\Bitwise.cpp">
       <Filter>Utilities</Filter>
     </ClCompile>
+    <ClCompile Include="src\About.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Factory">
