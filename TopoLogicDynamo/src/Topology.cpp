@@ -134,17 +134,23 @@ namespace Topologic
 			// If it is a surface which actually contains more than 1 surfaces, create a polySurface first, because it has a SurfaceCount method.
 			List<Autodesk::DesignScript::Geometry::Surface^>^ surfaces = gcnew List<Autodesk::DesignScript::Geometry::Surface^>();
 			surfaces->Add(dynamoSurface);
-			dynamoPolySurface = Autodesk::DesignScript::Geometry::PolySurface::ByJoinedSurfaces(surfaces);
-			int numOfSurfaces = dynamoPolySurface->SurfaceCount();
-			if (numOfSurfaces < 1)
+			try{
+				dynamoPolySurface = Autodesk::DesignScript::Geometry::PolySurface::ByJoinedSurfaces(surfaces);
+				int numOfSurfaces = dynamoPolySurface->SurfaceCount();
+				if (numOfSurfaces < 1)
+				{
+					throw gcnew Exception("The geometry is a surface by type but no surface is detected.");
+				}else if (numOfSurfaces > 1)
+				{
+					// This can be a shell or a cluster, so call Topology::ByPolySurface.
+					Topology^ topology = Topology::ByPolySurface(dynamoPolySurface);
+					delete dynamoPolySurface;
+					return topology;
+				}
+			}
+			catch (...)
 			{
-				throw gcnew Exception("The geometry is a surface by type but no surface is detected.");
-			}else if (numOfSurfaces > 1)
-			{
-				// This can be a shell or a cluster, so call Topology::ByPolySurface.
-				Topology^ topology = Topology::ByPolySurface(dynamoPolySurface);
-				delete dynamoPolySurface;
-				return topology;
+
 			}
 
 			return Face::BySurface(dynamoSurface);

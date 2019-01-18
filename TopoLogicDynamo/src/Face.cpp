@@ -772,7 +772,7 @@ namespace Topologic
 		delete m_pCoreFace;
 	}
 
-	Face^ Face::AddAperture(Face^ face, Face^ apertureDesign, int numEdgeSamples)
+	Face^ Face::AddApertureDesign(Face^ face, Face^ apertureDesign, int numEdgeSamples)
 	{
 		if (numEdgeSamples <= 0)
 		{
