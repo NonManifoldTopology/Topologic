@@ -46,9 +46,6 @@
     <ClInclude Include="include\EdgeFactory.h">
       <Filter>Factory</Filter>
     </ClInclude>
-    <ClInclude Include="include\AttributeManager.h">
-      <Filter>Attribute</Filter>
-    </ClInclude>
     <ClInclude Include="include\AttributeFactory.h">
       <Filter>Attribute</Filter>
     </ClInclude>
@@ -91,6 +88,9 @@
     </ClInclude>
     <ClInclude Include="include\LicenseManager.h" />
     <ClInclude Include="include\About.h" />
+    <ClInclude Include="include\AttributeFactoryManager.h">
+      <Filter>Attribute</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
@@ -134,9 +134,6 @@
     <ClCompile Include="src\WireFactory.cpp">
       <Filter>Factory</Filter>
     </ClCompile>
-    <ClCompile Include="src\AttributeManager.cpp">
-      <Filter>Attribute</Filter>
-    </ClCompile>
     <ClCompile Include="src\IntAttributeFactory.cpp">
       <Filter>Attribute</Filter>
     </ClCompile>
@@ -175,6 +172,9 @@
       <Filter>Utilities</Filter>
     </ClCompile>
     <ClCompile Include="src\About.cpp" />
+    <ClCompile Include="src\AttributeFactoryManager.cpp">
+      <Filter>Attribute</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Factory">

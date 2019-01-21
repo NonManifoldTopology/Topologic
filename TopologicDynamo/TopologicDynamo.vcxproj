@@ -155,7 +155,7 @@
     <ClInclude Include="include\ApertureFactory.h" />
     <ClInclude Include="include\Attribute.h" />
     <ClInclude Include="include\AttributeFactory.h" />
-    <ClInclude Include="include\AttributeManager.h" />
+    <ClInclude Include="include\AttributeFactoryManager.h" />
     <ClInclude Include="include\Bitwise.h" />
     <ClInclude Include="include\Cell.h" />
     <ClInclude Include="include\CellComplex.h" />
@@ -196,7 +196,7 @@
     <ClCompile Include="src\Aperture.cpp" />
     <ClCompile Include="src\ApertureFactory.cpp" />
     <ClCompile Include="src\Attribute.cpp" />
-    <ClCompile Include="src\AttributeManager.cpp" />
+    <ClCompile Include="src\AttributeFactoryManager.cpp" />
     <ClCompile Include="src\Bitwise.cpp" />
     <ClCompile Include="src\Cell.cpp" />
     <ClCompile Include="src\CellComplex.cpp" />
