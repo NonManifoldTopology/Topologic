@@ -53,6 +53,20 @@ namespace Topologic
 		return pAdjacentEdges;
 	}
 
+	Vertex^ Edge::StartVertex::get()
+	{
+		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
+		TopologicCore::Vertex::Ptr pCoreStartVertex = pCoreEdge->StartVertex();
+		return gcnew Vertex(pCoreStartVertex);
+	}
+
+	Vertex^ Edge::EndVertex::get()
+	{
+		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
+		TopologicCore::Vertex::Ptr pCoreStartVertex = pCoreEdge->EndVertex();
+		return gcnew Vertex(pCoreStartVertex);
+	}
+
 	List<Vertex^>^ Edge::Vertices::get()
 	{
 		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());

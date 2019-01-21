@@ -50,13 +50,13 @@ namespace Topologic
 		[IsVisibleInDynamoLibrary(false)]
 		static Aperture^ ByBoundaryWithinHost(Face^ hostFace, Wire^ apertureBoundary, bool link, bool open);
 
-		/// <summary>
+		/*/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="topology"></param>
 		/// <param name="contextTopology"></param>
 		/// <returns name="Aperture"></returns>
-		static Aperture^ ByTopologyContext(Topology^ topology, Topology^ contextTopology);
+		static Aperture^ ByTopologyContext(Topology^ topology, Topology^ contextTopology);*/
 
 		/// <summary>
 		/// Returns the underlying topology.

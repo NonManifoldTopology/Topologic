@@ -33,6 +33,22 @@ namespace Topologic {
 		}
 
 		/// <summary>
+		/// Get the start vertex of the edge.
+		/// </summary>
+		/// <returns name="Vertex"></returns>
+		property Vertex^ StartVertex {
+			Vertex^ get();
+		}
+
+		/// <summary>
+		/// Get the end vertex of the edge.
+		/// </summary>
+		/// <returns name="Vertex"></returns>
+		property Vertex^ EndVertex {
+			Vertex^ get();
+		}
+
+		/// <summary>
 		/// Get the vertices at the ends of the edge.
 		/// </summary>
 		/// <returns name="Vertex[]"></returns>

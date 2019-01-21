@@ -52,6 +52,18 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <returns></returns>
+		TOPOLOGIC_API std::shared_ptr<Vertex> StartVertex() const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		TOPOLOGIC_API std::shared_ptr<Vertex> EndVertex() const;
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="rVertices"></param>
 		TOPOLOGIC_API void Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const;
 

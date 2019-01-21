@@ -45,15 +45,24 @@ namespace TopologicCore
 		}
 	}
 
-	void Edge::Vertices(std::list<Vertex::Ptr>& rVertices) const
+	std::shared_ptr<Vertex> Edge::StartVertex() const
 	{
 		ShapeAnalysis_Edge occtShapeAnalysisEdge;
-		
-		TopoDS_Vertex occtVertex1 = occtShapeAnalysisEdge.FirstVertex(GetOcctEdge());
-		rVertices.push_back(std::make_shared<Vertex>(occtVertex1));
-		
-		TopoDS_Vertex occtVertex2 = occtShapeAnalysisEdge.LastVertex(GetOcctEdge());
-		rVertices.push_back(std::make_shared<Vertex>(occtVertex2));
+		TopoDS_Vertex occtFirstVertex = occtShapeAnalysisEdge.FirstVertex(GetOcctEdge());
+		return std::make_shared<Vertex>(occtFirstVertex);
+	}
+
+	std::shared_ptr<Vertex> Edge::EndVertex() const
+	{
+		ShapeAnalysis_Edge occtShapeAnalysisEdge;
+		TopoDS_Vertex occtLastVertex = occtShapeAnalysisEdge.LastVertex(GetOcctEdge());
+		return std::make_shared<Vertex>(occtLastVertex);
+	}
+
+	void Edge::Vertices(std::list<Vertex::Ptr>& rVertices) const
+	{
+		rVertices.push_back(StartVertex());
+		rVertices.push_back(EndVertex());
 	}
 
 	void Edge::Wires(std::list<Wire::Ptr>& rWires) const

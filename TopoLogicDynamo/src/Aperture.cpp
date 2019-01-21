@@ -59,26 +59,26 @@ namespace Topologic
 		return gcnew Aperture(pCoreAperture);
 	}
 
-	Aperture ^ Aperture::ByTopologyContext(Topologic::Topology ^ topology, Topologic::Topology ^ contextTopology)
-	{
-		// 1. Copy topology
-		TopologicCore::Topology::Ptr pCoreTopology =
-			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
-		//TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->DeepCopy();
+	//Aperture ^ Aperture::ByTopologyContext(Topologic::Topology ^ topology, Topologic::Topology ^ contextTopology)
+	//{
+	//	// 1. Copy topology
+	//	TopologicCore::Topology::Ptr pCoreTopology =
+	//		TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
+	//	//TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->DeepCopy();
 
-		// 2. Copy contextTopology
-		TopologicCore::Topology::Ptr pCoreContextTopology =
-			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(contextTopology->GetCoreTopologicalQuery());
-		//TopologicCore::Topology::Ptr pCoreCopyContextTopology = pCoreContextTopology->DeepCopy();
+	//	// 2. Copy contextTopology
+	//	TopologicCore::Topology::Ptr pCoreContextTopology =
+	//		TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(contextTopology->GetCoreTopologicalQuery());
+	//	//TopologicCore::Topology::Ptr pCoreCopyContextTopology = pCoreContextTopology->DeepCopy();
 
-		// 3. Copy topology becomes the content of copy context's topology
-		std::shared_ptr<TopologicCore::Aperture> pCoreAperture = TopologicCore::Aperture::ByTopologyContext(
-			pCoreTopology,
-			pCoreContextTopology
-		);
+	//	// 3. Copy topology becomes the content of copy context's topology
+	//	std::shared_ptr<TopologicCore::Aperture> pCoreAperture = TopologicCore::Aperture::ByTopologyContext(
+	//		pCoreTopology,
+	//		pCoreContextTopology
+	//	);
 
-		return gcnew Aperture(pCoreAperture);
-	}
+	//	return gcnew Aperture(pCoreAperture);
+	//}
 
 	Topologic::Topology^ Aperture::Topology()
 	{
