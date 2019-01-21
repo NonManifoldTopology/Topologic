@@ -28,7 +28,7 @@
 #include <ClusterFactory.h>
 #include <GraphFactory.h>
 #include <ApertureFactory.h>
-#include <AttributeManager.h>
+#include <AttributeFactoryManager.h>
 #include <AttributeFactory.h>
 #include <LicenseManager.h>
 
@@ -472,7 +472,7 @@ namespace Topologic
 			return nullptr;
 		}
 
-		AttributeFactory^ attributeFactory = AttributeManager::Instance->GetFactory(pSupportAttribute);
+		AttributeFactory^ attributeFactory = AttributeFactoryManager::Instance->GetFactory(pSupportAttribute);
 		return attributeFactory->CreateValue(pSupportAttribute);
 	}
 
@@ -484,7 +484,7 @@ namespace Topologic
 		for each(KeyValuePair<String^, Object^>^ entry in attributes)
 		{
 			System::Type^ entryValueType = entry->Value->GetType();
-			AttributeManager::Instance->SetAttribute(this, entry->Key, entry->Value); 
+			AttributeFactoryManager::Instance->SetAttribute(this, entry->Key, entry->Value);
 		}
 		return this;
 	}
@@ -496,7 +496,7 @@ namespace Topologic
 		std::string cppName = msclr::interop::marshal_as<std::string>(name);
 
 		TopologicUtilities::Attribute::Ptr pSupportAttribute = TopologicUtilities::AttributeManager::GetInstance().Find(pCoreTopology->GetOcctShape(), cppName);
-		AttributeFactory^ attributeFactory = AttributeManager::Instance->GetFactory(pSupportAttribute);
+		AttributeFactory^ attributeFactory = AttributeFactoryManager::Instance->GetFactory(pSupportAttribute);
 		return attributeFactory->CreateValue(pSupportAttribute);
 	}
 
@@ -519,7 +519,7 @@ namespace Topologic
 			String^ key = gcnew String(rkAttributePair.first.c_str());
 			keys->Add(key);
 
-			AttributeFactory^ attributeFactory = AttributeManager::Instance->GetFactory(rkAttributePair.second);
+			AttributeFactory^ attributeFactory = AttributeFactoryManager::Instance->GetFactory(rkAttributePair.second);
 			values->Add(attributeFactory->CreateValue(rkAttributePair.second));
 		}
 

@@ -1,6 +1,6 @@
 #include <Attribute.h>
 
-#include <AttributeManager.h>
+#include <AttributeFactoryManager.h>
 #include <AttributeFactory.h>
 
 namespace Topologic
