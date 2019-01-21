@@ -13,7 +13,12 @@ using namespace Autodesk::DesignScript::Runtime;
 
 namespace Topologic
 {
+	ref class CellComplex;
+	ref class Cell;
+	ref class Shell;
 	ref class Face;
+	ref class Wire;
+	ref class Edge;
 	ref class Vertex;
 	ref class Context;
 	ref class TopologyFactory;
@@ -307,6 +312,69 @@ namespace Topologic
 		property List<Topology^>^ SubTopologies
 		{
 			List<Topology^>^ get();
+		}
+
+		/// <summary>
+		/// Get the shells constituent to the Topology.
+		/// </summary>
+		/// <returns name="Shell[]"></returns>
+		property List<Shell^>^ Shells
+		{
+			List<Shell^>^ get();
+		}
+
+		/// <summary>
+		/// Get the faces constituent to the Topology.
+		/// </summary>
+		/// <returns name="Face[]"></returns>
+		property List<Face^>^ Faces
+		{
+			List<Face^>^ get();
+		}
+
+		/// <summary>
+		/// Get the wires constituent to the Topology.
+		/// </summary>
+		/// <returns name="Wire[]"></returns>
+		property List<Wire^>^ Wires
+		{
+			List<Wire^>^ get();
+		}
+
+		/// <summary>
+		/// Get the edges constituent to the Topology.
+		/// </summary>
+		/// <returns name="Edge[]"></returns>
+		property List<Edge^>^ Edges
+		{
+			List<Edge^>^ get();
+		}
+
+		/// <summary>
+		/// Get the vertices constituent to the Topology.
+		/// </summary>
+		/// <returns name="Vertex[]"></returns>
+		property List<Vertex^>^ Vertices
+		{
+			List<Vertex^>^ get();
+		}
+
+		/// <summary>
+		/// Get the cells constituent to the Topology.
+		/// </summary>
+		/// <returns name="Cell[]"></returns>
+		property List<Cell^>^ Cells
+		{
+			List<Cell^>^ get();
+		}
+
+		/// <summary>
+		/// Get the cellComplexes constituent to the Topology.
+		/// </summary>
+		/// <returns name="CellComplex[]"></returns>
+		property List<CellComplex^>^ CellComplexes
+		{
+			List<CellComplex^>^ get();
 		}
 
 		/// <summary>

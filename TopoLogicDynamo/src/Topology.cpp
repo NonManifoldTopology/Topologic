@@ -924,6 +924,139 @@ namespace Topologic
 		return pTopologies;
 	}
 
+	List<Shell^>^ Topology::Shells::get()
+	{
+		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+
+		std::list<TopologicCore::Shell::Ptr> coreShells;
+		pCoreTopology->Shells(coreShells);
+
+		List<Shell^>^ pShells = gcnew List<Shell^>();
+		for (std::list<TopologicCore::Shell::Ptr>::const_iterator kShellIterator = coreShells.begin();
+			kShellIterator != coreShells.end();
+			kShellIterator++)
+		{
+			Shell^ pShell = gcnew Shell(*kShellIterator);
+			pShells->Add(pShell);
+		}
+
+		return pShells;
+	}
+
+	List<Face^>^ Topology::Faces::get()
+	{
+		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+
+		std::list<TopologicCore::Face::Ptr> coreFaces;
+		pCoreTopology->Faces(coreFaces);
+
+		List<Face^>^ pFaces = gcnew List<Face^>();
+		for (std::list<TopologicCore::Face::Ptr>::const_iterator kFaceIterator = coreFaces.begin();
+			kFaceIterator != coreFaces.end();
+			kFaceIterator++)
+		{
+			Face^ pFace = gcnew Face(*kFaceIterator);
+			pFaces->Add(pFace);
+		}
+
+		return pFaces;
+	}
+
+	List<Wire^>^ Topology::Wires::get()
+	{
+		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+
+		std::list<TopologicCore::Wire::Ptr> coreWires;
+		pCoreTopology->Wires(coreWires);
+
+		List<Wire^>^ pWires = gcnew List<Wire^>();
+		for (std::list<TopologicCore::Wire::Ptr>::const_iterator kWireIterator = coreWires.begin();
+			kWireIterator != coreWires.end();
+			kWireIterator++)
+		{
+			Wire^ pWire = gcnew Wire(*kWireIterator);
+			pWires->Add(pWire);
+		}
+
+		return pWires;
+	}
+
+	List<Edge^>^ Topology::Edges::get()
+	{
+		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+
+		std::list<TopologicCore::Edge::Ptr> coreEdges;
+		pCoreTopology->Edges(coreEdges);
+
+		List<Edge^>^ pEdges = gcnew List<Edge^>();
+		for (std::list<TopologicCore::Edge::Ptr>::const_iterator kEdgeIterator = coreEdges.begin();
+			kEdgeIterator != coreEdges.end();
+			kEdgeIterator++)
+		{
+			Edge^ pEdge = gcnew Edge(*kEdgeIterator);
+			pEdges->Add(pEdge);
+		}
+
+		return pEdges;
+	}
+
+	List<Vertex^>^ Topology::Vertices::get()
+	{
+		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+
+		std::list<TopologicCore::Vertex::Ptr> coreVertices;
+		pCoreTopology->Vertices(coreVertices);
+
+		List<Vertex^>^ pVertices = gcnew List<Vertex^>();
+		for (std::list<TopologicCore::Vertex::Ptr>::const_iterator kVertexIterator = coreVertices.begin();
+			kVertexIterator != coreVertices.end();
+			kVertexIterator++)
+		{
+			Vertex^ pVertex = gcnew Vertex(*kVertexIterator);
+			pVertices->Add(pVertex);
+		}
+
+		return pVertices;
+	}
+
+	List<Cell^>^ Topology::Cells::get()
+	{
+		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+
+		std::list<TopologicCore::Cell::Ptr> coreCells;
+		pCoreTopology->Cells(coreCells);
+
+		List<Cell^>^ pCells = gcnew List<Cell^>();
+		for (std::list<TopologicCore::Cell::Ptr>::const_iterator kCellIterator = coreCells.begin();
+			kCellIterator != coreCells.end();
+			kCellIterator++)
+		{
+			Cell^ pCell = gcnew Cell(*kCellIterator);
+			pCells->Add(pCell);
+		}
+
+		return pCells;
+	}
+
+	List<CellComplex^>^ Topology::CellComplexes::get()
+	{
+		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+
+		std::list<TopologicCore::CellComplex::Ptr> coreCellComplexes;
+		pCoreTopology->CellComplexes(coreCellComplexes);
+
+		List<CellComplex^>^ pCellComplexes = gcnew List<CellComplex^>();
+		for (std::list<TopologicCore::CellComplex::Ptr>::const_iterator kCellComplexIterator = coreCellComplexes.begin();
+			kCellComplexIterator != coreCellComplexes.end();
+			kCellComplexIterator++)
+		{
+			CellComplex^ pCellComplex = gcnew CellComplex(*kCellComplexIterator);
+			pCellComplexes->Add(pCellComplex);
+		}
+
+		return pCellComplexes;
+	}
+
 	/*Topology^ Topology::Simplify()
 	{
 		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());

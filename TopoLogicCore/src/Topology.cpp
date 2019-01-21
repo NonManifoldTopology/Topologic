@@ -2193,6 +2193,41 @@ namespace TopologicCore
 		}
 	}
 
+	void Topology::Shells(std::list<std::shared_ptr<Shell>>& rShells) const
+	{
+		Navigate(rShells);
+	}
+
+	void Topology::Edges(std::list<std::shared_ptr<Edge>>& rEdges) const
+	{
+		Navigate(rEdges);
+	}
+
+	void Topology::Faces(std::list<std::shared_ptr<Face>>& rFaces) const
+	{
+		Navigate(rFaces);
+	}
+
+	void Topology::Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const
+	{
+		Navigate(rVertices);
+	}
+
+	void Topology::Wires(std::list<std::shared_ptr<Wire>>& rWires) const
+	{
+		Navigate(rWires);
+	}
+
+	void Topology::Cells(std::list<std::shared_ptr<Cell>>& rCells) const
+	{
+		Navigate(rCells);
+	}
+
+	void Topology::CellComplexes(std::list<std::shared_ptr<CellComplex>>& rCellComplexes) const
+	{
+		Navigate(rCellComplexes);
+	}
+
 	bool Topology::IsContainerType(const TopoDS_Shape& rkOcctShape)
 	{
 		TopAbs_ShapeEnum occtShapeType = rkOcctShape.ShapeType();

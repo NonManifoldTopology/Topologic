@@ -366,6 +366,57 @@ namespace TopologicCore
 		/// <returns></returns>
 		TOPOLOGIC_API virtual std::string GetTypeAsString() const = 0;
 
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rShells"></param>
+		TOPOLOGIC_API void Shells(std::list<std::shared_ptr<Shell>>& rShells) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rEdges"></param>
+		TOPOLOGIC_API void Edges(std::list<std::shared_ptr<Edge>>& rEdges) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rFaces"></param>
+		TOPOLOGIC_API void Faces(std::list<std::shared_ptr<Face>>& rFaces) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rVertices"></param>
+		TOPOLOGIC_API void Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rWires"></param>
+		TOPOLOGIC_API void Wires(std::list<std::shared_ptr<Wire>>& rWires) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rCells"></param>
+		TOPOLOGIC_API void Cells(std::list<std::shared_ptr<Cell>>& rCells) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rCellComplexes"></param>
+		TOPOLOGIC_API void CellComplexes(std::list<std::shared_ptr<CellComplex>>& rCellComplexes) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kOcctShapeType"></param>
+		/// <param name="rMembers"></param>
+		template <class Subclass>
+		void Navigate(std::list<std::shared_ptr<Subclass>>& rMembers) const;
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -393,7 +444,6 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kOcctShapeType"></param>
 		/// <param name="rMembers"></param>
 		template <class Subclass>
 		void DownwardNavigation(std::list<std::shared_ptr<Subclass>>& rMembers) const;
@@ -684,6 +734,23 @@ namespace TopologicCore
 		int m_dimensionality;
 		static int m_numOfTopologies;
 	};
+
+	template<class Subclass>
+	void Topology::Navigate(std::list<std::shared_ptr<Subclass>>& rMembers) const
+	{
+		if (Subclass::Type() > GetType())
+		{
+			UpwardNavigation(rMembers);
+		}
+		else if (Subclass::Type() < GetType())
+		{
+			DownwardNavigation(rMembers);
+		}
+		else
+		{
+			rMembers.push_back(TopologicalQuery::Downcast<Subclass>(ByOcctShape(GetOcctShape(), GetInstanceGUID())));
+		}
+	}
 
 	template <class Subclass>
 	void Topology::UpwardNavigation(std::list<std::shared_ptr<Subclass>>& rAncestors) const

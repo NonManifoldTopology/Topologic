@@ -117,8 +117,6 @@ namespace Topologic
 			List<CellComplex^>^ get();
 		}
 
-		//static int ClusterType() { return 0; }
-
 	public protected:
 		Cluster();
 

@@ -27,35 +27,9 @@ namespace TopologicCore
 		const double  kDefaultParameter = 0.0;
 		Topology::Ptr pClosestSimplestSubshape = kpContextTopology->ClosestSimplestSubshape(kpTopology->CenterOfMass());
 
-		// Check aperture topology and context topology.
-		// If the context is a face, and the aperture is either a wire or a face,
-		// - For an aperture wire, create a hole
-		// - For an aperture face, create a hole and plug it
-		//if (pClosestSimplestSubshape->GetType() == TOPOLOGY_FACE)
-		//{
-		//	Face::Ptr pFaceContext = TopologicalQuery::Downcast<Face>(pClosestSimplestSubshape);
-		//	if (kpTopology->GetType() == TOPOLOGY_WIRE)
-		//	{
-		//		Wire::Ptr pWireAperture = TopologicalQuery::Downcast<Wire>(kpTopology);
-		//		TopoDS_Shape occtOldSubentity = pFaceContext->GetOcctFace();
-		//		pFaceContext->AddInternalBoundary(pWireAperture);
-		//		kpContextTopology->ReplaceSubentity(occtOldSubentity, pFaceContext->GetOcctFace());
-		//	}
-		//	else if (kpTopology->GetType() == TOPOLOGY_FACE)
-		//	{
-		//		Face::Ptr pFaceAperture = TopologicalQuery::Downcast<Face>(kpTopology);
-		//		
-		//		// Merge pClosestSimplestSubshape with pFaceAperture,
-		//		// then pClosestSimplestSubshape is the 
-		//		//Topology::Ptr = pClosestSimplestSubshape->Merge(pFaceAperture);
-		//	}
-		//}
-
 		Context::Ptr pContext = Context::ByTopologyParameters(pClosestSimplestSubshape, kDefaultParameter, kDefaultParameter, kDefaultParameter);
 
 		std::shared_ptr<Aperture> pAperture = std::make_shared<Aperture>(kpTopology, pContext, kDefaultStatus);
-
-		//kpContextTopology->AddSubContent(pAperture, Face::Type());
 		
 		return pAperture;
 	}
