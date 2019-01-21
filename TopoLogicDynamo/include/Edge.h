@@ -66,11 +66,11 @@ namespace Topologic {
 		}
 
 		/// <summary>
-		/// Return the shared vertex between two edges.
+		/// Return the shared vertices between two edges.
 		/// </summary>
 		/// <param name="edge">An edge.</param>
-		/// <returns name="Vertex">the shared vertex of an edge</returns>
-		Vertex^ SharedVertex(Edge^ edge);
+		/// <returns name="Vertex[]">The shared vertices of the edges</returns>
+		List<Vertex^>^ SharedVertices(Edge^ edge);
 
 		property Object^ Geometry_
 		{

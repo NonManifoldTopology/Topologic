@@ -122,8 +122,9 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <param name="kpAnotherEdge"></param>
+		/// <param name="rSharedVertices"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API std::shared_ptr<Vertex> SharedVertex(const Edge::Ptr& kpAnotherEdge) const;
+		TOPOLOGIC_API void SharedVertices(const Edge::Ptr& kpAnotherEdge, std::list<std::shared_ptr<Vertex>>& rSharedVertices) const;
 
 		/// <summary>
 		/// 

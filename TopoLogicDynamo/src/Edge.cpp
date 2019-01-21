@@ -186,13 +186,25 @@ namespace Topologic
 		}
 	}
 
-	Vertex^ Edge::SharedVertex(Edge^ edge)
+	List<Vertex^>^ Edge::SharedVertices(Edge^ edge)
 	{
 		TopologicCore::Edge::Ptr pCoreEdge1 = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
 		TopologicCore::Edge::Ptr pCoreEdge2 = TopologicCore::Topology::Downcast<TopologicCore::Edge>(edge->GetCoreTopologicalQuery());
-		TopologicCore::Vertex::Ptr pCoreVertex = pCoreEdge1->SharedVertex(pCoreEdge2);
+		std::list<TopologicCore::Vertex::Ptr> pCoreVertices;
+		pCoreEdge1->SharedVertices(pCoreEdge2, pCoreVertices);
 
-		return gcnew Vertex(pCoreVertex);
+		List<Vertex^>^ pSharedVertices = gcnew List<Vertex^>();
+
+		for (std::list<TopologicCore::Vertex::Ptr>::const_iterator kVertexIterator = pCoreVertices.begin();
+			kVertexIterator != pCoreVertices.end();
+			kVertexIterator++)
+		{
+			const TopologicCore::Vertex::Ptr& kpCoreVertex = *kVertexIterator;
+			Vertex^ pVertex = gcnew Vertex(kpCoreVertex);
+			pSharedVertices->Add(pVertex);
+		}
+
+		return pSharedVertices;
 	}
 
 	Autodesk::DesignScript::Geometry::Curve^ Edge::Curve()
