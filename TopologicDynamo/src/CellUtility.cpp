@@ -6,7 +6,7 @@
 
 namespace Topologic {
 	namespace Utilities {
-		Cell^ CellUtility::ByVerticesFaceIndices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<int>^>^ faceIndices)
+		/*Cell^ CellUtility::ByVerticesFaceIndices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<int>^>^ faceIndices)
 		{
 			std::vector<TopologicCore::Vertex::Ptr> coreVertices;
 			for each(Vertex^ pVertex in vertices)
@@ -27,7 +27,7 @@ namespace Topologic {
 
 			Cell^ pCell = gcnew Cell(TopologicUtilities::CellUtility::ByVerticesFaceIndices(coreVertices, coreFaceIndices));
 			return pCell;
-		}
+		}*/
 
 		Cell^ CellUtility::ByLoft(System::Collections::Generic::IEnumerable<Wire^>^ wires)
 		{

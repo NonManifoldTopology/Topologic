@@ -27,7 +27,7 @@ namespace Topologic {
 			}
 		}
 
-		Shell^ ShellUtility::ByVerticesFaceIndices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<int>^>^ faceIndices)
+		/*Shell^ ShellUtility::ByVerticesFaceIndices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<int>^>^ faceIndices)
 		{
 			std::vector<TopologicCore::Vertex::Ptr> coreVertices;
 			for each(Vertex^ pVertex in vertices)
@@ -47,7 +47,7 @@ namespace Topologic {
 			}
 
 			return gcnew Shell(TopologicUtilities::ShellUtility::ByVerticesFaceIndices(coreVertices, coreFaceIndices));
-		}
+		}*/
 
 		List<Face^>^ ShellUtility::ByFacePlanarization(Face^ face, int iteration, int numEdgeSamples, int numUPanels, int numVPanels, double tolerance, bool capBottom, bool capTop)
 		{

@@ -22,7 +22,7 @@ namespace Topologic
 
 		void SetAttribute(Topology^ topology, String^ key, Object^ value);
 
-		AttributeFactory^ GetFactory(const std::shared_ptr<TopologicUtilities::Attribute> kpSupportAttribute);
+		AttributeFactory^ GetFactory(const std::shared_ptr<TopologicUtilities::Attribute> kpUtilitiesAttribute);
 
 	private:
 		AttributeFactoryManager();

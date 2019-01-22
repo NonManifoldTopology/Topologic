@@ -5,13 +5,13 @@
 
 namespace Topologic
 {
-	TopologicUtilities::Attribute::Ptr Attribute::SupportAttribute::get()
+	TopologicUtilities::Attribute::Ptr Attribute::UtilitiesAttribute::get()
 	{
-		return *m_pSupportAttribute;
+		return *m_pUtilitiesAttribute;
 	}
 
-	Attribute::Attribute(const TopologicUtilities::Attribute::Ptr& kpSupportAttribute)
-		: m_pSupportAttribute(new TopologicUtilities::Attribute::Ptr(kpSupportAttribute))
+	Attribute::Attribute(const TopologicUtilities::Attribute::Ptr& kpUtilitiesAttribute)
+		: m_pUtilitiesAttribute(new TopologicUtilities::Attribute::Ptr(kpUtilitiesAttribute))
 	{
 
 	}

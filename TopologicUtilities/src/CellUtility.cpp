@@ -21,7 +21,7 @@
 
 namespace TopologicUtilities
 {
-	TopologicCore::Cell::Ptr CellUtility::ByVerticesFaceIndices(const std::vector<TopologicCore::Vertex::Ptr>& rkVertices, const std::list<std::list<int>>& rkFaceIndices)
+	/*TopologicCore::Cell::Ptr CellUtility::ByVerticesFaceIndices(const std::vector<TopologicCore::Vertex::Ptr>& rkVertices, const std::list<std::list<int>>& rkFaceIndices)
 	{
 		if (rkVertices.empty())
 		{
@@ -62,7 +62,7 @@ namespace TopologicUtilities
 		TopologicCore::Cell::Ptr pCopyCell = std::dynamic_pointer_cast<TopologicCore::Cell>(pCell->DeepCopy());
 		TopologicCore::GlobalCluster::GetInstance().AddTopology(pCopyCell->GetOcctShape());
 		return pCopyCell;
-	}
+	}*/
 
 
 	TopologicCore::Cell::Ptr CellUtility::ByLoft(const std::list<TopologicCore::Wire::Ptr>& rkWires)

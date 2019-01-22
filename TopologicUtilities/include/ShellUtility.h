@@ -19,13 +19,13 @@ namespace TopologicUtilities
 
 	public:
 
-		/// <summary>
+		/*/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkVertices"></param>
 		/// <param name="rkFaceIndices"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_UTILITIES_API TopologicCore::Shell::Ptr ByVerticesFaceIndices(const std::vector<TopologicCore::Vertex::Ptr>& rkVertices, const std::list<std::list<int>>& rkFaceIndices);
+		static TOPOLOGIC_UTILITIES_API TopologicCore::Shell::Ptr ByVerticesFaceIndices(const std::vector<TopologicCore::Vertex::Ptr>& rkVertices, const std::list<std::list<int>>& rkFaceIndices);*/
 
 		/// <summary>
 		/// 

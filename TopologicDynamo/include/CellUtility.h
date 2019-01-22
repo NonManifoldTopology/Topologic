@@ -14,13 +14,13 @@ namespace Topologic {
 		public ref class CellUtility
 		{
 		public:
-			/// <summary>
+			/*/// <summary>
 			/// Create a cell by a list of vertices and a list of face indices.
 			/// </summary>
 			/// <param name="vertices">A list of vertices</param>
 			/// <param name="faceIndices">A list of face indices</param>
 			/// <returns name="Cell">The created cell</returns>
-			static Cell^ ByVerticesFaceIndices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<int>^>^ faceIndices);
+			static Cell^ ByVerticesFaceIndices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<int>^>^ faceIndices);*/
 
 			/// <summary>
 			/// Create a cell by lofting through a set of wires.
