@@ -2,19 +2,61 @@
 
 namespace TopologicCore
 {
-	int Bitwise::And(const int kArgument1, const int kArgument2)
+	int Bitwise::And(const std::list<int>& rArguments)
 	{
-		return kArgument1 & kArgument2;
+		int result = 0;
+		bool firstArgument = true;
+		for (const int kArgument : rArguments)
+		{
+			if (firstArgument)
+			{
+				result = kArgument;
+				firstArgument = false;
+			}
+			else
+			{
+				result &= kArgument;
+			}
+		}
+		return result;
 	}
 
-	int Bitwise::Or(const int kArgument1, const int kArgument2)
+	int Bitwise::Or(const std::list<int>& rArguments)
 	{
-		return kArgument1 | kArgument2;
+		int result = 0;
+		bool firstArgument = true;
+		for (const int kArgument : rArguments)
+		{
+			if (firstArgument)
+			{
+				result = kArgument;
+				firstArgument = false;
+			}
+			else
+			{
+				result |= kArgument;
+			}
+		}
+		return result;
 	}
 
-	int Bitwise::Xor(const int kArgument1, const int kArgument2)
+	int Bitwise::Xor(const std::list<int>& rArguments)
 	{
-		return kArgument1 ^ kArgument2;
+		int result = 0;
+		bool firstArgument = true;
+		for (const int kArgument : rArguments)
+		{
+			if (firstArgument)
+			{
+				result = kArgument;
+				firstArgument = false;
+			}
+			else
+			{
+				result ^= kArgument;
+			}
+		}
+		return result;
 	}
 
 	int Bitwise::Not(const int kArgument1)

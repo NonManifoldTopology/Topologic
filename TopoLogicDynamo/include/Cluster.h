@@ -117,6 +117,8 @@ namespace Topologic
 			List<CellComplex^>^ get();
 		}
 
+		static int Type();
+
 	public protected:
 		Cluster();
 
@@ -131,8 +133,6 @@ namespace Topologic
 		/// </summary>
 		/// <returns></returns>
 		virtual std::shared_ptr<TopologicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
-
-		static int Type();
 
 	protected:
 		virtual ~Cluster();

@@ -28,12 +28,6 @@ namespace TopologicUtilities
 			throw std::exception("No vertex is passed.");
 		}
 
-		/*std::vector<TopologicCore::Vertex::Ptr> copyVertices;
-		for (const TopologicCore::Vertex::Ptr& kpVertex : rkVertices)
-		{
-			copyVertices.push_back(std::dynamic_pointer_cast<TopologicCore::Vertex>(kpVertex->DeepCopy()));
-		}*/
-
 		std::list<TopologicCore::Face::Ptr> faces;
 		for (const std::list<int>& rkVertexIndices : rkFaceIndices)
 		{

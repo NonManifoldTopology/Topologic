@@ -331,6 +331,41 @@ namespace Topologic
 		return topologyType;
 	}
 
+	Topology ^ Topology::SetDictionary(System::Collections::Generic::Dictionary<String^, Object^>^ dictionary)
+	{
+		TopologicCore::Topology::Ptr pCoreTopology =
+		TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->DeepCopy();
+		Topology^ copyTopology = Topology::ByCoreTopology(pCoreCopyTopology);
+		copyTopology->AddAttributesNoCopy(dictionary);
+
+		return copyTopology;
+	}
+
+	Dictionary<String^, Object^>^ Topology::Dictionary::get()
+	{
+		TopologicCore::Topology::Ptr pCoreTopology =
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+
+		std::map<std::string, std::shared_ptr<TopologicUtilities::Attribute>> coreAttributes;
+		bool isFound = TopologicUtilities::AttributeManager::GetInstance().FindAll(pCoreTopology->GetOcctShape(), coreAttributes);
+		if (!isFound)
+		{
+			return nullptr;
+		}
+		
+		System::Collections::Generic::Dictionary<String^, Object^>^ dictionary = gcnew System::Collections::Generic::Dictionary<String^, Object^>();
+		for (const std::pair<std::string, TopologicUtilities::Attribute::Ptr>& rkAttributePair : coreAttributes)
+		{
+			String^ key = gcnew String(rkAttributePair.first.c_str());
+			AttributeFactory^ attributeFactory = AttributeFactoryManager::Instance->GetFactory(rkAttributePair.second);
+			dictionary->Add(key, attributeFactory->CreateValue(rkAttributePair.second));
+		}
+
+		return dictionary;
+	}
+
+
 	Topology^ Topology::ByCoreTopology(const std::shared_ptr<TopologicCore::Topology>& kpCoreTopology)
 	{
 		if (kpCoreTopology == nullptr)
@@ -426,41 +461,41 @@ namespace Topologic
 
 	}
 
-	Topology^ Topology::SetKeysValues(List<String^>^ keys, List<Object^>^ values)
-	{
-		if (keys->Count == 0)
-		{
-			throw gcnew Exception("An empty list of keys is given.");
-		}
+	//Topology^ Topology::SetKeysValues(List<String^>^ keys, List<Object^>^ values)
+	//{
+	//	if (keys->Count == 0)
+	//	{
+	//		throw gcnew Exception("An empty list of keys is given.");
+	//	}
 
-		if (values->Count == 0)
-		{
-			throw gcnew Exception("An empty list of values is given.");
-		}
+	//	if (values->Count == 0)
+	//	{
+	//		throw gcnew Exception("An empty list of values is given.");
+	//	}
 
-		if (values->Count != keys->Count)
-		{
-			throw gcnew Exception("The keys and values lists do not have the same length.");
-		}
+	//	if (values->Count != keys->Count)
+	//	{
+	//		throw gcnew Exception("The keys and values lists do not have the same length.");
+	//	}
 
-		Dictionary<String^, Object^>^ dictionary = gcnew Dictionary<String^, Object^>();
-		for (int i = 0; i < keys->Count; i++)
-		{
-			dictionary->Add(keys[i], values[i]);
-		}
+	//	Dictionary<String^, Object^>^ dictionary = gcnew Dictionary<String^, Object^>();
+	//	for (int i = 0; i < keys->Count; i++)
+	//	{
+	//		dictionary->Add(keys[i], values[i]);
+	//	}
 
-		// 1. Copy the core topology
-		TopologicCore::Topology::Ptr pCoreTopology =
-			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->DeepCopy();
-		Topology^ copyTopology = Topology::ByCoreTopology(pCoreCopyTopology);
-		copyTopology->AddAttributesNoCopy(dictionary);
+	//	// 1. Copy the core topology
+	//	TopologicCore::Topology::Ptr pCoreTopology =
+	//		TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+	//	TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->DeepCopy();
+	//	Topology^ copyTopology = Topology::ByCoreTopology(pCoreCopyTopology);
+	//	copyTopology->AddAttributesNoCopy(dictionary);
 
-		return copyTopology;
-	}
+	//	return copyTopology;
+	//}
 
 
-	Object ^ Topology::ValueAtKey(String ^ key)
+	/*Object ^ Topology::ValueAtKey(String ^ key)
 	{
 		TopologicCore::Topology::Ptr pCoreTopology =
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
@@ -474,9 +509,9 @@ namespace Topologic
 
 		AttributeFactory^ attributeFactory = AttributeFactoryManager::Instance->GetFactory(pSupportAttribute);
 		return attributeFactory->CreateValue(pSupportAttribute);
-	}
+	}*/
 
-	Topology ^ Topology::AddAttributesNoCopy(Dictionary<String^, Object^>^ attributes)
+	Topology ^ Topology::AddAttributesNoCopy(System::Collections::Generic::Dictionary<String^, Object^>^ attributes)
 	{
 		TopologicCore::Topology::Ptr pCoreTopology =
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
@@ -489,7 +524,7 @@ namespace Topologic
 		return this;
 	}
 
-	Object ^ Topology::AttributeValue(String ^ name)
+	/*Object ^ Topology::AttributeValue(String ^ name)
 	{
 		TopologicCore::Topology::Ptr pCoreTopology =
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
@@ -541,7 +576,7 @@ namespace Topologic
 		}
 
 		return copyTopology;
-	}
+	}*/
 
 	List<Topology^>^ Topology::Contents::get()
 	{

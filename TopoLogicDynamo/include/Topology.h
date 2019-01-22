@@ -50,6 +50,7 @@ namespace Topologic
 		/// </summary>
 		/// <param name="polySurface"></param>
 		/// <returns></returns>
+		[IsVisibleInDynamoLibrary(false)]
 		static Topology^ ByPolySurface(Autodesk::DesignScript::Geometry::PolySurface^ polySurface);
 
 		/// <summary>
@@ -86,47 +87,10 @@ namespace Topologic
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="keys"></param>
-		/// <param name="values"></param>
-		/// <returns name="Topology"></returns>
-		Topology^ SetKeysValues(List<String^>^ keys, List<Object^>^ values);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="key"></param>
-		/// <returns></returns>
-		Object^ ValueAtKey(String^ key);
-
-		/// <summary>
-		/// 
-		/// </summary>
 		/// <param name="attributes"></param>
 		/// <returns></returns>
 		[IsVisibleInDynamoLibrary(false)]
 		Topology^ AddAttributesNoCopy(Dictionary<String^, Object^>^ attributes);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="name"></param>
-		/// <returns name="Value"></returns>
-		Object^ AttributeValue(String^ name);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		property List<List<Object^>^>^ KeysValues
-		{
-			List<List<Object^>^>^ get();
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="keys"></param>
-		/// <returns></returns>
-		Topology^ RemoveKeys(List<String^>^ keys);
 
 		/// <summary>
 		/// Returns the non-constituent members of the input topological entity.
@@ -426,6 +390,43 @@ namespace Topologic
 
 		[IsVisibleInDynamoLibrary(false)]
 		void RegisterFactory(String^ rkGUID, TopologyFactory^ topologyFactory);
+
+		/*/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="name"></param>
+		/// <returns name="Value"></returns>
+		Object^ AttributeValue(String^ name);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		property List<List<Object^>^>^ KeysValues
+		{
+			List<List<Object^>^>^ get();
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="keys"></param>
+		/// <returns></returns>
+		Topology^ RemoveKeys(List<String^>^ keys);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="keys"></param>
+		/// <param name="values"></param>
+		/// <returns name="Topology"></returns>
+		Topology^ SetKeysValues(List<String^>^ keys, List<Object^>^ values);*/
+
+		Topology^ SetDictionary(Dictionary<String^, Object^>^ dictionary);
+
+		property System::Collections::Generic::Dictionary<String^, Object^>^ Dictionary
+		{
+			System::Collections::Generic::Dictionary<String^, Object^>^ get();
+		}
 
 	public protected:
 		static Topology^ ByCoreTopology(const std::shared_ptr<TopologicCore::Topology>& kpCoreTopology);

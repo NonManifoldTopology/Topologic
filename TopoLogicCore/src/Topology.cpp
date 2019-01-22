@@ -120,8 +120,8 @@ namespace TopologicCore
 		for (int i = 0; i < 4; ++i)
 		{
 			// If this is not the requested topology type, skip.
-			int result = Bitwise::And(kTypeFilter, shapeTypes[i]);
-			if (Bitwise::And(kTypeFilter, shapeTypes[i]) == 0)
+			int result = kTypeFilter & shapeTypes[i];
+			if (result == 0)
 			{
 				continue;
 			}
@@ -1151,7 +1151,7 @@ namespace TopologicCore
 			{
 				Topology::Ptr pContextTopology = kpContext->Topology();
 				TopologyType contextTopologyType = pContextTopology->GetType();
-				contextType = Bitwise::Or(contextType, contextTopologyType);
+				contextType = contextType | contextTopologyType;
 
 				// Remove content from current contexts
 				pContextTopology->RemoveContent(kpSubContent);
@@ -1192,7 +1192,7 @@ namespace TopologicCore
 			{
 				Topology::Ptr pContextTopology = kpContext->Topology();
 				TopologyType contextTopologyType = pContextTopology->GetType();
-				contextType = Bitwise::Or(contextType, contextTopologyType);
+				contextType = contextType | contextTopologyType;
 
 				// Remove content from current contexts
 				pContextTopology->RemoveContent(kpSubContent);
@@ -2352,7 +2352,7 @@ namespace TopologicCore
 			for (const Context::Ptr& pContext : contexts)
 			{
 				int contextType = pContext->Topology()->GetType();
-				filterType = Bitwise::Or(filterType, contextType);
+				filterType = filterType | contextType;
 			}
 			pShapeCopy->AddContent(pCopyContentTopology, filterType);
 		}

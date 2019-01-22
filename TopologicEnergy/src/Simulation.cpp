@@ -162,11 +162,12 @@ namespace TopologicEnergy
 		List<Modifiers::GeometryColor^>^ dynamoApertures = gcnew List<Modifiers::GeometryColor^>();
 		for each(Cell^ cell in energyModel->BuildingCells)
 		{
-			Object^ name = cell->AttributeValue("Name");
-			if (name == nullptr)
+			Dictionary<String^, Object^>^ dictionary = cell->Dictionary;
+			if (!dictionary->ContainsKey("Name"))
 			{
 				throw gcnew Exception("A cell does not have a name.");
 			}
+			Object^ name = dictionary["Name"];
 
 			String^ strName = nullptr;
 			try
