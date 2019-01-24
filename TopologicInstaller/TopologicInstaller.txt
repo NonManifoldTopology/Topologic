@@ -81,7 +81,7 @@ Section "TopologicDynamo" TopologicDynamo
   ;ADD YOUR OWN FILES HERE...
   File ..\output\x64\Release\TopologicExtensions.dll
   File ..\output\x64\Release\Topologic.dll
-  ;File ..\output\x64\Release\Topologic.customization.dll
+  File ..\output\x64\Release\Topologic.customization.dll
   File vc_redist.x64.exe
   
   ;Check if Revit 2017 exists.
@@ -236,6 +236,7 @@ Section "TopologicEnergy" TopologicEnergy
   SetOutPath "$INSTDIR"
   
   File ..\output\x64\Release\TopologicEnergy.dll
+  File ..\output\x64\Release\TopologicEnergy.customization.dll
   File ..\output\x64\Release\OpenStudio.dll
   File ..\output\x64\Release\openstudio_csharp.dll
   File ..\output\x64\Release\openstudio_translators_csharp.dll

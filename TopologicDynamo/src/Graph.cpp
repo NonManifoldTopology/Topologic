@@ -54,14 +54,6 @@ namespace Topologic
 			}
 		}
 
-		/*Object^ Graph::Geometry_::get()
-		{
-			List<Object^>^ graphGeometry = gcnew List<Object^>();
-			graphGeometry->Add(Cluster::Geometry_);
-
-			return graphGeometry;
-		}*/
-
 		std::shared_ptr<TopologicCore::TopologicalQuery> DualGraph_::GetCoreTopologicalQuery()
 		{
 			return Cluster::GetCoreTopologicalQuery();

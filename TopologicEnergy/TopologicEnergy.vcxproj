@@ -188,7 +188,23 @@ copy "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"
   <ItemGroup>
     <Xml Include="config\TopologicEnergy_DynamoCustomization.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="resources\TopologicEnergy.resx" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <Target Name="AfterBuild">
+    <!-- Get System.Drawing.dll -->
+    <GetReferenceAssemblyPaths TargetFrameworkMoniker=".NETFramework, Version=v2.0">
+      <Output TaskParameter="FullFrameworkReferenceAssemblyPaths" PropertyName="FrameworkAssembliesPath" />
+    </GetReferenceAssemblyPaths>
+    <!-- Get assembly -->
+    <GetAssemblyIdentity AssemblyFiles="$(OutDir)$(TargetName).dll">
+      <Output TaskParameter="Assemblies" ItemName="AssemblyInfo" />
+    </GetAssemblyIdentity>
+    <!-- Generate customization dll -->
+    <GenerateResource UseSourcePath="true" SdkToolsPath="$(sdk40toolspath)" Sources="$(ProjectDir)resources\TopologicEnergy.resx" OutputResources="$(ProjectDir)obj\TopologicEnergyImages.resources" References="$(FrameworkAssembliesPath)System.Drawing.dll" />
+    <AL TargetType="library" EmbedResources="$(ProjectDir)obj\TopologicEnergyImages.resources" OutputAssembly="$(OutDir)TopologicEnergy.customization.dll" Version="%(AssemblyInfo.Version)" />
+  </Target>
 </Project>

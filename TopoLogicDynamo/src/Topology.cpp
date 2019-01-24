@@ -642,8 +642,12 @@ namespace Topologic
 
 		pCoreCopyParentTopology->AddContent(pCoreCopyContentTopology);
 
-		// 5. Return the copy topology
-		return Topology::ByCoreTopology(pCoreCopyParentTopology);
+		// 3. Copy dictionary
+		Topology^ copyParentTopology = Topology::ByCoreTopology(pCoreCopyParentTopology);
+		Topology^ copyCopyParentTopology = copyParentTopology->SetDictionary(Dictionary);
+
+		// 4. Return the copy topology
+		return copyCopyParentTopology;
 	}
 
 	Topology ^ Topology::AddContent(Topology ^ topology, int typeFilter)
@@ -660,16 +664,16 @@ namespace Topologic
 
 		pCoreCopyParentTopology->AddContent(pCoreCopyContentTopology, typeFilter);
 
-		// 5. Return the copy topology
+		// 3. Copy dictionary
+		Topology^ copyParentTopology = Topology::ByCoreTopology(pCoreCopyParentTopology);
+		copyParentTopology->SetDictionary(copyParentTopology->Dictionary);
+
+		// 4. Return the copy topology
 		return Topology::ByCoreTopology(pCoreCopyParentTopology);
 	}
 
 	Topology^ Topology::RemoveContent(Topology^ topology)
 	{
-		/*std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		pCoreTopology->RemoveContent(TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery()));
-		return this;*/
-
 		throw gcnew NotImplementedException();
 	}
 

@@ -189,11 +189,23 @@
     <Filter Include="Extensions">
       <UniqueIdentifier>{d4638fb2-7e2b-466a-9ed8-76be45cf42c3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{ad2d32d9-7483-4053-93fb-a398384ec0a5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="config\Topologic_DynamoCustomization.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="resources\Topologic.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\Topologic-logo-large.png" />
+    <Image Include="resources\Topologic.Large.png">
+      <Filter>Resources</Filter>
+    </Image>
+    <Image Include="resources\Topologic.Small.png">
+      <Filter>Resources</Filter>
+    </Image>
   </ItemGroup>
 </Project>

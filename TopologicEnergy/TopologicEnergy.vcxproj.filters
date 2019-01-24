@@ -11,4 +11,20 @@
     <ClCompile Include="src\EnergyModel.cpp" />
     <ClCompile Include="src\Simulation.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="resources\TopologicEnergy.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{b7ce0487-7ec1-4c69-949d-d885d916e416}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\Topologic.Small.png">
+      <Filter>Resources</Filter>
+    </Image>
+    <Image Include="resources\Topologic.Large.png">
+      <Filter>Resources</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

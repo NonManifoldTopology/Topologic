@@ -141,7 +141,23 @@ namespace Topologic
 		}
 		else if (surface->GetType() == Autodesk::DesignScript::Geometry::Surface::typeid) // a generic surface
 		{
-			return BySurface(surface->ToNurbsSurface(), surface->PerimeterCurves());
+			Autodesk::DesignScript::Geometry::NurbsSurface^ dynamoNurbsSurface = nullptr;
+			array<Autodesk::DesignScript::Geometry::Curve^>^ dynamoPerimeterCurves = nullptr;
+			try {
+				dynamoNurbsSurface = surface->ToNurbsSurface();
+				dynamoPerimeterCurves = surface->PerimeterCurves();
+			}
+			catch (Exception ^ e)
+			{
+				throw gcnew System::NotImplementedException("Fails to create a face: " + e->Message);
+			}
+			catch (...)
+			{
+				throw gcnew System::NotImplementedException("Fails to create a face.");
+			}
+
+
+			return BySurface(dynamoNurbsSurface, dynamoPerimeterCurves);
 		}
 		else
 		{

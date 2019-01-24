@@ -118,17 +118,14 @@ namespace Topologic
 		}
 		else if (curve->GetType() == Autodesk::DesignScript::Geometry::Ellipse::typeid)
 		{
-			//throw gcnew System::NotImplementedException("Feature not yet implemented.");
 			return ByCurve(curve->ToNurbsCurve());
 		}
 		else if (curve->GetType() == Autodesk::DesignScript::Geometry::EllipseArc::typeid)
 		{
-			//throw gcnew System::NotImplementedException("Feature not yet implemented.");
 			return ByCurve(curve->ToNurbsCurve());
 		}
 		else if (curve->GetType() == Autodesk::DesignScript::Geometry::Helix::typeid)
 		{
-			//throw gcnew System::NotImplementedException("Feature not yet implemented.");
 			return ByCurve(curve->ToNurbsCurve());
 		}
 		else if (curve->GetType() == Autodesk::DesignScript::Geometry::Line::typeid)
@@ -145,7 +142,20 @@ namespace Topologic
 		}
 		else if (curve->GetType() == Autodesk::DesignScript::Geometry::Curve::typeid) // a generic curve
 		{
-			return ByCurve(curve->ToNurbsCurve());
+			Autodesk::DesignScript::Geometry::Curve^ dynamoCurve = nullptr;
+			try{
+				dynamoCurve = curve->ToNurbsCurve();
+			}
+			catch (Exception ^ e)
+			{
+				throw gcnew System::NotImplementedException("Fails to create an edge: " + e->Message);
+			}
+			catch (...)
+			{
+				throw gcnew System::NotImplementedException("Fails to create an edge.");
+			}
+
+			return ByCurve(dynamoCurve);
 		}
 		else
 		{

@@ -409,13 +409,17 @@ namespace TopologicCore
 			return;
 		}
 
-		ContentManager::GetInstance().Add(GetOcctShape(), rkTopology);
-
 		const double kDefaultParameter = 0.0;
+		Topology::Ptr pCopyTopology = std::dynamic_pointer_cast<Topology>(DeepCopy());
+		GlobalCluster::GetInstance().AddTopology(pCopyTopology->GetOcctShape());
+		Topology::Ptr pCopyContentTopology = std::dynamic_pointer_cast<Topology>(rkTopology->DeepCopy());
+		GlobalCluster::GetInstance().AddTopology(pCopyContentTopology->GetOcctShape());
+
+		ContentManager::GetInstance().Add(GetOcctShape(), rkTopology);
 		ContextManager::GetInstance().Add(
 			rkTopology->GetOcctShape(),
 			Context::ByTopologyParameters(Topology::ByOcctShape(GetOcctShape()),
-				kDefaultParameter, 
+				kDefaultParameter,
 				kDefaultParameter,
 				kDefaultParameter)
 		);
