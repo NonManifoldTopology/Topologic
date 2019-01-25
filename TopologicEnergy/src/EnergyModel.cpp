@@ -1,5 +1,5 @@
 #include "EnergyModel.h"
-#include "Simulation.h"
+#include "EnergySimulation.h"
 
 using namespace System::Diagnostics;
 using namespace System::IO;
@@ -17,7 +17,7 @@ namespace TopologicEnergy
 		return idfSaveCondition;
 	}
 
-	EnergyModel^ EnergyModel::Create(
+	EnergyModel^ EnergyModel::ByCellComplex(
 		CellComplex^ building,
 		Cluster^ shadingSurfaces,
 		List<double>^ floorLevels,
@@ -91,33 +91,33 @@ namespace TopologicEnergy
 		return gcnew EnergyModel(osModel, osBuilding, pBuildingCells, osSpaces);
 	}
 
-	Simulation^ EnergyModel::Analyze(EnergyModel ^ energyModel, String ^ openStudioExePath, String ^ openStudioOutputDirectory, bool run)
-	{
-		String^ oswPath = nullptr;
-		Export(energyModel, openStudioOutputDirectory, oswPath);
+	//EnergySimulation^ EnergyModel::Simulate(EnergyModel ^ energyModel, String ^ openStudioExePath, String ^ openStudioOutputDirectory, bool run)
+	//{
+	//	String^ oswPath = nullptr;
+	//	Export(energyModel, openStudioOutputDirectory, oswPath);
 
-		// https://stackoverflow.com/questions/5168612/launch-program-with-parameters
-		String^ args = "run -w \"" + oswPath + "\"";
-		System::Diagnostics::ProcessStartInfo^ startInfo = gcnew ProcessStartInfo(openStudioExePath, args);
-		startInfo->WorkingDirectory = Path::GetDirectoryName(oswPath);
+	//	// https://stackoverflow.com/questions/5168612/launch-program-with-parameters
+	//	String^ args = "run -w \"" + oswPath + "\"";
+	//	System::Diagnostics::ProcessStartInfo^ startInfo = gcnew ProcessStartInfo(openStudioExePath, args);
+	//	startInfo->WorkingDirectory = Path::GetDirectoryName(oswPath);
 
-		Process^ process = Process::Start(startInfo);
-		process->WaitForExit();
+	//	Process^ process = Process::Start(startInfo);
+	//	process->WaitForExit();
 
-		// Rename run and reports directory, add timestamp
-		String^ timestamp = DateTime::Now.ToString("yyyy-MM-dd_HH-mm-ss-fff");
-		Directory::Move(startInfo->WorkingDirectory + "\\run", startInfo->WorkingDirectory + "\\run_" + timestamp);
-		Directory::Move(startInfo->WorkingDirectory + "\\reports", startInfo->WorkingDirectory + "\\reports_" + timestamp);
+	//	// Rename run and reports directory, add timestamp
+	//	String^ timestamp = DateTime::Now.ToString("yyyy-MM-dd_HH-mm-ss-fff");
+	//	Directory::Move(startInfo->WorkingDirectory + "\\run", startInfo->WorkingDirectory + "\\run_" + timestamp);
+	//	Directory::Move(startInfo->WorkingDirectory + "\\reports", startInfo->WorkingDirectory + "\\reports_" + timestamp);
 
-		Simulation^ simulation = gcnew Simulation(
-			energyModel->BuildingCells,
-			oswPath,
-			energyModel->OsModel,
-			energyModel->OsSpaces,
-			timestamp);
+	//	EnergySimulation^ simulation = gcnew EnergySimulation(
+	//		energyModel->BuildingCells,
+	//		oswPath,
+	//		energyModel->OsModel,
+	//		energyModel->OsSpaces,
+	//		timestamp);
 
-		return simulation;
-	}
+	//	return simulation;
+	//}
 
 	void EnergyModel::Export(EnergyModel ^ energyModel, String ^ openStudioOutputDirectory)
 	{
@@ -303,122 +303,122 @@ namespace TopologicEnergy
 		return osSqlFile;
 	}
 
-	List<Modifiers::GeometryColor^>^ EnergyModel::AnalyzeSqlFile(OpenStudio::SqlFile ^ osSqlFile, OpenStudio::Model^ osModel, List<OpenStudio::Space^>^ spaces, List<Cell^>^ buildingCells,
-		String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPUnits)
-	{
-		osModel->setSqlFile(osSqlFile);
-		OpenStudio::OptionalDouble^ totalSE = osSqlFile->totalSiteEnergy();
-		double totalSEGJ = totalSE->__float__();
-		double totalSEkwh = totalSEGJ * 277.8;
-		//Print("Total Site Energy use: " + (totalSEGJ as string) + " Gigajoules (" + (totalSEkwh as string) + " kWh)")
-		OpenStudio::OptionalDouble^ totalEU = osSqlFile->electricityTotalEndUses();
-		double totalEUGJ = totalEU->__float__();
-		double totalEUkwh = totalEUGJ * 277.8;
-		//Print("Total Electricity End Uses: " + (totalEUGJ as string) + " Gigajoules (" + (totalEUkwh as string) + " kWh)")
-		OpenStudio::OptionalString^ spaceNameTemp = spaces[0]->name();
-		String^ spaceName = spaceNameTemp->get();
-		String^ EPRowName = spaceName + "_THERMAL_ZONE";
-		//String^ EPRowName = "test" + "_TZ";
+	//List<Modifiers::GeometryColor^>^ EnergyModel::AnalyzeSqlFile(OpenStudio::SqlFile ^ osSqlFile, OpenStudio::Model^ osModel, List<OpenStudio::Space^>^ spaces, List<Cell^>^ buildingCells,
+	//	String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPUnits)
+	//{
+	//	osModel->setSqlFile(osSqlFile);
+	//	OpenStudio::OptionalDouble^ totalSE = osSqlFile->totalSiteEnergy();
+	//	double totalSEGJ = totalSE->__float__();
+	//	double totalSEkwh = totalSEGJ * 277.8;
+	//	//Print("Total Site Energy use: " + (totalSEGJ as string) + " Gigajoules (" + (totalSEkwh as string) + " kWh)")
+	//	OpenStudio::OptionalDouble^ totalEU = osSqlFile->electricityTotalEndUses();
+	//	double totalEUGJ = totalEU->__float__();
+	//	double totalEUkwh = totalEUGJ * 277.8;
+	//	//Print("Total Electricity End Uses: " + (totalEUGJ as string) + " Gigajoules (" + (totalEUkwh as string) + " kWh)")
+	//	OpenStudio::OptionalString^ spaceNameTemp = spaces[0]->name();
+	//	String^ spaceName = spaceNameTemp->get();
+	//	String^ EPRowName = spaceName + "_THERMAL_ZONE";
+	//	//String^ EPRowName = "test" + "_TZ";
 
-		//If min and max values are not specified then calculate them from the data
-		// TODO: Take custom values
-		//Set an initial value for minimum and maximum values
-		double maxValue = 0.0;
-		try {
-			maxValue = DoubleValueFromQuery(osSqlFile, EPReportName, EPReportForString, EPTableName, EPColumnName, EPRowName, EPUnits);
-		}
-		catch (...)
-		{
-			maxValue = 10000.0;
-		}
-		double minValue = maxValue;
-		for each(OpenStudio::Space^ space in spaces)
-		{
-			OpenStudio::OptionalString^ osSpaceName = space->name();
-			String^ spaceName = osSpaceName->get();
-			EPRowName = spaceName + "_THERMAL_ZONE";
-			double aValue = 10000.0;
-			try{
-				aValue = DoubleValueFromQuery(osSqlFile, EPReportName, EPReportForString, EPTableName, EPColumnName, EPRowName, EPUnits);
-			}
-			catch (...)
-			{
-				aValue = 10000.0;
-			}
-			if (aValue > maxValue)
-			{
-				maxValue = aValue;
-			}
-			if (aValue < minValue)
-			{
-				minValue = aValue;
-			}
-		}
+	//	//If min and max values are not specified then calculate them from the data
+	//	// TODO: Take custom values
+	//	//Set an initial value for minimum and maximum values
+	//	double maxValue = 0.0;
+	//	try {
+	//		maxValue = DoubleValueFromQuery(osSqlFile, EPReportName, EPReportForString, EPTableName, EPColumnName, EPRowName, EPUnits);
+	//	}
+	//	catch (...)
+	//	{
+	//		maxValue = 10000.0;
+	//	}
+	//	double minValue = maxValue;
+	//	for each(OpenStudio::Space^ space in spaces)
+	//	{
+	//		OpenStudio::OptionalString^ osSpaceName = space->name();
+	//		String^ spaceName = osSpaceName->get();
+	//		EPRowName = spaceName + "_THERMAL_ZONE";
+	//		double aValue = 10000.0;
+	//		try{
+	//			aValue = DoubleValueFromQuery(osSqlFile, EPReportName, EPReportForString, EPTableName, EPColumnName, EPRowName, EPUnits);
+	//		}
+	//		catch (...)
+	//		{
+	//			aValue = 10000.0;
+	//		}
+	//		if (aValue > maxValue)
+	//		{
+	//			maxValue = aValue;
+	//		}
+	//		if (aValue < minValue)
+	//		{
+	//			minValue = aValue;
+	//		}
+	//	}
 
-		if (minValue <= maxValue && maxValue - minValue < 0.0001)
-		{
-			minValue = maxValue - (maxValue * 0.0001);
-		}
-					
-		//STEP 2: Find the cell that matches the space and set its colour.
+	//	if (minValue <= maxValue && maxValue - minValue < 0.0001)
+	//	{
+	//		minValue = maxValue - (maxValue * 0.0001);
+	//	}
+	//				
+	//	//STEP 2: Find the cell that matches the space and set its colour.
 
-		int i = 0;
-		List<Modifiers::GeometryColor^>^ dynamoGeometryColors = gcnew List<Modifiers::GeometryColor^>();
-		for each(OpenStudio::Space^ space in spaces)
-		{
-			Cell^ selectedCell = buildingCells[i];
-			++i;
-			OpenStudio::OptionalString^ osSpaceName = space->name();
-			String^ spaceName = osSpaceName->get();
-			EPRowName = spaceName + "_THERMAL_ZONE";
-			double outputVariable = 0.0;
-			try {
-				outputVariable = DoubleValueFromQuery(osSqlFile, EPReportName, EPReportForString, EPTableName, EPColumnName, EPRowName, EPUnits);
-			}
-			catch (...)
-			{
-				outputVariable = 10000.0;
-			}
-			
-			// Map the outputVariable to a ratio between 0 and 1
-			double ratio = (outputVariable - minValue) / (maxValue - minValue);
-			DSCore::Color^ aColor = GetColor(ratio);
-			System::Object^ cellGeometry = selectedCell->Geometry_;
-			
-			// 1. Try a Dynamo geometry
-			Autodesk::DesignScript::Geometry::Geometry^ dynamoGeometry = dynamic_cast<Autodesk::DesignScript::Geometry::Geometry^>(cellGeometry);
-			if (dynamoGeometry != nullptr)
-			{
-				Modifiers::GeometryColor^ dynamoGeometryColor = Modifiers::GeometryColor::ByGeometryColor(dynamoGeometry, aColor);
-				dynamoGeometryColors->Add(dynamoGeometryColor);
-				//delete cellGeometry;
-				continue;
-			}
+	//	int i = 0;
+	//	List<Modifiers::GeometryColor^>^ dynamoGeometryColors = gcnew List<Modifiers::GeometryColor^>();
+	//	for each(OpenStudio::Space^ space in spaces)
+	//	{
+	//		Cell^ selectedCell = buildingCells[i];
+	//		++i;
+	//		OpenStudio::OptionalString^ osSpaceName = space->name();
+	//		String^ spaceName = osSpaceName->get();
+	//		EPRowName = spaceName + "_THERMAL_ZONE";
+	//		double outputVariable = 0.0;
+	//		try {
+	//			outputVariable = DoubleValueFromQuery(osSqlFile, EPReportName, EPReportForString, EPTableName, EPColumnName, EPRowName, EPUnits);
+	//		}
+	//		catch (...)
+	//		{
+	//			outputVariable = 10000.0;
+	//		}
+	//		
+	//		// Map the outputVariable to a ratio between 0 and 1
+	//		double ratio = (outputVariable - minValue) / (maxValue - minValue);
+	//		DSCore::Color^ aColor = GetColor(ratio);
+	//		System::Object^ cellGeometry = selectedCell->Geometry_;
+	//		
+	//		// 1. Try a Dynamo geometry
+	//		Autodesk::DesignScript::Geometry::Geometry^ dynamoGeometry = dynamic_cast<Autodesk::DesignScript::Geometry::Geometry^>(cellGeometry);
+	//		if (dynamoGeometry != nullptr)
+	//		{
+	//			Modifiers::GeometryColor^ dynamoGeometryColor = Modifiers::GeometryColor::ByGeometryColor(dynamoGeometry, aColor);
+	//			dynamoGeometryColors->Add(dynamoGeometryColor);
+	//			//delete cellGeometry;
+	//			continue;
+	//		}
 
-			// 2. Try a Dynamo geometry
-			List<Object^>^ listOfObjects = dynamic_cast<List<Object^>^>(cellGeometry);
-			if (listOfObjects != nullptr)
-			{
-				for each(Object^ object in listOfObjects)
-				{
-					Autodesk::DesignScript::Geometry::Geometry^ dynamoGeometry = dynamic_cast<Autodesk::DesignScript::Geometry::Geometry^>(object);
-					if (dynamoGeometry != nullptr)
-					{
-						Modifiers::GeometryColor^ dynamoGeometryColor = Modifiers::GeometryColor::ByGeometryColor(dynamoGeometry, aColor);
-						delete object;
-						dynamoGeometryColors->Add(dynamoGeometryColor);
-					}
-				}
-				continue;
-			}
-		}
-			
-		//this is the important step otherwise the sqlfile stays locked
-		osSqlFile->close();
-		delete osSqlFile;
+	//		// 2. Try a Dynamo geometry
+	//		List<Object^>^ listOfObjects = dynamic_cast<List<Object^>^>(cellGeometry);
+	//		if (listOfObjects != nullptr)
+	//		{
+	//			for each(Object^ object in listOfObjects)
+	//			{
+	//				Autodesk::DesignScript::Geometry::Geometry^ dynamoGeometry = dynamic_cast<Autodesk::DesignScript::Geometry::Geometry^>(object);
+	//				if (dynamoGeometry != nullptr)
+	//				{
+	//					Modifiers::GeometryColor^ dynamoGeometryColor = Modifiers::GeometryColor::ByGeometryColor(dynamoGeometry, aColor);
+	//					delete object;
+	//					dynamoGeometryColors->Add(dynamoGeometryColor);
+	//				}
+	//			}
+	//			continue;
+	//		}
+	//	}
+	//		
+	//	//this is the important step otherwise the sqlfile stays locked
+	//	osSqlFile->close();
+	//	delete osSqlFile;
 
-		return dynamoGeometryColors;
-	}
+	//	return dynamoGeometryColors;
+	//}
 
 	double EnergyModel::DoubleValueFromQuery(OpenStudio::SqlFile^ sqlFile, String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPRowName, String^ EPUnits)
 	{
@@ -1071,7 +1071,7 @@ namespace TopologicEnergy
 		return 0;
 	}
 
-	DSCore::Color^ EnergyModel::GetColor(double ratio)
+	DSCore::Color^ EnergyModel::GetColor(double ratio, int alpha)
 	{
 		double r = 0.0;
 		double g = 0.0;
@@ -1105,7 +1105,7 @@ namespace TopologicEnergy
 		int rcom = (int) Math::Floor(Math::Max(Math::Min(Math::Floor(255.0 * r), 255.0), 0.0));
 		int gcom = (int) Math::Floor(Math::Max(Math::Min(Math::Floor(255.0 * g), 255.0), 0.0));
 		int bcom = (int) Math::Floor(Math::Max(Math::Min(Math::Floor(255.0 * b), 255.0), 0.0));
-		return DSCore::Color::ByARGB(50, rcom, gcom, bcom);
+		return DSCore::Color::ByARGB(alpha, rcom, gcom, bcom);
 	}
 
 	String^ EnergyModel::BuildingName::get()

@@ -29,7 +29,7 @@ namespace TopologicCore
 		std::list<Edge::Ptr> adjacentEdgesToFirstVertex;
 		pFirstVertex->Edges(adjacentEdgesToFirstVertex);
 
-		int numOfBranches = GetNumberOfBranches();
+		int numOfBranches = NumberOfBranches();
 		if(numOfBranches >= 0 
 		  ||
 		  (!IsClosed() && adjacentEdgesToFirstVertex.size() > 1)) // open and the first vertex is adjacent to > 1 edges
@@ -61,7 +61,7 @@ namespace TopologicCore
 
 	void Wire::Vertices(std::list<Vertex::Ptr>& rVertices) const
 	{
-		int numOfBranches = GetNumberOfBranches();
+		int numOfBranches = NumberOfBranches();
 		if (numOfBranches == 0)
 		{
 			TopoDS_Edge lastEdge;
@@ -129,7 +129,7 @@ namespace TopologicCore
 		return false;
 	}
 
-	int Wire::GetNumberOfBranches() const
+	int Wire::NumberOfBranches() const
 	{
 		std::list<Vertex::Ptr> vertices;
 		DownwardNavigation<Vertex>(vertices);

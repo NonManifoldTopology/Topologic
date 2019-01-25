@@ -15,7 +15,7 @@ namespace TopologicEnergy
 	};
 
 	ref class Model;
-	ref class Simulation;
+	ref class EnergySimulation;
 
 	public ref class EnergyModel
 	{
@@ -38,7 +38,7 @@ namespace TopologicEnergy
 		/// <param name="openStudioTemplatePath">Path to a template .osm file</param>
 		////// <param name="openStudioOutputPath">Path to an output .osm file. Timestamp will be added to the path.</param>
 		/// <returns name="energyModel"></returns>
-		static EnergyModel^ Create(
+		static EnergyModel^ ByCellComplex(
 			CellComplex^ building,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Cluster^ shadingSurfaces,
 			List<double>^ floorLevels,
@@ -53,20 +53,20 @@ namespace TopologicEnergy
 			[Autodesk::DesignScript::Runtime::DefaultArgument(".\\TopologicEnergy-files\\MinimalTemplate120.osm")] String^ openStudioTemplatePath
 			);
 
-		/// <summary>
+		/*/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="energyModel"></param>
 		/// <param name="openStudioExePath"></param>
 		/// <param name="openStudioOutputDirectory"></param>
 		/// <param name="run"></param>
-		/// <returns name="SimulationResult"></returns>
-		static Simulation^ Analyze(EnergyModel^ energyModel, String^ openStudioExePath, String ^ openStudioOutputDirectory, bool run);
+		/// <returns name="EnergySimulation"></returns>
+		static EnergySimulation^ Simulate(EnergyModel^ energyModel, String^ openStudioExePath, String ^ openStudioOutputDirectory, bool run);*/
 		
 		static void Export(EnergyModel^ energyModel, String^ openStudioOutputDirectory);
 
 	public protected:
-		static DSCore::Color^ GetColor(double ratio);
+		static DSCore::Color^ GetColor(double ratio, int alpha);
 		static double DoubleValueFromQuery(OpenStudio::SqlFile^ sqlFile, String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPRowName, String^ EPUnits);
 
 		static String^ StringValueFromQuery(OpenStudio::SqlFile^ sqlFile, String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPRowName, String^ EPUnits);
@@ -183,8 +183,8 @@ namespace TopologicEnergy
 
 		static OpenStudio::SqlFile^ CreateSqlFile(OpenStudio::Model^ osModel, String^ sqlFilePath);
 
-		static List<Modifiers::GeometryColor^>^ AnalyzeSqlFile(OpenStudio::SqlFile^ osSqlFile, OpenStudio::Model^ osModel, List<OpenStudio::Space^>^ spaces, List<Cell^>^ buildingCells,
-			String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPUnits);
+		/*static List<Modifiers::GeometryColor^>^ AnalyzeSqlFile(OpenStudio::SqlFile^ osSqlFile, OpenStudio::Model^ osModel, List<OpenStudio::Space^>^ spaces, List<Cell^>^ buildingCells,
+			String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPUnits);*/
 
 		static List<OpenStudio::BuildingStory^>^ buildingStories;
 		static OpenStudio::DefaultConstructionSet^ defaultConstructionSet;

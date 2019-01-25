@@ -22,33 +22,34 @@ namespace Topologic {
 			/// <param name="y"></param>
 			/// <param name="z"></param>
 			/// <returns></returns>
+			[IsVisibleInDynamoLibrary(false)]
 			static Topology^ Translate(Topology^ topology, double x, double y, double z);
 
 			/// <summary>
 			///
 			/// </summary>
 			/// <param name="topology"></param>
-			/// <param name="pointX"></param>
-			/// <param name="pointY"></param>
-			/// <param name="pointZ"></param>
-			/// <param name="directionX"></param>
-			/// <param name="directionY"></param>
-			/// <param name="directionZ"></param>
-			/// <param name="angleInRadian"></param>
+			/// <param name="origin"></param>
+			/// <param name="vector"></param>
+			/// <param name="degree"></param>
 			/// <returns></returns>
-			static Topology^ Rotate(Topology^ topology, 
-				double pointX, double pointY, double pointZ,
-				double directionX, double directionY, double directionZ,
-				double angleInRadian);
+			[IsVisibleInDynamoLibrary(false)]
+			static Topology^ Rotate(Topology^ topology,
+				Vertex^ origin,
+				Autodesk::DesignScript::Geometry::Vector^ vector,
+				double degree);
 
 			/// <summary>
 			///
 			/// </summary>
 			/// <param name="topology"></param>
-			/// <param name="vertex"></param>
-			/// <param name="scaleFactor"></param>
+			/// <param name="origin"></param>
+			/// <param name="xFactor"></param>
+			/// <param name="yFactor"></param>
+			/// <param name="zFactor"></param>
 			/// <returns></returns>
-			static Topology^ Scale(Topology^ topology, Vertex^ vertex, double scaleFactor);
+			[IsVisibleInDynamoLibrary(false)]
+			static Topology^ Scale(Topology^ topology, Vertex^ origin, double xFactor, double yFactor, double zFactor);
 
 			/// <summary>
 			/// Returns the distance between two topologies.

@@ -72,7 +72,7 @@ namespace Topologic
 	int Wire::GetNumberOfBranches()
 	{
 		TopologicCore::Wire::Ptr pCoreWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>(GetCoreTopologicalQuery());
-		return pCoreWire->GetNumberOfBranches();
+		return pCoreWire->NumberOfBranches();
 	}
 
 	Wire^ Wire::ByEdges(System::Collections::Generic::IEnumerable<Edge^>^ edges)

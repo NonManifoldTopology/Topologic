@@ -55,6 +55,7 @@ namespace Topologic {
 		/// 
 		/// </summary>
 		/// <returns></returns>
+		[IsVisibleInDynamoLibrary(false)]
 		int GetNumberOfBranches();
 
 		/// <summary>

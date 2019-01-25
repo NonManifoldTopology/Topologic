@@ -18,25 +18,29 @@ namespace Topologic
 			return Topology::ByCoreTopology(pCoreTopology);
 		}
 
-		Topology ^ TopologyUtility::Rotate(Topology ^ topology, double pointX, double pointY, double pointZ, double directionX, double directionY, double directionZ, double angleInRadian)
+		Topology ^ TopologyUtility::Rotate(Topology ^ topology, 
+			Vertex^ origin,
+			Autodesk::DesignScript::Geometry::Vector^ vector,
+			double degree)
 		{
 			// 1. Copy this topology
 			TopologicCore::Topology::Ptr pCoreTopology =
 				TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
-			//TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->DeepCopy();
-			TopologicUtilities::TopologyUtility::Rotate(pCoreTopology, pointX, pointY, pointZ, directionX, directionY, directionZ, angleInRadian);
+			TopologicCore::Vertex::Ptr pCoreOrigin =
+				TopologicCore::TopologicalQuery::Downcast<TopologicCore::Vertex>(origin->GetCoreTopologicalQuery());
+			TopologicUtilities::TopologyUtility::Rotate(pCoreTopology, pCoreOrigin, vector->X, vector->Y, vector->Z, degree);
 
 			return Topology::ByCoreTopology(pCoreTopology);
 		}
 
-		Topology ^ TopologyUtility::Scale(Topology ^ topology, Vertex ^ vertex, double scaleFactor)
+		Topology ^ TopologyUtility::Scale(Topology ^ topology, Vertex ^ origin, double xFactor, double yFactor, double zFactor)
 		{
 			// 1. Copy this topology
 			TopologicCore::Topology::Ptr pCoreTopology =
 				TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
-			TopologicCore::Vertex::Ptr pCoreVertex =
-				TopologicCore::TopologicalQuery::Downcast<TopologicCore::Vertex>(vertex->GetCoreTopologicalQuery());
-			TopologicUtilities::TopologyUtility::Scale(pCoreTopology, pCoreVertex, scaleFactor);
+			TopologicCore::Vertex::Ptr pCoreOrigin =
+				TopologicCore::TopologicalQuery::Downcast<TopologicCore::Vertex>(origin->GetCoreTopologicalQuery());
+			TopologicUtilities::TopologyUtility::Scale(pCoreTopology, pCoreOrigin, xFactor, yFactor, zFactor);
 
 			return Topology::ByCoreTopology(pCoreTopology);
 		}

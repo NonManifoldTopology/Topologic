@@ -30,31 +30,39 @@ namespace TopologicUtilities
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <param name="z"></param>
-		static TOPOLOGIC_UTILITIES_API void Translate(const TopologicCore::Topology::Ptr& kpTopology, const double x, const double y, const double z);
+		/// <returns></returns>
+		static TOPOLOGIC_UTILITIES_API TopologicCore::Topology::Ptr Translate(const TopologicCore::Topology::Ptr& kpTopology, const double x, const double y, const double z);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpTopology"></param>
-		/// <param name="kPointX"></param>
-		/// <param name="kPointY"></param>
-		/// <param name="kPointZ"></param>
-		/// <param name="kPkDirectionXointX"></param>
+		/// <param name="kpOrigin"></param>
+		/// <param name="kDirectionX"></param>
 		/// <param name="kDirectionY"></param>
 		/// <param name="kDirectionZ"></param>
-		/// <param name="kAngleInRadian"></param>
-		static TOPOLOGIC_UTILITIES_API void Rotate(const TopologicCore::Topology::Ptr& kpTopology, 
-			const double kPointX, const double kPointY, const double kPointZ, 
+		/// <param name="kDegree"></param>
+		/// <returns></returns>
+		static TOPOLOGIC_UTILITIES_API TopologicCore::Topology::Ptr Rotate(const TopologicCore::Topology::Ptr& kpTopology,
+			const TopologicCore::Vertex::Ptr& kpOrigin,
 			const double kDirectionX, const double kDirectionY, const double kDirectionZ,
-			const double kAngleInRadian);
+			const double kDegree);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpTopology"></param>
-		/// <param name="kpVertex"></param>
-		/// <param name="kScaleFactor"></param>
-		static TOPOLOGIC_UTILITIES_API void Scale(const TopologicCore::Topology::Ptr& kpTopology, const TopologicCore::Vertex::Ptr& kpVertex, const double kScaleFactor);
+		/// <param name="kpOrigin"></param>
+		/// <param name="kXFactor"></param>
+		/// <param name="kYFactor"></param>
+		/// <param name="kZFactor"></param>
+		/// <returns></returns>
+		static TOPOLOGIC_UTILITIES_API TopologicCore::Topology::Ptr Scale(
+			const TopologicCore::Topology::Ptr& kpTopology, const TopologicCore::Vertex::Ptr& kpOrigin, 
+			const double kXFactor, const double kYFactor, const double kZFactor);
 
+		static TOPOLOGIC_UTILITIES_API double DegreeToRadian(const double kDegree);
+
+		static TOPOLOGIC_UTILITIES_API double RadianToDegree(const double kRadian);
 	};
 }

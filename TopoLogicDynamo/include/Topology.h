@@ -58,6 +58,7 @@ namespace Topologic
 		/// </summary>
 		/// <param name="faces">A set of faces.</param>
 		/// <returns name="Topology">The created topology</returns>
+		[IsVisibleInDynamoLibrary(false)]
 		static Topology^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces);
 
 		/// <summary>
@@ -273,6 +274,7 @@ namespace Topologic
 		/// Returns all sub-topologies under this topology.
 		/// </summary>
 		/// <returns name="Topology[]">The sub-topologies of the input topology</returns>
+		[IsVisibleInDynamoLibrary(false)]
 		property List<Topology^>^ SubTopologies
 		{
 			List<Topology^>^ get();
@@ -361,6 +363,7 @@ namespace Topologic
 		/// <param name="selector"></param>
 		/// <param name="typeFilter"></param>
 		/// <returns></returns>
+		[IsVisibleInDynamoLibrary(false)]
 		Topology^ SelectSubtopology(Topology^ selector,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] int typeFilter);
 		

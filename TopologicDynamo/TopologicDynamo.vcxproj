@@ -269,7 +269,6 @@
     <EmbeddedResource Include="resources\Topologic.resx" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="resources\Topologic-logo-large.png" />
     <Image Include="resources\Topologic.Large.png" />
     <Image Include="resources\Topologic.Small.png" />
   </ItemGroup>

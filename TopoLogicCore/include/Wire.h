@@ -82,7 +82,7 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		TOPOLOGIC_API int GetNumberOfBranches() const;
+		TOPOLOGIC_API int NumberOfBranches() const;
 
 		/// <summary>
 		/// 
