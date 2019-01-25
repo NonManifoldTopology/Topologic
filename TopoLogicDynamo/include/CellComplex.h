@@ -21,68 +21,68 @@ namespace Topologic
 	{
 	public:
 		/// <summary>
-		/// Create a cellComplex from a set of cells.
+		/// Creates a CellComplex by a set of Cells.
 		/// </summary>
-		/// <param name="cells"></param>
-		/// <returns name="CellComplex"></returns>
+		/// <param name="cells">A set of Cells</param>
+		/// <returns name="CellComplex">The created CellComplex</returns>
 		static CellComplex^ ByCells(System::Collections::Generic::IEnumerable<Cell^>^ cells);
 
 		/// <summary>
-		/// Create a cellComplex from the space enclosed by a set of faces. Parts of the faces which do not enclose any space will be discarded.
+		/// Creates a CellComplex from the space enclosed by a set of Faces. Parts of the Faces which do not enclose any space will be discarded.
 		/// </summary>
-		/// <param name="faces"></param>
-		/// <returns name="CellComplex"></returns>
+		/// <param name="faces">A set of Faces</param>
+		/// <returns name="CellComplex">The created CellComplex</returns>
 		static CellComplex^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces);
 
 		/// <summary>
-		/// Get the cells constituent to the cellComplex.
+		/// Returns the Cells constituent to the CellComplex.
 		/// </summary>
-		/// <returns name="Cell[]"></returns>
+		/// <returns name="Cell[]">A list of Cells constituent to the CellComplex</returns>
 		property List<Cell^>^ Cells
 		{
 			List<Cell^>^ get();
 		}
 
 		/// <summary>
-		/// Get the faces constituent to the cellComplex.
+		/// Returns the Faces constituent to the CellComplex.
 		/// </summary>
-		/// <returns name="Face[]"></returns>
+		/// <returns name="Face[]">A list of Faces constituent to the CellComplex</returns>
 		property List<Face^>^ Faces
 		{
 			List<Face^>^ get();
 		}
 
 		/// <summary>
-		/// Get the shells constituent to the cellComplex.
+		/// Returns the Shells constituent to the CellComplex.
 		/// </summary>
-		/// <returns name="Shell[]"></returns>
+		/// <returns name="Shell[]">A list of Shells constituent to the CellComplex</returns>
 		property List<Shell^>^ Shells
 		{
 			List<Shell^>^ get();
 		}
 
 		/// <summary>
-		/// Get the wires constituent to the cellComplex.
+		/// Returns the Wires constituent to the CellComplex.
 		/// </summary>
-		/// <returns name="Wire[]"></returns>
+		/// <returns name="Wire[]">A list of Wires constituent to the CellComplex</returns>
 		property List<Wire^>^ Wires
 		{
 			List<Wire^>^ get();
 		}
 
 		/// <summary>
-		/// Get the edges constituent to the cellComplex.
+		/// Returns the Edges constituent to the CellComplex.
 		/// </summary>
-		/// <returns name="Edge[]"></returns>
+		/// <returns name="Edge[]">A list of Edges constituent to the CellComplex</returns>
 		property List<Edge^>^ Edges
 		{
 			List<Edge^>^ get();
 		}
 
 		/// <summary>
-		/// Get the vertices constituent to the cellComplex.
+		/// Returns the Vertices constituent to the CellComplex.
 		/// </summary>
-		/// <returns name="Vertex[]"></returns>
+		/// <returns name="Vertex[]">A list of Vertices constituent to the CellComplex</returns>
 		property List<Vertex^>^ Vertices
 		{
 			List<Vertex^>^ get();
@@ -90,41 +90,45 @@ namespace Topologic
 
 
 		/// <summary>
-		/// Get the external boundary (cell) of the cellComplex.
+		/// Returns the external boundary (Cell) of the CellComplex.
 		/// </summary>
-		/// <returns name="Cell"></returns>
+		/// <returns name="Cell">The external boundary (Cell) of the CellComplex</returns>
 		property Cell^ ExternalBoundary
 		{
 			Cell^ get();
 		}
 
 		/// <summary>
-		/// Get the internal boundaries (faces) of the cellComplex.
+		/// Returns the internal boundaries (Faces) of the CellComplex.
 		/// </summary>
-		/// <returns name="Face[]"></returns>
+		/// <returns name="Face[]">A list of the internal boundaries (Faces) of the CellComplex</returns>
 		property List<Face^>^ InternalBoundaries
 		{
 			List<Face^>^ get();
 		}
 
 		/// <summary>
-		/// Get the non-manifold faces of the cellComplex.
+		/// Returns the non-manifold Faces of the CellComplex.
 		/// </summary>
-		/// <returns name="Face[]"></returns>
+		/// <returns name="Face[]">A list of the non-manifold Faces of the CellComplex.</returns>
 		property List<Face^>^ NonManifoldFaces
 		{
 			List<Face^>^ get();
 		}
 
+		/// <summary>
+		/// Creates a geometry from CellComplex.
+		/// </summary>
+		/// <returns>The created geometry</returns>
 		property Object^ Geometry_
 		{
-			/// <summary>
-			/// 
-			/// </summary>
-			/// <returns></returns>
 			virtual Object^ get() override;
 		}
 
+		/// <summary>
+		/// Returns the type associated to CellComplex.
+		/// </summary>
+		/// <returns>The type associated to CellComplex</returns>
 		static int Type();
 
 	public protected:

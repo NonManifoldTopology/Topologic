@@ -13,6 +13,10 @@ namespace Topologic
 	ref class Topology;
 	ref class AttributeFactory;
 
+	/// <summary>
+	/// An AttributeFactoryManager stores the subclasses of AttributeFactory, identified by their IDs. This class is used to identify the attribute type. The ID is in the GUID format, represented as a String. A user-created AttributeFactory must be registered with a unique ID to this class.
+	/// </summary>
+
 	ref class AttributeManager
 	{
 	public protected:

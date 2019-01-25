@@ -16,55 +16,59 @@ namespace Topologic {
 	{
 	public:
 		/// <summary>
-		/// Create a straight edge by the startVertex and endVertex.
+		/// Creates a straight Edge by the startVertex and endVertex.
 		/// </summary>
-		/// <param name="startVertex"></param>
-		/// <param name="endVertex"></param>
-		/// <returns name="Edge"></returns>
+		/// <param name="startVertex">The start Vertex</param>
+		/// <param name="endVertex">The end Vertex</param>
+		/// <returns name="Edge">The created Edge</returns>
 		static Edge^ ByStartVertexEndVertex(Vertex^ startVertex, Vertex^ endVertex);
 
 		/// <summary>
-		/// Get the edges adjacent to the edge.
+		/// Returns the Edges adjacent to the Edge.
 		/// </summary>
-		/// <returns name="Edge[]">The edges adjacent to the edge</returns>
+		/// <returns name="Edge[]">A list of the Edges adjacent to the Edge</returns>
 		property List<Edge^>^ AdjacentEdges
 		{
 			List<Edge^>^ get();
 		}
 
 		/// <summary>
-		/// Get the vertices at the ends of the edge.
+		/// Returns the Vertices at the ends of the Edge.
 		/// </summary>
-		/// <returns name="Vertex[]"></returns>
+		/// <returns name="Vertex[]">A list of Vertices at the ends of the Edge</returns>
 		property List<Vertex^>^ Vertices {
 			List<Vertex^>^ get();
 		}
 
 		/// <summary>
-		/// Get the wires incident to the edge.
+		/// Returns the Wires incident to the Edge.
 		/// </summary>
-		/// <returns name="Wire[]">The list of wires incident to the edge</returns>
+		/// <returns name="Wire[]">A list of Wires incident to the Edge</returns>
 		property List<Wire^>^ Wires
 		{
 			List<Wire^>^ get();
 		}
 
 		/// <summary>
-		/// Return the shared vertex between two edges.
+		/// Returns the shared Vertex between two Edges.
 		/// </summary>
-		/// <param name="edge">An edge.</param>
-		/// <returns name="Vertex">the shared vertex of an edge</returns>
+		/// <param name="edge">Another Edge</param>
+		/// <returns name="Vertex">The shared vertex between the two Edges</returns>
 		Vertex^ SharedVertex(Edge^ edge);
 
+		/// <summary>
+		/// Creates a geometry from Edge.
+		/// </summary>
+		/// <returns>The created geometry</returns>
 		property Object^ Geometry_
 		{
-			/// <summary>
-			/// 
-			/// </summary>
-			/// <returns></returns>
 			virtual Object^ get() override;
 		}
 
+		/// <summary>
+		/// Returns the type associated to Edge.
+		/// </summary>
+		/// <returns>The type associated to Edge</returns>
 		static int Type();
 
 	public protected:

@@ -16,23 +16,21 @@ namespace Topologic
 	{
 	public:
 		/// <summary>
-		/// Create a vertex by XYZ coordinates.
+		/// Creates a Vertex by XYZ coordinates.
 		/// </summary>
-		/// <param name="x">The x coordinate.</param>
-		/// <param name="y">The y coordinate.</param>
-		/// <param name="z">The z coordinate.</param>
-		/// <returns name="Vertex">
-		/// A vertex.
-		/// </returns>
+		/// <param name="x">The X coordinate</param>
+		/// <param name="y">The Y coordinate</param>
+		/// <param name="z">The Z coordinate</param>
+		/// <returns name="Vertex">The created Vertex</returns>
 		static Vertex^ ByCoordinates(
 			[DefaultArgument("0")] double x, 
 			[DefaultArgument("0")] double y, 
 			[DefaultArgument("0")] double z);
 
 		/// <summary>
-		/// Get the list of edges incident to the vertex.
+		/// Returns the Edges incident to the Vertex.
 		/// </summary>
-		/// <returns name="Edge[]">The edges incident to this vertex</returns>
+		/// <returns name="Edge[]">The Edges incident to the Vertex</returns>
 		property List<Edge^>^ Edges
 		{
 			List<Edge^>^ get();
@@ -41,48 +39,52 @@ namespace Topologic
 		property double X
 		{
 			/// <summary>
-			/// 
+			/// Returns the X coordinate of the Vertex.
 			/// </summary>
-			/// <returns></returns>
+			/// <returns>The X coordinate of the Vertex</returns>
 			virtual double get();
 		}
 
 		property double Y
 		{
 			/// <summary>
-			/// 
+			/// Returns the Y coordinate of the Vertex.
 			/// </summary>
-			/// <returns></returns>
+			/// <returns>The Y coordinate of the Vertex</returns>
 			virtual double get();
 		}
 
 		property double Z
 		{
 			/// <summary>
-			/// 
+			/// Returns the Z coordinate of the Vertex.
 			/// </summary>
-			/// <returns></returns>
+			/// <returns>The Z coordinate of the Vertex</returns>
 			virtual double get();
 		}
 
 		property List<double>^ Coordinates
 		{
 			/// <summary>
-			/// 
+			/// Returns the coordinates of the Vertex.
 			/// </summary>
-			/// <returns name="Geometry"></returns>
+			/// <returns name="Geometry">The coordinates of the Vertex</returns>
 			virtual List<double>^ get();
 		}
 
 		property Object^ Geometry_
 		{
 			/// <summary>
-			/// 
+			/// Creates a geometry from Vertex.
 			/// </summary>
-			/// <returns name="Geometry"></returns>
+			/// <returns>The created geometry</returns>
 			virtual Object^ get() override;	
 		}
 
+		/// <summary>
+		/// Returns the type associated to Vertex.
+		/// </summary>
+		/// <returns>The type associated to Vertex</returns>
 		static int Type();
 
 	public protected:

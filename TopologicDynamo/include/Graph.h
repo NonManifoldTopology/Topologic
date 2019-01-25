@@ -9,7 +9,7 @@ namespace Topologic
 	ref class CellComplex;
 
 	/// <summary>
-	/// Extension currently includes the DualGraph class.
+	/// Extensions currently include the DualGraph class, but will be extended to include increased graph functionality.
 	/// </summary>
 
 	namespace Extensions
@@ -17,7 +17,7 @@ namespace Topologic
 
 	{
 		/// <summary>
-		/// A Graph consists of a set of vertices and a set of edges that connect the vertices. It can be a Wire, Vertex, Edge or Cluster and is defined by the input Topology. It can be manifold or non-manifold.
+		/// A Graph consists of a set of Vertices and a set of Edges that connect the Vertices. It can be a Wire, Vertex, Edge or Cluster and is defined by the input Topology. It can be manifold or non-manifold. Please note that this will be renamed to Graph in future versions.
 		/// </summary>
 		public ref class DualGraph_ : Cluster
 		
@@ -32,7 +32,7 @@ namespace Topologic
 			/// <param name="viaSharedApertures">Choose whether to use any shared Apertures in the CellComplex or not</param>
 			/// <param name="toExteriorFaces">Choose whether to use the exterior Faces of the CellComplex or not</param>
 			/// <param name="toExteriorApertures">Choose whether to use any exterior Apertures of the CellComplex or not</param>
-			/// <returns>The created dual graph</returns>
+			/// <returns name="DualGraph_">The created dual graph</returns>
 			static DualGraph_^ ByCellComplex(
 				CellComplex^ cellComplex,
 				[DefaultArgument("true")] bool direct,

@@ -22,20 +22,20 @@ namespace Topologic
 	{
 	public:
 		/// <summary>
-		/// Create an aperture by a topology and a context.
+		/// Creates an Aperture by a Topology and a context.
 		/// </summary>
 		/// <param name="topology">A topology</param>
 		/// <param name="context">A context</param>
-		/// <returns name="Aperture">An aperture</returns>
+		/// <returns name="Aperture">An Aperture</returns>
 		static Aperture^ ByTopologyContext(Topology^ topology, Context^ context);
 
 		/// <summary>
-		/// Create an aperture by a topology, a context, and an open status.
+		/// Creates an Aperture by a Topology, a context, and an open status.
 		/// </summary>
 		/// <param name="topology">A topology</param>
 		/// <param name="context">A context</param>
 		/// <param name="openStatus">An open status</param>
-		/// <returns name="Aperture">An aperture</returns>
+		/// <returns name="Aperture">An Aperture</returns>
 		[IsVisibleInDynamoLibrary(false)]
 		static Aperture^ ByTopologyContextStatus(Topology^ topology, Context^ context, bool openStatus);
 
@@ -51,17 +51,17 @@ namespace Topologic
 		static Aperture^ ByBoundaryWithinHost(Face^ hostFace, Wire^ apertureBoundary, bool link, bool open);
 
 		/// <summary>
-		/// 
+		/// Creates an Aperture by a Topology and a context Topology.
 		/// </summary>
-		/// <param name="topology"></param>
-		/// <param name="contextTopology"></param>
-		/// <returns name="Aperture"></returns>
+		/// <param name="topology">A topology</param>
+		/// <param name="contextTopology">A context topology</param>
+		/// <returns name="Aperture">An Aperture</returns>
 		static Aperture^ ByTopologyContext(Topology^ topology, Topology^ contextTopology);
 
 		/// <summary>
-		/// Returns the underlying topology.
+		/// Returns the underlying Topology.
 		/// </summary>
-		/// <returns name="Topology">The underlying topology</returns>
+		/// <returns name="Topology">The underlying Topology</returns>
 		Topologic::Topology^ Topology();
 
 		/*/// <summary>
@@ -109,12 +109,12 @@ namespace Topologic
 		/// <returns name="Aperture">An aperture</returns>
 		Aperture^ Close(List<Topologic::Topology^>^ topologies);*/
 
+		/// <summary>
+		/// Creates a geometry from Aperture.
+		/// </summary>
+		/// <returns>The created geometry</returns>
 		property Object^ Geometry_
 		{
-			/// <summary>
-			/// 
-			/// </summary>
-			/// <returns name="Geometry"></returns>
 			virtual Object^ get() override;
 		}
 

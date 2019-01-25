@@ -17,35 +17,35 @@ namespace Topologic {
 	{
 	public:
 		/// <summary>
-		/// Create a wire by a list of edges.
+		/// Creates a Wire by a set of Edges.
 		/// </summary>
-		/// <param name="edges">The edges.</param>
-		/// <exception cref="ArgumentException">Thrown if any of the arguments is not a Topologic edge.</exception>
-		/// <returns name="Wire">The created Topologic wire</returns>
+		/// <param name="edges">The set of Edges</param>
+		/// <exception cref="ArgumentException">Thrown if any of the arguments is not a Topologic Edge</exception>
+		/// <returns name="Wire">The created Wire</returns>
 		static Wire^ ByEdges(System::Collections::Generic::IEnumerable<Edge^>^ edges);
 
 		/// <summary>
-		/// Get the constituent edges of the wire. NOTE: This method will automatically identify its loop order property.
+		/// Returns the Edges constituent to the Wire. NOTE: This method will automatically identify its loop order property.
 		/// </summary>
-		/// <returns name="Edge[]">The constituent edges</returns>
+		/// <returns name="Edge[]">A list of Edges constituent to the Wire</returns>
 		property List<Edge^>^ Edges
 		{
 			List<Edge^>^ get();
 		}
 
 		/// <summary>
-		/// Get the list of faces that contain the wire.
+		/// Returns the Faces containing the Wire.
 		/// </summary>
-		/// <returns name="Face[]">The faces that contain the wire</returns>
+		/// <returns name="Face[]">A list of Faces containing the Wire</returns>
 		property List<Face^>^ Faces
 		{
 			List<Face^>^ get();
 		}
 
 		/// <summary>
-		/// Gets the list constituent vertices of the wire. NOTE: This method will automatically identify its loop order property.
+		/// Returns the Vertices constituent to the Wire. NOTE: This method will automatically identify its loop order property.
 		/// </summary>
-		/// <returns name="Vertex[]">The constituent vertices</returns>
+		/// <returns name="Vertex[]">A list of Vertices constituent to the Wire</returns>
 		property List<Vertex^>^ Vertices
 		{
 			List<Vertex^>^ get();
@@ -58,9 +58,9 @@ namespace Topologic {
 		int GetNumberOfBranches();
 
 		/// <summary>
-		/// Check if the wire is closed.
+		/// Checks if the Wire is closed.
 		/// </summary>
-		/// <returns name="bool">True if the wire is closed, otherwise false</returns>
+		/// <returns name="bool">True if the Wire is closed, otherwise false</returns>
 		property bool IsClosed
 		{
 			bool get();
@@ -69,12 +69,16 @@ namespace Topologic {
 		property Object^ Geometry_
 		{
 			/// <summary>
-			/// 
+			/// Creates a geometry from Wire.
 			/// </summary>
-			/// <returns></returns>
+			/// <returns>The created geometry</returns>
 			virtual Object^ get() override;
 		}
 
+		/// <summary>
+		/// Returns the type associated to Wire.
+		/// </summary>
+		/// <returns>The type associated to Wire</returns>
 		static int Type();
 
 	public protected:
