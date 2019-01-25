@@ -23,8 +23,19 @@ namespace TopologicCore
 {
 	void Wire::Edges(std::list<Edge::Ptr>& rEdges) const
 	{
+		BRepTools_WireExplorer occtWireExplorer(GetOcctWire());
+		const TopoDS_Vertex& rkOcctFirstVertex = occtWireExplorer.CurrentVertex();
+		Vertex::Ptr pFirstVertex = std::make_shared<Vertex>(rkOcctFirstVertex);
+		std::list<Edge::Ptr> adjacentEdgesToFirstVertex;
+		pFirstVertex->Edges(adjacentEdgesToFirstVertex);
+
 		int numOfBranches = GetNumberOfBranches();
-		if(numOfBranches == 0)
+		if(numOfBranches >= 0 
+		  ||
+		  (!IsClosed() && adjacentEdgesToFirstVertex.size() > 1)) // open and the first vertex is adjacent to > 1 edges
+		{
+			DownwardNavigation(rEdges);
+		}else
 		{
 			// This query uses a specialised class BRepTools_WireExplorer 
 			for (BRepTools_WireExplorer occtWireExplorer(GetOcctWire()); occtWireExplorer.More(); occtWireExplorer.Next())
@@ -32,9 +43,6 @@ namespace TopologicCore
 				const TopoDS_Edge& rkOcctEdge = occtWireExplorer.Current();
 				rEdges.push_back(std::make_shared<Edge>(rkOcctEdge, EdgeGUID::Get()));
 			}
-		}else
-		{
-			DownwardNavigation(rEdges);
 		}
 	}
 

@@ -13,7 +13,12 @@ using namespace Autodesk::DesignScript::Runtime;
 
 namespace Topologic
 {
+	ref class CellComplex;
+	ref class Cell;
+	ref class Shell;
 	ref class Face;
+	ref class Wire;
+	ref class Edge;
 	ref class Vertex;
 	ref class Context;
 	ref class TopologyFactory;
@@ -45,6 +50,7 @@ namespace Topologic
 		/// </summary>
 		/// <param name="polySurface">A polysurface</param>
 		/// <returns>The created Topology</returns>
+		[IsVisibleInDynamoLibrary(false)]
 		static Topology^ ByPolySurface(Autodesk::DesignScript::Geometry::PolySurface^ polySurface);
 
 		/// <summary>
@@ -85,47 +91,10 @@ namespace Topologic
 		/// <summary>
 		/// Returns a Topology 
 		/// </summary>
-		/// <param name="keys">A list of keys</param>
-		/// <param name="values">A list of values</param>
-		/// <returns name="Topology"></returns>
-		Topology^ SetKeysValues(List<String^>^ keys, List<Object^>^ values);
-
-		/// <summary>
-		/// Returns the value given a key.
-		/// </summary>
-		/// <param name="key">A key</param>
-		/// <returns>The value</returns>
-		Object^ ValueAtKey(String^ key);
-
-		/// <summary>
-		/// Adds a dictionary to a Topology without copying the Topology.
-		/// </summary>
 		/// <param name="attributes">A dictionary</param>
 		/// <returns>The original Topology with a dictionary</returns>
 		[IsVisibleInDynamoLibrary(false)]
 		Topology^ AddAttributesNoCopy(Dictionary<String^, Object^>^ attributes);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="name"></param>
-		/// <returns name="Value"></returns>
-		Object^ AttributeValue(String^ name);
-
-		/// <summary>
-		/// Returns the keys and their associated values of the Topology.
-		/// </summary>
-		property List<List<Object^>^>^ KeysValues
-		{
-			List<List<Object^>^>^ get();
-		}
-
-		/// <summary>
-		/// Removes keys from a Topology.
-		/// </summary>
-		/// <param name="keys"></param>
-		/// <returns></returns>
-		Topology^ RemoveKeys(List<String^>^ keys);
 
 		/// <summary>
 		/// Returns the non-constituent members of the input Topology.
@@ -323,7 +292,69 @@ namespace Topologic
 		}
 
 		/// <summary>
-		/// Checks if two Topologies are the same. NOTE: This is a pointer check, not a topological or a geometry one.
+		/// Get the shells constituent to the Topology.
+		/// </summary>
+		/// <returns name="Shell[]"></returns>
+		property List<Shell^>^ Shells
+		{
+			List<Shell^>^ get();
+		}
+
+		/// <summary>
+		/// Get the faces constituent to the Topology.
+		/// </summary>
+		/// <returns name="Face[]"></returns>
+		property List<Face^>^ Faces
+		{
+			List<Face^>^ get();
+		}
+
+		/// <summary>
+		/// Get the wires constituent to the Topology.
+		/// </summary>
+		/// <returns name="Wire[]"></returns>
+		property List<Wire^>^ Wires
+		{
+			List<Wire^>^ get();
+		}
+
+		/// <summary>
+		/// Get the edges constituent to the Topology.
+		/// </summary>
+		/// <returns name="Edge[]"></returns>
+		property List<Edge^>^ Edges
+		{
+			List<Edge^>^ get();
+		}
+
+		/// <summary>
+		/// Get the vertices constituent to the Topology.
+		/// </summary>
+		/// <returns name="Vertex[]"></returns>
+		property List<Vertex^>^ Vertices
+		{
+			List<Vertex^>^ get();
+		}
+
+		/// <summary>
+		/// Get the cells constituent to the Topology.
+		/// </summary>
+		/// <returns name="Cell[]"></returns>
+		property List<Cell^>^ Cells
+		{
+			List<Cell^>^ get();
+		}
+
+		/// <summary>
+		/// Get the cellComplexes constituent to the Topology.
+		/// </summary>
+		/// <returns name="CellComplex[]"></returns>
+		property List<CellComplex^>^ CellComplexes
+		{
+			List<CellComplex^>^ get();
+		}
+
+		/// <summary>
 		/// </summary>
 		/// <param name="topology">Another Topology</param>
 		/// <returns>True if the Topologies are the same, otherwise false</returns>
@@ -384,6 +415,43 @@ namespace Topologic
 
 		[IsVisibleInDynamoLibrary(false)]
 		void RegisterFactory(String^ rkGUID, TopologyFactory^ topologyFactory);
+
+		/*/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="name"></param>
+		/// <returns name="Value"></returns>
+		Object^ AttributeValue(String^ name);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		property List<List<Object^>^>^ KeysValues
+		{
+			List<List<Object^>^>^ get();
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="keys"></param>
+		/// <returns></returns>
+		Topology^ RemoveKeys(List<String^>^ keys);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="keys"></param>
+		/// <param name="values"></param>
+		/// <returns name="Topology"></returns>
+		Topology^ SetKeysValues(List<String^>^ keys, List<Object^>^ values);*/
+
+		Topology^ SetDictionary(Dictionary<String^, Object^>^ dictionary);
+
+		property System::Collections::Generic::Dictionary<String^, Object^>^ Dictionary
+		{
+			System::Collections::Generic::Dictionary<String^, Object^>^ get();
+		}
 
 	public protected:
 		static Topology^ ByCoreTopology(const std::shared_ptr<TopologicCore::Topology>& kpCoreTopology);

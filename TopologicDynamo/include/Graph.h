@@ -11,10 +11,7 @@ namespace Topologic
 	/// <summary>
 	/// Extensions currently include the DualGraph class, but will be extended to include increased graph functionality.
 	/// </summary>
-
 	namespace Extensions
-
-
 	{
 		/// <summary>
 		/// A Graph consists of a set of Vertices and a set of Edges that connect the Vertices. It can be a Wire, Vertex, Edge or Cluster and is defined by the input Topology. It can be manifold or non-manifold. Please note that this will be renamed to Graph in future versions.
@@ -58,15 +55,6 @@ namespace Topologic
 				[DefaultArgument("false")] bool viaSharedApertures,
 				[DefaultArgument("false")] bool toExteriorEdges,
 				[DefaultArgument("false")] bool toExteriorApertures);
-
-			/*property Object^ Geometry_
-			{
-				/// <summary>
-				/// 
-				/// </summary>
-				/// <returns></returns>
-				virtual Object^ get() override;
-			}*/
 
 		public protected:
 			/// <summary>

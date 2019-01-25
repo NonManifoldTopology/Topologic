@@ -150,11 +150,12 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\About.h" />
     <ClInclude Include="include\Aperture.h" />
     <ClInclude Include="include\ApertureFactory.h" />
     <ClInclude Include="include\Attribute.h" />
     <ClInclude Include="include\AttributeFactory.h" />
-    <ClInclude Include="include\AttributeManager.h" />
+    <ClInclude Include="include\AttributeFactoryManager.h" />
     <ClInclude Include="include\Bitwise.h" />
     <ClInclude Include="include\Cell.h" />
     <ClInclude Include="include\CellComplex.h" />
@@ -191,10 +192,11 @@
     <ClInclude Include="include\WireFactory.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\About.cpp" />
     <ClCompile Include="src\Aperture.cpp" />
     <ClCompile Include="src\ApertureFactory.cpp" />
     <ClCompile Include="src\Attribute.cpp" />
-    <ClCompile Include="src\AttributeManager.cpp" />
+    <ClCompile Include="src\AttributeFactoryManager.cpp" />
     <ClCompile Include="src\Bitwise.cpp" />
     <ClCompile Include="src\Cell.cpp" />
     <ClCompile Include="src\CellComplex.cpp" />
@@ -257,6 +259,7 @@
       <HintPath>..\references\Dynamo-2.0.1\ProtoGeometry.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -265,20 +268,25 @@
   <ItemGroup>
     <EmbeddedResource Include="resources\Topologic.resx" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\Topologic-logo-large.png" />
+    <Image Include="resources\Topologic.Large.png" />
+    <Image Include="resources\Topologic.Small.png" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <Target Name="AfterBuild">
     <!-- Get System.Drawing.dll -->
-    <!--<GetReferenceAssemblyPaths TargetFrameworkMoniker=".NETFramework, Version=v2.0">
+    <GetReferenceAssemblyPaths TargetFrameworkMoniker=".NETFramework, Version=v2.0">
       <Output TaskParameter="FullFrameworkReferenceAssemblyPaths" PropertyName="FrameworkAssembliesPath" />
-    </GetReferenceAssemblyPaths>-->
+    </GetReferenceAssemblyPaths>
     <!-- Get assembly -->
-    <!--<GetAssemblyIdentity AssemblyFiles="$(OutDir)$(TargetName).dll">
+    <GetAssemblyIdentity AssemblyFiles="$(OutDir)$(TargetName).dll">
       <Output TaskParameter="Assemblies" ItemName="AssemblyInfo" />
-    </GetAssemblyIdentity>-->
+    </GetAssemblyIdentity>
     <!-- Generate customization dll -->
-    <!--<GenerateResource UseSourcePath="true" SdkToolsPath="$(sdk40toolspath)" Sources="$(ProjectDir)resources\Topologic.resx" OutputResources="$(ProjectDir)obj\TopologicImages.resources" References="$(FrameworkAssembliesPath)System.Drawing.dll" />
-    <AL TargetType="library" EmbedResources="$(ProjectDir)obj\TopologicImages.resources" OutputAssembly="$(OutDir)Topologic.customization.dll" Version="%(AssemblyInfo.Version)" />-->
+    <GenerateResource UseSourcePath="true" SdkToolsPath="$(sdk40toolspath)" Sources="$(ProjectDir)resources\Topologic.resx" OutputResources="$(ProjectDir)obj\TopologicImages.resources" References="$(FrameworkAssembliesPath)System.Drawing.dll" />
+    <AL TargetType="library" EmbedResources="$(ProjectDir)obj\TopologicImages.resources" OutputAssembly="$(OutDir)Topologic.customization.dll" Version="%(AssemblyInfo.Version)" />
   </Target>
 </Project>

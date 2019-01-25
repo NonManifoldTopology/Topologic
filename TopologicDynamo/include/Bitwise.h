@@ -2,6 +2,8 @@
 
 #include <TopologicCore/include/Bitwise.h>
 
+using namespace System::Collections::Generic;
+
 namespace Topologic {
 	/// <summary>
 	/// Utilities provide extended functionality including further topologic and geometric methods and properties. These include the Bitwise, CellUtility, EdgeUtility, FaceUtility, ShellUtility and TopologyUtility classes.
@@ -16,11 +18,18 @@ namespace Topologic {
 		public ref class Bitwise
 		{
 		public:
-			static int And(int argument1, int argument2);
+			/*static int And(int argument1, int argument2);
 
 			static int Or(int argument1, int argument2);
 
-			static int Xor(int argument1, int argument2);
+			static int Xor(int argument1, int argument2);*/
+
+			static int And(List<int>^ arguments);
+
+			static int Or(List<int>^ arguments);
+
+			static int Xor(List<int>^ arguments);
+
 
 			static int Not(int argument);
 

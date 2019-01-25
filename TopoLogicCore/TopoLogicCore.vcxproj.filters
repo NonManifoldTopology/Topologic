@@ -57,6 +57,7 @@
     </ClInclude>
     <ClInclude Include="include\GlobalCluster.h" />
     <ClInclude Include="include\Bitwise.h" />
+    <ClInclude Include="include\About.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
@@ -111,6 +112,7 @@
     <ClCompile Include="src\GlobalCluster.cpp" />
     <ClCompile Include="src\Utilities.cpp" />
     <ClCompile Include="src\Bitwise.cpp" />
+    <ClCompile Include="src\About.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Context">

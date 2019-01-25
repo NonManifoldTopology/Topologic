@@ -21,18 +21,12 @@
 
 namespace TopologicUtilities
 {
-	TopologicCore::Cell::Ptr CellUtility::ByVerticesFaceIndices(const std::vector<TopologicCore::Vertex::Ptr>& rkVertices, const std::list<std::list<int>>& rkFaceIndices)
+	/*TopologicCore::Cell::Ptr CellUtility::ByVerticesFaceIndices(const std::vector<TopologicCore::Vertex::Ptr>& rkVertices, const std::list<std::list<int>>& rkFaceIndices)
 	{
 		if (rkVertices.empty())
 		{
 			throw std::exception("No vertex is passed.");
 		}
-
-		/*std::vector<TopologicCore::Vertex::Ptr> copyVertices;
-		for (const TopologicCore::Vertex::Ptr& kpVertex : rkVertices)
-		{
-			copyVertices.push_back(std::dynamic_pointer_cast<TopologicCore::Vertex>(kpVertex->DeepCopy()));
-		}*/
 
 		std::list<TopologicCore::Face::Ptr> faces;
 		for (const std::list<int>& rkVertexIndices : rkFaceIndices)
@@ -68,7 +62,7 @@ namespace TopologicUtilities
 		TopologicCore::Cell::Ptr pCopyCell = std::dynamic_pointer_cast<TopologicCore::Cell>(pCell->DeepCopy());
 		TopologicCore::GlobalCluster::GetInstance().AddTopology(pCopyCell->GetOcctShape());
 		return pCopyCell;
-	}
+	}*/
 
 
 	TopologicCore::Cell::Ptr CellUtility::ByLoft(const std::list<TopologicCore::Wire::Ptr>& rkWires)

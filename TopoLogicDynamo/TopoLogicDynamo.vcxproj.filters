@@ -46,9 +46,6 @@
     <ClInclude Include="include\EdgeFactory.h">
       <Filter>Factory</Filter>
     </ClInclude>
-    <ClInclude Include="include\AttributeManager.h">
-      <Filter>Attribute</Filter>
-    </ClInclude>
     <ClInclude Include="include\AttributeFactory.h">
       <Filter>Attribute</Filter>
     </ClInclude>
@@ -90,6 +87,10 @@
       <Filter>Utilities</Filter>
     </ClInclude>
     <ClInclude Include="include\LicenseManager.h" />
+    <ClInclude Include="include\About.h" />
+    <ClInclude Include="include\AttributeFactoryManager.h">
+      <Filter>Attribute</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
@@ -133,9 +134,6 @@
     <ClCompile Include="src\WireFactory.cpp">
       <Filter>Factory</Filter>
     </ClCompile>
-    <ClCompile Include="src\AttributeManager.cpp">
-      <Filter>Attribute</Filter>
-    </ClCompile>
     <ClCompile Include="src\IntAttributeFactory.cpp">
       <Filter>Attribute</Filter>
     </ClCompile>
@@ -173,6 +171,10 @@
     <ClCompile Include="src\Bitwise.cpp">
       <Filter>Utilities</Filter>
     </ClCompile>
+    <ClCompile Include="src\About.cpp" />
+    <ClCompile Include="src\AttributeFactoryManager.cpp">
+      <Filter>Attribute</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Factory">
@@ -187,11 +189,23 @@
     <Filter Include="Extensions">
       <UniqueIdentifier>{d4638fb2-7e2b-466a-9ed8-76be45cf42c3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{ad2d32d9-7483-4053-93fb-a398384ec0a5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="config\Topologic_DynamoCustomization.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="resources\Topologic.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\Topologic-logo-large.png" />
+    <Image Include="resources\Topologic.Large.png">
+      <Filter>Resources</Filter>
+    </Image>
+    <Image Include="resources\Topologic.Small.png">
+      <Filter>Resources</Filter>
+    </Image>
   </ItemGroup>
 </Project>

@@ -28,7 +28,7 @@
 #include <ClusterFactory.h>
 #include <GraphFactory.h>
 #include <ApertureFactory.h>
-#include <AttributeManager.h>
+#include <AttributeFactoryManager.h>
 #include <AttributeFactory.h>
 #include <LicenseManager.h>
 
@@ -134,17 +134,23 @@ namespace Topologic
 			// If it is a surface which actually contains more than 1 surfaces, create a polySurface first, because it has a SurfaceCount method.
 			List<Autodesk::DesignScript::Geometry::Surface^>^ surfaces = gcnew List<Autodesk::DesignScript::Geometry::Surface^>();
 			surfaces->Add(dynamoSurface);
-			dynamoPolySurface = Autodesk::DesignScript::Geometry::PolySurface::ByJoinedSurfaces(surfaces);
-			int numOfSurfaces = dynamoPolySurface->SurfaceCount();
-			if (numOfSurfaces < 1)
+			try{
+				dynamoPolySurface = Autodesk::DesignScript::Geometry::PolySurface::ByJoinedSurfaces(surfaces);
+				int numOfSurfaces = dynamoPolySurface->SurfaceCount();
+				if (numOfSurfaces < 1)
+				{
+					throw gcnew Exception("The geometry is a surface by type but no surface is detected.");
+				}else if (numOfSurfaces > 1)
+				{
+					// This can be a shell or a cluster, so call Topology::ByPolySurface.
+					Topology^ topology = Topology::ByPolySurface(dynamoPolySurface);
+					delete dynamoPolySurface;
+					return topology;
+				}
+			}
+			catch (...)
 			{
-				throw gcnew Exception("The geometry is a surface by type but no surface is detected.");
-			}else if (numOfSurfaces > 1)
-			{
-				// This can be a shell or a cluster, so call Topology::ByPolySurface.
-				Topology^ topology = Topology::ByPolySurface(dynamoPolySurface);
-				delete dynamoPolySurface;
-				return topology;
+
 			}
 
 			return Face::BySurface(dynamoSurface);
@@ -325,6 +331,41 @@ namespace Topologic
 		return topologyType;
 	}
 
+	Topology ^ Topology::SetDictionary(System::Collections::Generic::Dictionary<String^, Object^>^ dictionary)
+	{
+		TopologicCore::Topology::Ptr pCoreTopology =
+		TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->DeepCopy();
+		Topology^ copyTopology = Topology::ByCoreTopology(pCoreCopyTopology);
+		copyTopology->AddAttributesNoCopy(dictionary);
+
+		return copyTopology;
+	}
+
+	Dictionary<String^, Object^>^ Topology::Dictionary::get()
+	{
+		TopologicCore::Topology::Ptr pCoreTopology =
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+
+		std::map<std::string, std::shared_ptr<TopologicUtilities::Attribute>> coreAttributes;
+		bool isFound = TopologicUtilities::AttributeManager::GetInstance().FindAll(pCoreTopology->GetOcctShape(), coreAttributes);
+		if (!isFound)
+		{
+			return nullptr;
+		}
+		
+		System::Collections::Generic::Dictionary<String^, Object^>^ dictionary = gcnew System::Collections::Generic::Dictionary<String^, Object^>();
+		for (const std::pair<std::string, TopologicUtilities::Attribute::Ptr>& rkAttributePair : coreAttributes)
+		{
+			String^ key = gcnew String(rkAttributePair.first.c_str());
+			AttributeFactory^ attributeFactory = AttributeFactoryManager::Instance->GetFactory(rkAttributePair.second);
+			dictionary->Add(key, attributeFactory->CreateValue(rkAttributePair.second));
+		}
+
+		return dictionary;
+	}
+
+
 	Topology^ Topology::ByCoreTopology(const std::shared_ptr<TopologicCore::Topology>& kpCoreTopology)
 	{
 		if (kpCoreTopology == nullptr)
@@ -420,41 +461,41 @@ namespace Topologic
 
 	}
 
-	Topology^ Topology::SetKeysValues(List<String^>^ keys, List<Object^>^ values)
-	{
-		if (keys->Count == 0)
-		{
-			throw gcnew Exception("An empty list of keys is given.");
-		}
+	//Topology^ Topology::SetKeysValues(List<String^>^ keys, List<Object^>^ values)
+	//{
+	//	if (keys->Count == 0)
+	//	{
+	//		throw gcnew Exception("An empty list of keys is given.");
+	//	}
 
-		if (values->Count == 0)
-		{
-			throw gcnew Exception("An empty list of values is given.");
-		}
+	//	if (values->Count == 0)
+	//	{
+	//		throw gcnew Exception("An empty list of values is given.");
+	//	}
 
-		if (values->Count != keys->Count)
-		{
-			throw gcnew Exception("The keys and values lists do not have the same length.");
-		}
+	//	if (values->Count != keys->Count)
+	//	{
+	//		throw gcnew Exception("The keys and values lists do not have the same length.");
+	//	}
 
-		Dictionary<String^, Object^>^ dictionary = gcnew Dictionary<String^, Object^>();
-		for (int i = 0; i < keys->Count; i++)
-		{
-			dictionary->Add(keys[i], values[i]);
-		}
+	//	Dictionary<String^, Object^>^ dictionary = gcnew Dictionary<String^, Object^>();
+	//	for (int i = 0; i < keys->Count; i++)
+	//	{
+	//		dictionary->Add(keys[i], values[i]);
+	//	}
 
-		// 1. Copy the core topology
-		TopologicCore::Topology::Ptr pCoreTopology =
-			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->DeepCopy();
-		Topology^ copyTopology = Topology::ByCoreTopology(pCoreCopyTopology);
-		copyTopology->AddAttributesNoCopy(dictionary);
+	//	// 1. Copy the core topology
+	//	TopologicCore::Topology::Ptr pCoreTopology =
+	//		TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+	//	TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->DeepCopy();
+	//	Topology^ copyTopology = Topology::ByCoreTopology(pCoreCopyTopology);
+	//	copyTopology->AddAttributesNoCopy(dictionary);
 
-		return copyTopology;
-	}
+	//	return copyTopology;
+	//}
 
 
-	Object ^ Topology::ValueAtKey(String ^ key)
+	/*Object ^ Topology::ValueAtKey(String ^ key)
 	{
 		TopologicCore::Topology::Ptr pCoreTopology =
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
@@ -466,11 +507,11 @@ namespace Topologic
 			return nullptr;
 		}
 
-		AttributeFactory^ attributeFactory = AttributeManager::Instance->GetFactory(pSupportAttribute);
+		AttributeFactory^ attributeFactory = AttributeFactoryManager::Instance->GetFactory(pSupportAttribute);
 		return attributeFactory->CreateValue(pSupportAttribute);
-	}
+	}*/
 
-	Topology ^ Topology::AddAttributesNoCopy(Dictionary<String^, Object^>^ attributes)
+	Topology ^ Topology::AddAttributesNoCopy(System::Collections::Generic::Dictionary<String^, Object^>^ attributes)
 	{
 		TopologicCore::Topology::Ptr pCoreTopology =
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
@@ -478,19 +519,19 @@ namespace Topologic
 		for each(KeyValuePair<String^, Object^>^ entry in attributes)
 		{
 			System::Type^ entryValueType = entry->Value->GetType();
-			AttributeManager::Instance->SetAttribute(this, entry->Key, entry->Value); 
+			AttributeFactoryManager::Instance->SetAttribute(this, entry->Key, entry->Value);
 		}
 		return this;
 	}
 
-	Object ^ Topology::AttributeValue(String ^ name)
+	/*Object ^ Topology::AttributeValue(String ^ name)
 	{
 		TopologicCore::Topology::Ptr pCoreTopology =
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		std::string cppName = msclr::interop::marshal_as<std::string>(name);
 
 		TopologicUtilities::Attribute::Ptr pSupportAttribute = TopologicUtilities::AttributeManager::GetInstance().Find(pCoreTopology->GetOcctShape(), cppName);
-		AttributeFactory^ attributeFactory = AttributeManager::Instance->GetFactory(pSupportAttribute);
+		AttributeFactory^ attributeFactory = AttributeFactoryManager::Instance->GetFactory(pSupportAttribute);
 		return attributeFactory->CreateValue(pSupportAttribute);
 	}
 
@@ -513,7 +554,7 @@ namespace Topologic
 			String^ key = gcnew String(rkAttributePair.first.c_str());
 			keys->Add(key);
 
-			AttributeFactory^ attributeFactory = AttributeManager::Instance->GetFactory(rkAttributePair.second);
+			AttributeFactory^ attributeFactory = AttributeFactoryManager::Instance->GetFactory(rkAttributePair.second);
 			values->Add(attributeFactory->CreateValue(rkAttributePair.second));
 		}
 
@@ -535,7 +576,7 @@ namespace Topologic
 		}
 
 		return copyTopology;
-	}
+	}*/
 
 	List<Topology^>^ Topology::Contents::get()
 	{
@@ -601,8 +642,12 @@ namespace Topologic
 
 		pCoreCopyParentTopology->AddContent(pCoreCopyContentTopology);
 
-		// 5. Return the copy topology
-		return Topology::ByCoreTopology(pCoreCopyParentTopology);
+		// 3. Copy dictionary
+		Topology^ copyParentTopology = Topology::ByCoreTopology(pCoreCopyParentTopology);
+		Topology^ copyCopyParentTopology = copyParentTopology->SetDictionary(Dictionary);
+
+		// 4. Return the copy topology
+		return copyCopyParentTopology;
 	}
 
 	Topology ^ Topology::AddContent(Topology ^ topology, int typeFilter)
@@ -619,16 +664,16 @@ namespace Topologic
 
 		pCoreCopyParentTopology->AddContent(pCoreCopyContentTopology, typeFilter);
 
-		// 5. Return the copy topology
+		// 3. Copy dictionary
+		Topology^ copyParentTopology = Topology::ByCoreTopology(pCoreCopyParentTopology);
+		copyParentTopology->SetDictionary(copyParentTopology->Dictionary);
+
+		// 4. Return the copy topology
 		return Topology::ByCoreTopology(pCoreCopyParentTopology);
 	}
 
 	Topology^ Topology::RemoveContent(Topology^ topology)
 	{
-		/*std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		pCoreTopology->RemoveContent(TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery()));
-		return this;*/
-
 		throw gcnew NotImplementedException();
 	}
 
@@ -916,6 +961,139 @@ namespace Topologic
 			pTopologies->Add(pTopology);
 		}
 		return pTopologies;
+	}
+
+	List<Shell^>^ Topology::Shells::get()
+	{
+		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+
+		std::list<TopologicCore::Shell::Ptr> coreShells;
+		pCoreTopology->Shells(coreShells);
+
+		List<Shell^>^ pShells = gcnew List<Shell^>();
+		for (std::list<TopologicCore::Shell::Ptr>::const_iterator kShellIterator = coreShells.begin();
+			kShellIterator != coreShells.end();
+			kShellIterator++)
+		{
+			Shell^ pShell = gcnew Shell(*kShellIterator);
+			pShells->Add(pShell);
+		}
+
+		return pShells;
+	}
+
+	List<Face^>^ Topology::Faces::get()
+	{
+		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+
+		std::list<TopologicCore::Face::Ptr> coreFaces;
+		pCoreTopology->Faces(coreFaces);
+
+		List<Face^>^ pFaces = gcnew List<Face^>();
+		for (std::list<TopologicCore::Face::Ptr>::const_iterator kFaceIterator = coreFaces.begin();
+			kFaceIterator != coreFaces.end();
+			kFaceIterator++)
+		{
+			Face^ pFace = gcnew Face(*kFaceIterator);
+			pFaces->Add(pFace);
+		}
+
+		return pFaces;
+	}
+
+	List<Wire^>^ Topology::Wires::get()
+	{
+		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+
+		std::list<TopologicCore::Wire::Ptr> coreWires;
+		pCoreTopology->Wires(coreWires);
+
+		List<Wire^>^ pWires = gcnew List<Wire^>();
+		for (std::list<TopologicCore::Wire::Ptr>::const_iterator kWireIterator = coreWires.begin();
+			kWireIterator != coreWires.end();
+			kWireIterator++)
+		{
+			Wire^ pWire = gcnew Wire(*kWireIterator);
+			pWires->Add(pWire);
+		}
+
+		return pWires;
+	}
+
+	List<Edge^>^ Topology::Edges::get()
+	{
+		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+
+		std::list<TopologicCore::Edge::Ptr> coreEdges;
+		pCoreTopology->Edges(coreEdges);
+
+		List<Edge^>^ pEdges = gcnew List<Edge^>();
+		for (std::list<TopologicCore::Edge::Ptr>::const_iterator kEdgeIterator = coreEdges.begin();
+			kEdgeIterator != coreEdges.end();
+			kEdgeIterator++)
+		{
+			Edge^ pEdge = gcnew Edge(*kEdgeIterator);
+			pEdges->Add(pEdge);
+		}
+
+		return pEdges;
+	}
+
+	List<Vertex^>^ Topology::Vertices::get()
+	{
+		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+
+		std::list<TopologicCore::Vertex::Ptr> coreVertices;
+		pCoreTopology->Vertices(coreVertices);
+
+		List<Vertex^>^ pVertices = gcnew List<Vertex^>();
+		for (std::list<TopologicCore::Vertex::Ptr>::const_iterator kVertexIterator = coreVertices.begin();
+			kVertexIterator != coreVertices.end();
+			kVertexIterator++)
+		{
+			Vertex^ pVertex = gcnew Vertex(*kVertexIterator);
+			pVertices->Add(pVertex);
+		}
+
+		return pVertices;
+	}
+
+	List<Cell^>^ Topology::Cells::get()
+	{
+		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+
+		std::list<TopologicCore::Cell::Ptr> coreCells;
+		pCoreTopology->Cells(coreCells);
+
+		List<Cell^>^ pCells = gcnew List<Cell^>();
+		for (std::list<TopologicCore::Cell::Ptr>::const_iterator kCellIterator = coreCells.begin();
+			kCellIterator != coreCells.end();
+			kCellIterator++)
+		{
+			Cell^ pCell = gcnew Cell(*kCellIterator);
+			pCells->Add(pCell);
+		}
+
+		return pCells;
+	}
+
+	List<CellComplex^>^ Topology::CellComplexes::get()
+	{
+		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+
+		std::list<TopologicCore::CellComplex::Ptr> coreCellComplexes;
+		pCoreTopology->CellComplexes(coreCellComplexes);
+
+		List<CellComplex^>^ pCellComplexes = gcnew List<CellComplex^>();
+		for (std::list<TopologicCore::CellComplex::Ptr>::const_iterator kCellComplexIterator = coreCellComplexes.begin();
+			kCellComplexIterator != coreCellComplexes.end();
+			kCellComplexIterator++)
+		{
+			CellComplex^ pCellComplex = gcnew CellComplex(*kCellComplexIterator);
+			pCellComplexes->Add(pCellComplex);
+		}
+
+		return pCellComplexes;
 	}
 
 	/*Topology^ Topology::Simplify()

@@ -148,7 +148,7 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="rCells"></param>
+		/// <param name="rCellComplexes"></param>
 		TOPOLOGIC_API void CellComplexes(std::list<std::shared_ptr<CellComplex>>& rCellComplexes) const;
 
 		/// <summary>

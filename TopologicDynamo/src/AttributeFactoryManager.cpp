@@ -1,5 +1,5 @@
 #include <msclr/marshal_cppstd.h>
-#include "AttributeManager.h"
+#include "AttributeFactoryManager.h"
 #include "AttributeFactory.h"
 #include "IntAttributeFactory.h"
 #include "DoubleAttributeFactory.h"
@@ -13,7 +13,7 @@
 
 namespace Topologic
 {
-	AttributeManager::AttributeManager()
+	AttributeFactoryManager::AttributeFactoryManager()
 	{
 		// TODO: how to add user-defined attributes?
 		m_attributeFactoryDict->Add(gcnew String(TopologicUtilities::IntAttributeGUID::Get().c_str()), gcnew IntAttributeFactory());
@@ -21,7 +21,7 @@ namespace Topologic
 		m_attributeFactoryDict->Add(gcnew String(TopologicUtilities::StringAttributeGUID::Get().c_str()), gcnew StringAttributeFactory());
 	}
 
-	void AttributeManager::SetAttribute(Topology ^ topology, String ^ key, Object ^ value)
+	void AttributeFactoryManager::SetAttribute(Topology ^ topology, String ^ key, Object ^ value)
 	{
 		AttributeFactory^ attributeFactory = GetFactory(value);
 		Attribute^ attribute = attributeFactory->Create(key, value);
@@ -30,14 +30,14 @@ namespace Topologic
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 
 		// Add the attribute
-		TopologicUtilities::AttributeManager::GetInstance().Add(pCoreTopology, cppKey, attribute->SupportAttribute);
+		TopologicUtilities::AttributeManager::GetInstance().Add(pCoreTopology, cppKey, attribute->UtilitiesAttribute);
 	}
 
-	AttributeFactory ^ AttributeManager::GetFactory(const std::shared_ptr<TopologicUtilities::Attribute> kpSupportAttribute)
+	AttributeFactory ^ AttributeFactoryManager::GetFactory(const std::shared_ptr<TopologicUtilities::Attribute> kpUtilitiesAttribute)
 	{
 		for each(KeyValuePair<String^, AttributeFactory^>^ entry in m_attributeFactoryDict)
 		{
-			bool isValueCorrect = entry->Value->CheckType(kpSupportAttribute);
+			bool isValueCorrect = entry->Value->CheckType(kpUtilitiesAttribute);
 			if (isValueCorrect)
 			{
 				return entry->Value;
@@ -47,7 +47,7 @@ namespace Topologic
 		throw gcnew Exception("Attribute is not currently supported.");
 	}
 
-	AttributeFactory ^ AttributeManager::GetFactory(Object ^ value)
+	AttributeFactory ^ AttributeFactoryManager::GetFactory(Object ^ value)
 	{
 		System::Type^ entryValueType = value->GetType();
 		for each(KeyValuePair<String^, AttributeFactory^>^ entry in m_attributeFactoryDict)

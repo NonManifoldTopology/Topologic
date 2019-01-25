@@ -20,6 +20,9 @@ namespace Topologic
 					toExteriorFaces,
 					toExteriorApertures);
 
+				if (pCoreGraph == nullptr)
+					return nullptr;
+
 				return gcnew DualGraph_(pCoreGraph);
 			}
 			catch (std::exception& e)
@@ -40,6 +43,9 @@ namespace Topologic
 					toExteriorEdges,
 					toExteriorApertures);
 
+				if (pCoreGraph == nullptr)
+					return nullptr;
+
 				return gcnew DualGraph_(pCoreGraph);
 			}
 			catch (std::exception& e)
@@ -47,14 +53,6 @@ namespace Topologic
 				throw gcnew Exception(gcnew String(e.what()));
 			}
 		}
-
-		/*Object^ Graph::Geometry_::get()
-		{
-			List<Object^>^ graphGeometry = gcnew List<Object^>();
-			graphGeometry->Add(Cluster::Geometry_);
-
-			return graphGeometry;
-		}*/
 
 		std::shared_ptr<TopologicCore::TopologicalQuery> DualGraph_::GetCoreTopologicalQuery()
 		{

@@ -120,8 +120,8 @@ namespace TopologicCore
 		for (int i = 0; i < 4; ++i)
 		{
 			// If this is not the requested topology type, skip.
-			int result = Bitwise::And(kTypeFilter, shapeTypes[i]);
-			if (Bitwise::And(kTypeFilter, shapeTypes[i]) == 0)
+			int result = kTypeFilter & shapeTypes[i];
+			if (result == 0)
 			{
 				continue;
 			}
@@ -409,13 +409,17 @@ namespace TopologicCore
 			return;
 		}
 
-		ContentManager::GetInstance().Add(GetOcctShape(), rkTopology);
-
 		const double kDefaultParameter = 0.0;
+		Topology::Ptr pCopyTopology = std::dynamic_pointer_cast<Topology>(DeepCopy());
+		GlobalCluster::GetInstance().AddTopology(pCopyTopology->GetOcctShape());
+		Topology::Ptr pCopyContentTopology = std::dynamic_pointer_cast<Topology>(rkTopology->DeepCopy());
+		GlobalCluster::GetInstance().AddTopology(pCopyContentTopology->GetOcctShape());
+
+		ContentManager::GetInstance().Add(GetOcctShape(), rkTopology);
 		ContextManager::GetInstance().Add(
 			rkTopology->GetOcctShape(),
 			Context::ByTopologyParameters(Topology::ByOcctShape(GetOcctShape()),
-				kDefaultParameter, 
+				kDefaultParameter,
 				kDefaultParameter,
 				kDefaultParameter)
 		);
@@ -508,7 +512,7 @@ namespace TopologicCore
 
 	TopoDS_Shape Topology::OcctSewFaces(const TopTools_ListOfShape & rkOcctFaces, const double kTolerance)
 	{
-		BRepBuilderAPI_Sewing occtSewing(kTolerance);
+		BRepBuilderAPI_Sewing occtSewing(kTolerance, true, true, true, true);
 		for (TopTools_ListIteratorOfListOfShape occtEdgeIterator(rkOcctFaces);
 			occtEdgeIterator.More();
 			occtEdgeIterator.Next())
@@ -653,8 +657,10 @@ namespace TopologicCore
 		TopoDS_Shape occtShape;
 		BRep_Builder occtBRepBuilder;
 		bool returnValue = BRepTools::Read(occtShape, rkPath.c_str(), occtBRepBuilder);
+		Topology::Ptr pTopology = Topology::ByOcctShape(occtShape, "");
 
-		return Topology::ByOcctShape(occtShape, "");
+		GlobalCluster::GetInstance().AddTopology(pTopology);
+		return pTopology;
 	}
 
 	std::string Topology::Analyze(const TopoDS_Shape& rkShape, const int kLevel)
@@ -1149,7 +1155,7 @@ namespace TopologicCore
 			{
 				Topology::Ptr pContextTopology = kpContext->Topology();
 				TopologyType contextTopologyType = pContextTopology->GetType();
-				contextType = Bitwise::Or(contextType, contextTopologyType);
+				contextType = contextType | contextTopologyType;
 
 				// Remove content from current contexts
 				pContextTopology->RemoveContent(kpSubContent);
@@ -1190,7 +1196,7 @@ namespace TopologicCore
 			{
 				Topology::Ptr pContextTopology = kpContext->Topology();
 				TopologyType contextTopologyType = pContextTopology->GetType();
-				contextType = Bitwise::Or(contextType, contextTopologyType);
+				contextType = contextType | contextTopologyType;
 
 				// Remove content from current contexts
 				pContextTopology->RemoveContent(kpSubContent);
@@ -2191,6 +2197,41 @@ namespace TopologicCore
 		}
 	}
 
+	void Topology::Shells(std::list<std::shared_ptr<Shell>>& rShells) const
+	{
+		Navigate(rShells);
+	}
+
+	void Topology::Edges(std::list<std::shared_ptr<Edge>>& rEdges) const
+	{
+		Navigate(rEdges);
+	}
+
+	void Topology::Faces(std::list<std::shared_ptr<Face>>& rFaces) const
+	{
+		Navigate(rFaces);
+	}
+
+	void Topology::Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const
+	{
+		Navigate(rVertices);
+	}
+
+	void Topology::Wires(std::list<std::shared_ptr<Wire>>& rWires) const
+	{
+		Navigate(rWires);
+	}
+
+	void Topology::Cells(std::list<std::shared_ptr<Cell>>& rCells) const
+	{
+		Navigate(rCells);
+	}
+
+	void Topology::CellComplexes(std::list<std::shared_ptr<CellComplex>>& rCellComplexes) const
+	{
+		Navigate(rCellComplexes);
+	}
+
 	bool Topology::IsContainerType(const TopoDS_Shape& rkOcctShape)
 	{
 		TopAbs_ShapeEnum occtShapeType = rkOcctShape.ShapeType();
@@ -2315,7 +2356,7 @@ namespace TopologicCore
 			for (const Context::Ptr& pContext : contexts)
 			{
 				int contextType = pContext->Topology()->GetType();
-				filterType = Bitwise::Or(filterType, contextType);
+				filterType = filterType | contextType;
 			}
 			pShapeCopy->AddContent(pCopyContentTopology, filterType);
 		}

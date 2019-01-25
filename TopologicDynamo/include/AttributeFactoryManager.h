@@ -16,25 +16,24 @@ namespace Topologic
 	/// <summary>
 	/// An AttributeFactoryManager stores the subclasses of AttributeFactory, identified by their IDs. This class is used to identify the attribute type. The ID is in the GUID format, represented as a String. A user-created AttributeFactory must be registered with a unique ID to this class.
 	/// </summary>
-
-	ref class AttributeManager
+	ref class AttributeFactoryManager
 	{
 	public protected:
-		static property AttributeManager^ Instance {
-			AttributeManager^ get() { return %m_instance; }
+		static property AttributeFactoryManager^ Instance {
+			AttributeFactoryManager^ get() { return %m_instance; }
 		}
 
 		void SetAttribute(Topology^ topology, String^ key, Object^ value);
 
-		AttributeFactory^ GetFactory(const std::shared_ptr<TopologicUtilities::Attribute> kpSupportAttribute);
+		AttributeFactory^ GetFactory(const std::shared_ptr<TopologicUtilities::Attribute> kpUtilitiesAttribute);
 
 	private:
-		AttributeManager();
-		AttributeManager(const AttributeManager%) { throw gcnew System::InvalidOperationException("singleton cannot be copy-constructed"); }
+		AttributeFactoryManager();
+		AttributeFactoryManager(const AttributeFactoryManager%) { throw gcnew System::InvalidOperationException("singleton cannot be copy-constructed"); }
 
 		AttributeFactory^ GetFactory(Object^ value);
 
-		static AttributeManager m_instance;
+		static AttributeFactoryManager m_instance;
 		Dictionary<String^, AttributeFactory^>^ m_attributeFactoryDict = gcnew Dictionary<String^, AttributeFactory^>();
 	};
 }

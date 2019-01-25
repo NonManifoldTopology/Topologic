@@ -162,6 +162,7 @@ copy "$(SolutionDir)references\ShapeOp-0.1.0\bin\$(Platform)\$(Configuration)\*.
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\About.h" />
     <ClInclude Include="include\Aperture.h" />
     <ClInclude Include="include\ApertureFactory.h" />
     <ClInclude Include="include\AperturePath.h" />
@@ -194,6 +195,7 @@ copy "$(SolutionDir)references\ShapeOp-0.1.0\bin\$(Platform)\$(Configuration)\*.
     <ClInclude Include="include\WireFactory.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\About.cpp" />
     <ClCompile Include="src\Aperture.cpp" />
     <ClCompile Include="src\ApertureFactory.cpp" />
     <ClCompile Include="src\AperturePath.cpp" />

@@ -19,14 +19,14 @@ namespace Topologic
 		return type == stringHandleType;
 	}
 
-	bool StringAttributeFactory::CheckType(const std::shared_ptr<TopologicUtilities::Attribute>& kpSupportAttribute)
+	bool StringAttributeFactory::CheckType(const std::shared_ptr<TopologicUtilities::Attribute>& kpUtilitiesAttribute)
 	{
-		return std::dynamic_pointer_cast<TopologicUtilities::StringAttribute>(kpSupportAttribute) != nullptr;
+		return std::dynamic_pointer_cast<TopologicUtilities::StringAttribute>(kpUtilitiesAttribute) != nullptr;
 	}
 
-	Object^ StringAttributeFactory::CreateValue(const std::shared_ptr<TopologicUtilities::Attribute>& kpSupportAttribute)
+	Object^ StringAttributeFactory::CreateValue(const std::shared_ptr<TopologicUtilities::Attribute>& kpUtilitiesAttribute)
 	{
-		void* pValue = kpSupportAttribute->Value();
+		void* pValue = kpUtilitiesAttribute->Value();
 		std::string* pStringValue = static_cast<std::string*>(pValue);
 		return gcnew String(pStringValue->c_str());
 	}

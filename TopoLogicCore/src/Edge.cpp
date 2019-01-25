@@ -45,15 +45,24 @@ namespace TopologicCore
 		}
 	}
 
-	void Edge::Vertices(std::list<Vertex::Ptr>& rVertices) const
+	std::shared_ptr<Vertex> Edge::StartVertex() const
 	{
 		ShapeAnalysis_Edge occtShapeAnalysisEdge;
-		
-		TopoDS_Vertex occtVertex1 = occtShapeAnalysisEdge.FirstVertex(GetOcctEdge());
-		rVertices.push_back(std::make_shared<Vertex>(occtVertex1));
-		
-		TopoDS_Vertex occtVertex2 = occtShapeAnalysisEdge.LastVertex(GetOcctEdge());
-		rVertices.push_back(std::make_shared<Vertex>(occtVertex2));
+		TopoDS_Vertex occtFirstVertex = occtShapeAnalysisEdge.FirstVertex(GetOcctEdge());
+		return std::make_shared<Vertex>(occtFirstVertex);
+	}
+
+	std::shared_ptr<Vertex> Edge::EndVertex() const
+	{
+		ShapeAnalysis_Edge occtShapeAnalysisEdge;
+		TopoDS_Vertex occtLastVertex = occtShapeAnalysisEdge.LastVertex(GetOcctEdge());
+		return std::make_shared<Vertex>(occtLastVertex);
+	}
+
+	void Edge::Vertices(std::list<Vertex::Ptr>& rVertices) const
+	{
+		rVertices.push_back(StartVertex());
+		rVertices.push_back(EndVertex());
 	}
 
 	void Edge::Wires(std::list<Wire::Ptr>& rWires) const
@@ -147,19 +156,31 @@ namespace TopologicCore
 		return pCopyEdge;
 	}
 
-	Vertex::Ptr Edge::SharedVertex(const Edge::Ptr& kpAnotherEdge) const
+	void Edge::SharedVertices(const Edge::Ptr& kpAnotherEdge, std::list<std::shared_ptr<Vertex>>& rSharedVertices) const
 	{
-		TopoDS_Vertex occtSharedVertex;
-		bool hasSharedVertex = TopExp::CommonVertex(m_occtEdge, kpAnotherEdge->GetOcctEdge(), occtSharedVertex);
-		if (!hasSharedVertex)
+		const TopoDS_Shape& rkOcctShape1 = GetOcctShape();
+		TopTools_MapOfShape occtVertices1;
+		DownwardNavigation(rkOcctShape1, TopAbs_VERTEX, occtVertices1);
+
+		const TopoDS_Shape& rkOcctShape2 = kpAnotherEdge->GetOcctShape();
+		TopTools_MapOfShape occtVertices2;
+		DownwardNavigation(rkOcctShape2, TopAbs_VERTEX, occtVertices2);
+
+		for (TopTools_MapIteratorOfMapOfShape occtVertexIterator1(occtVertices1);
+			occtVertexIterator1.More();
+			occtVertexIterator1.Next())
 		{
-			return nullptr;
+			for (TopTools_MapIteratorOfMapOfShape occtVertexIterator2(occtVertices2);
+				occtVertexIterator2.More();
+				occtVertexIterator2.Next())
+			{
+				if (occtVertexIterator1.Value().IsSame(occtVertexIterator2.Value()))
+				{
+					Vertex::Ptr pVertex = std::make_shared<Vertex>(TopoDS::Vertex(occtVertexIterator1.Value()));
+					rSharedVertices.push_back(pVertex);
+				}
+			}
 		}
-
-		Vertex::Ptr pVertex = std::make_shared<Vertex>(occtSharedVertex);
-
-		// Find which of the vertices is this vertex, then copy the attributes. 
-		return pVertex;
 	}
 
 	bool Edge::IsManifold() const

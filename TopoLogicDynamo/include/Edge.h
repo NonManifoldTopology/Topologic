@@ -33,6 +33,22 @@ namespace Topologic {
 		}
 
 		/// <summary>
+		/// Get the start vertex of the edge.
+		/// </summary>
+		/// <returns name="Vertex"></returns>
+		property Vertex^ StartVertex {
+			Vertex^ get();
+		}
+
+		/// <summary>
+		/// Get the end vertex of the edge.
+		/// </summary>
+		/// <returns name="Vertex"></returns>
+		property Vertex^ EndVertex {
+			Vertex^ get();
+		}
+
+		/// <summary>
 		/// Returns the Vertices at the ends of the Edge.
 		/// </summary>
 		/// <returns name="Vertex[]">A list of Vertices at the ends of the Edge</returns>
@@ -50,11 +66,11 @@ namespace Topologic {
 		}
 
 		/// <summary>
-		/// Returns the shared Vertex between two Edges.
+		/// Return the shared Vertices between two edges.
 		/// </summary>
 		/// <param name="edge">Another Edge</param>
-		/// <returns name="Vertex">The shared vertex between the two Edges</returns>
-		Vertex^ SharedVertex(Edge^ edge);
+		/// <returns name="Vertex[]">The shared Vertices between the two Edges</returns>
+		List<Vertex^>^ SharedVertices(Edge^ edge);
 
 		/// <summary>
 		/// Creates a geometry from Edge.

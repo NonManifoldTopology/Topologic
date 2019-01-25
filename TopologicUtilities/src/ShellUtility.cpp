@@ -266,7 +266,7 @@ namespace TopologicUtilities
 		}
 	}
 
-	TopologicCore::Shell::Ptr ShellUtility::ByVerticesFaceIndices(const std::vector<TopologicCore::Vertex::Ptr>& rkVertices, const std::list<std::list<int>>& rkFaceIndices)
+	/*TopologicCore::Shell::Ptr ShellUtility::ByVerticesFaceIndices(const std::vector<TopologicCore::Vertex::Ptr>& rkVertices, const std::list<std::list<int>>& rkFaceIndices)
 	{
 		std::vector<TopologicCore::Vertex::Ptr> copyVertices;
 		for (const TopologicCore::Vertex::Ptr& kpVertex : rkVertices)
@@ -310,7 +310,7 @@ namespace TopologicUtilities
 		TopologicCore::GlobalCluster::GetInstance().AddTopology(pCopyShell);
 
 		return pCopyShell;
-	}
+	}*/
 
 	TopologicCore::Shell::Ptr ShellUtility::ByFacePlanarizationV2(
 		const TopologicCore::Face::Ptr& kpFace,

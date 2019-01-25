@@ -18,14 +18,14 @@ namespace Topologic
 		return type == intHandleType;
 	}
 
-	bool IntAttributeFactory::CheckType(const std::shared_ptr<TopologicUtilities::Attribute>& kpSupportAttribute)
+	bool IntAttributeFactory::CheckType(const std::shared_ptr<TopologicUtilities::Attribute>& kpUtilitiesAttribute)
 	{
-		return std::dynamic_pointer_cast<TopologicUtilities::IntAttribute>(kpSupportAttribute) != nullptr;
+		return std::dynamic_pointer_cast<TopologicUtilities::IntAttribute>(kpUtilitiesAttribute) != nullptr;
 	}
 
-	Object^ IntAttributeFactory::CreateValue(const std::shared_ptr<TopologicUtilities::Attribute>& kpSupportAttribute)
+	Object^ IntAttributeFactory::CreateValue(const std::shared_ptr<TopologicUtilities::Attribute>& kpUtilitiesAttribute)
 	{
-		void* pValue = kpSupportAttribute->Value();
+		void* pValue = kpUtilitiesAttribute->Value();
 		long long int* pIntValue = static_cast<long long int*>(pValue);
 		return *pIntValue;
 	}

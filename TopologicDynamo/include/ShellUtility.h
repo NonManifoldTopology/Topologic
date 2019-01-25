@@ -22,14 +22,14 @@ namespace Topologic {
 			/// <returns name="Shell">The created Shell</returns>
 			static Shell^ ByLoft(System::Collections::Generic::IEnumerable<Wire^>^ wires);
 
-			/// <summary>
+			/*/// <summary>
 			/// Creates a Shell by a list of vertices and a list of Face indices.
 			/// </summary>
 			/// <param name="vertices">A list of Vertices.</param>
 			/// <param name="faceIndices">A list of Face indices. Every element must be within the range of the Vertices argument.</param>
 			/// <returns name="Shell">The created shell</returns>
 			[IsVisibleInDynamoLibrary(false)]
-			static Shell^ ByVerticesFaceIndices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<int>^>^ faceIndices);
+			static Shell^ ByVerticesFaceIndices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<int>^>^ faceIndices);*/
 
 			/// <summary>
 			/// Creates a Shell by subdividing and planarizing a curved Face.

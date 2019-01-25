@@ -21,14 +21,14 @@ namespace Topologic
 		return type == doubleHandleType;
 	}
 
-	bool DoubleAttributeFactory::CheckType(const std::shared_ptr<TopologicUtilities::Attribute>& kpSupportAttribute)
+	bool DoubleAttributeFactory::CheckType(const std::shared_ptr<TopologicUtilities::Attribute>& kpUtilitiesAttribute)
 	{
-		return std::dynamic_pointer_cast<TopologicUtilities::DoubleAttribute>(kpSupportAttribute) != nullptr;
+		return std::dynamic_pointer_cast<TopologicUtilities::DoubleAttribute>(kpUtilitiesAttribute) != nullptr;
 	}
 
-	Object^ DoubleAttributeFactory::CreateValue(const std::shared_ptr<TopologicUtilities::Attribute>& kpSupportAttribute)
+	Object^ DoubleAttributeFactory::CreateValue(const std::shared_ptr<TopologicUtilities::Attribute>& kpUtilitiesAttribute)
 	{
-		void* pValue = kpSupportAttribute->Value();
+		void* pValue = kpUtilitiesAttribute->Value();
 		double* pDoubleValue = static_cast<double*>(pValue);
 		return *pDoubleValue;
 	}
