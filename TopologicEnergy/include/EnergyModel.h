@@ -66,7 +66,9 @@ namespace TopologicEnergy
 		static void Export(EnergyModel^ energyModel, String^ openStudioOutputDirectory);
 
 	public protected:
-		static DSCore::Color^ GetColor(double ratio, int alpha);
+		//static DSCore::Color^ GetColor(double ratio, int alpha);
+		static List<int>^ GetColor(double ratio);
+
 		static double DoubleValueFromQuery(OpenStudio::SqlFile^ sqlFile, String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPRowName, String^ EPUnits);
 
 		static String^ StringValueFromQuery(OpenStudio::SqlFile^ sqlFile, String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPRowName, String^ EPUnits);

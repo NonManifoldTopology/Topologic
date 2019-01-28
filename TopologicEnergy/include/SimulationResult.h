@@ -48,10 +48,18 @@ namespace TopologicEnergy
 		/// </summary>
 		/// <param name="minDomain"></param>
 		/// <param name="maxDomain"></param>
+		/// <param name="count"></param>
 		/// <returns name="ColorRangeData"></returns>
-		List<List<Object^>^>^ Legend(
+		List<List<int>^>^ LegendRGB(
 			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Nullable<double> minDomain,
-			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Nullable<double> maxDomain);
+			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Nullable<double> maxDomain,
+			[Autodesk::DesignScript::Runtime::DefaultArgument("10")] int count);
+
+
+		List<double>^ LegendValues(
+			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Nullable<double> minDomain,
+			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Nullable<double> maxDomain,
+			[Autodesk::DesignScript::Runtime::DefaultArgument("10")] int count);
 
 		property List<String^>^ Names
 		{
@@ -68,10 +76,10 @@ namespace TopologicEnergy
 			List<double>^ get();
 		}
 
-		List<DSCore::Color^>^ ARGB(
+		//List<DSCore::Color^>^ ARGB(
+		List<List<int>^>^ RGB(
 			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Nullable<double> minDomain, 
-			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Nullable<double> maxDomain,
-			int alpha);
+			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Nullable<double> maxDomain);
 
 	public protected:
 		/// <summary>
@@ -79,6 +87,13 @@ namespace TopologicEnergy
 		/// </summary>
 		SimulationResult(Dictionary<String^, Dictionary<String^, Object^>^>^ data);
 		~SimulationResult();
+
+		List<double>^ LegendRatios(
+			Nullable<double> minDomain,
+			Nullable<double> maxDomain,
+			int count,
+			double% finalMinDomain,
+			double& finalMaxDomain);
 
 	protected:
 		Dictionary<String^, Dictionary<String^, Object^>^>^ m_data;

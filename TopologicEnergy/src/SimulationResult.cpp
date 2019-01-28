@@ -85,6 +85,7 @@ namespace TopologicEnergy
 
 			Dictionary<String^, Object^>^ attributes = gcnew Dictionary<String^, Object^>();
 			attributes->Add("Value", outputVariable);
+			attributes->Add("Unit", EPUnits);
 			/*attributes->Add("r", (long long int)color->Red);
 			attributes->Add("g", (long long int)color->Green);
 			attributes->Add("b", (long long int)color->Blue);
@@ -108,36 +109,6 @@ namespace TopologicEnergy
 		{
 			Cell^ cell = energySimulation->Topology[i];
 			DSCore::Color^ color = colors[i];
-			//if (!dictionary->ContainsKey("Name"))
-			//{
-			//	throw gcnew Exception("A cell does not have a name.");
-			//}
-			//Object^ name = dictionary["Name"];
-
-			//String^ strName = nullptr;
-			//try
-			//{
-			//	strName = safe_cast<String^>(name);
-			//}
-			//catch (...)
-			//{
-			//	throw gcnew Exception("A cell's name is not a string.");
-			//}
-
-			//DSCore::Color^ color = nullptr;// DSCore::Color::ByARGB(alpha, (int)r, (int)g, (int)b);
-			//bool hasKey = data->ContainsKey(strName);
-			//if (hasKey)
-			//{
-			//	Dictionary<String^, Object^>^ attributes = data[strName];
-			//	long long int r = (long long int)attributes["r"];
-			//	long long int g = (long long int)attributes["g"];
-			//	long long int b = (long long int)attributes["b"];
-			//	color = DSCore::Color::ByARGB(alpha, (int)r, (int)g, (int)b);
-			//}
-			//else
-			//{
-			//	color = DSCore::Color::ByARGB(alpha, 128, 128, 128);
-			//}
 
 			{
 				bool hasGeometry = false;
@@ -203,50 +174,123 @@ namespace TopologicEnergy
 					}
 				}
 			}
-
 		}
+
 		dynamoGeometryColors->AddRange(dynamoApertures);
 		return dynamoGeometryColors;
 	}
 
-	List<List<Object^>^>^ SimulationResult::Legend(Nullable<double> minDomain, Nullable<double> maxDomain)
+	List<List<int>^>^ SimulationResult::LegendRGB(Nullable<double> minDomain, Nullable<double> maxDomain, int count)
 	{
-		/// Value, color --> Normalized value, color
-		List<double>^ values = Values;
-
-		double minValue = (double)Enumerable::Min(values);
-		double maxValue = (double)Enumerable::Max(values);
-		double deltaValue = maxValue - minValue;
-
-		List<List<Object^>^>^ output = gcnew List<List<Object^>^>();
-
-		List<DSCore::Color^>^ colors = ARGB(minDomain, maxDomain, 50);
-		List<Object^>^ colorsAsObjects = gcnew List<Object^>();
-		for each (DSCore::Color^ color in colors)
+		List<List<int>^>^ colors = gcnew List<List<int>^>();
+		double finalMinDomain = 0.0;
+		double finalMaxDomain = 0.0;
+		List<double>^ ratios = LegendRatios(minDomain, maxDomain, count, finalMinDomain, finalMaxDomain);
+		for each(double ratio in ratios)
 		{
-			colorsAsObjects->Add(color);
+			List<int>^ color = EnergyModel::GetColor(ratio);
+			colors->Add(color);
 		}
-		output->Add(colorsAsObjects);
-		if (deltaValue > 0.00001)
+
+		return colors;
+
+		//if (count < 2)
+		//{
+		//	throw gcnew Exception("The number of steps must be more than 2.");
+		//}
+
+		//List<double>^ domain = Domain;
+		//double finalMinDomain = Enumerable::Min(domain);
+		//double finalMaxDomain = Enumerable::Max(domain);
+
+		//if (minDomain.HasValue)
+		//{
+		//	finalMinDomain = minDomain.Value;
+		//}
+		//if (maxDomain.HasValue)
+		//{
+		//	finalMaxDomain = maxDomain.Value;
+		//}
+
+		//double deltaFinalDomain = finalMaxDomain - finalMinDomain;
+		//if (deltaFinalDomain < 0.00001)
+		//{
+		//	throw gcnew Exception("The domain is too small. Please provide a larger interval.");
+		//}
+
+		//List<List<int>^>^ colors = gcnew List<List<int>^>();
+		//List<Object^>^ valuesAsObjects = gcnew List<Object^>();
+		//double countMinusOne = (double)count;
+		//for (int i = 0; i < count; ++i)
+		//{
+		//	double doubleI = (double)i;	// 0..10
+		//	double ratio = doubleI / countMinusOne; // 0..1
+		//	double value = finalMinDomain + deltaFinalDomain * ratio;
+		//	valuesAsObjects->Add(value);
+		//	List<int>^ color = EnergyModel::GetColor(ratio);
+		//	colors->Add(color);
+		//}
+
+		///*List<List<Object^>^>^ output = gcnew List<List<Object^>^>();
+		//output->Add(colorsAsObjects);
+		//output->Add(valuesAsObjects);*/
+
+		//return colors;
+	}
+
+	List<double>^ SimulationResult::LegendValues(Nullable<double> minDomain, Nullable<double> maxDomain, int count)
+	{
+		List<double>^ values = gcnew List<double>();
+		double finalMinDomain = 0.0;
+		double finalMaxDomain = 0.0;
+		List<double>^ ratios = LegendRatios(minDomain, maxDomain, count, finalMinDomain, finalMaxDomain);
+		double deltaFinalDomain = finalMaxDomain - finalMinDomain; // Any problem with this should have been caught in LegendRatios
+		for each(double ratio in ratios)
 		{
-			List<Object^>^ normalizedValues = gcnew List<Object^>();
-			for each(Object^ value in values)
-			{
-				double normalizedValue = ((double)value - minValue) / deltaValue;
-				normalizedValues->Add(normalizedValue);
-			}
-			output->Add(normalizedValues);
+			double value = finalMinDomain + deltaFinalDomain * ratio;
+			values->Add(value);
 		}
-		else
-		{
-			List<Object^>^ valuesAsObjects = gcnew List<Object^>();
-			for each(Object^ value in values)
-			{
-				valuesAsObjects->Add(value);
-			}
-			output->Add(valuesAsObjects);
-		}
-		return output;
+
+		return values;
+
+		//if (count < 2)
+		//{
+		//	throw gcnew Exception("The number of steps must be more than 2.");
+		//}
+
+		//List<double>^ domain = Domain;
+		//double finalMinDomain = Enumerable::Min(domain);
+		//double finalMaxDomain = Enumerable::Max(domain);
+
+		//if (minDomain.HasValue)
+		//{
+		//	finalMinDomain = minDomain.Value;
+		//}
+		//if (maxDomain.HasValue)
+		//{
+		//	finalMaxDomain = maxDomain.Value;
+		//}
+
+		//double deltaFinalDomain = finalMaxDomain - finalMinDomain;
+		//if (deltaFinalDomain < 0.00001)
+		//{
+		//	throw gcnew Exception("The domain is too small. Please provide a larger interval.");
+		//}
+
+		//List<List<int>^>^ colors = gcnew List<List<int>^>();
+		//List<double>^ values = gcnew List<double>();
+		//double countMinusOne = (double)count;
+		//for (int i = 0; i < count; ++i)
+		//{
+		//	double doubleI = (double)i;	// 0..10
+		//	double ratio = doubleI / countMinusOne; // 0..1
+		//	double value = finalMinDomain + deltaFinalDomain * ratio;
+		//	values->Add(value);
+		//	List<int>^ color = EnergyModel::GetColor(ratio);
+		//	colors->Add(color);
+		//}
+
+		//return values;
 	}
 
 	List<String^>^ SimulationResult::Names::get()
@@ -293,7 +337,7 @@ namespace TopologicEnergy
 		return domain;
 	}
 
-	List<DSCore::Color^>^ SimulationResult::ARGB(Nullable<double> minDomain, Nullable<double> maxDomain, int alpha)
+	List<List<int>^>^ SimulationResult::RGB(Nullable<double> minDomain, Nullable<double> maxDomain)
 	{
 		List<double>^ domain = Domain;
 		double finalMinDomain = Enumerable::Min(domain);
@@ -314,125 +358,20 @@ namespace TopologicEnergy
 			throw gcnew Exception("The domain is too small. Please increase it.");
 		}
 
-		List<DSCore::Color^>^ colorList = gcnew List<DSCore::Color^>();
+		//List<DSCore::Color^>^ colorList = gcnew List<DSCore::Color^>();
+		List<List<int>^>^ colorList = gcnew List<List<int>^>();
 		List<double>^ values = Values;
 		for each(double value in values)
 		{
 			double ratio = (value - finalMinDomain) / deltaFinalDomain;
-			DSCore::Color^ color = EnergyModel::GetColor(ratio, alpha);
-			colorList->Add(color);
+			List<int>^ rgb = gcnew List<int>();
+			rgb = EnergyModel::GetColor(ratio);
+			//DSCore::Color^ color = EnergyModel::GetColor(ratio, alpha);
+			colorList->Add(rgb);
 		}
 
 		return colorList;
 	}
-
-	//List<Modifiers::GeometryColor^>^ SimulationResult::Display(EnergyModel ^ energyModel, Dictionary<String^, Dictionary<String^, Object^>^>^ data, int alpha)
-	//{
-	//	List<Modifiers::GeometryColor^>^ dynamoGeometryColors = gcnew List<Modifiers::GeometryColor^>();
-	//	List<Modifiers::GeometryColor^>^ dynamoApertures = gcnew List<Modifiers::GeometryColor^>();
-	//	for each(Cell^ cell in energyModel->BuildingCells)
-	//	{
-	//		Dictionary<String^, Object^>^ dictionary = cell->Dictionary;
-	//		if (!dictionary->ContainsKey("Name"))
-	//		{
-	//			throw gcnew Exception("A cell does not have a name.");
-	//		}
-	//		Object^ name = dictionary["Name"];
-
-	//		String^ strName = nullptr;
-	//		try
-	//		{
-	//			strName = safe_cast<String^>(name);
-	//		}
-	//		catch (...)
-	//		{
-	//			throw gcnew Exception("A cell's name is not a string.");
-	//		}
-
-	//		DSCore::Color^ color = nullptr;// DSCore::Color::ByARGB(alpha, (int)r, (int)g, (int)b);
-	//		bool hasKey = data->ContainsKey(strName);
-	//		if (hasKey)
-	//		{
-	//			Dictionary<String^, Object^>^ attributes = data[strName];
-	//			long long int r = (long long int)attributes["r"];
-	//			long long int g = (long long int)attributes["g"];
-	//			long long int b = (long long int)attributes["b"];
-	//			color = DSCore::Color::ByARGB(alpha, (int)r, (int)g, (int)b);
-	//		}
-	//		else
-	//		{
-	//			color = DSCore::Color::ByARGB(alpha, 128, 128, 128);
-	//		}
-
-	//		{
-	//			bool hasGeometry = false;
-	//			System::Object^ cellGeometry = cell->Geometry_;
-	//			Autodesk::DesignScript::Geometry::Geometry^ dynamoGeometry = dynamic_cast<Autodesk::DesignScript::Geometry::Geometry^>(cellGeometry);
-	//			if (dynamoGeometry != nullptr)
-	//			{
-	//				Modifiers::GeometryColor^ dynamoGeometryColor = Modifiers::GeometryColor::ByGeometryColor(dynamoGeometry, color);
-	//				dynamoGeometryColors->Add(dynamoGeometryColor);
-	//				hasGeometry = true;
-	//			}
-
-	//			if (!hasGeometry)
-	//			{
-	//				// 2. Try a list of Dynamo geometries
-	//				List<Object^>^ listOfObjects = dynamic_cast<List<Object^>^>(cellGeometry);
-	//				if (listOfObjects != nullptr)
-	//				{
-	//					for each(Object^ object in listOfObjects)
-	//					{
-	//						Autodesk::DesignScript::Geometry::Geometry^ dynamoGeometry = dynamic_cast<Autodesk::DesignScript::Geometry::Geometry^>(object);
-	//						if (dynamoGeometry != nullptr)
-	//						{
-	//							Modifiers::GeometryColor^ dynamoGeometryColor = Modifiers::GeometryColor::ByGeometryColor(dynamoGeometry, color);
-	//							delete object;
-	//							dynamoGeometryColors->Add(dynamoGeometryColor);
-	//						}
-	//					}
-	//				}
-	//			}
-	//		}
-
-	//		DSCore::Color^ contentColor = DSCore::Color::ByARGB(255, 128, 128, 128);
-	//		List<Topologic::Topology^>^ subcontents = cell->SubContents;
-	//		for each(Topologic::Topology^ subcontent in subcontents)
-	//		{
-	//			bool hasContentGeometry = false;
-	//			System::Object^ contentGeometry = subcontent->Geometry_;
-	//			Autodesk::DesignScript::Geometry::Geometry^ dynamoContentGeometry = dynamic_cast<Autodesk::DesignScript::Geometry::Geometry^>(contentGeometry);
-	//			if (dynamoContentGeometry != nullptr)
-	//			{
-	//				Modifiers::GeometryColor^ dynamoGeometryColor = Modifiers::GeometryColor::ByGeometryColor(dynamoContentGeometry, contentColor);
-	//				dynamoApertures->Add(dynamoGeometryColor);
-	//				hasContentGeometry = true;
-	//			}
-
-	//			if (!hasContentGeometry)
-	//			{
-	//				// 2. Try a list of Dynamo geometries
-	//				List<Object^>^ listOfObjects = dynamic_cast<List<Object^>^>(contentGeometry);
-	//				if (listOfObjects != nullptr)
-	//				{
-	//					for each(Object^ object in listOfObjects)
-	//					{
-	//						Autodesk::DesignScript::Geometry::Geometry^ dynamoGeometry = dynamic_cast<Autodesk::DesignScript::Geometry::Geometry^>(object);
-	//						if (dynamoContentGeometry != nullptr)
-	//						{
-	//							Modifiers::GeometryColor^ dynamoGeometryColor = Modifiers::GeometryColor::ByGeometryColor(dynamoContentGeometry, contentColor);
-	//							delete object;
-	//							dynamoApertures->Add(dynamoGeometryColor);
-	//						}
-	//					}
-	//				}
-	//			}
-	//		}
-
-	//	}
-	//	dynamoGeometryColors->AddRange(dynamoApertures);
-	//	return dynamoGeometryColors;
-	//}
 
 	SimulationResult::SimulationResult(Dictionary<String^, Dictionary<String^, Object^>^>^ data)
 		: m_data(data)
@@ -443,5 +382,42 @@ namespace TopologicEnergy
 	SimulationResult::~SimulationResult()
 	{
 
+	}
+
+	List<double>^ SimulationResult::LegendRatios(Nullable<double> minDomain, Nullable<double> maxDomain, int count, double% finalMinDomain, double& finalMaxDomain)
+	{
+		if (count < 2)
+		{
+			throw gcnew Exception("The number of steps must be more than 2.");
+		}
+
+		List<double>^ domain = Domain;
+		finalMinDomain = Enumerable::Min(domain);
+		finalMaxDomain = Enumerable::Max(domain);
+
+		if (minDomain.HasValue)
+		{
+			finalMinDomain = minDomain.Value;
+		}
+		if (maxDomain.HasValue)
+		{
+			finalMaxDomain = maxDomain.Value;
+		}
+
+		double deltaFinalDomain = finalMaxDomain - finalMinDomain;
+		if (deltaFinalDomain < 0.00001)
+		{
+			throw gcnew Exception("The domain is too small. Please provide a larger interval.");
+		}
+
+		List<double>^ ratios = gcnew List<double>();
+		double countMinusOne = (double)count;
+		for (int i = 0; i < count; ++i)
+		{
+			double doubleI = (double)i;	// 0..10
+			double ratio = doubleI / countMinusOne; // 0..1
+			ratios->Add(ratio);
+		}
+		return ratios;
 	}
 }

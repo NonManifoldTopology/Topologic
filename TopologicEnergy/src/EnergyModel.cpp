@@ -1071,41 +1071,55 @@ namespace TopologicEnergy
 		return 0;
 	}
 
-	DSCore::Color^ EnergyModel::GetColor(double ratio, int alpha)
+	List<int>^ EnergyModel::GetColor(double ratio)
 	{
 		double r = 0.0;
 		double g = 0.0;
 		double b = 0.0;
 
-		if (ratio >= 0.0 && ratio <= 0.25)
+		double finalRatio = ratio;
+		if (finalRatio < 0.0)
+		{
+			finalRatio = 0.0;
+		}
+		else if(finalRatio > 1.0)
+		{
+			finalRatio = 1.0;
+		}
+
+		if (finalRatio >= 0.0 && finalRatio <= 0.25)
 		{
 			r = 0.0;
-			g = 4.0 * ratio;
+			g = 4.0 * finalRatio;
 			b = 1.0;
 		}
-		else if (ratio > 0.25 && ratio <= 0.5)
+		else if (finalRatio > 0.25 && finalRatio <= 0.5)
 		{
 			r = 0.0;
 			g = 1.0;
-			b = 1.0 - 4.0 * (ratio - 0.25);
+			b = 1.0 - 4.0 * (finalRatio - 0.25);
 		}
-		else if (ratio > 0.5 && ratio <= 0.75)
+		else if (finalRatio > 0.5 && finalRatio <= 0.75)
 		{
-			r = 4.0*(ratio - 0.5);
+			r = 4.0*(finalRatio - 0.5);
 			g = 1.0;
 			b = 0.0;
 		}
 		else
 		{
 			r = 1.0;
-			g = 1.0 - 4.0 * (ratio - 0.75);
+			g = 1.0 - 4.0 * (finalRatio - 0.75);
 			b = 0.0;
 		}
 
 		int rcom = (int) Math::Floor(Math::Max(Math::Min(Math::Floor(255.0 * r), 255.0), 0.0));
 		int gcom = (int) Math::Floor(Math::Max(Math::Min(Math::Floor(255.0 * g), 255.0), 0.0));
 		int bcom = (int) Math::Floor(Math::Max(Math::Min(Math::Floor(255.0 * b), 255.0), 0.0));
-		return DSCore::Color::ByARGB(alpha, rcom, gcom, bcom);
+		List<int>^ rgb = gcnew List<int>();
+		rgb->Add(rcom);
+		rgb->Add(gcom);
+		rgb->Add(bcom);
+		return rgb;
 	}
 
 	String^ EnergyModel::BuildingName::get()
