@@ -5,10 +5,11 @@
 using namespace System::Collections::Generic;
 
 namespace Topologic {
-	namespace Utilities {
 	/// <summary>
-	/// Utility provides extended functionality including further topologic and geometric methods and properties. These include the Bitwise, CellUtility, EdgeUtility, FaceUtility, ShellUtility and TopologyUtility classes.
+	/// Utilities provide extended functionality including further topologic and geometric methods and properties. These include the Bitwise, CellUtility, EdgeUtility, FaceUtility, ShellUtility and TopologyUtility classes.
 	/// </summary>
+	namespace Utilities {
+	
 		
 		/// <summary>
 		/// Bitwise operators such as AND, OR, XOR and NOT are included in this class.

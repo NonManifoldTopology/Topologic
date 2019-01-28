@@ -18,141 +18,144 @@ namespace Topologic {
 	{
 	public:
 		/// <summary>
-		/// Get the faces adjacent to the face.
+		/// Returns the Faces adjacent to the Face.
 		/// </summary>
-		/// <param name="hostTopology"></param>
-		/// <returns name="Face[]">The faces adjacent to the face</returns>
+		/// <returns name="Face[]">A list of Faces adjacent to the Face</returns>
 		property List<Face^>^ AdjacentFaces
 		{
 			List<Face^>^ get();
 		}
 
 		/// <summary>
-		/// Get the cells incident to the face.
+		/// Returns the Cells incident to the Face.
 		/// </summary>
-		/// <returns name="Cell[]">The cells incident to the face</returns>
+		/// <returns name="Cell[]">A list of Cells incident to the Face</returns>
 		property List<Cell^>^ Cells
 		{
 			List<Cell^>^ get();
 		}
 
 		/// <summary>
-		/// Gets the shells incident to the face.
+		/// Returns the Shells incident to the Face.
 		/// </summary>
-		/// <returns name="Shell[]">The shells incident to the face</returns>
+		/// <returns name="Shell[]">A list of Shells incident to the Face</returns>
 		property List<Shell^>^ Shells
 		{
 			List<Shell^>^ get();
 		}
 
 		/// <summary>
-		/// Gets the constituent vertices of the face. 
+		/// Returns the Vertices constituent to the Face. 
 		/// </summary>
-		/// <returns name="Vertex[]">The vertices consituent to the face</returns>
+		/// <returns name="Vertex[]">A list of Vertices constituent to the Face</returns>
 		property List<Vertex^>^ Vertices
 		{
 			List<Vertex^>^ get();
 		}
 
 		/// <summary>
-		/// Get the edges constituent to the face.
+		/// Returns the Edges constituent to the Face.
 		/// </summary>
-		/// <returns name="Edge[]">The constituent edges</returns>
+		/// <returns name="Edge[]">A list of Edges constituent to the Face</returns>
 		property List<Edge^>^ Edges
 		{
 			List<Edge^>^ get();
 		}
 
 		/// <summary>
-		/// Get the wires constituent to the face.
+		/// Returns the Wires constituent to the Face.
 		/// </summary>
-		/// <returns name="Wire[]">The constituent wires</returns>
+		/// <returns name="Wire[]">A list of Wires constituent to the Face</returns>
 		property List<Wire^>^ Wires
 		{
 			List<Wire^>^ get();
 		}
 
 		/// <summary>
-		/// Create a face by a closed wire. NOTE: This node currently can only create a planar face. To create a curved face, please use Topology.ByGeometry().
+		/// Creates a Face by a closed planar Wire.
 		/// </summary>
-		/// <param name="wire">A closed wire. Must be (and internally verified if it is) a Dynamo polygon or a Topologic wire.</param>
-		/// <exception cref="ArgumentException">Thrown if any of the arguments is neither a Dynamo polygon nor a Topologic wire</exception>
-		/// <returns name="Face">/// </returns>
+		/// <param name="wire">A closed planar Wire</param>
+		/// <exception cref="ArgumentException">Thrown if any of the arguments is neither a Dynamo polygon nor a Topologic Wire</exception>
+		/// <returns name="Face">The created Face</returns>
 		static Face^ ByWire(Wire^ wire);
 
 		/// <summary>
-		/// Create a face by an external boundary and internal boundaries.
+		/// Creates a Face by an external boundary (Wire) and internal boundaries (Wires).
 		/// </summary>
-		/// <param name="externalBoundary"></param>
-		/// <param name="internalBoundaries"></param>
-		/// <returns name="Face"></returns>
+		/// <param name="externalBoundary">An external Wire</param>
+		/// <param name="internalBoundaries">A set of internal Wires</param>
+		/// <returns name="Face">The created Face</returns>
 		static Face^ ByExternalInternalBoundaries(Wire^ externalBoundary, System::Collections::Generic::IEnumerable<Wire^>^ internalBoundaries);
 
 		/// <summary>
-		/// Create a face by a list of edges.
+		/// Creates a Face by a list of Edges.
 		/// </summary>
-		/// <param name="edges">The edges. </param>
-		/// <exception cref="ArgumentException">Thrown if any of the arguments is not a Topologic edge</exception>
-		/// <returns name="Face">The created face</returns>
+		/// <param name="edges">A list of Edges</param>
+		/// <exception cref="ArgumentException">Thrown if any of the arguments is not a Topologic Edge</exception>
+		/// <returns name="Face">The created Face</returns>
 		static Face^ ByEdges(System::Collections::Generic::IEnumerable<Edge^>^ edges);
 
 		/// <summary>
-		/// Return the shared edges between two faces. 
+		/// Returns the shared Edges between two Faces. 
 		/// </summary>
-		/// <param name="face">Another face</param>
-		/// <returns name="Edge[]">The shared edges</returns>
+		/// <param name="face">Another Face</param>
+		/// <returns name="Edge[]">A list of shared Edges</returns>
 		List<Edge^>^ SharedEdges(Face^ face);
 
 		/// <summary>
-		/// Return the shared vertices between two faces.
+		/// Returns the shared Vertices between two Faces.
 		/// </summary>
-		/// <param name="face">Another face</param>
-		/// <returns name="Vertex[]">The shared vertices</returns>
+		/// <param name="face">Another Face</param>
+		/// <returns name="Vertex[]">A list of shared Vertices</returns>
 		List<Vertex^>^ SharedVertices(Face^ face);
 
 		/// <summary>
-		/// Return the external boundary (wire) of the face.
+		/// Returns the external boundary (Wire) of the Face.
 		/// </summary>
-		/// <returns name="Wire"></returns>
+		/// <returns name="Wire">The external Wire of the Face</returns>
 		property Wire^ ExternalBoundary
 		{
 			Wire^ get();
 		}
 
 		/// <summary>
-		/// Return the internal boundaries (wires) of the face.
+		/// Returns the internal boundaries (Wires) of the Face.
 		/// </summary>
-		/// <returns name="Wire[]"></returns>
+		/// <returns name="Wire[]">A list of the internal Wires of the Face</returns>
 		property List<Wire^>^ InternalBoundaries
 		{
 			List<Wire^>^ get();
 		}
 
 		/// <summary>
-		/// Add internal boundaries to a face.
+		/// Adds internal boundaries (Wires) to a Face.
 		/// </summary>
-		/// <param name="internalBoundaries"></param>
-		/// <returns name="Face"></returns>
+		/// <param name="internalBoundaries">A list of internal Wires</param>
+		/// <returns name="Face">The new Face</returns>
 		Face^ AddInternalBoundaries(List<Wire^>^ internalBoundaries);
 
 		/// <summary>
-		/// 
+		/// Adds an Aperture to a Face.
 		/// </summary>
-		/// <param name="face"></param>
-		/// <param name="apertureDesign"></param>
-		/// <param name="numEdgeSamples"></param>
-		/// <returns name="Face"></returns>
+		/// <param name="face">A Face</param>
+		/// <param name="apertureDesign">The Aperture design to be added</param>
+		/// <param name="numEdgeSamples">The number of sample points along the Aperture Edges</param>
+		/// <returns name="Face">The new Face</returns>
 		static Face^ AddApertureDesign(Face^ face, Face^ apertureDesign, int numEdgeSamples);
 
+		/// <summary>
+		/// Creates a geometry from Face.
+		/// </summary>
+		/// <returns>The created geometry</returns>
 		property Object^ Geometry_
 		{
-			/// <summary>
-			/// 
-			/// </summary>
-			/// <returns></returns>
 			virtual Object^ get() override;
 		}
 
+		/// <summary>
+		/// Returns the type associated to Face.
+		/// </summary>
+		/// <returns>The type associated to Face</returns>
 		static int Type();
 
 	public protected:

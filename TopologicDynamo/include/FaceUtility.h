@@ -3,10 +3,11 @@
 #include "Face.h"
 
 namespace Topologic {
-	namespace Utilities {
 	/// <summary>
-	/// Utility provides extended functionality including further topologic and geometric methods and properties. These include the Bitwise, CellUtility, EdgeUtility, FaceUtility, ShellUtility and TopologyUtility classes.
+	/// Utilities provide extended functionality including further topologic and geometric methods and properties. These include the Bitwise, CellUtility, EdgeUtility, FaceUtility, ShellUtility and TopologyUtility classes.
 	/// </summary>
+	namespace Utilities {
+	
 
 		/// <summary>
 		/// FaceUtility includes geometric methods relevant to a Face.
@@ -15,28 +16,29 @@ namespace Topologic {
 		{
 		public:
 			/// <summary>
-			/// Return the area of a face.
+			/// Returns the area of a Face.
 			/// </summary>
 			/// <param name="face">The Face</param>
-			/// <returns>The area of the face</returns>
+			/// <returns>The area of the Face</returns>
 			static double Area(Face^ face);
 
 			/// <summary>
-			/// Create a face (of any type) by a set of vertices.
+			/// Creates a Face (of any type) by a set of Vertices.
 			/// </summary>
 			/// <param name="vertices">A Set of Vertices</param>
-			/// <returns name="Face">A Face</returns>
+			/// <returns name="Face">The created Face</returns>
 			static Face^ ByVertices(Face^ face, System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<Vertex^>^>^ vertices);
 
 			/// <summary>
-			/// Returns the UV parameters at a given vertex on a face.
+			/// Returns the UV parameters at a given Vertex on a Face.
 			/// </summary>
+			/// <param name="face">A Face</param>
 			/// <param name="vertex">A Vertex on a Face</param>
 			/// <returns name="UV">The UV parameters</returns>
 			static Autodesk::DesignScript::Geometry::UV^ UVParameterAtVertex(Face^ face, Vertex^ vertex);
 
 			/// <summary>
-			/// Returns the vertex at a given parameter of the face.
+			/// Returns the Vertex at a given parameter of the Face.
 			/// </summary>
 			/// <param name="face">A Face</param>
 			/// <param name="u">The U parameter of the Face</param>
@@ -45,22 +47,27 @@ namespace Topologic {
 			static Vertex^ VertexAtParameter(Face^ face, double u, double v);
 
 			/// <summary>
-			/// Returns the normal (vector) at a parameter of a face.
+			/// Returns the normal (vector) at a parameter of a Face.
 			/// </summary>
+			/// <param name="face">A Face</param>
 			/// <param name="uv">The UV parameter of the Face</param>
-			/// <returns>The normal (vector) at a parameter of a face</returns>
+			/// <returns>The normal (vector) at a parameter of a Face</returns>
 			static Autodesk::DesignScript::Geometry::Vector^ NormalAtParameter(Face^ face, Autodesk::DesignScript::Geometry::UV^ uv);
 
 			/// <summary>
-			/// Trim a face with a wire. The portion of the face inside the wire will be returned.
+			/// Trims a Face with a Wire. The portion of the Face inside the Wire will be returned.
 			/// </summary>
+			/// <param name="face">The Face to be trimmed</param>
 			/// <param name="wire">The Wire with which the Face will be trimmed</param>
 			/// <returns name="Face">The trimmed Face</returns>
 			static Face^ TrimByWire(Face^ face, Wire^ wire);
 
 			/// <summary>
-			/// Triangulate a face given a deflection value.
+			/// Triangulates a Face given a deflection value.
 			/// </summary>
+			/// <param name="face">The Face to be triangulated</param>
+			/// <param name="deflection">The deflection value to be applied for triangulation</param>
+			/// <returns name="Face">The triangulated Face</returns>
 			static List<Face^>^ Triangulate(Face^ face, double deflection);
 
 		public protected:

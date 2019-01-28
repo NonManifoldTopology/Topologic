@@ -19,19 +19,20 @@ namespace Topologic
 	{
 	public:
 		/// <summary>
-		/// Creates a context by a topology and three parameters.
+		/// Creates a context by a Topology and three parameters.
 		/// </summary>
-		/// <param name="topology"></param>
-		/// <param name="U">The u parameter</param>
-		/// <param name="V">The v parameter</param>
-		/// <param name="W">The w parameter</param>
+		/// <param name="topology">A Topology</param>
+		/// <param name="U">The U parameter</param>
+		/// <param name="V">The V parameter</param>
+		/// <param name="W">The W parameter</param>
 		/// <returns>A context</returns>
+		[IsVisibleInDynamoLibrary(false)]
 		static Context^ ByTopologyParameters__(Topology^ topology, double U, double V, double W);
 
 		/// <summary>
-		/// 
+		/// Returns the associated Topology to the context.
 		/// </summary>
-		/// <returns>The associated topology</returns>
+		/// <returns name="Topology">The associated Topology</returns>
 		property Topology^ Topology
 		{
 			Topologic::Topology^ get();
@@ -52,7 +53,7 @@ namespace Topologic
 		double V();
 
 		/// <summary>
-		/// Returns the U parameter.
+		/// Returns the W parameter.
 		/// </summary>
 		/// <returns>The W parameter</returns>
 		[IsVisibleInDynamoLibrary(false)]

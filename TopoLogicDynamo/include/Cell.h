@@ -21,78 +21,78 @@ namespace Topologic
 	{
 	public:
 		/// <summary>
-		/// Create a cell by a set of faces.
+		/// Creates a Cell by a set of Faces.
 		/// </summary>
-		/// <param name="faces"></param>
-		/// <param name="tolerance"></param>
-		/// <returns name="Cell"></returns>
+		/// <param name="faces">A set of Faces</param>
+		/// <param name="tolerance">A tolerance value</param>
+		/// <returns name="Cell">The created Cell</returns>
 		static Cell^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces, [DefaultArgument("0.001")] double tolerance);
 
 		/// <summary>
-		/// Create a cell from a shell. The shell must be closed, otherwise an exception is thrown.
+		/// Creates a Cell from a Shell. The Shell must be closed, otherwise an exception is thrown.
 		/// </summary>
-		/// <param name="shell"></param>
-		/// <returns name="Cell"></returns>
+		/// <param name="shell">A Shell</param>
+		/// <returns name="Cell">The created Cell</returns>
 		static Cell^ ByShell(Shell^ shell);
 
 		/// <summary>
-		/// Get the cellComplexes which contain the cell.
+		/// Returns the CellComplexes which contain the Cell.
 		/// </summary>
-		/// <returns name="CellComplex[]"></returns>
+		/// <returns name="CellComplex[]">A list of CellComplexes containing the Cell</returns>
 		property List<CellComplex^>^ CellComplexes
 		{
 			List<CellComplex^>^ get();
 		}
 
 		/// <summary>
-		/// Get the shells constituent to the cell.
+		/// Returns the Shells constituent to the Cell.
 		/// </summary>
-		/// <returns name="Shell[]"></returns>
+		/// <returns name="Shell[]">A list of Shells constituent to the Cell</returns>
 		property List<Shell^>^ Shells
 		{
 			List<Shell^>^ get();
 		}
 
 		/// <summary>
-		/// Get the faces constituent to the cell.
+		/// Returns the Faces constituent to the Cell.
 		/// </summary>
-		/// <returns name="Face[]"></returns>
+		/// <returns name="Face[]">A list of Faces constituent to the Cell</returns>
 		property List<Face^>^ Faces
 		{
 			List<Face^>^ get();
 		}
 
 		/// <summary>
-		/// Get the wires constituent to the cell.
+		/// Returns the Wires constituent to the Cell.
 		/// </summary>
-		/// <returns name="Wire[]"></returns>
+		/// <returns name="Wire[]">A list of Wires constituent to the Cell</returns>
 		property List<Wire^>^ Wires
 		{
 			List<Wire^>^ get();
 		}
 
 		/// <summary>
-		/// Get the edges constituent to the cell.
+		/// Returns the Edges constituent to the Cell.
 		/// </summary>
-		/// <returns name="Edge[]"></returns>
+		/// <returns name="Edge[]">A list of Edges constituent to the Cell</returns>
 		property List<Edge^>^ Edges
 		{
 			List<Edge^>^ get();
 		}
 
 		/// <summary>
-		/// Get the vertices constituent to the cell.
+		/// Returns the Vertices constituent to the Cell.
 		/// </summary>
-		/// <returns name="Vertex[]"></returns>
+		/// <returns name="Vertex[]">A list of Vertices constituent to the Cell</returns>
 		property List<Vertex^>^ Vertices
 		{
 			List<Vertex^>^ get();
 		}
 
 		/// <summary>
-		/// Get the cells adjacent to the cell.
+		/// Returns the Cells adjacent to the Cell.
 		/// </summary>
-		/// <returns name="Cell[]"></returns>
+		/// <returns name="Cell[]">A list of Cells adjacent to the Cell</returns>
 		/// 
 		property List<Cell^>^ AdjacentCells
 		{
@@ -100,53 +100,57 @@ namespace Topologic
 		}
 
 		/// <summary>
-		/// Return the shared faces between two cells. 
+		/// Returns the shared Faces between two Cells. 
 		/// </summary>
-		/// <param name="cell"></param>
-		/// <returns name="Face[]"></returns>
+		/// <param name="cell">Another Cell</param>
+		/// <returns name="Face[]">A list of shared Faces between two Cells</returns>
 		List<Face^>^ SharedFaces(Cell^ cell);
 
 		/// <summary>
-		/// Return the shared edges between two cells. 
+		/// Returns the shared Edges between two Cells. 
 		/// </summary>
-		/// <param name="cell"></param>
-		/// <returns name="Face[]"></returns>
+		/// <param name="cell">Another Cell</param>
+		/// <returns name="Edge[]">A list of shared Edges between two Cells</returns>
 		List<Edge^>^ SharedEdges(Cell^ cell);
 
 		/// <summary>
-		/// Return the shared vertices between two cells. 
+		/// Returns the shared Vertices between two Cells. 
 		/// </summary>
-		/// <param name="cell"></param>
-		/// <returns name="Vertex[]"></returns>
+		/// <param name="cell">Another Cell</param>
+		/// <returns name="Vertex[]">A list of shared Vertices between two Cells</returns>
 		List<Vertex^>^ SharedVertices(Cell^ cell);
 
 		/// <summary>
-		/// Return the external boundary (shell) of the cell.
+		/// Returns the external boundary (Shell) of the Cell.
 		/// </summary>
-		/// <returns name="Shell"></returns>
+		/// <returns name="Shell">The external boundary (Shell) of the Cell</returns>
 		property Shell^ ExternalBoundary
 		{
 			Shell^ get();
 		}
 
 		/// <summary>
-		/// Return the internal boundary (shells) of the cell.
+		/// Returns the internal boundaries (Shells) of the Cell.
 		/// </summary>
-		/// <returns name="Shell[]"></returns>
+		/// <returns name="Shell[]">A list of the internal boundaries (Shells) of the Cell</returns>
 		property List<Shell^>^ InternalBoundaries
 		{
 			List<Shell^>^ get();
 		}
 
+		/// <summary>
+		/// Creates a geometry from Cell.
+		/// </summary>
+		/// <returns>The created geometry</returns>
 		property Object^ Geometry_
 		{
-			/// <summary>
-			/// 
-			/// </summary>
-			/// <returns></returns>
 			virtual Object^ get() override;
 		}
 
+		/// <summary>
+		/// Returns the type associated to Cell.
+		/// </summary>
+		/// <returns>The type associated to Cell</returns>
 		static int Type();
 
 	public protected:
@@ -157,11 +161,11 @@ namespace Topologic
 		Cell(const std::shared_ptr<TopologicCore::Cell>& kpCoreCell);
 
 		/// <summary>
-		/// Create a cell by a solid.
+		/// Creates a cell from a solid.
 		/// </summary>
-		/// <param name="solid"></param>
-		/// <param name="tolerance"></param>
-		/// <returns name="Cell"></returns>
+		/// <param name="solid">A solid</param>
+		/// <param name="tolerance">A tolerance value</param>
+		/// <returns name="Cell">The created Cell</returns>
 		static Cell^ BySolid(Autodesk::DesignScript::Geometry::Solid^ solid, [DefaultArgument("0.001")] double tolerance);
 
 		static Cell^ BySphere(Autodesk::DesignScript::Geometry::Sphere^ sphere);

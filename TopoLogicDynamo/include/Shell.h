@@ -21,75 +21,79 @@ namespace Topologic
 	{
 	public:
 		/// <summary>
-		/// Get the cell bounded by the shell.
+		/// Returns the Cells bounded by the Shell.
 		/// </summary>
-		/// <returns name="Cell[]">The cell bounded by the shell</returns>
+		/// <returns name="Cell[]">A list of Cells bounded by the Shell</returns>
 		property List<Cell^>^ Cells
 		{
 			List<Cell^>^ get();
 		}
 
 		/// <summary>
-		/// Get the constituent faces of the shell. 
+		/// Returns the constituent Faces of the Shell. 
 		/// </summary>
-		/// <returns name="Face[]">The constituent faces</returns>
+		/// <returns name="Face[]">A list of the constituent Faces</returns>
 		property List<Face^>^ Faces
 		{
 			List<Face^>^ get();
 		}
 
 		/// <summary>
-		/// Get the constituent wires of the shell.
+		/// Returns the constituent Wires of the Shell.
 		/// </summary>
-		/// <returns name="Wire[]">The constituent wires</returns>
+		/// <returns name="Wire[]">A list of the constituent Wires</returns>
 		property List<Wire^>^ Wires
 		{
 			List<Wire^>^ get();
 		}
 
 		/// <summary>
-		/// Get the constituent edges of the shell.
+		/// Returns the constituent Edges of the Shell.
 		/// </summary>
-		/// <returns name="Edge[]">The constituent edges</returns>
+		/// <returns name="Edge[]">A list of the constituent Edges</returns>
 		property List<Edge^>^ Edges
 		{
 			List<Edge^>^ get();
 		}
 
 		/// <summary>
-		/// Get the constituent vertices of the shell.
+		/// Returns the constituent Vertices of the Shell.
 		/// </summary>
-		/// <returns name="Vertex[]">The constituent vertices</returns>
+		/// <returns name="Vertex[]">A list of the constituent Vertices</returns>
 		property List<Vertex^>^ Vertices
 		{
 			List<Vertex^>^ get();
 		}
 
 		/// <summary>
-		/// Check if the shell is closed.
+		/// Checks if the Shell is closed.
 		/// </summary>
-		/// <returns name="bool">True if the shell is closed and false otherwise</returns>
+		/// <returns name="bool">True if the Shell is closed, otherwise false</returns>
 		property bool IsClosed {
 			bool get();
 		}
 
 		/// <summary>
-		/// Create a shell by a set of connected faces.
+		/// Creates a Shell by a set of connected Faces.
 		/// </summary>
-		/// <param name="faces">A set of faces.</param>
-		/// <param name="tolerance"></param>
-		/// <returns name="Shell">The created shell</returns>
+		/// <param name="faces">A set of Faces</param>
+		/// <param name="tolerance">A tolerance value</param>
+		/// <returns name="Shell">The created Shell</returns>
 		static Shell^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces, [DefaultArgument("0.001")] double tolerance);
 
+		/// <summary>
+		/// Creates a geometry from Shell.
+		/// </summary>
+		/// <returns>The created geometry</returns>
 		property Object^ Geometry_
 		{
-			/// <summary>
-			/// 
-			/// </summary>
-			/// <returns></returns>
 			virtual Object^ get() override;
 		}
 
+		/// <summary>
+		/// Returns the type associated to Shell.
+		/// </summary>
+		/// <returns>The type associated to Shell</returns>
 		static int Type();
 
 	public protected:

@@ -30,48 +30,48 @@ namespace Topologic
 	{
 	public:
 		/// <summary>
-		/// Create a topology by geometry.
+		/// Creates a Topology by geometry.
 		/// </summary>
-		/// <param name="geometry"></param>
-		/// <param name="tolerance"></param>
-		/// <returns name="Topology"></returns>
+		/// <param name="geometry">A geometry</param>
+		/// <param name="tolerance">A tolerance value</param>
+		/// <returns name="Topology">The created Topology</returns>
 		static Topology^ ByGeometry(Autodesk::DesignScript::Geometry::Geometry^ geometry, [DefaultArgument("0.001")] double tolerance);
 
 		/// <summary>
-		/// Create a topology by a list of vertices and a 2D list of indices of the vertices in the first argument. An array of 1 index makes a vertex. An array of 2 indices makes an edge. An array of 3 indices either makes a wire, or, when the array has at least 4 vertices and the first index is the same as the last index, a face will be created instead. NOTE: This node currently can only create planar faces.
+		/// Creates a Topology by a list of Vertices and a 2D list of indices of the Vertices in the first argument. An array of 1 index makes a Vertex. An array of 2 indices makes an Edge. An array of 3 indices either makes a Wire, or, when the array has at least 4 vertices and the first index is the same as the last index, a Face will be created instead. NOTE: This node currently can only create planar Faces.
 		/// </summary>
-		/// <param name="vertices"></param>
-		/// <param name="vertexIndices"></param>
-		/// <returns name="Topology[]"></returns>
+		/// <param name="vertices">A list of Vertices</param>
+		/// <param name="vertexIndices">A 2D list of the indices of the Vertices</param>
+		/// <returns name="Topology[]">A Topology</returns>
 		static List<Topology^>^ ByVerticesIndices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::List<int>^>^ vertexIndices);
 
 		/// <summary>
-		/// Create a shell by a polysurface.
+		/// Creates a Shell by a polysurface [NOTE: This method is deleted].
 		/// </summary>
-		/// <param name="polySurface"></param>
-		/// <returns></returns>
+		/// <param name="polySurface">A polysurface</param>
+		/// <returns>The created Topology</returns>
 		[IsVisibleInDynamoLibrary(false)]
 		static Topology^ ByPolySurface(Autodesk::DesignScript::Geometry::PolySurface^ polySurface);
 
 		/// <summary>
-		/// Create a shell or a cluster by a set of connected faces.
+		/// Creates a Shell or a Cluster by a set of connected Faces.
 		/// </summary>
-		/// <param name="faces">A set of faces.</param>
-		/// <returns name="Topology">The created topology</returns>
+		/// <param name="faces">A set of faces</param>
+		/// <returns name="Topology">The created Topology</returns>
 		[IsVisibleInDynamoLibrary(false)]
 		static Topology^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces);
 
 		/// <summary>
-		/// Returns the dimensionality of the topological entity.
+		/// Returns the dimensionality of the Topology.
 		/// </summary>
-		/// <returns name="int">The topological entity's dimentionality</returns>
+		/// <returns name="int">The Topology's dimensionality</returns>
 		property int Dimensionality
 		{
 			int get();
 		}
 
 		/// <summary>
-		/// Create a geometry from the topology.
+		/// Creates a geometry from the Topology.
 		/// </summary>
 		/// <returns name="Geometry">The host geometry counterpart of the topological entity</returns>
 		[IsVisibleInDynamoLibrary(false)]
@@ -80,28 +80,36 @@ namespace Topologic
 			virtual Object^ get() abstract;
 		}
 
+		/// <summary>
+		/// Creates a geometry from Topology.
+		/// </summary>
+		/// <returns>The created geometry</returns>
 		property Object^ Geometry
 		{
 			virtual Object^ get();
 		}
 
 		/// <summary>
-		/// 
+		/// Returns a Topology 
 		/// </summary>
-		/// <param name="attributes"></param>
-		/// <returns></returns>
+		/// <param name="attributes">A dictionary</param>
+		/// <returns>The original Topology with a dictionary</returns>
 		[IsVisibleInDynamoLibrary(false)]
 		Topology^ AddAttributesNoCopy(Dictionary<String^, Object^>^ attributes);
 
 		/// <summary>
-		/// Returns the non-constituent members of the input topological entity.
+		/// Returns the non-constituent members of the input Topology.
 		/// </summary>
-		/// <returns name="Topology[]">The topological entities containing the input topology as a non-constituent member</returns>
+		/// <returns name="Topology[]">A list of Topologies contained in the input Topology as non-constituent members</returns>
 		property List<Topology^>^ Contents
 		{
 			List<Topology^>^ get();
 		}
 
+		/// <summary>
+		/// Returns the sub-contents (contents of the constituent members) of a Topology.
+		/// </summary>
+		/// <returns name="Context[]">A list of the sub-contents (contents of the constituent members) of a Topology</returns>
 		[IsVisibleInDynamoLibrary(false)]
 		property List<Topology^>^ SubContents
 		{
@@ -109,62 +117,62 @@ namespace Topologic
 		}
 
 		/// <summary>
-		/// Returns the topological entities containing the input topology as a content.
+		/// Returns the Topologies containing the input topology as a content.
 		/// </summary>
-		/// <returns name="Context[]">The non-constituent members of the input topological entity</returns>
+		/// <returns name="Context[]">A list of the non-constituent members containing the input Topology</returns>
 		property List<Context^>^ Contexts
 		{
 			List<Context^>^ get();
 		}
 
 		/// <summary>
-		/// Add this topology as a non-constituent member to another topology.
+		/// Adds this Topology as a content (non-constituent member) to another Topology.
 		/// </summary>
-		/// <param name="topology"></param>
-		/// <returns></returns>
+		/// <param name="topology">The Topology of the content</param>
+		/// <returns>The new Topology</returns>
 		Topology^ AddContent(Topology^ topology);
 		
 		/// <summary>
-		/// 
+		/// Adds this Topology as a content (non-constituent member) to another Topology of a specific type.
 		/// </summary>
-		/// <param name="content"></param>
-		/// <param name="typeFilter"></param>
-		/// <returns></returns>
+		/// <param name="content">The Topology of the content</param>
+		/// <param name="typeFilter">The type of the context Topology</param>
+		/// <returns>The new Topology</returns>
 		Topology^ AddContent(Topology^ content, [DefaultArgument("255")] int typeFilter);
 
 		/// <summary>
-		/// Remove a non-constituent member from the topology.
+		/// Removes a content (non-constituent member) from a Topology.
 		/// </summary>
-		/// <param name="content"></param>
-		/// <returns name="Topology"></returns>
+		/// <param name="content">The Topology of the content</param>
+		/// <returns name="Topology">The new Topology</returns>
 		Topology^ RemoveContent(Topology^ content);
 
 		/// <summary>
-		/// 
+		/// Adds Apertures to a Topology.
 		/// </summary>
-		/// <param name="apertureTopologies"></param>
-		/// <returns name="Topology"></returns>
+		/// <param name="apertureTopologies">A list of Topologies associated to the apertures</param>
+		/// <returns name="Topology">The new Topology</returns>
 		Topology^ AddApertures(System::Collections::Generic::IEnumerable<Topology^>^ apertureTopologies);
 
 		/// <summary>
-		/// Add a context to the topology.
+		/// Adds a context to a Topology.
 		/// </summary>
-		/// <param name="context"></param>
-		/// <returns name="Topology"></returns>
+		/// <param name="context">A context</param>
+		/// <returns name="Topology">The new Topology</returns>
 		Topology^ AddContext(Context^ context);
 
 		/// <summary>
-		/// Remove a context from the topology.
+		/// Removes a context from a Topology.
 		/// </summary>
-		/// <param name="context"></param>
-		/// <returns name="Topology"></returns>
+		/// <param name="context">A context</param>
+		/// <returns name="Topology">The new Topology</returns>
 		Topology^ RemoveContext(Context^ context);
 
 		/// <summary>
-		/// 
+		/// Returns the shared Topologies between the input Topology and another Topology.
 		/// </summary>
-		/// <param name="topology"></param>
-		/// <returns name="Topology"></returns>
+		/// <param name="topology">Another Topology</param>
+		/// <returns name="Topology[]">A list of shared Topologies between the input Topology and another Topology</returns>
 		[IsVisibleInDynamoLibrary(false)]
 		List<Topology^>^ SharedTopologies(Topology^ topology);
 
@@ -179,101 +187,106 @@ namespace Topologic
 		List<List<Topology^>^>^ PathsTo(Topology^ topology, Topology^ parentTopology, int maxLevel, int maxPaths);
 
 		/// <summary>
-		/// Perform the Difference operation between the first and second topological entities.
+		/// Performs the Difference operation between the input Topology and another Topology.
 		/// </summary>
-		/// <param name="topology">The second topological entity</param>
+		/// <param name="topology">Another Topology</param>
 		/// <returns name="Topology">The result of the Difference operation</returns>
 		Topology^ Difference(Topology^ topology);
 
 		/// <summary>
-		/// Impose the second topological entity to the first one.
+		/// Imposes another Topology on the input Topology.
 		/// </summary>
-		/// <param name="tool">Topologic.Topology</param>
-		/// <returns name="Topology">Topologic.Topology</returns>
+		/// <param name="tool">Another Topology</param>
+		/// <returns name="Topology">The result of the Impose operation</returns>
 		Topology^ Impose(Topologic::Topology^ tool);
 
 		/// <summary>
-		/// Imprint the second topological entity to the first one.
+		/// Imprints another Topology on the input Topology.
 		/// </summary>
-		/// <param name="tool">Another topology</param>
+		/// <param name="tool">Another Topology</param>
 		/// <returns name="Topology">The result of the Imprint operation</returns>
 		Topology^ Imprint(Topology^ tool);
 
 		/// <summary>
-		/// Perform the Intersection operation between the first and the second topological entities.
+		/// Performs the Intersection operation between the input Topology and another Topology.
 		/// </summary>
-		/// <param name="topology"></param>
+		/// <param name="topology">Another Topology</param>
 		/// <returns name="Topology">The result of the Intersection operation</returns>
 		Topology^ Intersect(Topology^ topology);
 
 		/// <summary>
-		/// Merge the first and the second topological entities.
+		/// Merges the input Topology and another Topology.
 		/// </summary>
-		/// <param name="topology"></param>
+		/// <param name="topology">Another Topology</param>
 		/// <returns name="Topology">The result of the Merge operation</returns>
 		Topology^ Merge(Topology^ topology);
 
 		/// <summary>
-		/// Merge the subtopologies under this topology.
+		/// Merges the sub-topologies of the input Topology.
 		/// </summary>
-		/// <returns name="Topology">The result of the Merge operation</returns>
+		/// <returns name="Topology">The result of the SelfMerge operation</returns>
 		Topology^ SelfMerge();
 
 		/// <summary>
-		/// Slice the first topological entity with the second.
+		/// Slices the input Topology with another Topology.
 		/// </summary>
-		/// <param name="tool"></param>
+		/// <param name="tool">Another Topology</param>
 		/// <returns name="Topology">The result of the Slice operation</returns>
 		Topology^ Slice(Topology^ tool);
 
 		/// <summary>
-		/// 
+		/// Divides the input Topology with another Topology.
 		/// </summary>
-		/// <param name="tool"></param>
+		/// <param name="tool">Another Topology</param>
 		/// <returns name="Topology">The result of the Divide operation</returns>
 		Topology^ Divide(Topology^ tool);
 
 		/// <summary>
-		/// Union the first and the second topological entities.
+		/// Unions the input Topology and another Topology.
 		/// </summary>
-		/// <param name="topology"></param>
+		/// <param name="topology">Another Topology</param>
 		/// <returns name="Topology">The result of the Union operation</returns>
 		Topology^ Union(Topology^ topology);
 
 		/// <summary>
-		/// Perform an XOR operation between the first and the second topological entities.
+		/// Performs an XOR operation between the input Topology and another Topology.
 		/// </summary>
-		/// <param name="topology"></param>
+		/// <param name="topology">Another Topology</param>
 		/// <returns name="Topology">The result of the XOR operation</returns>
 		Topology^ XOR(Topology^ topology);
 
+		/// <summary>
+		/// Trims the input Topology with another Topology.
+		/// </summary>
+		/// <param name="topology">Another Topology</param>
+		/// <returns name="Topology">The result of the Trim operation</returns>
 		[IsVisibleInDynamoLibrary(false)]
 		Topology^ Trim(Topology^ trim);
 
 		/// <summary>
-		/// Export the topological entity to a BRep file (.brep).
+		/// Exports a Topology to a BRep file (.brep).
 		/// </summary>
 		/// <param name="path">The path to the BRep file</param>
 		/// <returns name="bool">True if the BRep file is succesffully created, otherwise false</returns>
 		bool ExportToBRep(String^ path);
 
 		/// <summary>
-		/// Import a topological entity from a BRep file (.brep).
+		/// Imports a Topology from a BRep file (.brep).
 		/// </summary>
 		/// <param name="path">The path to the BRep file</param>
-		/// <returns name="Topology">The loaded topology</returns>
+		/// <returns name="Topology">The loaded Topology</returns>
 		static Topology^ ImportFromBRep(String^ path);
 
 		/// <summary>
-		/// Print the topological information of the input entity.
+		/// Prints the topological information of a Topology.
 		/// </summary>
-		/// <returns name="String">The topological information of the input entity</returns>
+		/// <returns name="String">The topological information of the input Topology</returns>
 		String^ Analyze();
 
 		/// <summary>
-		/// Returns all sub-topologies under this topology.
+		/// Returns all sub-topologies (immediate constituent members) of a Topology.
 		/// </summary>
-		/// <returns name="Topology[]">The sub-topologies of the input topology</returns>
+		/// <returns name="Topology[]">A list of the sub-topologies (immediate constituent members) of a Topology</returns>
 		[IsVisibleInDynamoLibrary(false)]
 		property List<Topology^>^ SubTopologies
 		{
@@ -344,45 +357,57 @@ namespace Topologic
 		}
 
 		/// <summary>
-		/// Check if two topologies are the same. NOTE: This is a pointer check, not a topological or a geometry one.
 		/// </summary>
-		/// <param name="topology"></param>
-		/// <returns></returns>
+		/// <param name="topology">Another Topology</param>
+		/// <returns>True if the Topologies are the same, otherwise false</returns>
 		bool IsSame(Topology^ topology);
 
 		/// <summary>
-		/// Return the subtopology that is the closest and the simplest (i.e. has the lowest dimensionality) to the selector.
+		/// Returns the sub-topology that is the closest and the simplest (i.e. has the lowest dimensionality) to the selector.
 		/// </summary>
-		/// <param name="selector"></param>
-		/// <returns></returns>
+		/// <param name="selector">A Topology</param>
+		/// <returns>The closest and simplest sub-topology to the selector</returns>
 		Topology^ ClosestSimplestSubshape(Topology^ selector);
 
 		/// <summary>
-		/// 
+		/// Returns the sub-topology that is the closest to the selector and of a specific type.
 		/// </summary>
-		/// <param name="selector"></param>
-		/// <param name="typeFilter"></param>
-		/// <returns></returns>
+		/// <param name="selector">A Topology</param>
+		/// <param name="typeFilter">A type</param>
+		/// <returns>The closest sub-topology to the selector of the specified type</returns>
 		[IsVisibleInDynamoLibrary(false)]
 		Topology^ SelectSubtopology(Topology^ selector,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] int typeFilter);
 		
+		/// <summary>
+		/// Copies a Topology and its contents.
+		/// </summary>
+		/// <returns>The copied Topology</returns>
 		generic <class T>
 		where T: Topology
 		[IsVisibleInDynamoLibrary(false)]
 		T Copy();
 
+		/// <summary>
+		/// Copies a Topology without its contents.
+		/// </summary>
+		/// <returns>The copied Topology</returns>
 		Topology^ ShallowCopy();
 
 
 		/// <summary>
 		/// Returns the instance type as a string.
 		/// </summary>
+		/// <returns>The instance type as a string</returns>
 		property String^ TypeAsString
 		{
 			String^ get();
 		}
 
+		/// <summary>
+		/// Returns the type associated to the Topology.
+		/// </summary>
+		/// <returns>The type associated to the Topology</returns>
 		property int Type
 		{
 			int get();

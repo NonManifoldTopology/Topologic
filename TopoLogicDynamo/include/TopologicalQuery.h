@@ -4,6 +4,10 @@
 
 namespace Topologic
 {
+	/// <summary>
+	/// TopologicalQuery is the base class for Topology and Context classes. 
+	/// </summary>
+
 	public ref class TopologicalQuery abstract
 	{
 	public protected:
