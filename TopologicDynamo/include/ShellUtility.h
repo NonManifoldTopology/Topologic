@@ -31,33 +31,33 @@ namespace Topologic {
 			[IsVisibleInDynamoLibrary(false)]
 			static Shell^ ByVerticesFaceIndices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<int>^>^ faceIndices);*/
 
-			/// <summary>
-			/// Creates a Shell by subdividing and planarizing a curved Face.
-			/// </summary>
-			/// <param name="face">A curved Face</param>
-			/// <param name="iteration"></param>
-			/// <param name="numUPanels"></param>
-			/// <param name="numVPanels"></param>
-			/// <param name="tolerance"></param>
-			/// <param name="capBottom">Cap the bottom hole if the surface is closed either in the minimum u- or v-direction but open on the other</param>
-			/// <param name="capTop">Cap the top hole if the surface is closed either in the maximum u- or v-direction but open on the other</param>
-			/// <returns name="Face[]">A list of Faces</returns>
-			static List<Face^>^ ByFacePlanarization(Face^ face, int iteration, int numEdgeSamples, int numUPanels, int numVPanels, double tolerance, bool capBottom, bool capTop);
+			///// <summary>
+			///// Creates a Shell by subdividing and planarizing a curved Face.
+			///// </summary>
+			///// <param name="face">A curved Face</param>
+			///// <param name="iteration"></param>
+			///// <param name="numUPanels"></param>
+			///// <param name="numVPanels"></param>
+			///// <param name="tolerance"></param>
+			///// <param name="capBottom">Cap the bottom hole if the surface is closed either in the minimum u- or v-direction but open on the other</param>
+			///// <param name="capTop">Cap the top hole if the surface is closed either in the maximum u- or v-direction but open on the other</param>
+			///// <returns name="Face[]">A list of Faces</returns>
+			//static List<Face^>^ ByFacePlanarization(Face^ face, int iteration, int numEdgeSamples, int numUPanels, int numVPanels, double tolerance, bool capBottom, bool capTop);
 
-			/// <summary>
-			/// Creates a shell by subdividing and planarizing a curved face. NOTE: This constructor will be moved to a dedicated package.
-			/// </summary>
-			/// <param name="face">A curved Face</param>
-			/// <param name="iteration"></param>
-			/// <param name="uValues"></param>
-			/// <param name="vValues"></param>
-			/// <param name="tolerance"></param>
-			/// <param name="capBottom">Cap the holes if the surface is closed either in the minimum u- or v-direction but open on the other</param>
-			/// <param name="capTop">Cap the holes if the surface is closed either in the maximum u- or v-direction but open on the other</param>
-			/// <returns name="Shell">The created Shell</returns>
-			//[MultiReturn(gcnew array<String^> { "Vertices", "Edges", "Wires", "Faces", "Shell" })]
-			//static Dictionary<String^, Object^>^ ByFacePlanarization(Face^ face, int iteration, int numEdgeSamples, System::Collections::Generic::IEnumerable<double>^ uValues, System::Collections::Generic::IEnumerable<double>^ vValues, double tolerance, bool capBottom, bool capTop);
-			static Shell^ ByFacePlanarization(Face^ face, int iteration, int numEdgeSamples, System::Collections::Generic::IEnumerable<double>^ uValues, System::Collections::Generic::IEnumerable<double>^ vValues, double tolerance, bool capBottom, bool capTop);
+			///// <summary>
+			///// Creates a shell by subdividing and planarizing a curved face. NOTE: This constructor will be moved to a dedicated package.
+			///// </summary>
+			///// <param name="face">A curved Face</param>
+			///// <param name="iteration"></param>
+			///// <param name="uValues"></param>
+			///// <param name="vValues"></param>
+			///// <param name="tolerance"></param>
+			///// <param name="capBottom">Cap the holes if the surface is closed either in the minimum u- or v-direction but open on the other</param>
+			///// <param name="capTop">Cap the holes if the surface is closed either in the maximum u- or v-direction but open on the other</param>
+			///// <returns name="Shell">The created Shell</returns>
+			////[MultiReturn(gcnew array<String^> { "Vertices", "Edges", "Wires", "Faces", "Shell" })]
+			////static Dictionary<String^, Object^>^ ByFacePlanarization(Face^ face, int iteration, int numEdgeSamples, System::Collections::Generic::IEnumerable<double>^ uValues, System::Collections::Generic::IEnumerable<double>^ vValues, double tolerance, bool capBottom, bool capTop);
+			//static Shell^ ByFacePlanarization(Face^ face, int iteration, int numEdgeSamples, System::Collections::Generic::IEnumerable<double>^ uValues, System::Collections::Generic::IEnumerable<double>^ vValues, double tolerance, bool capBottom, bool capTop);
 
 		public protected:
 			ShellUtility() {}

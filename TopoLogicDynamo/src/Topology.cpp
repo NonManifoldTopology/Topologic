@@ -12,7 +12,7 @@
 #include <Wire.h>
 #include <Edge.h>
 #include <Vertex.h>
-#include <Graph.h>
+#include <DualGraph.h>
 #include <Aperture.h>
 #include <Context.h>
 #include <TopologyFactoryManager.h>
@@ -26,7 +26,7 @@
 #include <CellFactory.h>
 #include <CellComplexFactory.h>
 #include <ClusterFactory.h>
-#include <GraphFactory.h>
+#include <DualGraphFactory.h>
 #include <ApertureFactory.h>
 #include <AttributeFactoryManager.h>
 #include <AttributeFactory.h>
@@ -267,13 +267,13 @@ namespace Topologic
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		std::string cppPath = msclr::interop::marshal_as<std::string>(path);
-		return pCoreTopology->SaveToBrep(cppPath);
+		return pCoreTopology->ExportToBRep(cppPath);
 	}
 
-	Topology^ Topology::ImportFromBRep(String^ path)
+	Topology^ Topology::ByImportedBRep(String^ path)
 	{
 		std::string cppPath = msclr::interop::marshal_as<std::string>(path);
-		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::Topology::LoadFromBrep(cppPath);
+		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::Topology::ByImportedBRep(cppPath);
 		Topology^ pTopology = Topology::ByCoreTopology(pCoreTopology);
 		return pTopology;
 	}
@@ -358,7 +358,7 @@ namespace Topologic
 		for (const std::pair<std::string, TopologicUtilities::Attribute::Ptr>& rkAttributePair : coreAttributes)
 		{
 			String^ key = gcnew String(rkAttributePair.first.c_str());
-			AttributeFactory^ attributeFactory = AttributeFactoryManager::Instance->GetFactory(rkAttributePair.second);
+			Attributes::AttributeFactory^ attributeFactory = Attributes::AttributeFactoryManager::Instance->GetFactory(rkAttributePair.second);
 			dictionary->Add(key, attributeFactory->CreateValue(rkAttributePair.second));
 		}
 
@@ -373,13 +373,13 @@ namespace Topologic
 			return nullptr;
 		}
 		String^ guid = gcnew String(kpCoreTopology->GetInstanceGUID().c_str());
-		TopologyFactory^ topologyFactory = nullptr;
+		Factories::TopologyFactory^ topologyFactory = nullptr;
 		try {
-			topologyFactory = TopologyFactoryManager::Instance->Find(guid);
+			topologyFactory = Factories::TopologyFactoryManager::Instance->Find(guid);
 		}
 		catch (...)
 		{
-			topologyFactory = TopologyFactoryManager::Instance->GetDefaultFactory(kpCoreTopology);
+			topologyFactory = Factories::TopologyFactoryManager::Instance->GetDefaultFactory(kpCoreTopology);
 		}
 		return topologyFactory->Create(TopologicCore::TopologyPtr(kpCoreTopology));
 	}
@@ -421,14 +421,14 @@ namespace Topologic
 		return safe_cast<T>(topology);
 	}*/
 
-	void Topology::RegisterFactory(const TopologicCore::Topology::Ptr & kpCoreTopology, TopologyFactory^ topologyFactory)
+	void Topology::RegisterFactory(const TopologicCore::Topology::Ptr & kpCoreTopology, Factories::TopologyFactory^ topologyFactory)
 	{
-		TopologyFactoryManager::Instance->Add(kpCoreTopology, topologyFactory);
+		Factories::TopologyFactoryManager::Instance->Add(kpCoreTopology, topologyFactory);
 	}
 
-	void Topology::RegisterFactory(String^ guid, TopologyFactory^ topologyFactory)
+	void Topology::RegisterFactory(String^ guid, Factories::TopologyFactory^ topologyFactory)
 	{
-		TopologyFactoryManager::Instance->Add(guid, topologyFactory);
+		Factories::TopologyFactoryManager::Instance->Add(guid, topologyFactory);
 	}
 	
 	/*List<Topology^>^ Topology::HostTopology__::get()
@@ -442,16 +442,16 @@ namespace Topologic
 		static bool areFactoriesAdded = false;
 		if(!areFactoriesAdded)
 		{
-			RegisterFactory(gcnew String(TopologicCore::VertexGUID::Get().c_str()), gcnew VertexFactory());
-			RegisterFactory(gcnew String(TopologicCore::EdgeGUID::Get().c_str()), gcnew EdgeFactory());
-			RegisterFactory(gcnew String(TopologicCore::WireGUID::Get().c_str()), gcnew WireFactory());
-			RegisterFactory(gcnew String(TopologicCore::FaceGUID::Get().c_str()), gcnew FaceFactory());
-			RegisterFactory(gcnew String(TopologicCore::ShellGUID::Get().c_str()), gcnew ShellFactory());
-			RegisterFactory(gcnew String(TopologicCore::CellGUID::Get().c_str()), gcnew CellFactory());
-			RegisterFactory(gcnew String(TopologicCore::CellComplexGUID::Get().c_str()), gcnew CellComplexFactory());
-			RegisterFactory(gcnew String(TopologicCore::ClusterGUID::Get().c_str()), gcnew ClusterFactory());
-			RegisterFactory(gcnew String(TopologicExtensions::GraphGUID::Get().c_str()), gcnew GraphFactory());
-			RegisterFactory(gcnew String(TopologicCore::ApertureGUID::Get().c_str()), gcnew ApertureFactory());
+			RegisterFactory(gcnew String(TopologicCore::VertexGUID::Get().c_str()), gcnew Factories::VertexFactory());
+			RegisterFactory(gcnew String(TopologicCore::EdgeGUID::Get().c_str()), gcnew Factories::EdgeFactory());
+			RegisterFactory(gcnew String(TopologicCore::WireGUID::Get().c_str()), gcnew Factories::WireFactory());
+			RegisterFactory(gcnew String(TopologicCore::FaceGUID::Get().c_str()), gcnew Factories::FaceFactory());
+			RegisterFactory(gcnew String(TopologicCore::ShellGUID::Get().c_str()), gcnew Factories::ShellFactory());
+			RegisterFactory(gcnew String(TopologicCore::CellGUID::Get().c_str()), gcnew Factories::CellFactory());
+			RegisterFactory(gcnew String(TopologicCore::CellComplexGUID::Get().c_str()), gcnew Factories::CellComplexFactory());
+			RegisterFactory(gcnew String(TopologicCore::ClusterGUID::Get().c_str()), gcnew Factories::ClusterFactory());
+			RegisterFactory(gcnew String(TopologicExtensions::GraphGUID::Get().c_str()), gcnew Factories::DualGraphFactory());
+			RegisterFactory(gcnew String(TopologicCore::ApertureGUID::Get().c_str()), gcnew Factories::ApertureFactory());
 			areFactoriesAdded = true;
 		}
 	}
@@ -519,7 +519,7 @@ namespace Topologic
 		for each(KeyValuePair<String^, Object^>^ entry in attributes)
 		{
 			System::Type^ entryValueType = entry->Value->GetType();
-			AttributeFactoryManager::Instance->SetAttribute(this, entry->Key, entry->Value);
+			Attributes::AttributeFactoryManager::Instance->SetAttribute(this, entry->Key, entry->Value);
 		}
 		return this;
 	}
@@ -650,7 +650,7 @@ namespace Topologic
 		return copyCopyParentTopology;
 	}
 
-	Topology ^ Topology::AddContent(Topology ^ topology, int typeFilter)
+	Topology ^ Topology::AddContent(Topology ^ contentTopology, int typeFilter)
 	{
 		// 1. Copy this topology
 		TopologicCore::Topology::Ptr pCoreParentTopology =
@@ -659,7 +659,7 @@ namespace Topologic
 
 		// 2. Copy the content topology
 		TopologicCore::Topology::Ptr pCoreContentTopology =
-			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(contentTopology->GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreCopyContentTopology = pCoreContentTopology->DeepCopy();
 
 		pCoreCopyParentTopology->AddContent(pCoreCopyContentTopology, typeFilter);
@@ -939,7 +939,7 @@ namespace Topologic
 		}
 	}
 
-	Topology ^ Topology::Trim(Topology ^ trim)
+	Topology ^ Topology::Trim(Topology ^ topology)
 	{
 		throw gcnew System::NotImplementedException();
 		// TODO: insert return statement here

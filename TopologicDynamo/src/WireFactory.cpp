@@ -4,13 +4,16 @@
 
 namespace Topologic
 {
-	Topology ^ WireFactory::Create(const TopologicCore::TopologyPtr & kpTopology)
+	namespace Factories
 	{
-		TopologicCore::Wire::Ptr pCoreWire = std::dynamic_pointer_cast<TopologicCore::Wire>(kpTopology.topologyPtr);
-		if (pCoreWire == nullptr)
+		Topology ^ WireFactory::Create(const TopologicCore::TopologyPtr & kpTopology)
 		{
-			return nullptr;
+			TopologicCore::Wire::Ptr pCoreWire = std::dynamic_pointer_cast<TopologicCore::Wire>(kpTopology.topologyPtr);
+			if (pCoreWire == nullptr)
+			{
+				return nullptr;
+			}
+			return gcnew Wire(pCoreWire);
 		}
-		return gcnew Wire(pCoreWire);
 	}
 }

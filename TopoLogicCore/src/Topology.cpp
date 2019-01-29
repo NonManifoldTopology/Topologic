@@ -647,12 +647,12 @@ namespace TopologicCore
 		return ContextManager::GetInstance().Find(rkOcctShape, rContexts);
 	}
 
-	bool Topology::SaveToBrep(const std::string & rkPath) const
+	bool Topology::ExportToBRep(const std::string & rkPath) const
 	{
 		return BRepTools::Write(GetOcctShape(), rkPath.c_str());;
 	}
 
-	Topology::Ptr Topology::LoadFromBrep(const std::string & rkPath)
+	Topology::Ptr Topology::ByImportedBRep(const std::string & rkPath)
 	{
 		TopoDS_Shape occtShape;
 		BRep_Builder occtBRepBuilder;

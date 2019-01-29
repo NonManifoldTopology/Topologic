@@ -84,7 +84,7 @@ namespace Topologic
 	{
 		TopologicCore::Aperture::Ptr pCoreAperture = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Aperture>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreTopology = pCoreAperture->Topology();
-		return TopologyFactoryManager::GetDefaultFactory(pCoreTopology)->Create(pCoreTopology);
+		return Factories::TopologyFactoryManager::GetDefaultFactory(pCoreTopology)->Create(pCoreTopology);
 	}
 
 	/*bool Aperture::IsOpen()

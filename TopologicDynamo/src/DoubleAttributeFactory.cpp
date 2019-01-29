@@ -7,29 +7,32 @@
 
 namespace Topologic
 {
-	Attribute^ DoubleAttributeFactory::Create(String ^ key, Object ^ value)
+	namespace Attributes
 	{
-		double doubleValue = safe_cast<double>(value);
-		return gcnew Attribute(std::dynamic_pointer_cast<TopologicUtilities::Attribute>(std::make_shared<TopologicUtilities::DoubleAttribute>(doubleValue)));
-	}
+		Attribute^ DoubleAttributeFactory::Create(String ^ key, Object ^ value)
+		{
+			double doubleValue = safe_cast<double>(value);
+			return gcnew Attribute(std::dynamic_pointer_cast<TopologicUtilities::Attribute>(std::make_shared<TopologicUtilities::DoubleAttribute>(doubleValue)));
+		}
 
-	bool DoubleAttributeFactory::CheckType(Type ^ type)
-	{
-		typedef double ^ DoubleHandle;
-		System::Type^ doubleHandleType = DoubleHandle::typeid;
+		bool DoubleAttributeFactory::CheckType(Type ^ type)
+		{
+			typedef double ^ DoubleHandle;
+			System::Type^ doubleHandleType = DoubleHandle::typeid;
 
-		return type == doubleHandleType;
-	}
+			return type == doubleHandleType;
+		}
 
-	bool DoubleAttributeFactory::CheckType(const std::shared_ptr<TopologicUtilities::Attribute>& kpUtilitiesAttribute)
-	{
-		return std::dynamic_pointer_cast<TopologicUtilities::DoubleAttribute>(kpUtilitiesAttribute) != nullptr;
-	}
+		bool DoubleAttributeFactory::CheckType(const std::shared_ptr<TopologicUtilities::Attribute>& kpUtilitiesAttribute)
+		{
+			return std::dynamic_pointer_cast<TopologicUtilities::DoubleAttribute>(kpUtilitiesAttribute) != nullptr;
+		}
 
-	Object^ DoubleAttributeFactory::CreateValue(const std::shared_ptr<TopologicUtilities::Attribute>& kpUtilitiesAttribute)
-	{
-		void* pValue = kpUtilitiesAttribute->Value();
-		double* pDoubleValue = static_cast<double*>(pValue);
-		return *pDoubleValue;
+		Object^ DoubleAttributeFactory::CreateValue(const std::shared_ptr<TopologicUtilities::Attribute>& kpUtilitiesAttribute)
+		{
+			void* pValue = kpUtilitiesAttribute->Value();
+			double* pDoubleValue = static_cast<double*>(pValue);
+			return *pDoubleValue;
+		}
 	}
 }

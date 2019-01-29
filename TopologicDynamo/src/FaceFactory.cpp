@@ -4,13 +4,16 @@
 
 namespace Topologic
 {
-	Topology ^ FaceFactory::Create(const TopologicCore::TopologyPtr & kpTopology)
+	namespace Factories
 	{
-		TopologicCore::Face::Ptr pCoreFace = std::dynamic_pointer_cast<TopologicCore::Face>(kpTopology.topologyPtr);
-		if (pCoreFace == nullptr)
+		Topology ^ FaceFactory::Create(const TopologicCore::TopologyPtr & kpTopology)
 		{
-			return nullptr;
+			TopologicCore::Face::Ptr pCoreFace = std::dynamic_pointer_cast<TopologicCore::Face>(kpTopology.topologyPtr);
+			if (pCoreFace == nullptr)
+			{
+				return nullptr;
+			}
+			return gcnew Face(pCoreFace);
 		}
-		return gcnew Face(pCoreFace);
 	}
 }

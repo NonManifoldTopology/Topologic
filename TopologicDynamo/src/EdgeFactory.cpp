@@ -4,13 +4,16 @@
 
 namespace Topologic
 {
-	Topology ^ EdgeFactory::Create(const TopologicCore::TopologyPtr & kpTopology)
+	namespace Factories
 	{
-		TopologicCore::Edge::Ptr pCoreEdge = std::dynamic_pointer_cast<TopologicCore::Edge>(kpTopology.topologyPtr);
-		if (pCoreEdge == nullptr)
+		Topology ^ EdgeFactory::Create(const TopologicCore::TopologyPtr & kpTopology)
 		{
-			return nullptr;
+			TopologicCore::Edge::Ptr pCoreEdge = std::dynamic_pointer_cast<TopologicCore::Edge>(kpTopology.topologyPtr);
+			if (pCoreEdge == nullptr)
+			{
+				return nullptr;
+			}
+			return gcnew Edge(pCoreEdge);
 		}
-		return gcnew Edge(pCoreEdge);
 	}
 }

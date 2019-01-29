@@ -8,54 +8,56 @@
 #include <CellFactory.h>
 #include <ClusterFactory.h>
 #include <ApertureFactory.h>
-#include <GraphFactory.h>
+#include <DualGraphFactory.h>
 
 namespace Topologic
 {
-	void TopologyFactoryManager::Add(const TopologicCore::Topology::Ptr& content, TopologyFactory^ value)
+	namespace Factories
 	{
-		Add(gcnew String(content->GetClassGUID().c_str()), value);
-	}
-
-	void TopologyFactoryManager::Add(String^ key, TopologyFactory^ value)
-	{
-		try {
-			m_TopologyFactoryDict->Add(key, value);
-		}
-		catch (Exception^)
+		void TopologyFactoryManager::Add(const TopologicCore::Topology::Ptr& content, TopologyFactory^ value)
 		{
-
+			Add(gcnew String(content->GetClassGUID().c_str()), value);
 		}
-	}
 
-	TopologyFactory^ TopologyFactoryManager::Find(String^ key)
-	{
-		if (m_TopologyFactoryDict->ContainsKey(key))
+		void TopologyFactoryManager::Add(String^ key, TopologyFactory^ value)
 		{
-			return m_TopologyFactoryDict[key];
-		}
-		else
-		{
-			throw gcnew Exception("Not found");
-		}
-	}
+			try {
+				m_TopologyFactoryDict->Add(key, value);
+			}
+			catch (Exception^)
+			{
 
-	TopologyFactory^ TopologyFactoryManager::GetDefaultFactory(const TopologicCore::Topology::Ptr & content)
-	{
-		switch (content->GetType())
+			}
+		}
+
+		TopologyFactory^ TopologyFactoryManager::Find(String^ key)
 		{
-		case TopologicCore::TOPOLOGY_CLUSTER: return gcnew ClusterFactory();
-		case TopologicCore::TOPOLOGY_CELLCOMPLEX: return gcnew CellComplexFactory();
-		case TopologicCore::TOPOLOGY_CELL: return gcnew CellFactory();
-		case TopologicCore::TOPOLOGY_SHELL: return gcnew ShellFactory();
-		case TopologicCore::TOPOLOGY_FACE: return gcnew FaceFactory();
-		case TopologicCore::TOPOLOGY_WIRE: return gcnew WireFactory();
-		case TopologicCore::TOPOLOGY_EDGE: return gcnew EdgeFactory();
-		case TopologicCore::TOPOLOGY_VERTEX: return gcnew VertexFactory();
-		case TopologicCore::TOPOLOGY_APERTURE: return gcnew ApertureFactory();
-		//case TopologicCore::TOPOLOGY_GRAPH: return gcnew GraphFactory();
-		default:
-			throw gcnew Exception("Topology::ByOcctShape: unknown topology.");
+			if (m_TopologyFactoryDict->ContainsKey(key))
+			{
+				return m_TopologyFactoryDict[key];
+			}
+			else
+			{
+				throw gcnew Exception("Not found");
+			}
+		}
+
+		TopologyFactory^ TopologyFactoryManager::GetDefaultFactory(const TopologicCore::Topology::Ptr & topology)
+		{
+			switch (topology->GetType())
+			{
+			case TopologicCore::TOPOLOGY_CLUSTER: return gcnew ClusterFactory();
+			case TopologicCore::TOPOLOGY_CELLCOMPLEX: return gcnew CellComplexFactory();
+			case TopologicCore::TOPOLOGY_CELL: return gcnew CellFactory();
+			case TopologicCore::TOPOLOGY_SHELL: return gcnew ShellFactory();
+			case TopologicCore::TOPOLOGY_FACE: return gcnew FaceFactory();
+			case TopologicCore::TOPOLOGY_WIRE: return gcnew WireFactory();
+			case TopologicCore::TOPOLOGY_EDGE: return gcnew EdgeFactory();
+			case TopologicCore::TOPOLOGY_VERTEX: return gcnew VertexFactory();
+			case TopologicCore::TOPOLOGY_APERTURE: return gcnew ApertureFactory();
+			default:
+				throw gcnew Exception("Topology::ByOcctShape: unknown topology.");
+			}
 		}
 	}
 }

@@ -224,8 +224,7 @@ namespace TopologicCore
 		case BRepBuilderAPI_NonManifoldWire:
 			throw std::exception("The wire has some singularity.");
 
-		default: // i.e. BRepBuilderAPI_WireDone 
-			throw std::exception("A wire was successfully created.");
+		//default: // i.e. BRepBuilderAPI_WireDone, do nothing
 		}
 	}
 

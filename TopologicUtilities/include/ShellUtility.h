@@ -34,7 +34,7 @@ namespace TopologicUtilities
 		/// <returns></returns>
 		static TOPOLOGIC_UTILITIES_API TopologicCore::Shell::Ptr ByLoft(const std::list<TopologicCore::Wire::Ptr>& rkWires);
 
-		/// <summary>
+		/*/// <summary>
 		/// Note: Topologic UV values are normalized (from 0 and 1), but OCCT's values are not normalized.
 		/// </summary>
 		/// <param name="kpFace"></param>
@@ -91,7 +91,7 @@ namespace TopologicUtilities
 			const int kEdgeSamples,
 			const std::list<double>& rkUValues,
 			const std::list<double>& rkVValues
-		);
+		);*/
 
 	};
 }

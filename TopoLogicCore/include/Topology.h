@@ -300,14 +300,14 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="rkPath"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API bool SaveToBrep(const std::string& rkPath) const;
+		TOPOLOGIC_API bool ExportToBRep(const std::string& rkPath) const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkPath"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API Topology::Ptr LoadFromBrep(const std::string& rkPath);
+		static TOPOLOGIC_API Topology::Ptr ByImportedBRep(const std::string& rkPath);
 
 		/// <summary>
 		/// 

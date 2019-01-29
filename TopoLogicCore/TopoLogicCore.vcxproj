@@ -91,7 +91,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>include/;$(SolutionDir)references\opencascade-7.2.0\inc;$(SolutionDir)references\ShapeOp-0.1.0\include;$(SolutionDir)references\Eigen\include;$(SolutionDir)references\Earcut\include;$(SolutionDir)references\gpc-2.3.3\include;C:\Users\Nicholas Wardhana\Documents\Project\GEOMAlgo_Splitter</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>include/;$(SolutionDir)references\opencascade-7.2.0\inc;</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>TOPOLOGIC_EXPORTS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -115,9 +115,7 @@
     </Link>
     <PostBuildEvent>
       <Command>copy "$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\bind\*.dll" "$(SolutionDir)output\$(Platform)\$(Configuration)"
-copy "$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\bind\*.pdb" "$(SolutionDir)output\$(Platform)\$(Configuration)"
-copy "$(SolutionDir)references\ShapeOp-0.1.0\bin\$(Platform)\$(Configuration)\*.dll" "$(SolutionDir)output\$(Platform)\$(Configuration)"
-copy "$(SolutionDir)references\ShapeOp-0.1.0\bin\$(Platform)\$(Configuration)\*.pdb" "$(SolutionDir)output\$(Platform)\$(Configuration)"</Command>
+copy "$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\bind\*.pdb" "$(SolutionDir)output\$(Platform)\$(Configuration)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -128,7 +126,7 @@ copy "$(SolutionDir)references\ShapeOp-0.1.0\bin\$(Platform)\$(Configuration)\*.
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>include/;$(SolutionDir)references\opencascade-7.2.0\inc;$(SolutionDir)references\ShapeOp-0.1.0\include;$(SolutionDir)references\Eigen\include;$(SolutionDir)references\Earcut\include;$(SolutionDir)references\gpc-2.3.3\include;C:\Users\Nicholas Wardhana\Documents\Project\GEOMAlgo_Splitter</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>include/;$(SolutionDir)references\opencascade-7.2.0\inc;</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>TOPOLOGIC_EXPORTS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -157,8 +155,7 @@ copy "$(SolutionDir)references\ShapeOp-0.1.0\bin\$(Platform)\$(Configuration)\*.
       <AdditionalLibraryDirectories>$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\lib</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\bin\*.dll" "$(SolutionDir)output\$(Platform)\$(Configuration)"
-copy "$(SolutionDir)references\ShapeOp-0.1.0\bin\$(Platform)\$(Configuration)\*.dll" "$(SolutionDir)output\$(Platform)\$(Configuration)"</Command>
+      <Command>copy "$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\bin\*.dll" "$(SolutionDir)output\$(Platform)\$(Configuration)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

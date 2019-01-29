@@ -4,22 +4,25 @@
 
 namespace Topologic
 {
-	/// <summary>
-	/// An Attribute to a Topology maps an ID to its value. 
-	/// </summary>
-
-	public ref class Attribute
+	namespace Attributes
 	{
-	public protected:
-		property std::shared_ptr<TopologicUtilities::Attribute> UtilitiesAttribute
+		/// <summary>
+		/// An Attribute to a Topology maps an ID to its value. 
+		/// </summary>
+
+		public ref class Attribute
 		{
-			std::shared_ptr<TopologicUtilities::Attribute> get();
-		}
+		public protected:
+			property std::shared_ptr<TopologicUtilities::Attribute> UtilitiesAttribute
+			{
+				std::shared_ptr<TopologicUtilities::Attribute> get();
+			}
 
-		Attribute(const std::shared_ptr<TopologicUtilities::Attribute>& kpUtilitiesAttribute);
-		~Attribute();
+			Attribute(const std::shared_ptr<TopologicUtilities::Attribute>& kpUtilitiesAttribute);
+			~Attribute();
 
-	protected:
-		std::shared_ptr<TopologicUtilities::Attribute>* m_pUtilitiesAttribute;
-	};
+		protected:
+			std::shared_ptr<TopologicUtilities::Attribute>* m_pUtilitiesAttribute;
+		};
+	}
 }

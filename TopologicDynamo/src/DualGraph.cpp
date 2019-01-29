@@ -1,4 +1,4 @@
-#include <Graph.h>
+#include <DualGraph.h>
 #include <CellComplex.h>
 #include <Shell.h>
 #include <Vertex.h>

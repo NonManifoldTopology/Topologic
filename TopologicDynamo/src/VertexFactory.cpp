@@ -4,13 +4,16 @@
 
 namespace Topologic
 {
-	Topology ^ VertexFactory::Create(const TopologicCore::TopologyPtr & kpTopology)
+	namespace Factories
 	{
-		TopologicCore::Vertex::Ptr pCoreVertex = std::dynamic_pointer_cast<TopologicCore::Vertex>(kpTopology.topologyPtr);
-		if (pCoreVertex == nullptr)
+		Topology ^ VertexFactory::Create(const TopologicCore::TopologyPtr & kpTopology)
 		{
-			return nullptr;
+			TopologicCore::Vertex::Ptr pCoreVertex = std::dynamic_pointer_cast<TopologicCore::Vertex>(kpTopology.topologyPtr);
+			if (pCoreVertex == nullptr)
+			{
+				return nullptr;
+			}
+			return gcnew Vertex(pCoreVertex);
 		}
-		return gcnew Vertex(pCoreVertex);
 	}
 }

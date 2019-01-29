@@ -4,13 +4,16 @@
 
 namespace Topologic
 {
-	Topology ^ ShellFactory::Create(const TopologicCore::TopologyPtr & kpTopology)
+	namespace Factories
 	{
-		TopologicCore::Shell::Ptr pCoreShell = std::dynamic_pointer_cast<TopologicCore::Shell>(kpTopology.topologyPtr);
-		if (pCoreShell == nullptr)
+		Topology ^ ShellFactory::Create(const TopologicCore::TopologyPtr & kpTopology)
 		{
-			return nullptr;
+			TopologicCore::Shell::Ptr pCoreShell = std::dynamic_pointer_cast<TopologicCore::Shell>(kpTopology.topologyPtr);
+			if (pCoreShell == nullptr)
+			{
+				return nullptr;
+			}
+			return gcnew Shell(pCoreShell);
 		}
-		return gcnew Shell(pCoreShell);
 	}
 }

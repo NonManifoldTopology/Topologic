@@ -4,13 +4,16 @@
 
 namespace Topologic
 {
-	Topology ^ CellComplexFactory::Create(const TopologicCore::TopologyPtr & kpTopology)
+	namespace Factories
 	{
-		TopologicCore::CellComplex::Ptr pCoreCellComplex = std::dynamic_pointer_cast<TopologicCore::CellComplex>(kpTopology.topologyPtr);
-		if (pCoreCellComplex == nullptr)
+		Topology ^ CellComplexFactory::Create(const TopologicCore::TopologyPtr & kpTopology)
 		{
-			return nullptr;
+			TopologicCore::CellComplex::Ptr pCoreCellComplex = std::dynamic_pointer_cast<TopologicCore::CellComplex>(kpTopology.topologyPtr);
+			if (pCoreCellComplex == nullptr)
+			{
+				return nullptr;
+			}
+			return gcnew CellComplex(pCoreCellComplex);
 		}
-		return gcnew CellComplex(pCoreCellComplex);
 	}
 }

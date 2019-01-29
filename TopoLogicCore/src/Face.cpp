@@ -63,34 +63,6 @@ namespace TopologicCore
 				}
 			}
 		}
-		/*std::list<Edge::Ptr> edges;
-		Edges(edges);
-
-		TopTools_ListOfShape occtFaces;
-		std::list<bool> isSames;
-		for (const Edge::Ptr& kpEdge : edges)
-		{
-			std::list<Face::Ptr> faces;
-			kpEdge->UpwardNavigation(faces);
-
-			for (const Face::Ptr& kpFace : faces)
-			{
-				if(IsSame(kpFace))
-				{
-					continue;
-				}
-
-				TopoDS_Shape occtFace = kpFace->GetOcctShape();
-				if (occtFaces.Contains(occtFace))
-				{
-					continue;
-				}
-
-				isSames.push_back(IsSame(kpFace));
-				occtFaces.Append(occtFace);
-				rFaces.push_back(kpFace);
-			}
-		}*/
 	}
 
 	void Face::Cells(std::list<Cell::Ptr>& rCells) const
@@ -528,8 +500,7 @@ namespace TopologicCore
 		case BRepBuilderAPI_ParametersOutOfRange:
 			throw std::exception("The parameters given to limit the surface are out of its bounds.");
 
-		default: // i.e. BRepBuilderAPI_FaceDone 
-			throw std::exception("A face was successfully created.");
+		//default: // i.e. BRepBuilderAPI_FaceDone, do nothing
 		}
 	}
 }

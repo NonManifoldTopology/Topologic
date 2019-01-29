@@ -11,29 +11,33 @@ namespace TopologicUtilities
 namespace Topologic
 {
 	ref class Topology;
-	ref class AttributeFactory;
 
-	/// <summary>
-	/// An AttributeFactoryManager stores the subclasses of AttributeFactory, identified by their IDs. This class is used to identify the attribute type. The ID is in the GUID format, represented as a String. A user-created AttributeFactory must be registered with a unique ID to this class.
-	/// </summary>
-	ref class AttributeFactoryManager
+	namespace Attributes
 	{
-	public protected:
-		static property AttributeFactoryManager^ Instance {
-			AttributeFactoryManager^ get() { return %m_instance; }
-		}
+		ref class AttributeFactory;
 
-		void SetAttribute(Topology^ topology, String^ key, Object^ value);
+		/// <summary>
+		/// An AttributeFactoryManager stores the subclasses of AttributeFactory, identified by their IDs. This class is used to identify the attribute type. The ID is in the GUID format, represented as a String. A user-created AttributeFactory must be registered with a unique ID to this class.
+		/// </summary>
+		ref class AttributeFactoryManager
+		{
+		public protected:
+			static property AttributeFactoryManager^ Instance {
+				AttributeFactoryManager^ get() { return %m_instance; }
+			}
 
-		AttributeFactory^ GetFactory(const std::shared_ptr<TopologicUtilities::Attribute> kpUtilitiesAttribute);
+			void SetAttribute(Topology^ topology, String^ key, Object^ value);
 
-	private:
-		AttributeFactoryManager();
-		AttributeFactoryManager(const AttributeFactoryManager%) { throw gcnew System::InvalidOperationException("singleton cannot be copy-constructed"); }
+			AttributeFactory^ GetFactory(const std::shared_ptr<TopologicUtilities::Attribute> kpUtilitiesAttribute);
 
-		AttributeFactory^ GetFactory(Object^ value);
+		private:
+			AttributeFactoryManager();
+			AttributeFactoryManager(const AttributeFactoryManager%) { throw gcnew System::InvalidOperationException("singleton cannot be copy-constructed"); }
 
-		static AttributeFactoryManager m_instance;
-		Dictionary<String^, AttributeFactory^>^ m_attributeFactoryDict = gcnew Dictionary<String^, AttributeFactory^>();
-	};
+			AttributeFactory^ GetFactory(Object^ value);
+
+			static AttributeFactoryManager m_instance;
+			Dictionary<String^, AttributeFactory^>^ m_attributeFactoryDict = gcnew Dictionary<String^, AttributeFactory^>();
+		};
+	}
 }

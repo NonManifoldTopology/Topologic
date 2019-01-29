@@ -21,7 +21,11 @@ namespace Topologic
 	ref class Edge;
 	ref class Vertex;
 	ref class Context;
-	ref class TopologyFactory;
+
+	namespace Factories
+	{
+		ref class TopologyFactory;
+	}
 
 	/// <summary>
 	/// A Topology is an abstract superclass that includes constructors, properties and methods used by other subclasses that extend it.
@@ -135,10 +139,10 @@ namespace Topologic
 		/// <summary>
 		/// Adds this Topology as a content (non-constituent member) to another Topology of a specific type.
 		/// </summary>
-		/// <param name="content">The Topology of the content</param>
+		/// <param name="contentTopology">The Topology of the content</param>
 		/// <param name="typeFilter">The type of the context Topology</param>
 		/// <returns>The new Topology</returns>
-		Topology^ AddContent(Topology^ content, [DefaultArgument("255")] int typeFilter);
+		Topology^ AddContent(Topology^ contentTopology, [DefaultArgument("255")] int typeFilter);
 
 		/// <summary>
 		/// Removes a content (non-constituent member) from a Topology.
@@ -261,7 +265,7 @@ namespace Topologic
 		/// <param name="topology">Another Topology</param>
 		/// <returns name="Topology">The result of the Trim operation</returns>
 		[IsVisibleInDynamoLibrary(false)]
-		Topology^ Trim(Topology^ trim);
+		Topology^ Trim(Topology^ topology);
 
 		/// <summary>
 		/// Exports a Topology to a BRep file (.brep).
@@ -275,7 +279,7 @@ namespace Topologic
 		/// </summary>
 		/// <param name="path">The path to the BRep file</param>
 		/// <returns name="Topology">The loaded Topology</returns>
-		static Topology^ ImportFromBRep(String^ path);
+		static Topology^ ByImportedBRep(String^ path);
 
 		/// <summary>
 		/// Prints the topological information of a Topology.
@@ -414,10 +418,10 @@ namespace Topologic
 		}
 
 		[IsVisibleInDynamoLibrary(false)]
-		void RegisterFactory(const TopologicCore::Topology::Ptr& kpCoreTopology, TopologyFactory^ topologyFactory);
+		void RegisterFactory(const TopologicCore::Topology::Ptr& kpCoreTopology, Factories::TopologyFactory^ topologyFactory);
 
 		[IsVisibleInDynamoLibrary(false)]
-		void RegisterFactory(String^ rkGUID, TopologyFactory^ topologyFactory);
+		void RegisterFactory(String^ rkGUID, Factories::TopologyFactory^ topologyFactory);
 
 		/*/// <summary>
 		/// 

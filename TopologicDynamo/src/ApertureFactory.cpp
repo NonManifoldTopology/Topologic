@@ -4,13 +4,16 @@
 
 namespace Topologic
 {
-	Topology ^ ApertureFactory::Create(const TopologicCore::TopologyPtr& kpTopology)
+	namespace Factories
 	{
-		TopologicCore::Aperture::Ptr pCoreAperture = std::dynamic_pointer_cast<TopologicCore::Aperture>(kpTopology.topologyPtr);
-		if (pCoreAperture == nullptr)
+		Topology ^ ApertureFactory::Create(const TopologicCore::TopologyPtr& kpTopology)
 		{
-			return nullptr;
+			TopologicCore::Aperture::Ptr pCoreAperture = std::dynamic_pointer_cast<TopologicCore::Aperture>(kpTopology.topologyPtr);
+			if (pCoreAperture == nullptr)
+			{
+				return nullptr;
+			}
+			return gcnew Aperture(pCoreAperture);
 		}
-		return gcnew Aperture(pCoreAperture);
 	}
 }

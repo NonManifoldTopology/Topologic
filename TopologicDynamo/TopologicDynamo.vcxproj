@@ -166,7 +166,7 @@
     <ClInclude Include="include\ClusterFactory.h" />
     <ClInclude Include="include\DoubleAttributeFactory.h" />
     <ClInclude Include="include\GlobalCluster.h" />
-    <ClInclude Include="include\GraphFactory.h" />
+    <ClInclude Include="include\DualGraphFactory.h" />
     <ClInclude Include="include\EdgeFactory.h" />
     <ClInclude Include="include\EdgeUtility.h" />
     <ClInclude Include="include\FaceUtility.h" />
@@ -178,7 +178,7 @@
     <ClInclude Include="include\TopologyFactoryManager.h" />
     <ClInclude Include="include\TopologyFactory.h" />
     <ClInclude Include="include\Context.h" />
-    <ClInclude Include="include\Graph.h" />
+    <ClInclude Include="include\DualGraph.h" />
     <ClInclude Include="include\Edge.h" />
     <ClInclude Include="include\Face.h" />
     <ClInclude Include="include\FaceFactory.h" />
@@ -207,8 +207,8 @@
     <ClCompile Include="src\ClusterFactory.cpp" />
     <ClCompile Include="src\DoubleAttributeFactory.cpp" />
     <ClCompile Include="src\GlobalCluster.cpp" />
-    <ClCompile Include="src\Graph.cpp" />
-    <ClCompile Include="src\GraphFactory.cpp" />
+    <ClCompile Include="src\DualGraph.cpp" />
+    <ClCompile Include="src\DualGraphFactory.cpp" />
     <ClCompile Include="src\EdgeFactory.cpp" />
     <ClCompile Include="src\EdgeUtility.cpp" />
     <ClCompile Include="src\FaceUtility.cpp" />

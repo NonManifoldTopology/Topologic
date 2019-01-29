@@ -411,7 +411,7 @@ namespace TopologicEnergy
 		}
 
 		List<double>^ ratios = gcnew List<double>();
-		double countMinusOne = (double)count;
+		double countMinusOne = (double)(count-1);
 		for (int i = 0; i < count; ++i)
 		{
 			double doubleI = (double)i;	// 0..10
