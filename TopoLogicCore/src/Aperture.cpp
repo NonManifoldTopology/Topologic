@@ -219,7 +219,7 @@ namespace TopologicCore
 
 	bool Aperture::IsManifold() const
 	{
-		throw std::exception("Not implemented yet");
+		return Topology()->IsManifold();
 	}
 
 	std::string Aperture::GetTypeAsString() const

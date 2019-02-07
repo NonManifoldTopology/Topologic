@@ -1,8 +1,8 @@
 #include "About.h"
 
 #define MAJOR_VERSION 0
-#define MINOR_VERSION 7
-#define BUILD_VERSION 6
+#define MINOR_VERSION 8
+#define BUILD_VERSION 0
 
 namespace TopologicCore
 {

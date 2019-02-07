@@ -137,7 +137,7 @@ namespace Topologic
 		}
 		else if (surface->GetType() == Autodesk::DesignScript::Geometry::PolySurface::typeid)
 		{
-			throw gcnew System::NotImplementedException("Cannot create an Edge from a PolyCurve. Create a wire instead.");
+			throw gcnew System::Exception("Cannot create an Edge from a PolyCurve. Create a wire instead.");
 		}
 		else if (surface->GetType() == Autodesk::DesignScript::Geometry::Surface::typeid) // a generic surface
 		{
@@ -149,11 +149,11 @@ namespace Topologic
 			}
 			catch (Exception ^ e)
 			{
-				throw gcnew System::NotImplementedException("Fails to create a face: " + e->Message);
+				throw gcnew System::Exception("Dynamo fails to create a face: " + e->Message);
 			}
 			catch (...)
 			{
-				throw gcnew System::NotImplementedException("Fails to create a face.");
+				throw gcnew System::Exception("Dynamo fails to create a face.");
 			}
 
 
@@ -1003,7 +1003,20 @@ namespace Topologic
 				//Iterate through the individual curve. If the intersection is true, add it to the list and break.
 				for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoGroupedCurve in pDynamoCurveGroup)
 				{
-					if (pDynamoPerimeterCurve->DoesIntersect(pDynamoGroupedCurve))
+					bool doesIntersect = false;
+					try {
+						doesIntersect = pDynamoPerimeterCurve->DoesIntersect(pDynamoGroupedCurve);
+					}
+					catch (Exception ^ e)
+					{
+						throw gcnew System::Exception("Dynamo fails to perform intersection test on a group of curve: " + e->Message);
+					}
+					catch (...)
+					{
+						throw gcnew System::Exception("Dynamo fails to perform intersection test on a group of curve.");
+					}
+
+					if (doesIntersect)
 					{
 						// Only add once; other groups will be added to this list.
 						if(!isConnectedToAnotherCurve)

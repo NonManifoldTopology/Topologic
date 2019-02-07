@@ -14,7 +14,7 @@
 
   ;Name and file
   Name "Topologic"
-  OutFile "TopologicInstaller-${MyTIMESTAMP}.exe"
+  OutFile "TopologicInstaller.exe"
 
   ;Default installation folder
   InstallDir "$PROGRAMFILES64\Topologic"
@@ -30,7 +30,7 @@
 ;--------------------------------
 ;Pages
   ;!define MUI_WELCOMEPAGE_TITLE "Test"
-  !define MUI_WELCOMEPAGE_TEXT "This Setup will guide you through the installation of Topologic.$\r$\n$\r$\nClick Next to continue."
+  !define MUI_WELCOMEPAGE_TEXT "This Setup will guide you through the installation of Topologic.$\r$\n$\r$\nNOTE: Please close all Dynamo instances before proceeding with the next installation steps.$\r$\n$\r$\nClick Next to continue."
   
   !define MUI_ICON "Topologic-Logo-ColourOnWhite.ico"
   !define MUI_HEADERIMAGE
@@ -66,7 +66,6 @@ Section "TopologicCore" TopologicCore
   File ..\output\x64\Release\Topologic_DynamoCustomization.xml
   File ..\output\x64\Release\TopologicEnergy.xml
   File ..\output\x64\Release\TopologicEnergy_DynamoCustomization.xml
-  File ..\output\x64\Release\ShapeOp.0.1.0.dll
   File ..\output\x64\Release\license.file
   
   ;ADD YOUR OWN FILES HERE...

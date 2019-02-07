@@ -1,6 +1,5 @@
-#include <CellFactory.h>
-
-#include <Cell.h>
+#include "CellFactory.h"
+#include "Cell.h"
 
 namespace Topologic
 {

@@ -250,7 +250,6 @@ namespace TopologicUtilities
 	{
 		TopoDS_Face occtFace = kpFace->GetOcctFace();
 		BRepMesh_IncrementalMesh occtIncrementalMesh(occtFace, kDeflection);
-		//occtIncrementalMesh.Perform();
 		TopLoc_Location occtLocation;
 		Handle(Poly_Triangulation) pOcctTriangulation = BRep_Tool::Triangulation(occtFace, occtLocation);
 		if (pOcctTriangulation.IsNull())

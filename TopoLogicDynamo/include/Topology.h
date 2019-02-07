@@ -149,7 +149,8 @@ namespace Topologic
 		/// </summary>
 		/// <param name="content">The Topology of the content</param>
 		/// <returns name="Topology">The new Topology</returns>
-		Topology^ RemoveContent(Topology^ content);
+		[IsVisibleInDynamoLibrary(false)]
+		Topology^ RemoveContent(Topology^ contentTopology);
 
 		/// <summary>
 		/// Adds Apertures to a Topology.

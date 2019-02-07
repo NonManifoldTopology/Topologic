@@ -32,7 +32,7 @@ namespace Topologic
 
 		private:
 			AttributeFactoryManager();
-			AttributeFactoryManager(const AttributeFactoryManager%) { throw gcnew System::InvalidOperationException("singleton cannot be copy-constructed"); }
+			AttributeFactoryManager(const AttributeFactoryManager%) { throw gcnew System::InvalidOperationException("Singleton cannot be copy-constructed"); }
 
 			AttributeFactory^ GetFactory(Object^ value);
 

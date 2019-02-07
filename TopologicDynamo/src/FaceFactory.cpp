@@ -1,6 +1,5 @@
-#include <FaceFactory.h>
-
-#include <Face.h>
+#include "FaceFactory.h"
+#include "Face.h"
 
 namespace Topologic
 {

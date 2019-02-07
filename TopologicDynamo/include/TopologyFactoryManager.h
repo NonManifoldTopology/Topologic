@@ -1,8 +1,6 @@
 #pragma once
 
-#include <Topology.h>
-
-//#include <TopologicCore/include/Topology.h>
+#include "Topology.h"
 
 using namespace System;
 using namespace System::Collections::Generic;
@@ -54,7 +52,7 @@ namespace Topologic
 			/// </summary>
 			/// <param name="kpTopology">A TopologicCore layer Topology</param>
 			/// <returns name="TopologyFactory">The default TopologyFactory</returns>
-			static TopologyFactory^ GetDefaultFactory(const TopologicCore::Topology::Ptr& content);
+			static TopologyFactory^ GetDefaultFactory(const TopologicCore::Topology::Ptr& topology);
 
 		private:
 			TopologyFactoryManager() {}

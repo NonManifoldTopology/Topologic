@@ -8,7 +8,6 @@ namespace Topologic {
 	/// </summary>
 	namespace Utilities {
 	
-
 		/// <summary>
 		/// FaceUtility includes geometric methods relevant to a Face.
 		/// </summary>
@@ -68,6 +67,7 @@ namespace Topologic {
 			/// <param name="face">The Face to be triangulated</param>
 			/// <param name="deflection">The deflection value to be applied for triangulation</param>
 			/// <returns name="Face">The triangulated Face</returns>
+			[IsVisibleInDynamoLibrary(false)]
 			static List<Face^>^ Triangulate(Face^ face, double deflection);
 
 		public protected:

@@ -1,6 +1,5 @@
-#include <ApertureFactory.h>
-
-#include <Aperture.h>
+#include "ApertureFactory.h"
+#include "Aperture.h"
 
 namespace Topologic
 {

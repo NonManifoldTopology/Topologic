@@ -8,7 +8,6 @@ namespace Topologic {
 	/// </summary>
 	namespace Utilities {
 	
-
 		/// <summary>
 		/// EdgeUtility includes geometric methods relevant to an Edge.
 		/// </summary>

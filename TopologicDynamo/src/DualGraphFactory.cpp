@@ -1,6 +1,5 @@
-#include <DualGraphFactory.h>
-
-#include <DualGraph.h>
+#include "DualGraphFactory.h"
+#include "DualGraph.h"
 
 namespace Topologic
 {
