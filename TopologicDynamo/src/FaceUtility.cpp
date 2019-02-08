@@ -35,11 +35,11 @@ namespace Topologic {
 		}
 
 
-		Autodesk::DesignScript::Geometry::UV^ FaceUtility::UVParameterAtVertex(Face^ face, Vertex^ vertex)
+		Autodesk::DesignScript::Geometry::UV^ FaceUtility::ParametersAtVertex(Face^ face, Vertex^ vertex)
 		{
 			TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
 			double u = 0.0, v = 0.0;
-			TopologicUtilities::FaceUtility::UVParameterAtVertex(
+			TopologicUtilities::FaceUtility::ParametersAtVertex(
 				pCoreFace,
 				TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex->GetCoreTopologicalQuery()),
 				u, v
@@ -48,11 +48,11 @@ namespace Topologic {
 			return Autodesk::DesignScript::Geometry::UV::ByCoordinates(u, v);
 		}
 
-		Vertex^ FaceUtility::VertexAtParameter(Face^ face, double u, double v)
+		Vertex^ FaceUtility::VertexAtParameters(Face^ face, double u, double v)
 		{
 			TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
 			try {
-				TopologicCore::Vertex::Ptr pCoreVertex = TopologicUtilities::FaceUtility::VertexAtParameter(
+				TopologicCore::Vertex::Ptr pCoreVertex = TopologicUtilities::FaceUtility::VertexAtParameters(
 					pCoreFace, u, v);
 				return safe_cast<Vertex^>(Topology::ByCoreTopology(pCoreVertex));
 			}
@@ -63,10 +63,10 @@ namespace Topologic {
 			return nullptr;
 		}
 
-		Autodesk::DesignScript::Geometry::Vector^ FaceUtility::NormalAtParameter(Face^ face, Autodesk::DesignScript::Geometry::UV^ uv)
+		Autodesk::DesignScript::Geometry::Vector^ FaceUtility::NormalAtParameters(Face^ face, Autodesk::DesignScript::Geometry::UV^ uv)
 		{
 			TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
-			gp_Dir normal = TopologicUtilities::FaceUtility::NormalAtParameter(pCoreFace, uv->U, uv->V);
+			gp_Dir normal = TopologicUtilities::FaceUtility::NormalAtParameters(pCoreFace, uv->U, uv->V);
 
 			return Autodesk::DesignScript::Geometry::Vector::ByCoordinates(normal.X(), normal.Y(), normal.Z());
 		}

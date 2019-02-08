@@ -825,7 +825,7 @@ namespace Topologic
 					Vertex^ pSampleVertex = Topologic::Utilities::EdgeUtility::VertexAtParameter(pApertureEdge, t);
 
 					// Find the UV-coordinate of the point on the aperture design
-					Autodesk::DesignScript::Geometry::UV^ pUV = Topologic::Utilities::FaceUtility::UVParameterAtVertex(apertureDesign, pSampleVertex);
+					Autodesk::DesignScript::Geometry::UV^ pUV = Topologic::Utilities::FaceUtility::ParametersAtVertex(apertureDesign, pSampleVertex);
 					double checkedU = pUV->U, checkedV = pUV->V;
 					if (checkedU < 0.0)
 					{
@@ -846,7 +846,7 @@ namespace Topologic
 					}
 
 					// Find the point with the same UV-coordinate on the surface, add it to the list
-					Vertex^ pMappedSampleVertex = Topologic::Utilities::FaceUtility::VertexAtParameter(face, checkedU, checkedV);
+					Vertex^ pMappedSampleVertex = Topologic::Utilities::FaceUtility::VertexAtParameters(face, checkedU, checkedV);
 					pMappedSampleVertices->Add(pMappedSampleVertex);
 
 					delete pUV;

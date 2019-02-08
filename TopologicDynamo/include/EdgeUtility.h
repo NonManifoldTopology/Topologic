@@ -50,9 +50,9 @@ namespace Topologic {
 			/// Returns the Vertex at a given parameter of the Edge.
 			/// </summary>
 			/// <param name="edge">The Edge for which the parameter is given</param>
-			/// <param name="parameter">The parameter of the Edge</param>
+			/// <param name="u">The U parametric coordinate of the Vertex on the Edge</param>
 			/// <returns>The Vertex at a given parameter of the Edge</returns>
-			static Vertex^ VertexAtParameter(Edge^ edge, double parameter);
+			static Vertex^ VertexAtParameter(Edge^ edge, double u);
 
 		public protected:
 			EdgeUtility() {}

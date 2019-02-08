@@ -44,10 +44,10 @@ namespace Topologic
 			}
 		}
 
-		Vertex ^ EdgeUtility::VertexAtParameter(Edge ^ edge, double parameter)
+		Vertex ^ EdgeUtility::VertexAtParameter(Edge ^ edge, double u)
 		{
 			TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(edge->GetCoreTopologicalQuery());
-			TopologicCore::Vertex::Ptr pCoreVertex = TopologicUtilities::EdgeUtility::PointAtParameter(pCoreEdge, parameter);
+			TopologicCore::Vertex::Ptr pCoreVertex = TopologicUtilities::EdgeUtility::PointAtParameter(pCoreEdge, u);
 			return gcnew Vertex(pCoreVertex);
 		}
 	}

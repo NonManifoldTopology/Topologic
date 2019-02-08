@@ -24,7 +24,7 @@ namespace TopologicUtilities
 		/// <param name="kU"></param>
 		/// <param name="kV"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_UTILITIES_API gp_Dir NormalAtParameter(const TopologicCore::Face::Ptr& kpFace, const double kU, const double kV);
+		static TOPOLOGIC_UTILITIES_API gp_Dir NormalAtParameters(const TopologicCore::Face::Ptr& kpFace, const double kU, const double kV);
 
 		/// <summary>
 		/// 
@@ -48,7 +48,7 @@ namespace TopologicUtilities
 		/// <param name="rU"></param>
 		/// <param name="rV"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_UTILITIES_API void UVParameterAtVertex(const TopologicCore::Face::Ptr& kpFace, const TopologicCore::Vertex::Ptr& kpVertex, double& rU, double &rV);
+		static TOPOLOGIC_UTILITIES_API void ParametersAtVertex(const TopologicCore::Face::Ptr& kpFace, const TopologicCore::Vertex::Ptr& kpVertex, double& rU, double &rV);
 
 		/// <summary>
 		/// Note: Topologic UV values are normalized (from 0 and 1), but OCCT's values are not normalized.
@@ -57,7 +57,7 @@ namespace TopologicUtilities
 		/// <param name="kU"></param>
 		/// <param name="kV"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_UTILITIES_API TopologicCore::Vertex::Ptr VertexAtParameter(const TopologicCore::Face::Ptr& kpFace, const double kU, const double kV);
+		static TOPOLOGIC_UTILITIES_API TopologicCore::Vertex::Ptr VertexAtParameters(const TopologicCore::Face::Ptr& kpFace, const double kU, const double kV);
 
 		static void UVSamplePoints(
 			const TopologicCore::Face::Ptr& kpFace,
