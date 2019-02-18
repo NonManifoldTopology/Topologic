@@ -63,10 +63,10 @@ namespace Topologic {
 			return nullptr;
 		}
 
-		Autodesk::DesignScript::Geometry::Vector^ FaceUtility::NormalAtParameters(Face^ face, Autodesk::DesignScript::Geometry::UV^ uv)
+		Autodesk::DesignScript::Geometry::Vector^ FaceUtility::NormalAtParameters(Face^ face, double u, double v)
 		{
 			TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
-			gp_Dir normal = TopologicUtilities::FaceUtility::NormalAtParameters(pCoreFace, uv->U, uv->V);
+			gp_Dir normal = TopologicUtilities::FaceUtility::NormalAtParameters(pCoreFace, u, v);
 
 			return Autodesk::DesignScript::Geometry::Vector::ByCoordinates(normal.X(), normal.Y(), normal.Z());
 		}

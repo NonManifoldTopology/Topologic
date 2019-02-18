@@ -49,10 +49,11 @@ namespace Topologic {
 			/// Returns the normal (vector) at a parameter of a Face.
 			/// </summary>
 			/// <param name="face">A Face</param>
-			/// <param name="uv">The UV parameter of the Face</param>
+			/// <param name="u">The u parameter of the Face</param>
+			/// <param name="v">The v parameter of the Face</param>
 			/// <returns>The normal (vector) at a parameter of a Face</returns>
-			static Autodesk::DesignScript::Geometry::Vector^ NormalAtParameters(Face^ face, Autodesk::DesignScript::Geometry::UV^ uv);
-
+			static Autodesk::DesignScript::Geometry::Vector^ NormalAtParameters(Face^ face, double u, double v);
+			
 			/// <summary>
 			/// Trims a Face with a Wire. The portion of the Face inside the Wire will be returned.
 			/// </summary>
