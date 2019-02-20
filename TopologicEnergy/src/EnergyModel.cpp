@@ -452,8 +452,7 @@ namespace TopologicEnergy
 	{
 		// Add timestamp to the output file name
 		String^ openStudioOutputTimeStampPath = Path::GetDirectoryName(openStudioOutputDirectory + "\\") + "\\" +
-			Path::GetFileNameWithoutExtension(energyModel->BuildingName) + "_" +
-			DateTime::Now.ToString("yyyy-MM-dd_HH-mm-ss-fff") +
+			Path::GetFileNameWithoutExtension(energyModel->BuildingName) +
 			".osm";
 		// Save model to an OSM file
 		bool saveCondition = SaveModel(energyModel->m_osModel, openStudioOutputTimeStampPath);
