@@ -1,0 +1,189 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="include\About.h" />
+    <ClInclude Include="include\Aperture.h" />
+    <ClInclude Include="include\Cell.h" />
+    <ClInclude Include="include\CellComplex.h" />
+    <ClInclude Include="include\Cluster.h" />
+    <ClInclude Include="include\Context.h" />
+    <ClInclude Include="include\Edge.h" />
+    <ClInclude Include="include\Face.h" />
+    <ClInclude Include="include\GlobalCluster.h" />
+    <ClInclude Include="include\LicenseManager.h" />
+    <ClInclude Include="include\Shell.h" />
+    <ClInclude Include="include\ShellUtility.h" />
+    <ClInclude Include="include\TopologicalQuery.h" />
+    <ClInclude Include="include\Topology.h" />
+    <ClInclude Include="include\Vertex.h" />
+    <ClInclude Include="include\Wire.h" />
+    <ClInclude Include="include\DualGraph.h">
+      <Filter>Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ApertureFactory.h">
+      <Filter>Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CellComplexFactory.h">
+      <Filter>Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CellFactory.h">
+      <Filter>Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DualGraphFactory.h">
+      <Filter>Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ClusterFactory.h">
+      <Filter>Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TopologyUtility.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EdgeUtility.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="include\FaceUtility.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CellUtility.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Bitwise.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DoubleAttributeFactory.h">
+      <Filter>Attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\StringAttributeFactory.h">
+      <Filter>Attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IntAttributeFactory.h">
+      <Filter>Attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AttributeFactory.h">
+      <Filter>Attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AttributeFactoryManager.h">
+      <Filter>Attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Attribute.h">
+      <Filter>Attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ShellFactory.h">
+      <Filter>Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="include\FaceFactory.h">
+      <Filter>Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="include\VertexFactory.h">
+      <Filter>Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="include\WireFactory.h">
+      <Filter>Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TopologyFactoryManager.h">
+      <Filter>Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TopologyFactory.h">
+      <Filter>Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EdgeFactory.h">
+      <Filter>Factories</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\About.cpp" />
+    <ClCompile Include="src\Aperture.cpp" />
+    <ClCompile Include="src\Cell.cpp" />
+    <ClCompile Include="src\CellComplex.cpp" />
+    <ClCompile Include="src\Cluster.cpp" />
+    <ClCompile Include="src\Context.cpp" />
+    <ClCompile Include="src\Edge.cpp" />
+    <ClCompile Include="src\Face.cpp" />
+    <ClCompile Include="src\GlobalCluster.cpp" />
+    <ClCompile Include="src\Shell.cpp" />
+    <ClCompile Include="src\ShellUtility.cpp" />
+    <ClCompile Include="src\Topology.cpp" />
+    <ClCompile Include="src\Vertex.cpp" />
+    <ClCompile Include="src\Wire.cpp" />
+    <ClCompile Include="src\DualGraph.cpp">
+      <Filter>Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ApertureFactory.cpp">
+      <Filter>Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CellComplexFactory.cpp">
+      <Filter>Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CellFactory.cpp">
+      <Filter>Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DualGraphFactory.cpp">
+      <Filter>Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TopologyUtility.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EdgeUtility.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FaceUtility.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CellUtility.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Bitwise.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DoubleAttributeFactory.cpp">
+      <Filter>Attributes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\StringAttributeFactory.cpp">
+      <Filter>Attributes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IntAttributeFactory.cpp">
+      <Filter>Attributes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AttributeFactoryManager.cpp">
+      <Filter>Attributes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Attribute.cpp">
+      <Filter>Attributes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ShellFactory.cpp">
+      <Filter>Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FaceFactory.cpp">
+      <Filter>Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="src\VertexFactory.cpp">
+      <Filter>Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WireFactory.cpp">
+      <Filter>Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TopologyFactoryManager.cpp">
+      <Filter>Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EdgeFactory.cpp">
+      <Filter>Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ClusterFactory.cpp">
+      <Filter>Factories</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Attributes">
+      <UniqueIdentifier>{934d9ef4-980c-4ff7-ae29-af4a6dbffb01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Factories">
+      <UniqueIdentifier>{79ed147b-c0e6-4452-92e0-f24a0330626c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utilities">
+      <UniqueIdentifier>{b6e76095-26a7-4f46-a76d-e407c5946786}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Extensions">
+      <UniqueIdentifier>{57b680c0-ba46-4025-8fe4-e6a03d24dcc2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

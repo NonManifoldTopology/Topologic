@@ -20,22 +20,22 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{21993835-4EC5-4CC3-BCDA-47F6209CD349}</ProjectGuid>
+    <ProjectGuid>{C90904EC-87D6-4A5E-B7C2-9DEC3B078D85}</ProjectGuid>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <Keyword>ManagedCProj</Keyword>
-    <RootNamespace>TopologicDynamo</RootNamespace>
+    <RootNamespace>TopologicNET</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <CLRSupport>true</CLRSupport>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <CLRSupport>true</CLRSupport>
@@ -73,81 +73,63 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LinkIncremental>true</LinkIncremental>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)output\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)obj\$(Platform)\$(Configuration)\</IntDir>
-    <TargetName>Topologic</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)output\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)obj\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)output\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(ProjectDir)obj\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)output\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(ProjectDir)obj\$(Platform)\$(Configuration)\</IntDir>
-    <TargetName>Topologic</TargetName>
-  </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>TOPOLOGIC_DYNAMO;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>include/;$(SolutionDir);$(SolutionDir)references\opencascade-7.2.0\inc;$(SolutionDir)references\license++\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>include/;$(SolutionDir);$(SolutionDir)references\opencascade-7.2.0\inc;$(SolutionDir)references\license++\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>licensepp.lib;cryptopp-static.lib;TKCAF.lib;TKLCAF.lib;TKIGES.lib;TKPrim.lib;TKMesh.lib;TKXSBase.lib;TKStep.lib;TKBool.lib;TKBO.lib;TKShHealing.lib;TKG3d.lib;TKG2d.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKTopAlgo.lib;TKernel.lib;TKBrep.lib;TKMath.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)references\license++\lib\x64\$(Configuration);$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\libd</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)references\license++\lib\x64\$(Configuration);$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\lib</AdditionalLibraryDirectories>
     </Link>
-    <PostBuildEvent>
-      <Command>copy "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>include/;$(SolutionDir);$(SolutionDir)references\opencascade-7.2.0\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>TKIGES.lib;TKPrim.lib;TKMesh.lib;TKXSBase.lib;TKStep.lib;TKBool.lib;TKBO.lib;TKShHealing.lib;TKG3d.lib;TKG2d.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKTopAlgo.lib;TKernel.lib;TKBrep.lib;TKMath.lib</AdditionalDependencies>
+      <AdditionalDependencies />
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>include/;$(SolutionDir);$(SolutionDir)references\opencascade-7.2.0\inc;$(SolutionDir)references\license++\include;</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>licensepp.lib;cryptopp-static.lib;TKCAF.lib;TKLCAF.lib;TKIGES.lib;TKPrim.lib;TKMesh.lib;TKXSBase.lib;TKStep.lib;TKBool.lib;TKBO.lib;TKShHealing.lib;TKG3d.lib;TKG2d.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKTopAlgo.lib;TKernel.lib;TKBrep.lib;TKMath.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)references\license++\lib\x64\$(Configuration);$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\libd</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>include/;$(SolutionDir);$(SolutionDir)references\opencascade-7.2.0\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>TKIGES.lib;TKPrim.lib;TKMesh.lib;TKXSBase.lib;TKStep.lib;TKBool.lib;TKBO.lib;TKShHealing.lib;TKG3d.lib;TKG2d.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKTopAlgo.lib;TKernel.lib;TKBrep.lib;TKMath.lib</AdditionalDependencies>
+      <AdditionalDependencies />
     </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>TOPOLOGIC_DYNAMO;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>include/;$(SolutionDir);$(SolutionDir)references\opencascade-7.2.0\inc;$(SolutionDir)references\license++\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-    </ClCompile>
-    <Link>
-      <AdditionalDependencies>licensepp.lib;cryptopp-static.lib;TKCAF.lib;TKLCAF.lib;TKIGES.lib;TKPrim.lib;TKMesh.lib;TKXSBase.lib;TKStep.lib;TKBool.lib;TKBO.lib;TKShHealing.lib;TKG3d.lib;TKG2d.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKTopAlgo.lib;TKernel.lib;TKBrep.lib;TKMath.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)references\license++\lib\x64\$(Configuration);$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\lib</AdditionalLibraryDirectories>
-    </Link>
-    <PostBuildEvent>
-      <Command>copy "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"</Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\About.h" />
@@ -164,27 +146,27 @@
     <ClInclude Include="include\CellUtility.h" />
     <ClInclude Include="include\Cluster.h" />
     <ClInclude Include="include\ClusterFactory.h" />
+    <ClInclude Include="include\Context.h" />
     <ClInclude Include="include\DoubleAttributeFactory.h" />
-    <ClInclude Include="include\GlobalCluster.h" />
+    <ClInclude Include="include\DualGraph.h" />
     <ClInclude Include="include\DualGraphFactory.h" />
+    <ClInclude Include="include\Edge.h" />
     <ClInclude Include="include\EdgeFactory.h" />
     <ClInclude Include="include\EdgeUtility.h" />
+    <ClInclude Include="include\Face.h" />
+    <ClInclude Include="include\FaceFactory.h" />
     <ClInclude Include="include\FaceUtility.h" />
+    <ClInclude Include="include\GlobalCluster.h" />
     <ClInclude Include="include\IntAttributeFactory.h" />
     <ClInclude Include="include\LicenseManager.h" />
+    <ClInclude Include="include\Shell.h" />
     <ClInclude Include="include\ShellFactory.h" />
     <ClInclude Include="include\ShellUtility.h" />
     <ClInclude Include="include\StringAttributeFactory.h" />
-    <ClInclude Include="include\TopologyFactoryManager.h" />
-    <ClInclude Include="include\TopologyFactory.h" />
-    <ClInclude Include="include\Context.h" />
-    <ClInclude Include="include\DualGraph.h" />
-    <ClInclude Include="include\Edge.h" />
-    <ClInclude Include="include\Face.h" />
-    <ClInclude Include="include\FaceFactory.h" />
-    <ClInclude Include="include\Shell.h" />
     <ClInclude Include="include\TopologicalQuery.h" />
     <ClInclude Include="include\Topology.h" />
+    <ClInclude Include="include\TopologyFactory.h" />
+    <ClInclude Include="include\TopologyFactoryManager.h" />
     <ClInclude Include="include\TopologyUtility.h" />
     <ClInclude Include="include\Vertex.h" />
     <ClInclude Include="include\VertexFactory.h" />
@@ -205,24 +187,24 @@
     <ClCompile Include="src\CellUtility.cpp" />
     <ClCompile Include="src\Cluster.cpp" />
     <ClCompile Include="src\ClusterFactory.cpp" />
+    <ClCompile Include="src\Context.cpp" />
     <ClCompile Include="src\DoubleAttributeFactory.cpp" />
-    <ClCompile Include="src\GlobalCluster.cpp" />
     <ClCompile Include="src\DualGraph.cpp" />
     <ClCompile Include="src\DualGraphFactory.cpp" />
+    <ClCompile Include="src\Edge.cpp" />
     <ClCompile Include="src\EdgeFactory.cpp" />
     <ClCompile Include="src\EdgeUtility.cpp" />
+    <ClCompile Include="src\Face.cpp" />
+    <ClCompile Include="src\FaceFactory.cpp" />
     <ClCompile Include="src\FaceUtility.cpp" />
+    <ClCompile Include="src\GlobalCluster.cpp" />
     <ClCompile Include="src\IntAttributeFactory.cpp" />
+    <ClCompile Include="src\Shell.cpp" />
     <ClCompile Include="src\ShellFactory.cpp" />
     <ClCompile Include="src\ShellUtility.cpp" />
     <ClCompile Include="src\StringAttributeFactory.cpp" />
-    <ClCompile Include="src\TopologyFactoryManager.cpp" />
-    <ClCompile Include="src\Context.cpp" />
-    <ClCompile Include="src\Edge.cpp" />
-    <ClCompile Include="src\Face.cpp" />
-    <ClCompile Include="src\FaceFactory.cpp" />
-    <ClCompile Include="src\Shell.cpp" />
     <ClCompile Include="src\Topology.cpp" />
+    <ClCompile Include="src\TopologyFactoryManager.cpp" />
     <ClCompile Include="src\TopologyUtility.cpp" />
     <ClCompile Include="src\Vertex.cpp" />
     <ClCompile Include="src\VertexFactory.cpp" />
@@ -240,52 +222,7 @@
       <Project>{9a74a6d1-9ed7-432f-a415-9c82305053b4}</Project>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Reference Include="DSCoreNodes">
-      <HintPath>..\references\Dynamo-2.0.1\DSCoreNodes.dll</HintPath>
-    </Reference>
-    <Reference Include="DynamoCore">
-      <HintPath>..\references\Dynamo-2.0.1\DynamoCore.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="DynamoServices">
-      <HintPath>..\references\Dynamo-2.0.1\DynamoServices.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="GeometryColor">
-      <HintPath>..\references\Dynamo-2.0.1\GeometryColor.dll</HintPath>
-    </Reference>
-    <Reference Include="ProtoGeometry">
-      <HintPath>..\references\Dynamo-2.0.1\ProtoGeometry.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Xml Include="config\Topologic_DynamoCustomization.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="resources\Topologic.resx" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="resources\Topologic.Large.png" />
-    <Image Include="resources\Topologic.Small.png" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
-  <Target Name="AfterBuild">
-    <!-- Get System.Drawing.dll -->
-    <GetReferenceAssemblyPaths TargetFrameworkMoniker=".NETFramework, Version=v2.0">
-      <Output TaskParameter="FullFrameworkReferenceAssemblyPaths" PropertyName="FrameworkAssembliesPath" />
-    </GetReferenceAssemblyPaths>
-    <!-- Get assembly -->
-    <GetAssemblyIdentity AssemblyFiles="$(OutDir)$(TargetName).dll">
-      <Output TaskParameter="Assemblies" ItemName="AssemblyInfo" />
-    </GetAssemblyIdentity>
-    <!-- Generate customization dll -->
-    <GenerateResource UseSourcePath="true" SdkToolsPath="$(sdk40toolspath)" Sources="$(ProjectDir)resources\Topologic.resx" OutputResources="$(ProjectDir)obj\TopologicImages.resources" References="$(FrameworkAssembliesPath)System.Drawing.dll" />
-    <AL TargetType="library" EmbedResources="$(ProjectDir)obj\TopologicImages.resources" OutputAssembly="$(OutDir)Topologic.customization.dll" Version="%(AssemblyInfo.Version)" />
-  </Target>
 </Project>
