@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="include\VertexByCoordinates.h" />
+    <ClInclude Include="include\Vertex.h" />
+    <ClInclude Include="include\VertexParameter.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\VertexByCoordinates.cpp" />
+    <ClCompile Include="src\Vertex.cpp" />
+    <ClCompile Include="src\VertexParameter.cpp" />
+  </ItemGroup>
+</Project>

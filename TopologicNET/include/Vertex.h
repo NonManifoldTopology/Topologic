@@ -92,6 +92,7 @@ namespace Topologic
 		static int Type();
 
 	public protected:
+		Vertex();
 		Vertex(const std::shared_ptr<TopologicCore::Vertex>& kpCoreVertex);
 
 		/// <summary>

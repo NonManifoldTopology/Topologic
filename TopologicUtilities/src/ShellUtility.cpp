@@ -24,10 +24,10 @@
 // Earcut
 #include <mapbox/earcut.hpp>
 
-// GPC
-extern "C" {
-#include <gpc.h>
-}
+//// GPC
+//extern "C" {
+//#include <gpc.h>
+//}
 
 #include <array>
 
@@ -156,60 +156,60 @@ namespace TopologicUtilities
 	//	}
 	//}
 
-	void VattiClipping(
-		const std::list<Handle(Geom2d_CartesianPoint)>& rkClipPoints,
-		const std::list<Handle(Geom2d_CartesianPoint)>& rkSubjectPoints,
-		std::list<std::list<Handle(Geom2d_CartesianPoint)>>& rOutputPoints)
-	{
-		gpc_polygon subjectPolygon = { 0, nullptr, nullptr };;
-		gpc_polygon clipPolygon = { 0, nullptr, nullptr };;
-		gpc_polygon resultPolygon = { 0, nullptr, nullptr };;
+	//void VattiClipping(
+	//	const std::list<Handle(Geom2d_CartesianPoint)>& rkClipPoints,
+	//	const std::list<Handle(Geom2d_CartesianPoint)>& rkSubjectPoints,
+	//	std::list<std::list<Handle(Geom2d_CartesianPoint)>>& rOutputPoints)
+	//{
+	//	gpc_polygon subjectPolygon = { 0, nullptr, nullptr };;
+	//	gpc_polygon clipPolygon = { 0, nullptr, nullptr };;
+	//	gpc_polygon resultPolygon = { 0, nullptr, nullptr };;
 
-		// transfer from Topologic
-		gpc_vertex* pSubjectVertices = new gpc_vertex[rkSubjectPoints.size()];
-		int i = 0;
-		for (const Handle(Geom2d_CartesianPoint)& kpSubjectPoints : rkSubjectPoints)
-		{
-			pSubjectVertices[i] = { kpSubjectPoints->X(), kpSubjectPoints->Y() };
-			++i;
-		}
-		gpc_vertex_list subjectContour = { (int)rkSubjectPoints.size(), pSubjectVertices };
-		gpc_add_contour(&subjectPolygon, &subjectContour, 0);
+	//	// transfer from Topologic
+	//	gpc_vertex* pSubjectVertices = new gpc_vertex[rkSubjectPoints.size()];
+	//	int i = 0;
+	//	for (const Handle(Geom2d_CartesianPoint)& kpSubjectPoints : rkSubjectPoints)
+	//	{
+	//		pSubjectVertices[i] = { kpSubjectPoints->X(), kpSubjectPoints->Y() };
+	//		++i;
+	//	}
+	//	gpc_vertex_list subjectContour = { (int)rkSubjectPoints.size(), pSubjectVertices };
+	//	gpc_add_contour(&subjectPolygon, &subjectContour, 0);
 
-		gpc_vertex* pClipVertices = new gpc_vertex[rkClipPoints.size()];
-		i = 0;
-		for (const Handle(Geom2d_CartesianPoint)& kpClipVertices : rkClipPoints)
-		{
-			pClipVertices[i] = { kpClipVertices->X(), kpClipVertices->Y() };
-			++i;
-		}
-		gpc_vertex_list clipContour = { (int)rkClipPoints.size(), pClipVertices };
-		gpc_add_contour(&clipPolygon, &clipContour, 0);
+	//	gpc_vertex* pClipVertices = new gpc_vertex[rkClipPoints.size()];
+	//	i = 0;
+	//	for (const Handle(Geom2d_CartesianPoint)& kpClipVertices : rkClipPoints)
+	//	{
+	//		pClipVertices[i] = { kpClipVertices->X(), kpClipVertices->Y() };
+	//		++i;
+	//	}
+	//	gpc_vertex_list clipContour = { (int)rkClipPoints.size(), pClipVertices };
+	//	gpc_add_contour(&clipPolygon, &clipContour, 0);
 
-		gpc_polygon_clip(GPC_INT, &subjectPolygon, &clipPolygon, &resultPolygon);
+	//	gpc_polygon_clip(GPC_INT, &subjectPolygon, &clipPolygon, &resultPolygon);
 
-		// transfer back to Topologic
-		for (int i = 0; i < resultPolygon.num_contours; ++i)
-		{
-			std::list<Handle(Geom2d_CartesianPoint)> outputContours;
-			for (int j = 0; j < resultPolygon.contour[i].num_vertices; ++j)
-			{
-				outputContours.push_back(new Geom2d_CartesianPoint(
-					resultPolygon.contour[i].vertex[j].x,
-					resultPolygon.contour[i].vertex[j].y
-				));
-			}
-			rOutputPoints.push_back(outputContours);
-		}
+	//	// transfer back to Topologic
+	//	for (int i = 0; i < resultPolygon.num_contours; ++i)
+	//	{
+	//		std::list<Handle(Geom2d_CartesianPoint)> outputContours;
+	//		for (int j = 0; j < resultPolygon.contour[i].num_vertices; ++j)
+	//		{
+	//			outputContours.push_back(new Geom2d_CartesianPoint(
+	//				resultPolygon.contour[i].vertex[j].x,
+	//				resultPolygon.contour[i].vertex[j].y
+	//			));
+	//		}
+	//		rOutputPoints.push_back(outputContours);
+	//	}
 
-		// clean up
-		delete[] pClipVertices;
-		delete[] pSubjectVertices;
+	//	// clean up
+	//	delete[] pClipVertices;
+	//	delete[] pSubjectVertices;
 
-		gpc_free_polygon(&resultPolygon);
-		gpc_free_polygon(&clipPolygon);
-		gpc_free_polygon(&subjectPolygon);
-	}
+	//	gpc_free_polygon(&resultPolygon);
+	//	gpc_free_polygon(&clipPolygon);
+	//	gpc_free_polygon(&subjectPolygon);
+	//}
 
 	bool SutherlandHodgmanIsInside(const Handle(Geom2d_CartesianPoint)& kpPoint, const Handle(Geom2d_CartesianPoint)& kpLinePoint1, const Handle(Geom2d_CartesianPoint)& kpLinePoint2)
 	{
