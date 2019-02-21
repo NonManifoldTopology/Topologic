@@ -29,80 +29,172 @@
     <ClInclude Include="..\TopologicNET\include\About.h" />
     <ClInclude Include="..\TopologicNET\include\Aperture.h" />
     <ClInclude Include="..\TopologicNET\include\ApertureFactory.h" />
-    <ClInclude Include="..\TopologicNET\include\Attribute.h" />
-    <ClInclude Include="..\TopologicNET\include\AttributeFactory.h" />
-    <ClInclude Include="..\TopologicNET\include\AttributeFactoryManager.h" />
-    <ClInclude Include="..\TopologicNET\include\Bitwise.h" />
     <ClInclude Include="..\TopologicNET\include\Cell.h" />
     <ClInclude Include="..\TopologicNET\include\CellComplex.h" />
-    <ClInclude Include="..\TopologicNET\include\CellComplexFactory.h" />
-    <ClInclude Include="..\TopologicNET\include\CellFactory.h" />
-    <ClInclude Include="..\TopologicNET\include\CellUtility.h" />
     <ClInclude Include="..\TopologicNET\include\Cluster.h" />
-    <ClInclude Include="..\TopologicNET\include\ClusterFactory.h" />
     <ClInclude Include="..\TopologicNET\include\Context.h" />
-    <ClInclude Include="..\TopologicNET\include\DoubleAttributeFactory.h" />
-    <ClInclude Include="..\TopologicNET\include\DualGraph.h" />
-    <ClInclude Include="..\TopologicNET\include\DualGraphFactory.h" />
     <ClInclude Include="..\TopologicNET\include\Edge.h" />
-    <ClInclude Include="..\TopologicNET\include\EdgeFactory.h" />
-    <ClInclude Include="..\TopologicNET\include\EdgeUtility.h" />
     <ClInclude Include="..\TopologicNET\include\Face.h" />
-    <ClInclude Include="..\TopologicNET\include\FaceFactory.h" />
-    <ClInclude Include="..\TopologicNET\include\FaceUtility.h" />
     <ClInclude Include="..\TopologicNET\include\GlobalCluster.h" />
-    <ClInclude Include="..\TopologicNET\include\IntAttributeFactory.h" />
     <ClInclude Include="..\TopologicNET\include\LicenseManager.h" />
     <ClInclude Include="..\TopologicNET\include\Shell.h" />
-    <ClInclude Include="..\TopologicNET\include\ShellFactory.h" />
-    <ClInclude Include="..\TopologicNET\include\ShellUtility.h" />
-    <ClInclude Include="..\TopologicNET\include\StringAttributeFactory.h" />
     <ClInclude Include="..\TopologicNET\include\TopologicalQuery.h" />
     <ClInclude Include="..\TopologicNET\include\Topology.h" />
-    <ClInclude Include="..\TopologicNET\include\TopologyFactory.h" />
-    <ClInclude Include="..\TopologicNET\include\TopologyFactoryManager.h" />
-    <ClInclude Include="..\TopologicNET\include\TopologyUtility.h" />
     <ClInclude Include="..\TopologicNET\include\Vertex.h" />
-    <ClInclude Include="..\TopologicNET\include\VertexFactory.h" />
     <ClInclude Include="..\TopologicNET\include\Wire.h" />
-    <ClInclude Include="..\TopologicNET\include\WireFactory.h" />
+    <ClInclude Include="..\TopologicNET\include\Bitwise.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TopologicNET\include\CellUtility.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TopologicNET\include\EdgeUtility.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TopologicNET\include\FaceUtility.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TopologicNET\include\ShellUtility.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TopologicNET\include\TopologyUtility.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TopologicNET\include\Attribute.h">
+      <Filter>Attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TopologicNET\include\AttributeFactory.h">
+      <Filter>Attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TopologicNET\include\AttributeFactoryManager.h">
+      <Filter>Attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TopologicNET\include\DoubleAttributeFactory.h">
+      <Filter>Attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TopologicNET\include\IntAttributeFactory.h">
+      <Filter>Attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TopologicNET\include\StringAttributeFactory.h">
+      <Filter>Attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TopologicNET\include\DualGraph.h">
+      <Filter>Extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TopologicNET\include\CellComplexFactory.h">
+      <Filter>Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TopologicNET\include\CellFactory.h">
+      <Filter>Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TopologicNET\include\ClusterFactory.h">
+      <Filter>Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TopologicNET\include\DualGraphFactory.h">
+      <Filter>Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TopologicNET\include\EdgeFactory.h">
+      <Filter>Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TopologicNET\include\FaceFactory.h">
+      <Filter>Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TopologicNET\include\ShellFactory.h">
+      <Filter>Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TopologicNET\include\TopologyFactory.h">
+      <Filter>Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TopologicNET\include\TopologyFactoryManager.h">
+      <Filter>Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TopologicNET\include\VertexFactory.h">
+      <Filter>Factories</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TopologicNET\include\WireFactory.h">
+      <Filter>Factories</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\TopologicNET\src\About.cpp" />
     <ClCompile Include="..\TopologicNET\src\Aperture.cpp" />
     <ClCompile Include="..\TopologicNET\src\ApertureFactory.cpp" />
-    <ClCompile Include="..\TopologicNET\src\Attribute.cpp" />
-    <ClCompile Include="..\TopologicNET\src\AttributeFactoryManager.cpp" />
-    <ClCompile Include="..\TopologicNET\src\Bitwise.cpp" />
     <ClCompile Include="..\TopologicNET\src\Cell.cpp" />
     <ClCompile Include="..\TopologicNET\src\CellComplex.cpp" />
-    <ClCompile Include="..\TopologicNET\src\CellComplexFactory.cpp" />
-    <ClCompile Include="..\TopologicNET\src\CellFactory.cpp" />
-    <ClCompile Include="..\TopologicNET\src\CellUtility.cpp" />
     <ClCompile Include="..\TopologicNET\src\Cluster.cpp" />
-    <ClCompile Include="..\TopologicNET\src\ClusterFactory.cpp" />
     <ClCompile Include="..\TopologicNET\src\Context.cpp" />
-    <ClCompile Include="..\TopologicNET\src\DoubleAttributeFactory.cpp" />
-    <ClCompile Include="..\TopologicNET\src\DualGraph.cpp" />
-    <ClCompile Include="..\TopologicNET\src\DualGraphFactory.cpp" />
     <ClCompile Include="..\TopologicNET\src\Edge.cpp" />
-    <ClCompile Include="..\TopologicNET\src\EdgeFactory.cpp" />
-    <ClCompile Include="..\TopologicNET\src\EdgeUtility.cpp" />
     <ClCompile Include="..\TopologicNET\src\Face.cpp" />
-    <ClCompile Include="..\TopologicNET\src\FaceFactory.cpp" />
-    <ClCompile Include="..\TopologicNET\src\FaceUtility.cpp" />
     <ClCompile Include="..\TopologicNET\src\GlobalCluster.cpp" />
-    <ClCompile Include="..\TopologicNET\src\IntAttributeFactory.cpp" />
     <ClCompile Include="..\TopologicNET\src\Shell.cpp" />
-    <ClCompile Include="..\TopologicNET\src\ShellFactory.cpp" />
-    <ClCompile Include="..\TopologicNET\src\ShellUtility.cpp" />
-    <ClCompile Include="..\TopologicNET\src\StringAttributeFactory.cpp" />
     <ClCompile Include="..\TopologicNET\src\Topology.cpp" />
-    <ClCompile Include="..\TopologicNET\src\TopologyFactoryManager.cpp" />
-    <ClCompile Include="..\TopologicNET\src\TopologyUtility.cpp" />
     <ClCompile Include="..\TopologicNET\src\Vertex.cpp" />
-    <ClCompile Include="..\TopologicNET\src\VertexFactory.cpp" />
     <ClCompile Include="..\TopologicNET\src\Wire.cpp" />
-    <ClCompile Include="..\TopologicNET\src\WireFactory.cpp" />
+    <ClCompile Include="..\TopologicNET\src\Bitwise.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TopologicNET\src\CellUtility.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TopologicNET\src\EdgeUtility.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TopologicNET\src\FaceUtility.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TopologicNET\src\ShellUtility.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TopologicNET\src\TopologyUtility.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TopologicNET\src\Attribute.cpp">
+      <Filter>Attributes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TopologicNET\src\AttributeFactoryManager.cpp">
+      <Filter>Attributes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TopologicNET\src\DoubleAttributeFactory.cpp">
+      <Filter>Attributes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TopologicNET\src\IntAttributeFactory.cpp">
+      <Filter>Attributes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TopologicNET\src\StringAttributeFactory.cpp">
+      <Filter>Attributes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TopologicNET\src\DualGraph.cpp">
+      <Filter>Extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TopologicNET\src\CellComplexFactory.cpp">
+      <Filter>Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TopologicNET\src\CellFactory.cpp">
+      <Filter>Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TopologicNET\src\ClusterFactory.cpp">
+      <Filter>Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TopologicNET\src\DualGraphFactory.cpp">
+      <Filter>Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TopologicNET\src\EdgeFactory.cpp">
+      <Filter>Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TopologicNET\src\FaceFactory.cpp">
+      <Filter>Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TopologicNET\src\ShellFactory.cpp">
+      <Filter>Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TopologicNET\src\TopologyFactoryManager.cpp">
+      <Filter>Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TopologicNET\src\VertexFactory.cpp">
+      <Filter>Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TopologicNET\src\WireFactory.cpp">
+      <Filter>Factories</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
