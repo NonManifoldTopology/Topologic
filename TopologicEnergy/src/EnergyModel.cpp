@@ -24,7 +24,7 @@ namespace TopologicEnergy
 		String^ buildingName,
 		String^ buildingType,
 		String^ defaultSpaceType,
-		double glazingRatio,
+		Nullable<double> glazingRatio,
 		double coolingTemp,
 		double heatingTemp,
 		String^ weatherFilePath,
@@ -452,8 +452,7 @@ namespace TopologicEnergy
 	{
 		// Add timestamp to the output file name
 		String^ openStudioOutputTimeStampPath = Path::GetDirectoryName(openStudioOutputDirectory + "\\") + "\\" +
-			Path::GetFileNameWithoutExtension(energyModel->BuildingName) + "_" +
-			DateTime::Now.ToString("yyyy-MM-dd_HH-mm-ss-fff") +
+			Path::GetFileNameWithoutExtension(energyModel->BuildingName) +
 			".osm";
 		// Save model to an OSM file
 		bool saveCondition = SaveModel(energyModel->m_osModel, openStudioOutputTimeStampPath);
@@ -509,7 +508,7 @@ namespace TopologicEnergy
 		Autodesk::DesignScript::Geometry::Vector^ upVector,
 		double buildingHeight,
 		List<double>^ floorLevels,
-		double glazingRatio,
+		Nullable<double> glazingRatio,
 		double heatingTemp,
 		double coolingTemp)
 	{
@@ -616,7 +615,7 @@ namespace TopologicEnergy
 		OpenStudio::Space^ osSpace,
 		OpenStudio::Model^ osModel,
 		Autodesk::DesignScript::Geometry::Vector^ upVector,
-		double glazingRatio)
+		[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Nullable<double> glazingRatio)
 	{
 		OpenStudio::Construction^ osInteriorCeilingType = nullptr;
 		OpenStudio::Construction^ osExteriorRoofType = nullptr;
@@ -793,56 +792,60 @@ namespace TopologicEnergy
 			osSurface->setSunExposure("SunExposed");
 			osSurface->setWindExposure("WindExposed");
 
-			if (glazingRatio >= 1.0)
+			if (glazingRatio.HasValue)
 			{
-				throw gcnew Exception("Glazing ratio must have a value lower than 1.0 (negative values included).");
-			}else if (glazingRatio > 0.0 && glazingRatio < 1.0)
-			{
-				// Triangulate the Windows
-				List<Vertex^>^ scaledVertices = ScaleFaceVertices(buildingFace, glazingRatio);
-
-				for (int i = 0; i < scaledVertices->Count - 2; ++i)
+				if (glazingRatio.Value < 0.0 || glazingRatio.Value > 1.0)
 				{
-					OpenStudio::Point3dVector^ osWindowFacePoints = gcnew OpenStudio::Point3dVector();
+					throw gcnew Exception("The glazing ratio must be between 0.0 and 1.0 (both inclusive).");
+				}
+				else if (glazingRatio.Value > 0.0 && glazingRatio.Value <= 1.0)
+				{
+					// Triangulate the Windows
+					List<Vertex^>^ scaledVertices = ScaleFaceVertices(buildingFace, glazingRatio.Value);
 
-					Autodesk::DesignScript::Geometry::Point^ pDynamoPoint1 =
-						safe_cast<Autodesk::DesignScript::Geometry::Point^>(scaledVertices[0]->Geometry_);
-					OpenStudio::Point3d^ p1 = gcnew OpenStudio::Point3d(
-						pDynamoPoint1->X,
-						pDynamoPoint1->Y,
-						pDynamoPoint1->Z);
+					for (int i = 0; i < scaledVertices->Count - 2; ++i)
+					{
+						List<Vertex^>^ triangleVertices = gcnew List<Vertex^>();
+						triangleVertices->Add(scaledVertices[0]);
+						triangleVertices->Add(scaledVertices[i + 1]);
+						triangleVertices->Add(scaledVertices[i + 2]);
 
-					Autodesk::DesignScript::Geometry::Point^ pDynamoPoint2 =
-						safe_cast<Autodesk::DesignScript::Geometry::Point^>(scaledVertices[i + 1]->Geometry_);
-					OpenStudio::Point3d^ p2 = gcnew OpenStudio::Point3d(
-						pDynamoPoint2->X,
-						pDynamoPoint2->Y,
-						pDynamoPoint2->Z);
+						List<Vertex^>^ scaledTriangleVertices = ScaleVertices(triangleVertices, 0.999);
 
-					Autodesk::DesignScript::Geometry::Point^ pDynamoPoint3 =
-						safe_cast<Autodesk::DesignScript::Geometry::Point^>(scaledVertices[i + 2]->Geometry_);
-					OpenStudio::Point3d^ p3 = gcnew OpenStudio::Point3d(
-						pDynamoPoint3->X,
-						pDynamoPoint3->Y,
-						pDynamoPoint3->Z);
+						OpenStudio::Point3dVector^ osWindowFacePoints = gcnew OpenStudio::Point3dVector();
 
-					osWindowFacePoints->Add(p1);
-					osWindowFacePoints->Add(p2);
-					osWindowFacePoints->Add(p3);
+						for each (Vertex^ scaledTriangleVertex in scaledTriangleVertices)
+						{
+							Autodesk::DesignScript::Geometry::Point^ dynamoPoint =
+								safe_cast<Autodesk::DesignScript::Geometry::Point^>(scaledTriangleVertex->Geometry_);
+							OpenStudio::Point3d^ osPoint = gcnew OpenStudio::Point3d(
+								dynamoPoint->X,
+								dynamoPoint->Y,
+								dynamoPoint->Z);
 
-					OpenStudio::SubSurface^ osWindowSubSurface = gcnew OpenStudio::SubSurface(osWindowFacePoints, osModel);
-					osWindowSubSurface->setSubSurfaceType("FixedWindow");
-					osWindowSubSurface->setSurface(osSurface);
-					osWindowSubSurface->setName(osSurface->name()->get() + "_SUBSURFACE_" + subsurfaceCounter.ToString());
-					subsurfaceCounter++;
+							osWindowFacePoints->Add(osPoint);
+						}
 
-					double grossSubsurfaceArea = osWindowSubSurface->grossArea();
-					double netSubsurfaceArea = osWindowSubSurface->netArea();
-					double grossSurfaceArea = osSurface->grossArea();
-					double netSurfaceArea = osSurface->netArea();
-				} // for (int i = 0; i < scaledVertices->Count - 2; ++i)
+						OpenStudio::SubSurface^ osWindowSubSurface = gcnew OpenStudio::SubSurface(osWindowFacePoints, osModel);
+						double dotProduct = osWindowSubSurface->outwardNormal()->dot(osSurface->outwardNormal());
+						if (dotProduct < -0.99) // flipped
+						{
+							osWindowFacePoints->Reverse();
+							osWindowSubSurface->remove();
+							osWindowSubSurface = gcnew OpenStudio::SubSurface(osWindowFacePoints, osModel); //CreateSubSurface(pApertureVertices, osModel);
+						}
+						else if (dotProduct > -0.99 && dotProduct < 0.99)
+						{
+							throw gcnew Exception("There is a non-coplanar subsurface.");
+						}
+						osWindowSubSurface->setSubSurfaceType("FixedWindow");
+						osWindowSubSurface->setSurface(osSurface);
+						osWindowSubSurface->setName(osSurface->name()->get() + "_SUBSURFACE_" + subsurfaceCounter.ToString());
+						subsurfaceCounter++;
+					} // for (int i = 0; i < scaledVertices->Count - 2; ++i)
+				}
 			}
-			else // glazingRatio <= 0.0
+			else // glazingRatio is null
 			{
 				// Use the surface apertures
 				List<Topology^>^ pContents = buildingFace->Contents;
@@ -911,31 +914,43 @@ namespace TopologicEnergy
 
 	List<Vertex^>^ EnergyModel::ScaleFaceVertices(Face^ buildingFace, double scaleFactor)
 	{
-		List<Vertex^>^ scaledVertices = gcnew List<Vertex^>();
-		Vertex^ faceCentre = GetFaceCentre(buildingFace);
-		Autodesk::DesignScript::Geometry::Point^ faceCenterPoint =
-			safe_cast<Autodesk::DesignScript::Geometry::Point^>(faceCentre->Geometry_);
-
 		Wire^ pApertureWire = buildingFace->ExternalBoundary;
 		List<Vertex^>^ vertices = pApertureWire->Vertices;
 		vertices->Reverse();
 
+		return ScaleVertices(vertices, scaleFactor);
+	}
+
+	List<Vertex^>^ EnergyModel::ScaleVertices(List<Vertex^>^ vertices, double scaleFactor)
+	{
+		List<Vertex^>^ scaledVertices = gcnew List<Vertex^>();
 		double sqrtScaleFactor = Math::Sqrt(scaleFactor);
+		//Vertex^ faceCentre = GetFaceCentre(buildingFace);
+		Vertex^ centreVertex = GetCentreVertex(vertices);
+		Autodesk::DesignScript::Geometry::Point^ faceCenterPoint =
+			safe_cast<Autodesk::DesignScript::Geometry::Point^>(centreVertex->Geometry_);
 		for each(Vertex^ aVertex in vertices)
 		{
 			Autodesk::DesignScript::Geometry::Point^ originalPoint =
 				safe_cast<Autodesk::DesignScript::Geometry::Point^>(aVertex->Geometry_);
-			Autodesk::DesignScript::Geometry::Point^ scaledVertex = originalPoint->Subtract(faceCenterPoint->AsVector());
-			scaledVertex = safe_cast<Autodesk::DesignScript::Geometry::Point^>(scaledVertex->Scale(sqrtScaleFactor));
-			scaledVertex = scaledVertex->Add(faceCenterPoint->AsVector());
-			scaledVertices->Add(safe_cast<Vertex^>(Topology::ByGeometry(scaledVertex, 0.001))); // tolerance does not matter as it's just a vertex
+			Autodesk::DesignScript::Geometry::Point^ translatedPoint = originalPoint->Subtract(faceCenterPoint->AsVector());
+			Autodesk::DesignScript::Geometry::Point^ scaledPoint = safe_cast<Autodesk::DesignScript::Geometry::Point^>(translatedPoint->Scale(sqrtScaleFactor));
+			Autodesk::DesignScript::Geometry::Point^ reTranslatedPoint = scaledPoint->Add(faceCenterPoint->AsVector());
+			scaledVertices->Add(safe_cast<Vertex^>(Topology::ByGeometry(reTranslatedPoint, 0.001))); // tolerance does not matter as it's just a vertex
+
+			/*delete reTranslatedPoint;
+			delete scaledPoint;
+			delete translatedPoint;
+			delete originalPoint;*/
 		}
+
 		return scaledVertices;
 	}
 
-	Vertex^ EnergyModel::GetFaceCentre(Face^ buildingFace)
+	//Vertex^ EnergyModel::GetFaceCentre(Face^ buildingFace)
+	Vertex^ EnergyModel::GetCentreVertex(List<Vertex^>^ vertices)
 	{
-		List<Vertex^>^ vertices = buildingFace->Vertices;
+		//List<Vertex^>^ vertices = buildingFace->Vertices;
 		Autodesk::DesignScript::Geometry::Point^ sumPoint = Autodesk::DesignScript::Geometry::Point::ByCoordinates(0, 0, 0);
 
 		// assume vertices.count > 0
@@ -948,10 +963,18 @@ namespace TopologicEnergy
 		{
 			Autodesk::DesignScript::Geometry::Point^ p =
 				safe_cast<Autodesk::DesignScript::Geometry::Point^>(v->Geometry_);
-			sumPoint = sumPoint->Add(p->AsVector());
+			Autodesk::DesignScript::Geometry::Vector^ vector = p->AsVector();
+			sumPoint = sumPoint->Add(vector);
+			delete vector;
+			delete p;
 		}
-		Autodesk::DesignScript::Geometry::Point^ dynamoPoint = safe_cast<Autodesk::DesignScript::Geometry::Point^>(sumPoint->Scale(1.0 / (double)vertices->Count));
-		return safe_cast<Vertex^>(Topology::ByGeometry(dynamoPoint, 0.001)); // tolerance does not matter as it's just a vertex
+		
+		Autodesk::DesignScript::Geometry::Geometry^ scaledPoint = sumPoint->Scale(1.0 / (double)vertices->Count);
+		Autodesk::DesignScript::Geometry::Point^ dynamoPoint = safe_cast<Autodesk::DesignScript::Geometry::Point^>(scaledPoint);
+		Vertex^ vertex = safe_cast<Vertex^>(Topology::ByGeometry(dynamoPoint, 0.001)); // tolerance does not matter as it's just a vertex
+		delete dynamoPoint;
+		delete scaledPoint;
+		return vertex;
 	}
 
 	OpenStudio::Point3dVector^ EnergyModel::GetFacePoints(Face^ buildingFace)

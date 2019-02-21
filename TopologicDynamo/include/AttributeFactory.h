@@ -17,7 +17,6 @@ namespace Topologic
 		/// <summary>
 		/// A public abstract factory class to create an Attribute. This class should be inherited when new Attribute classes are implemented.
 		/// </summary>
-
 		public ref class AttributeFactory abstract
 		{
 		public:

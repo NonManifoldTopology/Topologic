@@ -12,7 +12,6 @@ namespace Topologic
 		/// <summary>
 		/// An Attribute to a Topology maps an ID to its value. 
 		/// </summary>
-
 		public ref class Attribute
 		{
 		public protected:

@@ -2,6 +2,7 @@
 
 #include "TopologicCore/include/GlobalCluster.h"
 
+#include <BRepBuilderAPI_Transform.hxx>
 #include <BRepBuilderAPI_GTransform.hxx>
 #include <BRepExtrema_DistShapeShape.hxx>
 #include <Geom_Point.hxx>
@@ -19,10 +20,17 @@ namespace TopologicUtilities
 	{
 		gp_Trsf transformation;
 		transformation.SetTranslation(gp_Vec(x, y, z));
+		BRepBuilderAPI_Transform transform(kpTopology->GetOcctShape(), transformation, true);
+		TopologicCore::Topology::Ptr pCoreTransformedTopology = TopologicCore::Topology::ByOcctShape(transform.Shape());
+
+		TopologicCore::GlobalCluster::GetInstance().AddTopology(pCoreTransformedTopology);
+		return pCoreTransformedTopology;
+
+		/*transform.Perform(shape);
 		TopologicCore::Topology::Ptr pCoreTransformedTopology = kpTopology->DeepCopy();
 		pCoreTransformedTopology->GetOcctShape().Move(TopLoc_Location(transformation));
 		TopologicCore::GlobalCluster::GetInstance().AddTopology(pCoreTransformedTopology);
-		return pCoreTransformedTopology;
+		return pCoreTransformedTopology;*/
 	}
 
 	TopologicCore::Topology::Ptr TopologyUtility::Rotate(const TopologicCore::Topology::Ptr & kpTopology,
@@ -30,14 +38,24 @@ namespace TopologicUtilities
 		const double kDirectionX, const double kDirectionY, const double kDirectionZ,
 		const double kDegree)
 	{
+		gp_Trsf transformation;
 		Handle(Geom_Point) pOcctOrigin = kpOrigin->Point();
+		double radian = DegreeToRadian(kDegree);
+		transformation.SetRotation(gp_Ax1(gp_Pnt(pOcctOrigin->X(), pOcctOrigin->Y(), pOcctOrigin->Z()), gp_Dir(kDirectionX, kDirectionY, kDirectionZ)), radian);
+		BRepBuilderAPI_Transform transform(kpTopology->GetOcctShape(), transformation, true);
+		TopologicCore::Topology::Ptr pCoreTransformedTopology = TopologicCore::Topology::ByOcctShape(transform.Shape());
+
+		TopologicCore::GlobalCluster::GetInstance().AddTopology(pCoreTransformedTopology);
+		return pCoreTransformedTopology;
+
+		/*Handle(Geom_Point) pOcctOrigin = kpOrigin->Point();
 		double radian = DegreeToRadian(kDegree);
 		gp_Trsf transformation;
 		transformation.SetRotation(gp_Ax1(gp_Pnt(pOcctOrigin->X(), pOcctOrigin->Y(), pOcctOrigin->Z()), gp_Dir(kDirectionX, kDirectionY, kDirectionZ)), radian);
 		TopologicCore::Topology::Ptr pCoreTransformedTopology = kpTopology->DeepCopy();
 		pCoreTransformedTopology->GetOcctShape().Move(TopLoc_Location(transformation)); 
 		TopologicCore::GlobalCluster::GetInstance().AddTopology(pCoreTransformedTopology);
-		return pCoreTransformedTopology;
+		return pCoreTransformedTopology;*/
 	}
 
 	TopologicCore::Topology::Ptr TopologyUtility::Scale(

@@ -138,7 +138,7 @@ namespace Topologic
 		}
 		else if (curve->GetType() == Autodesk::DesignScript::Geometry::PolyCurve::typeid)
 		{
-			throw gcnew System::NotImplementedException("Cannot create an Edge from a PolyCurve. Create a wire instead.");
+			throw gcnew System::Exception("Cannot create an Edge from a PolyCurve. Create a wire instead.");
 		}
 		else if (curve->GetType() == Autodesk::DesignScript::Geometry::Curve::typeid) // a generic curve
 		{
@@ -148,11 +148,11 @@ namespace Topologic
 			}
 			catch (Exception ^ e)
 			{
-				throw gcnew System::NotImplementedException("Fails to create an edge: " + e->Message);
+				throw gcnew System::Exception("Fails to create an edge: " + e->Message);
 			}
 			catch (...)
 			{
-				throw gcnew System::NotImplementedException("Fails to create an edge.");
+				throw gcnew System::Exception("Fails to create an edge.");
 			}
 
 			return ByCurve(dynamoCurve);

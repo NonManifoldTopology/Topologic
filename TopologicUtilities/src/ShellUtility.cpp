@@ -33,7 +33,6 @@ extern "C" {
 
 namespace TopologicUtilities
 {
-
 	//void SolveShapeOpPlanarization(const std::list<std::list<gp_Pnt>>& rkSamplePoints,
 	//	const int kIteration,
 	//	const int kNumUPoints, const int kNumVPoints,

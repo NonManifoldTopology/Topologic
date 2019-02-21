@@ -75,6 +75,5 @@ namespace Topologic {
 			minMaxes->Add(maxZ);
 			return minMaxes;
 		}
-
 	}
 }

@@ -1,6 +1,5 @@
-#include <VertexFactory.h>
-
-#include <Vertex.h>
+#include "VertexFactory.h"
+#include "Vertex.h"
 
 namespace Topologic
 {

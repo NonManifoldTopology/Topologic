@@ -1,6 +1,6 @@
-#include <EdgeFactory.h>
+#include "EdgeFactory.h"
 
-#include <Edge.h>
+#include "Edge.h"
 
 namespace Topologic
 {

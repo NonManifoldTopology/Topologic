@@ -431,11 +431,6 @@ namespace Topologic
 		Factories::TopologyFactoryManager::Instance->Add(guid, topologyFactory);
 	}
 	
-	/*List<Topology^>^ Topology::HostTopology__::get()
-	{
-		throw gcnew NotImplementedException("Feature not yet implemented");
-	}*/
-
 	Topology::Topology()
 	{
 		// Register the factories

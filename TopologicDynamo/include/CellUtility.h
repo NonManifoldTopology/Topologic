@@ -50,6 +50,7 @@ namespace Topologic {
 			/// </summary>
 			/// <param name="cell">The Cell</param>
 			/// <returns>Six values associated to the x, y, z coordinates of the bounding box of the topological entity</returns>
+			[IsVisibleInDynamoLibrary(false)]
 			static List<double>^ GetMinMax(Cell^ cell);
 
 		public protected:

@@ -8,7 +8,6 @@ namespace Topologic {
 	/// </summary>
 	namespace Utilities {
 	
-
 		/// <summary>
 		/// FaceUtility includes geometric methods relevant to a Face.
 		/// </summary>
@@ -35,25 +34,26 @@ namespace Topologic {
 			/// <param name="face">A Face</param>
 			/// <param name="vertex">A Vertex on a Face</param>
 			/// <returns name="UV">The UV parameters</returns>
-			static Autodesk::DesignScript::Geometry::UV^ UVParameterAtVertex(Face^ face, Vertex^ vertex);
+			static Autodesk::DesignScript::Geometry::UV^ ParametersAtVertex(Face^ face, Vertex^ vertex);
 
 			/// <summary>
 			/// Returns the Vertex at a given parameter of the Face.
 			/// </summary>
 			/// <param name="face">A Face</param>
-			/// <param name="u">The U parameter of the Face</param>
-			/// <param name="v">The V parameter of the Face</param>
+			/// <param name="u">The U parametric coordinate of the Vertex on the Face</param>
+			/// <param name="v">The V parametric coordinate of the Vertex on the Face</param>
 			/// <returns name="Vertex">The Vertex at the given parameter of the Face</returns>
-			static Vertex^ VertexAtParameter(Face^ face, double u, double v);
+			static Vertex^ VertexAtParameters(Face^ face, double u, double v);
 
 			/// <summary>
 			/// Returns the normal (vector) at a parameter of a Face.
 			/// </summary>
 			/// <param name="face">A Face</param>
-			/// <param name="uv">The UV parameter of the Face</param>
+			/// <param name="u">The u parameter of the Face</param>
+			/// <param name="v">The v parameter of the Face</param>
 			/// <returns>The normal (vector) at a parameter of a Face</returns>
-			static Autodesk::DesignScript::Geometry::Vector^ NormalAtParameter(Face^ face, Autodesk::DesignScript::Geometry::UV^ uv);
-
+			static Autodesk::DesignScript::Geometry::Vector^ NormalAtParameters(Face^ face, double u, double v);
+			
 			/// <summary>
 			/// Trims a Face with a Wire. The portion of the Face inside the Wire will be returned.
 			/// </summary>
@@ -68,6 +68,7 @@ namespace Topologic {
 			/// <param name="face">The Face to be triangulated</param>
 			/// <param name="deflection">The deflection value to be applied for triangulation</param>
 			/// <returns name="Face">The triangulated Face</returns>
+			[IsVisibleInDynamoLibrary(false)]
 			static List<Face^>^ Triangulate(Face^ face, double deflection);
 
 		public protected:

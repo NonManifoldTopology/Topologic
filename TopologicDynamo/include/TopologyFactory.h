@@ -2,8 +2,6 @@
 
 #include "Topology.h"
 
-//#include <TopologicCore/include/Topology.h>
-
 using namespace System::Collections::Generic;
 using namespace Autodesk::DesignScript::Runtime;
 

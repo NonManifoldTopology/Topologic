@@ -23,7 +23,6 @@ namespace Topologic {
 			/// <param name="y">The y value</param>
 			/// <param name="z">The z value</param>
 			/// <returns>The Topology in its new location</returns>
-			[IsVisibleInDynamoLibrary(false)]
 			static Topology^ Translate(Topology^ topology, double x, double y, double z);
 
 			/// <summary>
@@ -34,7 +33,6 @@ namespace Topologic {
 			/// <param name="vector"></param>
 			/// <param name="degree"></param>
 			/// <returns></returns>
-			[IsVisibleInDynamoLibrary(false)]
 			static Topology^ Rotate(Topology^ topology,
 				Vertex^ origin,
 				Autodesk::DesignScript::Geometry::Vector^ vector,
@@ -49,7 +47,6 @@ namespace Topologic {
 			/// <param name="yFactor"></param>
 			/// <param name="zFactor"></param>
 			/// <returns></returns>
-			[IsVisibleInDynamoLibrary(false)]
 			static Topology^ Scale(Topology^ topology, Vertex^ origin, double xFactor, double yFactor, double zFactor);
 
 			/// <summary>

@@ -12,10 +12,10 @@ namespace Topologic
 			// 1. Copy this topology
 			TopologicCore::Topology::Ptr pCoreTopology =
 				TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
-			//TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->DeepCopy();
-			TopologicUtilities::TopologyUtility::Translate(pCoreTopology, x, y, z);
 
-			return Topology::ByCoreTopology(pCoreTopology);
+			TopologicCore::Topology::Ptr pCoreTranslatedTopology = TopologicUtilities::TopologyUtility::Translate(pCoreTopology, x, y, z);
+
+			return Topology::ByCoreTopology(pCoreTranslatedTopology);
 		}
 
 		Topology ^ TopologyUtility::Rotate(Topology ^ topology, 
@@ -28,9 +28,10 @@ namespace Topologic
 				TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 			TopologicCore::Vertex::Ptr pCoreOrigin =
 				TopologicCore::TopologicalQuery::Downcast<TopologicCore::Vertex>(origin->GetCoreTopologicalQuery());
-			TopologicUtilities::TopologyUtility::Rotate(pCoreTopology, pCoreOrigin, vector->X, vector->Y, vector->Z, degree);
 
-			return Topology::ByCoreTopology(pCoreTopology);
+			TopologicCore::Topology::Ptr pCoreRotatedTopology = TopologicUtilities::TopologyUtility::Rotate(pCoreTopology, pCoreOrigin, vector->X, vector->Y, vector->Z, degree);
+
+			return Topology::ByCoreTopology(pCoreRotatedTopology);
 		}
 
 		Topology ^ TopologyUtility::Scale(Topology ^ topology, Vertex ^ origin, double xFactor, double yFactor, double zFactor)
@@ -40,9 +41,10 @@ namespace Topologic
 				TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 			TopologicCore::Vertex::Ptr pCoreOrigin =
 				TopologicCore::TopologicalQuery::Downcast<TopologicCore::Vertex>(origin->GetCoreTopologicalQuery());
-			TopologicUtilities::TopologyUtility::Scale(pCoreTopology, pCoreOrigin, xFactor, yFactor, zFactor);
 
-			return Topology::ByCoreTopology(pCoreTopology);
+			TopologicCore::Topology::Ptr pCoreScaledTopology = TopologicUtilities::TopologyUtility::Scale(pCoreTopology, pCoreOrigin, xFactor, yFactor, zFactor);
+
+			return Topology::ByCoreTopology(pCoreScaledTopology);
 		}
 
 		double TopologyUtility::Distance(Topology ^ topology, Topology ^ anotherTopology)
@@ -59,6 +61,5 @@ namespace Topologic
 			TopologicCore::Vertex::Ptr pCoreCenterOfMass = pCoreTopology->CenterOfMass();
 			return gcnew Vertex(pCoreCenterOfMass);
 		}
-
 	}
 }

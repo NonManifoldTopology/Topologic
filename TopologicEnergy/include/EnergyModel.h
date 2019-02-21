@@ -45,7 +45,7 @@ namespace TopologicEnergy
 			[Autodesk::DesignScript::Runtime::DefaultArgument("Building")] String^ buildingName,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("Commercial")] String^ buildingType,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("ASHRAE 189.1-2009 ClimateZone 4-8 MediumOffice")] String^ defaultSpaceType,
-			[Autodesk::DesignScript::Runtime::DefaultArgument("-1")] double glazingRatio,
+			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Nullable<double> glazingRatio,
 			double coolingTemp,
 			double heatingTemp,
 			[Autodesk::DesignScript::Runtime::DefaultArgument(".\\TopologicEnergy-files\\GBR_London.Gatwick.037760_IWEC.epw")] String^ weatherFilePath,
@@ -122,7 +122,7 @@ namespace TopologicEnergy
 			Autodesk::DesignScript::Geometry::Vector^ upVector,
 			double buildingHeight,
 			List<double>^ floorLevels,
-			double glazingRatio,
+			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Nullable<double> glazingRatio,
 			double heatingTemp,
 			double coolingTemp
 		);
@@ -140,13 +140,16 @@ namespace TopologicEnergy
 			OpenStudio::Space^ osSpace,
 			OpenStudio::Model^ osModel,
 			Autodesk::DesignScript::Geometry::Vector^ upVector,
-			double glazingRatio);
+			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Nullable<double> glazingRatio);
 
 		static OpenStudio::Model^ GetModelFromTemplate(String^ osmTemplatePath, String^ epwWeatherPath, String^ ddyPath);
 
 		static List<Vertex^>^ ScaleFaceVertices(Face^ buildingFace, double scaleFactor);
 
-		static Vertex^ GetFaceCentre(Face^ buildingFace);
+		static List<Vertex^>^ ScaleVertices(List<Vertex^>^ vertices, double scaleFactor);
+
+		//static Vertex^ GetFaceCentre(Face^ buildingFace);
+		static Vertex^ GetCentreVertex(List<Vertex^>^ vertices);
 
 		static OpenStudio::Point3dVector^ GetFacePoints(Face^ buildingFace);
 

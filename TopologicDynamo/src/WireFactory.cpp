@@ -1,6 +1,5 @@
-#include <WireFactory.h>
-
-#include <Wire.h>
+#include "WireFactory.h"
+#include "Wire.h"
 
 namespace Topologic
 {

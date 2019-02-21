@@ -1,7 +1,6 @@
-#include <Attribute.h>
-
-#include <AttributeFactoryManager.h>
-#include <AttributeFactory.h>
+#include "Attribute.h"
+#include "AttributeFactoryManager.h"
+#include "AttributeFactory.h"
 
 namespace Topologic
 {
@@ -20,7 +19,7 @@ namespace Topologic
 
 		Attribute::~Attribute()
 		{
-			// delete?
+
 		}
 	}
 }
