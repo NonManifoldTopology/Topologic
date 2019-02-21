@@ -60,7 +60,7 @@ namespace Topologic
 		/// <summary>
 		/// Creates a Shell or a Cluster by a set of connected Faces.
 		/// </summary>
-		/// <param name="faces">A set of faces</param>
+		/// <param name="faces">A set of Faces</param>
 		/// <returns name="Topology">The created Topology</returns>
 		[IsVisibleInDynamoLibrary(false)]
 		static Topology^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces);
@@ -298,69 +298,70 @@ namespace Topologic
 		}
 
 		/// <summary>
-		/// Get the shells constituent to the Topology.
+		/// Returns the Shells constituent to the Topology.
 		/// </summary>
-		/// <returns name="Shell[]"></returns>
+		/// <returns name="Shell[]">A list of Shells constituent to the Topology</returns>
 		property List<Shell^>^ Shells
 		{
 			List<Shell^>^ get();
 		}
 
 		/// <summary>
-		/// Get the faces constituent to the Topology.
+		/// Returns the Faces constituent to the Topology.
 		/// </summary>
-		/// <returns name="Face[]"></returns>
+		/// <returns name="Face[]">A list of Faces constituent to the Topology</returns>
 		property List<Face^>^ Faces
 		{
 			List<Face^>^ get();
 		}
 
 		/// <summary>
-		/// Get the wires constituent to the Topology.
+		/// Returns the Wires constituent to the Topology.
 		/// </summary>
-		/// <returns name="Wire[]"></returns>
+		/// <returns name="Wire[]">A list of Wires constituent to the Topology</returns>
 		property List<Wire^>^ Wires
 		{
 			List<Wire^>^ get();
 		}
 
 		/// <summary>
-		/// Get the edges constituent to the Topology.
+		/// Returns the Edges constituent to the Topology.
 		/// </summary>
-		/// <returns name="Edge[]"></returns>
+		/// <returns name="Edge[]">A list of Edges constituent to the Topology</returns>
 		property List<Edge^>^ Edges
 		{
 			List<Edge^>^ get();
 		}
 
 		/// <summary>
-		/// Get the vertices constituent to the Topology.
+		/// Returns the Vertices constituent to the Topology.
 		/// </summary>
-		/// <returns name="Vertex[]"></returns>
+		/// <returns name="Vertex[]">A list of Vertices constituent to the Topology</returns>
 		property List<Vertex^>^ Vertices
 		{
 			List<Vertex^>^ get();
 		}
 
 		/// <summary>
-		/// Get the cells constituent to the Topology.
+		/// Returns the Cells constituent to the Topology.
 		/// </summary>
-		/// <returns name="Cell[]"></returns>
+		/// <returns name="Cell[]">A list of Cells constituent to the Topology</returns>
 		property List<Cell^>^ Cells
 		{
 			List<Cell^>^ get();
 		}
 
 		/// <summary>
-		/// Get the cellComplexes constituent to the Topology.
+		/// Returns the CellComplexes constituent to the Topology.
 		/// </summary>
-		/// <returns name="CellComplex[]"></returns>
+		/// <returns name="CellComplex[]">A list of CellComplexes constituent to the Topology</returns>
 		property List<CellComplex^>^ CellComplexes
 		{
 			List<CellComplex^>^ get();
 		}
 
 		/// <summary>
+		/// Checks if two Topologies are the same. NOTE: This is a pointer check, not a topological or a geometry one.
 		/// </summary>
 		/// <param name="topology">Another Topology</param>
 		/// <returns>True if the Topologies are the same, otherwise false</returns>

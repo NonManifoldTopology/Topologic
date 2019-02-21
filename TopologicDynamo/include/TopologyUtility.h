@@ -9,20 +9,20 @@ namespace Topologic {
 	namespace Utilities {
 	
 		/// <summary>
-		/// TopologyUtility includes geometric methods relevant to any topology.
+		/// TopologyUtility includes geometric methods relevant to any Topology.
 		/// </summary>
 		public ref class TopologyUtility
 		{
 		public:
 
 			/// <summary>
-			/// Translates (moves) a topology a certain distance according to x, y, z values.
+			/// Translates (moves) a Topology a certain distance according to x, y, z values.
 			/// </summary>
 			/// <param name="topology">The topology to be translated</param>
 			/// <param name="x">The x value</param>
 			/// <param name="y">The y value</param>
 			/// <param name="z">The z value</param>
-			/// <returns>The topology in its new location</returns>
+			/// <returns>The Topology in its new location</returns>
 			[IsVisibleInDynamoLibrary(false)]
 			static Topology^ Translate(Topology^ topology, double x, double y, double z);
 
@@ -53,18 +53,18 @@ namespace Topologic {
 			static Topology^ Scale(Topology^ topology, Vertex^ origin, double xFactor, double yFactor, double zFactor);
 
 			/// <summary>
-			/// Returns the distance between two topologies.
+			/// Returns the distance between two Topologies.
 			/// </summary>
 			/// <param name="topology">A topology</param>
-			/// <param name="anotherTopology">Another topology</param>
-			/// <returns>The distance between the two topologies</returns>
+			/// <param name="anotherTopology">Another Topology</param>
+			/// <returns>The distance between the two Topologies</returns>
 			static double Distance(Topology^ topology, Topology^ anotherTopology);
 
 			/// <summary>
-			/// Returns the center of mass of any topology.
+			/// Returns the center of mass of any Topology.
 			/// </summary>
-			/// <param name="topology">A topology</param>
-			/// <returns>The center of mass of the given topology</returns>
+			/// <param name="topology">A Topology</param>
+			/// <returns>The center of mass of the given Topology</returns>
 			static Vertex^ CenterOfMass(Topology^ topology);
 
 		public protected:

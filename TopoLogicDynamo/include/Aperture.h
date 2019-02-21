@@ -24,7 +24,7 @@ namespace Topologic
 		/// <summary>
 		/// Creates an Aperture by a Topology and a context.
 		/// </summary>
-		/// <param name="topology">A topology</param>
+		/// <param name="topology">A Topology</param>
 		/// <param name="context">A context</param>
 		/// <returns name="Aperture">An Aperture</returns>
 		static Aperture^ ByTopologyContext(Topology^ topology, Context^ context);
@@ -32,7 +32,7 @@ namespace Topologic
 		/// <summary>
 		/// Creates an Aperture by a Topology, a context, and an open status.
 		/// </summary>
-		/// <param name="topology">A topology</param>
+		/// <param name="topology">A Topology</param>
 		/// <param name="context">A context</param>
 		/// <param name="openStatus">An open status</param>
 		/// <returns name="Aperture">An Aperture</returns>
@@ -53,8 +53,8 @@ namespace Topologic
 		/*/// <summary>
 		/// Creates an Aperture by a Topology and a context Topology.
 		/// </summary>
-		/// <param name="topology">A topology</param>
-		/// <param name="contextTopology">A context topology</param>
+		/// <param name="topology">A Topology</param>
+		/// <param name="contextTopology">A context Topology</param>
 		/// <returns name="Aperture">An Aperture</returns>
 		static Aperture^ ByTopologyContext(Topology^ topology, Topology^ contextTopology);*/
 
