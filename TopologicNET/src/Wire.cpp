@@ -128,7 +128,7 @@ namespace Topologic
 	}
 #endif
 
-	Object^ Wire::Geometry_::get()
+	Object^ Wire::BasicGeometry::get()
 	{
 #ifdef TOPOLOGIC_DYNAMO
 		List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoCurves = gcnew List<Autodesk::DesignScript::Geometry::Curve^>();
@@ -166,7 +166,7 @@ namespace Topologic
 
 		return pDynamoReturnValue;
 #else
-		throw gcnew NotImplementedException();
+		return nullptr;
 #endif
 	}
 

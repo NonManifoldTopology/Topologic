@@ -76,7 +76,7 @@ namespace Topologic {
 		/// Creates a geometry from Edge.
 		/// </summary>
 		/// <returns>The created geometry</returns>
-		property Object^ Geometry_
+		property Object^ BasicGeometry
 		{
 			virtual Object^ get() override;
 		}
@@ -114,18 +114,7 @@ namespace Topologic {
 		/// <param name="curve">A Dynamo curve.</param>
 		/// <returns name="Edge">The created Topologic edge</returns>
 		static Edge^ ByCurve(Autodesk::DesignScript::Geometry::Curve^ curve);
-#endif
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		virtual std::shared_ptr<TopologicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
-
-	protected:
-		virtual ~Edge();
-
-#ifdef TOPOLOGIC_DYNAMO
 		/// <summary>
 		/// Initialises the edge given a NurbsCurve argument. 
 		/// </summary>
@@ -147,6 +136,15 @@ namespace Topologic {
 		/// <returns></returns>
 		static Edge^ ByCurve(Autodesk::DesignScript::Geometry::Line^ pDynamoLine);
 #endif
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		virtual std::shared_ptr<TopologicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
+
+	protected:
+		virtual ~Edge();
 
 		/// <summary>
 		/// 

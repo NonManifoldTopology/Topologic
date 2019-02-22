@@ -112,7 +112,7 @@ namespace TopologicEnergy
 
 			{
 				bool hasGeometry = false;
-				System::Object^ cellGeometry = cell->Geometry_;
+				System::Object^ cellGeometry = cell->BasicGeometry;
 				Autodesk::DesignScript::Geometry::Geometry^ dynamoGeometry = dynamic_cast<Autodesk::DesignScript::Geometry::Geometry^>(cellGeometry);
 				if (dynamoGeometry != nullptr)
 				{
@@ -146,7 +146,7 @@ namespace TopologicEnergy
 			for each(Topologic::Topology^ subcontent in subcontents)
 			{
 				bool hasContentGeometry = false;
-				System::Object^ contentGeometry = subcontent->Geometry_;
+				System::Object^ contentGeometry = subcontent->BasicGeometry;
 				Autodesk::DesignScript::Geometry::Geometry^ dynamoContentGeometry = dynamic_cast<Autodesk::DesignScript::Geometry::Geometry^>(contentGeometry);
 				if (dynamoContentGeometry != nullptr)
 				{

@@ -50,7 +50,7 @@ namespace Topologic
 		return this;
 	}
 
-	Object^ Cluster::Geometry_::get()
+	Object^ Cluster::BasicGeometry::get()
 	{
 		TopologicCore::Cluster::Ptr pCoreCluster = TopologicCore::Topology::Downcast<TopologicCore::Cluster>(GetCoreTopologicalQuery());
 		std::list<std::shared_ptr<TopologicCore::Topology>> coreSubTopologies;
@@ -62,7 +62,7 @@ namespace Topologic
 			kCoreIterator != coreSubTopologies.end();
 			kCoreIterator++)
 		{
-			pTopologies->Add(Topology::ByCoreTopology(*kCoreIterator)->Geometry_);
+			pTopologies->Add(Topology::ByCoreTopology(*kCoreIterator)->BasicGeometry);
 		}
 
 		return pTopologies;

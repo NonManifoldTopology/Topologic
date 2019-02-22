@@ -28,14 +28,13 @@ namespace Topologic {
 			/// <returns name="Face">The created Face</returns>
 			static Face^ ByVertices(Face^ face, System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<Vertex^>^>^ vertices);
 
-#ifdef TOPOLOGIC_DYNAMO
 			/// <summary>
 			/// Returns the UV parameters at a given Vertex on a Face.
 			/// </summary>
 			/// <param name="face">A Face</param>
 			/// <param name="vertex">A Vertex on a Face</param>
 			/// <returns name="UV">The UV parameters</returns>
-			static Autodesk::DesignScript::Geometry::UV^ ParametersAtVertex(Face^ face, Vertex^ vertex);
+			static List<double>^ ParametersAtVertex(Face^ face, Vertex^ vertex);
 
 			/// <summary>
 			/// Returns the normal (vector) at a parameter of a Face.
@@ -44,8 +43,7 @@ namespace Topologic {
 			/// <param name="u">The u parameter of the Face</param>
 			/// <param name="v">The v parameter of the Face</param>
 			/// <returns>The normal (vector) at a parameter of a Face</returns>
-			static Autodesk::DesignScript::Geometry::Vector^ NormalAtParameters(Face^ face, double u, double v);
-#endif
+			static List<double>^ NormalAtParameters(Face^ face, double u, double v);
 
 			/// <summary>
 			/// Returns the Vertex at a given parameter of the Face.

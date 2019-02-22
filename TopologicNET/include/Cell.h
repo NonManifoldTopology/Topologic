@@ -146,7 +146,7 @@ namespace Topologic
 		/// Creates a geometry from Cell.
 		/// </summary>
 		/// <returns>The created geometry</returns>
-		property Object^ Geometry_
+		property Object^ BasicGeometry
 		{
 			virtual Object^ get() override;
 		}
@@ -173,11 +173,32 @@ namespace Topologic
 		/// <returns name="Cell">The created Cell</returns>
 		static Cell^ BySolid(Autodesk::DesignScript::Geometry::Solid^ solid, [DefaultArgument("0.001")] double tolerance);
 
+		/// <summary>
+		/// Creates a cell from a sphere.
+		/// </summary>
+		/// <param name="sphere">A sphere</param>
+		/// <returns name="Cell">The created Cell</returns>
 		static Cell^ BySphere(Autodesk::DesignScript::Geometry::Sphere^ sphere);
 
+		/// <summary>
+		/// Creates a cell from a cylinder.
+		/// </summary>
+		/// <param name="cylinder">A cylinder</param>
+		/// <returns name="Cell">The created Cell</returns>
 		static Cell^ ByCylinder(Autodesk::DesignScript::Geometry::Cylinder^ cylinder);
 
+		/// <summary>
+		/// Creates a cell from a cone.
+		/// </summary>
+		/// <param name="cone">A cone</param>
+		/// <returns name="Cell">The created Cell</returns>
 		static Cell^ ByCone(Autodesk::DesignScript::Geometry::Cone^ cone);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="cuboid"></param>
+		static Cell^ ByCuboid(Autodesk::DesignScript::Geometry::Cuboid^ cuboid);
 #endif
 
 		/// <summary>
@@ -188,14 +209,6 @@ namespace Topologic
 
 	protected:
 		virtual ~Cell();
-
-#ifdef TOPOLOGIC_DYNAMO
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="cuboid"></param>
-		static Cell^ ByCuboid(Autodesk::DesignScript::Geometry::Cuboid^ cuboid);
-#endif
 
 		/// <summary>
 		/// 

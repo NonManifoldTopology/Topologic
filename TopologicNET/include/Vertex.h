@@ -76,7 +76,7 @@ namespace Topologic
 			virtual List<double>^ get();
 		}
 
-		property Object^ Geometry_
+		property Object^ BasicGeometry
 		{
 			/// <summary>
 			/// Creates a geometry from Vertex.

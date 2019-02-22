@@ -134,7 +134,6 @@ namespace Topologic {
 		/// <returns name="Face">The new Face</returns>
 		Face^ AddInternalBoundaries(List<Wire^>^ internalBoundaries);
 
-#ifdef TOPOLOGIC_DYNAMO
 		/// <summary>
 		/// Adds an Aperture to a Face.
 		/// </summary>
@@ -143,13 +142,12 @@ namespace Topologic {
 		/// <param name="numEdgeSamples">The number of sample points along the Aperture Edges</param>
 		/// <returns name="Face">The new Face</returns>
 		static Face^ AddApertureDesign(Face^ face, Face^ apertureDesign, int numEdgeSamples);
-#endif
 
 		/// <summary>
 		/// Creates a geometry from Face.
 		/// </summary>
 		/// <returns>The created geometry</returns>
-		property Object^ Geometry_
+		property Object^ BasicGeometry
 		{
 			virtual Object^ get() override;
 		}
@@ -192,12 +190,7 @@ namespace Topologic {
 		/// <param name="surface">The surface</param>
 		/// <returns name="Face">The created face</returns>
 		static Face^ BySurface(Autodesk::DesignScript::Geometry::Surface^ surface);
-#endif
 
-	protected:
-		virtual ~Face();
-
-#ifdef TOPOLOGIC_DYNAMO
 		/// <summary>
 		/// Initialises the face given a NurbsSurface argument. Called by the respective constructor.
 		/// </summary>
@@ -206,6 +199,9 @@ namespace Topologic {
 		static Face^ BySurface(Autodesk::DesignScript::Geometry::NurbsSurface^ pDynamoNurbsSurface,
 			array<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoPerimeterCurves);
 #endif
+
+	protected:
+		virtual ~Face();
 
 		/// <summary>
 		/// 

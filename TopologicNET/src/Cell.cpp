@@ -32,41 +32,6 @@ namespace Topologic
 		return gcnew Cell(pCoreCell);
 	}
 
-#ifdef TOPOLOGIC_DYNAMO
-	Cell^ Cell::BySolid(Autodesk::DesignScript::Geometry::Solid^ solid, double tolerance)
-	{
-		if (solid->GetType() == Autodesk::DesignScript::Geometry::Sphere::typeid)
-		{
-			return BySphere(safe_cast<Autodesk::DesignScript::Geometry::Sphere^>(solid));
-		}
-		else if (solid->GetType() == Autodesk::DesignScript::Geometry::Cuboid::typeid)
-		{
-			return ByCuboid(safe_cast<Autodesk::DesignScript::Geometry::Cuboid^>(solid));
-		}
-		else if (solid->GetType() == Autodesk::DesignScript::Geometry::Cylinder::typeid)
-		{
-			return ByCylinder(safe_cast<Autodesk::DesignScript::Geometry::Cylinder^>(solid));
-		}
-		else if (solid->GetType() == Autodesk::DesignScript::Geometry::Cone::typeid)
-		{
-			return ByCone(safe_cast<Autodesk::DesignScript::Geometry::Cone^>(solid));
-		}
-		else
-		{
-			Autodesk::DesignScript::Geometry::PolySurface^ pDynamoPolysurface = 
-				Autodesk::DesignScript::Geometry::PolySurface::BySolid(solid);
-			List<Face^>^ pFaces = gcnew List<Face^>();
-			array<Autodesk::DesignScript::Geometry::Surface^>^ dynamoSurfaces = pDynamoPolysurface->Surfaces();
-			for each(Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface in dynamoSurfaces)
-			{
-				pFaces->Add(Face::BySurface(pDynamoSurface));
-				delete pDynamoSurface;
-			}
-			return ByFaces(pFaces, tolerance);
-		}
-	}
-#endif
-
 	Cell^ Cell::ByShell(Shell^ shell)
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Cell::ByShell(TopologicCore::Topology::Downcast<TopologicCore::Shell>(shell->GetCoreTopologicalQuery()));
@@ -295,7 +260,7 @@ namespace Topologic
 		return gcnew Vertex(pCoreCenterOfMass);
 	}*/
 
-	Object^ Cell::Geometry_::get()
+	Object^ Cell::BasicGeometry::get()
 	{
 #ifdef TOPOLOGIC_DYNAMO
 		List<Autodesk::DesignScript::Geometry::Surface^>^ pDynamoSurfaces = gcnew List<Autodesk::DesignScript::Geometry::Surface^>();
@@ -304,7 +269,7 @@ namespace Topologic
 		bool hasFallbackVisualization = false;
 		for each(Face^ pFace in pFaces)
 		{
-			Object^ pFaceGeometry = pFace->Geometry_;
+			Object^ pFaceGeometry = pFace->BasicGeometry;
 			Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface = dynamic_cast<Autodesk::DesignScript::Geometry::Surface^>(pFaceGeometry);
 			pDynamoGeometries->Add(pFaceGeometry);
 			if(pDynamoSurface != nullptr)
@@ -343,11 +308,44 @@ namespace Topologic
 
 		return pDynamoGeometries;
 #else
-		throw gcnew NotImplementedException();
+		return nullptr;
 #endif
 	}
 
 #ifdef TOPOLOGIC_DYNAMO
+	Cell^ Cell::BySolid(Autodesk::DesignScript::Geometry::Solid^ solid, double tolerance)
+	{
+		if (solid->GetType() == Autodesk::DesignScript::Geometry::Sphere::typeid)
+		{
+			return BySphere(safe_cast<Autodesk::DesignScript::Geometry::Sphere^>(solid));
+		}
+		else if (solid->GetType() == Autodesk::DesignScript::Geometry::Cuboid::typeid)
+		{
+			return ByCuboid(safe_cast<Autodesk::DesignScript::Geometry::Cuboid^>(solid));
+		}
+		else if (solid->GetType() == Autodesk::DesignScript::Geometry::Cylinder::typeid)
+		{
+			return ByCylinder(safe_cast<Autodesk::DesignScript::Geometry::Cylinder^>(solid));
+		}
+		else if (solid->GetType() == Autodesk::DesignScript::Geometry::Cone::typeid)
+		{
+			return ByCone(safe_cast<Autodesk::DesignScript::Geometry::Cone^>(solid));
+		}
+		else
+		{
+			Autodesk::DesignScript::Geometry::PolySurface^ pDynamoPolysurface =
+				Autodesk::DesignScript::Geometry::PolySurface::BySolid(solid);
+			List<Face^>^ pFaces = gcnew List<Face^>();
+			array<Autodesk::DesignScript::Geometry::Surface^>^ dynamoSurfaces = pDynamoPolysurface->Surfaces();
+			for each(Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface in dynamoSurfaces)
+			{
+				pFaces->Add(Face::BySurface(pDynamoSurface));
+				delete pDynamoSurface;
+			}
+			return ByFaces(pFaces, tolerance);
+		}
+	}
+
 	Cell ^ Cell::BySphere(Autodesk::DesignScript::Geometry::Sphere ^ sphere)
 	{
 		TopologicCore::Cell::Ptr pCoreSphere = TopologicUtilities::CellUtility::BySphere(

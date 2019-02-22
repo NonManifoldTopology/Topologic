@@ -53,7 +53,7 @@ namespace Topologic
 		/// Creates a geometry from Cluster.
 		/// </summary>
 		/// <returns>The created geometry</returns>
-		property Object^ Geometry_
+		property Object^ BasicGeometry
 		{
 			virtual Object^ get() override;
 		}

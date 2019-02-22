@@ -60,7 +60,6 @@ namespace Topologic
 		/// <returns name="Topology">The created Topology</returns>
 		[IsVisibleInDynamoLibrary(false)]
 		static Topology^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces);
-
 #endif
 
 		/// <summary>
@@ -87,7 +86,7 @@ namespace Topologic
 #ifdef TOPOLOGIC_DYNAMO
 		[IsVisibleInDynamoLibrary(false)]
 #endif
-		property Object^ Geometry_
+		property Object^ BasicGeometry
 		{
 			virtual Object^ get() abstract;
 		}

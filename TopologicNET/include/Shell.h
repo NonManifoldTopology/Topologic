@@ -4,10 +4,6 @@
 
 #include <TopologicCore/include/Shell.h>
 
-#ifdef TOPOLOGIC_DYNAMO
-using namespace Autodesk::DesignScript::Runtime;
-#endif
-
 namespace Topologic
 {
 	ref class Vertex;
@@ -92,7 +88,7 @@ namespace Topologic
 		/// Creates a geometry from Shell.
 		/// </summary>
 		/// <returns>The created geometry</returns>
-		property Object^ Geometry_
+		property Object^ BasicGeometry
 		{
 			virtual Object^ get() override;
 		}

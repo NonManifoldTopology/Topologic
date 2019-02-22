@@ -330,8 +330,8 @@ namespace Topologic
 			onlyTwoVertices = false;
 		}
 
-		Autodesk::DesignScript::Geometry::Point^ pDynamoPoint1 = safe_cast<Autodesk::DesignScript::Geometry::Point^>(pVertices[0]->Geometry_);
-		Autodesk::DesignScript::Geometry::Point^ pDynamoPoint2 = safe_cast<Autodesk::DesignScript::Geometry::Point^>(pVertices[1]->Geometry_);
+		Autodesk::DesignScript::Geometry::Point^ pDynamoPoint1 = safe_cast<Autodesk::DesignScript::Geometry::Point^>(pVertices[0]->BasicGeometry);
+		Autodesk::DesignScript::Geometry::Point^ pDynamoPoint2 = safe_cast<Autodesk::DesignScript::Geometry::Point^>(pVertices[1]->BasicGeometry);
 
 		Autodesk::DesignScript::Geometry::Line^ pDynamoLine =
 			Autodesk::DesignScript::Geometry::Line::ByStartPointEndPoint(pDynamoPoint1, pDynamoPoint2);
@@ -566,12 +566,12 @@ namespace Topologic
 		return pSharedVertices;
 	}
 
-	Object^ Edge::Geometry_::get()
+	Object^ Edge::BasicGeometry::get()
 	{
 #ifdef TOPOLOGIC_DYNAMO
 		return Curve();
 #else
-		throw gcnew NotImplementedException();
+		return nullptr;
 #endif
 	}
 

@@ -25,20 +25,20 @@ namespace Topologic {
 			/// <returns>The topology in its new location</returns>
 			static Topology^ Translate(Topology^ topology, double x, double y, double z);
 
-#ifdef TOPOLOGIC_DYNAMO
 			/// <summary>
 			///
 			/// </summary>
 			/// <param name="topology"></param>
 			/// <param name="origin"></param>
-			/// <param name="vector"></param>
+			/// <param name="xVector"></param>
+			/// <param name="yVector"></param>
+			/// <param name="zVector"></param>
 			/// <param name="degree"></param>
 			/// <returns></returns>
 			static Topology^ Rotate(Topology^ topology,
 				Vertex^ origin,
-				Autodesk::DesignScript::Geometry::Vector^ vector,
+				double xVector, double yVector, double zVector,
 				double degree);
-#endif
 
 			/// <summary>
 			///

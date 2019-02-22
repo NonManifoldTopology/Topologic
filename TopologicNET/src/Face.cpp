@@ -294,7 +294,7 @@ namespace Topologic
 			for each(Wire^ pWire in pWires)
 			{
 				try {
-					Object^ pWireGeometry = pWire->Geometry_;
+					Object^ pWireGeometry = pWire->BasicGeometry;
 					Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoWireGeometry = safe_cast<Autodesk::DesignScript::Geometry::PolyCurve^>(pWireGeometry);
 					if (pDynamoWireGeometry != nullptr)
 					{
@@ -480,7 +480,7 @@ namespace Topologic
 				}
 
 				Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoPolycurve =
-					safe_cast<Autodesk::DesignScript::Geometry::PolyCurve^>(pWire->Geometry_);
+					safe_cast<Autodesk::DesignScript::Geometry::PolyCurve^>(pWire->BasicGeometry);
 				if (pDynamoPolycurve != nullptr)
 				{
 					pDynamoEdgeLoops->Add(pDynamoPolycurve);
@@ -553,7 +553,7 @@ namespace Topologic
 		List<Autodesk::DesignScript::Geometry::Point^>^ pDynamoPoints = gcnew List<Autodesk::DesignScript::Geometry::Point^>();
 		for each(Vertex^ pVertex in pVertices)
 		{
-			pDynamoPoints->Add(safe_cast<Autodesk::DesignScript::Geometry::Point^>(pVertex->Geometry_));
+			pDynamoPoints->Add(safe_cast<Autodesk::DesignScript::Geometry::Point^>(pVertex->BasicGeometry));
 		}
 
 		Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface = Autodesk::DesignScript::Geometry::Surface::ByPerimeterPoints(pDynamoPoints);
@@ -1075,7 +1075,7 @@ namespace Topologic
 		return pWires;
 	}
 
-	Object^ Face::Geometry_::get()
+	Object^ Face::BasicGeometry::get()
 	{
 #ifdef TOPOLOGIC_DYNAMO
 		try {
@@ -1086,7 +1086,7 @@ namespace Topologic
 			return TriangulatedMesh();
 		}
 #else
-		throw gcnew NotImplementedException();
+		return nullptr;
 #endif
 	}
 
@@ -1118,7 +1118,6 @@ namespace Topologic
 		delete m_pCoreFace;
 	}
 
-#ifdef TOPOLOGIC_DYNAMO
 	Face^ Face::AddApertureDesign(Face^ face, Face^ apertureDesign, int numEdgeSamples)
 	{
 		if (numEdgeSamples <= 0)
@@ -1156,8 +1155,9 @@ namespace Topologic
 					Vertex^ pSampleVertex = Topologic::Utilities::EdgeUtility::VertexAtParameter(pApertureEdge, t);
 
 					// Find the UV-coordinate of the point on the aperture design
-					Autodesk::DesignScript::Geometry::UV^ pUV = Topologic::Utilities::FaceUtility::ParametersAtVertex(apertureDesign, pSampleVertex);
-					double checkedU = pUV->U, checkedV = pUV->V;
+					List<double>^ uv = Topologic::Utilities::FaceUtility::ParametersAtVertex(apertureDesign, pSampleVertex);
+					assert(uv->Count == 2);
+					double checkedU = uv[0], checkedV = uv[1];
 					if (checkedU < 0.0)
 					{
 						checkedU = 0.0;
@@ -1179,8 +1179,6 @@ namespace Topologic
 					// Find the point with the same UV-coordinate on the surface, add it to the list
 					Vertex^ pMappedSampleVertex = Topologic::Utilities::FaceUtility::VertexAtParameters(face, checkedU, checkedV);
 					pMappedSampleVertices->Add(pMappedSampleVertex);
-
-					delete pUV;
 				}
 
 				// Interpolate the mapped vertices to an edge.
@@ -1203,5 +1201,4 @@ namespace Topologic
 
 		return pCopyFace;
 	}
-#endif
 }

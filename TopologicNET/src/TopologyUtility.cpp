@@ -18,10 +18,9 @@ namespace Topologic
 			return Topology::ByCoreTopology(pCoreTranslatedTopology);
 		}
 
-#ifdef TOPOLOGIC_DYNAMO
 		Topology ^ TopologyUtility::Rotate(Topology ^ topology, 
 			Vertex^ origin,
-			Autodesk::DesignScript::Geometry::Vector^ vector,
+			double xVector, double yVector, double zVector,
 			double degree)
 		{
 			// 1. Copy this topology
@@ -30,11 +29,10 @@ namespace Topologic
 			TopologicCore::Vertex::Ptr pCoreOrigin =
 				TopologicCore::TopologicalQuery::Downcast<TopologicCore::Vertex>(origin->GetCoreTopologicalQuery());
 
-			TopologicCore::Topology::Ptr pCoreRotatedTopology = TopologicUtilities::TopologyUtility::Rotate(pCoreTopology, pCoreOrigin, vector->X, vector->Y, vector->Z, degree);
+			TopologicCore::Topology::Ptr pCoreRotatedTopology = TopologicUtilities::TopologyUtility::Rotate(pCoreTopology, pCoreOrigin, xVector, yVector, zVector, degree);
 
 			return Topology::ByCoreTopology(pCoreRotatedTopology);
 		}
-#endif
 
 		Topology ^ TopologyUtility::Scale(Topology ^ topology, Vertex ^ origin, double xFactor, double yFactor, double zFactor)
 		{

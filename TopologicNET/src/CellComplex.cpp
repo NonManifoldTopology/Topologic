@@ -196,13 +196,13 @@ namespace Topologic
 		return pNonManifoldFaces;
 	}
 
-	Object^ CellComplex::Geometry_::get()
+	Object^ CellComplex::BasicGeometry::get()
 	{
 		List<Cell^>^ pCells = Cells;
 		List<Object^>^ pObjects = gcnew List<Object^>();
 		for each(Cell^ pCell in pCells)
 		{
-			pObjects->Add(pCell->Geometry_);
+			pObjects->Add(pCell->BasicGeometry);
 		}
 		return pObjects;
 	}

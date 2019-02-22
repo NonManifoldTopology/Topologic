@@ -69,7 +69,7 @@ namespace Topologic {
 			bool get();
 		}
 
-		property Object^ Geometry_
+		property Object^ BasicGeometry
 		{
 			/// <summary>
 			/// Creates a geometry from Wire.

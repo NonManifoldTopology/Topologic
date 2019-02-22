@@ -87,12 +87,12 @@ namespace Topologic
 		delete m_pCoreVertex;
 	}
 
-	Object^ Vertex::Geometry_::get()
+	Object^ Vertex::BasicGeometry::get()
 	{
 #ifdef TOPOLOGIC_DYNAMO
 		return Point();
 #else
-		throw gcnew NotImplementedException();
+		return nullptr;
 #endif
 	}
 

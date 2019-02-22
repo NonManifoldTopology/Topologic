@@ -125,7 +125,7 @@ namespace Topologic
 		return pCoreShell->IsClosed();
 	}
 
-	Object^ Shell::Geometry_::get()
+	Object^ Shell::BasicGeometry::get()
 	{
 #ifdef TOPOLOGIC_DYNAMO
 		List<Autodesk::DesignScript::Geometry::Surface^>^ pDynamoSurfaces = gcnew List<Autodesk::DesignScript::Geometry::Surface^>();
@@ -146,7 +146,7 @@ namespace Topologic
 			return pDynamoSurfaces;
 		}
 #else
-		throw gcnew NotImplementedException();
+		return nullptr;
 #endif
 	}
 

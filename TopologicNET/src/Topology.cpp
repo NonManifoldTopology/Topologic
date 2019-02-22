@@ -241,7 +241,7 @@ namespace Topologic
 	void RecursiveGeometry(Topology^ topology, List<Object^>^% output)
 	{
 		List<Object^>^ objects = gcnew List<Object^>();
-		objects->Add(topology->Geometry_);
+		objects->Add(topology->BasicGeometry);
 
 		List<Topology^>^ subContents = topology->SubContents;
 		List<Object^>^ subContentGeometries = gcnew List<Object^>();

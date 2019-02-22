@@ -34,8 +34,7 @@ namespace Topologic {
 			}
 		}
 
-#ifdef TOPOLOGIC_DYNAMO
-		Autodesk::DesignScript::Geometry::UV^ FaceUtility::ParametersAtVertex(Face^ face, Vertex^ vertex)
+		List<double>^ FaceUtility::ParametersAtVertex(Face^ face, Vertex^ vertex)
 		{
 			TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
 			double u = 0.0, v = 0.0;
@@ -45,17 +44,23 @@ namespace Topologic {
 				u, v
 			);
 
-			return Autodesk::DesignScript::Geometry::UV::ByCoordinates(u, v);
+			List<double>^ uv = gcnew List<double>();
+			uv->Add(u);
+			uv->Add(v);
+			return uv;
 		}
 
-		Autodesk::DesignScript::Geometry::Vector^ FaceUtility::NormalAtParameters(Face^ face, double u, double v)
+		List<double>^ FaceUtility::NormalAtParameters(Face^ face, double u, double v)
 		{
 			TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
 			gp_Dir normal = TopologicUtilities::FaceUtility::NormalAtParameters(pCoreFace, u, v);
 
-			return Autodesk::DesignScript::Geometry::Vector::ByCoordinates(normal.X(), normal.Y(), normal.Z());
+			List<double>^ netNormal = gcnew List<double>();
+			netNormal->Add(normal.X());
+			netNormal->Add(normal.Y());
+			netNormal->Add(normal.Z());
+			return netNormal;
 		}
-#endif
 
 		Vertex^ FaceUtility::VertexAtParameters(Face^ face, double u, double v)
 		{
