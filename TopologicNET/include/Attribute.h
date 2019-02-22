@@ -4,6 +4,9 @@
 
 namespace Topologic
 {
+	/// <summary>
+	/// Attributes include the following classes: Attribute, AttributeFactory, AttributeFactoryManager, DoubleAttributeFactory, IntAttributeFactory and StringAttributeFactory.
+	/// </summary>
 	namespace Attributes
 	{
 		/// <summary>

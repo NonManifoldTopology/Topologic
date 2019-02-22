@@ -7,7 +7,7 @@ namespace Topologic
 	namespace Factories
 	{
 		/// <summary>
-		/// (private) A private factory class to create a graph.
+		/// (private) A private factory class to create a DualGraph.
 		/// </summary>
 		ref class DualGraphFactory : TopologyFactory
 		{

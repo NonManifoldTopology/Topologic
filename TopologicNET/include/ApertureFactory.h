@@ -4,6 +4,9 @@
 
 namespace Topologic
 {
+	/// <summary>
+	/// Factories include the following private classes: ApertureFactory, CellComplexFactory, CellFactory, ClusterFactory, DualGraphFactory, EdgeFactory, FaceFactory, ShellFactory, TopologyFactory, VertexFactory, WireFactory and TopologyFactoryManager.
+	/// </summary>
 	namespace Factories
 	{
 		/// <summary>

@@ -18,6 +18,9 @@ using namespace licensepp;
 
 namespace Topologic
 {
+	/// <summary>
+	/// LicenseKeysRegister stores information about the license.
+	/// </summary>
 	class LicenseKeysRegister
 	{
 	public:
@@ -40,6 +43,9 @@ namespace Topologic
 			87600U,
 			true), // 10 years max
 	};
+	/// <summary>
+	/// LicenseManager manages the license.
+	/// </summary>
 	class LicenseManager : public BaseLicenseManager<LicenseKeysRegister>
 	{
 	public:
