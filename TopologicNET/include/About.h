@@ -15,7 +15,7 @@ namespace Topologic {
 		/// <summary>
 		/// Returns the current version of Topologic.
 		/// </summary>
-		/// <returns">The current version of Topologic</returns>
+		/// <returns>The current version of Topologic</returns>
 	public:
 		static String^ Version();
 
