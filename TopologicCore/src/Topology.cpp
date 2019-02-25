@@ -592,8 +592,13 @@ namespace TopologicCore
 		occtCellsBuilder.MakeContainers();
 
 		TopoDS_Shape occtResultShape = occtCellsBuilder.Shape();
-		TopoDS_Shape occtPostprocessedShape = PostprocessBooleanResult(occtResultShape);
-		Topology::Ptr pPostprocessedShape = Topology::ByOcctShape(occtPostprocessedShape, "");
+		TopoDS_Shape occtPostprocessedShape = occtResultShape.IsNull()? occtResultShape : PostprocessBooleanResult(occtResultShape);
+		Topology::Ptr pPostprocessedShape = Topology::ByOcctShape(occtPostprocessedShape, ""); 
+		if (pPostprocessedShape == nullptr)
+		{
+			return nullptr;
+		}
+
 		TransferContents(GetOcctShape(), pPostprocessedShape);
 		TransferContents(kpOtherTopology->GetOcctShape(), pPostprocessedShape);
 		GlobalCluster::GetInstance().AddTopology(occtPostprocessedShape);
@@ -1328,8 +1333,13 @@ namespace TopologicCore
 		occtCellsBuilder.MakeContainers();
 
 		TopoDS_Shape occtResultShape = occtCellsBuilder.Shape();
-		TopoDS_Shape occtPostprocessedShape = PostprocessBooleanResult(occtResultShape);
+		TopoDS_Shape occtPostprocessedShape = occtResultShape.IsNull() ? occtResultShape : PostprocessBooleanResult(occtResultShape);
 		Topology::Ptr pPostprocessedShape = Topology::ByOcctShape(occtPostprocessedShape, "");
+		if (pPostprocessedShape == nullptr)
+		{
+			return nullptr;
+		}
+
 		Topology::Ptr pCopyPostprocessedShape = pPostprocessedShape->DeepCopy();
 		TransferContents(GetOcctShape(), pCopyPostprocessedShape);
 		TransferContents(kpOtherTopology->GetOcctShape(), pCopyPostprocessedShape);
@@ -1380,8 +1390,12 @@ namespace TopologicCore
 		occtCellsBuilder.MakeContainers();
 
 		TopoDS_Shape occtResultShape = occtCellsBuilder.Shape();
-		TopoDS_Shape occtPostprocessedShape = PostprocessBooleanResult(occtResultShape);
+		TopoDS_Shape occtPostprocessedShape = occtResultShape.IsNull() ? occtResultShape : PostprocessBooleanResult(occtResultShape);
 		Topology::Ptr pPostprocessedShape = Topology::ByOcctShape(occtPostprocessedShape, "");
+		if (pPostprocessedShape == nullptr)
+		{
+			return nullptr;
+		}
 		Topology::Ptr pCopyPostprocessedShape = pPostprocessedShape->DeepCopy();
 		TransferContents(GetOcctShape(), pCopyPostprocessedShape);
 		TransferContents(kpOtherTopology->GetOcctShape(), pCopyPostprocessedShape);
@@ -1421,7 +1435,7 @@ namespace TopologicCore
 		occtCellsBuilder.MakeContainers();
 
 		TopoDS_Shape occtResultShape = occtCellsBuilder.Shape();
-		TopoDS_Shape occtPostprocessedShape = PostprocessBooleanResult(occtResultShape);
+		TopoDS_Shape occtPostprocessedShape = occtResultShape.IsNull() ? occtResultShape : PostprocessBooleanResult(occtResultShape);
 		Topology::Ptr pPostprocessedShape = Topology::ByOcctShape(occtPostprocessedShape, "");
 		if (pPostprocessedShape == nullptr)
 		{
@@ -1471,8 +1485,12 @@ namespace TopologicCore
 		occtCellsBuilder.MakeContainers();
 
 		TopoDS_Shape occtResultShape = occtCellsBuilder.Shape();
-		TopoDS_Shape occtPostprocessedShape = PostprocessBooleanResult(occtResultShape);
+		TopoDS_Shape occtPostprocessedShape = occtResultShape.IsNull() ? occtResultShape : PostprocessBooleanResult(occtResultShape);
 		Topology::Ptr pPostprocessedShape = Topology::ByOcctShape(occtPostprocessedShape, "");
+		if (pPostprocessedShape == nullptr)
+		{
+			return nullptr;
+		}
 		Topology::Ptr pCopyPostprocessedShape = pPostprocessedShape->DeepCopy();
 		TransferContents(GetOcctShape(), pCopyPostprocessedShape);
 		TransferContents(kpOtherTopology->GetOcctShape(), pCopyPostprocessedShape);
@@ -1738,8 +1756,12 @@ namespace TopologicCore
 		occtCellsBuilder.MakeContainers();
 
 		TopoDS_Shape occtResultShape = occtCellsBuilder.Shape();
-		TopoDS_Shape occtPostprocessedShape = PostprocessBooleanResult(occtResultShape);
+		TopoDS_Shape occtPostprocessedShape = occtResultShape.IsNull() ? occtResultShape : PostprocessBooleanResult(occtResultShape);
 		Topology::Ptr pPostprocessedShape = Topology::ByOcctShape(occtPostprocessedShape, "");
+		if (pPostprocessedShape == nullptr)
+		{
+			return nullptr;
+		}
 		Topology::Ptr pCopyPostprocessedShape = pPostprocessedShape->DeepCopy();
 		TransferContents(GetOcctShape(), pCopyPostprocessedShape);
 		GlobalCluster::GetInstance().AddTopology(pCopyPostprocessedShape);
@@ -1765,8 +1787,12 @@ namespace TopologicCore
 		RegularBooleanOperation(occtArgumentsA, occtArgumentsB, occtFuse);
 
 		TopoDS_Shape occtResultShape = occtFuse.Shape();
-		TopoDS_Shape occtPostprocessedShape = PostprocessBooleanResult(occtResultShape);
+		TopoDS_Shape occtPostprocessedShape = occtResultShape.IsNull() ? occtResultShape : PostprocessBooleanResult(occtResultShape);
 		Topology::Ptr pPostprocessedShape = Topology::ByOcctShape(occtPostprocessedShape, "");
+		if (pPostprocessedShape == nullptr)
+		{
+			return nullptr;
+		}
 		Topology::Ptr pCopyPostprocessedShape = pPostprocessedShape->DeepCopy();
 		TransferContents(GetOcctShape(), pCopyPostprocessedShape);
 		TransferContents(kpOtherTopology->GetOcctShape(), pCopyPostprocessedShape);
@@ -2117,8 +2143,12 @@ namespace TopologicCore
 		occtCellsBuilder.MakeContainers();
 
 		TopoDS_Shape occtResultShape = occtCellsBuilder.Shape();
-		TopoDS_Shape occtPostprocessedShape = PostprocessBooleanResult(occtResultShape);
+		TopoDS_Shape occtPostprocessedShape = occtResultShape.IsNull() ? occtResultShape : PostprocessBooleanResult(occtResultShape);
 		Topology::Ptr pPostprocessedShape = Topology::ByOcctShape(occtPostprocessedShape, "");
+		if (pPostprocessedShape == nullptr)
+		{
+			return nullptr;
+		}
 		TransferContents(GetOcctShape(), pPostprocessedShape);
 		TransferContents(kpOtherTopology->GetOcctShape(), pPostprocessedShape);
 		GlobalCluster::GetInstance().AddTopology(occtPostprocessedShape);
