@@ -212,6 +212,7 @@
     <ClInclude Include="..\TopologicNET\include\FaceFactory.h" />
     <ClInclude Include="..\TopologicNET\include\FaceUtility.h" />
     <ClInclude Include="..\TopologicNET\include\GlobalCluster.h" />
+    <ClInclude Include="..\TopologicNET\include\Graph.h" />
     <ClInclude Include="..\TopologicNET\include\IntAttributeFactory.h" />
     <ClInclude Include="..\TopologicNET\include\LicenseManager.h" />
     <ClInclude Include="..\TopologicNET\include\Shell.h" />
@@ -253,6 +254,7 @@
     <ClCompile Include="..\TopologicNET\src\FaceFactory.cpp" />
     <ClCompile Include="..\TopologicNET\src\FaceUtility.cpp" />
     <ClCompile Include="..\TopologicNET\src\GlobalCluster.cpp" />
+    <ClCompile Include="..\TopologicNET\src\Graph.cpp" />
     <ClCompile Include="..\TopologicNET\src\IntAttributeFactory.cpp" />
     <ClCompile Include="..\TopologicNET\src\Shell.cpp" />
     <ClCompile Include="..\TopologicNET\src\ShellFactory.cpp" />

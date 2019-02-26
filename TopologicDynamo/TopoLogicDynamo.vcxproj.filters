@@ -114,6 +114,7 @@
     <ClInclude Include="..\TopologicNET\include\WireFactory.h">
       <Filter>Factories</Filter>
     </ClInclude>
+    <ClInclude Include="..\TopologicNET\include\Graph.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\TopologicNET\src\About.cpp" />
@@ -196,5 +197,6 @@
     <ClCompile Include="..\TopologicNET\src\WireFactory.cpp">
       <Filter>Factories</Filter>
     </ClCompile>
+    <ClCompile Include="..\TopologicNET\src\Graph.cpp" />
   </ItemGroup>
 </Project>

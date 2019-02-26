@@ -181,6 +181,7 @@ copy "$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\bind\*.pdb
     <ClInclude Include="include\EdgeFactory.h" />
     <ClInclude Include="include\Face.h" />
     <ClInclude Include="include\FaceFactory.h" />
+    <ClInclude Include="include\Graph.h" />
     <ClInclude Include="include\InstanceGUIDManager.h" />
     <ClInclude Include="include\Shell.h" />
     <ClInclude Include="include\ShellFactory.h" />
@@ -214,6 +215,7 @@ copy "$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\bind\*.pdb
     <ClCompile Include="src\EdgeFactory.cpp" />
     <ClCompile Include="src\Face.cpp" />
     <ClCompile Include="src\FaceFactory.cpp" />
+    <ClCompile Include="src\Graph.cpp" />
     <ClCompile Include="src\InstanceGUIDManager.cpp" />
     <ClCompile Include="src\Shell.cpp" />
     <ClCompile Include="src\ShellFactory.cpp" />

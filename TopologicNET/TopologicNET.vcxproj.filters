@@ -89,6 +89,7 @@
     <ClInclude Include="include\EdgeFactory.h">
       <Filter>Factories</Filter>
     </ClInclude>
+    <ClInclude Include="include\Graph.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\About.cpp" />
@@ -171,6 +172,7 @@
     <ClCompile Include="src\ClusterFactory.cpp">
       <Filter>Factories</Filter>
     </ClCompile>
+    <ClCompile Include="src\Graph.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Attributes">
