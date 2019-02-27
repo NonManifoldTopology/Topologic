@@ -23,10 +23,12 @@ namespace TopologicCore
 
 		virtual ~Graph();
 
+		TOPOLOGIC_API Topology::Ptr Topology();
+
 	protected:
 		std::list<Vertex::Ptr> m_vertices;
 		std::list<Edge::Ptr> m_edges;
 
-		std::map<TopoDS_Vertex, std::list<TopoDS_Edge>> m_graphDictionary;
+		std::map<TopoDS_Vertex, TopTools_MapOfShape, OcctShapeComparator> m_graphDictionary;
 	};
 }

@@ -55,6 +55,10 @@ namespace TopologicCore
 		/// <returns></returns>
 		TOPOLOGIC_API std::shared_ptr<Vertex> StartVertex() const;
 
+		static TopoDS_Vertex StartVertex(const TopoDS_Edge& rkOcctEdge);
+		
+		static TopoDS_Vertex EndVertex(const TopoDS_Edge& rkOcctEdge);
+
 		/// <summary>
 		/// 
 		/// </summary>
