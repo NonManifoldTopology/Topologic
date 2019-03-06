@@ -28,6 +28,25 @@ namespace Topologic
 		return gcnew Graph(pCoreGraph);
 	}
 
+	Graph ^ Graph::ByTopology(
+		Topologic::Topology ^ topology,
+		bool direct,
+		bool viaSharedTopologies,
+		bool viaSharedApertures,
+		bool toExteriorTopologies,
+		bool toExteriorApertures)
+	{
+		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
+		TopologicCore::Graph::Ptr pCoreGraph = TopologicCore::Graph::ByTopology(
+			pCoreTopology,
+			direct,
+			viaSharedTopologies,
+			viaSharedApertures,
+			toExteriorTopologies,
+			toExteriorApertures);
+		return gcnew Graph(pCoreGraph);
+	}
+
 	Graph::Graph(const std::shared_ptr<TopologicCore::Graph>& kpCoreGraph)
 		: m_pCoreGraph(kpCoreGraph != nullptr ? new TopologicCore::Graph::Ptr(kpCoreGraph) : throw gcnew Exception("A null graph was created."))
 	{

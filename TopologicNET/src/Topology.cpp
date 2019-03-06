@@ -511,13 +511,16 @@ namespace Topologic
 
 	Topology ^ Topology::AddAttributesNoCopy(System::Collections::Generic::Dictionary<String^, Object^>^ attributes)
 	{
-		TopologicCore::Topology::Ptr pCoreTopology =
-			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-
-		for each(KeyValuePair<String^, Object^>^ entry in attributes)
+		if (attributes != nullptr)
 		{
-			System::Type^ entryValueType = entry->Value->GetType();
-			Attributes::AttributeFactoryManager::Instance->SetAttribute(this, entry->Key, entry->Value);
+			TopologicCore::Topology::Ptr pCoreTopology =
+				TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+
+			for each(KeyValuePair<String^, Object^>^ entry in attributes)
+			{
+				System::Type^ entryValueType = entry->Value->GetType();
+				Attributes::AttributeFactoryManager::Instance->SetAttribute(this, entry->Key, entry->Value);
+			}
 		}
 		return this;
 	}

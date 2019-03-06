@@ -198,8 +198,8 @@ namespace TopologicCore
 		std::list<Wire::Ptr> wires;
 		Wires(wires);
 
-		// A manifold edge has 0 or 1 wires.
-		if (wires.size() < 2)
+		// A manifold edge has <= 2 wires.
+		if (wires.size() <= 2)
 		{
 			return true;
 		}

@@ -2,6 +2,10 @@
 
 #include <TopologicCore/include/Graph.h>
 
+#ifdef TOPOLOGIC_DYNAMO
+using namespace Autodesk::DesignScript::Runtime;
+#endif
+
 using namespace System::Collections::Generic;
 
 namespace Topologic {
@@ -13,6 +17,25 @@ namespace Topologic {
 	{
 	public:
 		static Graph^ ByVerticesEdges(List<Vertex^>^ vertices, List<Edge^>^ edges);
+
+
+#ifdef TOPOLOGIC_DYNAMO
+		static Graph^ ByTopology(
+			Topology^ topology,
+			[DefaultArgument("true")] bool direct,
+			[DefaultArgument("false")] bool viaSharedTopologies,
+			[DefaultArgument("false")] bool viaSharedApertures,
+			[DefaultArgument("false")] bool toExteriorTopologies,
+			[DefaultArgument("false")] bool toExteriorApertures);
+#else
+		static Graph^ ByTopology(
+			Topology^ topology,
+			bool direct,
+			bool viaSharedTopologies,
+			bool viaSharedApertures,
+			bool toExteriorTopologies,
+			bool toExteriorApertures);
+#endif
 
 		property Topology^ Topology
 		{

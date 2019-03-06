@@ -432,6 +432,10 @@ namespace TopologicCore
 
 		// 2. Find the closest simplest topology of the copy topology
 		Topology::Ptr selectedSubtopology = SelectSubtopology(pCenterOfMass, kTypeFilter);
+		if (selectedSubtopology == nullptr)
+		{
+			return;
+		}
 		bool hasContent = ContentManager::GetInstance().HasContent(selectedSubtopology->GetOcctShape(), rkTopology->GetOcctShape());
 		if (hasContent)
 		{
@@ -2388,7 +2392,7 @@ namespace TopologicCore
 				int contextType = pContext->Topology()->GetType();
 				filterType = filterType | contextType;
 			}
-			pShapeCopy->AddContent(pCopyContentTopology, filterType);
+			//pShapeCopy->AddContent(pCopyContentTopology, filterType);
 		}
 		GlobalCluster::GetInstance().AddTopology(pShapeCopy);
 		return pShapeCopy;
