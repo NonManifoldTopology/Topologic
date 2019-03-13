@@ -26,7 +26,7 @@ namespace TopologicCore
 		Vertices(vertices);
 
 		// Find the constituent edges
-		TopTools_MapOfShape occtEdges;
+		TopTools_MapOfShape occtAdjacentEdges;
 		for (const Vertex::Ptr& kpVertex : vertices)
 		{
 			// Find the edges
@@ -35,13 +35,18 @@ namespace TopologicCore
 
 			for (const Edge::Ptr& kpEdge : edges)
 			{
-				if (!IsSame(kpEdge) &&
-					!occtEdges.Contains(kpEdge->GetOcctShape()))
+				if (!IsSame(kpEdge))
 				{
-					occtEdges.Add(kpEdge->GetOcctShape());
-					rEdges.push_back(kpEdge);
+					occtAdjacentEdges.Add(kpEdge->GetOcctShape());
 				}
 			}
+		}
+
+		for (TopTools_MapIteratorOfMapOfShape occtAdjacentEdgeIterator(occtAdjacentEdges);
+			occtAdjacentEdgeIterator.More();
+			occtAdjacentEdgeIterator.Next())
+		{
+			rEdges.push_back(std::make_shared<Edge>(TopoDS::Edge(occtAdjacentEdgeIterator.Value())));
 		}
 	}
 

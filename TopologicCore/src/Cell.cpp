@@ -49,6 +49,7 @@ namespace TopologicCore
 		DownwardNavigation(GetOcctShape(), TopAbs_FACE, occtFaces);
 
 		const TopoDS_Solid& rkOcctSolid = GetOcctSolid();
+		TopTools_MapOfShape occtAdjacentSolids;
 		for (TopTools_MapOfShape::const_iterator kOcctFaceIterator = occtFaces.cbegin();
 			kOcctFaceIterator != occtFaces.cend();
 			kOcctFaceIterator++)
@@ -63,9 +64,16 @@ namespace TopologicCore
 				const TopoDS_Shape& rkIncidentCell = *kOcctCellIterator;
 				if (!rkOcctSolid.IsSame(rkIncidentCell))
 				{
-					rCells.push_back(std::make_shared<Cell>(TopoDS::Solid(rkIncidentCell)));
+					occtAdjacentSolids.Add(rkIncidentCell);
 				}
 			}
+		}
+
+		for (TopTools_MapIteratorOfMapOfShape occtAdjacentSolidIterator(occtAdjacentSolids); 
+			occtAdjacentSolidIterator.More();
+			occtAdjacentSolidIterator.Next())
+		{
+			rCells.push_back(std::make_shared<Cell>(TopoDS::Solid(occtAdjacentSolidIterator.Value())));
 		}
 	}
 

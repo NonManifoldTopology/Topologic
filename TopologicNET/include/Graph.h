@@ -37,10 +37,46 @@ namespace Topologic {
 			bool toExteriorApertures);
 #endif
 
+		property List<Vertex^>^ Vertices
+		{
+			List<Vertex^>^ get();
+		}
+
+		property List<Edge^>^ Edges
+		{
+			List<Edge^>^ get();
+		}
+
 		property Topology^ Topology
 		{
 			Topologic::Topology^ get();
 		}
+
+		Graph^ AddVertex(Vertex^ vertex);
+
+		Graph^ AddEdge(Edge^ edge);
+
+		int VertexDegree(Vertex^ vertex);
+
+		List<Vertex^>^ AdjacentVertices(Vertex^ vertex);
+
+		Graph^ Connect(Vertex^ vertex1, Vertex^ vertex2);
+
+		bool ContainsVertex(Vertex^ vertex);
+
+		bool ContainsEdge(Edge^ edge);
+
+		property List<int>^ DegreeSequence
+		{
+			List<int>^ get();
+		}
+
+		property double Density
+		{
+			double get();
+		}
+
+		//property bool IsC
 
 	public protected:
 		Graph(const std::shared_ptr<TopologicCore::Graph>& kpCoreGraph);

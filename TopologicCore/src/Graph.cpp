@@ -78,16 +78,10 @@ namespace TopologicCore
 			for (const std::pair<TopoDS_Vertex, TopTools_MapOfShape>& kpPair : m_graphDictionary)
 			{
 				const TopoDS_Vertex& rkOcctExistingVertex = kpPair.first;
-				BRepExtrema_DistShapeShape occtDistanceCalculation(rkOcctVertex, rkOcctExistingVertex);
-				bool isDone = occtDistanceCalculation.Perform();
-				if (isDone)
+				bool isAdded = AreVerticesGeometricallyIdentical(rkOcctVertex, rkOcctExistingVertex, 0.0001);
+				if (isAdded)
 				{
-					double distance = occtDistanceCalculation.Value();
-					if (distance < 0.0001)
-					{
-						isAdded = true;
-						break;
-					}
+					break;
 				}
 			}
 
@@ -138,10 +132,16 @@ namespace TopologicCore
 					TopTools_MapOfShape occtEdges;
 					m_graphDictionary.insert(std::make_pair(occtVertex, occtEdges));
 					Vertex::Ptr vertex = std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtVertex));
-					//m_vertices.push_back(vertex);
 				}
 			} // for (const Vertex::Ptr& kpVertex : vertices)
 		}
+	}
+
+	Graph::Graph(const Graph* kpAnotherGraph)
+		: m_vertices(kpAnotherGraph->m_vertices)
+		, m_edges(kpAnotherGraph->m_edges)
+		, m_graphDictionary(kpAnotherGraph->m_graphDictionary)
+	{
 	}
 
 	Graph::~Graph()
@@ -151,7 +151,7 @@ namespace TopologicCore
 		m_vertices.clear();
 	}
 
-	Topology::Ptr Graph::Topology()
+	Topology::Ptr Graph::Topology() const
 	{
 		// Graph: visualise in this order:
 		// 1. the edges
@@ -171,6 +171,161 @@ namespace TopologicCore
 
 		Cluster::Ptr cluster = Cluster::ByTopologies(topologies);
 		return cluster;
+	}
+
+	void Graph::Vertices(std::list<std::shared_ptr<Vertex>>& vertices) const
+	{
+		vertices = m_vertices;
+	}
+
+	void Graph::Edges(std::list<std::shared_ptr<Edge>>& edges) const
+	{
+		edges = m_edges;
+	}
+
+	void Graph::AddVertex(const std::shared_ptr<Vertex>& kpVertex, const bool kAddToVerticesList)
+	{
+		//Graph::Ptr pAnotherGraph = std::make_shared<Graph>(this);
+		bool isAdded = false;
+		for (const Vertex::Ptr& kpExistingVertex : m_vertices)
+		{
+			isAdded = AreVerticesGeometricallyIdentical(kpVertex->GetOcctVertex(), kpExistingVertex->GetOcctVertex(), 0.00001);
+			if (isAdded)
+			{
+				break;
+			}
+		}
+
+		if(!isAdded)
+		{
+			if (kAddToVerticesList)
+			{
+				m_vertices.push_back(kpVertex);
+			}
+			m_graphDictionary.insert(std::make_pair(kpVertex->GetOcctVertex(), TopTools_MapOfShape()));
+		}
+	}
+
+	void Graph::AddEdge(const std::shared_ptr<Edge>& kpEdge)
+	{
+		Vertex::Ptr pStartVertex = kpEdge->StartVertex();
+		Vertex::Ptr pEndVertex = kpEdge->EndVertex();
+
+		Vertex::Ptr pClosestToStartVertex = GetGeometricallyIdenticalVertexOrAddVertex(pStartVertex, true, false);
+		Vertex::Ptr pClosestToEndVertex = GetGeometricallyIdenticalVertexOrAddVertex(pEndVertex, true, false);
+
+		m_graphDictionary[pClosestToStartVertex->GetOcctVertex()].Add(pClosestToEndVertex->GetOcctVertex());
+		m_graphDictionary[pClosestToEndVertex->GetOcctVertex()].Add(pClosestToStartVertex->GetOcctVertex());
+		m_edges.push_back(kpEdge);
+	}
+
+	int Graph::VertexDegree(const std::shared_ptr<Vertex>& kpVertex) const
+	{
+		return VertexDegree(kpVertex->GetOcctVertex());
+	}
+
+	int Graph::VertexDegree(const TopoDS_Vertex & rkOcctVertex) const
+	{
+		TopoDS_Vertex occtClosestVertex = GetGeometricallyIdenticalVertex(rkOcctVertex);
+		if (occtClosestVertex.IsNull())
+		{
+			return 0;
+		}
+
+		int numberOfEdges = m_graphDictionary.find(occtClosestVertex)->second.Size();
+		int numberOfLoops = m_graphDictionary.find(occtClosestVertex)->second.Contains(occtClosestVertex) ? 1 : 0;
+		int degree = numberOfEdges + numberOfLoops;
+
+		return degree;
+	}
+
+	void Graph::AdjacentVertices(const std::shared_ptr<Vertex>& kpVertex, std::list<std::shared_ptr<Vertex>>& rAdjacentVertices) const
+	{
+		TopoDS_Vertex occtQueryVertex = kpVertex->GetOcctVertex();
+		TopoDS_Vertex occtClosestVertex = GetGeometricallyIdenticalVertex(occtQueryVertex);
+		if (occtClosestVertex.IsNull())
+		{
+			return;
+		}
+
+		TopTools_MapOfShape occtAdjacentVertices = m_graphDictionary.find(occtClosestVertex)->second;
+
+		for (const Vertex::Ptr& kpExistingVertex : m_vertices)
+		{
+			TopoDS_Vertex occtExistingVertex = kpExistingVertex->GetOcctVertex();
+			TopoDS_Vertex occtClosestVertexToExistingVertex = GetGeometricallyIdenticalVertex(occtExistingVertex);
+			if (occtClosestVertexToExistingVertex.IsNull())
+			{
+				continue;
+			}
+
+			if (occtAdjacentVertices.Contains(occtClosestVertexToExistingVertex))
+			{
+				rAdjacentVertices.push_back(kpExistingVertex);
+			}
+		}
+	}
+
+	void Graph::Connect(const std::shared_ptr<Vertex>& kpVertex1, const std::shared_ptr<Vertex>& kpVertex2)
+	{
+		TopoDS_Vertex occtQueryVertex1 = kpVertex1->GetOcctVertex();
+		TopoDS_Vertex occtClosestVertex1 = GetGeometricallyIdenticalVertex(occtQueryVertex1);
+		if (occtClosestVertex1.IsNull())
+		{
+			occtClosestVertex1 = occtQueryVertex1;
+		}
+
+		TopoDS_Vertex occtQueryVertex2 = kpVertex2->GetOcctVertex();
+		TopoDS_Vertex occtClosestVertex2 = GetGeometricallyIdenticalVertex(occtQueryVertex2);
+		if (occtClosestVertex2.IsNull())
+		{
+			occtClosestVertex2 = occtQueryVertex2;
+		}
+
+		Edge::Ptr edge = Edge::ByStartVertexEndVertex(kpVertex1, kpVertex2);
+		m_graphDictionary[occtClosestVertex1].Add(occtClosestVertex2);
+		m_graphDictionary[occtClosestVertex2].Add(occtClosestVertex1);
+		m_edges.push_back(edge);
+	}
+
+	bool Graph::ContainsVertex(const std::shared_ptr<Vertex>& kpVertex) const
+	{
+		return std::find(m_vertices.begin(), m_vertices.end(), kpVertex) != m_vertices.end();
+	}
+
+	bool Graph::ContainsEdge(const std::shared_ptr<Edge>& kpEdge)
+	{
+		return std::find(m_edges.begin(), m_edges.end(), kpEdge) != m_edges.end();
+	}
+
+	void Graph::DegreeSequence(std::list<int>& rDegreeSequence) const
+	{
+		 for (const Vertex::Ptr& kpVertex : m_vertices)
+		 {
+			 TopoDS_Vertex occtExistingVertex = kpVertex->GetOcctVertex();
+			 TopoDS_Vertex occtClosestVertexToExistingVertex = GetGeometricallyIdenticalVertex(occtExistingVertex);
+			 if (occtClosestVertexToExistingVertex.IsNull())
+			 {
+				 continue;
+			 }
+
+			 rDegreeSequence.push_back(VertexDegree(occtClosestVertexToExistingVertex));
+		 }
+
+		 rDegreeSequence.sort(std::greater<int>());
+	}
+
+	double Graph::Density() const
+	{
+		int numOfVertices = (int) m_vertices.size();
+		int numOfEdges = (int) m_edges.size();
+		double denominator = numOfVertices * (numOfVertices - 1);
+		if (denominator > -0.0001 && denominator < 0.0001)
+		{
+			// Divide by zero, return the largest double number
+			return std::numeric_limits<double>::max();
+		}
+		return (2 * numOfEdges) / denominator;
 	}
 
 	Graph::Ptr Graph::ByVertex(const Vertex::Ptr kpVertex,
@@ -211,8 +366,11 @@ namespace TopologicCore
 	{
 		std::list<Vertex::Ptr> vertices;
 		std::list<Edge::Ptr> edges;
+		std::list<Vertex::Ptr> edgeVertices;
+
 		if (kDirect)
 		{
+			kpEdge->Vertices(vertices);
 			edges.push_back(kpEdge);
 		}
 
@@ -226,12 +384,14 @@ namespace TopologicCore
 			{
 				if (kpContent->GetType() == TOPOLOGY_APERTURE)
 				{
+					Vertex::Ptr contentCenterOfMass = kpContent->CenterOfMass();
+					vertices.push_back(contentCenterOfMass);
 					std::list<Vertex::Ptr> edgeVertices;
 					kpEdge->Vertices(edgeVertices);
 
 					for (const Vertex::Ptr& kpVertex : edgeVertices)
 					{
-						Edge::Ptr edge = Edge::ByStartVertexEndVertex(kpVertex, kpContent->CenterOfMass());
+						Edge::Ptr edge = Edge::ByStartVertexEndVertex(kpVertex, contentCenterOfMass);
 						edges.push_back(edge);
 					}
 				}
@@ -250,6 +410,7 @@ namespace TopologicCore
 		if (kDirect || kToExteriorApertures)
 		{
 			kpWire->Edges(edges);
+			kpWire->Vertices(vertices);
 		}
 
 		if (kToExteriorApertures)
@@ -268,9 +429,11 @@ namespace TopologicCore
 				{
 					if (kpContent->GetType() == TOPOLOGY_APERTURE)
 					{
+						Vertex::Ptr contentCenterOfMass = kpContent->CenterOfMass();
+						vertices.push_back(contentCenterOfMass);
 						for (const Vertex::Ptr& edgeVertex :edgeVertices)
 						{
-							Edge::Ptr edge = Edge::ByStartVertexEndVertex(edgeVertex, kpContent->CenterOfMass());
+							Edge::Ptr edge = Edge::ByStartVertexEndVertex(edgeVertex, contentCenterOfMass);
 							edges.push_back(edge);
 						}
 					}
@@ -289,6 +452,7 @@ namespace TopologicCore
 		std::list<Edge::Ptr> edges;
 
 		Vertex::Ptr centerOfMass = kpFace->CenterOfMass();
+		vertices.push_back(centerOfMass);
 		if (kToExteriorTopologies || kToExteriorApertures)
 		{
 			std::list<Edge::Ptr> faceEdges;
@@ -298,8 +462,7 @@ namespace TopologicCore
 			{
 				if (kToExteriorTopologies)
 				{
-					Vertex::Ptr pFaceEdgeCenterOfMass = kpFaceEdge->CenterOfMass();
-					Edge::Ptr edge = Edge::ByStartVertexEndVertex(pFaceEdgeCenterOfMass, centerOfMass);
+					Edge::Ptr edge = Edge::ByStartVertexEndVertex(centerOfMass, centerOfMass);
 					edges.push_back(edge);
 				}
 
@@ -313,17 +476,13 @@ namespace TopologicCore
 						if (kpContent->GetType() == TOPOLOGY_APERTURE)
 						{
 							Vertex::Ptr pApertureCenterOfMass = kpContent->CenterOfMass();
+							vertices.push_back(pApertureCenterOfMass);
 							Edge::Ptr edge = Edge::ByStartVertexEndVertex(pApertureCenterOfMass, centerOfMass);
 							edges.push_back(edge);
 						}
 					}
 				}
 			}
-		}
-
-		if (edges.empty())
-		{
-			vertices.push_back(kpFace->CenterOfMass());
 		}
 
 		return std::make_shared<Graph>(vertices, edges);
@@ -355,7 +514,7 @@ namespace TopologicCore
 		}
 
 		// 2. Check the configurations. Add the edges to a cluster.
-		std::list<TopologicCore::Edge::Ptr> graphEdges;
+		std::list<TopologicCore::Topology::Ptr> graphEdges;
 		if (kDirect)
 		{
 			// Iterate through all faces and check for adjacency.
@@ -367,7 +526,13 @@ namespace TopologicCore
 
 				for (const TopologicCore::Face::Ptr& kpAdjacentFace : adjacentFaces)
 				{
-					TopologicCore::Edge::Ptr pEdge = TopologicCore::Edge::ByStartVertexEndVertex(faceCentroids[kpFace->GetOcctFace()], faceCentroids[kpAdjacentFace->GetOcctFace()]);
+					std::map<TopoDS_Face, TopologicCore::Vertex::Ptr, TopologicCore::OcctShapeComparator>::iterator adjacentCentroidPair =
+						faceCentroids.find(kpAdjacentFace->GetOcctFace());
+					if (adjacentCentroidPair == faceCentroids.end())
+					{
+						continue;
+					}
+					TopologicCore::Edge::Ptr pEdge = TopologicCore::Edge::ByStartVertexEndVertex(faceCentroids[kpFace->GetOcctFace()], adjacentCentroidPair->second);
 					graphEdges.push_back(pEdge);
 				}
 			}
@@ -426,8 +591,39 @@ namespace TopologicCore
 			}
 		}
 
+		// Merge the edges
+		TopologicCore::Cluster::Ptr pTopologiesAsCluster = TopologicCore::Cluster::ByTopologies(graphEdges);
+		if (pTopologiesAsCluster == nullptr)
+		{
+			return nullptr;
+		}
+		TopologicCore::Topology::Ptr pSelfMergedTopologies = pTopologiesAsCluster->SelfMerge();
+
+		// If this is a cluster, use it to create a dual graph. Otherwise, add it to a cluster to be used to create a dual graph.
+		TopologicCore::Cluster::Ptr pSelfMergedTopologiesAsCluster = std::dynamic_pointer_cast<Cluster>(pSelfMergedTopologies);
 		std::list<Vertex::Ptr> vertices;
-		return std::make_shared<Graph>(vertices, graphEdges);
+		if (pSelfMergedTopologiesAsCluster != nullptr)
+		{
+			std::list<Edge::Ptr> mergedGraphEdges;
+			pSelfMergedTopologies->Vertices(vertices);
+			pSelfMergedTopologies->Edges(mergedGraphEdges);
+			return std::make_shared<Graph>(vertices, mergedGraphEdges);
+		}
+
+		// else 
+		std::list<Edge::Ptr> finalGraphEdges; // converted to Edge::Ptr
+		for (const Topology::Ptr& kpEdgeTopology : graphEdges)
+		{
+			std::list<Vertex::Ptr> edgeVertices;
+			kpEdgeTopology->Vertices(edgeVertices);
+			for (const Vertex::Ptr& kpVertex : edgeVertices)
+			{
+				vertices.push_back(kpVertex);
+			}
+			Edge::Ptr edge = std::dynamic_pointer_cast<Edge>(kpEdgeTopology);
+			finalGraphEdges.push_back(edge);
+		}
+		return std::make_shared<Graph>(vertices, finalGraphEdges);
 	}
 
 	Graph::Ptr Graph::ByCell(const Cell::Ptr kpCell,
@@ -438,6 +634,7 @@ namespace TopologicCore
 		std::list<Edge::Ptr> edges;
 
 		Vertex::Ptr centerOfMass = kpCell->CenterOfMass();
+		vertices.push_back(kpCell->CenterOfMass());
 		if (kToExteriorTopologies || kToExteriorApertures)
 		{
 			std::list<Face::Ptr> cellFaces;
@@ -448,6 +645,7 @@ namespace TopologicCore
 				if (kToExteriorTopologies)
 				{
 					Vertex::Ptr pCellFaceCenterOfMass = kpCellFace->CenterOfMass();
+					vertices.push_back(pCellFaceCenterOfMass);
 					Edge::Ptr edge = Edge::ByStartVertexEndVertex(pCellFaceCenterOfMass, centerOfMass);
 					edges.push_back(edge);
 				}
@@ -462,17 +660,13 @@ namespace TopologicCore
 						if (kpContent->GetType() == TOPOLOGY_APERTURE)
 						{
 							Vertex::Ptr pApertureCenterOfMass = kpContent->CenterOfMass();
+							vertices.push_back(pApertureCenterOfMass);
 							Edge::Ptr edge = Edge::ByStartVertexEndVertex(pApertureCenterOfMass, centerOfMass);
 							edges.push_back(edge);
 						}
 					}
 				}
 			}
-		}
-
-		if (edges.empty())
-		{
-			vertices.push_back(kpCell->CenterOfMass());
 		}
 
 		return std::make_shared<Graph>(vertices, edges);
@@ -504,7 +698,7 @@ namespace TopologicCore
 		}
 
 		// 2. Check the configurations. Add the edges to a cluster.
-		std::list<TopologicCore::Edge::Ptr> edges;
+		std::list<TopologicCore::Topology::Ptr> edges;
 		if (kDirect)
 		{
 			// Iterate through all cells and check for adjacency.
@@ -576,8 +770,39 @@ namespace TopologicCore
 		}
 
 		// 3. Self-merge the cluster
+
+		// Merge the edges
+		TopologicCore::Cluster::Ptr pTopologiesAsCluster = TopologicCore::Cluster::ByTopologies(edges);
+		if (pTopologiesAsCluster == nullptr)
+		{
+			return nullptr;
+		}
+		TopologicCore::Topology::Ptr pSelfMergedTopologies = pTopologiesAsCluster->SelfMerge();
+
+		// If this is a cluster, use it to create a dual graph. Otherwise, add it to a cluster to be used to create a dual graph.
+		TopologicCore::Cluster::Ptr pSelfMergedTopologiesAsCluster = std::dynamic_pointer_cast<Cluster>(pSelfMergedTopologies);
 		std::list<Vertex::Ptr> vertices;
-		return std::make_shared<Graph>(vertices, edges);
+		if (pSelfMergedTopologiesAsCluster != nullptr)
+		{
+			std::list<Edge::Ptr> mergedGraphEdges;
+			pSelfMergedTopologies->Vertices(vertices);
+			pSelfMergedTopologies->Edges(mergedGraphEdges);
+			return std::make_shared<Graph>(vertices, mergedGraphEdges);
+		}
+
+		// else 
+		std::list<Edge::Ptr> finalGraphEdges; // converted to Edge::Ptr
+		for (const Topology::Ptr& kpEdgeTopology : edges)
+		{
+			std::list<Vertex::Ptr> edgeVertices;
+			kpEdgeTopology->Vertices(edgeVertices);
+			for (const Vertex::Ptr& kpVertex : edgeVertices)
+			{
+				vertices.push_back(kpVertex);
+			}
+			finalGraphEdges.push_back(std::dynamic_pointer_cast<Edge>(kpEdgeTopology));
+		}
+		return std::make_shared<Graph>(vertices, finalGraphEdges);
 	}
 
 	Graph::Ptr Graph::ByCluster(const Cluster::Ptr cluster,
@@ -598,5 +823,68 @@ namespace TopologicCore
 			edges.insert(edges.end(), graph->m_edges.begin(), graph->m_edges.end());
 		}
 		return std::make_shared<Graph>(vertices, edges);
+	}
+
+	bool Graph::AreVerticesGeometricallyIdentical(const TopoDS_Vertex & rkOcctVertex1, const TopoDS_Vertex & rkOcctVertex2, const double kDistanceThreshold)
+	{
+		BRepExtrema_DistShapeShape occtDistanceCalculation(rkOcctVertex1, rkOcctVertex2);
+		bool isDone = occtDistanceCalculation.Perform();
+		if (isDone)
+		{
+			double distance = occtDistanceCalculation.Value();
+			if (distance < kDistanceThreshold)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	std::shared_ptr<Vertex> Graph::GetGeometricallyIdenticalVertexOrAddVertex(const std::shared_ptr<Vertex>& kpVertex, const bool kAddToDictionary, const bool kAddToVerticesList)
+	{
+		for (const Vertex::Ptr& kpExistingVertex : m_vertices)
+		{
+			bool isFound = AreVerticesGeometricallyIdentical(kpVertex->GetOcctVertex(), kpExistingVertex->GetOcctVertex(), 0.0001);
+			if (isFound)
+			{
+				return kpExistingVertex;
+			}
+		}
+		
+		if (kAddToDictionary)
+		{
+			AddVertex(kpVertex, kAddToVerticesList);
+			return kpVertex;
+		}
+		//else
+		return nullptr;
+	}
+
+	TopoDS_Vertex Graph::GetGeometricallyIdenticalVertex(const TopoDS_Vertex& rkOcctVertex) const
+	{
+		for (const std::pair<TopoDS_Vertex, TopTools_MapOfShape>& vertexEdgesPair: m_graphDictionary)
+		{
+			TopoDS_Vertex occtExistingVertex = vertexEdgesPair.first;
+
+			bool isFound = AreVerticesGeometricallyIdentical(rkOcctVertex, occtExistingVertex, 0.0001);
+			if (isFound)
+			{
+				return occtExistingVertex;
+			}
+		}
+
+		return TopoDS_Vertex();
+	}
+
+	std::shared_ptr<Vertex> Graph::GetGeometricallyIdenticalVertex(const std::shared_ptr<Vertex>& kpQueryVertex) const
+	{
+		TopoDS_Vertex occtQueryVertex = kpQueryVertex->GetOcctVertex();
+		TopoDS_Vertex occtClosestVertex = GetGeometricallyIdenticalVertex(occtQueryVertex);
+		if (occtClosestVertex.IsNull())
+		{
+			return nullptr;
+		}
+
+		return std::make_shared<Vertex>(occtClosestVertex);
 	}
 }

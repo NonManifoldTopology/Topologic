@@ -45,6 +45,7 @@ namespace TopologicCore
 		}
 
 		const TopoDS_Face& rkOcctFace = GetOcctFace();
+		TopTools_MapOfShape occtAdjacentFaces;
 		for (TopTools_MapOfShape::const_iterator kOcctEdgeIterator = occtEdges.cbegin();
 			kOcctEdgeIterator != occtEdges.cend();
 			kOcctEdgeIterator++)
@@ -59,9 +60,16 @@ namespace TopologicCore
 				const TopoDS_Shape& rkIncidentFace = *kOcctFaceIterator;
 				if (!rkOcctFace.IsSame(rkIncidentFace))
 				{
-					rFaces.push_back(std::make_shared<Face>(TopoDS::Face(rkIncidentFace)));
+					occtAdjacentFaces.Add(rkIncidentFace);
 				}
 			}
+		}
+
+		for (TopTools_MapIteratorOfMapOfShape occtAdjacentFaceIterator(occtAdjacentFaces);
+			occtAdjacentFaceIterator.More();
+			occtAdjacentFaceIterator.Next())
+		{
+			rFaces.push_back(std::make_shared<Face>(TopoDS::Face(occtAdjacentFaceIterator.Value())));
 		}
 	}
 
