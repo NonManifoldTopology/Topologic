@@ -866,4 +866,14 @@ namespace TopologicCore
 
 		const std::shared_ptr<Topology>& topologyPtr;
 	};
+
+	struct TopologyCompare : public std::unary_function<std::shared_ptr<Topology>, bool>
+	{
+		explicit TopologyCompare(const std::shared_ptr<Topology> &baseline) : baseline(baseline) {}
+		bool operator() (const std::shared_ptr<Topology> &arg)
+		{
+			return arg->IsSame(baseline);
+		}
+		std::shared_ptr<Topology> baseline;
+	};
 }

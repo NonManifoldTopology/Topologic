@@ -45,7 +45,7 @@ namespace TopologicCore
 
 		TOPOLOGIC_API void Edges(std::list<std::shared_ptr<Edge>>& edges) const;
 
-		TOPOLOGIC_API void AddVertex(const std::shared_ptr<Vertex>& kpVertex, const bool kAddToVerticesList);
+		TOPOLOGIC_API void AddVertex(const std::shared_ptr<Vertex>& kpVertex);
 
 		TOPOLOGIC_API void AddEdge(const std::shared_ptr<Edge>& kpEdge);
 
@@ -59,11 +59,59 @@ namespace TopologicCore
 
 		TOPOLOGIC_API bool ContainsVertex(const std::shared_ptr<Vertex>& kpVertex) const;
 
+		bool ContainsVertex(const TopoDS_Vertex& rkOcctVertex) const;
+
 		TOPOLOGIC_API bool ContainsEdge(const std::shared_ptr<Edge>& kpEdge);
 
 		TOPOLOGIC_API void DegreeSequence(std::list<int>& rDegreeSequence) const;
 
 		TOPOLOGIC_API double Density() const;
+
+		TOPOLOGIC_API bool IsComplete() const;
+
+		TOPOLOGIC_API void IsolatedVertices(std::list<Vertex::Ptr>& rIsolatedVertices) const;
+
+		TOPOLOGIC_API int MinimumDelta() const;
+
+		TOPOLOGIC_API int MaximumDelta() const;
+
+		TOPOLOGIC_API void AllPaths(
+			const Vertex::Ptr& kpStartVertex,
+			const Vertex::Ptr& kpEndVertex,
+			std::list<std::shared_ptr<Wire>>& rPaths) const;
+
+		void AllPaths(
+			const Vertex::Ptr& kpStartVertex, 
+			const Vertex::Ptr& kpEndVertex, 
+			std::list<Vertex::Ptr>& rPath,
+			std::list<std::shared_ptr<Wire>>& rPaths) const;
+
+		TOPOLOGIC_API std::shared_ptr<Wire> Path(
+			const Vertex::Ptr& kpStartVertex,
+			const Vertex::Ptr& kpEndVertex) const;
+
+		std::shared_ptr<Wire> Path(
+			const Vertex::Ptr& kpStartVertex,
+			const Vertex::Ptr& kpEndVertex,
+			std::list<Vertex::Ptr>& rPath) const;
+
+		TOPOLOGIC_API std::shared_ptr<Wire> ShortestPath(
+			const Vertex::Ptr& kpStartVertex,
+			const Vertex::Ptr& kpEndVertex) const;
+
+		std::shared_ptr<Wire> ShortestPath(
+			const TopoDS_Vertex& rkOcctStartVertex,
+			const TopoDS_Vertex& rkOcctEndVertex) const;
+
+		TOPOLOGIC_API int Diameter() const;
+
+		TOPOLOGIC_API int Distance(const std::shared_ptr<Vertex>& kpStartVertex, const std::shared_ptr<Vertex>& kpEndVertex) const;
+
+		int Distance(const TopoDS_Vertex& rkOcctStartVertex, const TopoDS_Vertex& rkOcctVertex) const;
+
+		TOPOLOGIC_API int Eccentricity(const std::shared_ptr<Vertex>& kpVertex) const;
+
+		//TOPOLOGIC_API bool IsErdoesGallai() const;
 
 	protected:
 
@@ -109,16 +157,18 @@ namespace TopologicCore
 			const bool kToExteriorTopologies,
 			const bool kToExteriorApertures);
 
-		static bool AreVerticesGeometricallyIdentical(const TopoDS_Vertex& rkOcctVertex1, const TopoDS_Vertex& rkOcctVertex2, const double kDistanceThreshold);
+		static std::shared_ptr<Wire> ConstructPath(const std::list<Vertex::Ptr>& rkPathVertices);
 
-		std::shared_ptr<Vertex> GetGeometricallyIdenticalVertexOrAddVertex(const std::shared_ptr<Vertex>& kpVertex, const bool kAddToDictionary, const bool kAddToVerticesList);
+		//static bool AreVerticesGeometricallyIdentical(const TopoDS_Vertex& rkOcctVertex1, const TopoDS_Vertex& rkOcctVertex2, const double kDistanceThreshold);
 
-		TopoDS_Vertex GetGeometricallyIdenticalVertex(const TopoDS_Vertex& rkOcctVertex) const;
+		//std::shared_ptr<Vertex> GetGeometricallyIdenticalVertexOrAddVertex(const std::shared_ptr<Vertex>& kpVertex, const bool kAddToDictionary, const bool kAddToVerticesList);
 
-		std::shared_ptr<Vertex> GetGeometricallyIdenticalVertex(const std::shared_ptr<Vertex>& kpQueryVertex) const;
+		//TopoDS_Vertex GetGeometricallyIdenticalVertex(const TopoDS_Vertex& rkOcctVertex) const;
 
-		std::list<Vertex::Ptr> m_vertices;
-		std::list<Edge::Ptr> m_edges;
+		//std::shared_ptr<Vertex> GetGeometricallyIdenticalVertex(const std::shared_ptr<Vertex>& kpQueryVertex) const;
+
+		//std::list<Vertex::Ptr> m_vertices;
+		//std::list<Edge::Ptr> m_edges;
 
 		std::map<TopoDS_Vertex, TopTools_MapOfShape, OcctShapeComparator> m_graphDictionary;
 	};

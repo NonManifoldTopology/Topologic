@@ -11,6 +11,7 @@ using namespace System::Collections::Generic;
 namespace Topologic {
 	ref class Vertex;
 	ref class Edge;
+	ref class Wire;
 	ref class Topology;
 
 	public ref class Graph
@@ -38,6 +39,11 @@ namespace Topologic {
 #endif
 
 		property List<Vertex^>^ Vertices
+		{
+			List<Vertex^>^ get();
+		}
+
+		property List<Vertex^>^ IsolatedVertices
 		{
 			List<Vertex^>^ get();
 		}
@@ -76,7 +82,33 @@ namespace Topologic {
 			double get();
 		}
 
-		//property bool IsC
+		property bool IsComplete
+		{
+			bool get();
+		}
+
+		property int MinimumDelta
+		{
+			int get();
+		}
+
+		property int MaximumDelta
+		{
+			int get();
+		}
+
+		property int Diameter
+		{
+			int get();
+		}
+
+		List<Wire^>^ AllPaths(Vertex^ startVertex, Vertex^ endVertex);
+
+		Wire^ Path(Vertex^ startVertex, Vertex^ endVertex);
+
+		Wire^ ShortestPath(Vertex^ startVertex, Vertex^ endVertex);
+
+		double Distance(Vertex^ startVertex, Vertex^ endVertex);
 
 	public protected:
 		Graph(const std::shared_ptr<TopologicCore::Graph>& kpCoreGraph);

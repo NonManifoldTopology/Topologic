@@ -1,6 +1,7 @@
 #include "Graph.h"
 #include "Vertex.h"
 #include "Edge.h"
+#include "Wire.h"
 #include "Topology.h"
 
 #include <TopologicCore/include/Vertex.h>
@@ -59,7 +60,7 @@ namespace Topologic
 		TopologicCore::Vertex::Ptr pCoreCopyVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(pCoreVertex->DeepCopy());
 		TopologicCore::Graph::Ptr pCoreCopyGraph = std::make_shared<TopologicCore::Graph>(pCoreGraph.get());
 
-		pCoreCopyGraph->AddVertex(pCoreCopyVertex, true);
+		pCoreCopyGraph->AddVertex(pCoreCopyVertex);
 
 		return gcnew Graph(pCoreCopyGraph);
 	}
@@ -75,6 +76,54 @@ namespace Topologic
 		pCoreCopyGraph->AddEdge(pCoreCopyEdge);
 
 		return gcnew Graph(pCoreCopyGraph);
+	}
+
+	List<Wire^>^ Graph::AllPaths(Vertex ^ startVertex, Vertex ^ endVertex)
+	{
+		TopologicCore::Vertex::Ptr pCoreStartVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(startVertex->GetCoreTopologicalQuery());
+		TopologicCore::Vertex::Ptr pCoreEndVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(endVertex->GetCoreTopologicalQuery());
+
+		std::list<TopologicCore::Wire::Ptr> corePaths;
+		(*m_pCoreGraph)->AllPaths(pCoreStartVertex, pCoreEndVertex, corePaths);
+
+		List<Wire^>^ paths = gcnew List<Wire^>();
+		for (const TopologicCore::Wire::Ptr& rkPath : corePaths)
+		{
+			Wire^ path = safe_cast<Wire^>(Topologic::Topology::ByCoreTopology(rkPath));
+			paths->Add(path);
+		}
+
+		return paths;
+	}
+
+	Wire ^ Graph::Path(Vertex ^ startVertex, Vertex ^ endVertex)
+	{
+		TopologicCore::Vertex::Ptr pCoreStartVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(startVertex->GetCoreTopologicalQuery());
+		TopologicCore::Vertex::Ptr pCoreEndVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(endVertex->GetCoreTopologicalQuery());
+
+		TopologicCore::Wire::Ptr corePath = (*m_pCoreGraph)->Path(pCoreStartVertex, pCoreEndVertex);
+
+		Wire^ path = safe_cast<Wire^>(Topologic::Topology::ByCoreTopology(corePath));
+		return path;
+	}
+
+	Wire ^ Graph::ShortestPath(Vertex ^ startVertex, Vertex ^ endVertex)
+	{
+		TopologicCore::Vertex::Ptr pCoreStartVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(startVertex->GetCoreTopologicalQuery());
+		TopologicCore::Vertex::Ptr pCoreEndVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(endVertex->GetCoreTopologicalQuery());
+
+		TopologicCore::Wire::Ptr corePath = (*m_pCoreGraph)->ShortestPath(pCoreStartVertex, pCoreEndVertex);
+
+		Wire^ path = safe_cast<Wire^>(Topologic::Topology::ByCoreTopology(corePath));
+		return path;
+	}
+
+	double Graph::Distance(Vertex ^ startVertex, Vertex ^ endVertex)
+	{
+		TopologicCore::Vertex::Ptr pCoreStartVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(startVertex->GetCoreTopologicalQuery());
+		TopologicCore::Vertex::Ptr pCoreEndVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(endVertex->GetCoreTopologicalQuery());
+
+		return (*m_pCoreGraph)->Distance(pCoreStartVertex, pCoreEndVertex);
 	}
 
 	Graph::Graph(const std::shared_ptr<TopologicCore::Graph>& kpCoreGraph)
@@ -94,7 +143,6 @@ namespace Topologic
 		return Topologic::Topology::ByCoreTopology(coreTopology);
 	}
 
-
 	List<Vertex^>^ Graph::Vertices::get()
 	{
 		std::list<TopologicCore::Vertex::Ptr> coreVertices;
@@ -107,6 +155,20 @@ namespace Topologic
 			vertices->Add(vertex);
 		}
 		return vertices;
+	}
+
+	List<Vertex^>^ Graph::IsolatedVertices::get()
+	{
+		std::list<TopologicCore::Vertex::Ptr> coreIsolatedVertices;
+		(*m_pCoreGraph)->IsolatedVertices(coreIsolatedVertices);
+
+		List<Vertex^>^ isolatedVertices = gcnew List<Vertex^>();
+		for (const TopologicCore::Vertex::Ptr& kpCoreVertex : coreIsolatedVertices)
+		{
+			Vertex^ vertex = gcnew Vertex(kpCoreVertex);
+			isolatedVertices->Add(vertex);
+		}
+		return isolatedVertices;
 	}
 
 	List<Edge^>^ Graph::Edges::get()
@@ -190,4 +252,25 @@ namespace Topologic
 	{
 		return (*m_pCoreGraph)->Density();
 	}
+
+	bool Graph::IsComplete::get()
+	{
+		return (*m_pCoreGraph)->IsComplete();
+	}
+
+	int Graph::MinimumDelta::get()
+	{
+		return (*m_pCoreGraph)->MinimumDelta();
+	}
+
+	int Graph::MaximumDelta::get()
+	{
+		return (*m_pCoreGraph)->MaximumDelta();
+	}
+
+	int Graph::Diameter::get()
+	{
+		return (*m_pCoreGraph)->Diameter();
+	}
+
 }

@@ -90,7 +90,7 @@ namespace TopologicCore
 	{
 		if (rkEdges.empty())
 		{
-			throw std::exception("No edge is passed.");
+			return nullptr;
 		}
 
 		TopTools_ListOfShape occtEdges;
