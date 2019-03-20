@@ -52,28 +52,38 @@ namespace Topologic
 		return gcnew Graph(pCoreGraph);
 	}
 
-	Graph ^ Graph::AddVertex(Vertex ^ vertex)
+	Graph ^ Graph::AddVertices(List<Vertex^>^ vertices)
 	{
-		TopologicCore::Vertex::Ptr pCoreVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex->GetCoreTopologicalQuery());
 		TopologicCore::Graph::Ptr pCoreGraph = *m_pCoreGraph;
-
-		TopologicCore::Vertex::Ptr pCoreCopyVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(pCoreVertex->DeepCopy());
 		TopologicCore::Graph::Ptr pCoreCopyGraph = std::make_shared<TopologicCore::Graph>(pCoreGraph.get());
 
-		pCoreCopyGraph->AddVertex(pCoreCopyVertex);
+		std::list<TopologicCore::Vertex::Ptr> coreVertices;
+		for each(Vertex^ vertex in vertices)
+		{
+			TopologicCore::Vertex::Ptr pCoreVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex->GetCoreTopologicalQuery());
+			TopologicCore::Vertex::Ptr pCoreCopyVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(pCoreVertex->DeepCopy());
+			coreVertices.push_back(pCoreCopyVertex);
+		}
+
+		pCoreCopyGraph->AddVertices(coreVertices);
 
 		return gcnew Graph(pCoreCopyGraph);
 	}
 
-	Graph ^ Graph::AddEdge(Edge ^ edge)
+	Graph ^ Graph::AddEdges(List<Edge^>^ edges)
 	{
-		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(edge->GetCoreTopologicalQuery());
 		TopologicCore::Graph::Ptr pCoreGraph = *m_pCoreGraph;
-
-		TopologicCore::Edge::Ptr pCoreCopyEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(pCoreEdge->DeepCopy());
 		TopologicCore::Graph::Ptr pCoreCopyGraph = std::make_shared<TopologicCore::Graph>(pCoreGraph.get());
 
-		pCoreCopyGraph->AddEdge(pCoreCopyEdge);
+		std::list<TopologicCore::Edge::Ptr> coreEdges;
+		for each(Edge^ edge in edges)
+		{
+			TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(edge->GetCoreTopologicalQuery());
+			TopologicCore::Edge::Ptr pCoreCopyEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(pCoreEdge->DeepCopy());
+			coreEdges.push_back(pCoreCopyEdge);
+		}
+
+		pCoreCopyGraph->AddEdges(coreEdges);
 
 		return gcnew Graph(pCoreCopyGraph);
 	}
@@ -124,6 +134,52 @@ namespace Topologic
 		TopologicCore::Vertex::Ptr pCoreEndVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(endVertex->GetCoreTopologicalQuery());
 
 		return (*m_pCoreGraph)->Distance(pCoreStartVertex, pCoreEndVertex);
+	}
+
+	bool Graph::IsErdoesGallai(List<int>^ sequence)
+	{
+		std::list<int> coreSequence;
+		for each(int i in sequence)
+		{
+			coreSequence.push_back(i);
+		}
+		return (*m_pCoreGraph)->IsErdoesGallai(coreSequence);
+	}
+
+	Graph^  Graph::RemoveVertices(List<Vertex^>^ vertices)
+	{
+		TopologicCore::Graph::Ptr pCoreGraph = *m_pCoreGraph;
+		TopologicCore::Graph::Ptr pCoreCopyGraph = std::make_shared<TopologicCore::Graph>(pCoreGraph.get());
+
+		std::list<TopologicCore::Vertex::Ptr> coreVertices;
+		for each(Vertex^ vertex in vertices)
+		{
+			TopologicCore::Vertex::Ptr pCoreVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex->GetCoreTopologicalQuery());
+			TopologicCore::Vertex::Ptr pCoreCopyVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(pCoreVertex->DeepCopy());
+			coreVertices.push_back(pCoreCopyVertex);
+		}
+
+		pCoreCopyGraph->RemoveVertices(coreVertices);
+
+		return gcnew Graph(pCoreCopyGraph);
+	}
+
+	Graph^ Graph::RemoveEdges(List<Edge^>^ edges)
+	{
+		TopologicCore::Graph::Ptr pCoreGraph = *m_pCoreGraph;
+		TopologicCore::Graph::Ptr pCoreCopyGraph = std::make_shared<TopologicCore::Graph>(pCoreGraph.get());
+
+		std::list<TopologicCore::Edge::Ptr> coreEdges;
+		for each(Edge^ edge in edges)
+		{
+			TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(edge->GetCoreTopologicalQuery());
+			TopologicCore::Edge::Ptr pCoreCopyEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(pCoreEdge->DeepCopy());
+			coreEdges.push_back(pCoreCopyEdge);
+		}
+
+		pCoreCopyGraph->RemoveEdges(coreEdges);
+
+		return gcnew Graph(pCoreCopyGraph);
 	}
 
 	Graph::Graph(const std::shared_ptr<TopologicCore::Graph>& kpCoreGraph)

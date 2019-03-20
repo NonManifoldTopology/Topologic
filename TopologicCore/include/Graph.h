@@ -45,9 +45,9 @@ namespace TopologicCore
 
 		TOPOLOGIC_API void Edges(std::list<std::shared_ptr<Edge>>& edges) const;
 
-		TOPOLOGIC_API void AddVertex(const std::shared_ptr<Vertex>& kpVertex);
+		TOPOLOGIC_API void AddVertices(const std::list<std::shared_ptr<Vertex>>& rkVertices);
 
-		TOPOLOGIC_API void AddEdge(const std::shared_ptr<Edge>& kpEdge);
+		TOPOLOGIC_API void AddEdges(const std::list<std::shared_ptr<Edge>>& rkEdges);
 
 		TOPOLOGIC_API int VertexDegree(const std::shared_ptr<Vertex>& kpVertex) const;
 
@@ -111,9 +111,15 @@ namespace TopologicCore
 
 		TOPOLOGIC_API int Eccentricity(const std::shared_ptr<Vertex>& kpVertex) const;
 
-		//TOPOLOGIC_API bool IsErdoesGallai() const;
+		TOPOLOGIC_API bool IsErdoesGallai(const std::list<int>& rkSequence) const;
+
+		TOPOLOGIC_API void RemoveVertices(const std::list<Vertex::Ptr>& rkVertices);
+
+		TOPOLOGIC_API void RemoveEdges(const std::list<Edge::Ptr>& rkEdges);
 
 	protected:
+
+		typedef std::map<TopoDS_Vertex, TopTools_MapOfShape, OcctShapeComparator> GraphMap;
 
 		static Graph::Ptr ByVertex(
 			const std::shared_ptr<Vertex> kpVertex,
@@ -159,17 +165,8 @@ namespace TopologicCore
 
 		static std::shared_ptr<Wire> ConstructPath(const std::list<Vertex::Ptr>& rkPathVertices);
 
-		//static bool AreVerticesGeometricallyIdentical(const TopoDS_Vertex& rkOcctVertex1, const TopoDS_Vertex& rkOcctVertex2, const double kDistanceThreshold);
+		bool IsDegreeSequence(const std::list<int>& rkSequence) const;
 
-		//std::shared_ptr<Vertex> GetGeometricallyIdenticalVertexOrAddVertex(const std::shared_ptr<Vertex>& kpVertex, const bool kAddToDictionary, const bool kAddToVerticesList);
-
-		//TopoDS_Vertex GetGeometricallyIdenticalVertex(const TopoDS_Vertex& rkOcctVertex) const;
-
-		//std::shared_ptr<Vertex> GetGeometricallyIdenticalVertex(const std::shared_ptr<Vertex>& kpQueryVertex) const;
-
-		//std::list<Vertex::Ptr> m_vertices;
-		//std::list<Edge::Ptr> m_edges;
-
-		std::map<TopoDS_Vertex, TopTools_MapOfShape, OcctShapeComparator> m_graphDictionary;
+		GraphMap m_graphDictionary;
 	};
 }

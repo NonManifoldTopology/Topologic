@@ -77,7 +77,7 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)output\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)obj\$(Platform)\$(Configuration)\</IntDir>
-    <TargetName>Topologic</TargetName>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -93,7 +93,7 @@
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)output\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)obj\$(Platform)\$(Configuration)\</IntDir>
-    <TargetName>Topologic</TargetName>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -281,7 +281,7 @@
       <Output TaskParameter="Assemblies" ItemName="AssemblyInfo" />
     </GetAssemblyIdentity>
     <!-- Generate customization dll -->
-    <GenerateResource UseSourcePath="true" SdkToolsPath="$(sdk40toolspath)" Sources="$(ProjectDir)resources\Topologic.resx" OutputResources="$(ProjectDir)obj\TopologicImages.resources" References="$(FrameworkAssembliesPath)System.Drawing.dll" />
-    <AL TargetType="library" EmbedResources="$(ProjectDir)obj\TopologicImages.resources" OutputAssembly="$(OutDir)Topologic.customization.dll" Version="%(AssemblyInfo.Version)" />
+    <GenerateResource UseSourcePath="true" SdkToolsPath="$(sdk40toolspath)" Sources="$(ProjectDir)resources\Topologic.resx" OutputResources="$(ProjectDir)obj\TopologicDynamoImages.resources" References="$(FrameworkAssembliesPath)System.Drawing.dll" />
+    <AL TargetType="library" EmbedResources="$(ProjectDir)obj\TopologicDynamoImages.resources" OutputAssembly="$(OutDir)TopologicDynamo.customization.dll" Version="%(AssemblyInfo.Version)" />
   </Target>
 </Project>

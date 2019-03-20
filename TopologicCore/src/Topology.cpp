@@ -2346,6 +2346,9 @@ namespace TopologicCore
 	{
 		BRepBuilderAPI_Copy occtShapeCopier(rkOcctShape);
 		TopoDS_Shape occtShapeCopy = occtShapeCopier.Shape();
+
+		// TODO: copy the dictionary
+
 		DeepCopyExplodeShape(rkOcctShape, occtShapeCopier, rOcctShapeCopyShapeMap);
 		// Explode
 		Topology::Ptr pShapeCopy = Topology::ByOcctShape(occtShapeCopy, Topology::GetInstanceGUID(rkOcctShape));

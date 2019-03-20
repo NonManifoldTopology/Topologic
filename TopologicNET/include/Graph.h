@@ -58,9 +58,9 @@ namespace Topologic {
 			Topologic::Topology^ get();
 		}
 
-		Graph^ AddVertex(Vertex^ vertex);
+		Graph^ AddVertices(List<Vertex^>^ vertices);
 
-		Graph^ AddEdge(Edge^ edge);
+		Graph^ AddEdges(List<Edge^>^ edges);
 
 		int VertexDegree(Vertex^ vertex);
 
@@ -109,6 +109,12 @@ namespace Topologic {
 		Wire^ ShortestPath(Vertex^ startVertex, Vertex^ endVertex);
 
 		double Distance(Vertex^ startVertex, Vertex^ endVertex);
+
+		bool IsErdoesGallai(List<int>^ sequence);
+
+		Graph^ RemoveVertices(List<Vertex^>^ vertices);
+
+		Graph^ RemoveEdges(List<Edge^>^ edges);
 
 	public protected:
 		Graph(const std::shared_ptr<TopologicCore::Graph>& kpCoreGraph);

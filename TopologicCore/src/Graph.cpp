@@ -11,6 +11,7 @@
 #include <TopoDS.hxx>
 
 #include <algorithm>
+#include <numeric>
 
 namespace TopologicCore
 {
@@ -70,16 +71,10 @@ namespace TopologicCore
 	Graph::Graph(const std::list<Vertex::Ptr>& rkVertices, const std::list<Edge::Ptr>& rkEdges)
 	{
 		// 1. Add the vertices
-		for (const Vertex::Ptr& kpVertex : rkVertices)
-		{
-			AddVertex(kpVertex);
-		}
+		AddVertices(rkVertices);
 
 		// 2. Add the edges
-		for (const Edge::Ptr& kpEdge: rkEdges)
-		{
-			AddEdge(kpEdge);
-		}
+		AddEdges(rkEdges);
 	}
 
 	Graph::Graph(const Graph* kpAnotherGraph)
@@ -101,13 +96,16 @@ namespace TopologicCore
 		// For a loop: circle, radius/diameter/circumference = average of the edge lengths
 
 		std::list<Topology::Ptr> topologies;
+		GraphMap processedAdjacency;
 		for (const std::pair<TopoDS_Vertex, TopTools_MapOfShape>& rkDictionaryPair : m_graphDictionary)
 		{
-			Vertex::Ptr vertex1 = std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(rkDictionaryPair.first));
+			TopoDS_Vertex occtVertex1 = rkDictionaryPair.first;
+			Vertex::Ptr vertex1 = std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtVertex1));
 			if (rkDictionaryPair.second.Size() == 0)
 			{
 				// Just add the vertex
 				topologies.push_back(vertex1);
+				processedAdjacency.insert(std::make_pair(occtVertex1, TopTools_MapOfShape()));
 			}
 			else
 			{
@@ -116,20 +114,34 @@ namespace TopologicCore
 					mapIterator.More();
 					mapIterator.Next())
 				{
-					Vertex::Ptr vertex2 = std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(mapIterator.Value()));
+					TopoDS_Shape occtVertex2 = mapIterator.Value();
+					Vertex::Ptr vertex2 = std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtVertex2));
+
+					GraphMap::iterator vertex1Iterator = processedAdjacency.find(occtVertex1);
+					if (vertex1Iterator != processedAdjacency.end())
+					{
+						if (vertex1Iterator->second.Contains(occtVertex2))
+						{
+							continue;
+						}
+					}
+
+					GraphMap::iterator vertex2Iterator = processedAdjacency.find(TopoDS::Vertex(occtVertex2));
+					if (vertex2Iterator != processedAdjacency.end())
+					{
+						if (vertex2Iterator->second.Contains(occtVertex1))
+						{
+							continue;
+						}
+					}
+
 					Edge::Ptr edge = Edge::ByStartVertexEndVertex(vertex1, vertex2);
 					topologies.push_back(edge);
+					processedAdjacency[vertex1->GetOcctVertex()].Add(vertex2->GetOcctVertex());
+					processedAdjacency[vertex2->GetOcctVertex()].Add(vertex1->GetOcctVertex());
 				}
 			}
 		}
-		/*for (const Vertex::Ptr& kpVertex : m_vertices)
-		{
-			topologies.push_back(kpVertex);
-		}
-		for (const Edge::Ptr& kpEdge : m_edges)
-		{
-			topologies.push_back(kpEdge);
-		}*/
 
 		Cluster::Ptr cluster = Cluster::ByTopologies(topologies);
 		return cluster;
@@ -146,39 +158,68 @@ namespace TopologicCore
 
 	void Graph::Edges(std::list<std::shared_ptr<Edge>>& edges) const
 	{
+		GraphMap processedAdjacency;
 		for (const std::pair<TopoDS_Vertex, TopTools_MapOfShape>& rkDictionaryPair : m_graphDictionary)
 		{
-			Vertex::Ptr vertex1 = std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(rkDictionaryPair.first));
+			TopoDS_Vertex occtVertex1 = rkDictionaryPair.first;
+			Vertex::Ptr vertex1 = std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtVertex1));
 			// Create edges
 			for (TopTools_MapIteratorOfMapOfShape mapIterator(rkDictionaryPair.second);
 				mapIterator.More();
 				mapIterator.Next())
 			{
-				Topology::Ptr topology = Topology::ByOcctShape(mapIterator.Value());
+				TopoDS_Shape occtVertex2 = mapIterator.Value();
+				GraphMap::iterator vertex1Iterator = processedAdjacency.find(occtVertex1);
+				if (vertex1Iterator != processedAdjacency.end())
+				{
+					if (vertex1Iterator->second.Contains(occtVertex2))
+					{
+						continue;
+					}
+				}
+
+				GraphMap::iterator vertex2Iterator = processedAdjacency.find(TopoDS::Vertex(occtVertex2));
+				if (vertex2Iterator != processedAdjacency.end())
+				{
+					if (vertex2Iterator->second.Contains(occtVertex1))
+					{
+						continue;
+					}
+				}
+
+				Topology::Ptr topology = Topology::ByOcctShape(TopoDS::Vertex(occtVertex2));
 				Vertex::Ptr vertex2 = std::dynamic_pointer_cast<Vertex>(topology);
 				Edge::Ptr edge = Edge::ByStartVertexEndVertex(vertex1, vertex2);
 				edges.push_back(edge);
+				processedAdjacency[vertex1->GetOcctVertex()].Add(vertex2->GetOcctVertex());
+				processedAdjacency[vertex2->GetOcctVertex()].Add(vertex1->GetOcctVertex());
 			}
 		}
 	}
 
-	void Graph::AddVertex(const std::shared_ptr<Vertex>& kpVertex)
+	void Graph::AddVertices(const std::list<Vertex::Ptr>& rkVertices)
 	{
-		if(!ContainsVertex(kpVertex))
+		for (const Vertex::Ptr& kpVertex : rkVertices)
 		{
-			m_graphDictionary.insert(std::make_pair(kpVertex->GetOcctVertex(), TopTools_MapOfShape()));
+			if (!ContainsVertex(kpVertex))
+			{
+				m_graphDictionary.insert(std::make_pair(kpVertex->GetOcctVertex(), TopTools_MapOfShape()));
+			}
 		}
 	}
 
-	void Graph::AddEdge(const std::shared_ptr<Edge>& kpEdge)
+	void Graph::AddEdges(const std::list<Edge::Ptr>& rkEdges)
 	{
-		if (!ContainsEdge(kpEdge))
+		for (const Edge::Ptr& kpEdge : rkEdges)
 		{
-			Vertex::Ptr startVertex = kpEdge->StartVertex();
-			Vertex::Ptr endVertex = kpEdge->EndVertex();
+			if (!ContainsEdge(kpEdge))
+			{
+				Vertex::Ptr startVertex = kpEdge->StartVertex();
+				Vertex::Ptr endVertex = kpEdge->EndVertex();
 
-			m_graphDictionary[startVertex->GetOcctVertex()].Add(endVertex->GetOcctVertex());
-			m_graphDictionary[endVertex->GetOcctVertex()].Add(startVertex->GetOcctVertex());
+				m_graphDictionary[startVertex->GetOcctVertex()].Add(endVertex->GetOcctVertex());
+				m_graphDictionary[endVertex->GetOcctVertex()].Add(startVertex->GetOcctVertex());
+			}
 		}
 	}
 
@@ -578,6 +619,104 @@ namespace TopologicCore
 		}
 
 		return eccentricity;
+	}
+
+	bool Graph::IsErdoesGallai(const std::list<int>& rkSequence) const
+	{
+		int sum = std::accumulate(rkSequence.begin(), rkSequence.end(), 0);
+		if (sum % 2 != 0)
+		{
+			return false;
+		}
+
+		if (IsDegreeSequence(rkSequence))
+		{
+			std::vector<int> sequenceVector{ std::begin(rkSequence), std::end(rkSequence) };
+			int sizeOfSequence = (int)rkSequence.size();
+
+			/*for k in range(1, len(dsequence) + 1) :
+				left = sum(dsequence[:k])
+				right = k * (k - 1) + sum([min(x, k) for x in dsequence[k:]])
+				if left > right:
+					return False*/
+
+			std::list<int> range(rkSequence.size());
+			std::iota(range.begin(), range.end(), 1);
+
+			for (const int k : range)
+			{
+				int left = std::accumulate(sequenceVector.begin(), sequenceVector.begin()+k, 0);
+				std::vector<int> endSequence;
+				for (std::vector<int>::iterator x = sequenceVector.begin()+k;
+					x != sequenceVector.end();
+					x++)
+				{
+					endSequence.push_back(std::min(*x, k));
+				}
+				int right = k * (k-1) + std::accumulate(endSequence.begin(), endSequence.end(), 0);
+				if (left > right)
+				{
+					return false;
+				}
+			}
+		}
+		else
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	void Graph::RemoveVertices(const std::list<Vertex::Ptr>& rkVertices)
+	{
+		for (const Vertex::Ptr& kpVertex : rkVertices)
+		{
+			TopoDS_Vertex occtVertex = kpVertex->GetOcctVertex();
+
+			// Check if the connected vertices are connected to the vertex to be deleted. Remove it.
+			for (GraphMap::iterator graphIterator = m_graphDictionary.begin();
+				graphIterator != m_graphDictionary.end();
+				graphIterator++)
+			{
+				TopTools_MapOfShape& rOcctConnectedVertices = graphIterator->second;
+				rOcctConnectedVertices.Remove(occtVertex);
+			}
+
+			// Remove the entry from this map
+			GraphMap::iterator vertexIterator = m_graphDictionary.find(occtVertex);
+			if (vertexIterator != m_graphDictionary.end())
+			{
+				m_graphDictionary.erase(vertexIterator);
+			}
+		}
+	}
+
+	void Graph::RemoveEdges(const std::list<Edge::Ptr>& rkEdges)
+	{
+		for (const Edge::Ptr& kpEdge : rkEdges)
+		{
+			Vertex::Ptr startVertex = kpEdge->StartVertex();
+			Vertex::Ptr endVertex = kpEdge->EndVertex();
+
+			{
+				GraphMap::iterator startVertexIterator = m_graphDictionary.find(startVertex->GetOcctVertex());
+				if (startVertexIterator != m_graphDictionary.end())
+				{
+					TopTools_MapOfShape& adjacentVertices = startVertexIterator->second;
+					adjacentVertices.Remove(endVertex->GetOcctVertex());
+				}
+			}
+
+			{
+				GraphMap::iterator endVertexIterator = m_graphDictionary.find(endVertex->GetOcctVertex());
+				if (endVertexIterator != m_graphDictionary.end())
+				{
+					TopTools_MapOfShape& adjacentVertices = endVertexIterator->second;
+					adjacentVertices.Remove(startVertex->GetOcctVertex());
+				}
+			}
+		}
 	}
 
 	Graph::Ptr Graph::ByVertex(const Vertex::Ptr kpVertex,
@@ -1081,66 +1220,6 @@ namespace TopologicCore
 		return std::make_shared<Graph>(vertices, edges);
 	}
 
-	//bool Graph::AreVerticesGeometricallyIdentical(const TopoDS_Vertex & rkOcctVertex1, const TopoDS_Vertex & rkOcctVertex2, const double kDistanceThreshold)
-	//{
-	//	BRepExtrema_DistShapeShape occtDistanceCalculation(rkOcctVertex1, rkOcctVertex2);
-	//	bool isDone = occtDistanceCalculation.Perform();
-	//	if (isDone)
-	//	{
-	//		double distance = occtDistanceCalculation.Value();
-	//		if (distance < kDistanceThreshold)
-	//		{
-	//			return true;
-	//		}
-	//	}
-	//	return false;
-	//}
-
-	//std::shared_ptr<Vertex> Graph::GetGeometricallyIdenticalVertexOrAddVertex(const std::shared_ptr<Vertex>& kpVertex, const bool kAddToDictionary, const bool kAddToVerticesList)
-	//{
-	//	for (const Vertex::Ptr& kpExistingVertex : m_vertices)
-	//	{
-	//		bool isFound = AreVerticesGeometricallyIdentical(kpVertex->GetOcctVertex(), kpExistingVertex->GetOcctVertex(), 0.0001);
-	//		if (isFound)
-	//		{
-	//			return kpExistingVertex;
-	//		}
-	//	}
-	//	
-	//	if (kAddToDictionary)
-	//	{
-	//		AddVertex(kpVertex, kAddToVerticesList);
-	//		return kpVertex;
-	//	}
-	//	//else
-	//	return nullptr;
-	//}
-
-	//TopoDS_Vertex Graph::GetGeometricallyIdenticalVertex(const TopoDS_Vertex& rkOcctVertex) const
-	//{
-	//	for (const std::pair<TopoDS_Vertex, TopTools_MapOfShape>& vertexEdgesPair: m_graphDictionary)
-	//	{
-	//		TopoDS_Vertex occtExistingVertex = vertexEdgesPair.first;
-
-	//		bool isFound = AreVerticesGeometricallyIdentical(rkOcctVertex, occtExistingVertex, 0.0001);
-	//		if (isFound)
-	//		{
-	//			return occtExistingVertex;
-	//		}
-	//	}
-
-	//	return TopoDS_Vertex();
-	//}
-
-	//std::shared_ptr<Vertex> Graph::GetGeometricallyIdenticalVertex(const std::shared_ptr<Vertex>& kpQueryVertex) const
-	//{
-	//	TopoDS_Vertex occtQueryVertex = kpQueryVertex->GetOcctVertex();
-	//	TopoDS_Vertex occtClosestVertex = GetGeometricallyIdenticalVertex(occtQueryVertex);
-	//	if (occtClosestVertex.IsNull())
-	//	{
-	//		return nullptr;
-	//	}
-
 	Wire::Ptr Graph::ConstructPath(const std::list<Vertex::Ptr>& rkPathVertices)
 	{
 		std::list<Vertex::Ptr>::const_iterator lastVertexIterator = rkPathVertices.end();
@@ -1163,6 +1242,24 @@ namespace TopologicCore
 		return pathWire;
 	}
 
-	//	return std::make_shared<Vertex>(occtClosestVertex);
-	//}
+	bool Graph::IsDegreeSequence(const std::list<int>& rkSequence) const
+	{
+		std::list<int>::const_iterator beforeEndIterator = rkSequence.end();
+		beforeEndIterator--;
+
+		for(std::list<int>::const_iterator sequenceIterator = rkSequence.begin();
+			sequenceIterator != beforeEndIterator;
+			sequenceIterator++)
+		{
+			std::list<int>::const_iterator nextIterator = sequenceIterator;
+			nextIterator++;
+
+			if (*nextIterator > *sequenceIterator)
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
 }
