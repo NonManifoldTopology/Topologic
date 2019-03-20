@@ -384,7 +384,7 @@ namespace TopologicCore
 	{
 		if (rkFaces.empty())
 		{
-			throw std::exception("No face is passed.");
+			return nullptr;
 		}
 
 		TopTools_ListOfShape occtShapes;

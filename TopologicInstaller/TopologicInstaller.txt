@@ -62,8 +62,8 @@ Section "TopologicCore" TopologicCore
   File ..\output\x64\Release\TopologicCore.dll
   File ..\output\x64\Release\TopologicUtilities.dll
   File ..\output\x64\Release\TK*.dll
-  File ..\output\x64\Release\Topologic.xml
-  File ..\output\x64\Release\Topologic_DynamoCustomization.xml
+  File ..\output\x64\Release\TopologicDynamo.xml
+  File ..\output\x64\Release\TopologicDynamo_DynamoCustomization.xml
   File ..\output\x64\Release\TopologicEnergy.xml
   File ..\output\x64\Release\TopologicEnergy_DynamoCustomization.xml
   File ..\output\x64\Release\license.file
@@ -79,8 +79,9 @@ Section "TopologicDynamo" TopologicDynamo
   
   ;ADD YOUR OWN FILES HERE...
   File ..\output\x64\Release\TopologicExtensions.dll
-  File ..\output\x64\Release\Topologic.dll
-  File ..\output\x64\Release\Topologic.customization.dll
+  File ..\output\x64\Release\TopologicNET.dll
+  File ..\output\x64\Release\TopologicDynamo.dll
+  File ..\output\x64\Release\TopologicDynamo.customization.dll
   File vc_redist.x64.exe
   
   ;Check if Revit 2017 exists.
