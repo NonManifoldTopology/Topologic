@@ -6,6 +6,7 @@
 using namespace Autodesk::DesignScript::Runtime;
 #endif
 
+using namespace System;
 using namespace System::Collections::Generic;
 
 namespace Topologic {
@@ -102,7 +103,13 @@ namespace Topologic {
 			int get();
 		}
 
-		List<Wire^>^ AllPaths(Vertex^ startVertex, Vertex^ endVertex);
+		List<Wire^>^ AllPaths(
+			Vertex^ startVertex, 
+			Vertex^ endVertex, 
+#ifdef TOPOLOGIC_DYNAMO
+			[Autodesk::DesignScript::Runtime::DefaultArgument("null")]
+#endif
+			Nullable<double> timeLimitInSeconds);
 
 		Wire^ Path(Vertex^ startVertex, Vertex^ endVertex);
 

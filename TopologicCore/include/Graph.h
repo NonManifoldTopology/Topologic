@@ -5,6 +5,7 @@
 #include "Edge.h"
 
 #include <list>
+#include <chrono>
 
 namespace TopologicCore
 {
@@ -78,11 +79,16 @@ namespace TopologicCore
 		TOPOLOGIC_API void AllPaths(
 			const Vertex::Ptr& kpStartVertex,
 			const Vertex::Ptr& kpEndVertex,
+			const bool kUseTimeLimit,
+			const double kTimeLimitInSeconds,
 			std::list<std::shared_ptr<Wire>>& rPaths) const;
 
 		void AllPaths(
 			const Vertex::Ptr& kpStartVertex, 
-			const Vertex::Ptr& kpEndVertex, 
+			const Vertex::Ptr& kpEndVertex,
+			const bool kUseTimeLimit,
+			const double kTimeLimitInSeconds,
+			const std::chrono::system_clock::time_point& rkStartingTime,
 			std::list<Vertex::Ptr>& rPath,
 			std::list<std::shared_ptr<Wire>>& rPaths) const;
 

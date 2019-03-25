@@ -88,13 +88,20 @@ namespace Topologic
 		return gcnew Graph(pCoreCopyGraph);
 	}
 
-	List<Wire^>^ Graph::AllPaths(Vertex ^ startVertex, Vertex ^ endVertex)
+	List<Wire^>^ Graph::AllPaths(Vertex ^ startVertex, Vertex ^ endVertex, Nullable<double> timeLimitInSeconds)
 	{
 		TopologicCore::Vertex::Ptr pCoreStartVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(startVertex->GetCoreTopologicalQuery());
 		TopologicCore::Vertex::Ptr pCoreEndVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(endVertex->GetCoreTopologicalQuery());
 
 		std::list<TopologicCore::Wire::Ptr> corePaths;
-		(*m_pCoreGraph)->AllPaths(pCoreStartVertex, pCoreEndVertex, corePaths);
+		if (timeLimitInSeconds.HasValue)
+		{
+			(*m_pCoreGraph)->AllPaths(pCoreStartVertex, pCoreEndVertex, true, timeLimitInSeconds.Value, corePaths);
+		}
+		else
+		{
+			(*m_pCoreGraph)->AllPaths(pCoreStartVertex, pCoreEndVertex, false, 0.0, corePaths);
+		}
 
 		List<Wire^>^ paths = gcnew List<Wire^>();
 		for (const TopologicCore::Wire::Ptr& rkPath : corePaths)

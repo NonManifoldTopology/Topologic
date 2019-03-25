@@ -373,14 +373,38 @@ namespace TopologicCore
 		return maximumDelta;
 	}
 
-	void Graph::AllPaths(const Vertex::Ptr & kpStartVertex, const Vertex::Ptr & kpEndVertex, std::list<Wire::Ptr>& rPaths) const
+	void Graph::AllPaths(
+		const Vertex::Ptr & kpStartVertex, 
+		const Vertex::Ptr & kpEndVertex,
+		const bool kUseTimeLimit,
+		const double kTimeLimitInSeconds,
+		std::list<Wire::Ptr>& rPaths) const
 	{
 		std::list<Vertex::Ptr> path;
-		AllPaths(kpStartVertex, kpEndVertex, path, rPaths);
+		auto currentTime = std::chrono::system_clock::now();
+		AllPaths(kpStartVertex, kpEndVertex, kUseTimeLimit, kTimeLimitInSeconds, currentTime, path, rPaths);
 	}
 
-	void Graph::AllPaths(const Vertex::Ptr & kpStartVertex, const Vertex::Ptr & kpEndVertex, std::list<Vertex::Ptr>& rPath, std::list<Wire::Ptr>& rPaths) const
+	void Graph::AllPaths(
+		const Vertex::Ptr & kpStartVertex, 
+		const Vertex::Ptr & kpEndVertex,
+		const bool kUseTimeLimit,
+		const double kTimeLimitInSeconds,
+		const std::chrono::system_clock::time_point& rkStartingTime,
+		std::list<Vertex::Ptr>& rPath, 
+		std::list<Wire::Ptr>& rPaths) const
 	{
+		// Check elapsed time
+		if (kUseTimeLimit)
+		{
+			auto currentTime = std::chrono::system_clock::now();
+			auto timeDifferenceInSeconds = std::chrono::duration_cast<std::chrono::seconds>(currentTime - rkStartingTime);
+			if (timeDifferenceInSeconds.count() >= kTimeLimitInSeconds)
+			{
+				return;
+			}
+		}
+
 		if (!ContainsVertex(kpStartVertex))
 		{
 			return;
@@ -405,7 +429,7 @@ namespace TopologicCore
 			{
 				std::list<Wire::Ptr> extendedPaths;
 				std::list<Vertex::Ptr> previousPath = rPath;
-				AllPaths(connectedVertex, kpEndVertex, previousPath, extendedPaths);
+				AllPaths(connectedVertex, kpEndVertex, kUseTimeLimit, kTimeLimitInSeconds, rkStartingTime, previousPath, extendedPaths);
 				for (const Wire::Ptr& rkExtendedPath : extendedPaths)
 				{
 					rPaths.push_back(rkExtendedPath);
