@@ -1,6 +1,6 @@
 #pragma once
 
-#include <TopologicUtilities/include/Attribute.h>
+#include <TopologicCore/include/Attribute.h>
 
 namespace Topologic
 {
@@ -15,16 +15,16 @@ namespace Topologic
 		public ref class Attribute
 		{
 		public protected:
-			property std::shared_ptr<TopologicUtilities::Attribute> UtilitiesAttribute
+			property std::shared_ptr<TopologicCore::Attribute> UtilitiesAttribute
 			{
-				std::shared_ptr<TopologicUtilities::Attribute> get();
+				std::shared_ptr<TopologicCore::Attribute> get();
 			}
 
-			Attribute(const std::shared_ptr<TopologicUtilities::Attribute>& kpUtilitiesAttribute);
+			Attribute(const std::shared_ptr<TopologicCore::Attribute>& kpUtilitiesAttribute);
 			~Attribute();
 
 		protected:
-			std::shared_ptr<TopologicUtilities::Attribute>* m_pUtilitiesAttribute;
+			std::shared_ptr<TopologicCore::Attribute>* m_pUtilitiesAttribute;
 		};
 	}
 }

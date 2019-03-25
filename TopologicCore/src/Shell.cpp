@@ -7,6 +7,7 @@
 #include "Aperture.h"
 #include "ShellFactory.h"
 #include "GlobalCluster.h"
+#include "AttributeManager.h"
 
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
@@ -85,6 +86,11 @@ namespace TopologicCore
 			TopoDS_Shell occtShell = TopoDS::Shell(occtShape);
 			Shell::Ptr pShell = std::make_shared<Shell>(occtShell);
 			Shell::Ptr pCopyShell = std::dynamic_pointer_cast<Shell>(pShell->DeepCopy());
+			for (const Face::Ptr& kpFace: rkFaces)
+			{
+				AttributeManager::GetInstance().CopyAttributes(kpFace->GetOcctFace(), pCopyShell->GetOcctShell());
+			}
+
 			GlobalCluster::GetInstance().AddTopology(pCopyShell);
 			return pCopyShell;
 		}

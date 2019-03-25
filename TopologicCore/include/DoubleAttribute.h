@@ -5,7 +5,7 @@
 
 #include <string>
 
-namespace TopologicUtilities
+namespace TopologicCore
 {
 	class DoubleAttributeGUID {
 	public:
@@ -20,7 +20,7 @@ namespace TopologicUtilities
 	public:
 		typedef std::shared_ptr<DoubleAttribute> Ptr;
 
-		TOPOLOGIC_UTILITIES_API DoubleAttribute(const double kValue);
+		TOPOLOGIC_API DoubleAttribute(const double kValue);
 		virtual void* Value();
 		double DoubleValue() { return m_value; }
 

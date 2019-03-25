@@ -1,10 +1,17 @@
-#include <AttributeManager.h>
-#include <Attribute.h>
+#include "AttributeManager.h"
+#include "Attribute.h"
+#include "Topology.h"
 
-#include <TopologicCore/include/Topology.h>
+#include "TopExp_Explorer.hxx"
 
-namespace TopologicUtilities
+namespace TopologicCore
 {
+	AttributeManager & AttributeManager::GetInstance()
+	{
+		static AttributeManager instance;
+		return instance;
+	}
+
 	void AttributeManager::Add(const std::shared_ptr<TopologicCore::Topology>& kpTopology, const std::string & kAttributeName, const std::shared_ptr<Attribute>& kpAttribute)
 	{
 		Add(kpTopology->GetOcctShape(), kAttributeName, kpAttribute);
@@ -80,7 +87,37 @@ namespace TopologicUtilities
 		bool isFound = FindAll(rkOcctShape1, attributes);
 		if (isFound)
 		{
-			m_occtShapeToAttributesMap[rkOcctShape2] = std::map<std::string, Attribute::Ptr>(attributes);
+			if (rkOcctShape1.ShapeType() == rkOcctShape2.ShapeType())
+			{
+				m_occtShapeToAttributesMap[rkOcctShape2] = std::map<std::string, Attribute::Ptr>(attributes);
+			}
+			else
+			{
+				TopoDS_Shape occtSelectedSubtopology = Topology::SelectSubtopology(rkOcctShape2, rkOcctShape1, rkOcctShape1.ShapeType());
+				if (!occtSelectedSubtopology.IsNull())
+				{
+					m_occtShapeToAttributesMap[occtSelectedSubtopology] = std::map<std::string, Attribute::Ptr>(attributes);
+				}
+			}
+		}
+		
+		// Explore all subshapes and transfer the attribute to the closest simplest subshape of the same type
+		for (int occtShapeTypeInt = (int)rkOcctShape1.ShapeType() + 1; occtShapeTypeInt < (int)TopAbs_SHAPE; ++occtShapeTypeInt)
+		{
+			TopAbs_ShapeEnum occtShapeType = (TopAbs_ShapeEnum)occtShapeTypeInt;
+			for (TopExp_Explorer occtExplorer(rkOcctShape1, occtShapeType); occtExplorer.More(); occtExplorer.Next())
+			{
+				std::map<std::string, Attribute::Ptr> attributes;
+				bool isFound = FindAll(occtExplorer.Current(), attributes);
+				if (isFound)
+				{
+					TopoDS_Shape occtSelectedSubtopology = Topology::SelectSubtopology(rkOcctShape2, occtExplorer.Current(), Topology::GetTopologyType(occtExplorer.Current().ShapeType()));
+					if (!occtSelectedSubtopology.IsNull())
+					{
+						m_occtShapeToAttributesMap[occtSelectedSubtopology] = std::map<std::string, Attribute::Ptr>(attributes);
+					}
+				}
+			}
 		}
 	}
 }

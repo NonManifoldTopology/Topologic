@@ -34,9 +34,9 @@ namespace Topologic
 			virtual bool CheckType(Type^ type) override;
 
 		public protected:
-			virtual bool CheckType(const std::shared_ptr<TopologicUtilities::Attribute>& kpUtilitiesAttribute) override;
+			virtual bool CheckType(const std::shared_ptr<TopologicCore::Attribute>& kpUtilitiesAttribute) override;
 
-			virtual Object^ CreateValue(const std::shared_ptr<TopologicUtilities::Attribute>& kpUtilitiesAttribute) override;
+			virtual Object^ CreateValue(const std::shared_ptr<TopologicCore::Attribute>& kpUtilitiesAttribute) override;
 
 		protected:
 		};

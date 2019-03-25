@@ -5,7 +5,7 @@
 
 #include <string>
 
-namespace TopologicUtilities
+namespace TopologicCore
 {
 	class StringAttributeGUID {
 	public:
@@ -20,7 +20,7 @@ namespace TopologicUtilities
 	public:
 		typedef std::shared_ptr<StringAttribute> Ptr;
 
-		TOPOLOGIC_UTILITIES_API StringAttribute(const std::string& kValue);
+		TOPOLOGIC_API StringAttribute(const std::string& kValue);
 		virtual void* Value();
 
 	protected:

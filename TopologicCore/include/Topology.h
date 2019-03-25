@@ -526,6 +526,8 @@ namespace TopologicCore
 		/// <returns></returns>
 		TOPOLOGIC_API Topology::Ptr SelectSubtopology(const Topology::Ptr& kpSelectorTopology, const int kTypeFilter = TOPOLOGY_ALL) const;
 
+		static TopoDS_Shape SelectSubtopology(const TopoDS_Shape& rkOcctShape, const TopoDS_Shape& rkOcctSelectorShape, const int kTypeFilter = TOPOLOGY_ALL);
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -554,6 +556,8 @@ namespace TopologicCore
 		}*/
 
 		static TopologyType GetTopologyType(const TopAbs_ShapeEnum& rkOcctType);
+
+		static TopAbs_ShapeEnum GetOcctTopologyType(const TopologyType& rkType);
 
 		/// <summary>
 		/// 

@@ -4,6 +4,7 @@
 #include "Face.h"
 #include "EdgeFactory.h"
 #include "GlobalCluster.h"
+#include "AttributeManager.h"
 
 #include <BRepGProp.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
@@ -158,6 +159,7 @@ namespace TopologicCore
 		{
 			throw std::exception();
 		}
+
 		BRepBuilderAPI_MakeEdge occtMakeEdge(
 			kpStartVertex->GetOcctVertex(),
 			kpEndVertex->GetOcctVertex());
@@ -166,7 +168,12 @@ namespace TopologicCore
 			Throw(occtMakeEdge.Error());
 		}
 		Edge::Ptr pEdge = std::make_shared<Edge>(occtMakeEdge.Edge());
+		Vertex::Ptr startVertex = pEdge->StartVertex();
+		Vertex::Ptr endVertex = pEdge->EndVertex();
 		Edge::Ptr pCopyEdge = std::dynamic_pointer_cast<Edge>(pEdge->DeepCopy());
+		AttributeManager::GetInstance().CopyAttributes(startVertex->GetOcctVertex(), pCopyEdge->GetOcctEdge());
+		AttributeManager::GetInstance().CopyAttributes(endVertex->GetOcctVertex(), pCopyEdge->GetOcctEdge());
+	
 		GlobalCluster::GetInstance().AddTopology(pCopyEdge->GetOcctEdge());
 		return pCopyEdge;
 	}

@@ -6,13 +6,13 @@ namespace Topologic
 {
 	namespace Attributes
 	{
-		TopologicUtilities::Attribute::Ptr Attribute::UtilitiesAttribute::get()
+		TopologicCore::Attribute::Ptr Attribute::UtilitiesAttribute::get()
 		{
 			return *m_pUtilitiesAttribute;
 		}
 
-		Attribute::Attribute(const TopologicUtilities::Attribute::Ptr& kpUtilitiesAttribute)
-			: m_pUtilitiesAttribute(new TopologicUtilities::Attribute::Ptr(kpUtilitiesAttribute))
+		Attribute::Attribute(const TopologicCore::Attribute::Ptr& kpUtilitiesAttribute)
+			: m_pUtilitiesAttribute(new TopologicCore::Attribute::Ptr(kpUtilitiesAttribute))
 		{
 
 		}

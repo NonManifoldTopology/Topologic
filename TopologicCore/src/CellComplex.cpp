@@ -8,6 +8,7 @@
 #include "Shell.h"
 #include "CellComplexFactory.h"
 #include "GlobalCluster.h"
+#include "AttributeManager.h"
 
 #include <BRep_Builder.hxx>
 #include <BRepGProp.hxx>
@@ -71,6 +72,10 @@ namespace TopologicCore
 		TopoDS_CompSolid occtCompSolid = ByOcctSolids(occtShapes);
 		CellComplex::Ptr pCellComplex = std::make_shared<CellComplex>(occtCompSolid);
 		CellComplex::Ptr pCopyCellComplex = std::dynamic_pointer_cast<CellComplex>(pCellComplex->DeepCopy());
+		for (const Cell::Ptr& kpCell : rkCells)
+		{
+			AttributeManager::GetInstance().CopyAttributes(kpCell->GetOcctSolid(), pCopyCellComplex->GetOcctCompSolid());
+		}
 		GlobalCluster::GetInstance().AddTopology(pCopyCellComplex->GetOcctCompSolid());
 		return pCopyCellComplex;
 	}
@@ -190,7 +195,13 @@ namespace TopologicCore
 			}
 		}
 
-		return ByCells(cells);
+		CellComplex::Ptr cellComplex = ByCells(cells);
+
+		for (const Face::Ptr& kpFace : rkFaces)
+		{
+			AttributeManager::GetInstance().CopyAttributes(kpFace->GetOcctFace(), cellComplex->GetOcctCompSolid());
+		}
+		return cellComplex;
 	}
 
 	Cell::Ptr CellComplex::ExternalBoundary() const

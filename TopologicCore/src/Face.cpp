@@ -7,6 +7,7 @@
 #include "FaceFactory.h"
 #include "Utilities.h"
 #include "GlobalCluster.h"
+#include "AttributeManager.h"
 
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepAlgoAPI_Section.hxx>
@@ -110,7 +111,10 @@ namespace TopologicCore
 	Face::Ptr Face::ByExternalBoundary(const Wire::Ptr& kpExternalBoundary)
 	{
 		std::list<Wire::Ptr> internalBoundaries;
-		return ByExternalInternalBoundaries(kpExternalBoundary, internalBoundaries);
+		Face::Ptr face = ByExternalInternalBoundaries(kpExternalBoundary, internalBoundaries);
+		AttributeManager::GetInstance().CopyAttributes(kpExternalBoundary->GetOcctWire(), face->GetOcctFace());
+
+		return face;
 	}
 
 	Face::Ptr Face::ByExternalInternalBoundaries(
@@ -124,6 +128,7 @@ namespace TopologicCore
 			Throw(occtMakeFace);
 		}
 
+		
 		for (const Wire::Ptr& kpInternalBoundary : rkInternalBoundaries)
 		{
 			//Wire::Ptr pCopyInternalBoundary = std::dynamic_pointer_cast<Wire>(kpInternalBoundary->DeepCopy());
@@ -132,6 +137,12 @@ namespace TopologicCore
 
 		Face::Ptr pFace = std::make_shared<Face>(occtMakeFace);
 		Face::Ptr pCopyFace = std::dynamic_pointer_cast<Face>(pFace->DeepCopy());
+		AttributeManager::GetInstance().CopyAttributes(pkExternalBoundary->GetOcctWire(), pCopyFace->GetOcctFace());
+		for (const Wire::Ptr& kpInternalBoundary : rkInternalBoundaries)
+		{
+			AttributeManager::GetInstance().CopyAttributes(kpInternalBoundary->GetOcctWire(), pCopyFace->GetOcctFace());
+		}
+
 		GlobalCluster::GetInstance().AddTopology(pCopyFace->GetOcctFace());
 		return pCopyFace;
 	}
@@ -145,6 +156,10 @@ namespace TopologicCore
 
 		Wire::Ptr pWire = Wire::ByEdges(rkEdges);
 		Face::Ptr pFace = ByExternalBoundary(pWire);
+		for (const Edge::Ptr& kpEdge : rkEdges)
+		{
+			AttributeManager::GetInstance().CopyAttributes(kpEdge->GetOcctEdge(), pFace->GetOcctFace());
+		}
 
 		return pFace;
 	}

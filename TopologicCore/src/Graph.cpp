@@ -323,7 +323,8 @@ namespace TopologicCore
 			// Divide by zero, return the largest double number
 			return std::numeric_limits<double>::max();
 		}
-		return numOfEdges / denominator; // (2 * numOfEdges) / denominator; Not using the 2 factor
+		return  (2 * numOfEdges) / denominator;
+		//return numOfEdges / denominator; 
 	}
 
 	bool Graph::IsComplete() const

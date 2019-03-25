@@ -8,6 +8,7 @@
 #include "Shell.h"
 #include "ClusterFactory.h"
 #include "GlobalCluster.h"
+#include "AttributeManager.h"
 
 #include <TopoDS_Builder.hxx>
 #include <TopoDS_UnCompatibleShapes.hxx>
@@ -50,6 +51,11 @@ namespace TopologicCore
 		}
 
 		Cluster::Ptr pCopyCluster = std::dynamic_pointer_cast<Cluster>(pCluster->DeepCopy());
+		for (const Topology::Ptr& kpTopology : rkTopologies)
+		{
+			AttributeManager::GetInstance().CopyAttributes(kpTopology->GetOcctShape(), pCopyCluster->GetOcctCompound());
+		}
+
 		GlobalCluster::GetInstance().AddTopology(pCopyCluster->GetOcctCompound());
 		return pCopyCluster;
 	}

@@ -1,7 +1,7 @@
 #include "DoubleAttributeFactory.h"
 #include "Attribute.h"
 
-#include <TopologicUtilities/include/DoubleAttribute.h>
+#include <TopologicCore/include/DoubleAttribute.h>
 
 #include <memory>
 
@@ -12,7 +12,7 @@ namespace Topologic
 		Attribute^ DoubleAttributeFactory::Create(String ^ key, Object ^ value)
 		{
 			double doubleValue = safe_cast<double>(value);
-			return gcnew Attribute(std::dynamic_pointer_cast<TopologicUtilities::Attribute>(std::make_shared<TopologicUtilities::DoubleAttribute>(doubleValue)));
+			return gcnew Attribute(std::dynamic_pointer_cast<TopologicCore::Attribute>(std::make_shared<TopologicCore::DoubleAttribute>(doubleValue)));
 		}
 
 		bool DoubleAttributeFactory::CheckType(Type ^ type)
@@ -23,12 +23,12 @@ namespace Topologic
 			return type == doubleHandleType;
 		}
 
-		bool DoubleAttributeFactory::CheckType(const std::shared_ptr<TopologicUtilities::Attribute>& kpUtilitiesAttribute)
+		bool DoubleAttributeFactory::CheckType(const std::shared_ptr<TopologicCore::Attribute>& kpUtilitiesAttribute)
 		{
-			return std::dynamic_pointer_cast<TopologicUtilities::DoubleAttribute>(kpUtilitiesAttribute) != nullptr;
+			return std::dynamic_pointer_cast<TopologicCore::DoubleAttribute>(kpUtilitiesAttribute) != nullptr;
 		}
 
-		Object^ DoubleAttributeFactory::CreateValue(const std::shared_ptr<TopologicUtilities::Attribute>& kpUtilitiesAttribute)
+		Object^ DoubleAttributeFactory::CreateValue(const std::shared_ptr<TopologicCore::Attribute>& kpUtilitiesAttribute)
 		{
 			void* pValue = kpUtilitiesAttribute->Value();
 			double* pDoubleValue = static_cast<double*>(pValue);

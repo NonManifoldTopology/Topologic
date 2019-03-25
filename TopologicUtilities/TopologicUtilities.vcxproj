@@ -152,31 +152,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="include\Attribute.h" />
-    <ClInclude Include="include\AttributeManager.h" />
     <ClInclude Include="include\CellUtility.h" />
     <ClInclude Include="include\Direction.h" />
-    <ClInclude Include="include\DoubleAttribute.h" />
     <ClInclude Include="include\EdgeUtility.h" />
     <ClInclude Include="include\FaceUtility.h" />
-    <ClInclude Include="include\IntAttribute.h" />
     <ClInclude Include="include\ShellUtility.h" />
-    <ClInclude Include="include\StringAttribute.h" />
     <ClInclude Include="include\TopologyUtility.h" />
     <ClInclude Include="include\TransformationMatrix2D.h" />
     <ClInclude Include="include\Utilities.h" />
     <ClInclude Include="include\Vector.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\AttributeManager.cpp" />
     <ClCompile Include="src\CellUtility.cpp" />
     <ClCompile Include="src\Direction.cpp" />
-    <ClCompile Include="src\DoubleAttribute.cpp" />
     <ClCompile Include="src\EdgeUtility.cpp" />
     <ClCompile Include="src\FaceUtility.cpp" />
-    <ClCompile Include="src\IntAttribute.cpp" />
     <ClCompile Include="src\ShellUtility.cpp" />
-    <ClCompile Include="src\StringAttribute.cpp" />
     <ClCompile Include="src\TopologyUtility.cpp" />
     <ClCompile Include="src\TransformationMatrix2D.cpp" />
     <ClCompile Include="src\Vector.cpp" />

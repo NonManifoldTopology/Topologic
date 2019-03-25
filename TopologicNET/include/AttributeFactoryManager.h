@@ -3,7 +3,7 @@
 using namespace System;
 using namespace System::Collections::Generic;
 
-namespace TopologicUtilities
+namespace TopologicCore
 {
 	class Attribute;
 }
@@ -28,7 +28,7 @@ namespace Topologic
 
 			void SetAttribute(Topology^ topology, String^ key, Object^ value);
 
-			AttributeFactory^ GetFactory(const std::shared_ptr<TopologicUtilities::Attribute> kpUtilitiesAttribute);
+			AttributeFactory^ GetFactory(const std::shared_ptr<TopologicCore::Attribute> kpUtilitiesAttribute);
 
 		private:
 			AttributeFactoryManager();

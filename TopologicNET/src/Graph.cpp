@@ -269,11 +269,12 @@ namespace Topologic
 		TopologicCore::Vertex::Ptr pCoreVertex2 = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex2->GetCoreTopologicalQuery());
 		TopologicCore::Graph::Ptr pCoreGraph = *m_pCoreGraph;
 
-		TopologicCore::Vertex::Ptr pCoreCopyVertex1 = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(pCoreVertex1->DeepCopy());
-		TopologicCore::Vertex::Ptr pCoreCopyVertex2 = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(pCoreVertex2->DeepCopy());
+		/*TopologicCore::Vertex::Ptr pCoreCopyVertex1 = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(pCoreVertex1->DeepCopy());
+		TopologicCore::Vertex::Ptr pCoreCopyVertex2 = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(pCoreVertex2->DeepCopy());*/
 		TopologicCore::Graph::Ptr pCoreCopyGraph = std::make_shared<TopologicCore::Graph>(pCoreGraph.get());
 
-		pCoreCopyGraph->Connect(pCoreCopyVertex1, pCoreCopyVertex2);
+		//pCoreCopyGraph->Connect(pCoreCopyVertex1, pCoreCopyVertex2);
+		pCoreCopyGraph->Connect(pCoreVertex1, pCoreVertex2);
 
 		return gcnew Graph(pCoreCopyGraph);
 	}

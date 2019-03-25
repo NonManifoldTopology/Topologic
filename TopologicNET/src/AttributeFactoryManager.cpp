@@ -7,10 +7,10 @@
 #include "StringAttributeFactory.h"
 #include "Topology.h"
 
-#include <TopologicUtilities/include/IntAttribute.h>
-#include <TopologicUtilities/include/DoubleAttribute.h>
-#include <TopologicUtilities/include/StringAttribute.h>
-#include <TopologicUtilities/include/AttributeManager.h>
+#include <TopologicCore/include/IntAttribute.h>
+#include <TopologicCore/include/DoubleAttribute.h>
+#include <TopologicCore/include/StringAttribute.h>
+#include <TopologicCore/include/AttributeManager.h>
 
 namespace Topologic
 {
@@ -19,9 +19,9 @@ namespace Topologic
 		AttributeFactoryManager::AttributeFactoryManager()
 		{
 			// TODO: how to add user-defined attributes?
-			m_attributeFactoryDict->Add(gcnew String(TopologicUtilities::IntAttributeGUID::Get().c_str()), gcnew IntAttributeFactory());
-			m_attributeFactoryDict->Add(gcnew String(TopologicUtilities::DoubleAttributeGUID::Get().c_str()), gcnew DoubleAttributeFactory());
-			m_attributeFactoryDict->Add(gcnew String(TopologicUtilities::StringAttributeGUID::Get().c_str()), gcnew StringAttributeFactory());
+			m_attributeFactoryDict->Add(gcnew String(TopologicCore::IntAttributeGUID::Get().c_str()), gcnew IntAttributeFactory());
+			m_attributeFactoryDict->Add(gcnew String(TopologicCore::DoubleAttributeGUID::Get().c_str()), gcnew DoubleAttributeFactory());
+			m_attributeFactoryDict->Add(gcnew String(TopologicCore::StringAttributeGUID::Get().c_str()), gcnew StringAttributeFactory());
 		}
 
 		void AttributeFactoryManager::SetAttribute(Topology ^ topology, String ^ key, Object ^ value)
@@ -33,10 +33,10 @@ namespace Topologic
 				TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 
 			// Add the attribute
-			TopologicUtilities::AttributeManager::GetInstance().Add(pCoreTopology, cppKey, attribute->UtilitiesAttribute);
+			TopologicCore::AttributeManager::GetInstance().Add(pCoreTopology, cppKey, attribute->UtilitiesAttribute);
 		}
 
-		AttributeFactory ^ AttributeFactoryManager::GetFactory(const std::shared_ptr<TopologicUtilities::Attribute> kpUtilitiesAttribute)
+		AttributeFactory ^ AttributeFactoryManager::GetFactory(const std::shared_ptr<TopologicCore::Attribute> kpUtilitiesAttribute)
 		{
 			for each(KeyValuePair<String^, AttributeFactory^>^ entry in m_attributeFactoryDict)
 			{

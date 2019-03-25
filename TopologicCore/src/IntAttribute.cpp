@@ -1,7 +1,6 @@
-#include <DoubleAttribute.h>
-#include "..\include\IntAttribute.h"
+#include "IntAttribute.h"
 
-namespace TopologicUtilities
+namespace TopologicCore
 {
 	IntAttribute::IntAttribute(const long long int kValue)
 		: m_value(kValue)

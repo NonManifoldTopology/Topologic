@@ -166,6 +166,8 @@ copy "$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\bind\*.pdb
     <ClInclude Include="include\Aperture.h" />
     <ClInclude Include="include\ApertureFactory.h" />
     <ClInclude Include="include\AperturePath.h" />
+    <ClInclude Include="include\Attribute.h" />
+    <ClInclude Include="include\AttributeManager.h" />
     <ClInclude Include="include\Bitwise.h" />
     <ClInclude Include="include\Cell.h" />
     <ClInclude Include="include\CellComplex.h" />
@@ -176,6 +178,7 @@ copy "$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\bind\*.pdb
     <ClInclude Include="include\ContentManager.h" />
     <ClInclude Include="include\Context.h" />
     <ClInclude Include="include\ContextManager.h" />
+    <ClInclude Include="include\DoubleAttribute.h" />
     <ClInclude Include="include\GlobalCluster.h" />
     <ClInclude Include="include\Edge.h" />
     <ClInclude Include="include\EdgeFactory.h" />
@@ -183,8 +186,10 @@ copy "$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\bind\*.pdb
     <ClInclude Include="include\FaceFactory.h" />
     <ClInclude Include="include\Graph.h" />
     <ClInclude Include="include\InstanceGUIDManager.h" />
+    <ClInclude Include="include\IntAttribute.h" />
     <ClInclude Include="include\Shell.h" />
     <ClInclude Include="include\ShellFactory.h" />
+    <ClInclude Include="include\StringAttribute.h" />
     <ClInclude Include="include\TopologicalQuery.h" />
     <ClInclude Include="include\Topology.h" />
     <ClInclude Include="include\TopologyFactory.h" />
@@ -200,6 +205,7 @@ copy "$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\bind\*.pdb
     <ClCompile Include="src\Aperture.cpp" />
     <ClCompile Include="src\ApertureFactory.cpp" />
     <ClCompile Include="src\AperturePath.cpp" />
+    <ClCompile Include="src\AttributeManager.cpp" />
     <ClCompile Include="src\Bitwise.cpp" />
     <ClCompile Include="src\Cell.cpp" />
     <ClCompile Include="src\CellComplex.cpp" />
@@ -210,6 +216,7 @@ copy "$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\bind\*.pdb
     <ClCompile Include="src\ContentManager.cpp" />
     <ClCompile Include="src\Context.cpp" />
     <ClCompile Include="src\ContextManager.cpp" />
+    <ClCompile Include="src\DoubleAttribute.cpp" />
     <ClCompile Include="src\GlobalCluster.cpp" />
     <ClCompile Include="src\Edge.cpp" />
     <ClCompile Include="src\EdgeFactory.cpp" />
@@ -217,8 +224,10 @@ copy "$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\bind\*.pdb
     <ClCompile Include="src\FaceFactory.cpp" />
     <ClCompile Include="src\Graph.cpp" />
     <ClCompile Include="src\InstanceGUIDManager.cpp" />
+    <ClCompile Include="src\IntAttribute.cpp" />
     <ClCompile Include="src\Shell.cpp" />
     <ClCompile Include="src\ShellFactory.cpp" />
+    <ClCompile Include="src\StringAttribute.cpp" />
     <ClCompile Include="src\Topology.cpp" />
     <ClCompile Include="src\TopologyFactoryManager.cpp" />
     <ClCompile Include="src\Utilities.cpp" />

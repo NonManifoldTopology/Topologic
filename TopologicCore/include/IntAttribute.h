@@ -5,7 +5,7 @@
 
 #include <string>
 
-namespace TopologicUtilities
+namespace TopologicCore
 {
 	class IntAttributeGUID {
 	public:
@@ -20,7 +20,7 @@ namespace TopologicUtilities
 	public:
 		typedef std::shared_ptr<IntAttribute> Ptr;
 
-		TOPOLOGIC_UTILITIES_API IntAttribute(const long long int kValue);
+		TOPOLOGIC_API IntAttribute(const long long int kValue);
 		virtual void* Value();
 
 	protected:

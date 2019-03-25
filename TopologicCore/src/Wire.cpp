@@ -4,6 +4,7 @@
 #include "Face.h"
 #include "WireFactory.h"
 #include "GlobalCluster.h"
+#include "AttributeManager.h"
 
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepCheck_Wire.hxx>
@@ -102,6 +103,10 @@ namespace TopologicCore
 		TopoDS_Wire occtWire = ByOcctEdges(occtEdges);
 		Wire::Ptr pWire = std::make_shared<Wire>(occtWire);
 		Wire::Ptr pCopyWire = std::dynamic_pointer_cast<Wire>(pWire->DeepCopy());
+		for (const Edge::Ptr& kpEdge : rkEdges)
+		{
+			AttributeManager::GetInstance().CopyAttributes(kpEdge->GetOcctEdge(), pCopyWire->GetOcctWire());
+		}
 
 		GlobalCluster::GetInstance().AddTopology(pCopyWire->GetOcctWire());
 		return pCopyWire;

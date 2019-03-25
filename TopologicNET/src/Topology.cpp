@@ -32,10 +32,10 @@
 #include <AttributeFactory.h>
 #include <LicenseManager.h>
 
-#include <TopologicUtilities/include/AttributeManager.h>
-#include <TopologicUtilities/include/IntAttribute.h>
-#include <TopologicUtilities/include/DoubleAttribute.h>
-#include <TopologicUtilities/include/StringAttribute.h>
+#include <TopologicCore/include/AttributeManager.h>
+#include <TopologicCore/include/IntAttribute.h>
+#include <TopologicCore/include/DoubleAttribute.h>
+#include <TopologicCore/include/StringAttribute.h>
 
 //using namespace System::Xml;
 using namespace System::Reflection;
@@ -350,15 +350,15 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreTopology =
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 
-		std::map<std::string, std::shared_ptr<TopologicUtilities::Attribute>> coreAttributes;
-		bool isFound = TopologicUtilities::AttributeManager::GetInstance().FindAll(pCoreTopology->GetOcctShape(), coreAttributes);
+		std::map<std::string, std::shared_ptr<TopologicCore::Attribute>> coreAttributes;
+		bool isFound = TopologicCore::AttributeManager::GetInstance().FindAll(pCoreTopology->GetOcctShape(), coreAttributes);
 		if (!isFound)
 		{
 			return nullptr;
 		}
 		
 		System::Collections::Generic::Dictionary<String^, Object^>^ dictionary = gcnew System::Collections::Generic::Dictionary<String^, Object^>();
-		for (const std::pair<std::string, TopologicUtilities::Attribute::Ptr>& rkAttributePair : coreAttributes)
+		for (const std::pair<std::string, TopologicCore::Attribute::Ptr>& rkAttributePair : coreAttributes)
 		{
 			String^ key = gcnew String(rkAttributePair.first.c_str());
 			Attributes::AttributeFactory^ attributeFactory = Attributes::AttributeFactoryManager::Instance->GetFactory(rkAttributePair.second);
@@ -405,7 +405,7 @@ namespace Topologic
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->DeepCopy();
 
-		TopologicUtilities::AttributeManager::GetInstance().CopyAttributes(pCoreTopology->GetOcctShape(), pCoreCopyTopology->GetOcctShape());
+		TopologicCore::AttributeManager::GetInstance().CopyAttributes(pCoreTopology->GetOcctShape(), pCoreCopyTopology->GetOcctShape());
 		
 		Topology^ topology = ByCoreTopology(pCoreCopyTopology);
 		return safe_cast<T>(topology);
@@ -418,7 +418,7 @@ namespace Topologic
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->DeepCopy();
 
-		TopologicUtilities::AttributeManager::GetInstance().CopyAttributes(pCoreTopology->GetOcctShape(), pCoreCopyTopology->GetOcctShape());
+		TopologicCore::AttributeManager::GetInstance().CopyAttributes(pCoreTopology->GetOcctShape(), pCoreCopyTopology->GetOcctShape());
 
 		Topology^ topology = ByCoreTopology(pCoreCopyTopology);
 		return safe_cast<T>(topology);
@@ -499,7 +499,7 @@ namespace Topologic
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		std::string cppName = msclr::interop::marshal_as<std::string>(key);
 
-		TopologicUtilities::Attribute::Ptr pSupportAttribute = TopologicUtilities::AttributeManager::GetInstance().Find(pCoreTopology->GetOcctShape(), cppName);
+		TopologicCore::Attribute::Ptr pSupportAttribute = TopologicCore::AttributeManager::GetInstance().Find(pCoreTopology->GetOcctShape(), cppName);
 		if (pSupportAttribute == nullptr)
 		{
 			return nullptr;
@@ -531,7 +531,7 @@ namespace Topologic
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		std::string cppName = msclr::interop::marshal_as<std::string>(name);
 
-		TopologicUtilities::Attribute::Ptr pSupportAttribute = TopologicUtilities::AttributeManager::GetInstance().Find(pCoreTopology->GetOcctShape(), cppName);
+		TopologicCore::Attribute::Ptr pSupportAttribute = TopologicCore::AttributeManager::GetInstance().Find(pCoreTopology->GetOcctShape(), cppName);
 		AttributeFactory^ attributeFactory = AttributeFactoryManager::Instance->GetFactory(pSupportAttribute);
 		return attributeFactory->CreateValue(pSupportAttribute);
 	}
@@ -541,8 +541,8 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreTopology =
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 
-		std::map<std::string, std::shared_ptr<TopologicUtilities::Attribute>> coreAttributes;
-		bool isFound = TopologicUtilities::AttributeManager::GetInstance().FindAll(pCoreTopology->GetOcctShape(), coreAttributes);
+		std::map<std::string, std::shared_ptr<TopologicCore::Attribute>> coreAttributes;
+		bool isFound = TopologicCore::AttributeManager::GetInstance().FindAll(pCoreTopology->GetOcctShape(), coreAttributes);
 		if (!isFound)
 		{
 			return nullptr;
@@ -550,7 +550,7 @@ namespace Topologic
 
 		List<Object^>^ keys = gcnew List<Object^>();
 		List<Object^>^ values = gcnew List<Object^>();
-		for (const std::pair<std::string, TopologicUtilities::Attribute::Ptr>& rkAttributePair : coreAttributes)
+		for (const std::pair<std::string, TopologicCore::Attribute::Ptr>& rkAttributePair : coreAttributes)
 		{
 			String^ key = gcnew String(rkAttributePair.first.c_str());
 			keys->Add(key);
@@ -573,7 +573,7 @@ namespace Topologic
 		for each(String^ key in keys)
 		{
 			std::string cppKey = msclr::interop::marshal_as<std::string>(key);
-			TopologicUtilities::AttributeManager::GetInstance().Remove(pCoreCopyTopology, cppKey);
+			TopologicCore::AttributeManager::GetInstance().Remove(pCoreCopyTopology, cppKey);
 		}
 
 		return copyTopology;

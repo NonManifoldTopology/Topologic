@@ -59,6 +59,21 @@
     <ClInclude Include="include\Bitwise.h" />
     <ClInclude Include="include\About.h" />
     <ClInclude Include="include\Graph.h" />
+    <ClInclude Include="include\Attribute.h">
+      <Filter>Attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AttributeManager.h">
+      <Filter>Attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DoubleAttribute.h">
+      <Filter>Attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IntAttribute.h">
+      <Filter>Attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="include\StringAttribute.h">
+      <Filter>Attributes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
@@ -115,6 +130,18 @@
     <ClCompile Include="src\Bitwise.cpp" />
     <ClCompile Include="src\About.cpp" />
     <ClCompile Include="src\Graph.cpp" />
+    <ClCompile Include="src\AttributeManager.cpp">
+      <Filter>Attributes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DoubleAttribute.cpp">
+      <Filter>Attributes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IntAttribute.cpp">
+      <Filter>Attributes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\StringAttribute.cpp">
+      <Filter>Attributes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Context">
@@ -122,6 +149,9 @@
     </Filter>
     <Filter Include="Factory">
       <UniqueIdentifier>{a21958dd-917d-4441-b751-1a82742b61e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Attributes">
+      <UniqueIdentifier>{dfd6bfc1-9eef-4c6f-a329-025cd25261a1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

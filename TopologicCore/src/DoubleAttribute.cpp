@@ -1,6 +1,6 @@
-#include <DoubleAttribute.h>
+#include "DoubleAttribute.h"
 
-namespace TopologicUtilities
+namespace TopologicCore
 {
 	DoubleAttribute::DoubleAttribute(const double kValue)
 		: m_value(kValue)
