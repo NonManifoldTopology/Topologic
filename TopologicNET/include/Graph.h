@@ -18,9 +18,6 @@ namespace Topologic {
 	public ref class Graph
 	{
 	public:
-		static Graph^ ByVerticesEdges(List<Vertex^>^ vertices, List<Edge^>^ edges);
-
-
 #ifdef TOPOLOGIC_DYNAMO
 		static Graph^ ByTopology(
 			Topology^ topology,
@@ -59,19 +56,39 @@ namespace Topologic {
 			Topologic::Topology^ get();
 		}
 
-		Graph^ AddVertices(List<Vertex^>^ vertices);
+		Graph^ AddVertices(
+			List<Vertex^>^ vertices,
+#ifdef TOPOLOGIC_DYNAMO
+			[Autodesk::DesignScript::Runtime::DefaultArgument("null")]
+#endif
+			Nullable<double> tolerance);
 
-		Graph^ AddEdges(List<Edge^>^ edges);
+		Graph^ AddEdges(
+			List<Edge^>^ edges,
+#ifdef TOPOLOGIC_DYNAMO
+			[Autodesk::DesignScript::Runtime::DefaultArgument("null")]
+#endif
+			Nullable<double> tolerance);
 
-		int VertexDegree(Vertex^ vertex);
+		Graph^ Connect(
+			Vertex^ vertex1, 
+			Vertex^ vertex2, 
+#ifdef TOPOLOGIC_DYNAMO
+			[Autodesk::DesignScript::Runtime::DefaultArgument("null")]
+#endif
+			Nullable<double> tolerance);
+
+		int Degree(Vertex^ vertex);
 
 		List<Vertex^>^ AdjacentVertices(Vertex^ vertex);
 
-		Graph^ Connect(Vertex^ vertex1, Vertex^ vertex2);
+		bool ContainsVertex(Vertex^ vertex, 
+#ifdef TOPOLOGIC_DYNAMO
+			[Autodesk::DesignScript::Runtime::DefaultArgument("null")]
+#endif
+			Nullable<double> tolerance);
 
-		bool ContainsVertex(Vertex^ vertex);
-
-		bool ContainsEdge(Edge^ edge);
+		bool ContainsEdge(Edge^ edge, Nullable<double> tolerance);
 
 		property List<int>^ DegreeSequence
 		{

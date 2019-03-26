@@ -71,10 +71,10 @@ namespace TopologicCore
 	Graph::Graph(const std::list<Vertex::Ptr>& rkVertices, const std::list<Edge::Ptr>& rkEdges)
 	{
 		// 1. Add the vertices
-		AddVertices(rkVertices);
+		AddVertices(rkVertices, false, 0.0);
 
 		// 2. Add the edges
-		AddEdges(rkEdges);
+		AddEdges(rkEdges, false, 0.0);
 	}
 
 	Graph::Graph(const Graph* kpAnotherGraph)
@@ -197,38 +197,48 @@ namespace TopologicCore
 		}
 	}
 
-	void Graph::AddVertices(const std::list<Vertex::Ptr>& rkVertices)
+	void Graph::AddVertices(const std::list<Vertex::Ptr>& rkVertices, const bool kUseTolerance, const double kTolerance)
 	{
 		for (const Vertex::Ptr& kpVertex : rkVertices)
 		{
-			if (!ContainsVertex(kpVertex))
+			if (!ContainsVertex(kpVertex, kUseTolerance, kTolerance))
 			{
 				m_graphDictionary.insert(std::make_pair(kpVertex->GetOcctVertex(), TopTools_MapOfShape()));
 			}
 		}
 	}
 
-	void Graph::AddEdges(const std::list<Edge::Ptr>& rkEdges)
+	void Graph::AddEdges(const std::list<Edge::Ptr>& rkEdges, const bool kUseTolerance, const double kTolerance)
 	{
 		for (const Edge::Ptr& kpEdge : rkEdges)
 		{
-			if (!ContainsEdge(kpEdge))
+			if (!ContainsEdge(kpEdge, kUseTolerance, kTolerance))
 			{
 				Vertex::Ptr startVertex = kpEdge->StartVertex();
+				TopoDS_Vertex occtStartCoincidentVertex = GetCoincidentVertex(startVertex->GetOcctVertex(), kUseTolerance, kTolerance);
+				if (occtStartCoincidentVertex.IsNull())
+				{
+					occtStartCoincidentVertex = startVertex->GetOcctVertex();
+				}
 				Vertex::Ptr endVertex = kpEdge->EndVertex();
+				TopoDS_Vertex occtEndCoincidentVertex = GetCoincidentVertex(endVertex->GetOcctVertex(), kUseTolerance, kTolerance);
+				if (occtEndCoincidentVertex.IsNull())
+				{
+					occtEndCoincidentVertex = endVertex->GetOcctVertex();
+				}
 
-				m_graphDictionary[startVertex->GetOcctVertex()].Add(endVertex->GetOcctVertex());
-				m_graphDictionary[endVertex->GetOcctVertex()].Add(startVertex->GetOcctVertex());
+				m_graphDictionary[occtStartCoincidentVertex].Add(occtEndCoincidentVertex);
+				m_graphDictionary[occtEndCoincidentVertex].Add(occtStartCoincidentVertex);
 			}
 		}
 	}
 
-	int Graph::VertexDegree(const std::shared_ptr<Vertex>& kpVertex) const
+	int Graph::Degree(const std::shared_ptr<Vertex>& kpVertex) const
 	{
-		return VertexDegree(kpVertex->GetOcctVertex());
+		return Degree(kpVertex->GetOcctVertex());
 	}
 
-	int Graph::VertexDegree(const TopoDS_Vertex & rkOcctVertex) const
+	int Graph::Degree(const TopoDS_Vertex & rkOcctVertex) const
 	{
 		if (m_graphDictionary.find(rkOcctVertex) == m_graphDictionary.end())
 		{
@@ -245,7 +255,7 @@ namespace TopologicCore
 	void Graph::AdjacentVertices(const std::shared_ptr<Vertex>& kpVertex, std::list<std::shared_ptr<Vertex>>& rAdjacentVertices) const
 	{
 		TopoDS_Vertex occtQueryVertex = kpVertex->GetOcctVertex();
-		if (!ContainsVertex(occtQueryVertex))
+		if (!ContainsVertex(occtQueryVertex, false, 0.0))
 		{
 			return;
 		}
@@ -260,43 +270,53 @@ namespace TopologicCore
 		}
 	}
 
-	void Graph::Connect(const std::shared_ptr<Vertex>& kpVertex1, const std::shared_ptr<Vertex>& kpVertex2)
+	void Graph::Connect(const std::shared_ptr<Vertex>& kpVertex1, const std::shared_ptr<Vertex>& kpVertex2, const bool kUseTolerance, const double kTolerance)
 	{
-		TopoDS_Vertex occtQueryVertex1 = kpVertex1->GetOcctVertex();
-		TopoDS_Vertex occtQueryVertex2 = kpVertex2->GetOcctVertex();
-		
+		TopoDS_Vertex occtQueryVertex1 = GetCoincidentVertex(kpVertex1->GetOcctVertex(), kUseTolerance, kTolerance);
+		if (occtQueryVertex1.IsNull())
+		{
+			occtQueryVertex1 = kpVertex1->GetOcctVertex();
+		}
+		TopoDS_Vertex occtQueryVertex2 = GetCoincidentVertex(kpVertex2->GetOcctVertex(), kUseTolerance, kTolerance);
+		if (occtQueryVertex2.IsNull())
+		{
+			occtQueryVertex2 = kpVertex2->GetOcctVertex();
+		}
+
 		m_graphDictionary[occtQueryVertex1].Add(occtQueryVertex2);
 		m_graphDictionary[occtQueryVertex2].Add(occtQueryVertex1);
 	}
 
-	bool Graph::ContainsVertex(const std::shared_ptr<Vertex>& kpVertex) const
+	bool Graph::ContainsVertex(const std::shared_ptr<Vertex>& kpVertex, const bool kUseTolerance, const double kTolerance) const
 	{
-		return ContainsVertex(kpVertex->GetOcctVertex());
+		return ContainsVertex(kpVertex->GetOcctVertex(), kUseTolerance, kTolerance);
 	}
 
-	bool Graph::ContainsVertex(const TopoDS_Vertex & rkOcctVertex) const
+	bool Graph::ContainsVertex(const TopoDS_Vertex & rkOcctVertex, const bool kUseTolerance, const double kTolerance) const
 	{
-		return m_graphDictionary.find(rkOcctVertex) != m_graphDictionary.end();
+		TopoDS_Vertex occtCoincidentVertex = GetCoincidentVertex(rkOcctVertex, kUseTolerance, kTolerance);
+		return !occtCoincidentVertex.IsNull();
 	}
 
-	bool Graph::ContainsEdge(const std::shared_ptr<Edge>& kpEdge)
+	bool Graph::ContainsEdge(const std::shared_ptr<Edge>& kpEdge, const bool kUseTolerance, const double kTolerance)
 	{
 		Vertex::Ptr startVertex = kpEdge->StartVertex();
-		if (!ContainsVertex(startVertex))
+		TopoDS_Vertex occtStartCoincidentVertex = GetCoincidentVertex(startVertex->GetOcctVertex(), kUseTolerance, kTolerance);
+		if (occtStartCoincidentVertex.IsNull())
 		{
 			return false;
 		}
-
 		Vertex::Ptr endVertex = kpEdge->EndVertex();
-		if (!ContainsVertex(endVertex))
+		TopoDS_Vertex occtEndCoincidentVertex = GetCoincidentVertex(endVertex->GetOcctVertex(), kUseTolerance, kTolerance);
+		if (occtEndCoincidentVertex.IsNull())
 		{
 			return false;
 		}
 
-		TopTools_MapOfShape adjacentVerticesToStart = m_graphDictionary[startVertex->GetOcctVertex()];
-		TopTools_MapOfShape adjacentVerticesToEnd = m_graphDictionary[endVertex->GetOcctVertex()];
+		TopTools_MapOfShape adjacentVerticesToStart = m_graphDictionary[occtStartCoincidentVertex];
+		TopTools_MapOfShape adjacentVerticesToEnd = m_graphDictionary[occtEndCoincidentVertex];
 
-		return adjacentVerticesToStart.Contains(endVertex->GetOcctVertex()) || adjacentVerticesToEnd.Contains(startVertex->GetOcctVertex());
+		return adjacentVerticesToStart.Contains(occtEndCoincidentVertex) || adjacentVerticesToEnd.Contains(occtStartCoincidentVertex);
 	}
 
 	void Graph::DegreeSequence(std::list<int>& rDegreeSequence) const
@@ -304,7 +324,7 @@ namespace TopologicCore
 		for (const std::pair<TopoDS_Vertex, TopTools_MapOfShape>& rkDictionaryPair : m_graphDictionary)
 		{
 			Vertex::Ptr vertex = std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(rkDictionaryPair.first));
-			rDegreeSequence.push_back(VertexDegree(vertex));
+			rDegreeSequence.push_back(Degree(vertex));
 		}
 
 		 rDegreeSequence.sort(std::greater<int>());
@@ -349,7 +369,7 @@ namespace TopologicCore
 
 		for (const std::pair<TopoDS_Vertex, TopTools_MapOfShape>& kpPair : m_graphDictionary)
 		{
-			int vertexDegree = VertexDegree(kpPair.first);
+			int vertexDegree = Degree(kpPair.first);
 			if (vertexDegree < minimumDelta)
 			{
 				minimumDelta = vertexDegree;
@@ -364,7 +384,7 @@ namespace TopologicCore
 
 		for (const std::pair<TopoDS_Vertex, TopTools_MapOfShape>& kpPair : m_graphDictionary)
 		{
-			int vertexDegree = VertexDegree(kpPair.first);
+			int vertexDegree = Degree(kpPair.first);
 			if (vertexDegree > maximumDelta)
 			{
 				maximumDelta = vertexDegree;
@@ -405,7 +425,7 @@ namespace TopologicCore
 			}
 		}
 
-		if (!ContainsVertex(kpStartVertex))
+		if (!ContainsVertex(kpStartVertex, false, 0.0))
 		{
 			return;
 		}
@@ -447,7 +467,7 @@ namespace TopologicCore
 	Wire::Ptr Graph::Path(const Vertex::Ptr & kpStartVertex, const Vertex::Ptr & kpEndVertex, std::list<Vertex::Ptr>& rPath) const
 	{
 		rPath.push_back(kpStartVertex);
-		if (!ContainsVertex(kpStartVertex))
+		if (!ContainsVertex(kpStartVertex, false, 0.0))
 		{
 			return nullptr;
 		}
@@ -1286,5 +1306,41 @@ namespace TopologicCore
 		}
 
 		return true;
+	}
+
+	TopoDS_Vertex Graph::GetCoincidentVertex(const TopoDS_Vertex & rkVertex, const bool kUseTolerance, const double kTolerance) const
+	{
+		if (kUseTolerance)
+		{
+			double absDistanceThreshold = std::abs(kTolerance);
+			for (GraphMap::const_iterator graphIterator = m_graphDictionary.begin();
+				graphIterator != m_graphDictionary.end();
+				graphIterator++)
+			{
+				TopoDS_Vertex currentVertex = graphIterator->first;
+				BRepExtrema_DistShapeShape occtDistanceCalculation(rkVertex, currentVertex);
+				bool isDone = occtDistanceCalculation.Perform();
+				if (isDone)
+				{
+					double distance = occtDistanceCalculation.Value();
+					if (distance < absDistanceThreshold)
+					{
+						return currentVertex;
+					}
+				}
+			}
+
+			return TopoDS_Vertex(); // null vertex
+		}
+		else
+		{
+			GraphMap::const_iterator graphIterator = m_graphDictionary.find(rkVertex);
+			if (graphIterator == m_graphDictionary.end())
+			{
+				return TopoDS_Vertex();
+			}
+
+			return rkVertex;
+		}
 	}
 }
