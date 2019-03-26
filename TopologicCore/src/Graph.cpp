@@ -7,6 +7,7 @@
 #include "CellComplex.h"
 #include "Aperture.h"
 
+#include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepExtrema_DistShapeShape.hxx>
 #include <TopoDS.hxx>
 
@@ -397,7 +398,7 @@ namespace TopologicCore
 		const Vertex::Ptr & kpStartVertex, 
 		const Vertex::Ptr & kpEndVertex,
 		const bool kUseTimeLimit,
-		const double kTimeLimitInSeconds,
+		const int kTimeLimitInSeconds,
 		std::list<Wire::Ptr>& rPaths) const
 	{
 		std::list<Vertex::Ptr> path;
@@ -409,7 +410,7 @@ namespace TopologicCore
 		const Vertex::Ptr & kpStartVertex, 
 		const Vertex::Ptr & kpEndVertex,
 		const bool kUseTimeLimit,
-		const double kTimeLimitInSeconds,
+		const int kTimeLimitInSeconds,
 		const std::chrono::system_clock::time_point& rkStartingTime,
 		std::list<Vertex::Ptr>& rPath, 
 		std::list<Wire::Ptr>& rPaths) const
@@ -761,6 +762,78 @@ namespace TopologicCore
 					adjacentVertices.Remove(startVertex->GetOcctVertex());
 				}
 			}
+		}
+	}
+
+	void Graph::VerticesAtCoordinates(const double kX, const double kY, const double kZ, const double kTolerance, std::list<std::shared_ptr<Vertex>>& rVertices) const
+	{
+		TopoDS_Vertex occtQueryVertex = BRepBuilderAPI_MakeVertex(gp_Pnt(kX, kY, kZ));
+		double absDistanceThreshold = std::abs(kTolerance);
+		for (GraphMap::const_iterator graphIterator = m_graphDictionary.begin();
+			graphIterator != m_graphDictionary.end();
+			graphIterator++)
+		{
+			TopoDS_Vertex currentVertex = graphIterator->first;
+			BRepExtrema_DistShapeShape occtDistanceCalculation(occtQueryVertex, currentVertex);
+			bool isDone = occtDistanceCalculation.Perform();
+			if (isDone)
+			{
+				double distance = occtDistanceCalculation.Value();
+				if (distance < absDistanceThreshold)
+				{
+					Vertex::Ptr closestVertex = std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(currentVertex));
+					rVertices.push_back(closestVertex);
+				}
+			}
+		}
+	}
+
+	std::shared_ptr<Edge> Graph::EdgeAtVertices(const std::shared_ptr<Vertex>& kpVertex1, const std::shared_ptr<Vertex>& kpVertex2, const bool kUseTolerance, const double kTolerance) const
+	{
+		TopoDS_Vertex occtQueryVertex1 = GetCoincidentVertex(kpVertex1->GetOcctVertex(), kUseTolerance, kTolerance);
+		if (occtQueryVertex1.IsNull())
+		{
+			return nullptr;
+		}
+		TopoDS_Vertex occtQueryVertex2 = GetCoincidentVertex(kpVertex2->GetOcctVertex(), kUseTolerance, kTolerance);
+		if (occtQueryVertex2.IsNull())
+		{
+			return nullptr;
+		}
+
+		GraphMap::const_iterator kAdjacentVerticesIterator1 = m_graphDictionary.find(occtQueryVertex1);
+		if (kAdjacentVerticesIterator1 == m_graphDictionary.end())
+		{
+			return nullptr;
+		}
+		
+		TopTools_MapOfShape adjacentVerticesToVertex1 = kAdjacentVerticesIterator1->second;
+		if (!adjacentVerticesToVertex1.Contains(occtQueryVertex1))
+		{
+			return nullptr;
+		}
+
+		Vertex::Ptr vertex1 = std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtQueryVertex1));
+		Vertex::Ptr vertex2 = std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtQueryVertex2));
+		Edge::Ptr edge = Edge::ByStartVertexEndVertex(vertex1, vertex2);
+		return edge;
+	}
+
+	void Graph::IncidentEdges(const std::shared_ptr<Vertex>& kpVertex, const bool kUseTolerance, const double kTolerance, std::list<std::shared_ptr<Edge>>& rEdges) const
+	{
+		TopoDS_Vertex occtQueryVertex = GetCoincidentVertex(kpVertex->GetOcctVertex(), kUseTolerance, kTolerance);
+		if (occtQueryVertex.IsNull())
+		{
+			return;
+		}
+
+		Vertex::Ptr queryVertex = std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtQueryVertex));
+		std::list<Vertex::Ptr> adjacentVertices;
+		AdjacentVertices(queryVertex, adjacentVertices);
+		for (const Vertex::Ptr& kpAdjacentVertex : adjacentVertices)
+		{
+			Edge::Ptr edge = Edge::ByStartVertexEndVertex(queryVertex, kpAdjacentVertex);
+			rEdges.push_back(edge);
 		}
 	}
 
@@ -1310,9 +1383,9 @@ namespace TopologicCore
 
 	TopoDS_Vertex Graph::GetCoincidentVertex(const TopoDS_Vertex & rkVertex, const bool kUseTolerance, const double kTolerance) const
 	{
-		if (kUseTolerance)
+		double absDistanceThreshold = std::abs(kTolerance);
+		if (kUseTolerance || absDistanceThreshold >= 0.000001)
 		{
-			double absDistanceThreshold = std::abs(kTolerance);
 			for (GraphMap::const_iterator graphIterator = m_graphDictionary.begin();
 				graphIterator != m_graphDictionary.end();
 				graphIterator++)

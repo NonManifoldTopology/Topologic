@@ -40,48 +40,48 @@ namespace Topologic
 			List<Edge^>^ get();
 		}
 
+		/// <summary>
+		/// Returns the X coordinate of the Vertex.
+		/// </summary>
+		/// <returns>The X coordinate of the Vertex</returns>
 		property double X
 		{
-			/// <summary>
-			/// Returns the X coordinate of the Vertex.
-			/// </summary>
-			/// <returns>The X coordinate of the Vertex</returns>
 			virtual double get();
 		}
 
+		/// <summary>
+		/// Returns the Y coordinate of the Vertex.
+		/// </summary>
+		/// <returns>The Y coordinate of the Vertex</returns>
 		property double Y
 		{
-			/// <summary>
-			/// Returns the Y coordinate of the Vertex.
-			/// </summary>
-			/// <returns>The Y coordinate of the Vertex</returns>
 			virtual double get();
 		}
 
+		/// <summary>
+		/// Returns the Z coordinate of the Vertex.
+		/// </summary>
+		/// <returns>The Z coordinate of the Vertex</returns>
 		property double Z
 		{
-			/// <summary>
-			/// Returns the Z coordinate of the Vertex.
-			/// </summary>
-			/// <returns>The Z coordinate of the Vertex</returns>
 			virtual double get();
 		}
 
+		/// <summary>
+		/// Returns the coordinates of the Vertex.
+		/// </summary>
+		/// <returns name="Geometry">The coordinates of the Vertex</returns>
 		property List<double>^ Coordinates
 		{
-			/// <summary>
-			/// Returns the coordinates of the Vertex.
-			/// </summary>
-			/// <returns name="Geometry">The coordinates of the Vertex</returns>
 			virtual List<double>^ get();
 		}
 
+		/// <summary>
+		/// Creates a geometry from Vertex.
+		/// </summary>
+		/// <returns>The created geometry</returns>
 		property Object^ BasicGeometry
 		{
-			/// <summary>
-			/// Creates a geometry from Vertex.
-			/// </summary>
-			/// <returns>The created geometry</returns>
 			virtual Object^ get() override;	
 		}
 

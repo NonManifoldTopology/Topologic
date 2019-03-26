@@ -69,12 +69,12 @@ namespace Topologic {
 			bool get();
 		}
 
+		/// <summary>
+		/// Creates a geometry from Wire.
+		/// </summary>
+		/// <returns>The created geometry</returns>
 		property Object^ BasicGeometry
 		{
-			/// <summary>
-			/// Creates a geometry from Wire.
-			/// </summary>
-			/// <returns>The created geometry</returns>
 			virtual Object^ get() override;
 		}
 

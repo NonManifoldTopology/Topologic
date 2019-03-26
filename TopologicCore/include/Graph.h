@@ -80,14 +80,14 @@ namespace TopologicCore
 			const Vertex::Ptr& kpStartVertex,
 			const Vertex::Ptr& kpEndVertex,
 			const bool kUseTimeLimit,
-			const double kTimeLimitInSeconds,
+			const int kTimeLimitInSeconds,
 			std::list<std::shared_ptr<Wire>>& rPaths) const;
 
 		void AllPaths(
 			const Vertex::Ptr& kpStartVertex, 
 			const Vertex::Ptr& kpEndVertex,
 			const bool kUseTimeLimit,
-			const double kTimeLimitInSeconds,
+			const int kTimeLimitInSeconds,
 			const std::chrono::system_clock::time_point& rkStartingTime,
 			std::list<Vertex::Ptr>& rPath,
 			std::list<std::shared_ptr<Wire>>& rPaths) const;
@@ -122,6 +122,12 @@ namespace TopologicCore
 		TOPOLOGIC_API void RemoveVertices(const std::list<Vertex::Ptr>& rkVertices);
 
 		TOPOLOGIC_API void RemoveEdges(const std::list<Edge::Ptr>& rkEdges);
+
+		TOPOLOGIC_API void VerticesAtCoordinates(const double kX, const double kY, const double kZ, const double kTolerance, std::list<std::shared_ptr<Vertex>>& rVertices) const;
+
+		TOPOLOGIC_API std::shared_ptr<Edge> EdgeAtVertices(const std::shared_ptr<Vertex>& kpVertex1, const std::shared_ptr<Vertex>& kpVertex2, const bool kUseTolerance, const double kTolerance) const;
+
+		TOPOLOGIC_API void IncidentEdges(const std::shared_ptr<Vertex>& kpVertex, const bool kUseTolerance, const double kTolerance, std::list<std::shared_ptr<Edge>>& rEdges) const;
 
 	protected:
 
