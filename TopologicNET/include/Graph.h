@@ -76,7 +76,7 @@ namespace Topologic {
 		/// <summary>
 		/// Returns the Topology of the Graph.
 		/// </summary>
-		/// <returns name="Edge[]">The Topology of the Graph</returns>
+		/// <returns name="Topology">The Topology of the Graph</returns>
 		property Topology^ Topology
 		{
 			Topologic::Topology^ get();
@@ -90,7 +90,12 @@ namespace Topologic {
 		/// <param name="z">The Z coordinate</param>
 		/// <param name="tolerance">A positive tolerance value</param>
 		/// <returns name="Vertex[]">The Vertices at the given coordinates</returns>
-		List<Vertex^>^ VerticesAtCoordinates(double x, double y, double z, double tolerance);
+		List<Vertex^>^ VerticesAtCoordinates(
+			double x, double y, double z, 
+#ifdef TOPOLOGIC_DYNAMO
+			[Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")]
+#endif
+			double tolerance);
 
 		/// <summary>
 		/// Adds the list of Vertices to the Graph. If a tolerance is specified, the Vertices will be merged with existing Vertices within the input tolerance distance. A zero or null tolerance means that the Vertices will be added to the Graph regardless of their overlap with existing Vertices.
@@ -165,7 +170,11 @@ namespace Topologic {
 		/// <param name="edge">The input Edge</param>
 		/// <param name="tolerance">A positive tolerance value</param>
 		/// <returns name="bool">True if the input Graph contains the input Edge, False otherwise</returns>
-		bool ContainsEdge(Edge^ edge, Nullable<double> tolerance);
+		bool ContainsEdge(Edge^ edge, 
+#ifdef TOPOLOGIC_DYNAMO
+			[Autodesk::DesignScript::Runtime::DefaultArgument("null")]
+#endif
+			Nullable<double> tolerance);
 
 		/// <summary>
 		/// Returns a list of Vertex degrees in a non-increasing order.

@@ -153,7 +153,7 @@ namespace TopologicCore
 		return pEdge;
 	}
 
-	Edge::Ptr Edge::ByStartVertexEndVertex(const std::shared_ptr<Vertex>& kpStartVertex, const std::shared_ptr<Vertex>& kpEndVertex)
+	Edge::Ptr Edge::ByStartVertexEndVertex(const std::shared_ptr<Vertex>& kpStartVertex, const std::shared_ptr<Vertex>& kpEndVertex, const bool kCopy)
 	{
 		if (kpStartVertex == nullptr)
 		{
@@ -170,12 +170,23 @@ namespace TopologicCore
 		Edge::Ptr pEdge = std::make_shared<Edge>(occtMakeEdge.Edge());
 		Vertex::Ptr startVertex = pEdge->StartVertex();
 		Vertex::Ptr endVertex = pEdge->EndVertex();
-		Edge::Ptr pCopyEdge = std::dynamic_pointer_cast<Edge>(pEdge->DeepCopy());
-		AttributeManager::GetInstance().CopyAttributes(startVertex->GetOcctVertex(), pCopyEdge->GetOcctEdge());
-		AttributeManager::GetInstance().CopyAttributes(endVertex->GetOcctVertex(), pCopyEdge->GetOcctEdge());
-	
-		GlobalCluster::GetInstance().AddTopology(pCopyEdge->GetOcctEdge());
-		return pCopyEdge;
+		if (kCopy)
+		{
+			Edge::Ptr pCopyEdge = std::dynamic_pointer_cast<Edge>(pEdge->DeepCopy());
+			AttributeManager::GetInstance().CopyAttributes(startVertex->GetOcctVertex(), pCopyEdge->GetOcctEdge());
+			AttributeManager::GetInstance().CopyAttributes(endVertex->GetOcctVertex(), pCopyEdge->GetOcctEdge());
+
+			GlobalCluster::GetInstance().AddTopology(pCopyEdge->GetOcctEdge());
+			return pCopyEdge;
+		}
+		else
+		{
+			AttributeManager::GetInstance().CopyAttributes(startVertex->GetOcctVertex(), pEdge->GetOcctEdge());
+			AttributeManager::GetInstance().CopyAttributes(endVertex->GetOcctVertex(), pEdge->GetOcctEdge());
+
+			GlobalCluster::GetInstance().AddTopology(pEdge->GetOcctEdge());
+			return pEdge;
+		}
 	}
 
 	void Edge::SharedVertices(const Edge::Ptr& kpAnotherEdge, std::list<std::shared_ptr<Vertex>>& rSharedVertices) const

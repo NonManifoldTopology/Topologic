@@ -120,7 +120,7 @@ namespace TopologicCore
 		/// <param name="kpStartVertex"></param>
 		/// <param name="kpEndVertex"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API Edge::Ptr ByStartVertexEndVertex(const std::shared_ptr<Vertex>& kpStartVertex, const std::shared_ptr<Vertex>& kpEndVertex);
+		static TOPOLOGIC_API Edge::Ptr ByStartVertexEndVertex(const std::shared_ptr<Vertex>& kpStartVertex, const std::shared_ptr<Vertex>& kpEndVertex, const bool kCopy = true);
 
 		/// <summary>
 		/// 

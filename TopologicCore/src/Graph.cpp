@@ -190,7 +190,7 @@ namespace TopologicCore
 
 				Topology::Ptr topology = Topology::ByOcctShape(TopoDS::Vertex(occtVertex2));
 				Vertex::Ptr vertex2 = std::dynamic_pointer_cast<Vertex>(topology);
-				Edge::Ptr edge = Edge::ByStartVertexEndVertex(vertex1, vertex2);
+				Edge::Ptr edge = Edge::ByStartVertexEndVertex(vertex1, vertex2, false);
 				edges.push_back(edge);
 				processedAdjacency[vertex1->GetOcctVertex()].Add(vertex2->GetOcctVertex());
 				processedAdjacency[vertex2->GetOcctVertex()].Add(vertex1->GetOcctVertex());
@@ -416,16 +416,6 @@ namespace TopologicCore
 		std::list<Wire::Ptr>& rPaths) const
 	{
 		// Check elapsed time
-		if (kUseTimeLimit)
-		{
-			auto currentTime = std::chrono::system_clock::now();
-			auto timeDifferenceInSeconds = std::chrono::duration_cast<std::chrono::seconds>(currentTime - rkStartingTime);
-			if (timeDifferenceInSeconds.count() >= kTimeLimitInSeconds)
-			{
-				return;
-			}
-		}
-
 		if (!ContainsVertex(kpStartVertex, false, 0.0))
 		{
 			return;
@@ -438,6 +428,16 @@ namespace TopologicCore
 			Wire::Ptr pathWire = ConstructPath(rPath);
 			rPaths.push_back(pathWire);
 			return;
+		}
+
+		if (kUseTimeLimit)
+		{
+			auto currentTime = std::chrono::system_clock::now();
+			auto timeDifferenceInSeconds = std::chrono::duration_cast<std::chrono::seconds>(currentTime - rkStartingTime);
+			if (timeDifferenceInSeconds.count() >= kTimeLimitInSeconds)
+			{
+				return;
+			}
 		}
 
 		TopTools_MapOfShape occtConnectedVertices = m_graphDictionary.find(kpStartVertex->GetOcctVertex())->second;
@@ -454,6 +454,16 @@ namespace TopologicCore
 				for (const Wire::Ptr& rkExtendedPath : extendedPaths)
 				{
 					rPaths.push_back(rkExtendedPath);
+				}
+			}
+
+			if (kUseTimeLimit)
+			{
+				auto currentTime = std::chrono::system_clock::now();
+				auto timeDifferenceInSeconds = std::chrono::duration_cast<std::chrono::seconds>(currentTime - rkStartingTime);
+				if (timeDifferenceInSeconds.count() >= kTimeLimitInSeconds)
+				{
+					break;
 				}
 			}
 		}
@@ -527,7 +537,7 @@ namespace TopologicCore
 			for (const TopoDS_Vertex& kpVertexInQueue : vertexList)
 			{
 				double distance = distanceMap[kpVertexInQueue];
-				if (distance < minDistance)
+				if (distance <= minDistance)
 				{
 					minDistance = distance;
 					occtVertexMinDistance = kpVertexInQueue;
@@ -637,6 +647,10 @@ namespace TopologicCore
 	int Graph::Distance(const TopoDS_Vertex & rkOcctStartVertex, const TopoDS_Vertex & rkOcctVertex) const
 	{
 		Wire::Ptr shortestPath = ShortestPath(rkOcctStartVertex, rkOcctVertex);
+		if (shortestPath == nullptr)
+		{
+			return std::numeric_limits<int>::max();
+		}
 		std::list<Vertex::Ptr> vertices;
 		shortestPath->Vertices(vertices);
 		return (int)vertices.size() - 1;
@@ -808,7 +822,7 @@ namespace TopologicCore
 		}
 		
 		TopTools_MapOfShape adjacentVerticesToVertex1 = kAdjacentVerticesIterator1->second;
-		if (!adjacentVerticesToVertex1.Contains(occtQueryVertex1))
+		if (!adjacentVerticesToVertex1.Contains(occtQueryVertex2))
 		{
 			return nullptr;
 		}
