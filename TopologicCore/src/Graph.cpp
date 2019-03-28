@@ -72,10 +72,10 @@ namespace TopologicCore
 	Graph::Graph(const std::list<Vertex::Ptr>& rkVertices, const std::list<Edge::Ptr>& rkEdges)
 	{
 		// 1. Add the vertices
-		AddVertices(rkVertices, false, 0.0);
+		AddVertices(rkVertices, 0.0001);
 
 		// 2. Add the edges
-		AddEdges(rkEdges, false, 0.0);
+		AddEdges(rkEdges, 0.0001);
 	}
 
 	Graph::Graph(const Graph* kpAnotherGraph)
@@ -190,7 +190,7 @@ namespace TopologicCore
 
 				Topology::Ptr topology = Topology::ByOcctShape(TopoDS::Vertex(occtVertex2));
 				Vertex::Ptr vertex2 = std::dynamic_pointer_cast<Vertex>(topology);
-				Edge::Ptr edge = Edge::ByStartVertexEndVertex(vertex1, vertex2, false);
+				Edge::Ptr edge = Edge::ByStartVertexEndVertex(vertex1, vertex2);
 				edges.push_back(edge);
 				processedAdjacency[vertex1->GetOcctVertex()].Add(vertex2->GetOcctVertex());
 				processedAdjacency[vertex2->GetOcctVertex()].Add(vertex1->GetOcctVertex());
@@ -198,31 +198,31 @@ namespace TopologicCore
 		}
 	}
 
-	void Graph::AddVertices(const std::list<Vertex::Ptr>& rkVertices, const bool kUseTolerance, const double kTolerance)
+	void Graph::AddVertices(const std::list<Vertex::Ptr>& rkVertices, const double kTolerance)
 	{
 		for (const Vertex::Ptr& kpVertex : rkVertices)
 		{
-			if (!ContainsVertex(kpVertex, kUseTolerance, kTolerance))
+			if (!ContainsVertex(kpVertex, kTolerance))
 			{
 				m_graphDictionary.insert(std::make_pair(kpVertex->GetOcctVertex(), TopTools_MapOfShape()));
 			}
 		}
 	}
 
-	void Graph::AddEdges(const std::list<Edge::Ptr>& rkEdges, const bool kUseTolerance, const double kTolerance)
+	void Graph::AddEdges(const std::list<Edge::Ptr>& rkEdges, const double kTolerance)
 	{
 		for (const Edge::Ptr& kpEdge : rkEdges)
 		{
-			if (!ContainsEdge(kpEdge, kUseTolerance, kTolerance))
+			if (!ContainsEdge(kpEdge, kTolerance))
 			{
 				Vertex::Ptr startVertex = kpEdge->StartVertex();
-				TopoDS_Vertex occtStartCoincidentVertex = GetCoincidentVertex(startVertex->GetOcctVertex(), kUseTolerance, kTolerance);
+				TopoDS_Vertex occtStartCoincidentVertex = GetCoincidentVertex(startVertex->GetOcctVertex(), kTolerance);
 				if (occtStartCoincidentVertex.IsNull())
 				{
 					occtStartCoincidentVertex = startVertex->GetOcctVertex();
 				}
 				Vertex::Ptr endVertex = kpEdge->EndVertex();
-				TopoDS_Vertex occtEndCoincidentVertex = GetCoincidentVertex(endVertex->GetOcctVertex(), kUseTolerance, kTolerance);
+				TopoDS_Vertex occtEndCoincidentVertex = GetCoincidentVertex(endVertex->GetOcctVertex(), kTolerance);
 				if (occtEndCoincidentVertex.IsNull())
 				{
 					occtEndCoincidentVertex = endVertex->GetOcctVertex();
@@ -256,7 +256,7 @@ namespace TopologicCore
 	void Graph::AdjacentVertices(const std::shared_ptr<Vertex>& kpVertex, std::list<std::shared_ptr<Vertex>>& rAdjacentVertices) const
 	{
 		TopoDS_Vertex occtQueryVertex = kpVertex->GetOcctVertex();
-		if (!ContainsVertex(occtQueryVertex, false, 0.0))
+		if (!ContainsVertex(occtQueryVertex, 0.0001))
 		{
 			return;
 		}
@@ -271,44 +271,50 @@ namespace TopologicCore
 		}
 	}
 
-	void Graph::Connect(const std::shared_ptr<Vertex>& kpVertex1, const std::shared_ptr<Vertex>& kpVertex2, const bool kUseTolerance, const double kTolerance)
+	void Graph::Connect(const std::shared_ptr<Vertex>& kpVertex1, const std::shared_ptr<Vertex>& kpVertex2, const double kTolerance)
 	{
-		TopoDS_Vertex occtQueryVertex1 = GetCoincidentVertex(kpVertex1->GetOcctVertex(), kUseTolerance, kTolerance);
+		TopoDS_Vertex occtQueryVertex1 = GetCoincidentVertex(kpVertex1->GetOcctVertex(), kTolerance);
 		if (occtQueryVertex1.IsNull())
 		{
 			occtQueryVertex1 = kpVertex1->GetOcctVertex();
 		}
-		TopoDS_Vertex occtQueryVertex2 = GetCoincidentVertex(kpVertex2->GetOcctVertex(), kUseTolerance, kTolerance);
+		TopoDS_Vertex occtQueryVertex2 = GetCoincidentVertex(kpVertex2->GetOcctVertex(), kTolerance);
 		if (occtQueryVertex2.IsNull())
 		{
 			occtQueryVertex2 = kpVertex2->GetOcctVertex();
 		}
 
-		m_graphDictionary[occtQueryVertex1].Add(occtQueryVertex2);
-		m_graphDictionary[occtQueryVertex2].Add(occtQueryVertex1);
+		if (!m_graphDictionary[occtQueryVertex1].Contains(occtQueryVertex2))
+		{
+			m_graphDictionary[occtQueryVertex1].Add(occtQueryVertex2);
+		}
+		if (!m_graphDictionary[occtQueryVertex2].Contains(occtQueryVertex1))
+		{
+			m_graphDictionary[occtQueryVertex2].Add(occtQueryVertex1);
+		}
 	}
 
-	bool Graph::ContainsVertex(const std::shared_ptr<Vertex>& kpVertex, const bool kUseTolerance, const double kTolerance) const
+	bool Graph::ContainsVertex(const std::shared_ptr<Vertex>& kpVertex, const double kTolerance) const
 	{
-		return ContainsVertex(kpVertex->GetOcctVertex(), kUseTolerance, kTolerance);
+		return ContainsVertex(kpVertex->GetOcctVertex(), kTolerance);
 	}
 
-	bool Graph::ContainsVertex(const TopoDS_Vertex & rkOcctVertex, const bool kUseTolerance, const double kTolerance) const
+	bool Graph::ContainsVertex(const TopoDS_Vertex & rkOcctVertex, const double kTolerance) const
 	{
-		TopoDS_Vertex occtCoincidentVertex = GetCoincidentVertex(rkOcctVertex, kUseTolerance, kTolerance);
+		TopoDS_Vertex occtCoincidentVertex = GetCoincidentVertex(rkOcctVertex, kTolerance);
 		return !occtCoincidentVertex.IsNull();
 	}
 
-	bool Graph::ContainsEdge(const std::shared_ptr<Edge>& kpEdge, const bool kUseTolerance, const double kTolerance)
+	bool Graph::ContainsEdge(const std::shared_ptr<Edge>& kpEdge, const double kTolerance)
 	{
 		Vertex::Ptr startVertex = kpEdge->StartVertex();
-		TopoDS_Vertex occtStartCoincidentVertex = GetCoincidentVertex(startVertex->GetOcctVertex(), kUseTolerance, kTolerance);
+		TopoDS_Vertex occtStartCoincidentVertex = GetCoincidentVertex(startVertex->GetOcctVertex(), kTolerance);
 		if (occtStartCoincidentVertex.IsNull())
 		{
 			return false;
 		}
 		Vertex::Ptr endVertex = kpEdge->EndVertex();
-		TopoDS_Vertex occtEndCoincidentVertex = GetCoincidentVertex(endVertex->GetOcctVertex(), kUseTolerance, kTolerance);
+		TopoDS_Vertex occtEndCoincidentVertex = GetCoincidentVertex(endVertex->GetOcctVertex(), kTolerance);
 		if (occtEndCoincidentVertex.IsNull())
 		{
 			return false;
@@ -402,8 +408,8 @@ namespace TopologicCore
 		std::list<Wire::Ptr>& rPaths) const
 	{
 		std::list<Vertex::Ptr> path;
-		auto currentTime = std::chrono::system_clock::now();
-		AllPaths(kpStartVertex, kpEndVertex, kUseTimeLimit, kTimeLimitInSeconds, currentTime, path, rPaths);
+		auto startingTime = std::chrono::system_clock::now();
+		AllPaths(kpStartVertex, kpEndVertex, kUseTimeLimit, kTimeLimitInSeconds, startingTime, path, rPaths);
 	}
 
 	void Graph::AllPaths(
@@ -415,8 +421,17 @@ namespace TopologicCore
 		std::list<Vertex::Ptr>& rPath, 
 		std::list<Wire::Ptr>& rPaths) const
 	{
-		// Check elapsed time
-		if (!ContainsVertex(kpStartVertex, false, 0.0))
+		if (kUseTimeLimit)
+		{
+			auto currentTime = std::chrono::system_clock::now();
+			auto timeDifferenceInSeconds = std::chrono::duration_cast<std::chrono::seconds>(currentTime - rkStartingTime);
+			if (timeDifferenceInSeconds.count() >= kTimeLimitInSeconds)
+			{
+				return;
+			}
+		}
+		
+		if (!ContainsVertex(kpStartVertex, 0.0001))
 		{
 			return;
 		}
@@ -426,6 +441,7 @@ namespace TopologicCore
 		{
 			// Create a wire
 			Wire::Ptr pathWire = ConstructPath(rPath);
+
 			rPaths.push_back(pathWire);
 			return;
 		}
@@ -450,6 +466,17 @@ namespace TopologicCore
 			{
 				std::list<Wire::Ptr> extendedPaths;
 				std::list<Vertex::Ptr> previousPath = rPath;
+
+				if (kUseTimeLimit)
+				{
+					auto currentTime = std::chrono::system_clock::now();
+					auto timeDifferenceInSeconds = std::chrono::duration_cast<std::chrono::seconds>(currentTime - rkStartingTime);
+					if (timeDifferenceInSeconds.count() >= kTimeLimitInSeconds)
+					{
+						break;
+					}
+				}
+
 				AllPaths(connectedVertex, kpEndVertex, kUseTimeLimit, kTimeLimitInSeconds, rkStartingTime, previousPath, extendedPaths);
 				for (const Wire::Ptr& rkExtendedPath : extendedPaths)
 				{
@@ -467,6 +494,7 @@ namespace TopologicCore
 				}
 			}
 		}
+
 	}
 
 	Wire::Ptr Graph::Path(const Vertex::Ptr & kpStartVertex, const Vertex::Ptr & kpEndVertex) const
@@ -478,7 +506,7 @@ namespace TopologicCore
 	Wire::Ptr Graph::Path(const Vertex::Ptr & kpStartVertex, const Vertex::Ptr & kpEndVertex, std::list<Vertex::Ptr>& rPath) const
 	{
 		rPath.push_back(kpStartVertex);
-		if (!ContainsVertex(kpStartVertex, false, 0.0))
+		if (!ContainsVertex(kpStartVertex, 0.0001))
 		{
 			return nullptr;
 		}
@@ -802,14 +830,14 @@ namespace TopologicCore
 		}
 	}
 
-	std::shared_ptr<Edge> Graph::EdgeAtVertices(const std::shared_ptr<Vertex>& kpVertex1, const std::shared_ptr<Vertex>& kpVertex2, const bool kUseTolerance, const double kTolerance) const
+	std::shared_ptr<Edge> Graph::EdgeAtVertices(const std::shared_ptr<Vertex>& kpVertex1, const std::shared_ptr<Vertex>& kpVertex2, const double kTolerance) const
 	{
-		TopoDS_Vertex occtQueryVertex1 = GetCoincidentVertex(kpVertex1->GetOcctVertex(), kUseTolerance, kTolerance);
+		TopoDS_Vertex occtQueryVertex1 = GetCoincidentVertex(kpVertex1->GetOcctVertex(), kTolerance);
 		if (occtQueryVertex1.IsNull())
 		{
 			return nullptr;
 		}
-		TopoDS_Vertex occtQueryVertex2 = GetCoincidentVertex(kpVertex2->GetOcctVertex(), kUseTolerance, kTolerance);
+		TopoDS_Vertex occtQueryVertex2 = GetCoincidentVertex(kpVertex2->GetOcctVertex(), kTolerance);
 		if (occtQueryVertex2.IsNull())
 		{
 			return nullptr;
@@ -833,9 +861,9 @@ namespace TopologicCore
 		return edge;
 	}
 
-	void Graph::IncidentEdges(const std::shared_ptr<Vertex>& kpVertex, const bool kUseTolerance, const double kTolerance, std::list<std::shared_ptr<Edge>>& rEdges) const
+	void Graph::IncidentEdges(const std::shared_ptr<Vertex>& kpVertex, const double kTolerance, std::list<std::shared_ptr<Edge>>& rEdges) const
 	{
-		TopoDS_Vertex occtQueryVertex = GetCoincidentVertex(kpVertex->GetOcctVertex(), kUseTolerance, kTolerance);
+		TopoDS_Vertex occtQueryVertex = GetCoincidentVertex(kpVertex->GetOcctVertex(), kTolerance);
 		if (occtQueryVertex.IsNull())
 		{
 			return;
@@ -1354,13 +1382,33 @@ namespace TopologicCore
 
 	Wire::Ptr Graph::ConstructPath(const std::list<Vertex::Ptr>& rkPathVertices)
 	{
+		auto startingTime = std::chrono::system_clock::now();
+		return ConstructPath(rkPathVertices, false, 0, startingTime);
+	}
+
+	std::shared_ptr<Wire> Graph::ConstructPath(
+		const std::list<Vertex::Ptr>& rkPathVertices, 
+		const bool kUseTimeLimit, 
+		const int kTimeLimitInSeconds,
+		const std::chrono::system_clock::time_point& rkStartingTime)
+	{
 		std::list<Vertex::Ptr>::const_iterator lastVertexIterator = rkPathVertices.end();
-		lastVertexIterator--; 
+		lastVertexIterator--;
 		std::list<Edge::Ptr> edges;
 		for (std::list<Vertex::Ptr>::const_iterator vertexIterator = rkPathVertices.begin();
 			vertexIterator != lastVertexIterator;
 			vertexIterator++)
 		{
+			if (kUseTimeLimit)
+			{
+				auto currentTime = std::chrono::system_clock::now();
+				auto timeDifferenceInSeconds = std::chrono::duration_cast<std::chrono::seconds>(currentTime - rkStartingTime);
+				if (timeDifferenceInSeconds.count() >= kTimeLimitInSeconds)
+				{
+					return nullptr;
+				}
+			}
+
 			std::list<Vertex::Ptr>::const_iterator nextVertexIterator = vertexIterator;
 			nextVertexIterator++;
 			Edge::Ptr edge = Edge::ByStartVertexEndVertex(*vertexIterator, *nextVertexIterator);
@@ -1395,11 +1443,11 @@ namespace TopologicCore
 		return true;
 	}
 
-	TopoDS_Vertex Graph::GetCoincidentVertex(const TopoDS_Vertex & rkVertex, const bool kUseTolerance, const double kTolerance) const
+	TopoDS_Vertex Graph::GetCoincidentVertex(const TopoDS_Vertex & rkVertex, const double kTolerance) const
 	{
 		double absDistanceThreshold = std::abs(kTolerance);
-		if (kUseTolerance || absDistanceThreshold >= 0.000001)
-		{
+		/*if (absDistanceThreshold > 0.0)
+		{*/
 			for (GraphMap::const_iterator graphIterator = m_graphDictionary.begin();
 				graphIterator != m_graphDictionary.end();
 				graphIterator++)
@@ -1418,7 +1466,7 @@ namespace TopologicCore
 			}
 
 			return TopoDS_Vertex(); // null vertex
-		}
+		/*}
 		else
 		{
 			GraphMap::const_iterator graphIterator = m_graphDictionary.find(rkVertex);
@@ -1428,6 +1476,6 @@ namespace TopologicCore
 			}
 
 			return rkVertex;
-		}
+		}*/
 	}
 }

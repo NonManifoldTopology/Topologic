@@ -46,9 +46,9 @@ namespace TopologicCore
 
 		TOPOLOGIC_API void Edges(std::list<std::shared_ptr<Edge>>& edges) const;
 
-		TOPOLOGIC_API void AddVertices(const std::list<std::shared_ptr<Vertex>>& rkVertices, const bool kUseTolerance, const double kTolerance);
+		TOPOLOGIC_API void AddVertices(const std::list<std::shared_ptr<Vertex>>& rkVertices, const double kTolerance);
 
-		TOPOLOGIC_API void AddEdges(const std::list<std::shared_ptr<Edge>>& rkEdges, const bool kUseTolerance, const double kTolerance);
+		TOPOLOGIC_API void AddEdges(const std::list<std::shared_ptr<Edge>>& rkEdges, const double kTolerance);
 
 		TOPOLOGIC_API int Degree(const std::shared_ptr<Vertex>& kpVertex) const;
 
@@ -56,13 +56,13 @@ namespace TopologicCore
 
 		TOPOLOGIC_API void AdjacentVertices(const std::shared_ptr<Vertex>& kpVertex, std::list<std::shared_ptr<Vertex>>& rAdjacentVertices) const;
 
-		TOPOLOGIC_API void Connect(const std::shared_ptr<Vertex>& kpVertex1, const std::shared_ptr<Vertex>& kpVertex2, const bool kUseTolerance, const double kTolerance);
+		TOPOLOGIC_API void Connect(const std::shared_ptr<Vertex>& kpVertex1, const std::shared_ptr<Vertex>& kpVertex2, const double kTolerance);
 
-		TOPOLOGIC_API bool ContainsVertex(const std::shared_ptr<Vertex>& kpVertex, const bool kUseTolerance, const double kTolerance) const;
+		TOPOLOGIC_API bool ContainsVertex(const std::shared_ptr<Vertex>& kpVertex, const double kTolerance) const;
 
-		bool ContainsVertex(const TopoDS_Vertex& rkOcctVertex, const bool kUseTolerance, const double kTolerance) const;
+		bool ContainsVertex(const TopoDS_Vertex& rkOcctVertex, const double kTolerance) const;
 
-		TOPOLOGIC_API bool ContainsEdge(const std::shared_ptr<Edge>& kpEdge, const bool kUseTolerance, const double kTolerance);
+		TOPOLOGIC_API bool ContainsEdge(const std::shared_ptr<Edge>& kpEdge, const double kTolerance);
 
 		TOPOLOGIC_API void DegreeSequence(std::list<int>& rDegreeSequence) const;
 
@@ -125,9 +125,9 @@ namespace TopologicCore
 
 		TOPOLOGIC_API void VerticesAtCoordinates(const double kX, const double kY, const double kZ, const double kTolerance, std::list<std::shared_ptr<Vertex>>& rVertices) const;
 
-		TOPOLOGIC_API std::shared_ptr<Edge> EdgeAtVertices(const std::shared_ptr<Vertex>& kpVertex1, const std::shared_ptr<Vertex>& kpVertex2, const bool kUseTolerance, const double kTolerance) const;
+		TOPOLOGIC_API std::shared_ptr<Edge> EdgeAtVertices(const std::shared_ptr<Vertex>& kpVertex1, const std::shared_ptr<Vertex>& kpVertex2, const double kTolerance) const;
 
-		TOPOLOGIC_API void IncidentEdges(const std::shared_ptr<Vertex>& kpVertex, const bool kUseTolerance, const double kTolerance, std::list<std::shared_ptr<Edge>>& rEdges) const;
+		TOPOLOGIC_API void IncidentEdges(const std::shared_ptr<Vertex>& kpVertex, const double kTolerance, std::list<std::shared_ptr<Edge>>& rEdges) const;
 
 	protected:
 
@@ -177,9 +177,15 @@ namespace TopologicCore
 
 		static std::shared_ptr<Wire> ConstructPath(const std::list<Vertex::Ptr>& rkPathVertices);
 
+		static std::shared_ptr<Wire> ConstructPath(
+			const std::list<Vertex::Ptr>& rkPathVertices,
+			const bool kUseTimeLimit,
+			const int kTimeLimitInSeconds,
+			const std::chrono::system_clock::time_point& rkStartingTime);
+
 		bool IsDegreeSequence(const std::list<int>& rkSequence) const;
 
-		TopoDS_Vertex GetCoincidentVertex(const TopoDS_Vertex& rkVertex, const bool kUseTolerance, const double kTolerance) const;
+		TopoDS_Vertex GetCoincidentVertex(const TopoDS_Vertex& rkVertex, const double kTolerance) const;
 
 		GraphMap m_graphDictionary;
 	};

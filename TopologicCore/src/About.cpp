@@ -2,8 +2,8 @@
 
 #define MAJOR_VERSION 0
 #define MINOR_VERSION 8
-#define EXTERNAL_BUILD_VERSION 2
-#define INTERNAL_BUILD_VERSION 8
+#define EXTERNAL_BUILD_VERSION 3
+#define INTERNAL_BUILD_VERSION -1
 
 namespace TopologicCore
 {

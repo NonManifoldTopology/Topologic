@@ -106,9 +106,9 @@ namespace Topologic {
 		Graph^ AddVertices(
 			List<Vertex^>^ vertices,
 #ifdef TOPOLOGIC_DYNAMO
-			[Autodesk::DesignScript::Runtime::DefaultArgument("null")]
+			[Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")]
 #endif
-			Nullable<double> tolerance);
+			double tolerance);
 
 		/// <summary>
 		/// Adds the list of Edges to the Graph. The Vertices of the Edges are merged with existing Vertices if they fall within the input tolerance. No new Edges will be added if they already exist. A zero or null tolerance means that the Vertices of the input Edges will be added to the Graph regardless of their overlap with existing Vertices.
@@ -119,9 +119,9 @@ namespace Topologic {
 		Graph^ AddEdges(
 			List<Edge^>^ edges,
 #ifdef TOPOLOGIC_DYNAMO
-			[Autodesk::DesignScript::Runtime::DefaultArgument("null")]
+			[Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")]
 #endif
-			Nullable<double> tolerance);
+			double tolerance);
 
 		/// <summary>
 		/// Connects the two input vertices with an Edge.
@@ -134,9 +134,9 @@ namespace Topologic {
 			Vertex^ vertex1, 
 			Vertex^ vertex2, 
 #ifdef TOPOLOGIC_DYNAMO
-			[Autodesk::DesignScript::Runtime::DefaultArgument("null")]
+			[Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")]
 #endif
-			Nullable<double> tolerance);
+			double tolerance);
 
 		/// <summary>
 		/// Returns the number of edges connected to the input Vertex.
@@ -160,9 +160,9 @@ namespace Topologic {
 		/// <returns name="bool">True if the input Graph contains the input Vertex, False otherwise</returns>
 		bool ContainsVertex(Vertex^ vertex, 
 #ifdef TOPOLOGIC_DYNAMO
-			[Autodesk::DesignScript::Runtime::DefaultArgument("null")]
+			[Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")]
 #endif
-			Nullable<double> tolerance);
+			double tolerance);
 
 		/// <summary>
 		/// Returns True if the input Graph contains the input Edge. Returns False otherwise.
@@ -172,9 +172,9 @@ namespace Topologic {
 		/// <returns name="bool">True if the input Graph contains the input Edge, False otherwise</returns>
 		bool ContainsEdge(Edge^ edge, 
 #ifdef TOPOLOGIC_DYNAMO
-			[Autodesk::DesignScript::Runtime::DefaultArgument("null")]
+			[Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")]
 #endif
-			Nullable<double> tolerance);
+			double tolerance);
 
 		/// <summary>
 		/// Returns a list of Vertex degrees in a non-increasing order.
@@ -300,9 +300,9 @@ namespace Topologic {
 		/// <returns name="Edge">The Edge connecting the two Vertices</returns>
 		Edge^ EdgeAtVertices(Vertex^ vertex1, Vertex^ vertex2,
 #ifdef TOPOLOGIC_DYNAMO
-			[Autodesk::DesignScript::Runtime::DefaultArgument("null")]
+			[Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")]
 #endif
-			Nullable<double> tolerance);
+			double tolerance);
 
 		/// <summary>
 		/// Returns a list of all Edges connected to the input Vertex.
@@ -312,9 +312,9 @@ namespace Topologic {
 		/// <returns name="Edge[]">The Edges connected to the input Vertex</returns>
 		List<Edge^>^ IncidentEdges(Vertex^ vertex, 
 #ifdef TOPOLOGIC_DYNAMO
-			[Autodesk::DesignScript::Runtime::DefaultArgument("null")]
+			[Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")]
 #endif
-			Nullable<double> tolerance);
+			double tolerance);
 
 	public protected:
 		Graph(const std::shared_ptr<TopologicCore::Graph>& kpCoreGraph);
