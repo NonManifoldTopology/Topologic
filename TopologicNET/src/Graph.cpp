@@ -1,3 +1,5 @@
+#include <msclr/marshal_cppstd.h>
+
 #include "Graph.h"
 #include "Vertex.h"
 #include "Edge.h"
@@ -122,13 +124,14 @@ namespace Topologic
 		return path;
 	}
 
-	Wire ^ Graph::ShortestPath(Vertex ^ startVertex, Vertex ^ endVertex)
+	Wire ^ Graph::ShortestPath(Vertex ^ startVertex, Vertex ^ endVertex, String^ edgeKey)
 	{
 		TopologicCore::Vertex::Ptr pCoreStartVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(startVertex->GetCoreTopologicalQuery());
 		TopologicCore::Vertex::Ptr pCoreEndVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(endVertex->GetCoreTopologicalQuery());
+		std::string coreEdgeKey = msclr::interop::marshal_as<std::string>(edgeKey);
 
-		TopologicCore::Wire::Ptr corePath = (*m_pCoreGraph)->ShortestPath(pCoreStartVertex, pCoreEndVertex);
-
+		TopologicCore::Wire::Ptr corePath = (*m_pCoreGraph)->ShortestPath(pCoreStartVertex, pCoreEndVertex, coreEdgeKey);
+		
 		Wire^ path = safe_cast<Wire^>(Topologic::Topology::ByCoreTopology(corePath));
 		return path;
 	}

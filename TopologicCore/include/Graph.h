@@ -62,7 +62,9 @@ namespace TopologicCore
 
 		bool ContainsVertex(const TopoDS_Vertex& rkOcctVertex, const double kTolerance) const;
 
-		TOPOLOGIC_API bool ContainsEdge(const std::shared_ptr<Edge>& kpEdge, const double kTolerance);
+		TOPOLOGIC_API bool ContainsEdge(const std::shared_ptr<Edge>& kpEdge, const double kTolerance) const;
+		
+		bool ContainsEdge(const TopoDS_Vertex& rkVertex1, const TopoDS_Vertex& rkVertex2, const double kTolerance) const;
 
 		TOPOLOGIC_API void DegreeSequence(std::list<int>& rDegreeSequence) const;
 
@@ -103,11 +105,13 @@ namespace TopologicCore
 
 		TOPOLOGIC_API std::shared_ptr<Wire> ShortestPath(
 			const Vertex::Ptr& kpStartVertex,
-			const Vertex::Ptr& kpEndVertex) const;
+			const Vertex::Ptr& kpEndVertex,
+			const std::string& rkEdgeKey) const;
 
 		std::shared_ptr<Wire> ShortestPath(
 			const TopoDS_Vertex& rkOcctStartVertex,
-			const TopoDS_Vertex& rkOcctEndVertex) const;
+			const TopoDS_Vertex& rkOcctEndVertex,
+			const std::string& rkEdgeKey) const;
 
 		TOPOLOGIC_API int Diameter() const;
 
@@ -187,6 +191,9 @@ namespace TopologicCore
 
 		TopoDS_Vertex GetCoincidentVertex(const TopoDS_Vertex& rkVertex, const double kTolerance) const;
 
+		double ComputeCost(const TopoDS_Vertex& rkVertex1, const TopoDS_Vertex& rkVertex2, const std::string& rkEdgeKey) const;
+
 		GraphMap m_graphDictionary;
+		TopTools_MapOfShape m_occtEdges;
 	};
 }

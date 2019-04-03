@@ -230,6 +230,8 @@ namespace TopologicCore
 
 				m_graphDictionary[occtStartCoincidentVertex].Add(occtEndCoincidentVertex);
 				m_graphDictionary[occtEndCoincidentVertex].Add(occtStartCoincidentVertex);
+
+				//m_occtEdges.Add(kpEdge->GetOcctEdge());
 			}
 		}
 	}
@@ -284,13 +286,24 @@ namespace TopologicCore
 			occtQueryVertex2 = kpVertex2->GetOcctVertex();
 		}
 
+		bool addingEdge = false;
 		if (!m_graphDictionary[occtQueryVertex1].Contains(occtQueryVertex2))
 		{
 			m_graphDictionary[occtQueryVertex1].Add(occtQueryVertex2);
+			addingEdge = true;
 		}
 		if (!m_graphDictionary[occtQueryVertex2].Contains(occtQueryVertex1))
 		{
 			m_graphDictionary[occtQueryVertex2].Add(occtQueryVertex1);
+			addingEdge = true;
+		}
+
+		if (addingEdge)
+		{
+			Vertex::Ptr queryVertex1 = std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtQueryVertex1));
+			Vertex::Ptr queryVertex2 = std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtQueryVertex2));
+			Edge::Ptr edge = Edge::ByStartVertexEndVertex(queryVertex1, queryVertex2);
+			//m_occtEdges.Add(edge->GetOcctEdge());
 		}
 	}
 
@@ -305,23 +318,28 @@ namespace TopologicCore
 		return !occtCoincidentVertex.IsNull();
 	}
 
-	bool Graph::ContainsEdge(const std::shared_ptr<Edge>& kpEdge, const double kTolerance)
+	bool Graph::ContainsEdge(const std::shared_ptr<Edge>& kpEdge, const double kTolerance) const
 	{
 		Vertex::Ptr startVertex = kpEdge->StartVertex();
-		TopoDS_Vertex occtStartCoincidentVertex = GetCoincidentVertex(startVertex->GetOcctVertex(), kTolerance);
+		Vertex::Ptr endVertex = kpEdge->EndVertex();
+		return ContainsEdge(startVertex->GetOcctVertex(), endVertex->GetOcctVertex(), kTolerance);
+	}
+
+	bool Graph::ContainsEdge(const TopoDS_Vertex & rkVertex1, const TopoDS_Vertex & rkVertex2, const double kTolerance) const
+	{
+		TopoDS_Vertex occtStartCoincidentVertex = GetCoincidentVertex(rkVertex1, kTolerance);
 		if (occtStartCoincidentVertex.IsNull())
 		{
 			return false;
 		}
-		Vertex::Ptr endVertex = kpEdge->EndVertex();
-		TopoDS_Vertex occtEndCoincidentVertex = GetCoincidentVertex(endVertex->GetOcctVertex(), kTolerance);
+		TopoDS_Vertex occtEndCoincidentVertex = GetCoincidentVertex(rkVertex2, kTolerance);
 		if (occtEndCoincidentVertex.IsNull())
 		{
 			return false;
 		}
 
-		TopTools_MapOfShape adjacentVerticesToStart = m_graphDictionary[occtStartCoincidentVertex];
-		TopTools_MapOfShape adjacentVerticesToEnd = m_graphDictionary[occtEndCoincidentVertex];
+		TopTools_MapOfShape adjacentVerticesToStart = m_graphDictionary.find(occtStartCoincidentVertex)->second;
+		TopTools_MapOfShape adjacentVerticesToEnd = m_graphDictionary.find(occtEndCoincidentVertex)->second;
 
 		return adjacentVerticesToStart.Contains(occtEndCoincidentVertex) || adjacentVerticesToEnd.Contains(occtStartCoincidentVertex);
 	}
@@ -537,12 +555,12 @@ namespace TopologicCore
 		return nullptr;
 	}
 
-	std::shared_ptr<Wire> Graph::ShortestPath(const Vertex::Ptr & kpStartVertex, const Vertex::Ptr & kpEndVertex) const
+	std::shared_ptr<Wire> Graph::ShortestPath(const Vertex::Ptr & kpStartVertex, const Vertex::Ptr & kpEndVertex, const std::string& rkEdgeKey) const
 	{
-		return ShortestPath(kpStartVertex->GetOcctVertex(), kpEndVertex->GetOcctVertex());
+		return ShortestPath(kpStartVertex->GetOcctVertex(), kpEndVertex->GetOcctVertex(), rkEdgeKey);
 	}
 
-	std::shared_ptr<Wire> Graph::ShortestPath(const TopoDS_Vertex & rkOcctStartVertex, const TopoDS_Vertex & rkOcctEndVertex) const
+	std::shared_ptr<Wire> Graph::ShortestPath(const TopoDS_Vertex & rkOcctStartVertex, const TopoDS_Vertex & rkOcctEndVertex, const std::string& rkEdgeKey) const
 	{
 		// Dijkstra's: https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm#Pseudocode
 		std::list<TopoDS_Vertex> vertexList;
@@ -614,7 +632,8 @@ namespace TopologicCore
 				double length = 0.0;
 				if (!occtVertexMinDistance.IsSame(occtNeighbour))
 				{
-					length = 1.0; // to be replaced by the cost
+					//length = 1.0; // to be replaced by the cost
+					length = ComputeCost(occtVertexMinDistance, occtNeighbour, rkEdgeKey);
 				}
 				double alternativeDistance = distanceMap[occtVertexMinDistance] + length;
 				if (alternativeDistance < distanceMap[occtNeighbour])
@@ -674,7 +693,7 @@ namespace TopologicCore
 
 	int Graph::Distance(const TopoDS_Vertex & rkOcctStartVertex, const TopoDS_Vertex & rkOcctVertex) const
 	{
-		Wire::Ptr shortestPath = ShortestPath(rkOcctStartVertex, rkOcctVertex);
+		Wire::Ptr shortestPath = ShortestPath(rkOcctStartVertex, rkOcctVertex, "");
 		if (shortestPath == nullptr)
 		{
 			return std::numeric_limits<int>::max();
@@ -1446,36 +1465,48 @@ namespace TopologicCore
 	TopoDS_Vertex Graph::GetCoincidentVertex(const TopoDS_Vertex & rkVertex, const double kTolerance) const
 	{
 		double absDistanceThreshold = std::abs(kTolerance);
-		/*if (absDistanceThreshold > 0.0)
-		{*/
-			for (GraphMap::const_iterator graphIterator = m_graphDictionary.begin();
-				graphIterator != m_graphDictionary.end();
-				graphIterator++)
+		for (GraphMap::const_iterator graphIterator = m_graphDictionary.begin();
+			graphIterator != m_graphDictionary.end();
+			graphIterator++)
+		{
+			TopoDS_Vertex currentVertex = graphIterator->first;
+			BRepExtrema_DistShapeShape occtDistanceCalculation(rkVertex, currentVertex);
+			bool isDone = occtDistanceCalculation.Perform();
+			if (isDone)
 			{
-				TopoDS_Vertex currentVertex = graphIterator->first;
-				BRepExtrema_DistShapeShape occtDistanceCalculation(rkVertex, currentVertex);
-				bool isDone = occtDistanceCalculation.Perform();
-				if (isDone)
+				double distance = occtDistanceCalculation.Value();
+				if (distance < absDistanceThreshold)
 				{
-					double distance = occtDistanceCalculation.Value();
-					if (distance < absDistanceThreshold)
-					{
-						return currentVertex;
-					}
+					return currentVertex;
 				}
 			}
+		}
 
-			return TopoDS_Vertex(); // null vertex
-		/*}
+		return TopoDS_Vertex(); // null vertex
+	}
+	double Graph::ComputeCost(const TopoDS_Vertex & rkVertex1, const TopoDS_Vertex & rkVertex2, const std::string & rkEdgeKey) const
+	{
+		// Check: if not connected, return the largest double value
+		if (!ContainsEdge(rkVertex1, rkVertex2, 0.0001))
+		{
+			return std::numeric_limits<double>::max();
+		}
 		else
 		{
-			GraphMap::const_iterator graphIterator = m_graphDictionary.find(rkVertex);
-			if (graphIterator == m_graphDictionary.end())
+			// Check edge key
+			if (rkEdgeKey.compare(""))
 			{
-				return TopoDS_Vertex();
+				return 1.0;
 			}
-
-			return rkVertex;
-		}*/
+			else if (rkEdgeKey.compare("distance") || rkEdgeKey.compare("length"))
+			{
+				BRepExtrema_DistShapeShape occtDistance(rkVertex1, rkVertex2);
+				return occtDistance.Value();
+			}
+			else
+			{
+				throw std::exception("Custom edge key not currently supported.");
+			}
+		}
 	}
 }

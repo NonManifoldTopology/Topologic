@@ -260,7 +260,11 @@ namespace Topologic {
 		/// <param name="startVertex">The start Vertex</param>
 		/// <param name="endVertex">The end Vertex</param>
 		/// <returns name="Wire">The shortest path</returns>
-		Wire^ ShortestPath(Vertex^ startVertex, Vertex^ endVertex);
+		Wire^ ShortestPath(Vertex^ startVertex, Vertex^ endVertex,
+#ifdef TOPOLOGIC_DYNAMO
+			[Autodesk::DesignScript::Runtime::DefaultArgument("")]
+#endif
+		String^ edgeKey);
 
 		/// <summary>
 		/// Returns the number of Edges of the shortest path connecting the two input Vertices.
