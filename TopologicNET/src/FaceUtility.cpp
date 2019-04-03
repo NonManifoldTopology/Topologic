@@ -12,7 +12,7 @@ namespace Topologic {
 			return TopologicUtilities::FaceUtility::Area(pCoreFace);
 		}
 
-		Face ^ FaceUtility::ByVertices(Face^ face, System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<Vertex^>^>^ vertices)
+		Face ^ FaceUtility::ByVertices(System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<Vertex^>^>^ vertices)
 		{
 			std::list<std::list<TopologicCore::Vertex::Ptr>> coreVertices;
 			for each(System::Collections::Generic::IEnumerable<Vertex^>^ verticesList in vertices)

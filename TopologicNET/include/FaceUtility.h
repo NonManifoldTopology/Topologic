@@ -26,7 +26,7 @@ namespace Topologic {
 			/// </summary>
 			/// <param name="vertices">A Set of Vertices</param>
 			/// <returns name="Face">The created Face</returns>
-			static Face^ ByVertices(Face^ face, System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<Vertex^>^>^ vertices);
+			static Face^ ByVertices(System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<Vertex^>^>^ vertices);
 
 			/// <summary>
 			/// Returns the UV parameters at a given Vertex on a Face.
