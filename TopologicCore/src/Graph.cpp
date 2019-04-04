@@ -17,6 +17,7 @@
 #include <TopoDS.hxx>
 
 #include <algorithm>
+#include <locale>
 #include <numeric>
 
 namespace TopologicCore
@@ -1554,7 +1555,9 @@ namespace TopologicCore
 				AttributeManager::AttributeMap attributeMap;
 				bool hasAttribute = AttributeManager::GetInstance().FindAll(occtEdge, attributeMap);
 				AttributeManager::AttributeMap::iterator attributeIterator = attributeMap.find(rkEdgeKey);
-				if ((rkEdgeKey.compare("distance") || rkEdgeKey.compare("length")) 
+				std::locale locale;
+				std::string lowercaseEdgeKey = std::tolower(rkEdgeKey, locale);
+				if ((lowercaseEdgeKey.compare("distance") || lowercaseEdgeKey.compare("length"))
 					&&
 					attributeIterator == attributeMap.end()) // no attribute with this name is found
 				{
