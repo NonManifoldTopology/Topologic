@@ -6,9 +6,14 @@
 #include "Cell.h"
 #include "CellComplex.h"
 #include "Aperture.h"
+#include "Attribute.h"
+#include "DoubleAttribute.h"
+#include "IntAttribute.h"
+#include "AttributeManager.h"
 
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepExtrema_DistShapeShape.hxx>
+#include <ShapeAnalysis_Edge.hxx>
 #include <TopoDS.hxx>
 
 #include <algorithm>
@@ -231,7 +236,7 @@ namespace TopologicCore
 				m_graphDictionary[occtStartCoincidentVertex].Add(occtEndCoincidentVertex);
 				m_graphDictionary[occtEndCoincidentVertex].Add(occtStartCoincidentVertex);
 
-				//m_occtEdges.Add(kpEdge->GetOcctEdge());
+				m_occtEdges.Add(kpEdge->GetOcctEdge());
 			}
 		}
 	}
@@ -303,7 +308,7 @@ namespace TopologicCore
 			Vertex::Ptr queryVertex1 = std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtQueryVertex1));
 			Vertex::Ptr queryVertex2 = std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtQueryVertex2));
 			Edge::Ptr edge = Edge::ByStartVertexEndVertex(queryVertex1, queryVertex2);
-			//m_occtEdges.Add(edge->GetOcctEdge());
+			m_occtEdges.Add(edge->GetOcctEdge());
 		}
 	}
 
@@ -788,12 +793,29 @@ namespace TopologicCore
 			{
 				TopTools_MapOfShape& rOcctConnectedVertices = graphIterator->second;
 				rOcctConnectedVertices.Remove(occtVertex);
+				TopoDS_Edge occtEdge = FindEdge(TopoDS::Vertex(graphIterator->first), occtVertex);
+				if (!occtEdge.IsNull())
+				{
+					m_occtEdges.Remove(occtEdge);
+				}
 			}
 
 			// Remove the entry from this map
 			GraphMap::iterator vertexIterator = m_graphDictionary.find(occtVertex);
 			if (vertexIterator != m_graphDictionary.end())
 			{
+				TopTools_MapOfShape& rOcctConnectedVertices = vertexIterator->second;
+				for(TopTools_MapIteratorOfMapOfShape occtConnectedVertexIterator(rOcctConnectedVertices);
+					occtConnectedVertexIterator.More();
+					occtConnectedVertexIterator.Next())
+				{
+					TopoDS_Edge occtEdge = FindEdge(occtVertex, TopoDS::Vertex(occtConnectedVertexIterator.Value()));
+					if (!occtEdge.IsNull())
+					{
+						m_occtEdges.Remove(occtEdge);
+					}
+				}
+
 				m_graphDictionary.erase(vertexIterator);
 			}
 		}
@@ -812,6 +834,11 @@ namespace TopologicCore
 				{
 					TopTools_MapOfShape& adjacentVertices = startVertexIterator->second;
 					adjacentVertices.Remove(endVertex->GetOcctVertex());
+					TopoDS_Edge occtEdge = FindEdge(startVertex->GetOcctVertex(), endVertex->GetOcctVertex());
+					if (!occtEdge.IsNull())
+					{
+						m_occtEdges.Remove(occtEdge);
+					}
 				}
 			}
 
@@ -821,6 +848,11 @@ namespace TopologicCore
 				{
 					TopTools_MapOfShape& adjacentVertices = endVertexIterator->second;
 					adjacentVertices.Remove(startVertex->GetOcctVertex());
+					TopoDS_Edge occtEdge = FindEdge(endVertex->GetOcctVertex(), startVertex->GetOcctVertex());
+					if (!occtEdge.IsNull())
+					{
+						m_occtEdges.Remove(occtEdge);
+					}
 				}
 			}
 		}
@@ -874,10 +906,16 @@ namespace TopologicCore
 			return nullptr;
 		}
 
-		Vertex::Ptr vertex1 = std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtQueryVertex1));
+		TopoDS_Edge occtEdge = FindEdge(occtQueryVertex1, occtQueryVertex2);
+		if (occtEdge.IsNull())
+		{
+			return nullptr;
+		}
+		return std::dynamic_pointer_cast<Edge>(Topology::ByOcctShape(occtEdge));
+		/*Vertex::Ptr vertex1 = std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtQueryVertex1));
 		Vertex::Ptr vertex2 = std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtQueryVertex2));
 		Edge::Ptr edge = Edge::ByStartVertexEndVertex(vertex1, vertex2);
-		return edge;
+		return edge;*/
 	}
 
 	void Graph::IncidentEdges(const std::shared_ptr<Vertex>& kpVertex, const double kTolerance, std::list<std::shared_ptr<Edge>>& rEdges) const
@@ -893,7 +931,14 @@ namespace TopologicCore
 		AdjacentVertices(queryVertex, adjacentVertices);
 		for (const Vertex::Ptr& kpAdjacentVertex : adjacentVertices)
 		{
-			Edge::Ptr edge = Edge::ByStartVertexEndVertex(queryVertex, kpAdjacentVertex);
+			//Edge::Ptr edge = Edge::ByStartVertexEndVertex(queryVertex, kpAdjacentVertex);
+			TopoDS_Edge occtEdge = FindEdge(queryVertex->GetOcctVertex(), kpAdjacentVertex->GetOcctVertex());
+			if (occtEdge.IsNull())
+			{
+				continue;
+			}
+			Edge::Ptr edge = std::dynamic_pointer_cast<Edge>(Topology::ByOcctShape(occtEdge));
+
 			rEdges.push_back(edge);
 		}
 	}
@@ -1498,15 +1543,64 @@ namespace TopologicCore
 			{
 				return 1.0;
 			}
-			else if (rkEdgeKey.compare("distance") || rkEdgeKey.compare("length"))
-			{
-				BRepExtrema_DistShapeShape occtDistance(rkVertex1, rkVertex2);
-				return occtDistance.Value();
-			}
 			else
 			{
-				throw std::exception("Custom edge key not currently supported.");
+				TopoDS_Edge occtEdge = FindEdge(rkVertex1, rkVertex2);
+				if (occtEdge.IsNull())
+				{
+					return std::numeric_limits<double>::max();
+				}
+
+				AttributeManager::AttributeMap attributeMap;
+				bool hasAttribute = AttributeManager::GetInstance().FindAll(occtEdge, attributeMap);
+				AttributeManager::AttributeMap::iterator attributeIterator = attributeMap.find(rkEdgeKey);
+				if ((rkEdgeKey.compare("distance") || rkEdgeKey.compare("length")) 
+					&&
+					attributeIterator == attributeMap.end()) // no attribute with this name is found
+				{
+					BRepExtrema_DistShapeShape occtDistance(rkVertex1, rkVertex2);
+					return occtDistance.Value();
+				}
+				else
+				{
+					Attribute::Ptr attribute = attributeIterator->second;
+
+					// Only add if double or int
+					DoubleAttribute::Ptr doubleAttribute = std::dynamic_pointer_cast<DoubleAttribute>(attribute);
+					if (doubleAttribute != nullptr)
+					{
+						return doubleAttribute->DoubleValue();
+					}
+
+					IntAttribute::Ptr intAttribute = std::dynamic_pointer_cast<IntAttribute>(attribute);
+					if (intAttribute != nullptr)
+					{
+						return (double) intAttribute->IntValue();
+					}
+
+					std::string strException = std::string("No attribute with the name " + rkEdgeKey + " is found.");
+					throw std::exception(strException.c_str());
+				}
 			}
 		}
+	}
+	TopoDS_Edge Graph::FindEdge(const TopoDS_Vertex & rkVertex1, const TopoDS_Vertex & rkVertex2) const
+	{
+		for (TopTools_MapIteratorOfMapOfShape occtEdgeIterator(m_occtEdges);
+			occtEdgeIterator.More();
+			occtEdgeIterator.Next())
+		{
+			TopoDS_Edge occtEdge = TopoDS::Edge(occtEdgeIterator.Value());
+			ShapeAnalysis_Edge occtShapeAnalysisEdge;
+			TopoDS_Vertex occtFirstVertex = occtShapeAnalysisEdge.FirstVertex(occtEdge);
+			TopoDS_Vertex occtLastVertex = occtShapeAnalysisEdge.LastVertex(occtEdge);
+			if ((occtFirstVertex.IsSame(rkVertex1) && occtLastVertex.IsSame(rkVertex2)) ||
+				(occtFirstVertex.IsSame(rkVertex2) && occtLastVertex.IsSame(rkVertex1)))
+			{
+				return occtEdge;
+			}
+		}
+
+		return TopoDS_Edge();
 	}
 }

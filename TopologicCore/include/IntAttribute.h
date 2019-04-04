@@ -22,6 +22,7 @@ namespace TopologicCore
 
 		TOPOLOGIC_API IntAttribute(const long long int kValue);
 		virtual void* Value();
+		long long int IntValue() { return m_value; }
 
 	protected:
 		long long int m_value;

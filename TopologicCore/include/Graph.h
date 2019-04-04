@@ -193,6 +193,8 @@ namespace TopologicCore
 
 		double ComputeCost(const TopoDS_Vertex& rkVertex1, const TopoDS_Vertex& rkVertex2, const std::string& rkEdgeKey) const;
 
+		TopoDS_Edge FindEdge(const TopoDS_Vertex& rkVertex1, const TopoDS_Vertex& rkVertex2) const;
+
 		GraphMap m_graphDictionary;
 		TopTools_MapOfShape m_occtEdges;
 	};

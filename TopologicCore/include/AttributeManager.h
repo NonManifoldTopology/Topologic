@@ -17,6 +17,7 @@ namespace TopologicCore
 	{
 	public:
 		typedef std::shared_ptr<AttributeManager> Ptr;
+		typedef std::map<std::string, std::shared_ptr<Attribute>> AttributeMap;
 
 	public:
 		TOPOLOGIC_API static AttributeManager& GetInstance();
