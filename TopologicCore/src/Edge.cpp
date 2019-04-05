@@ -7,6 +7,7 @@
 #include "AttributeManager.h"
 
 #include <BRepGProp.hxx>
+#include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRep_Tool.hxx>
 #include <Geom_BSplineCurve.hxx>
@@ -302,9 +303,18 @@ namespace TopologicCore
 
 	std::shared_ptr<Vertex> Edge::CenterOfMass() const
 	{
-		GProp_GProps occtShapeProperties;
+		TopoDS_Vertex occtCenterOfMass = CenterOfMass(GetOcctEdge());
+		return std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtCenterOfMass));
+		/*GProp_GProps occtShapeProperties;
 		BRepGProp::LinearProperties(GetOcctShape(), occtShapeProperties);
-		return Vertex::ByPoint(new Geom_CartesianPoint(occtShapeProperties.CentreOfMass()));
+		return Vertex::ByPoint(new Geom_CartesianPoint(occtShapeProperties.CentreOfMass()));*/
+	}
+
+	TopoDS_Vertex Edge::CenterOfMass(const TopoDS_Edge & rkOcctEdge)
+	{
+		GProp_GProps occtShapeProperties;
+		BRepGProp::LinearProperties(rkOcctEdge, occtShapeProperties);
+		return BRepBuilderAPI_MakeVertex(occtShapeProperties.CentreOfMass());
 	}
 
 	std::string Edge::GetTypeAsString() const

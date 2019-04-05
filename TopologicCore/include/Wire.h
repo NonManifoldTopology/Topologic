@@ -128,6 +128,9 @@ namespace TopologicCore
 
 		TOPOLOGIC_API virtual std::shared_ptr<Vertex> CenterOfMass() const;
 
+		static TopoDS_Vertex CenterOfMass(const TopoDS_Wire& rkOcctWire);
+
+
 		virtual TopologyType GetType() const { return TOPOLOGY_WIRE; }
 
 		/// <summary>

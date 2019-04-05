@@ -143,6 +143,8 @@ namespace TopologicCore
 
 		virtual std::shared_ptr<Vertex> CenterOfMass() const;
 
+		static TopoDS_Vertex CenterOfMass(const TopoDS_Vertex& rkOcctVertex);
+
 		virtual TopologyType GetType() const { return TOPOLOGY_VERTEX; }
 
 		/// <summary>

@@ -232,7 +232,12 @@ namespace TopologicCore
 
 	Vertex::Ptr Cluster::CenterOfMass() const
 	{
-		throw std::exception("Not yet implemented");
+		throw std::exception("Not implemented yet");
+	}
+
+	TopoDS_Vertex Cluster::CenterOfMass(const TopoDS_Compound & rkOcctCompound)
+	{
+		throw std::exception("Not implemented yet");
 	}
 
 	bool Cluster::IsManifold() const

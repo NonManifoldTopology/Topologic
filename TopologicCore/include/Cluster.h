@@ -162,6 +162,8 @@ namespace TopologicCore
 		/// </summary>
 		TOPOLOGIC_API virtual std::shared_ptr<Vertex> CenterOfMass() const;
 
+		static TopoDS_Vertex CenterOfMass(const TopoDS_Compound& rkOcctCompound);
+
 		/// <summary>
 		/// 
 		/// </summary>

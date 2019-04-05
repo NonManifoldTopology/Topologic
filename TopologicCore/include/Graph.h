@@ -106,11 +106,13 @@ namespace TopologicCore
 		TOPOLOGIC_API std::shared_ptr<Wire> ShortestPath(
 			const Vertex::Ptr& kpStartVertex,
 			const Vertex::Ptr& kpEndVertex,
+			const std::string& rkVertexKey,
 			const std::string& rkEdgeKey) const;
 
 		std::shared_ptr<Wire> ShortestPath(
 			const TopoDS_Vertex& rkOcctStartVertex,
 			const TopoDS_Vertex& rkOcctEndVertex,
+			const std::string& rkVertexKey,
 			const std::string& rkEdgeKey) const;
 
 		TOPOLOGIC_API int Diameter() const;
@@ -179,21 +181,24 @@ namespace TopologicCore
 			const bool kToExteriorTopologies,
 			const bool kToExteriorApertures);
 
-		static std::shared_ptr<Wire> ConstructPath(const std::list<Vertex::Ptr>& rkPathVertices);
+		std::shared_ptr<Wire> ConstructPath(const std::list<Vertex::Ptr>& rkPathVertices) const;
 
-		static std::shared_ptr<Wire> ConstructPath(
+		std::shared_ptr<Wire> ConstructPath(
 			const std::list<Vertex::Ptr>& rkPathVertices,
 			const bool kUseTimeLimit,
 			const int kTimeLimitInSeconds,
-			const std::chrono::system_clock::time_point& rkStartingTime);
+			const std::chrono::system_clock::time_point& rkStartingTime) const;
 
 		bool IsDegreeSequence(const std::list<int>& rkSequence) const;
 
 		TopoDS_Vertex GetCoincidentVertex(const TopoDS_Vertex& rkVertex, const double kTolerance) const;
 
-		double ComputeCost(const TopoDS_Vertex& rkVertex1, const TopoDS_Vertex& rkVertex2, const std::string& rkEdgeKey) const;
+		double ComputeCost(const TopoDS_Vertex& rkVertex1, const TopoDS_Vertex& rkVertex2, const std::string& rkVertexKey, const std::string& rkEdgeKey) const;
+		double ComputeVertexCost(const TopoDS_Vertex& rkVertex1, const TopoDS_Vertex& rkVertex2, const std::string& rkVertexKey) const;
+		double ComputeEdgeCost(const TopoDS_Vertex& rkVertex1, const TopoDS_Vertex& rkVertex2, const std::string& rkEdgeKey) const;
 
-		TopoDS_Edge FindEdge(const TopoDS_Vertex& rkVertex1, const TopoDS_Vertex& rkVertex2) const;
+		TopoDS_Edge FindEdge(const TopoDS_Vertex& rkVertex1, const TopoDS_Vertex& rkVertex2, const double kTolerance = 0.0001) const;
+		static bool IsCoincident(const TopoDS_Vertex& rkVertex1, const TopoDS_Vertex& rkVertex2, const double kTolerance = 0.0001);
 
 		GraphMap m_graphDictionary;
 		TopTools_MapOfShape m_occtEdges;

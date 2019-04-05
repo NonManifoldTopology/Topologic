@@ -149,9 +149,18 @@ namespace TopologicCore
 
 	Vertex::Ptr Shell::CenterOfMass() const
 	{
-		GProp_GProps occtShapeProperties;
+		TopoDS_Vertex occtCenterOfMass = CenterOfMass(GetOcctShell());
+		return std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtCenterOfMass));
+		/*GProp_GProps occtShapeProperties;
 		BRepGProp::SurfaceProperties(GetOcctShape(), occtShapeProperties);
-		return Vertex::ByPoint(new Geom_CartesianPoint(occtShapeProperties.CentreOfMass()));
+		return Vertex::ByPoint(new Geom_CartesianPoint(occtShapeProperties.CentreOfMass()));*/
+	}
+
+	TopoDS_Vertex Shell::CenterOfMass(const TopoDS_Shell & rkOcctShell)
+	{
+		GProp_GProps occtShapeProperties;
+		BRepGProp::SurfaceProperties(rkOcctShell, occtShapeProperties);
+		return BRepBuilderAPI_MakeVertex(occtShapeProperties.CentreOfMass());
 	}
 
 	std::string Shell::GetTypeAsString() const

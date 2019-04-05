@@ -124,16 +124,25 @@ namespace Topologic
 		return path;
 	}
 
-	Wire ^ Graph::ShortestPath(Vertex ^ startVertex, Vertex ^ endVertex, String^ edgeKey)
+	Wire ^ Graph::ShortestPath(Vertex ^ startVertex, Vertex ^ endVertex, String^ vertexKey, String^ edgeKey)
 	{
 		TopologicCore::Vertex::Ptr pCoreStartVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(startVertex->GetCoreTopologicalQuery());
 		TopologicCore::Vertex::Ptr pCoreEndVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(endVertex->GetCoreTopologicalQuery());
-		std::string coreEdgeKey = msclr::interop::marshal_as<std::string>(edgeKey);
+		String^ fixedVertexKey = vertexKey == nullptr ? gcnew String("") : vertexKey;
+		std::string coreVertexKey = msclr::interop::marshal_as<std::string>(fixedVertexKey);
+		String^ fixedEdgeKey = edgeKey == nullptr ? gcnew String("") : edgeKey;
+		std::string coreEdgeKey = msclr::interop::marshal_as<std::string>(fixedEdgeKey);
 
-		TopologicCore::Wire::Ptr corePath = (*m_pCoreGraph)->ShortestPath(pCoreStartVertex, pCoreEndVertex, coreEdgeKey);
-		
-		Wire^ path = safe_cast<Wire^>(Topologic::Topology::ByCoreTopology(corePath));
-		return path;
+		try {
+			TopologicCore::Wire::Ptr corePath = (*m_pCoreGraph)->ShortestPath(pCoreStartVertex, pCoreEndVertex, coreVertexKey, coreEdgeKey);
+
+			Wire^ path = safe_cast<Wire^>(Topologic::Topology::ByCoreTopology(corePath));
+			return path;
+		}
+		catch (std::exception& e)
+		{
+			throw gcnew Exception(gcnew String(e.what()));
+		}
 	}
 
 	double Graph::Distance(Vertex ^ startVertex, Vertex ^ endVertex)

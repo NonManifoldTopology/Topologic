@@ -2,7 +2,8 @@
 #include "Attribute.h"
 #include "Topology.h"
 
-#include "TopExp_Explorer.hxx"
+#include <TopExp_Explorer.hxx>
+#include <TopoDS_Vertex.hxx>
 
 namespace TopologicCore
 {
@@ -93,7 +94,7 @@ namespace TopologicCore
 			}
 			else
 			{
-				TopoDS_Shape occtSelectedSubtopology = Topology::SelectSubtopology(rkOcctShape2, rkOcctShape1, rkOcctShape1.ShapeType());
+				TopoDS_Shape occtSelectedSubtopology = Topology::SelectSubtopology(rkOcctShape2, Topology::CenterOfMass(rkOcctShape1), rkOcctShape1.ShapeType());
 				if (!occtSelectedSubtopology.IsNull())
 				{
 					m_occtShapeToAttributesMap[occtSelectedSubtopology] = std::map<std::string, Attribute::Ptr>(attributes);

@@ -259,10 +259,16 @@ namespace Topologic {
 		/// </summary>
 		/// <param name="startVertex">The start Vertex</param>
 		/// <param name="endVertex">The end Vertex</param>
+		/// <param name="vertexKey">The key for the Vertex cost</param>
+		/// <param name="edgeKey">The key for the Edge cost</param>
 		/// <returns name="Wire">The shortest path</returns>
 		Wire^ ShortestPath(Vertex^ startVertex, Vertex^ endVertex,
 #ifdef TOPOLOGIC_DYNAMO
-			[Autodesk::DesignScript::Runtime::DefaultArgument("")]
+			[Autodesk::DesignScript::Runtime::DefaultArgument("null")]
+#endif
+		String^ vertexKey,
+#ifdef TOPOLOGIC_DYNAMO
+			[Autodesk::DesignScript::Runtime::DefaultArgument("null")]
 #endif
 		String^ edgeKey);
 

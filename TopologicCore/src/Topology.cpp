@@ -222,6 +222,23 @@ namespace TopologicCore
 		return occtClosestSubshape;
 	}
 
+	TopoDS_Vertex Topology::CenterOfMass(const TopoDS_Shape & rkOcctShape)
+	{
+		switch (rkOcctShape.ShapeType())
+		{
+		case TopAbs_VERTEX: return Vertex::CenterOfMass(TopoDS::Vertex(rkOcctShape));
+		case TopAbs_EDGE: return Edge::CenterOfMass(TopoDS::Edge(rkOcctShape));
+		case TopAbs_WIRE: return Wire::CenterOfMass(TopoDS::Wire(rkOcctShape));
+		case TopAbs_FACE: return Face::CenterOfMass(TopoDS::Face(rkOcctShape));
+		case TopAbs_SHELL: return Shell::CenterOfMass(TopoDS::Shell(rkOcctShape));
+		case TopAbs_SOLID: return Cell::CenterOfMass(TopoDS::Solid(rkOcctShape));
+		case TopAbs_COMPSOLID: return CellComplex::CenterOfMass(TopoDS::CompSolid(rkOcctShape));
+		case TopAbs_COMPOUND: return Cluster::CenterOfMass(TopoDS::Compound(rkOcctShape));
+		default:
+			throw std::exception("Unrecognised topology");
+		}
+	}
+
 	TopologyType Topology::GetTopologyType(const TopAbs_ShapeEnum & rkOcctType)
 	{
 		switch (rkOcctType)

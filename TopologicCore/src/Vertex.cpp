@@ -133,8 +133,14 @@ namespace TopologicCore
 
 	std::shared_ptr<Vertex> Vertex::CenterOfMass() const
 	{
-		Handle(Geom_Point) pOcctPoint = Point();
-		return ByPoint(pOcctPoint);
+		TopoDS_Vertex occtCenterOfMass = CenterOfMass(GetOcctVertex());
+		return std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtCenterOfMass));
+		/*Handle(Geom_Point) pOcctPoint = Point();
+		return ByPoint(pOcctPoint);*/
+	}
+	TopoDS_Vertex Vertex::CenterOfMass(const TopoDS_Vertex & rkOcctVertex)
+	{
+		return BRepBuilderAPI_MakeVertex(BRep_Tool::Pnt(rkOcctVertex));
 	}
 	std::string Vertex::GetTypeAsString() const
 	{

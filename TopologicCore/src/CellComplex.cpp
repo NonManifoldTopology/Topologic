@@ -11,6 +11,7 @@
 #include "AttributeManager.h"
 
 #include <BRep_Builder.hxx>
+#include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepGProp.hxx>
 #include <Geom_Surface.hxx>
 #include <GProp_GProps.hxx>
@@ -363,9 +364,18 @@ namespace TopologicCore
 
 	Vertex::Ptr CellComplex::CenterOfMass() const
 	{
-		GProp_GProps occtShapeProperties;
+		TopoDS_Vertex occtCenterOfMass = CenterOfMass(GetOcctCompSolid());
+		return std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtCenterOfMass));
+		/*GProp_GProps occtShapeProperties;
 		BRepGProp::VolumeProperties(GetOcctShape(), occtShapeProperties);
-		return Vertex::ByPoint(new Geom_CartesianPoint(occtShapeProperties.CentreOfMass()));
+		return Vertex::ByPoint(new Geom_CartesianPoint(occtShapeProperties.CentreOfMass()));*/
+	}
+
+	TopoDS_Vertex CellComplex::CenterOfMass(const TopoDS_CompSolid & rkOcctCompSolid)
+	{
+		GProp_GProps occtShapeProperties;
+		BRepGProp::VolumeProperties(rkOcctCompSolid, occtShapeProperties);
+		return BRepBuilderAPI_MakeVertex(occtShapeProperties.CentreOfMass());
 	}
 
 	CellComplex::CellComplex(const TopoDS_CompSolid& rkOcctCompSolid, const std::string& rkGuid)

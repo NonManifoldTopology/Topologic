@@ -9,6 +9,7 @@
 #include "GlobalCluster.h"
 #include "AttributeManager.h"
 
+#include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepAlgoAPI_Section.hxx>
 #include <BRep_Tool.hxx>
@@ -101,11 +102,22 @@ namespace TopologicCore
 
 	Vertex::Ptr Face::CenterOfMass() const
 	{
-		GProp_GProps occtShapeProperties;
+		TopoDS_Vertex occtCenterOfMass = CenterOfMass(GetOcctFace());
+		return std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtCenterOfMass));
+		/*GProp_GProps occtShapeProperties;
 		ShapeFix_Face occtShapeFix(GetOcctFace());
 		occtShapeFix.Perform();
 		BRepGProp::SurfaceProperties(occtShapeFix.Face(), occtShapeProperties);
-		return Vertex::ByPoint(new Geom_CartesianPoint(occtShapeProperties.CentreOfMass()));
+		return Vertex::ByPoint(new Geom_CartesianPoint(occtShapeProperties.CentreOfMass()));*/
+	}
+
+	TopoDS_Vertex Face::CenterOfMass(const TopoDS_Face & rkOcctFace)
+	{
+		GProp_GProps occtShapeProperties;
+		ShapeFix_Face occtShapeFix(rkOcctFace);
+		occtShapeFix.Perform();
+		BRepGProp::SurfaceProperties(occtShapeFix.Face(), occtShapeProperties);
+		return BRepBuilderAPI_MakeVertex(occtShapeProperties.CentreOfMass());
 	}
 
 	Face::Ptr Face::ByExternalBoundary(const Wire::Ptr& kpExternalBoundary)

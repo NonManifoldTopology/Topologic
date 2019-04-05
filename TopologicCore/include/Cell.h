@@ -89,6 +89,8 @@ namespace TopologicCore
 		/// </summary>
 		virtual std::shared_ptr<Vertex> CenterOfMass() const;
 
+		static TopoDS_Vertex CenterOfMass(const TopoDS_Solid & rkOcctSolid);
+
 		/// <summary>
 		/// 
 		/// </summary>

@@ -14,6 +14,7 @@
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepBuilderAPI_MakeSolid.hxx>
+#include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepCheck_Shell.hxx>
 #include <BRepClass3d.hxx>
@@ -109,9 +110,18 @@ namespace TopologicCore
 
 	Vertex::Ptr Cell::CenterOfMass() const
 	{
-		GProp_GProps occtShapeProperties;
+		TopoDS_Vertex occtCenterOfMass = CenterOfMass(GetOcctSolid());
+		return std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtCenterOfMass));
+		/*GProp_GProps occtShapeProperties;
 		BRepGProp::VolumeProperties(GetOcctShape(), occtShapeProperties);
-		return Vertex::ByPoint(new Geom_CartesianPoint(occtShapeProperties.CentreOfMass()));
+		return Vertex::ByPoint(new Geom_CartesianPoint(occtShapeProperties.CentreOfMass()));*/
+	}
+
+	TopoDS_Vertex Cell::CenterOfMass(const TopoDS_Solid & rkOcctSolid)
+	{
+		GProp_GProps occtShapeProperties;
+		BRepGProp::VolumeProperties(rkOcctSolid, occtShapeProperties);
+		return BRepBuilderAPI_MakeVertex(occtShapeProperties.CentreOfMass());
 	}
 
 	Cell::Ptr Cell::ByFaces(const std::list<Face::Ptr>& rkFaces, double kTolerance)

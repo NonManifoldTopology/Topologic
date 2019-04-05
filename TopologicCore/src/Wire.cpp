@@ -6,6 +6,7 @@
 #include "GlobalCluster.h"
 #include "AttributeManager.h"
 
+#include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepCheck_Wire.hxx>
 #include <BRepGProp.hxx>
@@ -235,9 +236,18 @@ namespace TopologicCore
 
 	std::shared_ptr<Vertex> Wire::CenterOfMass() const
 	{
-		GProp_GProps occtShapeProperties;
+		TopoDS_Vertex occtCenterOfMass = CenterOfMass(GetOcctWire());
+		return std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtCenterOfMass));
+		/*GProp_GProps occtShapeProperties;
 		BRepGProp::LinearProperties(GetOcctShape(), occtShapeProperties);
-		return Vertex::ByPoint(new Geom_CartesianPoint(occtShapeProperties.CentreOfMass()));
+		return Vertex::ByPoint(new Geom_CartesianPoint(occtShapeProperties.CentreOfMass()));*/
+	}
+
+	TopoDS_Vertex Wire::CenterOfMass(const TopoDS_Wire & rkOcctWire)
+	{
+		GProp_GProps occtShapeProperties;
+		BRepGProp::LinearProperties(rkOcctWire, occtShapeProperties);
+		return BRepBuilderAPI_MakeVertex(occtShapeProperties.CentreOfMass());
 	}
 
 	std::string Wire::GetTypeAsString() const
