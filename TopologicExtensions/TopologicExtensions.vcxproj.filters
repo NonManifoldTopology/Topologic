@@ -1,12 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="src\Graph.cpp" />
-    <ClCompile Include="src\GraphFactory.cpp" />
+    <ClInclude Include="include\Utilities.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Graph.h" />
-    <ClInclude Include="include\GraphFactory.h" />
-    <ClInclude Include="include\Utilities.h" />
+    <ClCompile Include="src\main.cpp" />
   </ItemGroup>
 </Project>
