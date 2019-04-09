@@ -12,7 +12,6 @@
 #include <Wire.h>
 #include <Edge.h>
 #include <Vertex.h>
-#include <DualGraph.h>
 #include <Aperture.h>
 #include <Context.h>
 #include <TopologyFactoryManager.h>
@@ -26,7 +25,6 @@
 #include <CellFactory.h>
 #include <CellComplexFactory.h>
 #include <ClusterFactory.h>
-#include <DualGraphFactory.h>
 #include <ApertureFactory.h>
 #include <AttributeFactoryManager.h>
 #include <AttributeFactory.h>
@@ -238,17 +236,17 @@ namespace Topologic
 		return pTopologies;
 	}
 
-	void RecursiveGeometry(Topology^ topology, List<Object^>^% output)
+	void Topology::RecursiveGeometry(List<Object^>^% output)
 	{
 		List<Object^>^ objects = gcnew List<Object^>();
-		objects->Add(topology->BasicGeometry);
+		objects->Add(BasicGeometry);
 
-		List<Topology^>^ subContents = topology->SubContents;
+		List<Topology^>^ subContents = SubContents;
 		List<Object^>^ subContentGeometries = gcnew List<Object^>();
 		for each(Topology^ subContent in subContents)
 		{
 			List<Object^>^ dynamoThisGeometries = gcnew List<Object^>();
-			RecursiveGeometry(subContent, subContentGeometries);
+			subContent->RecursiveGeometry(subContentGeometries);
 		}
 
 		if (subContentGeometries->Count > 0)
@@ -262,7 +260,7 @@ namespace Topologic
 	Object^ Topology::Geometry::get()
 	{
 		List<Object^>^ output = gcnew List<Object^>();
-		RecursiveGeometry(this, output);
+		RecursiveGeometry(output);
 		return output;
 	}
 
@@ -448,7 +446,6 @@ namespace Topologic
 			RegisterFactory(gcnew String(TopologicCore::CellGUID::Get().c_str()), gcnew Factories::CellFactory());
 			RegisterFactory(gcnew String(TopologicCore::CellComplexGUID::Get().c_str()), gcnew Factories::CellComplexFactory());
 			RegisterFactory(gcnew String(TopologicCore::ClusterGUID::Get().c_str()), gcnew Factories::ClusterFactory());
-			RegisterFactory(gcnew String(TopologicExtensions::GraphGUID::Get().c_str()), gcnew Factories::DualGraphFactory());
 			RegisterFactory(gcnew String(TopologicCore::ApertureGUID::Get().c_str()), gcnew Factories::ApertureFactory());
 			areFactoriesAdded = true;
 		}

@@ -203,8 +203,6 @@
     <ClInclude Include="..\TopologicNET\include\ClusterFactory.h" />
     <ClInclude Include="..\TopologicNET\include\Context.h" />
     <ClInclude Include="..\TopologicNET\include\DoubleAttributeFactory.h" />
-    <ClInclude Include="..\TopologicNET\include\DualGraph.h" />
-    <ClInclude Include="..\TopologicNET\include\DualGraphFactory.h" />
     <ClInclude Include="..\TopologicNET\include\Edge.h" />
     <ClInclude Include="..\TopologicNET\include\EdgeFactory.h" />
     <ClInclude Include="..\TopologicNET\include\EdgeUtility.h" />
@@ -245,8 +243,6 @@
     <ClCompile Include="..\TopologicNET\src\ClusterFactory.cpp" />
     <ClCompile Include="..\TopologicNET\src\Context.cpp" />
     <ClCompile Include="..\TopologicNET\src\DoubleAttributeFactory.cpp" />
-    <ClCompile Include="..\TopologicNET\src\DualGraph.cpp" />
-    <ClCompile Include="..\TopologicNET\src\DualGraphFactory.cpp" />
     <ClCompile Include="..\TopologicNET\src\Edge.cpp" />
     <ClCompile Include="..\TopologicNET\src\EdgeFactory.cpp" />
     <ClCompile Include="..\TopologicNET\src\EdgeUtility.cpp" />

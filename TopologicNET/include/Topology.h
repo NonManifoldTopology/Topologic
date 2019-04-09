@@ -100,6 +100,11 @@ namespace Topologic
 			virtual Object^ get();
 		}
 
+#ifdef TOPOLOGIC_DYNAMO
+		[IsVisibleInDynamoLibrary(false)]
+#endif
+		void Topology::RecursiveGeometry(List<Object^>^% output);
+
 		/// <summary>
 		/// Returns a Topology 
 		/// </summary>

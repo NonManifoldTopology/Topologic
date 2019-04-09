@@ -6,7 +6,7 @@
 
 namespace TopologicExtensions
 {
-	class GraphGUID
+	/*class GraphGUID
 	{
 	public:
 		static std::string Get()
@@ -62,5 +62,5 @@ namespace TopologicExtensions
 		}
 
 	protected:
-	};
+	};*/
 }

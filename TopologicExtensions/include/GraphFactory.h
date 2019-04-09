@@ -4,7 +4,7 @@
 
 namespace TopologicExtensions
 {
-	class GraphFactory : public TopologicCore::TopologyFactory
+	/*class GraphFactory : public TopologicCore::TopologyFactory
 	{
 	public:
 		typedef std::shared_ptr<GraphFactory> Ptr;
@@ -13,5 +13,5 @@ namespace TopologicExtensions
 		GraphFactory() {}
 
 		virtual std::shared_ptr<TopologicCore::Topology> Create(const TopoDS_Shape& rkOcctShape);
-	};
+	};*/
 }

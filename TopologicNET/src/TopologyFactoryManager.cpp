@@ -8,7 +8,6 @@
 #include "CellFactory.h"
 #include "ClusterFactory.h"
 #include "ApertureFactory.h"
-#include "DualGraphFactory.h"
 
 namespace Topologic
 {

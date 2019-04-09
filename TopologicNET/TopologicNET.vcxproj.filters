@@ -16,9 +16,6 @@
     <ClInclude Include="include\Topology.h" />
     <ClInclude Include="include\Vertex.h" />
     <ClInclude Include="include\Wire.h" />
-    <ClInclude Include="include\DualGraph.h">
-      <Filter>Extensions</Filter>
-    </ClInclude>
     <ClInclude Include="include\ApertureFactory.h">
       <Filter>Factories</Filter>
     </ClInclude>
@@ -26,9 +23,6 @@
       <Filter>Factories</Filter>
     </ClInclude>
     <ClInclude Include="include\CellFactory.h">
-      <Filter>Factories</Filter>
-    </ClInclude>
-    <ClInclude Include="include\DualGraphFactory.h">
       <Filter>Factories</Filter>
     </ClInclude>
     <ClInclude Include="include\ClusterFactory.h">
@@ -107,9 +101,6 @@
     <ClCompile Include="src\Topology.cpp" />
     <ClCompile Include="src\Vertex.cpp" />
     <ClCompile Include="src\Wire.cpp" />
-    <ClCompile Include="src\DualGraph.cpp">
-      <Filter>Extensions</Filter>
-    </ClCompile>
     <ClCompile Include="src\ApertureFactory.cpp">
       <Filter>Factories</Filter>
     </ClCompile>
@@ -117,9 +108,6 @@
       <Filter>Factories</Filter>
     </ClCompile>
     <ClCompile Include="src\CellFactory.cpp">
-      <Filter>Factories</Filter>
-    </ClCompile>
-    <ClCompile Include="src\DualGraphFactory.cpp">
       <Filter>Factories</Filter>
     </ClCompile>
     <ClCompile Include="src\TopologyUtility.cpp">
@@ -187,9 +175,6 @@
     </Filter>
     <Filter Include="Utilities">
       <UniqueIdentifier>{b6e76095-26a7-4f46-a76d-e407c5946786}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Extensions">
-      <UniqueIdentifier>{57b680c0-ba46-4025-8fe4-e6a03d24dcc2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -4,9 +4,6 @@
     <Filter Include="Utilities">
       <UniqueIdentifier>{90d86c48-21c1-4fc3-986c-6246b22e9a3b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Extensions">
-      <UniqueIdentifier>{d4638fb2-7e2b-466a-9ed8-76be45cf42c3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resources">
       <UniqueIdentifier>{ad2d32d9-7483-4053-93fb-a398384ec0a5}</UniqueIdentifier>
     </Filter>
@@ -78,9 +75,6 @@
     <ClInclude Include="..\TopologicNET\include\StringAttributeFactory.h">
       <Filter>Attributes</Filter>
     </ClInclude>
-    <ClInclude Include="..\TopologicNET\include\DualGraph.h">
-      <Filter>Extensions</Filter>
-    </ClInclude>
     <ClInclude Include="..\TopologicNET\include\CellComplexFactory.h">
       <Filter>Factories</Filter>
     </ClInclude>
@@ -88,9 +82,6 @@
       <Filter>Factories</Filter>
     </ClInclude>
     <ClInclude Include="..\TopologicNET\include\ClusterFactory.h">
-      <Filter>Factories</Filter>
-    </ClInclude>
-    <ClInclude Include="..\TopologicNET\include\DualGraphFactory.h">
       <Filter>Factories</Filter>
     </ClInclude>
     <ClInclude Include="..\TopologicNET\include\EdgeFactory.h">
@@ -164,9 +155,6 @@
     <ClCompile Include="..\TopologicNET\src\StringAttributeFactory.cpp">
       <Filter>Attributes</Filter>
     </ClCompile>
-    <ClCompile Include="..\TopologicNET\src\DualGraph.cpp">
-      <Filter>Extensions</Filter>
-    </ClCompile>
     <ClCompile Include="..\TopologicNET\src\CellComplexFactory.cpp">
       <Filter>Factories</Filter>
     </ClCompile>
@@ -174,9 +162,6 @@
       <Filter>Factories</Filter>
     </ClCompile>
     <ClCompile Include="..\TopologicNET\src\ClusterFactory.cpp">
-      <Filter>Factories</Filter>
-    </ClCompile>
-    <ClCompile Include="..\TopologicNET\src\DualGraphFactory.cpp">
       <Filter>Factories</Filter>
     </ClCompile>
     <ClCompile Include="..\TopologicNET\src\EdgeFactory.cpp">

@@ -502,12 +502,6 @@
   <data name="Topologic.Wire.Vertices.Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Topologic.Large.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Topologic.Extensions.DualGraph_.ByCellComplex.Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Topologic.Large.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Topologic.Extensions.DualGraph_.ByShell.Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Topologic.Large.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="Topologic.Utilities.Bitwise.And.Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Topologic.Large.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -1052,12 +1046,6 @@
     <value>Topologic.Small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Topologic.Wire.Vertices.Small" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Topologic.Small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Topologic.Extensions.DualGraph_.ByCellComplex.Small" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Topologic.Small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Topologic.Extensions.DualGraph_.ByShell.Small" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Topologic.Small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Topologic.Utilities.Bitwise.And.Small" type="System.Resources.ResXFileRef, System.Windows.Forms">
