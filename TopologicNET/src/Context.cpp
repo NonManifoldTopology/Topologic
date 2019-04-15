@@ -36,6 +36,13 @@ namespace Topologic
 		return pCoreContext->W();
 	}
 
+	Context::Context()
+		: Topologic::TopologicalQuery()
+		, m_pCoreContext(nullptr)
+	{
+
+	}
+
 	Context::Context(const std::shared_ptr<TopologicCore::Context>& kpCoreContext)
 		: m_pCoreContext(new std::shared_ptr<TopologicCore::Context>(kpCoreContext))
 	{

@@ -327,6 +327,8 @@ namespace Topologic {
 			double tolerance);
 
 	public protected:
+		Graph();
+
 		Graph(const std::shared_ptr<TopologicCore::Graph>& kpCoreGraph);
 
 	protected:

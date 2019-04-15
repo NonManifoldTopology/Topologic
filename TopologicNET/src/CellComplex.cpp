@@ -25,14 +25,14 @@ namespace Topologic
 		return pCellComplex;
 	}
 
-	CellComplex^ CellComplex::ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces)
+	CellComplex^ CellComplex::ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces, double tolerance)
 	{
 		std::list<TopologicCore::Face::Ptr> coreFaces;
 		for each(Face^ pFace in faces)
 		{
 			coreFaces.push_back(TopologicCore::Topology::Downcast<TopologicCore::Face>(pFace->GetCoreTopologicalQuery()));
 		}
-		TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::CellComplex::ByFaces(coreFaces);
+		TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::CellComplex::ByFaces(coreFaces, tolerance);
 		CellComplex^ pCellComplex = gcnew CellComplex(pCoreCellComplex);
 		return pCellComplex;
 	}
@@ -210,6 +210,13 @@ namespace Topologic
 	int CellComplex::Type()
 	{
 		return TopologicCore::CellComplex::Type();
+	}
+
+	CellComplex::CellComplex()
+		: Topologic::Topology()
+		, m_pCoreCellComplex(nullptr)
+	{
+
 	}
 
 	CellComplex::CellComplex(const TopologicCore::CellComplex::Ptr& kpCoreCellComplex)

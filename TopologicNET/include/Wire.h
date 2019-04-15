@@ -85,6 +85,8 @@ namespace Topologic {
 		static int Type();
 
 	public protected:
+		Wire();
+
 		/// <summary>
 		/// 
 		/// </summary>

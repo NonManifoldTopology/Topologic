@@ -233,6 +233,12 @@ namespace Topologic
 		return edges;
 	}
 
+	Graph::Graph()
+		: m_pCoreGraph(nullptr)
+	{
+
+	}
+
 	Graph::Graph(const std::shared_ptr<TopologicCore::Graph>& kpCoreGraph)
 		: m_pCoreGraph(kpCoreGraph != nullptr ? new TopologicCore::Graph::Ptr(kpCoreGraph) : throw gcnew Exception("A null graph was created."))
 	{

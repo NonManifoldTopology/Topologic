@@ -591,6 +591,13 @@ namespace Topologic
 		return TopologicCore::Edge::Type();
 	}
 
+	Edge::Edge()
+		: Topologic::Topology()
+		, m_pCoreEdge(nullptr)
+	{
+
+	}
+
 	Edge::Edge(const TopologicCore::Edge::Ptr& kpCoreEdge)
 		: Topology()
 		, m_pCoreEdge(kpCoreEdge != nullptr? new TopologicCore::Edge::Ptr(kpCoreEdge) : throw gcnew Exception("A null edge was created."))

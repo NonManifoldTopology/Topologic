@@ -31,8 +31,12 @@ namespace Topologic
 		/// Creates a CellComplex from the space enclosed by a set of Faces. Parts of the Faces which do not enclose any space will be discarded.
 		/// </summary>
 		/// <param name="faces">A set of Faces</param>
-		/// <returns name="CellComplex">The created CellComplex</returns>
-		static CellComplex^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces);
+		/// <returns name="CellComplex">The created CellComplex</returns> 
+		static CellComplex^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces,
+#ifdef TOPOLOGIC_DYNAMO
+			[Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")]
+#endif
+		double tolerance);
 
 		/// <summary>
 		/// Returns the Cells constituent to the CellComplex.
@@ -132,6 +136,8 @@ namespace Topologic
 		static int Type();
 
 	public protected:
+		CellComplex();
+
 		/// <summary>
 		/// 
 		/// </summary>

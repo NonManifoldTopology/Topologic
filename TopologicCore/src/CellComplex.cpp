@@ -148,7 +148,7 @@ namespace TopologicCore
 		return pCopyCellComplex->GetOcctCompSolid();
 	}
 
-	CellComplex::Ptr CellComplex::ByFaces(const std::list<Face::Ptr>& rkFaces)
+	CellComplex::Ptr CellComplex::ByFaces(const std::list<Face::Ptr>& rkFaces, const double kTolerance)
 	{
 		BOPAlgo_MakerVolume occtMakerVolume;
 		BOPCol_ListOfShape occtShapes;
@@ -158,12 +158,11 @@ namespace TopologicCore
 		}
 		bool isParallel = false; /* parallel or single mode (the default value is FALSE)*/
 		bool doesIntersection = true; /* intersect or not the arguments (the default value is TRUE)*/
-		double tolerance = 0.0; /* fuzzy option (default value is 0)*/
 								  //
 		occtMakerVolume.SetArguments(occtShapes);
 		occtMakerVolume.SetRunParallel(isParallel);
 		occtMakerVolume.SetIntersect(doesIntersection);
-		occtMakerVolume.SetFuzzyValue(tolerance);
+		occtMakerVolume.SetFuzzyValue(kTolerance);
 		//
 		occtMakerVolume.Perform(); //perform the operation
 		if (occtMakerVolume.HasErrors()) { //check error status

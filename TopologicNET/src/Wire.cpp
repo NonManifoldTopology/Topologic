@@ -186,6 +186,13 @@ namespace Topologic
 		return TopologicCore::Wire::Type();
 	}
 
+	Wire::Wire()
+		: Topology()
+		, m_pCoreWire(nullptr)
+	{
+
+	}
+
 	Wire::Wire(const TopologicCore::Wire::Ptr& kpCoreWire)
 		: Topology()
 		, m_pCoreWire(kpCoreWire != nullptr? new TopologicCore::Wire::Ptr(kpCoreWire) : throw gcnew Exception("A null wire was created."))

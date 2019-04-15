@@ -90,8 +90,8 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <param name="rkFaces"></param>
-		/// <returns></returns>
-		static TOPOLOGIC_API std::shared_ptr<CellComplex> ByFaces(const std::list<std::shared_ptr<Face>>& rkFaces);
+		/// <returns></returns> 
+		static TOPOLOGIC_API std::shared_ptr<CellComplex> ByFaces(const std::list<std::shared_ptr<Face>>& rkFaces, const double kTolerance);
 
 		/// <summary>
 		/// 

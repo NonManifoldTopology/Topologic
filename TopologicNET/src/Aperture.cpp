@@ -187,6 +187,13 @@ namespace Topologic
 		return this;
 	}*/
 
+	Aperture::Aperture()
+		: Topologic::Topology()
+		, m_pCoreAperture(nullptr)
+	{
+
+	}
+
 	Aperture::Aperture(const std::shared_ptr<TopologicCore::Aperture>& kpCoreAperture)
 		: m_pCoreAperture(kpCoreAperture != nullptr ? new TopologicCore::Aperture::Ptr(kpCoreAperture) : throw gcnew Exception("A null aperture was created."))
 	{

@@ -159,6 +159,8 @@ namespace Topologic {
 		static int Type();
 
 	public protected:
+		Face();
+
 		/// <summary>
 		/// 
 		/// </summary>

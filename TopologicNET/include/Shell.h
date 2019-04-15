@@ -100,6 +100,8 @@ namespace Topologic
 		static int Type();
 
 	public protected:
+		Shell();
+
 		/// <summary>
 		/// 
 		/// </summary>

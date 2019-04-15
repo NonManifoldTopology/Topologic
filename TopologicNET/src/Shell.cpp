@@ -155,6 +155,13 @@ namespace Topologic
 		return TopologicCore::Shell::Type();
 	}
 
+	Shell::Shell()
+		: Topologic::Topology()
+		, m_pCoreShell(nullptr)
+	{
+
+	}
+
 	Shell::Shell(const TopologicCore::Shell::Ptr& kpCoreShell)
 		: Topology()
 		, m_pCoreShell(kpCoreShell != nullptr ? new TopologicCore::Shell::Ptr(kpCoreShell) : throw gcnew Exception("A null shell was created."))

@@ -119,6 +119,7 @@ namespace Topologic
 		}
 
 	public protected:
+		Aperture();
 		Aperture(const std::shared_ptr<TopologicCore::Aperture>& kpCoreAperture);
 
 		virtual std::shared_ptr<TopologicCore::TopologicalQuery> GetCoreTopologicalQuery() override;

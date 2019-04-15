@@ -87,6 +87,8 @@ namespace Topologic {
 		static int Type();
 
 	public protected:
+		Edge();
+
 		/// <summary>
 		/// 
 		/// </summary>

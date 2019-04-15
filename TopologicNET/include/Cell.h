@@ -158,6 +158,7 @@ namespace Topologic
 		static int Type();
 
 	public protected:
+		Cell();
 		/// <summary>
 		/// 
 		/// </summary>

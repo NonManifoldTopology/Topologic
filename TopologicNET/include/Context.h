@@ -66,6 +66,8 @@ namespace Topologic
 		double W();
 
 	public protected:
+		Context();
+
 		Context(const std::shared_ptr<TopologicCore::Context>& kpCoreContext);
 
 		virtual std::shared_ptr<TopologicCore::TopologicalQuery> GetCoreTopologicalQuery() override;
