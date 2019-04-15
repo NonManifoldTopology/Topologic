@@ -1,50 +1,50 @@
-#include "Vertex.h"
+#include "Topology.h"
 
 namespace TopologicGrasshopper
 {
-	Vertex::Vertex()
-		: Topologic::Vertex()
+	Topology::Topology()
+		: Topologic::Topology()
 	{
 
 	}
-	Vertex::~Vertex()
+	Topology::~Topology()
 	{
 
 	}
-	bool Vertex::Write(GH_IO::Serialization::GH_IWriter ^writer)
+	bool Topology::Write(GH_IO::Serialization::GH_IWriter ^writer)
 	{
 		return false;
 	}
-	bool Vertex::Read(GH_IO::Serialization::GH_IReader ^reader)
+	bool Topology::Read(GH_IO::Serialization::GH_IReader ^reader)
 	{
 		return false;
 	}
-	Grasshopper::Kernel::Types::IGH_Goo ^ Vertex::Duplicate()
+	Grasshopper::Kernel::Types::IGH_Goo ^ Topology::Duplicate()
 	{
 		throw gcnew System::NotImplementedException();
 		// TODO: insert return statement here
 	}
-	System::String ^ Vertex::ToString()
+	System::String ^ Topology::ToString()
 	{
 		throw gcnew System::NotImplementedException();
 		// TODO: insert return statement here
 	}
-	Grasshopper::Kernel::Types::IGH_GooProxy ^ Vertex::EmitProxy()
+	Grasshopper::Kernel::Types::IGH_GooProxy ^ Topology::EmitProxy()
 	{
 		throw gcnew System::NotImplementedException();
 		// TODO: insert return statement here
 	}
-	bool Vertex::CastFrom(System::Object ^source)
+	bool Topology::CastFrom(System::Object ^source)
 	{
 		return false;
 	}
 
 	generic <class T>
-	bool Vertex::CastTo(T %target)
+	bool Topology::CastTo(T %target)
 	{
 		return false;
 	}
-	System::Object ^ Vertex::ScriptVariable()
+	System::Object ^ Topology::ScriptVariable()
 	{
 		throw gcnew System::NotImplementedException();
 		// TODO: insert return statement here

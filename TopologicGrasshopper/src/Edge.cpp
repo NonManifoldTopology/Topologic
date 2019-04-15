@@ -1,50 +1,50 @@
-#include "Vertex.h"
+#include "Edge.h"
 
 namespace TopologicGrasshopper
 {
-	Vertex::Vertex()
-		: Topologic::Vertex()
+	Edge::Edge()
+		: Topologic::Edge()
 	{
 
 	}
-	Vertex::~Vertex()
+	Edge::~Edge()
 	{
 
 	}
-	bool Vertex::Write(GH_IO::Serialization::GH_IWriter ^writer)
+	bool Edge::Write(GH_IO::Serialization::GH_IWriter ^writer)
 	{
 		return false;
 	}
-	bool Vertex::Read(GH_IO::Serialization::GH_IReader ^reader)
+	bool Edge::Read(GH_IO::Serialization::GH_IReader ^reader)
 	{
 		return false;
 	}
-	Grasshopper::Kernel::Types::IGH_Goo ^ Vertex::Duplicate()
+	Grasshopper::Kernel::Types::IGH_Goo ^ Edge::Duplicate()
 	{
 		throw gcnew System::NotImplementedException();
 		// TODO: insert return statement here
 	}
-	System::String ^ Vertex::ToString()
+	System::String ^ Edge::ToString()
 	{
 		throw gcnew System::NotImplementedException();
 		// TODO: insert return statement here
 	}
-	Grasshopper::Kernel::Types::IGH_GooProxy ^ Vertex::EmitProxy()
+	Grasshopper::Kernel::Types::IGH_GooProxy ^ Edge::EmitProxy()
 	{
 		throw gcnew System::NotImplementedException();
 		// TODO: insert return statement here
 	}
-	bool Vertex::CastFrom(System::Object ^source)
+	bool Edge::CastFrom(System::Object ^source)
 	{
 		return false;
 	}
 
 	generic <class T>
-	bool Vertex::CastTo(T %target)
+	bool Edge::CastTo(T %target)
 	{
 		return false;
 	}
-	System::Object ^ Vertex::ScriptVariable()
+	System::Object ^ Edge::ScriptVariable()
 	{
 		throw gcnew System::NotImplementedException();
 		// TODO: insert return statement here

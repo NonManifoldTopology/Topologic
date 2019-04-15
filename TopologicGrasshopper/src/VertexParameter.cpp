@@ -11,12 +11,12 @@ namespace TopologicGrasshopper
 
 	GH_GetterResult VertexParameter::Prompt_Singular(Vertex^% value)
 	{
-		return GH_GetterResult();
+		return GH_GetterResult::cancel;
 	}
 
 	GH_GetterResult VertexParameter::Prompt_Plural(List<Vertex^>^% values)
 	{
-		return GH_GetterResult();
+		return GH_GetterResult::cancel;
 	}
 
 	Guid VertexParameter::ComponentGuid::get()

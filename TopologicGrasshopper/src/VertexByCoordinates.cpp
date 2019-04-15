@@ -14,7 +14,6 @@ namespace TopologicGrasshopper
 		pManager->AddNumberParameter("X", "X", "X coordinate", GH_ParamAccess::item);
 		pManager->AddNumberParameter("Y", "Y", "Y coordinate", GH_ParamAccess::item);
 		pManager->AddNumberParameter("Z", "Z", "Z coordinate", GH_ParamAccess::item);
-
 	}
 
 	void VertexByCoordinates::RegisterOutputParams(GH_Component::GH_OutputParamManager ^ pManager)
