@@ -13,8 +13,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TopologicEnergy", "Topologi
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TopologicUtilities", "TopologicUtilities\TopologicUtilities.vcxproj", "{9A74A6D1-9ED7-432F-A415-9C82305053B4}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TopologicExtensions", "TopologicExtensions\TopologicExtensions.vcxproj", "{D18EC187-9CEB-4A7F-B163-39762CCF8569}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TopologicNET", "TopologicNET\TopologicNET.vcxproj", "{C90904EC-87D6-4A5E-B7C2-9DEC3B078D85}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TopologicGrasshopper", "TopologicGrasshopper\TopologicGrasshopper.vcxproj", "{C291335E-0A7E-4658-84E2-4AA4D4994C67}"
@@ -79,16 +77,6 @@ Global
 		{9A74A6D1-9ED7-432F-A415-9C82305053B4}.Release|x64.Build.0 = Release|x64
 		{9A74A6D1-9ED7-432F-A415-9C82305053B4}.Release|x86.ActiveCfg = Release|Win32
 		{9A74A6D1-9ED7-432F-A415-9C82305053B4}.Release|x86.Build.0 = Release|Win32
-		{D18EC187-9CEB-4A7F-B163-39762CCF8569}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{D18EC187-9CEB-4A7F-B163-39762CCF8569}.Debug|x64.ActiveCfg = Debug|x64
-		{D18EC187-9CEB-4A7F-B163-39762CCF8569}.Debug|x64.Build.0 = Debug|x64
-		{D18EC187-9CEB-4A7F-B163-39762CCF8569}.Debug|x86.ActiveCfg = Debug|Win32
-		{D18EC187-9CEB-4A7F-B163-39762CCF8569}.Debug|x86.Build.0 = Debug|Win32
-		{D18EC187-9CEB-4A7F-B163-39762CCF8569}.Release|Any CPU.ActiveCfg = Release|Win32
-		{D18EC187-9CEB-4A7F-B163-39762CCF8569}.Release|x64.ActiveCfg = Release|x64
-		{D18EC187-9CEB-4A7F-B163-39762CCF8569}.Release|x64.Build.0 = Release|x64
-		{D18EC187-9CEB-4A7F-B163-39762CCF8569}.Release|x86.ActiveCfg = Release|Win32
-		{D18EC187-9CEB-4A7F-B163-39762CCF8569}.Release|x86.Build.0 = Release|Win32
 		{C90904EC-87D6-4A5E-B7C2-9DEC3B078D85}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{C90904EC-87D6-4A5E-B7C2-9DEC3B078D85}.Debug|x64.ActiveCfg = Debug|x64
 		{C90904EC-87D6-4A5E-B7C2-9DEC3B078D85}.Debug|x64.Build.0 = Debug|x64
