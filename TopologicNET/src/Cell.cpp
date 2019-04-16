@@ -7,6 +7,7 @@
 #include <CellComplex.h>
 
 #include <TopologicUtilities/include/CellUtility.h>
+#include <TopologicUtilities/include/TopologyUtility.h>
 
 #include <assert.h>
 
@@ -402,46 +403,32 @@ namespace Topologic
 		double zScale = pDynamoCoordinateSystem->ZScaleFactor;
 		double oneMinusPrecision = 1.0 - 0.0001;//Precision::Confusion();
 		double onePlusPrecision = 1.0 + 0.0001; //Precision::Confusion();
-
-		Autodesk::DesignScript::Geometry::Vector^ pDynamoXAxis = Autodesk::DesignScript::Geometry::Vector::ByCoordinates(1.0, 0.0, 0.0);
-		Autodesk::DesignScript::Geometry::Vector^ pDynamoYAxis = Autodesk::DesignScript::Geometry::Vector::ByCoordinates(0.0, 1.0, 0.0);
-		Autodesk::DesignScript::Geometry::Vector^ pDynamoZAxis = Autodesk::DesignScript::Geometry::Vector::ByCoordinates(0.0, 0.0, 1.0);
-
-		bool canCreateCell = true;
-		if (xScale < oneMinusPrecision || xScale > onePlusPrecision ||
-			yScale < oneMinusPrecision || yScale > onePlusPrecision ||
-			zScale < oneMinusPrecision || zScale > onePlusPrecision ||
-			!pDynamoCoordinateSystem->XAxis->IsAlmostEqualTo(pDynamoXAxis) ||
-			!pDynamoCoordinateSystem->YAxis->IsAlmostEqualTo(pDynamoYAxis) ||
-			!pDynamoCoordinateSystem->ZAxis->IsAlmostEqualTo(pDynamoZAxis))
-		{
-			canCreateCell = false;
-		}
-
+		
 		TopologicCore::Cell::Ptr pCoreCell = nullptr;
-		if (canCreateCell)
-		{
-			pCoreCell = TopologicUtilities::CellUtility::ByCuboid(
-				pDynamoCentroid->X,
-				pDynamoCentroid->Y,
-				pDynamoCentroid->Z,
-				width,
-				length,
-				height
-			);
-		}
+		pCoreCell = TopologicUtilities::CellUtility::ByCuboid(
+			pDynamoCentroid->X,
+			pDynamoCentroid->Y,
+			pDynamoCentroid->Z,
+			width,
+			length,
+			height
+		);
+
+		TopologicCore::Vertex::Ptr coreCentroid = pCoreCell->CenterOfMass();
+
+		/*pCoreCell = 
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Cell>(
+				TopologicUtilities::TopologyUtility::Scale(pCoreCell, coreCentroid, xScale, yScale, zScale));*/
+
+		pCoreCell =
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Cell>(
+				TopologicUtilities::TopologyUtility::Transform(
+					pCoreCell, coreCentroid, 
+					pDynamoCoordinateSystem->ZAxis->X, pDynamoCoordinateSystem->ZAxis->Y, pDynamoCoordinateSystem->ZAxis->Z,
+					-pDynamoCoordinateSystem->XAxis->X, -pDynamoCoordinateSystem->XAxis->Y, -pDynamoCoordinateSystem->XAxis->Z));
 
 		delete pDynamoCentroid;
 		delete pDynamoCoordinateSystem;
-		delete pDynamoXAxis;
-		delete pDynamoYAxis;
-		delete pDynamoZAxis;
-
-		if (!canCreateCell)
-		{
-			throw gcnew Exception("Cell creation by cuboid does not currently take transformation.");
-		}
-
 		return gcnew Cell(pCoreCell);
 	}
 #endif

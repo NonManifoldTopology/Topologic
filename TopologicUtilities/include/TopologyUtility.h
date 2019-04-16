@@ -53,6 +53,23 @@ namespace TopologicUtilities
 		/// </summary>
 		/// <param name="kpTopology"></param>
 		/// <param name="kpOrigin"></param>
+		/// <param name="kNormalX"></param>
+		/// <param name="kNormalY"></param>
+		/// <param name="kNormalZ"></param>
+		/// <param name="kXAxisX"></param>
+		/// <param name="kXAxisY"></param>
+		/// <param name="kXAxisZ"></param>
+		/// <returns></returns>
+		static TOPOLOGIC_UTILITIES_API TopologicCore::Topology::Ptr Transform(const TopologicCore::Topology::Ptr& kpTopology,
+			const TopologicCore::Vertex::Ptr& kpOrigin,
+			const double kNormalX, const double kNormalY, const double kNormalZ,
+			const double kXAxisX, const double kXAxisY, const double kXAxisZ);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpTopology"></param>
+		/// <param name="kpOrigin"></param>
 		/// <param name="kXFactor"></param>
 		/// <param name="kYFactor"></param>
 		/// <param name="kZFactor"></param>
