@@ -61,5 +61,21 @@ namespace Topologic
 			TopologicCore::Vertex::Ptr pCoreCenterOfMass = pCoreTopology->CenterOfMass();
 			return gcnew Vertex(pCoreCenterOfMass);
 		}
+
+		Topology ^ TopologyUtility::Transform(Topology ^ topology,
+			double zAxisX, double zAxisY, double zAxisZ,
+			double xAxisX, double xAxisY, double xAxisZ)
+		{
+			TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
+			TopologicCore::Vertex::Ptr pCoreCenterOfMass = pCoreTopology->CenterOfMass();
+
+			TopologicCore::Topology::Ptr pCoreTransformedTopology =
+					TopologicUtilities::TopologyUtility::Transform(
+						pCoreTopology, pCoreCenterOfMass,
+						zAxisX, zAxisY, zAxisZ,
+						xAxisX, xAxisY, xAxisZ);
+
+			return Topology::ByCoreTopology(pCoreTransformedTopology);
+		}
 	}
 }
