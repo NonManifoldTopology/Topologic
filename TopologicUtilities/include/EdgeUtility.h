@@ -39,6 +39,19 @@ namespace TopologicUtilities
 			const TopologicCore::Vertex::Ptr& kpCenterPoint, const double kRadius,
 			const double kXAxisX, const double kXAxisY, const double kXAxisZ,
 			const double kNormalX, const double kNormalY, const double kNormalZ);
+		
+		static TOPOLOGIC_UTILITIES_API TopologicCore::Edge::Ptr ByEllipse(
+			const std::shared_ptr<TopologicCore::Vertex>& kpCenterPoint, const double kMajorRadius, const double kMinorRadius,
+			const double kXAxisX, const double kXAxisY, const double kXAxisZ,
+			const double kNormalX, const double kNormalY, const double kNormalZ);
+
+		static TOPOLOGIC_UTILITIES_API TopologicCore::Edge::Ptr ByNurbsCurve(
+			const std::list<TopologicCore::Vertex::Ptr>& rkControlPoints,
+			const std::list<double>& rkKnots,
+			const std::list<double>& rkWeights,
+			const int kDegree,
+			const bool kIsPeriodic,
+			const bool kIsRational);
 
 		/// <summary>
 		/// 

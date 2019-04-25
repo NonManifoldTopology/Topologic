@@ -4,6 +4,7 @@
 #include <BRepGProp.hxx>
 #include <Geom_CartesianPoint.hxx>
 #include <Geom_Circle.hxx>
+#include <Geom_Ellipse.hxx>
 #include <Geom_Line.hxx>
 #include <GeomAPI_Interpolate.hxx>
 #include <GeomLib_Tool.hxx>
@@ -82,6 +83,100 @@ namespace TopologicUtilities
 			kRadius
 		);
 		return TopologicCore::Edge::ByCurve(pOcctCircle);
+	}
+
+	TopologicCore::Edge::Ptr EdgeUtility::ByEllipse(const std::shared_ptr<TopologicCore::Vertex>& kpCenterPoint, const double kMajorRadius, const double kMinorRadius,
+		const double kXAxisX, const double kXAxisY, const double kXAxisZ,
+		const double kNormalX, const double kNormalY, const double kNormalZ)
+	{
+		Handle(Geom_Ellipse) pOcctEllipse = new Geom_Ellipse(
+			gp_Ax2(
+				kpCenterPoint->Point()->Pnt(),
+				gp_Dir(kNormalX, kNormalY, kNormalZ),
+				gp_Dir(kXAxisX, kXAxisY, kXAxisZ)
+			),
+			kMajorRadius, kMinorRadius
+		);
+
+		return TopologicCore::Edge::ByCurve(pOcctEllipse);
+	}
+
+	TopologicCore::Edge::Ptr EdgeUtility::ByNurbsCurve(
+		const std::list<TopologicCore::Vertex::Ptr>& rkControlPoints, 
+		const std::list<double>& rkKnots, 
+		const std::list<double>& rkWeights,
+		const int kDegree,
+		const bool kIsPeriodic,
+		const bool kIsRational)
+	{
+		TColgp_Array1OfPnt occtPoles(0, (int)rkControlPoints.size() - 1);
+
+		std::list<TopologicCore::Vertex::Ptr>::const_iterator controlPointIterator = rkControlPoints.begin();
+		for (int i = occtPoles.Lower(); i <= occtPoles.Upper(); i++)
+		{
+			TopologicCore::Vertex::Ptr controlPoint = *controlPointIterator;
+			std::tuple<double, double, double> coordinates = controlPoint->Coordinates();
+			occtPoles.SetValue(i, gp_Pnt(std::get<0>(coordinates), std::get<1>(coordinates), std::get<2>(coordinates)));
+			controlPointIterator++;
+		}
+
+		TColStd_Array1OfReal occtWeights(0, (int)rkWeights.size() - 1);
+		std::list<double>::const_iterator weightIterator = rkWeights.begin();
+		for (int i = occtWeights.Lower(); i <= occtWeights.Upper(); i++)
+		{
+			double weight = *weightIterator;
+			occtWeights.SetValue(i, weight);
+			weightIterator++;
+		}
+		
+		std::list<double> uniqueKnots;
+		std::list<int> multiplicities;
+		double previousKnot = *rkKnots.begin() - 1.0;
+		int multiplicity = 0;
+		for(const double knot : rkKnots)
+		{
+			if (knot > previousKnot)
+			{
+				if (previousKnot > *rkKnots.begin() - 1.0)
+				{
+					multiplicities.push_back(multiplicity);
+				}
+				uniqueKnots.push_back(knot);
+				multiplicity = 1;
+			}
+			else
+			{
+				multiplicity++;
+			}
+			previousKnot = knot;
+		}
+		multiplicities.push_back(multiplicity);
+
+		TColStd_Array1OfReal occtKnots(0, (int)uniqueKnots.size() - 1);
+		std::list<double>::const_iterator knotIterator = uniqueKnots.begin();
+		for (int i = occtKnots.Lower(); i <= occtKnots.Upper(); i++)
+		{
+			occtKnots.SetValue(i, *knotIterator);
+			knotIterator++;
+		}
+
+		TColStd_Array1OfInteger occtMultiplicities(0, (int)multiplicities.size() - 1);
+		std::list<int>::const_iterator multiplicityIterator = multiplicities.begin();
+		for (int i = occtMultiplicities.Lower(); i <= occtMultiplicities.Upper(); i++)
+		{
+			occtMultiplicities.SetValue(i, *multiplicityIterator);
+			multiplicityIterator++;
+		}
+
+		return TopologicCore::Edge::ByCurve(
+				occtPoles,
+				occtWeights,
+				occtKnots,
+				occtMultiplicities,
+				kDegree, 
+				kIsPeriodic,
+				kIsRational
+			);
 	}
 
 	double EdgeUtility::ParameterAtPoint(const TopologicCore::Edge::Ptr& kpEdge, const TopologicCore::Vertex::Ptr& kpVertex)

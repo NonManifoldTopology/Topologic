@@ -1,0 +1,218 @@
+;NSIS Modern User Interface
+;Basic Example Script
+;Written by Joost Verburg
+
+;--------------------------------
+;Include Modern UI
+
+  !include "MUI2.nsh"
+  !include "Sections.nsh"
+
+;--------------------------------
+;General
+  !define /date MyTIMESTAMP "%Y-%m-%d-%H-%M-%S"
+
+  ;Name and file
+  Name "Topologic"
+  OutFile "TopologicDynamoInstaller.exe"
+
+  ;Default installation folder
+  InstallDir "$APPDATA\Dynamo\Dynamo Core"
+  
+  ;Request application privileges for Windows Vista
+  RequestExecutionLevel admin 
+
+;--------------------------------
+;Interface Settings
+
+  !define MUI_ABORTWARNING
+
+;--------------------------------
+;Pages
+  ;!define MUI_WELCOMEPAGE_TITLE "Test"
+  !define MUI_WELCOMEPAGE_TEXT "This Setup will guide you through the installation of Topologic as a Dynamo package.$\r$\n$\r$\nNOTE: Please close all Dynamo instances before proceeding with the next installation steps.$\r$\n$\r$\nClick Next to continue."
+  
+  !define MUI_ICON "Topologic-Logo-ColourOnWhite.ico"
+  !define MUI_HEADERIMAGE
+  !define MUI_HEADERIMAGE_BITMAP "TopoLogic-Logo.bmp"
+  !define MUI_HEADERIMAGE_UNBITMAP "TopoLogic-Logo.bmp"
+  !define MUI_HEADERIMAGE_RIGHT
+  
+  !insertmacro MUI_PAGE_WELCOME
+  !insertmacro MUI_PAGE_LICENSE "TopologicLicense.rtf"
+  !insertmacro MUI_PAGE_COMPONENTS
+  !insertmacro MUI_PAGE_INSTFILES
+  
+  !insertmacro MUI_UNPAGE_CONFIRM
+  !insertmacro MUI_UNPAGE_INSTFILES
+  
+;--------------------------------
+;Languages
+ 
+  !insertmacro MUI_LANGUAGE "English"
+
+;--------------------------------
+;Installer Sections
+Var path
+Var installTopologicEnergy
+
+
+!macro InstallTopologic
+  SetOutPath "$path\bin"
+    File ..\output\x64\Release\TopologicCore.dll
+    File ..\output\x64\Release\TopologicUtilities.dll
+    File ..\output\x64\Release\license.file
+    File ..\output\x64\Release\TK*.dll
+	File ..\output\x64\Release\TopologicDynamo.dll
+    File ..\output\x64\Release\TopologicDynamo.customization.dll
+    File ..\output\x64\Release\TopologicDynamo.xml
+    File ..\output\x64\Release\TopologicDynamo_DynamoCustomization.xml
+
+	${If} $installTopologicEnergy <> 0	
+		File ..\output\x64\Release\TopologicEnergy.dll
+		File ..\output\x64\Release\TopologicEnergy.customization.dll
+		File ..\output\x64\Release\TopologicEnergy.xml
+		File ..\output\x64\Release\TopologicEnergy_DynamoCustomization.xml
+		File ..\output\x64\Release\OpenStudio.dll
+		File ..\output\x64\Release\openstudio_csharp.dll
+		File ..\output\x64\Release\openstudio_translators_csharp.dll
+	${EndIf}
+	
+	Call CheckVCRedistributable
+    WriteUninstaller "$path\Uninstall.exe"
+!macroend
+
+
+SectionGroup "Topologic Packages" SectionGroupTopologicPackages
+	Section "TopologicDynamo" SectionTopologicDynamo
+	SectionEnd
+	Section "TopologicEnergy" SectionTopologicEnergy
+		StrCpy $installTopologicEnergy 1
+	SectionEnd
+SectionGroupEnd
+
+SectionGroup "Dynamo version" SectionGroupDynamoVersion
+	Section "For Dynamo 2.0" SectionDynamo2Dot0
+	  SetOutPath "$APPDATA\Dynamo\Dynamo Core\2.0\packages\Topologic"
+	  File pkg.json
+	  CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.0\packages\Topologic\bin"
+	  CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.0\packages\Topologic\dyf"
+	  CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.0\packages\Topologic\extra"
+	  StrCpy $path "$APPDATA\Dynamo\Dynamo Core\2.0\packages\Topologic\bin"
+	  !insertmacro InstallTopologic
+	SectionEnd
+
+	Section "For Dynamo 2.1" SectionDynamo2Dot1
+	  SetOutPath "$APPDATA\Dynamo\Dynamo Core\2.1\packages\Topologic"
+	  File pkg.json
+	  CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.1\packages\Topologic\bin"
+	  CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.1\packages\Topologic\dyf"
+	  CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.1\packages\Topologic\extra"
+	  StrCpy $path "$APPDATA\Dynamo\Dynamo Core\2.1\packages\Topologic\bin"
+	  !insertmacro InstallTopologic
+	SectionEnd 
+	 
+	Section "For Dynamo 2.2" SectionDynamo2Dot2
+	  SetOutPath "$APPDATA\Dynamo\Dynamo Core\2.2\packages\Topologic"
+	  File pkg.json
+	  CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.2\packages\Topologic\bin"
+	  CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.2\packages\Topologic\dyf"
+	  CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.2\packages\Topologic\extra"
+	  StrCpy $path "$APPDATA\Dynamo\Dynamo Core\2.2\packages\Topologic\bin"
+	  !insertmacro InstallTopologic
+	SectionEnd
+
+	Section "For Dynamo 2.3" SectionDynamo2Dot3
+	  SetOutPath "$APPDATA\Dynamo\Dynamo Core\2.3\packages\Topologic"
+	  File pkg.json
+	  CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.3\packages\Topologic\bin"
+	  CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.3\packages\Topologic\dyf"
+	  CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.3\packages\Topologic\extra"
+	  StrCpy $path "$APPDATA\Dynamo\Dynamo Core\2.3\packages\Topologic"
+	  !insertmacro InstallTopologic
+	SectionEnd 
+SectionGroupEnd
+
+
+;Section #hidden, run after all other sections
+  ;WriteUninstaller "$path\Uninstall.exe"
+;SectionEnd
+
+Function .onInit
+  IntOp $R0 ${SF_RO} | ${SF_SELECTED}
+  SectionSetFlags ${SectionTopologicDynamo} $R0
+  
+  SectionSetFlags ${SectionTopologicEnergy} 0
+  SectionSetFlags ${SectionDynamo2Dot0} 0
+  SectionSetFlags ${SectionDynamo2Dot1} 0
+  SectionSetFlags ${SectionDynamo2Dot2} 0
+  SectionSetFlags ${SectionDynamo2Dot3} 0
+  
+FunctionEnd
+
+Function CheckVCRedistributable
+  ClearErrors
+  SetRegView 64
+  ReadRegDWORD $0 HKLM "SOFTWARE\WOW6432Node\Microsoft\VisualStudio\14.0\VC\Runtimes\x64" "Installed"
+  ${If} ${Errors}
+    ;Install Redistributable
+	Call InstallVCRedistributable
+  ${Else}
+    ${If} $0 == ""
+      ;Install Redistributable, although this should not happen.
+	  Call InstallVCRedistributable
+    ${Else} ; Compare version
+	  ReadRegDWORD $1 HKLM "SOFTWARE\WOW6432Node\Microsoft\VisualStudio\14.0\VC\Runtimes\x64" "Major"
+	  ${If} $1 < 14
+	    ;Install Redistributable
+	    Call InstallVCRedistributable
+	  ${Else}
+	    ReadRegDWORD $2 HKLM "SOFTWARE\WOW6432Node\Microsoft\VisualStudio\14.0\VC\Runtimes\x64" "Minor"
+		${If} $2 < 14
+	      ;Install Redistributable
+	      Call InstallVCRedistributable
+	    ${EndIf}
+	  ${EndIf}
+    ${EndIf}
+  ${EndIf}
+FunctionEnd
+
+Function InstallVCRedistributable
+  MessageBox MB_YESNO "No Visual Studio 2017 Redistributable (x64) installation is found. Press Yes to install it, otherwise press No to skip this process (you will need to download and install it separately)." IDYES InstallVCRedistributableYes IDNO InstallVCRedistributableFinish
+  InstallVCRedistributableYes:
+	File vc_redist.x64.exe
+    ExecWait "$INSTDIR\vc_redist.x64.exe" $0
+    ${If} $0 <> 0
+      MessageBox MB_OK "Visual Studio 2017 Redistributable (x64) was not installed."
+    ${EndIf}
+  InstallVCRedistributableFinish:
+  Delete $INSTDIR\vc_redist.x64.exe ;bug: if the installation halts (e.g. not restarted), this file is not deleted
+FunctionEnd
+;--------------------------------
+;Descriptions
+
+  ;Language strings
+  LangString DESC_Dynamo2Dot0 ${LANG_ENGLISH} "Installs Topologic as a Dynamo 2.0 package."
+  LangString DESC_Dynamo2Dot1 ${LANG_ENGLISH} "Installs Topologic as a Dynamo 2.1 package."
+  LangString DESC_Dynamo2Dot2 ${LANG_ENGLISH} "Installs Topologic as a Dynamo 2.2 package."
+  LangString DESC_Dynamo2Dot3 ${LANG_ENGLISH} "Installs Topologic as a Dynamo 2.3 package."
+
+  ;Assign language strings to sections
+  !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
+    !insertmacro MUI_DESCRIPTION_TEXT ${SectionDynamo2Dot0} $(DESC_Dynamo2Dot0)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SectionDynamo2Dot1} $(DESC_Dynamo2Dot1)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SectionDynamo2Dot2} $(DESC_Dynamo2Dot2)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SectionDynamo2Dot3} $(DESC_Dynamo2Dot3)
+  !insertmacro MUI_FUNCTION_DESCRIPTION_END
+
+;--------------------------------
+;Uninstaller Section
+
+Section "Uninstall"
+
+  ;ADD YOUR OWN FILES HERE...
+  Delete "$INSTDIR\*"
+  Delete "$INSTDIR\Uninstall.exe"
+  RMDir "$INSTDIR"
+
+SectionEnd

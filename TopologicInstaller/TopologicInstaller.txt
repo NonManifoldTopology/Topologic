@@ -54,66 +54,72 @@
 
 ;--------------------------------
 ;Installer Sections
- 
-Section "TopologicCore" TopologicCore
+SectionGroup "TopologicCore" SectionGroupTopologicCore
+  Section "Library" SectionTopologicCore
+    SetOutPath "$INSTDIR"
+    File ..\output\x64\Release\TopologicCore.dll
+    File ..\output\x64\Release\TopologicUtilities.dll
+    File ..\output\x64\Release\license.file
+  SectionEnd 
 
+  Section "Open CASCADE Technology 7.2.0" SectionOCCT
+    SetOutPath "$INSTDIR"
+    File ..\output\x64\Release\TK*.dll
+  SectionEnd
+SectionGroupEnd
+
+Section "TopologicNET" SectionTopologicNET
   SetOutPath "$INSTDIR"
-  
-  File ..\output\x64\Release\TopologicCore.dll
-  File ..\output\x64\Release\TopologicUtilities.dll
-  File ..\output\x64\Release\TK*.dll
-  File ..\output\x64\Release\TopologicDynamo.xml
-  File ..\output\x64\Release\TopologicDynamo_DynamoCustomization.xml
-  File ..\output\x64\Release\TopologicEnergy.xml
-  File ..\output\x64\Release\TopologicEnergy_DynamoCustomization.xml
-  File ..\output\x64\Release\license.file
-  
-  ;ADD YOUR OWN FILES HERE...
-  
+  File ..\output\x64\Release\TopologicNET.dll
+  File vc_redist.x64.exe
+  Call CheckVCRedistributable
 SectionEnd
 
-
-Section "TopologicDynamo" TopologicDynamo
-
-  SetOutPath "$INSTDIR"
-  
-  ;ADD YOUR OWN FILES HERE...
-  File ..\output\x64\Release\TopologicExtensions.dll
-  File ..\output\x64\Release\TopologicNET.dll
-  File ..\output\x64\Release\TopologicDynamo.dll
-  File ..\output\x64\Release\TopologicDynamo.customization.dll
-  File vc_redist.x64.exe
-  
-  ;Check if Revit 2017 exists.
-  ClearErrors
-  SetRegView 64
-  ReadRegStr $0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Autodesk Revit 2017" "DisplayName"
-  ${If} ${Errors}
-    ;If Revit 2017 does not exist, check if Revit 2018 exists.
-	Call CheckRevit2018
-  ${Else}
-    ${If} $0 == ""
-	  Call CheckRevit2018
-    ${Else}
-	  Call CheckDynamoCore
-    ${EndIf}
-  ${EndIf}
-  
-  ;Check if Dynamo exists. If it does not, download and install.
-  ClearErrors
-  SetRegView 64
-  ReadRegStr $0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Dynamo Core 2.0" "Version"
-  ${If} ${Errors}
-    ;Install Dynamo
+SectionGroup "TopologicDynamo" SectionGroupTopologicDynamo
+  Section "Library" SectionTopologicDynamo
+    SetOutPath "$INSTDIR"
+	File ..\output\x64\Release\TopologicDynamo.dll
+	File ..\output\x64\Release\TopologicDynamo.customization.dll
+    File ..\output\x64\Release\TopologicDynamo.xml
+    File ..\output\x64\Release\TopologicDynamo_DynamoCustomization.xml
+    Call CheckVCRedistributable
+  SectionEnd
+  Section "Dynamo Sandbox 2.1.0" SectionDynamo
+    ;MessageBox
+	;Download and execute
 	Call InstallDynamoCore
-  ${Else}
-    ${If} $0 == ""
-      ;Install Dynamo, although this should not happen.
-	  Call InstallDynamoCore
-    ${EndIf}
-  ${EndIf}
-  
-  ; Check if Visual Studio Redistributable 2017 x64 exists
+  SectionEnd
+SectionGroupEnd
+
+SectionGroup "TopologicEnergy" SectionGroupTopologicEnergy
+  Section "Library" SectionTopologicEnergy
+    SetOutPath "$INSTDIR"
+	File ..\output\x64\Release\TopologicEnergy.dll
+    File ..\output\x64\Release\TopologicEnergy.customization.dll
+    File ..\output\x64\Release\TopologicEnergy.xml
+    File ..\output\x64\Release\TopologicEnergy_DynamoCustomization.xml
+  SectionEnd
+  Section "OpenStudio 2.6.0" SectionOpenStudio
+    ;Install
+	File ..\output\x64\Release\OpenStudio.dll
+    File ..\output\x64\Release\openstudio_csharp.dll
+    File ..\output\x64\Release\openstudio_translators_csharp.dll
+  SectionEnd
+SectionGroupEnd
+
+; SectionGroup "TopologicBHoM"
+  ; Section "Library" TopologicBHoM
+    ; ; For now, only install as Grasshopper plugin
+    ; SetOutPath "$APPDATA\Grasshopper\Libraries\BHoM"
+	; File "C:\Users\Nicholas Wardhana\AppData\Roaming\Grasshopper\Libraries\BHoM\*"
+  ; SectionEnd
+
+  ; Section "BHoM 2.2.0"
+    ; ;Install
+  ; SectionEnd
+; SectionGroupEnd
+
+Function CheckVCRedistributable
   ClearErrors
   SetRegView 64
   ReadRegDWORD $0 HKLM "SOFTWARE\WOW6432Node\Microsoft\VisualStudio\14.0\VC\Runtimes\x64" "Installed"
@@ -138,167 +144,105 @@ Section "TopologicDynamo" TopologicDynamo
 	  ${EndIf}
     ${EndIf}
   ${EndIf}
-SectionEnd
-
-Function CheckRevit2018
-  ReadRegStr $0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Autodesk Revit 2018" "DisplayName"
-  ${If} ${Errors}
-    Call CheckRevit2019
-  ${Else}
-	${If} $0 == ""
-	  Call CheckRevit2019
-	${Else}
-	  ;Revit 2019 is found. Check Dynamo Core.
-	  Call CheckDynamoCore
-	${EndIf}
-  ${EndIf}
-FunctionEnd 
-
-Function CheckRevit2019
-  ;If Revit 2018 does not exist, check if Revit 2019 exists.
-  ReadRegStr $0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Autodesk Revit 2019" "DisplayName"
-  ${If} ${Errors}
-	;No Revit installation is found. Download and run Dynamo Studio 2017.
-	Call InstallDynamoStudio
-  ${Else}
-	${If} $0 == ""
-	  Call InstallDynamoStudio
-	${Else}
-	  ;Revit 2019 is found. Check Dynamo Core.
-	  Call CheckDynamoCore
-	${EndIf}
-  ${EndIf}
-FunctionEnd 
-
-Function CheckDynamoCore
-  ;Check if Dynamo exists. If it does not, download and install.
-  ClearErrors
-  SetRegView 64
-  ReadRegStr $0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Dynamo Core 2.0" "Version"
-  ${If} ${Errors}
-    ;Install Dynamo
-	Call InstallDynamoCore
-  ${Else}
-    ${If} $0 == ""
-      ;Install Dynamo, although this should not happen.
-	  Call InstallDynamoCore
-    ${EndIf}
-  ${EndIf}
 FunctionEnd
 
 Function InstallDynamoCore
-  MessageBox MB_YESNO "No Dynamo Core installation is found. Press Yes to download and install it, otherwise press No to skip this proess (you will need to download and install it separately)." IDYES InstallDynamoCoreYes IDNO InstallDynamoCoreFinish
-  InstallDynamoCoreYes:
-    NSISdl::download http://dyn-builds-data.s3-us-west-2.amazonaws.com/DynamoInstall2.0.1.exe "$INSTDIR\DynamoInstall2.0.1.exe"
-    Pop $0
-    ${If} $0 == "success"
-      ExecWait "$INSTDIR\DynamoInstall2.0.1.exe" $1
-      Delete "$INSTDIR\DynamoInstall2.0.1.exe"
-	  ${If} $1 <> 0
-	    MessageBox MB_OK "Failed to install Dynamo Revit 2.0.1. Please install it manually."
-	  ${EndIf}
-    ${Else}
-      MessageBox MB_OK "Failed to download Dynamo Revit 2.0.1. Please install it manually."
+  NSISdl::download https://s3-us-west-2.amazonaws.com/dyn-builds-data/DynamoCoreRuntime2.1.0.zip "$INSTDIR\DynamoCoreRuntime2.1.0.zip"
+  Pop $0
+  ${If} $0 == "success"
+    Nsis7z::Extract "$INSTDIR\DynamoCoreRuntime2.1.0.zip"
+    Delete "$INSTDIR\DynamoCoreRuntime2.1.0.zip"
+    ${If} $1 <> 0
+      MessageBox MB_OK "Dynamo Core 2.1.0 was not installed."
     ${EndIf}
-  InstallDynamoCoreFinish:
-FunctionEnd
-
-Function InstallDynamoStudio
-  MessageBox MB_YESNO "No Dynamo Studio installation is found. Press Yes to download and install it, otherwise press No to skip this process (you will need to download and install it separately)." IDYES InstallDynamoStudioYes IDNO InstallDynamoStudioFinish
-  InstallDynamoStudioYes:
-    NSISdl::download http://edutrial.autodesk.com/NET17SWDLD/2017/DYNSTD/14D6DC8A-A45C-43B1-B5CF-A1434EF0959A/SFX/Autodesk_Dynamo_Studio_2017_English_Win_64bit_dlm.sfx.exe "$INSTDIR\Autodesk_Dynamo_Studio_2017_English_Win_64bit_dlm.sfx.exe"
-    Pop $0
-    ${If} $0 == "success"
-      ExecWait "$INSTDIR\Autodesk_Dynamo_Studio_2017_English_Win_64bit_dlm.sfx.exe" $1
-      Delete "$INSTDIR\Autodesk_Dynamo_Studio_2017_English_Win_64bit_dlm.sfx.exe"
-	  ${If} $1 <> 0
-	    MessageBox MB_OK "Failed to install Dynamo Studio 2017. Please install it manually."
-	  ${EndIf}
-    ${Else}
-      MessageBox MB_OK "Failed to download Dynamo Studio 2017. Please install it manually."
-    ${EndIf}
-  InstallDynamoStudioFinish:
-FunctionEnd
-
-Function InstallVCRedistributable
-  MessageBox MB_YESNO "No Visual Studio 2017 Redistributale (x64) installation is found. Press Yes to install it, otherwise press No to skip this process (you will need to download and install it separately)." IDYES InstallVCRedistributableYes IDNO InstallVCRedistributableFinish
-  InstallVCRedistributableYes:
-    ExecWait "$INSTDIR\vc_redist.x64.exe" $0
-    Delete $INSTDIR\vc_redist.x64.exe ;bug: if the installation halts (e.g. not restarted), this file is not deleted
-    ${If} $0 <> 0
-      MessageBox MB_OK "Failed to install Visual Studio 2017 Redistributable (x64). Please install the redistributable manually."
-    ${EndIf}
-  InstallVCRedistributableFinish:
-FunctionEnd
-
-Section "TopologicEnergy" TopologicEnergy
-
-  SetOutPath "$INSTDIR"
-  
-  File ..\output\x64\Release\TopologicEnergy.dll
-  File ..\output\x64\Release\TopologicEnergy.customization.dll
-  File ..\output\x64\Release\OpenStudio.dll
-  File ..\output\x64\Release\openstudio_csharp.dll
-  File ..\output\x64\Release\openstudio_translators_csharp.dll
-  
-  ;Check if OpenStudio is already installed. Because it uses GUID, which is random, we need to iterate 
-  ;through all GUIDs.
-  ;https://stackoverflow.com/questions/42108679/how-can-i-find-an-application-if-i-dont-know-its-guid
-  StrCpy $0 0
-  Var /GLOBAL installOpenStudio
-  StrCpy $installOpenStudio "0"
-  loop:
-    EnumRegKey $1 HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall" $0
-    StrCmp $1 "" done 
-    ReadRegStr $2 HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$1" "DisplayName"
-    ${If} $2 == "OpenStudio"
-        ReadRegStr $2 HKCU "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$1" "DisplayVersion"
-        ${If} $2 == "2.6.0"
-		  StrCpy $installOpenStudio "1"
-		  Goto done
-		${EndIf}
-    ${EndIf}
-    IntOp $0 $0 + 1
-    Goto loop
-
-  done:
-    ${If} $installOpenStudio == "0" ;not found
-	  Call InstallOpenStudio
-	${EndIf}
-SectionEnd
-
-Function InstallOpenStudio
-  MessageBox MB_YESNO "No OpenStudio 2.6.0 installation is found. Press Yes to download and install it, otherwise press No to skip this process (you will need to download and install it separately)." IDYES InstallOpenStudioYes IDNO InstallOpenStudioFinish
-  InstallOpenStudioYes:
-    NSISdl::download http://openstudio-builds.s3.amazonaws.com/2.6.0/OpenStudio-2.6.0.8c81faf8bc-Windows.exe "$INSTDIR\OpenStudio-2.6.0.8c81faf8bc-Windows.exe"
-    Pop $0
-    ${If} $0 == "success"
-      ExecWait "$INSTDIR\OpenStudio-2.6.0.8c81faf8bc-Windows.exe" $1
-      Delete "$INSTDIR\OpenStudio-2.6.0.8c81faf8bc-Windows.exe"
-	  ${If} $1 <> 0
-	    MessageBox MB_OK "Failed to install OpenStudio 2.6.0. Please install it manually."
-	  ${EndIf}
-    ${Else}
-      MessageBox MB_OK "Failed to download OpenStudio 2.6.0. Please install it manually."
-    ${EndIf}
-  InstallOpenStudioFinish:
-FunctionEnd
-
-Section #hidden, run after all other sections
-  WriteUninstaller "$INSTDIR\Uninstall.exe"
-  
-  ;Install and run Streams
-  File streams.exe
-  ExecWait "$INSTDIR\streams.exe -s -d *"
-  Delete $INSTDIR\streams.exe
-SectionEnd
-
-Function .onInit
-  IntOp $R0 ${SF_RO} | ${SF_SELECTED}
-  SectionSetFlags ${TopologicCore} $R0
+  ${Else}
+    MessageBox MB_OK "Dynamo Core 2.1.0 was not installed."
+  ${EndIf}
 FunctionEnd
 
 Function .onSelChange
+
+  ${If} $0 == 0 ;SectionGroupTopologicCore
+    
+  ${ElseIf} $0 == 1 ;SectionTopologicCore
+    
+  ${ElseIf} $0 == 2 ;SectionOCCT
+    
+  ${ElseIf} $0 == 3 ;Hidden group?
+    
+  ${ElseIf} $0 == 4 ;SectionTopologicNET, requires SectionTopologicCore (which is selected by default)
+    
+  ${ElseIf} $0 == 5 ;SectionGroupTopologicDynamo
+    
+    SectionGetFlags ${SectionGroupTopologicDynamo} $R0
+    IntOp $R0 $R0 & ${SF_SELECTED}
+    ${If} $R0  == 0
+      ;If TopologicDynamo is deselected, also deselect TopologicEnergy.
+      SectionGetFlags ${SectionTopologicEnergy} $R1
+	  IntOp $R1 $R1 & ~${SF_SELECTED}
+	  SectionSetFlags ${SectionTopologicEnergy} $R1
+	  
+      SectionGetFlags ${SectionOpenStudio} $R1
+	  IntOp $R1 $R1 & ~${SF_SELECTED}
+	  SectionSetFlags ${SectionOpenStudio} $R1
+    ${EndIf}
+	
+  ${ElseIf} $0 == 6 ;SectionTopologicDynamo, requires TopologicCore
+    SectionGetFlags ${SectionTopologicDynamo} $R0
+    IntOp $R0 $R0 & ${SF_SELECTED}
+    ${If} $R0  == 0
+      ;If TopologicDynamo is deselected, also deselect TopologicEnergy.	  
+      SectionGetFlags ${SectionTopologicEnergy} $R1
+	  IntOp $R1 $R1 & ~${SF_SELECTED}
+	  SectionSetFlags ${SectionTopologicEnergy} $R1
+	  
+      SectionGetFlags ${SectionOpenStudio} $R1
+	  IntOp $R1 $R1 & ~${SF_SELECTED}
+	  SectionSetFlags ${SectionOpenStudio} $R1
+    ${EndIf}
+	
+  ${ElseIf} $0 == 7 ;SectionDynamo
+    
+  ${ElseIf} $0 == 8 ;SectionGroupTopologicEnergy
+    ;If TopologicEnergy is selected, also select: TopologicDynamo, 
+    SectionGetFlags ${SectionGroupTopologicEnergy} $R0
+    IntOp $R0 $R0 & ${SF_SELECTED}
+    ${If} $R0 != 0
+      SectionGetFlags ${SectionTopologicDynamo} $R1
+	  IntOp $R1 $R1 | ${SF_SELECTED}
+	  SectionSetFlags ${SectionTopologicDynamo} $R1
+	  
+      SectionGetFlags ${SectionDynamo} $R1
+	  IntOp $R1 $R1 | ${SF_SELECTED}
+	  SectionSetFlags ${SectionDynamo} $R1
+	  
+      SectionGetFlags ${SectionTopologicEnergy} $R1
+	  IntOp $R1 $R1 | ${SF_SELECTED}
+	  SectionSetFlags ${SectionTopologicEnergy} $R1
+	  
+      SectionGetFlags ${SectionOpenStudio} $R1
+	  IntOp $R1 $R1 | ${SF_SELECTED}
+	  SectionSetFlags ${SectionOpenStudio} $R1
+    ${EndIf}
+  
+  ${ElseIf} $0 == 9 ;SectionTopologicEnergy
+    SectionGetFlags ${SectionTopologicEnergy} $R0
+    IntOp $R0 $R0 & ${SF_SELECTED}
+    ${If} $R0 != 0
+	  SectionGetFlags ${SectionTopologicDynamo} $R1
+	  IntOp $R1 $R1 | ${SF_SELECTED}
+	  SectionSetFlags ${SectionTopologicDynamo} $R1
+	  
+      SectionGetFlags ${SectionDynamo} $R1
+	  IntOp $R1 $R1 | ${SF_SELECTED}
+	  SectionSetFlags ${SectionDynamo} $R1
+	  
+    ${EndIf}
+  ${ElseIf} $0 == 10 ;SectionOpenStudio
+    
+  ${EndIf}
+FunctionEnd
+/* Function .onSelChange
   ${If} $0 == 1 ;TopologicDynamo
     ;If TopologicDynamo is selected, also select TopologicUtility.
     SectionGetFlags ${TopologicDynamo} $R0
@@ -324,23 +268,65 @@ Function .onSelChange
     ${EndIf}
   ${EndIf}
   
+FunctionEnd */
+
+Function InstallVCRedistributable
+  MessageBox MB_YESNO "No Visual Studio 2017 Redistributale (x64) installation is found. Press Yes to install it, otherwise press No to skip this process (you will need to download and install it separately)." IDYES InstallVCRedistributableYes IDNO InstallVCRedistributableFinish
+  InstallVCRedistributableYes:
+    File vc_redist.x64.exe
+    ExecWait "$INSTDIR\vc_redist.x64.exe" $0
+    Delete $INSTDIR\vc_redist.x64.exe ;bug: if the installation halts (e.g. not restarted), this file is not deleted
+    ${If} $0 <> 0
+      MessageBox MB_OK "Visual Studio 2017 Redistributable (x64) was not installed."
+    ${EndIf}
+  InstallVCRedistributableFinish:
 FunctionEnd
+
+
+Function .onInit
+  IntOp $R0 ${SF_RO} | ${SF_SELECTED}
+  SectionSetFlags ${SectionTopologicCore} $R0
+FunctionEnd
+
+Section #hidden, run after all other sections
+  WriteUninstaller "$INSTDIR\Uninstall.exe"
+  
+  ;Install and run Streams
+  File streams.exe
+  ExecWait "$INSTDIR\streams.exe -s -d *"
+  Delete $INSTDIR\streams.exe
+SectionEnd
 
 ;--------------------------------
 ;Descriptions
 
   ;Language strings
-  LangString DESC_TopologicCore ${LANG_ENGLISH} "Installs the native core layer of Topologic."
-  LangString DESC_TopologicDynamo ${LANG_ENGLISH} "Installs the Dynamo layer of Topologic."
-  LangString DESC_TopologicEnergy ${LANG_ENGLISH} "Installs the Energy application layer of Topologic."
+  LangString DESC_GroupTopologicCore ${LANG_ENGLISH} "Installs the native core layer of Topologic."
+  LangString DESC_TopologicCore ${LANG_ENGLISH} "Installs TopologicCore DLLs."
+  LangString DESC_OCCT ${LANG_ENGLISH} "Installs Open CASCADE 7.2.0."
+  LangString DESC_TopologicNET ${LANG_ENGLISH} "Installs the .NET layer of Topologic."
+  LangString DESC_GroupTopologicDynamo ${LANG_ENGLISH} "Installs the Dynamo layer of Topologic."
+  LangString DESC_TopologicDynamo ${LANG_ENGLISH} "Installs TopologicDynamo DLLs."
+  LangString DESC_Dynamo ${LANG_ENGLISH} "Installs Dynamo 2.1.0."
+  LangString DESC_GroupTopologicEnergy ${LANG_ENGLISH} "Installs the Energy application layer of Topologic."
+  LangString DESC_TopologicEnergy ${LANG_ENGLISH} "Installs TopologicEnergy DLLs."
+  LangString DESC_OpenStudio ${LANG_ENGLISH} "Installs OpenStudio 2.6.0."
 
   ;Assign language strings to sections
   !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-    !insertmacro MUI_DESCRIPTION_TEXT ${TopologicCore} $(DESC_TopologicCore)
-    !insertmacro MUI_DESCRIPTION_TEXT ${TopologicDynamo} $(DESC_TopologicDynamo)
-    !insertmacro MUI_DESCRIPTION_TEXT ${TopologicEnergy} $(DESC_TopologicEnergy)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SectionGroupTopologicCore} $(DESC_GroupTopologicCore)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SectionTopologicCore} $(DESC_TopologicCore)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SectionOCCT} $(DESC_OCCT)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SectionTopologicNET} $(DESC_TopologicNET)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SectionGroupTopologicDynamo} $(DESC_GroupTopologicDynamo)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SectionTopologicDynamo} $(DESC_TopologicDynamo)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SectionDynamo} $(DESC_Dynamo)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SectionGroupTopologicEnergy} $(DESC_GroupTopologicEnergy)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SectionTopologicEnergy} $(DESC_TopologicEnergy)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SectionOpenStudio} $(DESC_OpenStudio)
+    ;!insertmacro MUI_DESCRIPTION_TEXT ${TopologicBHoM} $(DESC_TopologicBHoM)
   !insertmacro MUI_FUNCTION_DESCRIPTION_END
-
+ 
 ;--------------------------------
 ;Uninstaller Section
 

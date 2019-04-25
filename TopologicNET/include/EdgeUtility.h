@@ -39,6 +39,32 @@ namespace Topologic {
 				double normalX, double normalY, double normalZ);
 
 			/// <summary>
+			/// Create an Edge by an ellipse.
+			/// </summary>
+			/// <param name="centerPoint">The center point of the ellipse</param>
+			/// <param name="majorRadius">The major radius of the ellipse</param>
+			/// <param name="minorRadius">The minor radius of the ellipse</param>
+			/// <param name="xAxisX">The starting X value of the ellipse on the X axis</param>
+			/// <param name="xAxisY">The starting X value of the ellipse on the Y axis</param>
+			/// <param name="xAxisZ">The starting X value of the ellipse on the Z axis</param>
+			/// <param name="normalX">The X component of the ellipse's normal</param>
+			/// <param name="normalY">The Y component of the ellipse's normal</param>
+			/// <param name="normalZ">The Z component of the ellipse's normal</param>
+			/// <returns>The created Edge</returns>
+			static Edge^ ByEllipse(
+				Vertex^ centerPoint, double majorRadius, double minorRadius,
+				double xAxisX, double xAxisY, double xAxisZ,
+				double normalX, double normalY, double normalZ);
+			
+			static Edge^ ByNurbsCurve(
+				List<Vertex^>^ controlPoints, 
+				List<double>^ knots,
+				List<double>^ weights,
+				int degree,
+				bool isPeriodic,
+				bool isRational);
+
+			/// <summary>
 			/// Returns the parameter at a given Vertex on the Edge.
 			/// </summary>
 			/// <param name="edge">The Edge</param>

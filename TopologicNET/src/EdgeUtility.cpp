@@ -32,6 +32,38 @@ namespace Topologic
 			return gcnew Edge(pCoreCircleEdge);
 		}
 
+		Edge ^ EdgeUtility::ByEllipse(Vertex ^ centerPoint, double majorRadius, double minorRadius, double xAxisX, double xAxisY, double xAxisZ, double normalX, double normalY, double normalZ)
+		{
+			TopologicCore::Vertex::Ptr pCoreCentrePoint = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(centerPoint->GetCoreTopologicalQuery());
+			TopologicCore::Edge::Ptr pCoreEllipseEdge = TopologicUtilities::EdgeUtility::ByEllipse(pCoreCentrePoint, majorRadius, minorRadius, xAxisX, xAxisY, xAxisZ, normalX, normalY, normalZ);
+			return gcnew Edge(pCoreEllipseEdge);
+		}
+
+		Edge ^ EdgeUtility::ByNurbsCurve(List<Vertex^>^ controlPoints, List<double>^ knots, List<double>^ weights, int degree, bool isPeriodic, bool isRational)
+		{
+			std::list<TopologicCore::Vertex::Ptr> coreVertices;
+			for each (Vertex^ controlPoint in controlPoints)
+			{
+				TopologicCore::Vertex::Ptr pCoreControlPoint = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(controlPoint->GetCoreTopologicalQuery());
+				coreVertices.push_back(pCoreControlPoint);
+			}
+
+			std::list<double> coreKnots;
+			for each(double knot in knots)
+			{
+				coreKnots.push_back(knot);
+			}
+
+			std::list<double> coreWeights;
+			for each(double weight in weights)
+			{
+				coreWeights.push_back(weight);
+			}
+			
+			TopologicCore::Edge::Ptr pCoreEdge = TopologicUtilities::EdgeUtility::ByNurbsCurve(coreVertices, coreKnots, coreWeights, degree, isPeriodic, isRational);
+			return gcnew Edge(pCoreEdge);
+		}
+
 		double EdgeUtility::ParameterAtVertex(Edge ^ edge, Vertex ^ vertex)
 		{
 			TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(edge->GetCoreTopologicalQuery());
