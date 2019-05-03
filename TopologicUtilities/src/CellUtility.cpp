@@ -85,15 +85,21 @@ namespace TopologicUtilities
 	}
 
 	TopologicCore::Cell::Ptr CellUtility::ByCuboid(
-		const double kCentroidX, const double kCentroidY, const double kCentroidZ,
-		const double kXDimension, const double kYDimension, const double kZDimension)
+		const double kXCentroid, const double kYCentroid, const double kZCentroid,
+		const double kXDimension, const double kYDimension, const double kZDimension,
+		const double kXNormal, const double kYNormal, const double kZNormal,
+		const double kXAxisX, const double kYAxisX, const double kZAxisX)
 	{
 		gp_Pnt occtLowCorner(
-			kCentroidX - kXDimension / 2.0,
-			kCentroidY - kYDimension / 2.0,
-			kCentroidZ - kZDimension / 2.0
+			kXCentroid - kXDimension / 2.0,
+			kYCentroid - kYDimension / 2.0,
+			kZCentroid - kZDimension / 2.0
 		);
-		BRepPrimAPI_MakeBox occtMakeBox(occtLowCorner, kXDimension, kYDimension, kZDimension);
+		gp_Ax2 occtAxes(
+			occtLowCorner,
+			gp_Dir(kXNormal, kYNormal, kZNormal),
+			gp_Dir(kXAxisX, kYAxisX, kZAxisX));
+		BRepPrimAPI_MakeBox occtMakeBox(occtAxes, kXDimension, kYDimension, kZDimension);
 		occtMakeBox.Build();
 
 		TopologicCore::Cell::Ptr pCell = std::make_shared<TopologicCore::Cell>(occtMakeBox.Solid());
@@ -108,6 +114,18 @@ namespace TopologicUtilities
 		TopologicCore::Cell::Ptr pCell = std::make_shared<TopologicCore::Cell>(occtMakeSphere.Solid());
 		TopologicCore::GlobalCluster::GetInstance().AddTopology(pCell->GetOcctSolid());
 		return pCell;
+	}
+
+	TopologicCore::Cell::Ptr CellUtility::ByTwoCorners(const std::shared_ptr<TopologicCore::Vertex>& kpMinVertex, const std::shared_ptr<TopologicCore::Vertex>& kpMaxVertex)
+	{
+		BRepPrimAPI_MakeBox occtMakeBox(
+			kpMinVertex->Point()->Pnt(), 
+			kpMaxVertex->Point()->Pnt());
+
+		TopologicCore::Cell::Ptr pCell = std::make_shared<TopologicCore::Cell>(occtMakeBox.Solid());
+		TopologicCore::GlobalCluster::GetInstance().AddTopology(pCell->GetOcctSolid());
+		return pCell;
+		return TopologicCore::Cell::Ptr();
 	}
 
 	TopologicCore::Cell::Ptr CellUtility::ByCylinder(const double kReferencePointX, const double kReferencePointY, const double kReferencePointZ,

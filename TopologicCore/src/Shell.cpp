@@ -10,6 +10,7 @@
 #include "AttributeManager.h"
 
 #include <BRepBuilderAPI_MakeVertex.hxx>
+#include <BRepBuilderAPI_MakeShell.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
@@ -79,6 +80,21 @@ namespace TopologicCore
 		{
 			//Face::Ptr pCopyFace = std::dynamic_pointer_cast<Face>(kpFace->DeepCopy());
 			occtShapes.Append(kpFace->GetOcctShape());
+		}
+
+		if (occtShapes.Size() == 1)
+		{
+			TopoDS_Shell occtShell; // no need to copy, as this is a new instance
+			TopoDS_Builder occtBuilder;
+			occtBuilder.MakeShell(occtShell);
+			for (TopTools_ListIteratorOfListOfShape occtShapeIterator(occtShapes); occtShapeIterator.More(); occtShapeIterator.Next())
+			{
+				occtBuilder.Add(occtShell, TopoDS::Face(occtShapeIterator.Value()));
+				AttributeManager::GetInstance().CopyAttributes(occtShapeIterator.Value(), occtShell);
+			}
+			Shell::Ptr pShell = std::make_shared<Shell>(occtShell);
+			GlobalCluster::GetInstance().AddTopology(pShell);
+			return pShell;
 		}
 
 		TopoDS_Shape occtShape = OcctSewFaces(occtShapes, kTolerance);

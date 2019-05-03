@@ -48,6 +48,53 @@ namespace Topologic {
 			}
 		}
 
+		Cell^ CellUtility::ByCuboid(double xCentroid, double yCentroid, double zCentroid,
+			double xDimension, double yDimension, double zDimension,
+			double xNormal, double yNormal, double zNormal,
+			double xAxisX, double yAxisX, double ZAxisX)
+		{
+			try {
+				TopologicCore::Cell::Ptr pCoreCell = TopologicUtilities::CellUtility::ByCuboid(
+					xCentroid, yCentroid, zCentroid, 
+					xDimension, yDimension, zDimension,
+					xNormal, yNormal, zNormal,
+					xAxisX, yAxisX, ZAxisX);
+				return gcnew Cell(pCoreCell);
+			}
+			catch (std::exception&)
+			{
+				throw gcnew Exception("Error creating a Cell from a Cuboid.");
+			}
+		}
+
+		Cell^ CellUtility::BySphere(double xCentroid, double yCentroid, double zCentroid, double radius)
+		{
+			try {
+				TopologicCore::Cell::Ptr pCoreCell = TopologicUtilities::CellUtility::BySphere(
+					xCentroid, yCentroid, zCentroid, radius);
+				return gcnew Cell(pCoreCell);
+			}
+			catch (std::exception&)
+			{
+				throw gcnew Exception("Error creating a Cell from a Spher.");
+			}
+		}
+
+		Cell^ CellUtility::ByTwoCorners(Vertex^ minVertex, Vertex^ maxVertex)
+		{
+			TopologicCore::Vertex::Ptr pCoreMinVertex= TopologicCore::Topology::Downcast<TopologicCore::Vertex>(minVertex->GetCoreTopologicalQuery());
+			TopologicCore::Vertex::Ptr pCoreMaxVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(maxVertex->GetCoreTopologicalQuery());
+			try {
+				TopologicCore::Cell::Ptr pCoreCell = TopologicUtilities::CellUtility::ByTwoCorners(
+					pCoreMinVertex, pCoreMaxVertex);
+				return gcnew Cell(pCoreCell);
+			}
+			catch (std::exception&)
+			{
+				throw gcnew Exception("Error creating a Cell from a Spher.");
+			}
+		}
+
 		double CellUtility::Volume(Cell^ cell)
 		{
 			TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(cell->GetCoreTopologicalQuery());

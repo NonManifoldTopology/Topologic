@@ -31,6 +31,45 @@ namespace Topologic {
 			static Cell^ ByLoft(System::Collections::Generic::IEnumerable<Wire^>^ wires);
 
 			/// <summary>
+			/// Creates a Cell by a Cuboid
+			/// </summary>
+			/// <param name="xCentroid">The X coordinate of the centroid</param>
+			/// <param name="yCentroid">The Y coordinate of the centroid</param>
+			/// <param name="zCentroid">The Z coordinate of the centroid</param>
+			/// <param name="xDimension">The size along the X axis</param>
+			/// <param name="yDimension">The size along the Y axis</param>
+			/// <param name="zDimension">The size along the Z axis</param>
+			/// <param name="xNormal">The X component of the normal</param>
+			/// <param name="yNormal">The Y component of the normal</param>
+			/// <param name="zNormal">The Z component of the normal</param>
+			/// <param name="xAxisX">The X component of the X-axis</param>
+			/// <param name="yAxisX">The X component of the Y-axis</param>
+			/// <param name="ZAxisX">The X component of the Z-axis</param>
+			/// <returns name="Cell">The created Cell</returns>
+			static Cell^ ByCuboid(double xCentroid, double yCentroid, double zCentroid,
+				double xDimension, double yDimension, double zDimension,
+				double xNormal, double yNormal, double zNormal,
+				double xAxisX, double yAxisX, double ZAxisX);
+
+			/// <summary>
+			/// Creates a Cell by a Sphere
+			/// </summary>
+			/// <param name="xCentroid">The X coordinate of the centroid</param>
+			/// <param name="yCentroid">The Y coordinate of the centroid</param>
+			/// <param name="zCentroid">The Z coordinate of the centroid</param>
+			/// <param name="radius">The radius of the Sphere</param>
+			/// <returns name="Cell">The created Cell</returns>
+			static Cell^ BySphere(double xCentroid, double yCentroid, double zCentroid, double radius);
+
+			/// <summary>
+			/// Creates an Axis-Aligned Bounding Box Cell by two Vertices at the minimum and maximum corners
+			/// </summary>
+			/// <param name="minVertex">The minimum Vertex</param>
+			/// <param name="maxVertex">The maximum Vertex</param>
+			/// <returns name="Cell">The created Cell</returns>
+			static Cell ^ ByTwoCorners(Vertex ^ minVertex, Vertex ^ maxVertex);
+
+			/// <summary>
 			/// Returns the volume of a Cell.
 			/// </summary>
 			/// <param name="cell">The Cell</param>

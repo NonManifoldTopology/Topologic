@@ -33,8 +33,10 @@ namespace TopologicUtilities
 
 		//
 		static TOPOLOGIC_UTILITIES_API TopologicCore::Cell::Ptr ByCuboid(
-			const double kCentroidX, const double kCentroidY, const double kCentroidZ, 
-			const double kXDimension, const double kYDimension, const double kZDimension);
+			const double kXCentroid, const double kYCentroid, const double kZCentroid,
+			const double kXDimension, const double kYDimension, const double kZDimension,
+			const double kXNormal, const double kYNormal, const double kZNormal,
+			const double kXAxisX, const double kYAxisX, const double kZAxisX);
 
 		/// <summary>
 		/// 
@@ -45,6 +47,8 @@ namespace TopologicUtilities
 		/// <param name="kRadius"></param>
 		/// <returns></returns>
 		static TOPOLOGIC_UTILITIES_API TopologicCore::Cell::Ptr BySphere(const double kCenterX, const double kCenterY, const double kCenterZ, const double kRadius);
+
+		static TOPOLOGIC_UTILITIES_API TopologicCore::Cell::Ptr ByTwoCorners(const std::shared_ptr<TopologicCore::Vertex>& kpMinVertex, const std::shared_ptr<TopologicCore::Vertex>& kpMaxVertex);
 
 		/// <summary>
 		/// 

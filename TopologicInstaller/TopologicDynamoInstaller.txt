@@ -58,7 +58,7 @@ Var installTopologicEnergy
 
 
 !macro InstallTopologic
-  SetOutPath "$path\bin"
+  SetOutPath "$path"
     File ..\output\x64\Release\TopologicCore.dll
     File ..\output\x64\Release\TopologicUtilities.dll
     File ..\output\x64\Release\license.file
