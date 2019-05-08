@@ -158,7 +158,13 @@ namespace Topologic
 			}
 
 
-			return BySurface(dynamoNurbsSurface, dynamoPerimeterCurves);
+			Face^ face = BySurface(dynamoNurbsSurface, dynamoPerimeterCurves);
+			delete dynamoNurbsSurface;
+			for each(Autodesk::DesignScript::Geometry::Curve^ dynamoPerimeterCurve in dynamoPerimeterCurves)
+			{
+				delete dynamoPerimeterCurve;
+			}
+			return face;
 		}
 		else
 		{
@@ -358,25 +364,35 @@ namespace Topologic
 						Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoProjectedPolyCurve = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoProjectedCurves, 0.001);
 						pDynamoProjectedEdgeLoops->Add(pDynamoProjectedPolyCurve);
 						pDynamoProjectedCurves->Clear();
-						delete pDynamoProjectedCurves;
+						for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoProjectedCurve in pDynamoProjectedCurves)
+						{
+							delete pDynamoProjectedCurve;
+						}
 					}
 
+					Autodesk::DesignScript::Geometry::Surface^ pDynamoTrimmedSurfaceByParameters = nullptr;
 					try {
-						Autodesk::DesignScript::Geometry::Surface^ pDynamoTrimmedSurfaceByParameters =
+						pDynamoTrimmedSurfaceByParameters =
 							pDynamoUntrimmedSurface->TrimWithEdgeLoops(pDynamoProjectedEdgeLoops);
-
-						for each(Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoEdgeLoop in pDynamoEdgeLoops)
-						{
-							delete pDynamoEdgeLoop;
-						}
-
-						delete pDynamoUntrimmedSurface;
-
-						return pDynamoTrimmedSurfaceByParameters;
 					}
 					catch (...)
 					{
 					}
+
+
+					for each(Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoEdgeLoop in pDynamoEdgeLoops)
+					{
+						delete pDynamoEdgeLoop;
+					}
+
+					for each(Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoProjectedEdgeLoop in pDynamoProjectedEdgeLoops)
+					{
+						delete pDynamoProjectedEdgeLoop;
+					}
+
+					delete pDynamoUntrimmedSurface;
+
+					return pDynamoTrimmedSurfaceByParameters;
 				}
 			}
 			catch (...)
@@ -433,9 +449,9 @@ namespace Topologic
 
 				if (pDynamoCurves->Count > 0)
 				{
-					pDynamoSurface = Autodesk::DesignScript::Geometry::Surface::ByPatch(
-						Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoCurves, 0.001)
-					);
+					Autodesk::DesignScript::Geometry::PolyCurve^ dynamoPolyCurve = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoCurves, 0.001);
+					pDynamoSurface = Autodesk::DesignScript::Geometry::Surface::ByPatch(dynamoPolyCurve);
+					delete dynamoPolyCurve;
 				}
 
 				for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoCurve in pDynamoCurves)
@@ -468,10 +484,15 @@ namespace Topologic
 							// 2. Convert the edges to Dynamo curves
 							pDynamoOuterCurves->Add(pOuterEdge->Curve());
 						}
-						pDynamoSurface = Autodesk::DesignScript::Geometry::Surface::ByPatch(
-							Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoOuterCurves, 0.001)
-						);
 
+						Autodesk::DesignScript::Geometry::PolyCurve^ dynamoPolyCurve = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoOuterCurves, 0.001);
+						if (pDynamoSurface != nullptr)
+						{
+							delete pDynamoSurface;
+						}
+						pDynamoSurface = Autodesk::DesignScript::Geometry::Surface::ByPatch(dynamoPolyCurve);
+
+						delete dynamoPolyCurve;
 						for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoOuterCurve in pDynamoOuterCurves)
 						{
 							delete pDynamoOuterCurve;
@@ -479,28 +500,16 @@ namespace Topologic
 					}
 				}
 
-				Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoPolycurve =
-					safe_cast<Autodesk::DesignScript::Geometry::PolyCurve^>(pWire->BasicGeometry);
+				Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoPolycurve = safe_cast<Autodesk::DesignScript::Geometry::PolyCurve^>(pWire->BasicGeometry);
 				if (pDynamoPolycurve != nullptr)
 				{
 					pDynamoEdgeLoops->Add(pDynamoPolycurve);
 				}
 			}
 
-			// this may raise exception
+			Autodesk::DesignScript::Geometry::Surface^ pTrimmedDynamoSurface = nullptr;
 			try {
-				Autodesk::DesignScript::Geometry::Surface^ pTrimmedDynamoSurface = pDynamoSurface->TrimWithEdgeLoops(pDynamoEdgeLoops);
-
-				if (pDynamoSurface != nullptr)
-				{
-					delete pDynamoSurface;
-				}
-				for each(Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoEdgeLoop in pDynamoEdgeLoops)
-				{
-					delete pDynamoEdgeLoop;
-				}
-
-				return pTrimmedDynamoSurface;
+				pTrimmedDynamoSurface = pDynamoSurface->TrimWithEdgeLoops(pDynamoEdgeLoops);
 			}
 			catch (Exception^ e)
 			{
@@ -511,6 +520,17 @@ namespace Topologic
 			{
 				throw gcnew Exception("Unknown exception");
 			}
+			
+			if (pDynamoSurface != nullptr)
+			{
+				delete pDynamoSurface;
+			}
+			for each(Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoEdgeLoop in pDynamoEdgeLoops)
+			{
+				delete pDynamoEdgeLoop;
+			}
+
+			return pTrimmedDynamoSurface;
 		}
 
 		Handle(Geom_SphericalSurface) pOcctSphericalSurface = Handle_Geom_SphericalSurface::DownCast(pOcctSurface);
@@ -731,210 +751,214 @@ namespace Topologic
 		bool checkWire = true;
 
 		// Retrieve the perimeters as curves. These comprise of the outer and, if any, inner perimeters.
-		List<List<Autodesk::DesignScript::Geometry::Curve^>^>^ pDynamoCurveGroups = gcnew List<List<Autodesk::DesignScript::Geometry::Curve^>^>();
-		for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoPerimeterCurve in pDynamoPerimeterCurves)
 		{
-			// Set this flag to true if a polycurve can be created. But, don't store the polycurve yet. 
-			// The final ones will be created at the end.
-			List<List<Autodesk::DesignScript::Geometry::Curve^>^>^ pOtherConnectedCurveGroups = gcnew List<List<Autodesk::DesignScript::Geometry::Curve^>^>();
-			bool isConnectedToAnotherCurve = false;
-			for each(List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoCurveGroup in pDynamoCurveGroups)
+			List<List<Autodesk::DesignScript::Geometry::Curve^>^>^ pDynamoCurveGroups = gcnew List<List<Autodesk::DesignScript::Geometry::Curve^>^>();
+			for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoPerimeterCurve in pDynamoPerimeterCurves)
 			{
-				//Iterate through the individual curve. If the intersection is true, add it to the list and break.
-				for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoGroupedCurve in pDynamoCurveGroup)
+				// Set this flag to true if a polycurve can be created. But, don't store the polycurve yet. 
+				// The final ones will be created at the end.
+				List<List<Autodesk::DesignScript::Geometry::Curve^>^>^ pOtherConnectedCurveGroups = gcnew List<List<Autodesk::DesignScript::Geometry::Curve^>^>();
+				bool isConnectedToAnotherCurve = false;
+				for each(List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoCurveGroup in pDynamoCurveGroups)
 				{
-					bool doesIntersect = false;
-					try {
-						doesIntersect = pDynamoPerimeterCurve->DoesIntersect(pDynamoGroupedCurve);
-					}
-					catch (Exception ^ e)
+					//Iterate through the individual curve. If the intersection is true, add it to the list and break.
+					for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoGroupedCurve in pDynamoCurveGroup)
 					{
-						throw gcnew System::Exception("Dynamo fails to perform intersection test on a group of curve: " + e->Message);
+						bool doesIntersect = false;
+						try {
+							doesIntersect = pDynamoPerimeterCurve->DoesIntersect(pDynamoGroupedCurve);
+						}
+						catch (Exception ^ e)
+						{
+							throw gcnew System::Exception("Dynamo fails to perform intersection test on a group of curve: " + e->Message);
+						}
+						catch (...)
+						{
+							throw gcnew System::Exception("Dynamo fails to perform intersection test on a group of curve.");
+						}
+
+						if (doesIntersect)
+						{
+							// Only add once; other groups will be added to this list.
+							if (!isConnectedToAnotherCurve)
+							{
+								isConnectedToAnotherCurve = true;
+								pDynamoCurveGroup->Add(pDynamoPerimeterCurve);
+							}
+							pOtherConnectedCurveGroups->Add(pDynamoCurveGroup);
+							break; // No need to check other curves
+						}
+					}
+
+					// Continue to check other groups
+				}
+
+				for each(List<Autodesk::DesignScript::Geometry::Curve^>^ pOtherConnectedCurveGroup in pOtherConnectedCurveGroups)
+				{
+					if (pOtherConnectedCurveGroup == pOtherConnectedCurveGroups[0])
+					{
+						continue;
+					}
+
+					pOtherConnectedCurveGroups[0]->AddRange(pOtherConnectedCurveGroup);
+
+					// Remove this list from pDynamoCurveGroups
+					pDynamoCurveGroups->Remove(pOtherConnectedCurveGroup);
+				}
+
+				// If not yet added to any polycurve, create one.
+				if (!isConnectedToAnotherCurve)
+				{
+					List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoNewConnectedCurves = gcnew List<Autodesk::DesignScript::Geometry::Curve^>();
+					pDynamoNewConnectedCurves->Add(pDynamoPerimeterCurve);
+					pDynamoCurveGroups->Add(pDynamoNewConnectedCurves);
+				}
+			}
+
+			// Do the rest of operations in OpenCascade. Create wires by edges.
+			TopologicCore::Wire::Ptr pCoreOuterWire = nullptr;
+			try {
+				List<Wire^>^ pWires = gcnew List<Wire^>();
+				for each(List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoCurveGroup in pDynamoCurveGroups)
+				{
+					List<Edge^>^ pEdges = gcnew List<Edge^>();
+					for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoCurve in pDynamoCurveGroup)
+					{
+						Edge^ pEdge = Edge::ByCurve(pDynamoCurve);
+						pEdges->Add(pEdge);
+					}
+					Wire^ pWire = Wire::ByEdges(pEdges);
+					pWires->Add(pWire);
+				}
+
+
+				std::list<double> surfaceAreas;
+				for each(Wire^ pWire in pWires)
+				{
+					try {
+						Face^ pFace = Face::ByWire(pWire);
+						surfaceAreas.push_back(Topologic::Utilities::FaceUtility::Area(pFace));
 					}
 					catch (...)
 					{
-						throw gcnew System::Exception("Dynamo fails to perform intersection test on a group of curve.");
+						surfaceAreas.push_back(0.0);
 					}
+				}
 
-					if (doesIntersect)
+				if (checkWire)
+				{
+					std::list<double>::iterator maxAreaIterator = std::max_element(surfaceAreas.begin(), surfaceAreas.end());
+					int index = 0;
+					for (std::list<double>::iterator areaIterator = surfaceAreas.begin();
+						areaIterator != maxAreaIterator;
+						areaIterator++)
 					{
-						// Only add once; other groups will be added to this list.
-						if (!isConnectedToAnotherCurve)
-						{
-							isConnectedToAnotherCurve = true;
-							pDynamoCurveGroup->Add(pDynamoPerimeterCurve);
-						}
-						pOtherConnectedCurveGroups->Add(pDynamoCurveGroup);
-						break; // No need to check other curves
+						++index;
 					}
+					pOuterPolycurve = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoCurveGroups[index], 0.001);
+					pCoreOuterWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>((Wire::ByPolyCurve(pOuterPolycurve))->GetCoreTopologicalQuery());
+					delete pOuterPolycurve;
+					pDynamoCurveGroups->RemoveAt(index);
 				}
-
-				// Continue to check other groups
 			}
-
-			for each(List<Autodesk::DesignScript::Geometry::Curve^>^ pOtherConnectedCurveGroup in pOtherConnectedCurveGroups)
+			catch (...)
 			{
-				if (pOtherConnectedCurveGroup == pOtherConnectedCurveGroups[0])
-				{
-					continue;
-				}
 
-				pOtherConnectedCurveGroups[0]->AddRange(pOtherConnectedCurveGroup);
-
-				// Remove this list from pDynamoCurveGroups
-				pDynamoCurveGroups->Remove(pOtherConnectedCurveGroup);
 			}
 
-			// If not yet added to any polycurve, create one.
-			if (!isConnectedToAnotherCurve)
-			{
-				List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoNewConnectedCurves = gcnew List<Autodesk::DesignScript::Geometry::Curve^>();
-				pDynamoNewConnectedCurves->Add(pDynamoPerimeterCurve);
-				pDynamoCurveGroups->Add(pDynamoNewConnectedCurves);
-			}
-		}
-
-		// Do the rest of operations in OpenCascade. Create wires by edges.
-		TopologicCore::Wire::Ptr pCoreOuterWire = nullptr;
-		try {
-			List<Wire^>^ pWires = gcnew List<Wire^>();
-			for each(List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoCurveGroup in pDynamoCurveGroups)
-			{
-				List<Edge^>^ pEdges = gcnew List<Edge^>();
-				for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoCurve in pDynamoCurveGroup)
-				{
-					Edge^ pEdge = Edge::ByCurve(pDynamoCurve);
-					pEdges->Add(pEdge);
-				}
-				Wire^ pWire = Wire::ByEdges(pEdges);
-				pWires->Add(pWire);
-			}
-
-
-			std::list<double> surfaceAreas;
-			for each(Wire^ pWire in pWires)
+			// Get the outer polycurve and discard it from the pDynamoCurveGroups
+			/*for each(List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoCurveGroup in pDynamoCurveGroups)
 			{
 				try {
-					Face^ pFace = Face::ByWire(pWire);
-					surfaceAreas.push_back(Topologic::Utilities::FaceUtility::Area(pFace));
+					Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoPolyCurve = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoCurveGroup);
+					Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface = Autodesk::DesignScript::Geometry::Surface::ByPatch(pDynamoPolyCurve);
+					surfaceAreas.push_back(pDynamoSurface->Area);
 				}
-				catch (...)
+				catch (std::exception& e)
 				{
-					surfaceAreas.push_back(0.0);
+					String^ str = gcnew String(e.what());
+					checkWire = false;
+					break;
 				}
-			}
-
-			if (checkWire)
-			{
-				std::list<double>::iterator maxAreaIterator = std::max_element(surfaceAreas.begin(), surfaceAreas.end());
-				int index = 0;
-				for (std::list<double>::iterator areaIterator = surfaceAreas.begin();
-					areaIterator != maxAreaIterator;
-					areaIterator++)
+				catch (Exception^ e)
 				{
-					++index;
+					String^ str(e->Message);
+					checkWire = false;
+					break;
 				}
-				pOuterPolycurve = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoCurveGroups[index], 0.001);
-				pCoreOuterWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>((Wire::ByPolyCurve(pOuterPolycurve))->GetCoreTopologicalQuery());
-				pDynamoCurveGroups->RemoveAt(index);
-			}
-		}
-		catch (...)
-		{
+			}*/
 
-		}
+			// 3. Bounding wires
+			std::list<TopologicCore::Wire::Ptr> coreInnerWires;
 
-		// Get the outer polycurve and discard it from the pDynamoCurveGroups
-		/*for each(List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoCurveGroup in pDynamoCurveGroups)
-		{
 			try {
-				Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoPolyCurve = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoCurveGroup);
-				Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface = Autodesk::DesignScript::Geometry::Surface::ByPatch(pDynamoPolyCurve);
-				surfaceAreas.push_back(pDynamoSurface->Area);
+				// Create wires and add them to occtMakeFace to create internal wires
+				for each(List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoConnectedCurves in pDynamoCurveGroups)
+				{
+					Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoPolycurve = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoConnectedCurves, 0.001);
+					Wire^ pWire = Wire::ByPolyCurve(pDynamoPolycurve);
+					delete pDynamoPolycurve;
+					coreInnerWires.push_back(TopologicCore::Topology::Downcast<TopologicCore::Wire>(pWire->GetCoreTopologicalQuery()));
+				}
 			}
-			catch (std::exception& e)
+			catch (...)
 			{
-				String^ str = gcnew String(e.what());
-				checkWire = false;
-				break;
+
 			}
-			catch (Exception^ e)
+
+			//=================================================
+			Exception^ e = nullptr;
+			TopologicCore::Face::Ptr pCoreFace = nullptr;
+			try {
+				pCoreFace = TopologicCore::Face::BySurface(
+					occtPoles,
+					occtWeights,
+					occtUKnots,
+					occtVKnots,
+					occtUMultiplicities,
+					occtVMultiplicities,
+					uDegree,
+					vDegree,
+					isUPeriodic,
+					isVPeriodic,
+					isRational,
+					pCoreOuterWire,
+					coreInnerWires
+				);
+			}
+			catch (const std::exception& rkException)
 			{
-				String^ str(e->Message);
-				checkWire = false;
-				break;
+				e = gcnew Exception(gcnew String(rkException.what()));
 			}
-		}*/
 
-		// 3. Bounding wires
-		std::list<TopologicCore::Wire::Ptr> coreInnerWires;
-
-		try {
-			// Create wires and add them to occtMakeFace to create internal wires
-			for each(List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoConnectedCurves in pDynamoCurveGroups)
+			for each(array<Autodesk::DesignScript::Geometry::Point^>^ pDynamo1DControlPoints in pDynamoControlPoints)
 			{
-				Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoPolycurve = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoConnectedCurves, 0.001);
-				Wire^ pWire = Wire::ByPolyCurve(pDynamoPolycurve);
-				coreInnerWires.push_back(TopologicCore::Topology::Downcast<TopologicCore::Wire>(pWire->GetCoreTopologicalQuery()));
+				for each(Autodesk::DesignScript::Geometry::Point^ pDynamoControlPoint in pDynamo1DControlPoints)
+				{
+					delete pDynamoControlPoint;
+				}
 			}
-		}
-		catch (...)
-		{
 
-		}
-
-		//=================================================
-		Exception^ e = nullptr;
-		TopologicCore::Face::Ptr pCoreFace = nullptr;
-		try {
-			pCoreFace = TopologicCore::Face::BySurface(
-				occtPoles,
-				occtWeights,
-				occtUKnots,
-				occtVKnots,
-				occtUMultiplicities,
-				occtVMultiplicities,
-				uDegree,
-				vDegree,
-				isUPeriodic,
-				isVPeriodic,
-				isRational,
-				pCoreOuterWire,
-				coreInnerWires
-			);
-		}
-		catch (const std::exception& rkException)
-		{
-			e = gcnew Exception(gcnew String(rkException.what()));
-		}
-
-		for each(array<Autodesk::DesignScript::Geometry::Point^>^ pDynamo1DControlPoints in pDynamoControlPoints)
-		{
-			for each(Autodesk::DesignScript::Geometry::Point^ pDynamoControlPoint in pDynamo1DControlPoints)
+			for each(List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamo1DCurveGroup in pDynamoCurveGroups)
 			{
-				delete pDynamoControlPoint;
+				for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoCurveGroup in pDynamo1DCurveGroup)
+				{
+					delete pDynamoCurveGroup;
+				}
 			}
-		}
 
-		for each(List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamo1DCurveGroup in pDynamoCurveGroups)
-		{
-			for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoCurveGroup in pDynamo1DCurveGroup)
+			if (pOuterPolycurve != nullptr)
 			{
-				delete pDynamoCurveGroup;
+				delete pOuterPolycurve;
 			}
-		}
 
-		if (pOuterPolycurve != nullptr)
-		{
-			delete pOuterPolycurve;
-		}
+			if (e != nullptr)
+			{
+				throw e;
+			}
 
-		if (e != nullptr)
-		{
-			throw e;
+			return gcnew Face(pCoreFace);
 		}
-
-		return gcnew Face(pCoreFace);
 	}
 #endif
 

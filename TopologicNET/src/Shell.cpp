@@ -135,9 +135,9 @@ namespace Topologic
 			pDynamoSurfaces->Add(pFace->Surface());
 		}
 
+		Autodesk::DesignScript::Geometry::PolySurface^ pDynamoPolySurface = nullptr;
 		try {
-			Autodesk::DesignScript::Geometry::PolySurface^ pDynamoPolySurface =
-				Autodesk::DesignScript::Geometry::PolySurface::ByJoinedSurfaces(pDynamoSurfaces);
+			pDynamoPolySurface = Autodesk::DesignScript::Geometry::PolySurface::ByJoinedSurfaces(pDynamoSurfaces);
 
 			return pDynamoPolySurface;
 		}
@@ -145,6 +145,18 @@ namespace Topologic
 		{
 			return pDynamoSurfaces;
 		}
+
+		if (pDynamoPolySurface != nullptr)
+		{
+			for each(Autodesk::DesignScript::Geometry::Surface^ dynamoSurface in pDynamoSurfaces)
+			{
+				delete dynamoSurface;
+			}
+			return pDynamoPolySurface;
+		}
+
+		// else
+		return pDynamoSurfaces;
 #else
 		return nullptr;
 #endif

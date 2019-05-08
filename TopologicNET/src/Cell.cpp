@@ -343,6 +343,7 @@ namespace Topologic
 				pFaces->Add(Face::BySurface(pDynamoSurface));
 				delete pDynamoSurface;
 			}
+			delete pDynamoPolysurface;
 			return ByFaces(pFaces, tolerance);
 		}
 	}

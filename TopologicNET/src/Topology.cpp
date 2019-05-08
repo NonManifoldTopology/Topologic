@@ -109,21 +109,22 @@ namespace Topologic
 				// If it is a curve which actually contains more than 1 curves, create a polyCurve first, because it has a NumberOfCurves property.
 				List<Autodesk::DesignScript::Geometry::Curve^>^ dynamoCurves = gcnew List<Autodesk::DesignScript::Geometry::Curve^>();
 				dynamoCurves->Add(dynamoCurve);
-				dynamoPolyCurve = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(dynamoCurves, 0.0001);
-				int numOfCurves = dynamoPolyCurve->NumberOfCurves;
-				if (numOfCurves < 1)
-				{
-					throw gcnew Exception("The geometry is a curve by type but no curve is detected.");
-				}
-				else if (numOfCurves > 1)
+				Autodesk::DesignScript::Geometry::PolyCurve^ dynamoNewPolyCurve = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(dynamoCurves, 0.0001);
+				int numOfCurves = dynamoNewPolyCurve->NumberOfCurves;
+				if (numOfCurves > 1)
 				{
 					Wire^ wire = Wire::ByPolyCurve(dynamoPolyCurve);
-					delete dynamoPolyCurve;
 					topology = wire;
 				}
 				else
 				{
 					topology = Edge::ByCurve(dynamoCurve);
+				}
+				delete dynamoNewPolyCurve;
+
+				if (numOfCurves < 1)
+				{
+					throw gcnew Exception("The geometry is a curve by type but no curve is detected.");
 				}
 			}
 		}
@@ -143,17 +144,18 @@ namespace Topologic
 				List<Autodesk::DesignScript::Geometry::Surface^>^ surfaces = gcnew List<Autodesk::DesignScript::Geometry::Surface^>();
 				surfaces->Add(dynamoSurface);
 				try {
-					dynamoPolySurface = Autodesk::DesignScript::Geometry::PolySurface::ByJoinedSurfaces(surfaces);
+					Autodesk::DesignScript::Geometry::PolySurface^ dynamoNewPolySurface = Autodesk::DesignScript::Geometry::PolySurface::ByJoinedSurfaces(surfaces);
 					int numOfSurfaces = dynamoPolySurface->SurfaceCount();
-					if (numOfSurfaces < 1)
-					{
-						throw gcnew Exception("The geometry is a surface by type but no surface is detected.");
-					}
-					else if (numOfSurfaces > 1)
+					if (numOfSurfaces > 1)
 					{
 						// This can be a shell or a cluster, so call Topology::ByPolySurface.
 						topology = Topology::ByPolySurface(dynamoPolySurface);
-						delete dynamoPolySurface;
+					}
+
+					delete dynamoNewPolySurface;
+					if (numOfSurfaces < 1)
+					{
+						throw gcnew Exception("The geometry is a surface by type but no surface is detected.");
 					}
 				}
 				catch (...)
@@ -182,15 +184,19 @@ namespace Topologic
 			pDynamoCoordinateSystem->Origin->Y,
 			pDynamoCoordinateSystem->Origin->Z
 			);
+
+		delete pDynamoCoordinateSystem;
 		return topology;
 	}
 
 	Topology ^ Topology::ByPolySurface(Autodesk::DesignScript::Geometry::PolySurface ^ polySurface)
 	{
 		List<Face^>^ pFaces = gcnew List<Face^>();
-		for each(Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface in polySurface->Surfaces())
+		array<Autodesk::DesignScript::Geometry::Surface^>^ dynamoSurfaces = polySurface->Surfaces();
+		for each(Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface in dynamoSurfaces)
 		{
 			pFaces->Add(Face::BySurface(pDynamoSurface));
+			delete pDynamoSurface;
 		}
 		return ByFaces(pFaces);
 	}

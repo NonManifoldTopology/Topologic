@@ -156,7 +156,9 @@ namespace Topologic
 				throw gcnew System::Exception("Fails to create an edge.");
 			}
 
-			return ByCurve(dynamoCurve);
+			Edge^ edge = ByCurve(dynamoCurve);
+			delete dynamoCurve;
+			return edge;
 		}
 		else
 		{
@@ -443,7 +445,7 @@ namespace Topologic
 		pDynamoNormal = pDynamoNormal->Normalized();
 		Autodesk::DesignScript::Geometry::CoordinateSystem^ pDynamoCoordinateSystem = pDynamoCircle->ContextCoordinateSystem;
 		Autodesk::DesignScript::Geometry::Vector^ pDynamoXAxis = pDynamoCoordinateSystem->XAxis;
-		pDynamoXAxis = pDynamoXAxis->Normalized();
+		Autodesk::DesignScript::Geometry::Vector^ pNormalisedDynamoXAxis = pDynamoXAxis->Normalized();
 
 		Exception^ e = nullptr;
 		TopologicCore::Edge::Ptr pCoreEdge = nullptr;
@@ -452,7 +454,7 @@ namespace Topologic
 				gp_Ax2(
 					gp_Pnt(pDynamoCenterPoint->X, pDynamoCenterPoint->Y, pDynamoCenterPoint->Z),
 					gp_Dir(pDynamoNormal->X, pDynamoNormal->Y, pDynamoNormal->Z),
-					gp_Dir(pDynamoXAxis->X, pDynamoXAxis->Y, pDynamoXAxis->Z)
+					gp_Dir(pNormalisedDynamoXAxis->X, pNormalisedDynamoXAxis->Y, pNormalisedDynamoXAxis->Z)
 				),
 				radius
 			);
@@ -472,6 +474,7 @@ namespace Topologic
 		delete pDynamoNormal;
 		delete pDynamoCoordinateSystem;
 		delete pDynamoXAxis;
+		delete pNormalisedDynamoXAxis;
 
 		if (e != nullptr)
 		{
