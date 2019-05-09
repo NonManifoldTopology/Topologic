@@ -149,7 +149,7 @@ Function FunctionInstallVersionEnter
   Pop $HiddenPathListBoxHWND
   ShowWindow $HiddenPathListBoxHWND ${SW_HIDE} # start out hidden
 
-  ${If} ListBoxHWND != error
+  ${If} $ListBoxHWND != error
     ${If} ${FileExists} "$APPDATA\Dynamo\Dynamo Core\*.*"
 		FindFirst $0 $1 "$APPDATA\Dynamo\Dynamo Core\*.*"
 		loopCore:
@@ -196,13 +196,13 @@ Function FunctionInstallVersionEnter
 		FindClose $0
 	${EndIf}
 	
-	${NSD_LB_GetCount} ${ListBoxHWND} $0
-	${If} $0 != 0
-		MessageBox MB_OK "No Dynamo packages folder is found. Aborting."
-		Abort
-	${Else}
+	${NSD_LB_GetCount} $ListBoxHWND $0
+	${If} $0 > 0
 		System::Call user32::SendMessage(i$ListBoxHWND,i${LB_SETCURSEL},0,0)
 		System::Call user32::SendMessage(i$HiddenPathListBoxHWND,i${LB_SETCURSEL},0,0)
+	${Else}
+		MessageBox MB_OK "No Dynamo packages folder is found. Aborting."
+		Abort
 	${EndIf}
 
   ${Else}
@@ -214,17 +214,20 @@ FunctionEnd
 
 Var LB_output
 Function FunctionInstallVersionLeave
-  #${NSD_LB_GetSelection} $ListBoxHWND $LB_output
   ${NSD_LB_GetSelectionIndex} $ListBoxHWND $LB_output
   System::Call user32::SendMessage(i$HiddenPathListBoxHWND,i${LB_GETTEXT},i$LB_output,t.r0)
-  StrCpy $path $0
+  StrCpy $path $0 ;this stores the path
 FunctionEnd
 
-Var installTopologicEnergy
 
-!macro InstallTopologic
-  SetOutPath "$path"
-    File ..\output\x64\Release\TopologicCore.dll
+Section "TopologicDynamo" SectionTopologicDynamo
+	SetOutPath "$path\packages\Topologic"
+	File pkg.json
+	CreateDirectory "$path\packages\Topologic\bin"
+	CreateDirectory "$path\packages\Topologic\dyf"
+	CreateDirectory "$path\packages\Topologic\extra"
+	SetOutPath "$path\packages\Topologic\bin"
+	File ..\output\x64\Release\TopologicCore.dll
     File ..\output\x64\Release\TopologicUtilities.dll
     File ..\output\x64\Release\license.file
     File ..\output\x64\Release\TK*.dll
@@ -233,25 +236,18 @@ Var installTopologicEnergy
     File ..\output\x64\Release\TopologicDynamo.xml
     File ..\output\x64\Release\TopologicDynamo_DynamoCustomization.xml
 
-	${If} $installTopologicEnergy <> 0	
-		File ..\output\x64\Release\TopologicEnergy.dll
-		File ..\output\x64\Release\TopologicEnergy.customization.dll
-		File ..\output\x64\Release\TopologicEnergy.xml
-		File ..\output\x64\Release\TopologicEnergy_DynamoCustomization.xml
-		File ..\output\x64\Release\OpenStudio.dll
-		File ..\output\x64\Release\openstudio_csharp.dll
-		File ..\output\x64\Release\openstudio_translators_csharp.dll
-	${EndIf}
-	
 	Call CheckVCRedistributable
-    WriteUninstaller "$path\Uninstall.exe"
-!macroend
-
-
-Section "TopologicDynamo" SectionTopologicDynamo
+    WriteUninstaller "$path\packages\Topologic\Uninstall.exe"
 SectionEnd
-Section "TopologicEnergy" SectionTopologicEnergy
-	StrCpy $installTopologicEnergy 1
+
+Section "TopologicEnergy" SectionTopologicEnergy	
+	File ..\output\x64\Release\TopologicEnergy.dll
+	File ..\output\x64\Release\TopologicEnergy.customization.dll
+	File ..\output\x64\Release\TopologicEnergy.xml
+	File ..\output\x64\Release\TopologicEnergy_DynamoCustomization.xml
+	File ..\output\x64\Release\OpenStudio.dll
+	File ..\output\x64\Release\openstudio_csharp.dll
+	File ..\output\x64\Release\openstudio_translators_csharp.dll
 SectionEnd
 	
 ; SectionGroup "Dynamo version" SectionGroupDynamoVersion
@@ -304,12 +300,7 @@ SectionEnd
 Function .onInit
   IntOp $R0 ${SF_RO} | ${SF_SELECTED}
   SectionSetFlags ${SectionTopologicDynamo} $R0
-  
   SectionSetFlags ${SectionTopologicEnergy} 0
-  ; SectionSetFlags ${SectionDynamo2Dot0} 0
-  ; SectionSetFlags ${SectionDynamo2Dot1} 0
-  ; SectionSetFlags ${SectionDynamo2Dot2} 0
-  ; SectionSetFlags ${SectionDynamo2Dot3} 0
   
 FunctionEnd
 
@@ -354,19 +345,6 @@ FunctionEnd
 ;--------------------------------
 ;Descriptions
 
-  ;Language strings
-  LangString DESC_Dynamo2Dot0 ${LANG_ENGLISH} "Installs Topologic as a Dynamo 2.0 package."
-  LangString DESC_Dynamo2Dot1 ${LANG_ENGLISH} "Installs Topologic as a Dynamo 2.1 package."
-  LangString DESC_Dynamo2Dot2 ${LANG_ENGLISH} "Installs Topologic as a Dynamo 2.2 package."
-  LangString DESC_Dynamo2Dot3 ${LANG_ENGLISH} "Installs Topologic as a Dynamo 2.3 package."
-
-  ;Assign language strings to sections
-  !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-    !insertmacro MUI_DESCRIPTION_TEXT ${SectionDynamo2Dot0} $(DESC_Dynamo2Dot0)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SectionDynamo2Dot1} $(DESC_Dynamo2Dot1)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SectionDynamo2Dot2} $(DESC_Dynamo2Dot2)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SectionDynamo2Dot3} $(DESC_Dynamo2Dot3)
-  !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ;--------------------------------
 ;Uninstaller Section
