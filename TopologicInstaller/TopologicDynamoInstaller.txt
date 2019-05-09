@@ -7,6 +7,11 @@
 
   !include "MUI2.nsh"
   !include "Sections.nsh"
+  !include "LogicLib.nsh"
+  !include "NSISList.nsh"
+  !include "WinMessages.nsh"
+  ReserveFile "${NSISDIR}\Plugins\NSISList.dll"
+ 
 
 ;--------------------------------
 ;General
@@ -27,6 +32,72 @@
 
   !define MUI_ABORTWARNING
 
+; https://nsis-dev.github.io/NSIS-Forums/html/t-321778.html
+!define __NSD_ListBoxMultiselect_CLASS LISTBOX
+!define __NSD_ListBoxMultiselect_STYLE ${DEFAULT_STYLES}|${WS_TABSTOP}|${WS_VSCROLL}|${LBS_DISABLENOSCROLL}|${LBS_HASSTRINGS}|${LBS_NOINTEGRALHEIGHT}|${LBS_NOTIFY}|${LBS_MULTIPLESEL}
+!define __NSD_ListBoxMultiselect_EXSTYLE ${WS_EX_WINDOWEDGE}|${WS_EX_CLIENTEDGE}
+!insertmacro __NSD_DefineControl ListBoxMultiselect 
+
+; https://nsis.sourceforge.io/Validation_Function
+!define Validate "!insertmacro Validate"
+ 
+!macro Validate ResultVar String CharacterSet
+	Push "${String}"
+	Push "${CharacterSet}"
+	Call ValidateInternal
+	Pop "${ResultVar}"
+!macroend
+ 
+ 
+!define ALPHA "abcdefghijklmnopqrstuvwxyz "
+!define NUMERIC "1234567890"
+!define SPECIAL "~!@#$%^&*()_+|`\=-}{$\":?><][';/.," # workaround for syntax highlighting - '
+ 
+;Push "value to check"
+;Push "comparisonlist"
+Function ValidateInternal 
+  Push $0
+  Push $1
+  Push $2
+  Push $3 ;value length
+  Push $4 ;count 1
+  Push $5 ;tmp var 1
+  Push $6 ;list length
+  Push $7 ;count 2
+  Push $8 ;tmp var 2
+  Exch 9
+  Pop $1 ;list
+  Exch 9
+  Pop $2 ;value
+  StrCpy $0 1
+  StrLen $3 $2
+  StrLen $6 $1
+  StrCpy $4 0
+  lbl_loop:
+    StrCpy $5 $2 1 $4
+    StrCpy $7 0
+    lbl_loop2:
+      StrCpy $8 $1 1 $7
+      StrCmp $5 $8 lbl_loop_next 0
+      IntOp $7 $7 + 1
+      IntCmp $7 $6 lbl_loop2 lbl_loop2 lbl_error
+  lbl_loop_next:
+  IntOp $4 $4 + 1
+  IntCmp $4 $3 lbl_loop lbl_loop lbl_done
+  lbl_error:
+  StrCpy $0 0
+  lbl_done:
+  Pop $6
+  Pop $5
+  Pop $4
+  Pop $3
+  Pop $2
+  Pop $1
+  Exch 2
+  Pop $7
+  Pop $8
+  Exch $0
+FunctionEnd
 ;--------------------------------
 ;Pages
   ;!define MUI_WELCOMEPAGE_TITLE "Test"
@@ -41,6 +112,8 @@
   !insertmacro MUI_PAGE_WELCOME
   !insertmacro MUI_PAGE_LICENSE "TopologicLicense.rtf"
   !insertmacro MUI_PAGE_COMPONENTS
+  ;!insertmacro MUI_PAGE_DIRECTORY
+  Page custom FunctionInstallVersionEnter FunctionInstallVersionLeave ;Custom page
   !insertmacro MUI_PAGE_INSTFILES
   
   !insertmacro MUI_UNPAGE_CONFIRM
@@ -53,9 +126,101 @@
 
 ;--------------------------------
 ;Installer Sections
+LangString PAGE_TITLE ${LANG_ENGLISH} "Choose Install Location"
+LangString PAGE_SUBTITLE ${LANG_ENGLISH} "Choose the Dynamo version to install Topologic."
+Var Dialog
+Var Label
+Var ListBoxHWND ;the displayed list box shows the Dynamo versions
+Var HiddenPathListBoxHWND ;stores the path, hidden
 Var path
-Var installTopologicEnergy
 
+Function FunctionInstallVersionEnter
+  !insertmacro MUI_HEADER_TEXT $(PAGE_TITLE) $(PAGE_SUBTITLE)
+  nsDialogs::Create 1018
+  Pop $Dialog
+
+  ${NSD_CreateLabel} 0 0 100% 13% "Setup will install Topologic for the following Dynamo versions. Click Next to continue."
+  Pop $Label
+  
+  ${NSD_CreateListBox} 0 14% 100% 86% "Dynamo versions"
+  Pop $ListBoxHWND
+  
+  ${NSD_CreateListBox} 0 0 0 0 "Hidden Dynamo paths"
+  Pop $HiddenPathListBoxHWND
+  ShowWindow $HiddenPathListBoxHWND ${SW_HIDE} # start out hidden
+
+  ${If} ListBoxHWND != error
+    ${If} ${FileExists} "$APPDATA\Dynamo\Dynamo Core\*.*"
+		FindFirst $0 $1 "$APPDATA\Dynamo\Dynamo Core\*.*"
+		loopCore:
+		StrCmp $1 "" doneCore
+		StrCmp $1 "." nextCore
+		StrCmp $1 ".." nextCore
+		
+		; get the first letter. only consider number
+		StrCpy $2 $1 1 0
+		${Validate} $3 $2 ${NUMERIC}
+		StrCmp $3 "0" nextCore
+		
+		${If} ${FileExists} "$APPDATA\Dynamo\Dynamo Core\$1\*.*"
+			${NSD_LB_AppendString} $ListBoxHWND "Dynamo Core $1"
+			${NSD_LB_AppendString} $HiddenPathListBoxHWND "$APPDATA\Dynamo\Dynamo Core\$1\"
+		${EndIf}
+		nextCore:
+		FindNext $0 $1
+		Goto loopCore
+		doneCore:
+		FindClose $0
+	${EndIf}
+	
+    ${If} ${FileExists} "$APPDATA\Dynamo\Dynamo Revit\*.*"
+		FindFirst $0 $1 "$APPDATA\Dynamo\Dynamo Revit\*.*"
+		loopRevit:
+		StrCmp $1 "" doneRevit
+		StrCmp $1 "." nextRevit
+		StrCmp $1 ".." nextRevit
+		
+		; get the first letter. only consider number
+		StrCpy $2 $1 1 0
+		${Validate} $3 $2 ${NUMERIC}
+		StrCmp $3 "0" nextRevit
+
+		${If} ${FileExists} "$APPDATA\Dynamo\Dynamo Revit\$1\*.*"
+			${NSD_LB_AppendString} $ListBoxHWND "Dynamo Revit $1"
+			${NSD_LB_AppendString} $HiddenPathListBoxHWND "$APPDATA\Dynamo\Dynamo Revit\$1\"
+		${EndIf}
+		nextRevit:
+		FindNext $0 $1
+		Goto loopRevit
+		doneRevit:
+		FindClose $0
+	${EndIf}
+	
+	${NSD_LB_GetCount} ${ListBoxHWND} $0
+	${If} $0 != 0
+		MessageBox MB_OK "No Dynamo packages folder is found. Aborting."
+		Abort
+	${Else}
+		System::Call user32::SendMessage(i$ListBoxHWND,i${LB_SETCURSEL},0,0)
+		System::Call user32::SendMessage(i$HiddenPathListBoxHWND,i${LB_SETCURSEL},0,0)
+	${EndIf}
+
+  ${Else}
+    MessageBox MB_OK "Error showing Dynamo version options."  
+  ${EndIf}
+  
+  nsDialogs::Show
+FunctionEnd
+
+Var LB_output
+Function FunctionInstallVersionLeave
+  #${NSD_LB_GetSelection} $ListBoxHWND $LB_output
+  ${NSD_LB_GetSelectionIndex} $ListBoxHWND $LB_output
+  System::Call user32::SendMessage(i$HiddenPathListBoxHWND,i${LB_GETTEXT},i$LB_output,t.r0)
+  StrCpy $path $0
+FunctionEnd
+
+Var installTopologicEnergy
 
 !macro InstallTopologic
   SetOutPath "$path"
@@ -83,55 +248,53 @@ Var installTopologicEnergy
 !macroend
 
 
-SectionGroup "Topologic Packages" SectionGroupTopologicPackages
-	Section "TopologicDynamo" SectionTopologicDynamo
-	SectionEnd
-	Section "TopologicEnergy" SectionTopologicEnergy
-		StrCpy $installTopologicEnergy 1
-	SectionEnd
-SectionGroupEnd
+Section "TopologicDynamo" SectionTopologicDynamo
+SectionEnd
+Section "TopologicEnergy" SectionTopologicEnergy
+	StrCpy $installTopologicEnergy 1
+SectionEnd
+	
+; SectionGroup "Dynamo version" SectionGroupDynamoVersion
+	; Section "For Dynamo 2.0" SectionDynamo2Dot0
+	  ; SetOutPath "$APPDATA\Dynamo\Dynamo Core\2.0\packages\Topologic"
+	  ; File pkg.json
+	  ; CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.0\packages\Topologic\bin"
+	  ; CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.0\packages\Topologic\dyf"
+	  ; CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.0\packages\Topologic\extra"
+	  ; StrCpy $path "$APPDATA\Dynamo\Dynamo Core\2.0\packages\Topologic\bin"
+	  ; !insertmacro InstallTopologic
+	; SectionEnd
 
-SectionGroup "Dynamo version" SectionGroupDynamoVersion
-	Section "For Dynamo 2.0" SectionDynamo2Dot0
-	  SetOutPath "$APPDATA\Dynamo\Dynamo Core\2.0\packages\Topologic"
-	  File pkg.json
-	  CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.0\packages\Topologic\bin"
-	  CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.0\packages\Topologic\dyf"
-	  CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.0\packages\Topologic\extra"
-	  StrCpy $path "$APPDATA\Dynamo\Dynamo Core\2.0\packages\Topologic\bin"
-	  !insertmacro InstallTopologic
-	SectionEnd
-
-	Section "For Dynamo 2.1" SectionDynamo2Dot1
-	  SetOutPath "$APPDATA\Dynamo\Dynamo Core\2.1\packages\Topologic"
-	  File pkg.json
-	  CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.1\packages\Topologic\bin"
-	  CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.1\packages\Topologic\dyf"
-	  CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.1\packages\Topologic\extra"
-	  StrCpy $path "$APPDATA\Dynamo\Dynamo Core\2.1\packages\Topologic\bin"
-	  !insertmacro InstallTopologic
-	SectionEnd 
+	; Section "For Dynamo 2.1" SectionDynamo2Dot1
+	  ; SetOutPath "$APPDATA\Dynamo\Dynamo Core\2.1\packages\Topologic"
+	  ; File pkg.json
+	  ; CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.1\packages\Topologic\bin"
+	  ; CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.1\packages\Topologic\dyf"
+	  ; CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.1\packages\Topologic\extra"
+	  ; StrCpy $path "$APPDATA\Dynamo\Dynamo Core\2.1\packages\Topologic\bin"
+	  ; !insertmacro InstallTopologic
+	; SectionEnd 
 	 
-	Section "For Dynamo 2.2" SectionDynamo2Dot2
-	  SetOutPath "$APPDATA\Dynamo\Dynamo Core\2.2\packages\Topologic"
-	  File pkg.json
-	  CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.2\packages\Topologic\bin"
-	  CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.2\packages\Topologic\dyf"
-	  CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.2\packages\Topologic\extra"
-	  StrCpy $path "$APPDATA\Dynamo\Dynamo Core\2.2\packages\Topologic\bin"
-	  !insertmacro InstallTopologic
-	SectionEnd
+	; Section "For Dynamo 2.2" SectionDynamo2Dot2
+	  ; SetOutPath "$APPDATA\Dynamo\Dynamo Core\2.2\packages\Topologic"
+	  ; File pkg.json
+	  ; CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.2\packages\Topologic\bin"
+	  ; CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.2\packages\Topologic\dyf"
+	  ; CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.2\packages\Topologic\extra"
+	  ; StrCpy $path "$APPDATA\Dynamo\Dynamo Core\2.2\packages\Topologic\bin"
+	  ; !insertmacro InstallTopologic
+	; SectionEnd
 
-	Section "For Dynamo 2.3" SectionDynamo2Dot3
-	  SetOutPath "$APPDATA\Dynamo\Dynamo Core\2.3\packages\Topologic"
-	  File pkg.json
-	  CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.3\packages\Topologic\bin"
-	  CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.3\packages\Topologic\dyf"
-	  CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.3\packages\Topologic\extra"
-	  StrCpy $path "$APPDATA\Dynamo\Dynamo Core\2.3\packages\Topologic"
-	  !insertmacro InstallTopologic
-	SectionEnd 
-SectionGroupEnd
+	; Section "For Dynamo 2.3" SectionDynamo2Dot3
+	  ; SetOutPath "$APPDATA\Dynamo\Dynamo Core\2.3\packages\Topologic"
+	  ; File pkg.json
+	  ; CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.3\packages\Topologic\bin"
+	  ; CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.3\packages\Topologic\dyf"
+	  ; CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.3\packages\Topologic\extra"
+	  ; StrCpy $path "$APPDATA\Dynamo\Dynamo Core\2.3\packages\Topologic"
+	  ; !insertmacro InstallTopologic
+	; SectionEnd 
+; SectionGroupEnd
 
 
 ;Section #hidden, run after all other sections
@@ -143,10 +306,10 @@ Function .onInit
   SectionSetFlags ${SectionTopologicDynamo} $R0
   
   SectionSetFlags ${SectionTopologicEnergy} 0
-  SectionSetFlags ${SectionDynamo2Dot0} 0
-  SectionSetFlags ${SectionDynamo2Dot1} 0
-  SectionSetFlags ${SectionDynamo2Dot2} 0
-  SectionSetFlags ${SectionDynamo2Dot3} 0
+  ; SectionSetFlags ${SectionDynamo2Dot0} 0
+  ; SectionSetFlags ${SectionDynamo2Dot1} 0
+  ; SectionSetFlags ${SectionDynamo2Dot2} 0
+  ; SectionSetFlags ${SectionDynamo2Dot3} 0
   
 FunctionEnd
 
