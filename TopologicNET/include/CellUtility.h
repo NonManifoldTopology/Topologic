@@ -46,6 +46,9 @@ namespace Topologic {
 			/// <param name="yAxisX">The X component of the Y-axis</param>
 			/// <param name="ZAxisX">The X component of the Z-axis</param>
 			/// <returns name="Cell">The created Cell</returns>
+#ifdef TOPOLOGIC_DYNAMO
+			[IsVisibleInDynamoLibrary(false)]
+#endif
 			static Cell^ ByCuboid(double xCentroid, double yCentroid, double zCentroid,
 				double xDimension, double yDimension, double zDimension,
 				double xNormal, double yNormal, double zNormal,
@@ -59,6 +62,9 @@ namespace Topologic {
 			/// <param name="zCentroid">The Z coordinate of the centroid</param>
 			/// <param name="radius">The radius of the Sphere</param>
 			/// <returns name="Cell">The created Cell</returns>
+#ifdef TOPOLOGIC_DYNAMO
+			[IsVisibleInDynamoLibrary(false)]
+#endif
 			static Cell^ BySphere(double xCentroid, double yCentroid, double zCentroid, double radius);
 
 			/// <summary>
@@ -67,6 +73,9 @@ namespace Topologic {
 			/// <param name="minVertex">The minimum Vertex</param>
 			/// <param name="maxVertex">The maximum Vertex</param>
 			/// <returns name="Cell">The created Cell</returns>
+#ifdef TOPOLOGIC_DYNAMO
+			[IsVisibleInDynamoLibrary(false)]
+#endif
 			static Cell ^ ByTwoCorners(Vertex ^ minVertex, Vertex ^ maxVertex);
 
 			/// <summary>

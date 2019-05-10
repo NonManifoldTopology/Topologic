@@ -88,7 +88,7 @@ namespace TopologicEnergy
 
 		osModel->purgeUnusedResourceObjects();
 
-		return gcnew EnergyModel(osModel, osBuilding, pBuildingCells, osSpaces);
+		return gcnew EnergyModel(osModel, osBuilding, pBuildingCells, shadingSurfaces, osSpaces);
 	}
 
 	//EnergySimulation^ EnergyModel::Simulate(EnergyModel ^ energyModel, String ^ openStudioExePath, String ^ openStudioOutputDirectory, bool run)
@@ -123,6 +123,102 @@ namespace TopologicEnergy
 	{
 		String^ oswPath = nullptr;
 		Export(energyModel, openStudioOutputDirectory, oswPath);
+	}
+
+	EnergyModel ^ EnergyModel::Import(String ^ osmFile, double tolerance)
+	{
+		OpenStudio::Path^ osOsmFile = gcnew OpenStudio::Path(osmFile);
+
+		// Create an abstract model
+		OpenStudio::OptionalModel^ osOptionalModel = OpenStudio::Model::load(osOsmFile);
+		if (osOptionalModel->isNull())
+		{
+			return nullptr;
+		}
+
+		OpenStudio::Model^ osModel = osOptionalModel->get(); //1
+		if (osModel == nullptr)
+		{
+			return nullptr;
+		}
+
+		OpenStudio::Building^ osBuilding = osModel->getBuilding(); // 2
+		OpenStudio::SpaceVector^ osSpaceVector = osModel->getSpaces(); // 3
+		OpenStudio::SpaceVector::SpaceVectorEnumerator^ spaceEnumerator = osSpaceVector->GetEnumerator();
+		List<OpenStudio::Space^>^ osSpaces = gcnew List<OpenStudio::Space^>();
+		while (spaceEnumerator->MoveNext())
+		{
+			osSpaces->Add(spaceEnumerator->Current);
+		}
+
+		// 4. Get shading surfaces as a cluster
+		OpenStudio::ShadingSurfaceVector^ osShadingSurfaceVector = osModel->getShadingSurfaces(); //4
+		OpenStudio::ShadingSurfaceVector::ShadingSurfaceVectorEnumerator^ shadingSurfaceEnumerator = osShadingSurfaceVector->GetEnumerator();
+		List<Topologic::Topology^>^ shadingFaceList = gcnew List<Topologic::Topology^>();
+		while (shadingSurfaceEnumerator->MoveNext())
+		{
+			OpenStudio::ShadingSurface^ osShadingSurface = shadingSurfaceEnumerator->Current;
+			Face^ shadingFace = FaceByOsSurface(osShadingSurface);
+			shadingFaceList->Add(shadingFace);
+		}
+		Topologic::Cluster^ shadingFaces = nullptr;
+		if (shadingFaceList->Count > 0)
+		{
+			shadingFaces = Topologic::Cluster::ByTopologies(shadingFaceList);
+		}
+
+		// 5. Get building spaces as a CellComplex
+		OpenStudio::SpaceVector::SpaceVectorEnumerator^ osSpaceEnumerator = osSpaceVector->GetEnumerator();
+		List<Topologic::Cell^>^ cellList = gcnew List<Topologic::Cell^>();
+		while (osSpaceEnumerator->MoveNext())
+		{
+			OpenStudio::Space^ osSpace = osSpaceEnumerator->Current;
+			OpenStudio::SurfaceVector^ osSurfaces = osSpace->surfaces;
+			OpenStudio::SurfaceVector::SurfaceVectorEnumerator^ osSurfaceEnumerator = osSurfaces->GetEnumerator();
+			List<Topologic::Face^>^ faceList = gcnew List<Topologic::Face^>();
+			while (osSurfaceEnumerator->MoveNext())
+			{
+				OpenStudio::Surface^ osSurface = osSurfaceEnumerator->Current;
+				Face^ face = FaceByOsSurface(osSurface);
+				
+				// Subsurfaces
+				OpenStudio::SubSurfaceVector^ osSubSurfaces = osSurface->subSurfaces();
+				OpenStudio::SubSurfaceVector::SubSurfaceVectorEnumerator^ osSubSurfaceEnumerator = osSubSurfaces->GetEnumerator();
+				List<Topologic::Topology^>^ faceApertureList = gcnew List<Topologic::Topology^>();
+				while (osSubSurfaceEnumerator->MoveNext())
+				{
+					OpenStudio::SubSurface^ osSubSurface = osSubSurfaceEnumerator->Current;
+					Face^ subFace = FaceByOsSurface(osSubSurface);
+					faceApertureList->Add(subFace);
+				}
+				Topology^ topologyWithApertures = face->AddApertures(faceApertureList);
+				try {
+					Face^ faceWithApertures = safe_cast<Topologic::Face^>(topologyWithApertures);
+
+					faceList->Add(faceWithApertures);
+				}
+				catch (Exception^)
+				{
+					throw gcnew Exception("Error converting a topology with apertures to a face.");
+				}
+			}
+
+			Cell^ cell = Cell::ByFaces(faceList, tolerance);
+			cellList->Add(cell);
+		}
+
+		List<Topologic::Cell^>^ buildingCells = gcnew List<Topologic::Cell^>();
+		if (cellList->Count == 1)
+		{
+			buildingCells->Add(cellList[0]);
+		}
+		else
+		{
+			CellComplex^ cellComplex = CellComplex::ByCells(cellList);
+			buildingCells = cellComplex->Cells;
+		}
+
+		return gcnew EnergyModel(osModel, osBuilding, buildingCells, shadingFaces, osSpaces);
 	}
 
 	bool EnergyModel::SaveModel(OpenStudio::Model^ osModel, String^ osmPathName)
@@ -301,6 +397,50 @@ namespace TopologicEnergy
 			throw gcnew Exception("Fails to create an SQL output file");
 		}
 		return osSqlFile;
+	}
+
+	Topologic::Face ^ EnergyModel::FaceByOsSurface(OpenStudio::PlanarSurface^ osPlanarSurface)
+	{
+		OpenStudio::Point3dVector^ osVertices = osPlanarSurface->vertices();
+		OpenStudio::Point3dVector::Point3dVectorEnumerator^ osPointEnumerator = osVertices->GetEnumerator();
+		List<Topologic::Vertex^>^ vertices = gcnew List<Topologic::Vertex^>();
+		List<int>^ indices = gcnew List<int>();
+		int index = 0;
+		while (osPointEnumerator->MoveNext())
+		{
+			OpenStudio::Point3d^ osVertex = osPointEnumerator->Current;
+			vertices->Add(Topologic::Vertex::ByCoordinates(osVertex->x(), osVertex->y(), osVertex->z()));
+			indices->Add(index);
+			++index;
+		}
+
+		if (vertices->Count < 3)
+		{
+			throw gcnew Exception("Invalid surface is found.");
+		}
+
+		indices->Add(0); // close the wire
+
+		List<List<int>^>^ vertexIndices = gcnew List<List<int>^>();
+		vertexIndices->Add(indices);
+
+		List<Topologic::Topology^>^ topologies = Topologic::Topology::ByVerticesIndices(vertices, vertexIndices);
+
+		if (topologies == nullptr || topologies->Count == 0)
+		{
+			throw gcnew Exception("Error creating a topology from a surface.");
+		}
+
+		Topologic::Face^ face = nullptr;
+		try {
+			face = safe_cast<Topologic::Face^>(topologies[0]);
+		}
+		catch (Exception^)
+		{
+			throw gcnew Exception("Error converting a topology to a face.");
+		}
+
+		return face;
 	}
 
 	//List<Modifiers::GeometryColor^>^ EnergyModel::AnalyzeSqlFile(OpenStudio::SqlFile ^ osSqlFile, OpenStudio::Model^ osModel, List<OpenStudio::Space^>^ spaces, List<Cell^>^ buildingCells,
@@ -1156,11 +1296,12 @@ namespace TopologicEnergy
 		return osName->get();
 	}
 
-	EnergyModel::EnergyModel(OpenStudio::Model^ osModel, OpenStudio::Building^ osBuilding, List<Topologic::Cell^>^ pBuildingCells, List<OpenStudio::Space^>^ osSpaces)
+	EnergyModel::EnergyModel(OpenStudio::Model^ osModel, OpenStudio::Building^ osBuilding, List<Topologic::Cell^>^ pBuildingCells, Cluster^ shadingSurfaces, List<OpenStudio::Space^>^ osSpaces)
 		: m_osModel(osModel)
 		, m_osBuilding(osBuilding)
 		, m_buildingCells(pBuildingCells)
 		, m_osSpaces(osSpaces)
+		, m_shadingSurfaces(shadingSurfaces)
 	{
 
 	}

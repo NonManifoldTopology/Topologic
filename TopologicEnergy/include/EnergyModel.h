@@ -64,6 +64,8 @@ namespace TopologicEnergy
 		static EnergySimulation^ Simulate(EnergyModel^ energyModel, String^ openStudioExePath, String ^ openStudioOutputDirectory, bool run);*/
 		
 		static void Export(EnergyModel^ energyModel, String^ openStudioOutputDirectory);
+		
+		static EnergyModel^ Import(String^ osmFile, [Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")] double tolerance);
 
 	public protected:
 		//static DSCore::Color^ GetColor(double ratio, int alpha);
@@ -95,7 +97,7 @@ namespace TopologicEnergy
 
 
 	private:
-		EnergyModel(OpenStudio::Model^ osModel, OpenStudio::Building^ osBuilding, List<Topologic::Cell^>^ pBuildingCells, List<OpenStudio::Space^>^ osSpaces);
+		EnergyModel(OpenStudio::Model^ osModel, OpenStudio::Building^ osBuilding, List<Topologic::Cell^>^ pBuildingCells, Cluster^ shadingSurfaces, List<OpenStudio::Space^>^ osSpaces);
 		~EnergyModel() {}
 
 		/// <summary>
@@ -188,6 +190,8 @@ namespace TopologicEnergy
 
 		static OpenStudio::SqlFile^ CreateSqlFile(OpenStudio::Model^ osModel, String^ sqlFilePath);
 
+		static Topologic::Face^ FaceByOsSurface(OpenStudio::PlanarSurface^ osPlanarSurface);
+
 		/*static List<Modifiers::GeometryColor^>^ AnalyzeSqlFile(OpenStudio::SqlFile^ osSqlFile, OpenStudio::Model^ osModel, List<OpenStudio::Space^>^ spaces, List<Cell^>^ buildingCells,
 			String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPUnits);*/
 
@@ -199,6 +203,7 @@ namespace TopologicEnergy
 		static int numOfAppliedApertures;
 
 		List<Topologic::Cell^>^ m_buildingCells;
+		Cluster^ m_shadingSurfaces;
 		List<OpenStudio::Space^>^ m_osSpaces;
 		OpenStudio::Model^ m_osModel;
 		OpenStudio::Building^ m_osBuilding;

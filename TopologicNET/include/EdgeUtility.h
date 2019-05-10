@@ -33,6 +33,9 @@ namespace Topologic {
 			/// <param name="normalY">The Y component of the circle's normal</param>
 			/// <param name="normalZ">The Z component of the circle's normal</param>
 			/// <returns>The created Edge</returns>
+#ifdef TOPOLOGIC_DYNAMO
+			[IsVisibleInDynamoLibrary(false)]
+#endif
 			static Edge^ ByCircle(
 				Vertex^ centerPoint, double radius,
 				double xAxisX, double xAxisY, double xAxisZ,
@@ -51,11 +54,17 @@ namespace Topologic {
 			/// <param name="normalY">The Y component of the ellipse's normal</param>
 			/// <param name="normalZ">The Z component of the ellipse's normal</param>
 			/// <returns>The created Edge</returns>
+#ifdef TOPOLOGIC_DYNAMO
+			[IsVisibleInDynamoLibrary(false)]
+#endif
 			static Edge^ ByEllipse(
 				Vertex^ centerPoint, double majorRadius, double minorRadius,
 				double xAxisX, double xAxisY, double xAxisZ,
 				double normalX, double normalY, double normalZ);
-			
+
+#ifdef TOPOLOGIC_DYNAMO
+			[IsVisibleInDynamoLibrary(false)]
+#endif	
 			static Edge^ ByNurbsCurve(
 				List<Vertex^>^ controlPoints, 
 				List<double>^ knots,

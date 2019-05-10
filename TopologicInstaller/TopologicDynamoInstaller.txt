@@ -139,10 +139,10 @@ Function FunctionInstallVersionEnter
   nsDialogs::Create 1018
   Pop $Dialog
 
-  ${NSD_CreateLabel} 0 0 100% 13% "Setup will install Topologic for the following Dynamo versions. Click Next to continue."
+  ${NSD_CreateLabel} 0 0 100% 18% "The installer found the following versions of Dynamo installed on your system. Please select the version for which to install Topologic. You can install for additional versions by re-running this installer."
   Pop $Label
   
-  ${NSD_CreateListBox} 0 14% 100% 86% "Dynamo versions"
+  ${NSD_CreateListBox} 0 19% 100% 81% "Dynamo versions"
   Pop $ListBoxHWND
   
   ${NSD_CreateListBox} 0 0 0 0 "Hidden Dynamo paths"
@@ -250,53 +250,6 @@ Section "TopologicEnergy" SectionTopologicEnergy
 	File ..\output\x64\Release\openstudio_translators_csharp.dll
 SectionEnd
 	
-; SectionGroup "Dynamo version" SectionGroupDynamoVersion
-	; Section "For Dynamo 2.0" SectionDynamo2Dot0
-	  ; SetOutPath "$APPDATA\Dynamo\Dynamo Core\2.0\packages\Topologic"
-	  ; File pkg.json
-	  ; CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.0\packages\Topologic\bin"
-	  ; CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.0\packages\Topologic\dyf"
-	  ; CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.0\packages\Topologic\extra"
-	  ; StrCpy $path "$APPDATA\Dynamo\Dynamo Core\2.0\packages\Topologic\bin"
-	  ; !insertmacro InstallTopologic
-	; SectionEnd
-
-	; Section "For Dynamo 2.1" SectionDynamo2Dot1
-	  ; SetOutPath "$APPDATA\Dynamo\Dynamo Core\2.1\packages\Topologic"
-	  ; File pkg.json
-	  ; CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.1\packages\Topologic\bin"
-	  ; CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.1\packages\Topologic\dyf"
-	  ; CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.1\packages\Topologic\extra"
-	  ; StrCpy $path "$APPDATA\Dynamo\Dynamo Core\2.1\packages\Topologic\bin"
-	  ; !insertmacro InstallTopologic
-	; SectionEnd 
-	 
-	; Section "For Dynamo 2.2" SectionDynamo2Dot2
-	  ; SetOutPath "$APPDATA\Dynamo\Dynamo Core\2.2\packages\Topologic"
-	  ; File pkg.json
-	  ; CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.2\packages\Topologic\bin"
-	  ; CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.2\packages\Topologic\dyf"
-	  ; CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.2\packages\Topologic\extra"
-	  ; StrCpy $path "$APPDATA\Dynamo\Dynamo Core\2.2\packages\Topologic\bin"
-	  ; !insertmacro InstallTopologic
-	; SectionEnd
-
-	; Section "For Dynamo 2.3" SectionDynamo2Dot3
-	  ; SetOutPath "$APPDATA\Dynamo\Dynamo Core\2.3\packages\Topologic"
-	  ; File pkg.json
-	  ; CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.3\packages\Topologic\bin"
-	  ; CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.3\packages\Topologic\dyf"
-	  ; CreateDirectory "$APPDATA\Dynamo\Dynamo Core\2.3\packages\Topologic\extra"
-	  ; StrCpy $path "$APPDATA\Dynamo\Dynamo Core\2.3\packages\Topologic"
-	  ; !insertmacro InstallTopologic
-	; SectionEnd 
-; SectionGroupEnd
-
-
-;Section #hidden, run after all other sections
-  ;WriteUninstaller "$path\Uninstall.exe"
-;SectionEnd
-
 Function .onInit
   IntOp $R0 ${SF_RO} | ${SF_SELECTED}
   SectionSetFlags ${SectionTopologicDynamo} $R0
