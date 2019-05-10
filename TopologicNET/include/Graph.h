@@ -15,6 +15,9 @@ namespace Topologic {
 	ref class Wire;
 	ref class Topology;
 
+	/// <summary>
+	/// A Graph consists of a set of Vertices and a set of Edges that connect the Vertices. It can be a Wire, Vertex, Edge or Cluster and is defined by the input Topology. It can be manifold or non-manifold.
+	/// </summary>
 	public ref class Graph
 	{
 	public:
@@ -23,10 +26,10 @@ namespace Topologic {
 		/// Creates a Graph from any topology.
 		/// </summary>
 		/// <param name="direct"></param>
-		/// <param name="viaSharedTopologies"></param>
-		/// <param name="viaSharedApertures"></param>
-		/// <param name="viaSharedTopologies"></param>
-		/// <param name="viaSharedApertures"></param>
+		/// <param name="viaSharedTopologies">Use shared Topologies</param>
+		/// <param name="viaSharedApertures">Use shared Apertures</param>
+		/// <param name="toExteriorTopologies">Use exterior Topologies</param>
+		/// <param name="toExteriorApertures">Use exterior Apertures</param>
 		/// <returns name="Graph">The created Graph</returns>
 #ifdef TOPOLOGIC_DYNAMO
 		static Graph^ ByTopology(
@@ -124,7 +127,7 @@ namespace Topologic {
 			double tolerance);
 
 		/// <summary>
-		/// Connects the two input vertices with an Edge.
+		/// Connects the two input Vertices with an Edge.
 		/// </summary>
 		/// <param name="vertex1">The first Vertex</param>
 		/// <param name="vertex2">The second Vertex</param>
@@ -139,7 +142,7 @@ namespace Topologic {
 			double tolerance);
 
 		/// <summary>
-		/// Returns the number of edges connected to the input Vertex.
+		/// Returns the number of Edges connected to the input Vertex.
 		/// </summary>
 		/// <param name="vertex">The input Vertex</param>
 		/// <returns name="int">The degree of a Vertex</returns>
@@ -149,7 +152,7 @@ namespace Topologic {
 		/// Returns a list of Vertices that are connected to the input Vertex by an Edge.
 		/// </summary>
 		/// <param name="vertex">The input Vertex</param>
-		/// <returns name="Vertex[]">The vertices adjacent to a Vertex</returns>
+		/// <returns name="Vertex[]">The Vertices adjacent to a Vertex</returns>
 		List<Vertex^>^ AdjacentVertices(Vertex^ vertex);
 
 		/// <summary>
@@ -186,7 +189,7 @@ namespace Topologic {
 		}
 
 		/// <summary>
-		/// Returns the ratio of the number of Edges and the total number of Edges, the Graph could have.
+		/// Returns the ratio of the number of Edges to the total number of Edges the Graph could have.
 		/// </summary>
 		/// <returns name="double">The graph's density</returns>
 		property double Density
@@ -246,7 +249,7 @@ namespace Topologic {
 			Nullable<int> timeLimitInSeconds);
 
 		/// <summary>
-		/// Returns the first Path it finds between the input vertices.
+		/// Returns the first Path found between the input vertices.
 		/// </summary>
 		/// <param name="startVertex">The start Vertex</param>
 		/// <param name="endVertex">The end Vertex</param>
@@ -305,7 +308,7 @@ namespace Topologic {
 		/// Returns the Edge, if one exists, that connects the two input Vertices.
 		/// </summary>
 		/// <param name="vertex1">The first Vertex</param>
-		/// <param name="vertex2">The secondVertex</param>
+		/// <param name="vertex2">The second Vertex</param>
 		/// <param name="tolerance">A positive tolerance value</param>
 		/// <returns name="Edge">The Edge connecting the two Vertices</returns>
 		Edge^ EdgeAtVertices(Vertex^ vertex1, Vertex^ vertex2,
