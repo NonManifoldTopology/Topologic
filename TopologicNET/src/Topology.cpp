@@ -176,16 +176,6 @@ namespace Topologic
 			throw gcnew NotImplementedException("This geometry is not currently handled.");
 		}
 
-		Autodesk::DesignScript::Geometry::CoordinateSystem^ pDynamoCoordinateSystem = geometry->ContextCoordinateSystem;
-		
-		topology = Utilities::TopologyUtility::Translate(
-			topology,
-			pDynamoCoordinateSystem->Origin->X,
-			pDynamoCoordinateSystem->Origin->Y,
-			pDynamoCoordinateSystem->Origin->Z
-			);
-
-		delete pDynamoCoordinateSystem;
 		return topology;
 	}
 
