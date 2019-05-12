@@ -9,15 +9,18 @@ using namespace System::Linq;
 namespace TopologicEnergy
 {
 
-	SimulationResult^ SimulationResult::ByEnergySimulation(EnergySimulation^ energySimulation, String ^ EPReportName, String ^ EPReportForString, String ^ EPTableName, String ^ EPColumnName, String ^ EPUnits)
+	Object^ SimulationResult::ByEnergySimulation(EnergySimulation^ energySimulation, String ^ EPReportName, String ^ EPReportForString, String ^ EPTableName, String ^ EPColumnName, String ^ EPUnits)
 	{
 		OpenStudio::OptionalDouble^ totalSE = energySimulation->OsSqlFile->totalSiteEnergy();
+
 		double totalSEGJ = totalSE->__float__();
 		double totalSEkwh = totalSEGJ * 277.8;
 		OpenStudio::OptionalDouble^ totalEU = energySimulation->OsSqlFile->electricityTotalEndUses();
 		double totalEUGJ = totalEU->__float__();
 		double totalEUkwh = totalEUGJ * 277.8;
+		OpenStudio::Space^ space = energySimulation->OsSpaces[0];
 		OpenStudio::OptionalString^ spaceNameTemp = energySimulation->OsSpaces[0]->name();
+		
 		String^ spaceName = spaceNameTemp->get();
 		String^ EPRowName = spaceName + "_THERMAL_ZONE";
 
@@ -59,6 +62,7 @@ namespace TopologicEnergy
 			minValue = maxValue - (maxValue * 0.0001);
 		}
 
+
 		// Create a map: space name -> cell
 		Dictionary<String^, Dictionary<String^, Object^>^>^ data = gcnew Dictionary<String^, Dictionary<String^, Object^>^>();
 
@@ -79,26 +83,18 @@ namespace TopologicEnergy
 				throw gcnew Exception("Fails to execute SQL query. There is an incorrect argument.");
 			}
 
-			// Map the outputVariable to a ratio between 0 and 1
-			/*double ratio = (outputVariable - minValue) / (maxValue - minValue);
-			DSCore::Color^ color = EnergyModel::GetColor(ratio);*/
-
 			Dictionary<String^, Object^>^ attributes = gcnew Dictionary<String^, Object^>();
 			attributes->Add("Value", outputVariable);
 			attributes->Add("Unit", EPUnits);
-			/*attributes->Add("r", (long long int)color->Red);
-			attributes->Add("g", (long long int)color->Green);
-			attributes->Add("b", (long long int)color->Blue);
-			delete color;*/
 			data->Add(spaceName, attributes);
 		}
 
 		return gcnew SimulationResult(data);
 	}
 
-	List<Modifiers::GeometryColor^>^ SimulationResult::Display(EnergySimulation ^ energySimulation, List<DSCore::Color^>^ colors)
+	List<Modifiers::GeometryColor^>^ SimulationResult::Display(EnergyModel^ energyModel, List<DSCore::Color^>^ colors)
 	{
-		if (energySimulation->Topology->Count != colors->Count)
+		if (energyModel->Topology->Count != colors->Count)
 		{
 			throw gcnew Exception("The number of colors does not match the number of cells.");
 		}
@@ -107,7 +103,7 @@ namespace TopologicEnergy
 		List<Modifiers::GeometryColor^>^ dynamoApertures = gcnew List<Modifiers::GeometryColor^>();
 		for(int i = 0; i < colors->Count; ++i)
 		{
-			Cell^ cell = energySimulation->Topology[i];
+			Cell^ cell = energyModel->Topology[i];
 			DSCore::Color^ color = colors[i];
 
 			{

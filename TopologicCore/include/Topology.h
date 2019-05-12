@@ -63,7 +63,7 @@ namespace TopologicCore
 
 		/// <summary>
 		/// 
-		/// </summary>
+		///		</summary>
 		/// <param name="kpContext"></param>
 		/// <returns></returns>
 		static Topology::Ptr ByContext(const std::shared_ptr<Context>& kpContext);

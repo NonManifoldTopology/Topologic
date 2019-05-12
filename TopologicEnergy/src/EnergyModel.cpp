@@ -45,7 +45,7 @@ namespace TopologicEnergy
 		List<Cell^>^ pBuildingCells = buildingCopy->Cells;
 
 		// Create OpenStudio spaces
-		List<OpenStudio::Space^>^ osSpaces = gcnew List<OpenStudio::Space^>();
+		OpenStudio::SpaceVector^ osSpaceVector = gcnew OpenStudio::SpaceVector();
 		for each(Cell^ buildingCell in pBuildingCells)
 		{
 			int spaceNumber = 1;
@@ -66,12 +66,14 @@ namespace TopologicEnergy
 			attributes->Add("Name", osSpace->nameString());
 			buildingCell->AddAttributesNoCopy(attributes);
 
-			for each(OpenStudio::Space^ osExistingSpace in osSpaces)
+			OpenStudio::SpaceVector::SpaceVectorEnumerator^ spaceEnumerator = osSpaceVector->GetEnumerator();
+			while (spaceEnumerator->MoveNext())
 			{
+				OpenStudio::Space^ osExistingSpace = spaceEnumerator->Current;
 				osSpace->matchSurfaces(osExistingSpace);
 			}
 
-			osSpaces->Add(osSpace);
+			osSpaceVector->Add(osSpace);
 		}
 
 		// Create shading surfaces
@@ -88,7 +90,7 @@ namespace TopologicEnergy
 
 		osModel->purgeUnusedResourceObjects();
 
-		return gcnew EnergyModel(osModel, osBuilding, pBuildingCells, shadingSurfaces, osSpaces);
+		return gcnew EnergyModel(osModel, osBuilding, pBuildingCells, shadingSurfaces, osSpaceVector);
 	}
 
 	//EnergySimulation^ EnergyModel::Simulate(EnergyModel ^ energyModel, String ^ openStudioExePath, String ^ openStudioOutputDirectory, bool run)
@@ -119,10 +121,10 @@ namespace TopologicEnergy
 	//	return simulation;
 	//}
 
-	void EnergyModel::Export(EnergyModel ^ energyModel, String ^ openStudioOutputDirectory)
+	bool EnergyModel::Export(EnergyModel ^ energyModel, String ^ openStudioOutputDirectory)
 	{
 		String^ oswPath = nullptr;
-		Export(energyModel, openStudioOutputDirectory, oswPath);
+		return Export(energyModel, openStudioOutputDirectory, oswPath);
 	}
 
 	EnergyModel ^ EnergyModel::Import(String ^ osmFile, double tolerance)
@@ -148,7 +150,8 @@ namespace TopologicEnergy
 		List<OpenStudio::Space^>^ osSpaces = gcnew List<OpenStudio::Space^>();
 		while (spaceEnumerator->MoveNext())
 		{
-			osSpaces->Add(spaceEnumerator->Current);
+			OpenStudio::Space^ osSpace = spaceEnumerator->Current;
+			osSpaces->Add(osSpace);
 		}
 
 		// 4. Get shading surfaces as a cluster
@@ -191,7 +194,7 @@ namespace TopologicEnergy
 					Face^ subFace = FaceByOsSurface(osSubSurface);
 					faceApertureList->Add(subFace);
 				}
-				Topology^ topologyWithApertures = face->AddApertures(faceApertureList);
+				Topologic::Topology^ topologyWithApertures = face->AddApertures(faceApertureList);
 				try {
 					Face^ faceWithApertures = safe_cast<Topologic::Face^>(topologyWithApertures);
 
@@ -218,7 +221,11 @@ namespace TopologicEnergy
 			buildingCells = cellComplex->Cells;
 		}
 
-		return gcnew EnergyModel(osModel, osBuilding, buildingCells, shadingFaces, osSpaces);
+		//OpenStudio::Space^ osSpace = osSpaces[0];
+		EnergyModel^ energyModel = gcnew EnergyModel(osModel, osBuilding, buildingCells, shadingFaces, osSpaceVector);
+
+		//OpenStudio::Space^ osSpace2 = energyModel->m_osSpaces[0];
+		return energyModel;
 	}
 
 	bool EnergyModel::SaveModel(OpenStudio::Model^ osModel, String^ osmPathName)
@@ -588,7 +595,7 @@ namespace TopologicEnergy
 		return sqlFile->execAndReturnFirstInt(query)->get();
 	}
 
-	void EnergyModel::Export(EnergyModel ^ energyModel, String ^ openStudioOutputDirectory, String ^% oswPath)
+	bool EnergyModel::Export(EnergyModel ^ energyModel, String ^ openStudioOutputDirectory, String ^% oswPath)
 	{
 		// Add timestamp to the output file name
 		String^ openStudioOutputTimeStampPath = Path::GetDirectoryName(openStudioOutputDirectory + "\\") + "\\" +
@@ -599,7 +606,8 @@ namespace TopologicEnergy
 
 		if (!saveCondition)
 		{
-			throw gcnew Exception("Failed to save the OSM file.");
+			return false;
+			//throw gcnew Exception("Failed to save the OSM file.");
 		}
 
 		OpenStudio::WorkflowJSON^ workflow = gcnew OpenStudio::WorkflowJSON();
@@ -611,10 +619,12 @@ namespace TopologicEnergy
 			workflow->setSeedFile(gcnew OpenStudio::Path(openStudioOutputTimeStampPath));
 			workflow->setWeatherFile(gcnew OpenStudio::Path());
 			workflow->saveAs(osOswPath);
+			return true;
 		}
 		catch (...)
 		{
-			throw gcnew Exception("Failed to create the OSM and OSW files.");
+			return false;
+			// throw gcnew Exception("Failed to create the OSM and OSW files.");
 		}
 	}
 
@@ -988,8 +998,8 @@ namespace TopologicEnergy
 			else // glazingRatio is null
 			{
 				// Use the surface apertures
-				List<Topology^>^ pContents = buildingFace->Contents;
-				for each(Topology^ pContent in pContents)
+				List<Topologic::Topology^>^ pContents = buildingFace->Contents;
+				for each(Topologic::Topology^ pContent in pContents)
 				{
 					Aperture^ pAperture = dynamic_cast<Aperture^>(pContent);
 					if (pAperture == nullptr)
@@ -1076,7 +1086,7 @@ namespace TopologicEnergy
 			Autodesk::DesignScript::Geometry::Point^ translatedPoint = originalPoint->Subtract(faceCenterPoint->AsVector());
 			Autodesk::DesignScript::Geometry::Point^ scaledPoint = safe_cast<Autodesk::DesignScript::Geometry::Point^>(translatedPoint->Scale(sqrtScaleFactor));
 			Autodesk::DesignScript::Geometry::Point^ reTranslatedPoint = scaledPoint->Add(faceCenterPoint->AsVector());
-			scaledVertices->Add(safe_cast<Vertex^>(Topology::ByGeometry(reTranslatedPoint, 0.001))); // tolerance does not matter as it's just a vertex
+			scaledVertices->Add(safe_cast<Vertex^>(Topologic::Topology::ByGeometry(reTranslatedPoint, 0.001))); // tolerance does not matter as it's just a vertex
 
 			/*delete reTranslatedPoint;
 			delete scaledPoint;
@@ -1111,7 +1121,7 @@ namespace TopologicEnergy
 		
 		Autodesk::DesignScript::Geometry::Geometry^ scaledPoint = sumPoint->Scale(1.0 / (double)vertices->Count);
 		Autodesk::DesignScript::Geometry::Point^ dynamoPoint = safe_cast<Autodesk::DesignScript::Geometry::Point^>(scaledPoint);
-		Vertex^ vertex = safe_cast<Vertex^>(Topology::ByGeometry(dynamoPoint, 0.001)); // tolerance does not matter as it's just a vertex
+		Vertex^ vertex = safe_cast<Vertex^>(Topologic::Topology::ByGeometry(dynamoPoint, 0.001)); // tolerance does not matter as it's just a vertex
 		delete dynamoPoint;
 		delete scaledPoint;
 		return vertex;
@@ -1184,7 +1194,7 @@ namespace TopologicEnergy
 		Autodesk::DesignScript::Geometry::Point^ pDynamoOffsetPoint =
 			dynamic_cast<Autodesk::DesignScript::Geometry::Point^>(dynamoCenterPoint->Translate(faceNormal->Scale(0.001)));
 
-		Vertex^ pOffsetVertex = safe_cast<Vertex^>(Topology::ByGeometry(pDynamoOffsetPoint, 0.001)); // tolerance does not matter as it's just a vertex
+		Vertex^ pOffsetVertex = safe_cast<Vertex^>(Topologic::Topology::ByGeometry(pDynamoOffsetPoint, 0.001)); // tolerance does not matter as it's just a vertex
 
 		if (faceAngle < 5.0 || faceAngle > 175.0)
 		{
@@ -1296,11 +1306,16 @@ namespace TopologicEnergy
 		return osName->get();
 	}
 
-	EnergyModel::EnergyModel(OpenStudio::Model^ osModel, OpenStudio::Building^ osBuilding, List<Topologic::Cell^>^ pBuildingCells, Cluster^ shadingSurfaces, List<OpenStudio::Space^>^ osSpaces)
+	List<Topologic::Cell^>^ EnergyModel::Topology::get()
+	{
+		return m_buildingCells;
+	}
+
+	EnergyModel::EnergyModel(OpenStudio::Model^ osModel, OpenStudio::Building^ osBuilding, List<Topologic::Cell^>^ pBuildingCells, Cluster^ shadingSurfaces, OpenStudio::SpaceVector^ osSpaces)
 		: m_osModel(osModel)
 		, m_osBuilding(osBuilding)
 		, m_buildingCells(pBuildingCells)
-		, m_osSpaces(osSpaces)
+		, m_osSpaceVector(osSpaces)
 		, m_shadingSurfaces(shadingSurfaces)
 	{
 

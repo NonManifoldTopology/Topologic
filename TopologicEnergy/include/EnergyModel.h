@@ -63,9 +63,14 @@ namespace TopologicEnergy
 		/// <returns name="EnergySimulation"></returns>
 		static EnergySimulation^ Simulate(EnergyModel^ energyModel, String^ openStudioExePath, String ^ openStudioOutputDirectory, bool run);*/
 		
-		static void Export(EnergyModel^ energyModel, String^ openStudioOutputDirectory);
+		static bool Export(EnergyModel^ energyModel, String^ openStudioOutputDirectory);
 		
 		static EnergyModel^ Import(String^ osmFile, [Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")] double tolerance);
+
+		property List<Topologic::Cell^>^ Topology
+		{
+			List<Topologic::Cell^>^ get();
+		}
 
 	public protected:
 		//static DSCore::Color^ GetColor(double ratio, int alpha);
@@ -77,18 +82,18 @@ namespace TopologicEnergy
 
 		static int IntValueFromQuery(OpenStudio::SqlFile^ sqlFile, String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPRowName, String^ EPUnits);
 
-		static void Export(EnergyModel^ energyModel, String^ openStudioOutputDirectory, String^% oswPath);
+		static bool Export(EnergyModel^ energyModel, String^ openStudioOutputDirectory, String^% oswPath);
 
 		property OpenStudio::Model^ OsModel {
 			OpenStudio::Model^ get() { return m_osModel; }
 		}
 
-		property List<Topologic::Cell^>^ BuildingCells {
+		/*property List<Topologic::Cell^>^ BuildingCells {
 			List<Topologic::Cell^>^ get() { return m_buildingCells; }
-		}
+		}*/
 
-		property List<OpenStudio::Space^>^ OsSpaces {
-			List<OpenStudio::Space^>^ get() { return m_osSpaces; }
+		property OpenStudio::SpaceVector^ OsSpaces {
+			OpenStudio::SpaceVector^ get() { return m_osSpaceVector; }
 		}
 
 		property String^ BuildingName {
@@ -97,7 +102,7 @@ namespace TopologicEnergy
 
 
 	private:
-		EnergyModel(OpenStudio::Model^ osModel, OpenStudio::Building^ osBuilding, List<Topologic::Cell^>^ pBuildingCells, Cluster^ shadingSurfaces, List<OpenStudio::Space^>^ osSpaces);
+		EnergyModel(OpenStudio::Model^ osModel, OpenStudio::Building^ osBuilding, List<Topologic::Cell^>^ pBuildingCells, Cluster^ shadingSurfaces, OpenStudio::SpaceVector^ osSpaceVector);
 		~EnergyModel() {}
 
 		/// <summary>
@@ -204,7 +209,7 @@ namespace TopologicEnergy
 
 		List<Topologic::Cell^>^ m_buildingCells;
 		Cluster^ m_shadingSurfaces;
-		List<OpenStudio::Space^>^ m_osSpaces;
+		OpenStudio::SpaceVector^ m_osSpaceVector;
 		OpenStudio::Model^ m_osModel;
 		OpenStudio::Building^ m_osBuilding;
 	};

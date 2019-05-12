@@ -112,9 +112,6 @@ namespace TopologicCore
 	{
 		TopoDS_Vertex occtCenterOfMass = CenterOfMass(GetOcctSolid());
 		return std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtCenterOfMass));
-		/*GProp_GProps occtShapeProperties;
-		BRepGProp::VolumeProperties(GetOcctShape(), occtShapeProperties);
-		return Vertex::ByPoint(new Geom_CartesianPoint(occtShapeProperties.CentreOfMass()));*/
 	}
 
 	TopoDS_Vertex Cell::CenterOfMass(const TopoDS_Solid & rkOcctSolid)
@@ -133,6 +130,12 @@ namespace TopologicCore
 
 		Shell::Ptr pShell = Shell::ByFaces(rkFaces, kTolerance);
 		Cell::Ptr pCell = ByShell(pShell);
+
+		for(const Face::Ptr& kpFace : rkFaces)
+		{
+			TransferContents(kpFace->GetOcctShape(), pCell);
+		}
+
 		return pCell;
 	}
 

@@ -24,7 +24,7 @@ namespace TopologicEnergy
 		/// <param name="EPColumnName"></param>
 		/// <param name="EPUnits"></param>
 		/// <returns name="SimulationResult"></returns>
-		static SimulationResult^ ByEnergySimulation(EnergySimulation^ energySimulation, String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPUnits);
+		static Object^ ByEnergySimulation(EnergySimulation^ energySimulation, String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPUnits);
 
 		/*/// <summary>
 		/// 
@@ -38,10 +38,10 @@ namespace TopologicEnergy
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="energySimulation"></param>
+		/// <param name="energyModel"></param>
 		/// <param name="colors"></param>
 		/// <returns name="GeometryColor[]"></returns>
-		static List<Modifiers::GeometryColor^>^ Display(EnergySimulation^ energySimulation, List<DSCore::Color^>^ colors);
+		static List<Modifiers::GeometryColor^>^ Display(EnergyModel^ energyModel, List<DSCore::Color^>^ colors);
 
 		/// <summary>
 		/// This outputs the color range of the data. The first element is the colors, the second element is the normalised position within the spectrum. The colors are sorted by the values.
