@@ -249,7 +249,7 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="rkOcctShape1"></param>
 		/// <param name="kpTopology2"></param>
-		static void TransferContents(const TopoDS_Shape& rkOcctShape1, const Topology::Ptr& kpTopology2);
+		TOPOLOGIC_API static void TransferContents(const TopoDS_Shape& rkOcctShape1, const Topology::Ptr& kpTopology2);
 
 		
 		static void TransferContents(const TopoDS_Shape& rkOcctShape1, const Topology::Ptr& kpTopology2, const BOPCol_ListOfShape& rkOcctDeletedSubshapes);

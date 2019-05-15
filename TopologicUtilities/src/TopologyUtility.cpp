@@ -1,6 +1,7 @@
 #include "TopologyUtility.h"
 
 #include "TopologicCore/include/GlobalCluster.h"
+#include "TopologicCore/include/AttributeManager.h"
 
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRepBuilderAPI_GTransform.hxx>
@@ -69,6 +70,8 @@ namespace TopologicUtilities
 		BRepBuilderAPI_GTransform gTransform(kpTopology->GetOcctShape(), gTransformation, true);
 		TopologicCore::Topology::Ptr pCoreTransformedTopology = TopologicCore::Topology::ByOcctShape(gTransform.Shape());
 
+		TopologicCore::AttributeManager::GetInstance().CopyAttributes(kpTopology->GetOcctShape(), pCoreTransformedTopology->GetOcctShape());
+		TopologicCore::Topology::TransferContents(kpTopology->GetOcctShape(), pCoreTransformedTopology);
 		TopologicCore::GlobalCluster::GetInstance().AddTopology(pCoreTransformedTopology);
 		return pCoreTransformedTopology;
 	}

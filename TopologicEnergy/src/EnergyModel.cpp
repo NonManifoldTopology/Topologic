@@ -199,23 +199,85 @@ namespace TopologicEnergy
 				
 				// Subsurfaces
 				OpenStudio::SubSurfaceVector^ osSubSurfaces = osSurface->subSurfaces();
-				OpenStudio::SubSurfaceVector::SubSurfaceVectorEnumerator^ osSubSurfaceEnumerator = osSubSurfaces->GetEnumerator();
-				List<Topologic::Topology^>^ faceApertureList = gcnew List<Topologic::Topology^>();
-				while (osSubSurfaceEnumerator->MoveNext())
+				if (osSubSurfaces->Count > 0)
 				{
-					OpenStudio::SubSurface^ osSubSurface = osSubSurfaceEnumerator->Current;
-					Face^ subFace = FaceByOsSurface(osSubSurface);
-					faceApertureList->Add(subFace);
-				}
-				Topologic::Topology^ topologyWithApertures = face->AddApertures(faceApertureList);
-				try {
-					Face^ faceWithApertures = safe_cast<Topologic::Face^>(topologyWithApertures);
+					OpenStudio::SubSurfaceVector::SubSurfaceVectorEnumerator^ osSubSurfaceEnumerator = osSubSurfaces->GetEnumerator();
+					List<Topologic::Topology^>^ faceApertureList = gcnew List<Topologic::Topology^>();
+					while (osSubSurfaceEnumerator->MoveNext())
+					{
+						OpenStudio::SubSurface^ osSubSurface = osSubSurfaceEnumerator->Current;
+						Face^ subFace = FaceByOsSurface(osSubSurface);
+						faceApertureList->Add(subFace);
+					}
+					Topologic::Topology^ topologyWithApertures = face->AddApertures(faceApertureList);
+					try {
+						Face^ faceWithApertures = safe_cast<Topologic::Face^>(topologyWithApertures);
 
-					faceList->Add(faceWithApertures);
+						faceList->Add(faceWithApertures);
+					}
+					catch (Exception^)
+					{
+						throw gcnew Exception("Error converting a topology with apertures to a face.");
+					}
 				}
-				catch (Exception^)
+				else // no subsurfaces, use glazing ratio
 				{
-					throw gcnew Exception("Error converting a topology with apertures to a face.");
+					double windowToWallRatio = osSurface->windowToWallRatio();
+
+					if (windowToWallRatio > 0.0)
+					{
+						List<Vertex^>^ scaledVertices = ScaleFaceVertices(face, windowToWallRatio);
+
+						if (scaledVertices->Count < 3)
+						{
+							throw gcnew Exception("An invalid face with fewer than 3 vertices is found.");
+						}
+						else
+						{
+							List<int>^ indices = gcnew List<int>();
+
+							for (int i = 0; i < scaledVertices->Count; ++i)
+							{
+								indices->Add(i);
+							}
+							indices->Add(0);
+							List<List<int>^>^ indicesList = gcnew List<List<int>^>();
+							indicesList->Add(indices);
+							List<Topologic::Topology^>^ topologies = Topologic::Topology::ByVerticesIndices(scaledVertices, indicesList);
+
+							if (topologies->Count == 0)
+							{
+								throw gcnew Exception("A set of invalid topologies are created.");
+							}
+							else
+							{
+								Topologic::Topology^ topology = topologies[0];
+								try {
+									Face^ subface = safe_cast<Face^>(topology);
+									List<Topologic::Topology^>^ faceApertureList = gcnew List<Topologic::Topology^>();
+
+									Topologic::Topology^ topologyWithApertures = face->AddApertures(faceApertureList);
+									try {
+										Face^ faceWithApertures = safe_cast<Topologic::Face^>(topologyWithApertures);
+
+										faceList->Add(faceWithApertures);
+									}
+									catch (Exception^)
+									{
+										throw gcnew Exception("Error converting a topology with apertures to a face.");
+									}
+								}
+								catch (Exception^)
+								{
+									throw gcnew Exception("Error converting a topology to a face.");
+								}
+							}
+						}
+					}
+					else
+					{
+						faceList->Add(face);
+					}
 				}
 			}
 
