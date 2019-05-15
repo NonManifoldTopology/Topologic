@@ -66,6 +66,15 @@ namespace Topologic {
 			/// <returns>The center of mass of the given Topology</returns>
 			static Vertex^ CenterOfMass(Topology^ topology);
 
+#ifdef TOPOLOGIC_DYNAMO
+			[IsVisibleInDynamoLibrary(false)]
+#endif
+			static Topology^ Transform(Topology^ topology,
+				double translationX, double translationY, double translationZ,
+				double rotation11, double rotation12, double rotation13,
+				double rotation21, double rotation22, double rotation23,
+				double rotation31, double rotation32, double rotation33);
+
 		public protected:
 			TopologyUtility() {}
 

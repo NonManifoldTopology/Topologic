@@ -60,6 +60,19 @@ namespace TopologicUtilities
 		return pCoreTransformedTopology;
 	}
 
+	TopologicCore::Topology::Ptr TopologyUtility::Transform(const TopologicCore::Topology::Ptr & kpTopology, const double kTranslationX, const double kTranslationY, const double kTranslationZ, const double kRotation11, const double kRotation12, const double kRotation13, const double kRotation21, const double kRotation22, const double kRotation23, const double kRotation31, const double kRotation32, const double kRotation33)
+	{
+		gp_GTrsf gTransformation(
+			gp_Mat(kRotation11, kRotation12, kRotation13, kRotation21, kRotation22, kRotation23, kRotation31, kRotation32, kRotation33),
+			gp_XYZ(kTranslationX, kTranslationY, kTranslationZ)
+		);
+		BRepBuilderAPI_GTransform gTransform(kpTopology->GetOcctShape(), gTransformation, true);
+		TopologicCore::Topology::Ptr pCoreTransformedTopology = TopologicCore::Topology::ByOcctShape(gTransform.Shape());
+
+		TopologicCore::GlobalCluster::GetInstance().AddTopology(pCoreTransformedTopology);
+		return pCoreTransformedTopology;
+	}
+
 	TopologicCore::Topology::Ptr TopologyUtility::Scale(
 		const TopologicCore::Topology::Ptr & kpTopology, const TopologicCore::Vertex::Ptr & kpOrigin,
 		const double kXFactor, const double kYFactor, const double kZFactor)

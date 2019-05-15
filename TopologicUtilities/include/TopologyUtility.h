@@ -65,6 +65,12 @@ namespace TopologicUtilities
 			const double kNormalX, const double kNormalY, const double kNormalZ,
 			const double kXAxisX, const double kXAxisY, const double kXAxisZ);
 
+		static TOPOLOGIC_UTILITIES_API TopologicCore::Topology::Ptr Transform(const TopologicCore::Topology::Ptr& kpTopology,
+			const double kTranslationX, const double kTranslationY, const double kTranslationZ,
+			const double kRotation11, const double kRotation12, const double kRotation13,
+			const double kRotation21, const double kRotation22, const double kRotation23,
+			const double kRotation31, const double kRotation32, const double kRotation33);
+
 		/// <summary>
 		/// 
 		/// </summary>

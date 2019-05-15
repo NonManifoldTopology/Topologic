@@ -9,7 +9,6 @@ namespace TopologicEnergy
 {
 	EnergySimulation^ EnergySimulation::ByEnergyModel(EnergyModel ^ energyModel, String ^ openStudioExePath, String ^ openStudioOutputDirectory, bool run)
 	{
-		OpenStudio::Space^ osSpace = energyModel->OsSpaces[0];
 		String^ oswPath = nullptr;
 
 		String^ timestamp = DateTime::Now.ToString("yyyy-MM-dd_HH-mm-ss-fff");
@@ -25,18 +24,12 @@ namespace TopologicEnergy
 		Process^ process = Process::Start(startInfo);
 		process->WaitForExit();
 
-		OpenStudio::Space^ osSpace2 = energyModel->OsSpaces[0];
-		//// Rename run and reports directory, add timestamp
-		//Directory::Move(startInfo->WorkingDirectory + "\\run", startInfo->WorkingDirectory + "\\run_" + timestamp);
-		//Directory::Move(startInfo->WorkingDirectory + "\\reports", startInfo->WorkingDirectory + "\\reports_" + timestamp);
-
 		EnergySimulation^ simulation = gcnew EnergySimulation(
 			energyModel->Topology,
 			oswPath,
 			energyModel->OsModel,
 			energyModel->OsSpaces);
 
-		OpenStudio::Space^ osSpace3 = simulation->OsSpaces[0];
 		return simulation;
 	}
 

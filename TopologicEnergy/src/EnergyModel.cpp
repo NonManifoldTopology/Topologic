@@ -177,6 +177,19 @@ namespace TopologicEnergy
 		{
 			OpenStudio::Space^ osSpace = osSpaceEnumerator->Current;
 			OpenStudio::SurfaceVector^ osSurfaces = osSpace->surfaces;
+			OpenStudio::Transformation^ osTransformation = osSpace->transformation();
+			OpenStudio::Vector3d^ osTranslation = osTransformation->translation();
+			OpenStudio::Matrix^ osMatrix = osTransformation->rotationMatrix();
+			double rotation11 = osMatrix->__getitem__(0, 0);
+			double rotation12 = osMatrix->__getitem__(0, 1);
+			double rotation13 = osMatrix->__getitem__(0, 2);
+			double rotation21 = osMatrix->__getitem__(1, 0);
+			double rotation22 = osMatrix->__getitem__(1, 1);
+			double rotation23 = osMatrix->__getitem__(1, 2);
+			double rotation31 = osMatrix->__getitem__(2, 0);
+			double rotation32 = osMatrix->__getitem__(2, 1);
+			double rotation33 = osMatrix->__getitem__(2, 2);
+
 			OpenStudio::SurfaceVector::SurfaceVectorEnumerator^ osSurfaceEnumerator = osSurfaces->GetEnumerator();
 			List<Topologic::Face^>^ faceList = gcnew List<Topologic::Face^>();
 			while (osSurfaceEnumerator->MoveNext())
@@ -207,7 +220,14 @@ namespace TopologicEnergy
 			}
 
 			Cell^ cell = Cell::ByFaces(faceList, tolerance);
-			cellList->Add(cell);
+
+			Topologic::Topology^ transformedTopology = Topologic::Utilities::TopologyUtility::Transform(cell,
+				osTranslation->x(), osTranslation->y(), osTranslation->z(),
+				rotation11, rotation12, rotation13, 
+				rotation21, rotation22, rotation23, 
+				rotation31, rotation32, rotation33);
+			Cell^ transformedCell = safe_cast<Topologic::Cell^>(transformedTopology);
+			cellList->Add(transformedCell);
 		}
 
 		List<Topologic::Cell^>^ buildingCells = gcnew List<Topologic::Cell^>();

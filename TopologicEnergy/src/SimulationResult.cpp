@@ -18,7 +18,6 @@ namespace TopologicEnergy
 		OpenStudio::OptionalDouble^ totalEU = energySimulation->OsSqlFile->electricityTotalEndUses();
 		double totalEUGJ = totalEU->__float__();
 		double totalEUkwh = totalEUGJ * 277.8;
-		OpenStudio::Space^ space = energySimulation->OsSpaces[0];
 		OpenStudio::OptionalString^ spaceNameTemp = energySimulation->OsSpaces[0]->name();
 		
 		String^ spaceName = spaceNameTemp->get();
