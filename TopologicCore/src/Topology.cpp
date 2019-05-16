@@ -783,6 +783,20 @@ namespace TopologicCore
 		return pTopology;
 	}
 
+	void Topology::Filter(const std::list<Topology::Ptr>& rkTopologies, const int kTypeFilter, std::list<Topology::Ptr>& rFilteredTopologies)
+	{
+		for (const Topology::Ptr& kpTopology : rkTopologies)
+		{
+			int shapeType = (int)kpTopology->GetType();
+			if ((shapeType & kTypeFilter) == 0)
+			{
+				continue;
+			}
+
+			rFilteredTopologies.push_back(kpTopology);
+		}
+	}
+
 	std::string Topology::Analyze(const TopoDS_Shape& rkShape, const int kLevel)
 	{
 		BOPCol_ListOfShape occtSubTopologies;

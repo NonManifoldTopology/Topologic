@@ -439,6 +439,27 @@ namespace Topologic
 		return safe_cast<T>(topology);
 	}*/
 
+	List<Topology^>^ Topology::Filter(List<Topology^>^ topologies, int typeFilter)
+	{
+		std::list<TopologicCore::Topology::Ptr> coreTopologies;
+		for each(Topology^ topology in topologies)
+		{
+			TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
+			coreTopologies.push_back(pCoreTopology);
+		}
+
+		std::list<TopologicCore::Topology::Ptr> coreFilteredTopologies;
+		TopologicCore::Topology::Filter(coreTopologies, typeFilter, coreFilteredTopologies);
+
+		List<Topology^>^ filteredTopologies = gcnew List<Topology^>();
+		for (const TopologicCore::Topology::Ptr& kpFilteredTopology : coreFilteredTopologies)
+		{
+			Topology^ filteredTopology = Topology::ByCoreTopology(kpFilteredTopology);
+			filteredTopologies->Add(filteredTopology);
+		}
+		return filteredTopologies;
+	}
+
 	void Topology::RegisterFactory(const TopologicCore::Topology::Ptr & kpCoreTopology, Factories::TopologyFactory^ topologyFactory)
 	{
 		Factories::TopologyFactoryManager::Instance->Add(kpCoreTopology, topologyFactory);

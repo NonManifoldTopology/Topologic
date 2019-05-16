@@ -317,6 +317,8 @@ namespace TopologicCore
 		/// <returns></returns>
 		static TOPOLOGIC_API Topology::Ptr ByImportedBRep(const std::string& rkPath);
 
+		static TOPOLOGIC_API void Filter(const std::list<Topology::Ptr>& rkTopologies, const int kTypeFilter, std::list<Topology::Ptr>& rFilteredTopologies);
+
 		/// <summary>
 		/// 
 		/// </summary>

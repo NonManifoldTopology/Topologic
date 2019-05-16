@@ -462,6 +462,14 @@ namespace Topologic
 			int get();
 		}
 
+		/// <summary>
+		/// Filter a list of topologies by type. This methods returns a list of topologies of the type specified in the typefilter.
+		/// </summary>
+		/// <param name="topologies">A list of Topologies</param>
+		/// <param name="typeFilter">The type of the filtered Topologies</param>
+		/// <returns>The filtered topologies</returns>
+		static List<Topology^>^ Filter(List<Topology^>^ topologies, int typeFilter);
+
 #ifdef TOPOLOGIC_DYNAMO
 		[IsVisibleInDynamoLibrary(false)]
 #endif
