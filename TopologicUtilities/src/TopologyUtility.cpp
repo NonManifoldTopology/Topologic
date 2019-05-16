@@ -2,6 +2,7 @@
 
 #include "TopologicCore/include/GlobalCluster.h"
 #include "TopologicCore/include/AttributeManager.h"
+#include "TopologicCore/include/Context.h"
 
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRepBuilderAPI_GTransform.hxx>
@@ -23,7 +24,32 @@ namespace TopologicUtilities
 		gp_Trsf transformation;
 		transformation.SetTranslation(gp_Vec(x, y, z));
 		BRepBuilderAPI_Transform transform(kpTopology->GetOcctShape(), transformation, true);
-		TopologicCore::Topology::Ptr pCoreTransformedTopology = TopologicCore::Topology::ByOcctShape(transform.Shape());
+		TopologicCore::Topology::Ptr pCoreTransformedTopology = TopologicCore::Topology::ByOcctShape(transform.Shape(), kpTopology->GetClassGUID());
+
+		TopologicCore::AttributeManager::GetInstance().CopyAttributes(kpTopology->GetOcctShape(), pCoreTransformedTopology->GetOcctShape());
+
+		std::list<TopologicCore::Topology::Ptr> subContents;
+		TopologicCore::Topology::SubContents(kpTopology->GetOcctShape(), subContents);
+
+		for (const TopologicCore::Topology::Ptr kpSubContent : subContents)
+		{
+			// Transform kpSubContent
+			TopologicCore::Topology::Ptr transformedSubcontent = Translate(kpSubContent,
+				x, y, z);
+
+			// Attach to the same context type
+			int contextType = 0;
+			std::list<TopologicCore::Context::Ptr> contexts;
+			kpSubContent->Contexts(contexts);
+			for (const TopologicCore::Context::Ptr& kpContext : contexts)
+			{
+				TopologicCore::Topology::Ptr pContextTopology = kpContext->Topology();
+				TopologicCore::TopologyType contextTopologyType = pContextTopology->GetType();
+				contextType = contextType | contextTopologyType;
+			}
+
+			pCoreTransformedTopology->AddContent(transformedSubcontent, contextType);
+		}
 
 		TopologicCore::GlobalCluster::GetInstance().AddTopology(pCoreTransformedTopology);
 		return pCoreTransformedTopology;
@@ -39,13 +65,38 @@ namespace TopologicUtilities
 		double radian = DegreeToRadian(kDegree);
 		transformation.SetRotation(gp_Ax1(gp_Pnt(pOcctOrigin->X(), pOcctOrigin->Y(), pOcctOrigin->Z()), gp_Dir(kDirectionX, kDirectionY, kDirectionZ)), radian);
 		BRepBuilderAPI_Transform transform(kpTopology->GetOcctShape(), transformation, true);
-		TopologicCore::Topology::Ptr pCoreTransformedTopology = TopologicCore::Topology::ByOcctShape(transform.Shape());
+		TopologicCore::Topology::Ptr pCoreTransformedTopology = TopologicCore::Topology::ByOcctShape(transform.Shape(), kpTopology->GetClassGUID());
+
+		TopologicCore::AttributeManager::GetInstance().CopyAttributes(kpTopology->GetOcctShape(), pCoreTransformedTopology->GetOcctShape());
+
+		std::list<TopologicCore::Topology::Ptr> subContents;
+		TopologicCore::Topology::SubContents(kpTopology->GetOcctShape(), subContents);
+
+		for (const TopologicCore::Topology::Ptr kpSubContent : subContents)
+		{
+			// Transform kpSubContent
+			TopologicCore::Topology::Ptr transformedSubcontent = Rotate(kpSubContent,
+				kpOrigin, kDirectionX, kDirectionY, kDirectionZ, kDegree);
+
+			// Attach to the same context type
+			int contextType = 0;
+			std::list<TopologicCore::Context::Ptr> contexts;
+			kpSubContent->Contexts(contexts);
+			for (const TopologicCore::Context::Ptr& kpContext : contexts)
+			{
+				TopologicCore::Topology::Ptr pContextTopology = kpContext->Topology();
+				TopologicCore::TopologyType contextTopologyType = pContextTopology->GetType();
+				contextType = contextType | contextTopologyType;
+			}
+
+			pCoreTransformedTopology->AddContent(transformedSubcontent, contextType);
+		}
 
 		TopologicCore::GlobalCluster::GetInstance().AddTopology(pCoreTransformedTopology);
 		return pCoreTransformedTopology;
 	}
 
-	TopologicCore::Topology::Ptr TopologyUtility::Transform(const TopologicCore::Topology::Ptr & kpTopology, const TopologicCore::Vertex::Ptr & kpOrigin, const double kNormalX, const double kNormalY, const double kNormalZ, const double kXAxisX, const double kXAxisY, const double kXAxisZ)
+	/*TopologicCore::Topology::Ptr TopologyUtility::Transform(const TopologicCore::Topology::Ptr & kpTopology, const TopologicCore::Vertex::Ptr & kpOrigin, const double kNormalX, const double kNormalY, const double kNormalZ, const double kXAxisX, const double kXAxisY, const double kXAxisZ)
 	{
 		gp_Trsf transformation;
 		Handle(Geom_Point) pOcctOrigin = kpOrigin->Point();
@@ -57,9 +108,12 @@ namespace TopologicUtilities
 		BRepBuilderAPI_Transform transform(kpTopology->GetOcctShape(), transformation, true);
 		TopologicCore::Topology::Ptr pCoreTransformedTopology = TopologicCore::Topology::ByOcctShape(transform.Shape());
 
+		TopologicCore::AttributeManager::GetInstance().CopyAttributes(kpTopology->GetOcctShape(), pCoreTransformedTopology->GetOcctShape());
+		TopologicCore::Topology::TransferContents(kpTopology->GetOcctShape(), pCoreTransformedTopology);
+
 		TopologicCore::GlobalCluster::GetInstance().AddTopology(pCoreTransformedTopology);
 		return pCoreTransformedTopology;
-	}
+	}*/
 
 	TopologicCore::Topology::Ptr TopologyUtility::Transform(const TopologicCore::Topology::Ptr & kpTopology, const double kTranslationX, const double kTranslationY, const double kTranslationZ, const double kRotation11, const double kRotation12, const double kRotation13, const double kRotation21, const double kRotation22, const double kRotation23, const double kRotation31, const double kRotation32, const double kRotation33)
 	{
@@ -68,10 +122,36 @@ namespace TopologicUtilities
 			gp_XYZ(kTranslationX, kTranslationY, kTranslationZ)
 		);
 		BRepBuilderAPI_GTransform gTransform(kpTopology->GetOcctShape(), gTransformation, true);
-		TopologicCore::Topology::Ptr pCoreTransformedTopology = TopologicCore::Topology::ByOcctShape(gTransform.Shape());
+		TopologicCore::Topology::Ptr pCoreTransformedTopology = TopologicCore::Topology::ByOcctShape(gTransform.Shape(), kpTopology->GetClassGUID());
 
 		TopologicCore::AttributeManager::GetInstance().CopyAttributes(kpTopology->GetOcctShape(), pCoreTransformedTopology->GetOcctShape());
-		TopologicCore::Topology::TransferContents(kpTopology->GetOcctShape(), pCoreTransformedTopology);
+
+		std::list<TopologicCore::Topology::Ptr> subContents;
+		TopologicCore::Topology::SubContents(kpTopology->GetOcctShape(), subContents);
+
+		for (const TopologicCore::Topology::Ptr kpSubContent : subContents)
+		{
+			// Transform kpSubContent
+			TopologicCore::Topology::Ptr transformedSubcontent = Transform(kpSubContent,
+				kTranslationX, kTranslationY, kTranslationZ,
+				kRotation11, kRotation12, kRotation13,
+				kRotation21, kRotation22, kRotation23,
+				kRotation31, kRotation32, kRotation33);
+
+			// Attach to the same context type
+			int contextType = 0;
+			std::list<TopologicCore::Context::Ptr> contexts;
+			kpSubContent->Contexts(contexts);
+			for (const TopologicCore::Context::Ptr& kpContext : contexts)
+			{
+				TopologicCore::Topology::Ptr pContextTopology = kpContext->Topology();
+				TopologicCore::TopologyType contextTopologyType = pContextTopology->GetType();
+				contextType = contextType | contextTopologyType;
+			}
+
+			pCoreTransformedTopology->AddContent(transformedSubcontent, contextType);
+		}
+
 		TopologicCore::GlobalCluster::GetInstance().AddTopology(pCoreTransformedTopology);
 		return pCoreTransformedTopology;
 	}
@@ -90,7 +170,32 @@ namespace TopologicUtilities
 		);
 		BRepBuilderAPI_GTransform occtTransform(kpTopology->DeepCopy()->GetOcctShape(), occtGTransformation);
 		TopoDS_Shape occtTransformedShape = occtTransform.Shape();
-		TopologicCore::Topology::Ptr pCoreTransformedTopology = TopologicCore::Topology::ByOcctShape(occtTransformedShape, kpTopology->GetInstanceGUID());
+		TopologicCore::Topology::Ptr pCoreTransformedTopology = TopologicCore::Topology::ByOcctShape(occtTransformedShape, kpTopology->GetClassGUID());
+
+		TopologicCore::AttributeManager::GetInstance().CopyAttributes(kpTopology->GetOcctShape(), pCoreTransformedTopology->GetOcctShape());
+
+		std::list<TopologicCore::Topology::Ptr> subContents;
+		TopologicCore::Topology::SubContents(kpTopology->GetOcctShape(), subContents);
+
+		for (const TopologicCore::Topology::Ptr kpSubContent : subContents)
+		{
+			// Transform kpSubContent
+			TopologicCore::Topology::Ptr transformedSubcontent = Scale(kpSubContent,
+				kpOrigin, kXFactor, kYFactor, kZFactor);
+
+			// Attach to the same context type
+			int contextType = 0;
+			std::list<TopologicCore::Context::Ptr> contexts;
+			kpSubContent->Contexts(contexts);
+			for (const TopologicCore::Context::Ptr& kpContext : contexts)
+			{
+				TopologicCore::Topology::Ptr pContextTopology = kpContext->Topology();
+				TopologicCore::TopologyType contextTopologyType = pContextTopology->GetType();
+				contextType = contextType | contextTopologyType;
+			}
+
+			pCoreTransformedTopology->AddContent(transformedSubcontent, contextType);
+		}
 		TopologicCore::GlobalCluster::GetInstance().AddTopology(pCoreTransformedTopology);
 		return pCoreTransformedTopology;
 	}

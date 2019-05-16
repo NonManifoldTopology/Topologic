@@ -16,6 +16,7 @@ using namespace Autodesk::DesignScript::Runtime;
 
 namespace Topologic
 {
+	ref class Aperture;
 	ref class CellComplex;
 	ref class Cell;
 	ref class Shell;
@@ -122,6 +123,15 @@ namespace Topologic
 		property List<Topology^>^ Contents
 		{
 			List<Topology^>^ get();
+		}
+
+		/// <summary>
+		/// Returns the Apertures of the input Topology.
+		/// </summary>
+		/// <returns name="Aperture[]">A list of Topologies contained in the input Topology as Apertures</returns>
+		property List<Aperture^>^ Apertures
+		{
+			List<Aperture^>^ get();
 		}
 
 		/// <summary>

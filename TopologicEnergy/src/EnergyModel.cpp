@@ -46,6 +46,8 @@ namespace TopologicEnergy
 
 		// Create OpenStudio spaces
 		OpenStudio::SpaceVector^ osSpaceVector = gcnew OpenStudio::SpaceVector();
+
+		Autodesk::DesignScript::Geometry::Vector^ dynamoZAxis = Autodesk::DesignScript::Geometry::Vector::ZAxis();
 		for each(Cell^ buildingCell in pBuildingCells)
 		{
 			int spaceNumber = 1;
@@ -54,7 +56,7 @@ namespace TopologicEnergy
 				buildingCell,
 				buildingCopy,
 				osModel,
-				Autodesk::DesignScript::Geometry::Vector::ZAxis(),
+				dynamoZAxis,
 				buildingHeight,
 				floorLevels,
 				glazingRatio,
@@ -75,6 +77,7 @@ namespace TopologicEnergy
 
 			osSpaceVector->Add(osSpace);
 		}
+		delete dynamoZAxis;
 
 		// Create shading surfaces
 		if (shadingSurfaces != nullptr)
@@ -207,6 +210,14 @@ namespace TopologicEnergy
 					{
 						OpenStudio::SubSurface^ osSubSurface = osSubSurfaceEnumerator->Current;
 						Face^ subFace = FaceByOsSurface(osSubSurface);
+
+						/*Topologic::Topology^ transformedSubTopology = Topologic::Utilities::TopologyUtility::Transform(subFace,
+							osTranslation->x(), osTranslation->y(), osTranslation->z(),
+							rotation11, rotation12, rotation13,
+							rotation21, rotation22, rotation23,
+							rotation31, rotation32, rotation33);
+						Face^ transformedSubface = safe_cast<Topologic::Face^>(transformedSubTopology);*/
+
 						faceApertureList->Add(subFace);
 					}
 					Topologic::Topology^ topologyWithApertures = face->AddApertures(faceApertureList);
@@ -220,64 +231,9 @@ namespace TopologicEnergy
 						throw gcnew Exception("Error converting a topology with apertures to a face.");
 					}
 				}
-				else // no subsurfaces, use glazing ratio
+				else // no subsurfaces
 				{
-					double windowToWallRatio = osSurface->windowToWallRatio();
-
-					if (windowToWallRatio > 0.0)
-					{
-						List<Vertex^>^ scaledVertices = ScaleFaceVertices(face, windowToWallRatio);
-
-						if (scaledVertices->Count < 3)
-						{
-							throw gcnew Exception("An invalid face with fewer than 3 vertices is found.");
-						}
-						else
-						{
-							List<int>^ indices = gcnew List<int>();
-
-							for (int i = 0; i < scaledVertices->Count; ++i)
-							{
-								indices->Add(i);
-							}
-							indices->Add(0);
-							List<List<int>^>^ indicesList = gcnew List<List<int>^>();
-							indicesList->Add(indices);
-							List<Topologic::Topology^>^ topologies = Topologic::Topology::ByVerticesIndices(scaledVertices, indicesList);
-
-							if (topologies->Count == 0)
-							{
-								throw gcnew Exception("A set of invalid topologies are created.");
-							}
-							else
-							{
-								Topologic::Topology^ topology = topologies[0];
-								try {
-									Face^ subface = safe_cast<Face^>(topology);
-									List<Topologic::Topology^>^ faceApertureList = gcnew List<Topologic::Topology^>();
-
-									Topologic::Topology^ topologyWithApertures = face->AddApertures(faceApertureList);
-									try {
-										Face^ faceWithApertures = safe_cast<Topologic::Face^>(topologyWithApertures);
-
-										faceList->Add(faceWithApertures);
-									}
-									catch (Exception^)
-									{
-										throw gcnew Exception("Error converting a topology with apertures to a face.");
-									}
-								}
-								catch (Exception^)
-								{
-									throw gcnew Exception("Error converting a topology to a face.");
-								}
-							}
-						}
-					}
-					else
-					{
-						faceList->Add(face);
-					}
+					faceList->Add(face);
 				}
 			}
 
@@ -411,17 +367,10 @@ namespace TopologicEnergy
 		OpenStudio::Point3dVector^ osWindowFacePoints = gcnew OpenStudio::Point3dVector();
 		for each(Vertex^ vertex in vertices)
 		{
-			Object^ pVertexGeometry = vertex->BasicGeometry;
-			Autodesk::DesignScript::Geometry::Point^ pAperturePoint =
-				dynamic_cast<Autodesk::DesignScript::Geometry::Point^>(pVertexGeometry);
-			if (pAperturePoint == nullptr)
-			{
-				continue;
-			}
 			OpenStudio::Point3d^ osPoint = gcnew OpenStudio::Point3d(
-				pAperturePoint->X,
-				pAperturePoint->Y,
-				pAperturePoint->Z);
+				vertex->X,
+				vertex->Y,
+				vertex->Z);
 			osWindowFacePoints->Add(osPoint);
 		}
 
@@ -531,123 +480,6 @@ namespace TopologicEnergy
 
 		return face;
 	}
-
-	//List<Modifiers::GeometryColor^>^ EnergyModel::AnalyzeSqlFile(OpenStudio::SqlFile ^ osSqlFile, OpenStudio::Model^ osModel, List<OpenStudio::Space^>^ spaces, List<Cell^>^ buildingCells,
-	//	String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPUnits)
-	//{
-	//	osModel->setSqlFile(osSqlFile);
-	//	OpenStudio::OptionalDouble^ totalSE = osSqlFile->totalSiteEnergy();
-	//	double totalSEGJ = totalSE->__float__();
-	//	double totalSEkwh = totalSEGJ * 277.8;
-	//	//Print("Total Site Energy use: " + (totalSEGJ as string) + " Gigajoules (" + (totalSEkwh as string) + " kWh)")
-	//	OpenStudio::OptionalDouble^ totalEU = osSqlFile->electricityTotalEndUses();
-	//	double totalEUGJ = totalEU->__float__();
-	//	double totalEUkwh = totalEUGJ * 277.8;
-	//	//Print("Total Electricity End Uses: " + (totalEUGJ as string) + " Gigajoules (" + (totalEUkwh as string) + " kWh)")
-	//	OpenStudio::OptionalString^ spaceNameTemp = spaces[0]->name();
-	//	String^ spaceName = spaceNameTemp->get();
-	//	String^ EPRowName = spaceName + "_THERMAL_ZONE";
-	//	//String^ EPRowName = "test" + "_TZ";
-
-	//	//If min and max values are not specified then calculate them from the data
-	//	// TODO: Take custom values
-	//	//Set an initial value for minimum and maximum values
-	//	double maxValue = 0.0;
-	//	try {
-	//		maxValue = DoubleValueFromQuery(osSqlFile, EPReportName, EPReportForString, EPTableName, EPColumnName, EPRowName, EPUnits);
-	//	}
-	//	catch (...)
-	//	{
-	//		maxValue = 10000.0;
-	//	}
-	//	double minValue = maxValue;
-	//	for each(OpenStudio::Space^ space in spaces)
-	//	{
-	//		OpenStudio::OptionalString^ osSpaceName = space->name();
-	//		String^ spaceName = osSpaceName->get();
-	//		EPRowName = spaceName + "_THERMAL_ZONE";
-	//		double aValue = 10000.0;
-	//		try{
-	//			aValue = DoubleValueFromQuery(osSqlFile, EPReportName, EPReportForString, EPTableName, EPColumnName, EPRowName, EPUnits);
-	//		}
-	//		catch (...)
-	//		{
-	//			aValue = 10000.0;
-	//		}
-	//		if (aValue > maxValue)
-	//		{
-	//			maxValue = aValue;
-	//		}
-	//		if (aValue < minValue)
-	//		{
-	//			minValue = aValue;
-	//		}
-	//	}
-
-	//	if (minValue <= maxValue && maxValue - minValue < 0.0001)
-	//	{
-	//		minValue = maxValue - (maxValue * 0.0001);
-	//	}
-	//				
-	//	//STEP 2: Find the cell that matches the space and set its colour.
-
-	//	int i = 0;
-	//	List<Modifiers::GeometryColor^>^ dynamoGeometryColors = gcnew List<Modifiers::GeometryColor^>();
-	//	for each(OpenStudio::Space^ space in spaces)
-	//	{
-	//		Cell^ selectedCell = buildingCells[i];
-	//		++i;
-	//		OpenStudio::OptionalString^ osSpaceName = space->name();
-	//		String^ spaceName = osSpaceName->get();
-	//		EPRowName = spaceName + "_THERMAL_ZONE";
-	//		double outputVariable = 0.0;
-	//		try {
-	//			outputVariable = DoubleValueFromQuery(osSqlFile, EPReportName, EPReportForString, EPTableName, EPColumnName, EPRowName, EPUnits);
-	//		}
-	//		catch (...)
-	//		{
-	//			outputVariable = 10000.0;
-	//		}
-	//		
-	//		// Map the outputVariable to a ratio between 0 and 1
-	//		double ratio = (outputVariable - minValue) / (maxValue - minValue);
-	//		DSCore::Color^ aColor = GetColor(ratio);
-	//		System::Object^ cellGeometry = selectedCell->BasicGeometry;
-	//		
-	//		// 1. Try a Dynamo geometry
-	//		Autodesk::DesignScript::Geometry::Geometry^ dynamoGeometry = dynamic_cast<Autodesk::DesignScript::Geometry::Geometry^>(cellGeometry);
-	//		if (dynamoGeometry != nullptr)
-	//		{
-	//			Modifiers::GeometryColor^ dynamoGeometryColor = Modifiers::GeometryColor::ByGeometryColor(dynamoGeometry, aColor);
-	//			dynamoGeometryColors->Add(dynamoGeometryColor);
-	//			//delete cellGeometry;
-	//			continue;
-	//		}
-
-	//		// 2. Try a Dynamo geometry
-	//		List<Object^>^ listOfObjects = dynamic_cast<List<Object^>^>(cellGeometry);
-	//		if (listOfObjects != nullptr)
-	//		{
-	//			for each(Object^ object in listOfObjects)
-	//			{
-	//				Autodesk::DesignScript::Geometry::Geometry^ dynamoGeometry = dynamic_cast<Autodesk::DesignScript::Geometry::Geometry^>(object);
-	//				if (dynamoGeometry != nullptr)
-	//				{
-	//					Modifiers::GeometryColor^ dynamoGeometryColor = Modifiers::GeometryColor::ByGeometryColor(dynamoGeometry, aColor);
-	//					delete object;
-	//					dynamoGeometryColors->Add(dynamoGeometryColor);
-	//				}
-	//			}
-	//			continue;
-	//		}
-	//	}
-	//		
-	//	//this is the important step otherwise the sqlfile stays locked
-	//	osSqlFile->close();
-	//	delete osSqlFile;
-
-	//	return dynamoGeometryColors;
-	//}
 
 	double EnergyModel::DoubleValueFromQuery(OpenStudio::SqlFile^ sqlFile, String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPRowName, String^ EPUnits)
 	{
@@ -804,8 +636,7 @@ namespace TopologicEnergy
 
 			for each(Vertex^ aVertex in vertices)
 			{
-				Autodesk::DesignScript::Geometry::Point^ p = safe_cast<Autodesk::DesignScript::Geometry::Point^>(aVertex->BasicGeometry);
-				OpenStudio::Point3d^ aPoint = gcnew OpenStudio::Point3d(p->X, p->Y, p->Z);
+				OpenStudio::Point3d^ aPoint = gcnew OpenStudio::Point3d(aVertex->X, aVertex->Y, aVertex->Z);
 				facePoints->Add(aPoint);
 			}
 
@@ -826,8 +657,7 @@ namespace TopologicEnergy
 
 		for each(Vertex^ aVertex in vertices)
 		{
-			Autodesk::DesignScript::Geometry::Point^ p = safe_cast<Autodesk::DesignScript::Geometry::Point^>(aVertex->BasicGeometry);
-			OpenStudio::Point3d^ aPoint = gcnew OpenStudio::Point3d(p->X, p->Y, p->Z);
+			OpenStudio::Point3d^ aPoint = gcnew OpenStudio::Point3d(aVertex->X, aVertex->Y, aVertex->Z);
 			facePoints->Add(aPoint);
 		}
 
@@ -1048,12 +878,10 @@ namespace TopologicEnergy
 
 						for each (Vertex^ scaledTriangleVertex in scaledTriangleVertices)
 						{
-							Autodesk::DesignScript::Geometry::Point^ dynamoPoint =
-								safe_cast<Autodesk::DesignScript::Geometry::Point^>(scaledTriangleVertex->BasicGeometry);
 							OpenStudio::Point3d^ osPoint = gcnew OpenStudio::Point3d(
-								dynamoPoint->X,
-								dynamoPoint->Y,
-								dynamoPoint->Z);
+								scaledTriangleVertex->X,
+								scaledTriangleVertex->Y,
+								scaledTriangleVertex->Z);
 
 							osWindowFacePoints->Add(osPoint);
 						}
@@ -1157,7 +985,6 @@ namespace TopologicEnergy
 	{
 		List<Vertex^>^ scaledVertices = gcnew List<Vertex^>();
 		double sqrtScaleFactor = Math::Sqrt(scaleFactor);
-		//Vertex^ faceCentre = GetFaceCentre(buildingFace);
 		Vertex^ centreVertex = GetCentreVertex(vertices);
 		Autodesk::DesignScript::Geometry::Point^ faceCenterPoint =
 			safe_cast<Autodesk::DesignScript::Geometry::Point^>(centreVertex->BasicGeometry);
@@ -1165,21 +992,26 @@ namespace TopologicEnergy
 		{
 			Autodesk::DesignScript::Geometry::Point^ originalPoint =
 				safe_cast<Autodesk::DesignScript::Geometry::Point^>(aVertex->BasicGeometry);
-			Autodesk::DesignScript::Geometry::Point^ translatedPoint = originalPoint->Subtract(faceCenterPoint->AsVector());
+			Autodesk::DesignScript::Geometry::Vector^ originalPointAsVector = faceCenterPoint->AsVector();
+			Autodesk::DesignScript::Geometry::Point^ translatedPoint = originalPoint->Subtract(originalPointAsVector);
 			Autodesk::DesignScript::Geometry::Point^ scaledPoint = safe_cast<Autodesk::DesignScript::Geometry::Point^>(translatedPoint->Scale(sqrtScaleFactor));
-			Autodesk::DesignScript::Geometry::Point^ reTranslatedPoint = scaledPoint->Add(faceCenterPoint->AsVector());
+			Autodesk::DesignScript::Geometry::Vector^ scaledPointAsVector = faceCenterPoint->AsVector();
+			Autodesk::DesignScript::Geometry::Point^ reTranslatedPoint = scaledPoint->Add(scaledPointAsVector);
 			scaledVertices->Add(safe_cast<Vertex^>(Topologic::Topology::ByGeometry(reTranslatedPoint, 0.001))); // tolerance does not matter as it's just a vertex
 
-			/*delete reTranslatedPoint;
+			delete reTranslatedPoint;
+			delete scaledPointAsVector;
 			delete scaledPoint;
 			delete translatedPoint;
-			delete originalPoint;*/
+			delete originalPointAsVector;
+			delete originalPoint;
 		}
+
+		delete faceCenterPoint;
 
 		return scaledVertices;
 	}
 
-	//Vertex^ EnergyModel::GetFaceCentre(Face^ buildingFace)
 	Vertex^ EnergyModel::GetCentreVertex(List<Vertex^>^ vertices)
 	{
 		//List<Vertex^>^ vertices = buildingFace->Vertices;
@@ -1205,7 +1037,8 @@ namespace TopologicEnergy
 		Autodesk::DesignScript::Geometry::Point^ dynamoPoint = safe_cast<Autodesk::DesignScript::Geometry::Point^>(scaledPoint);
 		Vertex^ vertex = safe_cast<Vertex^>(Topologic::Topology::ByGeometry(dynamoPoint, 0.001)); // tolerance does not matter as it's just a vertex
 		delete dynamoPoint;
-		delete scaledPoint;
+		//delete scaledPoint;
+		delete sumPoint;
 		return vertex;
 	}
 
@@ -1218,12 +1051,10 @@ namespace TopologicEnergy
 
 		for each(Vertex^ v in vertices)
 		{
-			Autodesk::DesignScript::Geometry::Point^ point =
-				safe_cast<Autodesk::DesignScript::Geometry::Point^>(v->BasicGeometry);
 			OpenStudio::Point3d^ osPoint = gcnew OpenStudio::Point3d(
-				point->X,
-				point->Y,
-				point->Z);
+				v->X,
+				v->Y,
+				v->Z);
 
 			osFacePoints->Add(osPoint);
 		}
@@ -1237,10 +1068,7 @@ namespace TopologicEnergy
 
 		for each(Vertex^ aVertex in vertices)
 		{
-			Autodesk::DesignScript::Geometry::Point^ point =
-				safe_cast<Autodesk::DesignScript::Geometry::Point^>(aVertex->BasicGeometry);
-
-			if (point->Z > 0.0)
+			if (aVertex->Z > 0.0)
 			{
 				return false;
 			}
@@ -1266,15 +1094,21 @@ namespace TopologicEnergy
 		List<Vertex^>^ vertices = buildingFace->Vertices;
 		Autodesk::DesignScript::Geometry::Point^ p1 =
 			safe_cast<Autodesk::DesignScript::Geometry::Point^>(vertices[0]->BasicGeometry);
+		Autodesk::DesignScript::Geometry::Vector^ p1AsVector = p1->AsVector();
 		Autodesk::DesignScript::Geometry::Point^ p2 =
 			safe_cast<Autodesk::DesignScript::Geometry::Point^>(vertices[1]->BasicGeometry);
+		Autodesk::DesignScript::Geometry::Point^ p2Subtract = p2->Subtract(p1AsVector);
+		Autodesk::DesignScript::Geometry::Vector^ p2SubtractAsVector = p2Subtract->AsVector();
 		Autodesk::DesignScript::Geometry::Point^ p3 =
 			safe_cast<Autodesk::DesignScript::Geometry::Point^>(vertices[2]->BasicGeometry);
-		Autodesk::DesignScript::Geometry::Vector^ dir = (p2->Subtract(p1->AsVector()))->AsVector()->Cross((p3->Subtract(p1->AsVector()))->AsVector());
+		Autodesk::DesignScript::Geometry::Point^ p3Subtract = p3->Subtract(p1AsVector);
+		Autodesk::DesignScript::Geometry::Vector^ p3SubtractAsVector = p3Subtract->AsVector();
+		Autodesk::DesignScript::Geometry::Vector^ dir = p2SubtractAsVector->Cross(p3SubtractAsVector);
 		Autodesk::DesignScript::Geometry::Vector^ faceNormal = dir->Normalized();
 		double faceAngle = faceNormal->AngleWithVector(upVector);
+		Autodesk::DesignScript::Geometry::Vector^ scaledFaceNormal = faceNormal->Scale(0.001);
 		Autodesk::DesignScript::Geometry::Point^ pDynamoOffsetPoint =
-			dynamic_cast<Autodesk::DesignScript::Geometry::Point^>(dynamoCenterPoint->Translate(faceNormal->Scale(0.001)));
+			dynamic_cast<Autodesk::DesignScript::Geometry::Point^>(dynamoCenterPoint->Translate(scaledFaceNormal));
 
 		Vertex^ pOffsetVertex = safe_cast<Vertex^>(Topologic::Topology::ByGeometry(pDynamoOffsetPoint, 0.001)); // tolerance does not matter as it's just a vertex
 
@@ -1282,8 +1116,6 @@ namespace TopologicEnergy
 		{
 			bool isInside = Topologic::Utilities::CellUtility::Contains(buildingSpace, pOffsetVertex);
 			// The offset vertex has to be false, so if isInside is true, reverse the face.
-
-			//bool isFaceInsideOutWithRespectToTheCell = ;
 
 			if (isInside)
 			{
@@ -1301,6 +1133,21 @@ namespace TopologicEnergy
 				faceType = FACE_FLOOR;
 			}
 		}
+
+		delete dynamoCenterPoint;
+		delete p1;
+		delete p1AsVector;
+		delete p2;
+		delete p2Subtract;
+		delete p2SubtractAsVector;
+		delete p3;
+		delete p3Subtract;
+		delete p3SubtractAsVector;
+		delete dir;
+		delete faceNormal;
+		delete scaledFaceNormal;
+		delete pDynamoOffsetPoint;
+
 		return faceType;
 	}
 
@@ -1313,11 +1160,9 @@ namespace TopologicEnergy
 	{
 		double volume = Utilities::CellUtility::Volume(buildingCell);
 		Vertex^ centreOfMass = Utilities::TopologyUtility::CenterOfMass(buildingCell);
-		Autodesk::DesignScript::Geometry::Point^ centrePoint =
-			safe_cast<Autodesk::DesignScript::Geometry::Point^>(centreOfMass->BasicGeometry);
 		for (int i = 0; i < floorLevels->Count - 1; ++i)
 		{
-			if (centrePoint->Z > floorLevels[i] && centrePoint->Z < floorLevels[i + 1])
+			if (centreOfMass->Z > floorLevels[i] && centreOfMass->Z < floorLevels[i + 1])
 			{
 				return i;
 			}

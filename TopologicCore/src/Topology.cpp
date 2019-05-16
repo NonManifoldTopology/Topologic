@@ -710,6 +710,26 @@ namespace TopologicCore
 		ContentManager::GetInstance().Find(rkOcctShape, rContents);
 	}
 
+	void Topology::Apertures(std::list<Aperture::Ptr>& rApertures) const
+	{
+		Apertures(GetOcctShape(), rApertures);
+	}
+
+	void Topology::Apertures(const TopoDS_Shape & rkOcctShape, std::list<Aperture::Ptr>& rApertures)
+	{
+		std::list<Topology::Ptr> contents;
+		ContentManager::GetInstance().Find(rkOcctShape, contents);
+
+		for (const Topology::Ptr& kpContent : contents)
+		{
+			if (kpContent->GetType() == TOPOLOGY_APERTURE)
+			{
+				std::shared_ptr<Aperture> aperture = TopologicalQuery::Downcast<Aperture>(kpContent);
+				rApertures.push_back(aperture);
+			}
+		}
+	}
+
 	void Topology::SubContents(std::list<Topology::Ptr>& rSubContents) const
 	{
 		SubContents(GetOcctShape(), rSubContents);
@@ -1175,70 +1195,6 @@ namespace TopologicCore
 			throw std::exception(errorStream.str().c_str());
 		}
 	}
-
-	//std::shared_ptr<Topology> Topology::TransferBooleanContents(
-	//	const std::shared_ptr<Topology>& kpAnotherTopology,
-	//	BOPAlgo_CellsBuilder& rOcctCellsBuilder,
-	//	BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceA,
-	//	BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceB)
-	//{
-	//	std::list<Topology::Ptr> thisContents;
-	//	SubContents(thisContents);
-
-	//	BOPCol_ListOfShape occtSubTopologies;
-	//	SubTopologies(rOcctCellsBuilder.Shape(), occtSubTopologies);
-	//	//TopoDS_Shape queryShape = rOcctCellsBuilder.Shape();
-	//	TopoDS_Shape queryShape = Simplify(rOcctCellsBuilder.Shape());
-	//	queryShape = MakeBooleanContainers(queryShape);
-	//	GlobalCluster::GetInstance().AddTopology(queryShape);
-
-	//	Topology::Ptr pBooleanResult = Topology::ByOcctShape(queryShape, "");
-	//	// queryShape (pBooleanResult) is the member of the Boolean result, it doesn't have any content yet.
-
-	//	// For now, handle the case where queryShape is a cellComplex and t
-	//	if (GetType() != TOPOLOGY_CELL || pBooleanResult->GetType() != TOPOLOGY_CELLCOMPLEX)
-	//	{
-	//		return pBooleanResult;
-	//	}
-
-	//	// For now, only handle a cell topology
-	//	Cell* pCell = Topology::Downcast<Cell>(this);
-
-	//	std::list<Face::Ptr> originalFaces;
-	//	pCell->Faces(originalFaces);
-	//	for (const Face::Ptr& kpOriginalFace : originalFaces)
-	//	{
-	//		// Get the fixed face
-	//		TopoDS_Shape occtFixedFace;
-	//		try {
-	//			occtFixedFace = rOcctMapFaceToFixedFaceA.Find(kpOriginalFace->GetOcctFace());
-	//		}
-	//		catch (...)
-	//		{
-	//			continue;
-	//		}
-
-	//		// Get the modified fixed faces
-	//		TopTools_ListOfShape occtModifiedFixedFaces = rOcctCellsBuilder.Modified(occtFixedFace);
-	//		for (TopTools_ListIteratorOfListOfShape occtModifiedFixedFaceIterator(occtModifiedFixedFaces);
-	//			occtModifiedFixedFaceIterator.More();
-	//			occtModifiedFixedFaceIterator.Next())
-	//		{
-	//			const TopoDS_Shape& rkOcctModifiedFixedFace = occtModifiedFixedFaceIterator.Value();
-	//			std::shared_ptr<Topology> pModifiedFixedFace = Topology::ByOcctShape(rkOcctModifiedFixedFace, "");
-
-	//			// Transfer the contents from kpOriginalFace to pModifiedFixedFace
-	//			std::list<Topology::Ptr> contents;
-	//			kpOriginalFace->Contents(contents);
-	//			for(const Topology::Ptr& kpTopology : contents)
-	//			{
-	//				pModifiedFixedFace->AddContent(kpTopology);
-	//			}
-	//		}
-	//	}
-
-	//	return pBooleanResult;
-	//}
 
 	void Topology::TransferContents(const TopoDS_Shape& rkOcctShape1, const Topology::Ptr& kpTopology2)
 	{

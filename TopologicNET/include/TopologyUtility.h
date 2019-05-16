@@ -78,9 +78,9 @@ namespace Topologic {
 		public protected:
 			TopologyUtility() {}
 
-			static Topology^ Transform(Topology^ topology, 
+			/*static Topology^ Transform(Topology^ topology, 
 				double zAxisX, double zAxisY, double zAxisZ,
-				double xAxisX, double xAxisY, double xAxisZ);
+				double xAxisX, double xAxisY, double xAxisZ);*/
 
 		};
 	}

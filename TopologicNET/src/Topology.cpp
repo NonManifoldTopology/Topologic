@@ -609,6 +609,23 @@ namespace Topologic
 		return pTopologies;
 	}
 
+	List<Aperture^>^ Topology::Apertures::get()
+	{
+		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		std::list<std::shared_ptr<TopologicCore::Aperture>> coreApertures;
+		pCoreTopology->Apertures(coreApertures);
+
+		List<Aperture^>^ pApertures = gcnew List<Aperture^>();
+
+		for (const TopologicCore::Aperture::Ptr& kpCoreAperture : coreApertures)
+		{
+			Topology^ topology = Topology::ByCoreTopology(kpCoreAperture);
+			Aperture^ aperture = safe_cast<Aperture^>(topology);
+			pApertures->Add(aperture);
+		}
+		return pApertures;
+	}
+
 	List<Topology^>^ Topology::SubContents::get()
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());

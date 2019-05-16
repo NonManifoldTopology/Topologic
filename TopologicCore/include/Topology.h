@@ -33,6 +33,7 @@ namespace TopologicCore
 	class Edge;
 	class Wire;
 	class Context;
+	class Aperture;
 	class TopologyFactory;
 
 	/// <summary>
@@ -251,7 +252,6 @@ namespace TopologicCore
 		/// <param name="kpTopology2"></param>
 		TOPOLOGIC_API static void TransferContents(const TopoDS_Shape& rkOcctShape1, const Topology::Ptr& kpTopology2);
 
-		
 		static void TransferContents(const TopoDS_Shape& rkOcctShape1, const Topology::Ptr& kpTopology2, const BOPCol_ListOfShape& rkOcctDeletedSubshapes);
 
 		/// <summary>
@@ -271,6 +271,14 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="rApertures"></param>
+		TOPOLOGIC_API void Apertures(std::list<std::shared_ptr<Aperture>>& rApertures) const;
+
+		static void Apertures(const TopoDS_Shape& rkOcctShape, std::list<std::shared_ptr<Aperture>>& rApertures);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="rSubContents"></param>
 		TOPOLOGIC_API void SubContents(std::list<Topology::Ptr>& rSubContents) const;
 
@@ -279,7 +287,7 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="rkOcctShape"></param>
 		/// <param name="rSubContents"></param>
-		static void SubContents(const TopoDS_Shape& rkOcctShape, std::list<Topology::Ptr>& rSubContents);
+		static TOPOLOGIC_API void SubContents(const TopoDS_Shape& rkOcctShape, std::list<Topology::Ptr>& rSubContents);
 
 		/// <summary>
 		/// 

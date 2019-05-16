@@ -82,7 +82,7 @@ namespace Topologic
 			return Topology::ByCoreTopology(pCoreTransformedTopology);
 		}
 
-		Topology ^ TopologyUtility::Transform(Topology ^ topology,
+		/*Topology ^ TopologyUtility::Transform(Topology ^ topology,
 			double zAxisX, double zAxisY, double zAxisZ,
 			double xAxisX, double xAxisY, double xAxisZ)
 		{
@@ -96,6 +96,6 @@ namespace Topologic
 						xAxisX, xAxisY, xAxisZ);
 
 			return Topology::ByCoreTopology(pCoreTransformedTopology);
-		}
+		}*/
 	}
 }
