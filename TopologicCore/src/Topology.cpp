@@ -545,6 +545,56 @@ namespace TopologicCore
 		));
 	}
 
+	Topology::Ptr Topology::AddContents(const std::list<Topology::Ptr>& rkContentTopologies, const int kTypeFilter)
+	{
+		Topology::Ptr pCopyTopology = std::dynamic_pointer_cast<Topology>(DeepCopy());
+		std::string contextInstanceGUID;
+
+		for (const Topology::Ptr& kpContentTopology : rkContentTopologies)
+		{
+			TopoDS_Shape occtCopyContextShape;
+			if (kTypeFilter == 0)
+			{
+				occtCopyContextShape = pCopyTopology->GetOcctShape();
+				contextInstanceGUID = pCopyTopology->GetInstanceGUID();
+			}
+			else
+			{
+				Vertex::Ptr pCenterOfMass = kpContentTopology->CenterOfMass();
+				Topology::Ptr selectedSubtopology = pCopyTopology->SelectSubtopology(pCenterOfMass, kTypeFilter);
+				if (selectedSubtopology == nullptr)
+				{
+					throw std::exception("No suitable constituent members with the desired type to attach the content to.");
+				}
+				occtCopyContextShape = selectedSubtopology->GetOcctShape();
+				contextInstanceGUID = selectedSubtopology->GetInstanceGUID();
+			}
+
+			bool hasContent = ContentManager::GetInstance().HasContent(occtCopyContextShape, kpContentTopology->GetOcctShape());
+			if (hasContent)
+			{
+				continue;
+			}
+
+			Topology::Ptr pCopyContentTopology = std::dynamic_pointer_cast<Topology>(kpContentTopology->DeepCopy());
+			GlobalCluster::GetInstance().AddTopology(pCopyContentTopology->GetOcctShape());
+				
+			ContentManager::GetInstance().Add(occtCopyContextShape, pCopyContentTopology);
+
+			const double kDefaultParameter = 0.0; // TODO: calculate the parameters
+			ContextManager::GetInstance().Add(
+				pCopyContentTopology->GetOcctShape(),
+				TopologicCore::Context::ByTopologyParameters(
+					Topology::ByOcctShape(occtCopyContextShape, contextInstanceGUID),
+					kDefaultParameter, kDefaultParameter, kDefaultParameter
+				));
+		}
+
+		GlobalCluster::GetInstance().AddTopology(pCopyTopology->GetOcctShape());
+
+		return pCopyTopology;
+	}
+
 	void Topology::RemoveContent(const Topology::Ptr& rkTopology)
 	{
 		ContentManager::GetInstance().Remove(GetOcctShape(), rkTopology->GetOcctShape());

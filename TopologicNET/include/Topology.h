@@ -155,23 +155,23 @@ namespace Topologic
 			List<Context^>^ get();
 		}
 
-		/// <summary>
+		/*/// <summary>
 		/// Adds this Topology as a content (non-constituent member) to another Topology.
 		/// </summary>
 		/// <param name="topology">The Topology of the content</param>
 		/// <returns>The new Topology</returns>
-		Topology^ AddContent(Topology^ topology);
+		Topology^ AddContent(Topology^ topology);*/
 		
 		/// <summary>
-		/// Adds this Topology as a content (non-constituent member) to another Topology of a specific type.
+		/// Adds this Topology as a content (non-constituent member) to another Topology of a specific type. If the type filter is 0, the contents will be added to the parent topology.
 		/// </summary>
-		/// <param name="contentTopology">The Topology of the content</param>
+		/// <param name="contentTopologies">The Topologies of the content</param>
 		/// <param name="typeFilter">The type of the context Topology</param>
 		/// <returns>The new Topology</returns>
 #ifdef TOPOLOGIC_DYNAMO
-		Topology^ AddContent(Topology^ contentTopology, [DefaultArgument("255")] int typeFilter);
+		Topology^ AddContents(List<Topology^>^ contentTopologies, [DefaultArgument("0")] int typeFilter);
 #else
-		Topology^ AddContent(Topology^ contentTopology, int typeFilter);
+		Topology^ AddContents(List<Topology^>^ contentTopologies, int typeFilter);
 #endif
 
 		/// <summary>

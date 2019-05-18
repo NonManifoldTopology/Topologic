@@ -681,47 +681,42 @@ namespace Topologic
 		return pContexts;
 	}
 
-	Topology^ Topology::AddContent(Topology^ content)
+	//Topology^ Topology::AddContent(Topology^ content)
+	//{
+	//	// 1. Copy this topology
+	//	TopologicCore::Topology::Ptr pCoreParentTopology =
+	//		TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+	//	TopologicCore::Topology::Ptr pCoreCopyParentTopology = pCoreParentTopology->DeepCopy();
+	//	
+	//	// 2. Copy the content topology
+	//	TopologicCore::Topology::Ptr pCoreContentTopology =
+	//		TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(content->GetCoreTopologicalQuery());
+	//	TopologicCore::Topology::Ptr pCoreCopyContentTopology = pCoreContentTopology->DeepCopy();
+
+	//	pCoreCopyParentTopology->AddContent(pCoreCopyContentTopology);
+
+	//	// 3. Copy dictionary
+	//	Topology^ copyParentTopology = Topology::ByCoreTopology(pCoreCopyParentTopology);
+	//	Topology^ copyCopyParentTopology = copyParentTopology->SetDictionary(Dictionary);
+
+	//	// 4. Return the copy topology
+	//	return copyCopyParentTopology;
+	//}
+
+	Topology ^ Topology::AddContents(List<Topology^>^ contentTopologies, int typeFilter)
 	{
-		// 1. Copy this topology
 		TopologicCore::Topology::Ptr pCoreParentTopology =
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreCopyParentTopology = pCoreParentTopology->DeepCopy();
-		
-		// 2. Copy the content topology
-		TopologicCore::Topology::Ptr pCoreContentTopology =
-			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(content->GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreCopyContentTopology = pCoreContentTopology->DeepCopy();
 
-		pCoreCopyParentTopology->AddContent(pCoreCopyContentTopology);
+		std::list<TopologicCore::Topology::Ptr> coreContentTopologies;
+		for each(Topology^ contentTopology in contentTopologies)
+		{
+			TopologicCore::Topology::Ptr pCoreContentTopology =
+					TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(contentTopology->GetCoreTopologicalQuery());
+			coreContentTopologies.push_back(pCoreContentTopology);
+		}
 
-		// 3. Copy dictionary
-		Topology^ copyParentTopology = Topology::ByCoreTopology(pCoreCopyParentTopology);
-		Topology^ copyCopyParentTopology = copyParentTopology->SetDictionary(Dictionary);
-
-		// 4. Return the copy topology
-		return copyCopyParentTopology;
-	}
-
-	Topology ^ Topology::AddContent(Topology ^ contentTopology, int typeFilter)
-	{
-		// 1. Copy this topology
-		TopologicCore::Topology::Ptr pCoreParentTopology =
-			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreCopyParentTopology = pCoreParentTopology->DeepCopy();
-
-		// 2. Copy the content topology
-		TopologicCore::Topology::Ptr pCoreContentTopology =
-			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(contentTopology->GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreCopyContentTopology = pCoreContentTopology->DeepCopy();
-
-		pCoreCopyParentTopology->AddContent(pCoreCopyContentTopology, typeFilter);
-
-		// 3. Copy dictionary
-		Topology^ copyParentTopology = Topology::ByCoreTopology(pCoreCopyParentTopology);
-		copyParentTopology->SetDictionary(copyParentTopology->Dictionary);
-
-		// 4. Return the copy topology
+		TopologicCore::Topology::Ptr pCoreCopyParentTopology = pCoreParentTopology->AddContents(coreContentTopologies, typeFilter);
 		return Topology::ByCoreTopology(pCoreCopyParentTopology);
 	}
 
