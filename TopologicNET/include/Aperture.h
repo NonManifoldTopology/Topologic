@@ -62,7 +62,10 @@ namespace Topologic
 		/// Returns the underlying Topology.
 		/// </summary>
 		/// <returns name="Topology">The underlying Topology</returns>
-		Topologic::Topology^ Topology();
+		property Topologic::Topology^ Topology
+		{
+			Topologic::Topology^ get();
+		}
 
 		/*/// <summary>
 		/// Checks if any aperture path is open.

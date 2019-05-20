@@ -917,7 +917,7 @@ namespace TopologicEnergy
 						continue;
 					}
 
-					Face^ pFaceAperture = dynamic_cast<Face^>(pAperture->Topology());
+					Face^ pFaceAperture = dynamic_cast<Face^>(pAperture->Topology);
 					if (pAperture == nullptr)
 					{
 						continue;

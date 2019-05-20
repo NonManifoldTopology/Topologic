@@ -163,7 +163,7 @@ namespace Topologic
 		Topology^ AddContent(Topology^ topology);*/
 		
 		/// <summary>
-		/// Adds this Topology as a content (non-constituent member) to another Topology of a specific type. If the type filter is 0, the contents will be added to the parent topology.
+		/// Adds this Topology as a content (non-constituent member) to another Topology of a specific type. If the type filter is 0, the contents will be added to the parent topology. Otherwise, the contents will be added to the closest sub-topology which matches the filter.
 		/// </summary>
 		/// <param name="contentTopologies">The Topologies of the content</param>
 		/// <param name="typeFilter">The type of the context Topology</param>
