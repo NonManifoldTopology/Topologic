@@ -14,7 +14,7 @@
 
   ;Name and file
   Name "Topologic"
-  OutFile "TopologicInstaller.exe"
+  OutFile "TopologicNETInstaller.exe"
 
   ;Default installation folder
   InstallDir "$PROGRAMFILES64\Topologic"
@@ -75,37 +75,37 @@ Section "TopologicNET" SectionTopologicNET
   Call CheckVCRedistributable
 SectionEnd
 
-SectionGroup "TopologicDynamo" SectionGroupTopologicDynamo
-  Section "Library" SectionTopologicDynamo
-    SetOutPath "$INSTDIR"
-	File ..\output\x64\Release\TopologicDynamo.dll
-	File ..\output\x64\Release\TopologicDynamo.customization.dll
-    File ..\output\x64\Release\TopologicDynamo.xml
-    File ..\output\x64\Release\TopologicDynamo_DynamoCustomization.xml
-    Call CheckVCRedistributable
-  SectionEnd
-  Section "Dynamo Sandbox 2.1.0" SectionDynamo
-    ;MessageBox
-	;Download and execute
-	Call InstallDynamoCore
-  SectionEnd
-SectionGroupEnd
+; SectionGroup "TopologicDynamo" SectionGroupTopologicDynamo
+  ; Section "Library" SectionTopologicDynamo
+    ; SetOutPath "$INSTDIR"
+	; File ..\output\x64\Release\TopologicDynamo.dll
+	; File ..\output\x64\Release\TopologicDynamo.customization.dll
+    ; File ..\output\x64\Release\TopologicDynamo.xml
+    ; File ..\output\x64\Release\TopologicDynamo_DynamoCustomization.xml
+    ; Call CheckVCRedistributable
+  ; SectionEnd
+  ; Section "Dynamo Sandbox 2.1.0" SectionDynamo
+    ; ;MessageBox
+	; ;Download and execute
+	; Call InstallDynamoCore
+  ; SectionEnd
+; SectionGroupEnd
 
-SectionGroup "TopologicEnergy" SectionGroupTopologicEnergy
-  Section "Library" SectionTopologicEnergy
-    SetOutPath "$INSTDIR"
-	File ..\output\x64\Release\TopologicEnergy.dll
-    File ..\output\x64\Release\TopologicEnergy.customization.dll
-    File ..\output\x64\Release\TopologicEnergy.xml
-    File ..\output\x64\Release\TopologicEnergy_DynamoCustomization.xml
-  SectionEnd
-  Section "OpenStudio 2.6.0" SectionOpenStudio
-    ;Install
-	File ..\output\x64\Release\OpenStudio.dll
-    File ..\output\x64\Release\openstudio_csharp.dll
-    File ..\output\x64\Release\openstudio_translators_csharp.dll
-  SectionEnd
-SectionGroupEnd
+; SectionGroup "TopologicEnergy" SectionGroupTopologicEnergy
+  ; Section "Library" SectionTopologicEnergy
+    ; SetOutPath "$INSTDIR"
+	; File ..\output\x64\Release\TopologicEnergy.dll
+    ; File ..\output\x64\Release\TopologicEnergy.customization.dll
+    ; File ..\output\x64\Release\TopologicEnergy.xml
+    ; File ..\output\x64\Release\TopologicEnergy_DynamoCustomization.xml
+  ; SectionEnd
+  ; Section "OpenStudio 2.6.0" SectionOpenStudio
+    ; ;Install
+	; File ..\output\x64\Release\OpenStudio.dll
+    ; File ..\output\x64\Release\openstudio_csharp.dll
+    ; File ..\output\x64\Release\openstudio_translators_csharp.dll
+  ; SectionEnd
+; SectionGroupEnd
 
 ; SectionGroup "TopologicBHoM"
   ; Section "Library" TopologicBHoM
@@ -146,19 +146,19 @@ Function CheckVCRedistributable
   ${EndIf}
 FunctionEnd
 
-Function InstallDynamoCore
-  NSISdl::download https://s3-us-west-2.amazonaws.com/dyn-builds-data/DynamoCoreRuntime2.1.0.zip "$INSTDIR\DynamoCoreRuntime2.1.0.zip"
-  Pop $0
-  ${If} $0 == "success"
-    Nsis7z::Extract "$INSTDIR\DynamoCoreRuntime2.1.0.zip"
-    Delete "$INSTDIR\DynamoCoreRuntime2.1.0.zip"
-    ${If} $1 <> 0
-      MessageBox MB_OK "Dynamo Core 2.1.0 was not installed."
-    ${EndIf}
-  ${Else}
-    MessageBox MB_OK "Dynamo Core 2.1.0 was not installed."
-  ${EndIf}
-FunctionEnd
+; Function InstallDynamoCore
+  ; NSISdl::download https://s3-us-west-2.amazonaws.com/dyn-builds-data/DynamoCoreRuntime2.1.0.zip "$INSTDIR\DynamoCoreRuntime2.1.0.zip"
+  ; Pop $0
+  ; ${If} $0 == "success"
+    ; Nsis7z::Extract "$INSTDIR\DynamoCoreRuntime2.1.0.zip"
+    ; Delete "$INSTDIR\DynamoCoreRuntime2.1.0.zip"
+    ; ${If} $1 <> 0
+      ; MessageBox MB_OK "Dynamo Core 2.1.0 was not installed."
+    ; ${EndIf}
+  ; ${Else}
+    ; MessageBox MB_OK "Dynamo Core 2.1.0 was not installed."
+  ; ${EndIf}
+; FunctionEnd
 
 Function .onSelChange
 
@@ -172,73 +172,73 @@ Function .onSelChange
     
   ${ElseIf} $0 == 4 ;SectionTopologicNET, requires SectionTopologicCore (which is selected by default)
     
-  ${ElseIf} $0 == 5 ;SectionGroupTopologicDynamo
+  ; ${ElseIf} $0 == 5 ;SectionGroupTopologicDynamo
     
-    SectionGetFlags ${SectionGroupTopologicDynamo} $R0
-    IntOp $R0 $R0 & ${SF_SELECTED}
-    ${If} $R0  == 0
-      ;If TopologicDynamo is deselected, also deselect TopologicEnergy.
-      SectionGetFlags ${SectionTopologicEnergy} $R1
-	  IntOp $R1 $R1 & ~${SF_SELECTED}
-	  SectionSetFlags ${SectionTopologicEnergy} $R1
+    ; SectionGetFlags ${SectionGroupTopologicDynamo} $R0
+    ; IntOp $R0 $R0 & ${SF_SELECTED}
+    ; ${If} $R0  == 0
+      ; ;If TopologicDynamo is deselected, also deselect TopologicEnergy.
+      ; SectionGetFlags ${SectionTopologicEnergy} $R1
+	  ; IntOp $R1 $R1 & ~${SF_SELECTED}
+	  ; SectionSetFlags ${SectionTopologicEnergy} $R1
 	  
-      SectionGetFlags ${SectionOpenStudio} $R1
-	  IntOp $R1 $R1 & ~${SF_SELECTED}
-	  SectionSetFlags ${SectionOpenStudio} $R1
-    ${EndIf}
+      ; SectionGetFlags ${SectionOpenStudio} $R1
+	  ; IntOp $R1 $R1 & ~${SF_SELECTED}
+	  ; SectionSetFlags ${SectionOpenStudio} $R1
+    ; ${EndIf}
 	
-  ${ElseIf} $0 == 6 ;SectionTopologicDynamo, requires TopologicCore
-    SectionGetFlags ${SectionTopologicDynamo} $R0
-    IntOp $R0 $R0 & ${SF_SELECTED}
-    ${If} $R0  == 0
-      ;If TopologicDynamo is deselected, also deselect TopologicEnergy.	  
-      SectionGetFlags ${SectionTopologicEnergy} $R1
-	  IntOp $R1 $R1 & ~${SF_SELECTED}
-	  SectionSetFlags ${SectionTopologicEnergy} $R1
+  ; ${ElseIf} $0 == 6 ;SectionTopologicDynamo, requires TopologicCore
+    ; SectionGetFlags ${SectionTopologicDynamo} $R0
+    ; IntOp $R0 $R0 & ${SF_SELECTED}
+    ; ${If} $R0  == 0
+      ; ;If TopologicDynamo is deselected, also deselect TopologicEnergy.	  
+      ; SectionGetFlags ${SectionTopologicEnergy} $R1
+	  ; IntOp $R1 $R1 & ~${SF_SELECTED}
+	  ; SectionSetFlags ${SectionTopologicEnergy} $R1
 	  
-      SectionGetFlags ${SectionOpenStudio} $R1
-	  IntOp $R1 $R1 & ~${SF_SELECTED}
-	  SectionSetFlags ${SectionOpenStudio} $R1
-    ${EndIf}
+      ; SectionGetFlags ${SectionOpenStudio} $R1
+	  ; IntOp $R1 $R1 & ~${SF_SELECTED}
+	  ; SectionSetFlags ${SectionOpenStudio} $R1
+    ; ${EndIf}
 	
-  ${ElseIf} $0 == 7 ;SectionDynamo
+  ; ${ElseIf} $0 == 7 ;SectionDynamo
     
-  ${ElseIf} $0 == 8 ;SectionGroupTopologicEnergy
-    ;If TopologicEnergy is selected, also select: TopologicDynamo, 
-    SectionGetFlags ${SectionGroupTopologicEnergy} $R0
-    IntOp $R0 $R0 & ${SF_SELECTED}
-    ${If} $R0 != 0
-      SectionGetFlags ${SectionTopologicDynamo} $R1
-	  IntOp $R1 $R1 | ${SF_SELECTED}
-	  SectionSetFlags ${SectionTopologicDynamo} $R1
+  ; ${ElseIf} $0 == 8 ;SectionGroupTopologicEnergy
+    ; ;If TopologicEnergy is selected, also select: TopologicDynamo, 
+    ; SectionGetFlags ${SectionGroupTopologicEnergy} $R0
+    ; IntOp $R0 $R0 & ${SF_SELECTED}
+    ; ${If} $R0 != 0
+      ; SectionGetFlags ${SectionTopologicDynamo} $R1
+	  ; IntOp $R1 $R1 | ${SF_SELECTED}
+	  ; SectionSetFlags ${SectionTopologicDynamo} $R1
 	  
-      SectionGetFlags ${SectionDynamo} $R1
-	  IntOp $R1 $R1 | ${SF_SELECTED}
-	  SectionSetFlags ${SectionDynamo} $R1
+      ; SectionGetFlags ${SectionDynamo} $R1
+	  ; IntOp $R1 $R1 | ${SF_SELECTED}
+	  ; SectionSetFlags ${SectionDynamo} $R1
 	  
-      SectionGetFlags ${SectionTopologicEnergy} $R1
-	  IntOp $R1 $R1 | ${SF_SELECTED}
-	  SectionSetFlags ${SectionTopologicEnergy} $R1
+      ; SectionGetFlags ${SectionTopologicEnergy} $R1
+	  ; IntOp $R1 $R1 | ${SF_SELECTED}
+	  ; SectionSetFlags ${SectionTopologicEnergy} $R1
 	  
-      SectionGetFlags ${SectionOpenStudio} $R1
-	  IntOp $R1 $R1 | ${SF_SELECTED}
-	  SectionSetFlags ${SectionOpenStudio} $R1
-    ${EndIf}
+      ; SectionGetFlags ${SectionOpenStudio} $R1
+	  ; IntOp $R1 $R1 | ${SF_SELECTED}
+	  ; SectionSetFlags ${SectionOpenStudio} $R1
+    ; ${EndIf}
   
-  ${ElseIf} $0 == 9 ;SectionTopologicEnergy
-    SectionGetFlags ${SectionTopologicEnergy} $R0
-    IntOp $R0 $R0 & ${SF_SELECTED}
-    ${If} $R0 != 0
-	  SectionGetFlags ${SectionTopologicDynamo} $R1
-	  IntOp $R1 $R1 | ${SF_SELECTED}
-	  SectionSetFlags ${SectionTopologicDynamo} $R1
+  ; ${ElseIf} $0 == 9 ;SectionTopologicEnergy
+    ; SectionGetFlags ${SectionTopologicEnergy} $R0
+    ; IntOp $R0 $R0 & ${SF_SELECTED}
+    ; ${If} $R0 != 0
+	  ; SectionGetFlags ${SectionTopologicDynamo} $R1
+	  ; IntOp $R1 $R1 | ${SF_SELECTED}
+	  ; SectionSetFlags ${SectionTopologicDynamo} $R1
 	  
-      SectionGetFlags ${SectionDynamo} $R1
-	  IntOp $R1 $R1 | ${SF_SELECTED}
-	  SectionSetFlags ${SectionDynamo} $R1
+      ; SectionGetFlags ${SectionDynamo} $R1
+	  ; IntOp $R1 $R1 | ${SF_SELECTED}
+	  ; SectionSetFlags ${SectionDynamo} $R1
 	  
-    ${EndIf}
-  ${ElseIf} $0 == 10 ;SectionOpenStudio
+    ; ${EndIf}
+  ; ${ElseIf} $0 == 10 ;SectionOpenStudio
     
   ${EndIf}
 FunctionEnd
@@ -305,12 +305,12 @@ SectionEnd
   LangString DESC_TopologicCore ${LANG_ENGLISH} "Installs TopologicCore DLLs."
   LangString DESC_OCCT ${LANG_ENGLISH} "Installs Open CASCADE 7.2.0."
   LangString DESC_TopologicNET ${LANG_ENGLISH} "Installs the .NET layer of Topologic."
-  LangString DESC_GroupTopologicDynamo ${LANG_ENGLISH} "Installs the Dynamo layer of Topologic."
-  LangString DESC_TopologicDynamo ${LANG_ENGLISH} "Installs TopologicDynamo DLLs."
-  LangString DESC_Dynamo ${LANG_ENGLISH} "Installs Dynamo 2.1.0."
-  LangString DESC_GroupTopologicEnergy ${LANG_ENGLISH} "Installs the Energy application layer of Topologic."
-  LangString DESC_TopologicEnergy ${LANG_ENGLISH} "Installs TopologicEnergy DLLs."
-  LangString DESC_OpenStudio ${LANG_ENGLISH} "Installs OpenStudio 2.6.0."
+  ; LangString DESC_GroupTopologicDynamo ${LANG_ENGLISH} "Installs the Dynamo layer of Topologic."
+  ; LangString DESC_TopologicDynamo ${LANG_ENGLISH} "Installs TopologicDynamo DLLs."
+  ; LangString DESC_Dynamo ${LANG_ENGLISH} "Installs Dynamo 2.1.0."
+  ; LangString DESC_GroupTopologicEnergy ${LANG_ENGLISH} "Installs the Energy application layer of Topologic."
+  ; LangString DESC_TopologicEnergy ${LANG_ENGLISH} "Installs TopologicEnergy DLLs."
+  ; LangString DESC_OpenStudio ${LANG_ENGLISH} "Installs OpenStudio 2.6.0."
 
   ;Assign language strings to sections
   !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
@@ -318,12 +318,12 @@ SectionEnd
     !insertmacro MUI_DESCRIPTION_TEXT ${SectionTopologicCore} $(DESC_TopologicCore)
     !insertmacro MUI_DESCRIPTION_TEXT ${SectionOCCT} $(DESC_OCCT)
     !insertmacro MUI_DESCRIPTION_TEXT ${SectionTopologicNET} $(DESC_TopologicNET)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SectionGroupTopologicDynamo} $(DESC_GroupTopologicDynamo)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SectionTopologicDynamo} $(DESC_TopologicDynamo)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SectionDynamo} $(DESC_Dynamo)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SectionGroupTopologicEnergy} $(DESC_GroupTopologicEnergy)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SectionTopologicEnergy} $(DESC_TopologicEnergy)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SectionOpenStudio} $(DESC_OpenStudio)
+    ; !insertmacro MUI_DESCRIPTION_TEXT ${SectionGroupTopologicDynamo} $(DESC_GroupTopologicDynamo)
+    ; !insertmacro MUI_DESCRIPTION_TEXT ${SectionTopologicDynamo} $(DESC_TopologicDynamo)
+    ; !insertmacro MUI_DESCRIPTION_TEXT ${SectionDynamo} $(DESC_Dynamo)
+    ; !insertmacro MUI_DESCRIPTION_TEXT ${SectionGroupTopologicEnergy} $(DESC_GroupTopologicEnergy)
+    ; !insertmacro MUI_DESCRIPTION_TEXT ${SectionTopologicEnergy} $(DESC_TopologicEnergy)
+    ; !insertmacro MUI_DESCRIPTION_TEXT ${SectionOpenStudio} $(DESC_OpenStudio)
     ;!insertmacro MUI_DESCRIPTION_TEXT ${TopologicBHoM} $(DESC_TopologicBHoM)
   !insertmacro MUI_FUNCTION_DESCRIPTION_END
  
