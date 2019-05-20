@@ -40,7 +40,7 @@ namespace TopologicEnergy
 		OpenStudio::Space^ osSpace = osSpaces[0];
 		System::String^ directory = System::IO::Path::GetDirectoryName(oswPath);
 		System::String^ sqlPath = directory + "\\run\\eplusout.sql";
-		m_osSqlFile = gcnew OpenStudio::SqlFile(gcnew OpenStudio::Path(sqlPath));
+		m_osSqlFile = gcnew OpenStudio::SqlFile(OpenStudio::OpenStudioUtilitiesCore::toPath(sqlPath));
 		m_osModel->setSqlFile(m_osSqlFile);
 		OpenStudio::Space^ osSpace2 = OsSpaces[0];
 	}

@@ -106,7 +106,7 @@
       <AdditionalDependencies />
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)references\OpenStudio-2.5.0\*.dll" "$(SolutionDir)output\$(Platform)\$(Configuration)"
+      <Command>copy "$(SolutionDir)references\OpenStudio-2.8.0\*.dll" "$(SolutionDir)output\$(Platform)\$(Configuration)"
 copy "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -143,7 +143,7 @@ copy "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"
       <AdditionalDependencies />
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)references\OpenStudio-2.5.0\*.dll" "$(SolutionDir)output\$(Platform)\$(Configuration)"
+      <Command>copy "$(SolutionDir)references\OpenStudio-2.8.0\*.dll" "$(SolutionDir)output\$(Platform)\$(Configuration)"
 copy "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -173,7 +173,7 @@ copy "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"
       <HintPath>..\references\Dynamo-2.0.1\GeometryColor.dll</HintPath>
     </Reference>
     <Reference Include="OpenStudio">
-      <HintPath>..\references\OpenStudio-2.5.0\OpenStudio.dll</HintPath>
+      <HintPath>..\references\OpenStudio-2.8.0\OpenStudio.dll</HintPath>
     </Reference>
     <Reference Include="ProtoGeometry">
       <HintPath>..\references\Dynamo-2.0.1\ProtoGeometry.dll</HintPath>

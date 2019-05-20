@@ -12,7 +12,7 @@ namespace TopologicEnergy
 		OpenStudio::EnergyPlusForwardTranslator^ osForwardTranslator = gcnew OpenStudio::EnergyPlusForwardTranslator();
 		OpenStudio::Workspace^ osWorkspace = osForwardTranslator->translateModel(osModel);
 		OpenStudio::IdfFile^ osIdfFile = osWorkspace->toIdfFile();
-		OpenStudio::Path^ osIdfPath = gcnew OpenStudio::Path(idfPathName);
+		OpenStudio::Path^ osIdfPath = OpenStudio::OpenStudioUtilitiesCore::toPath(idfPathName); //gcnew OpenStudio::Path(idfPathName);
 		bool idfSaveCondition = osIdfFile->save(osIdfPath);
 		return idfSaveCondition;
 	}
@@ -132,7 +132,7 @@ namespace TopologicEnergy
 
 	EnergyModel ^ EnergyModel::Import(String ^ osmFile, double tolerance)
 	{
-		OpenStudio::Path^ osOsmFile = gcnew OpenStudio::Path(osmFile);
+		OpenStudio::Path^ osOsmFile = OpenStudio::OpenStudioUtilitiesCore::toPath(osmFile);// gcnew OpenStudio::Path(osmFile);
 
 		// Create an abstract model
 		OpenStudio::OptionalModel^ osOptionalModel = OpenStudio::Model::load(osOsmFile);
@@ -272,7 +272,7 @@ namespace TopologicEnergy
 		osModel->purgeUnusedResourceObjects();
 
 		// Create a path string
-		OpenStudio::Path^ osPath = gcnew OpenStudio::Path(osmPathName);
+		OpenStudio::Path^ osPath = OpenStudio::OpenStudioUtilitiesCore::toPath(osmPathName);// gcnew OpenStudio::Path(osmPathName);
 		bool osCondition = osModel->save(osPath, true);
 		return osCondition;
 	}
@@ -291,20 +291,20 @@ namespace TopologicEnergy
 		{
 			throw gcnew FileNotFoundException("DDY file not found.");
 		}
-		OpenStudio::Path^ osTemplatePath = gcnew OpenStudio::Path(osmTemplatePath);
+		OpenStudio::Path^ osTemplatePath = OpenStudio::OpenStudioUtilitiesCore::toPath(osmTemplatePath);// gcnew OpenStudio::Path(osmTemplatePath);
 
 		// Create an abstract model
 		OpenStudio::OptionalModel^ osOptionalModel = OpenStudio::Model::load(osTemplatePath);
 		OpenStudio::Model^ osModel = osOptionalModel->__ref__();
 
 		// Read an EPW weather file
-		OpenStudio::Path^ osEPWPath = gcnew OpenStudio::Path(epwWeatherPath);
+		OpenStudio::Path^ osEPWPath = OpenStudio::OpenStudioUtilitiesCore::toPath(epwWeatherPath);// gcnew OpenStudio::Path(epwWeatherPath);
 		OpenStudio::EpwFile^ osEPWFile = gcnew OpenStudio::EpwFile(osEPWPath);
 		OpenStudio::WeatherFile^ osWeatherFile = osModel->getWeatherFile();
 		OpenStudio::WeatherFile::setWeatherFile(osModel, osEPWFile);
 
 		// Read an DDY design days files
-		OpenStudio::Path^ osDDYPath = gcnew OpenStudio::Path(ddyPath);
+		OpenStudio::Path^ osDDYPath = OpenStudio::OpenStudioUtilitiesCore::toPath(ddyPath);
 		OpenStudio::EnergyPlusReverseTranslator^ osTranslator = gcnew OpenStudio::EnergyPlusReverseTranslator();
 		OpenStudio::OptionalModel^ tempModel01 = osTranslator->loadModel(osDDYPath);
 		OpenStudio::Model^ tempModel02 = tempModel01->__ref__();
@@ -423,7 +423,7 @@ namespace TopologicEnergy
 
 	OpenStudio::SqlFile^ EnergyModel::CreateSqlFile(OpenStudio::Model ^ osModel, String^ sqlFilePath)
 	{
-		OpenStudio::Path^ osSqlFilePath = gcnew OpenStudio::Path(sqlFilePath);
+		OpenStudio::Path^ osSqlFilePath = OpenStudio::OpenStudioUtilitiesCore::toPath(sqlFilePath);
 		OpenStudio::SqlFile^ osSqlFile = gcnew OpenStudio::SqlFile(osSqlFilePath);
 		if (osSqlFile == nullptr)
 		{
@@ -529,8 +529,8 @@ namespace TopologicEnergy
 			String^ osmFilename = Path::GetFileNameWithoutExtension(openStudioOutputTimeStampPath);
 			String^ osmDirectory = Path::GetDirectoryName(openStudioOutputTimeStampPath);
 			oswPath = osmDirectory + "\\" + osmFilename + ".osw";
-			OpenStudio::Path^ osOswPath = gcnew OpenStudio::Path(oswPath);
-			workflow->setSeedFile(gcnew OpenStudio::Path(openStudioOutputTimeStampPath));
+			OpenStudio::Path^ osOswPath = OpenStudio::OpenStudioUtilitiesCore::toPath(oswPath);
+			workflow->setSeedFile(OpenStudio::OpenStudioUtilitiesCore::toPath(openStudioOutputTimeStampPath));
 			workflow->setWeatherFile(gcnew OpenStudio::Path());
 			workflow->saveAs(osOswPath);
 			return true;
