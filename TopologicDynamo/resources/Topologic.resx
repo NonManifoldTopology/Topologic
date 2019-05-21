@@ -352,7 +352,7 @@
   <data name="Topologic.Topology.AddContents.Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Topologic.Large.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Topologic.Topology.AddContext.Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="Topologic.Topology.AddContexts.Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Topologic.Large.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Topologic.Topology.Analyze.Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
@@ -387,7 +387,7 @@
   </data>
   <data name="Topologic.Topology.Merge.Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Topologic.Large.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
+  </data>	
   <data name="Topologic.Topology.RemoveContents.Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Topologic.Large.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -919,7 +919,7 @@
   <data name="Topologic.Topology.AddContents.Small" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Topologic.Small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Topologic.Topology.AddContext.Small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="Topologic.Topology.AddContexts.Small" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Topologic.Small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Topologic.Topology.Analyze.Small" type="System.Resources.ResXFileRef, System.Windows.Forms">

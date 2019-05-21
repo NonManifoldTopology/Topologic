@@ -191,12 +191,12 @@ namespace Topologic
 		/// <returns name="Topology">The new Topology</returns>
 		Topology^ RemoveContents(List<Topology^> contentTopologies);
 
-		/// <summary>
+		/*/// <summary>
 		/// Removes contexts from a Topology.
 		/// </summary>
 		/// <param name="contexts">The Contexts</param>
 		/// <returns name="Topology">The new Topology</returns>
-		Topology^ RemoveContexts(List<Context^>^ contexts);
+		Topology^ RemoveContexts(List<Context^>^ contexts);*/
 
 		/// <summary>
 		/// Adds Apertures to a Topology.
@@ -205,12 +205,12 @@ namespace Topologic
 		/// <returns name="Topology">The new Topology</returns>
 		Topology^ AddApertures(System::Collections::Generic::IEnumerable<Topology^>^ apertureTopologies);
 
-		/// <summary>
+		/*/// <summary>
 		/// Adds a context to a Topology.
 		/// </summary>
-		/// <param name="context">A context</param>
+		/// <param name="contexts">A context</param>
 		/// <returns name="Topology">The new Topology</returns>
-		Topology^ AddContext(Context^ context);
+		Topology^ AddContexts(List<Context^>^ contexts);*/
 
 		/*/// <summary>
 		/// Removes a context from a Topology.

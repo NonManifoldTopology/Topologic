@@ -552,6 +552,12 @@ namespace TopologicCore
 
 		for (const Topology::Ptr& kpContentTopology : rkContentTopologies)
 		{
+			bool hasContent = ContentManager::GetInstance().HasContent(GetOcctShape(), kpContentTopology->GetOcctShape());
+			if (hasContent)
+			{
+				continue;
+			}
+
 			TopoDS_Shape occtCopyContextShape;
 			if (kTypeFilter == 0)
 			{
@@ -568,12 +574,6 @@ namespace TopologicCore
 				}
 				occtCopyContextShape = selectedSubtopology->GetOcctShape();
 				contextInstanceGUID = selectedSubtopology->GetInstanceGUID();
-			}
-
-			bool hasContent = ContentManager::GetInstance().HasContent(occtCopyContextShape, kpContentTopology->GetOcctShape());
-			if (hasContent)
-			{
-				continue;
 			}
 
 			Topology::Ptr pCopyContentTopology = std::dynamic_pointer_cast<Topology>(kpContentTopology->DeepCopy());
@@ -639,6 +639,41 @@ namespace TopologicCore
 
 		// 2. Register to ContentManager
 		ContentManager::GetInstance().Add(rkContext->Topology()->GetOcctShape(), Topology::ByOcctShape(GetOcctShape(), GetInstanceGUID()));
+	}
+
+	Topology::Ptr Topology::AddContexts(const std::list<std::shared_ptr<Context>>& rkContexts)
+	{
+		Topology::Ptr pCopyTopology = std::dynamic_pointer_cast<Topology>(DeepCopy());
+		std::string contentInstanceGUID;
+
+		for (const Context::Ptr& kpContext : rkContexts)
+		{
+			bool hasContent = ContentManager::GetInstance().HasContent(kpContext->Topology()->GetOcctShape(), GetOcctShape());
+			if (hasContent)
+			{
+				continue;
+			}
+
+			TopoDS_Shape occtCopyContentShape = pCopyTopology->GetOcctShape();
+			contentInstanceGUID = pCopyTopology->GetInstanceGUID();
+
+			Topology::Ptr pCopyContextTopology = std::dynamic_pointer_cast<Topology>(kpContext->Topology()->DeepCopy());
+			GlobalCluster::GetInstance().AddTopology(pCopyContextTopology->GetOcctShape());
+
+			ContentManager::GetInstance().Add(pCopyContextTopology->GetOcctShape(), pCopyTopology);
+
+			const double kDefaultParameter = 0.0; // TODO: calculate the parameters
+			ContextManager::GetInstance().Add(
+				pCopyTopology->GetOcctShape(),
+				TopologicCore::Context::ByTopologyParameters(
+					pCopyContextTopology,
+					kDefaultParameter, kDefaultParameter, kDefaultParameter
+				));
+		}
+
+		GlobalCluster::GetInstance().AddTopology(pCopyTopology->GetOcctShape());
+
+		return pCopyTopology;
 	}
 
 	void Topology::RemoveContext(const std::shared_ptr<Context>& rkContext)

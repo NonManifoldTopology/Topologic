@@ -136,7 +136,14 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="rkContext"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API void AddContext(const std::shared_ptr<Context>& rkContext);
+		void AddContext(const std::shared_ptr<Context>& rkContext);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkContexts"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API Topology::Ptr AddContexts(const std::list<std::shared_ptr<Context>>& rkContexts);
 
 		/// <summary>
 		/// 
