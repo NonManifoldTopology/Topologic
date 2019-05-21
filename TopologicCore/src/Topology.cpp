@@ -602,15 +602,42 @@ namespace TopologicCore
 		ContextManager::GetInstance().Remove(rkTopology->GetOcctShape(), GetOcctShape());
 	}
 
+	Topology::Ptr Topology::RemoveContents(const std::list<Topology::Ptr>& rkTopologies)
+	{
+		std::list<Topology::Ptr> contents;
+		Contents(contents);
+		
+		std::list<Topology::Ptr> addedContents;
+		for (const Topology::Ptr& kpContent : contents)
+		{
+			bool isRemoved = false;
+			for (const Topology::Ptr& kpRemovedContent : rkTopologies)
+			{
+				if (kpContent->IsSame(kpRemovedContent))
+				{
+					isRemoved = true;
+					break;
+				}
+			}
+
+			if (!isRemoved)
+			{
+				Topology::Ptr copyContent = kpContent->DeepCopy();
+				addedContents.push_back(copyContent);
+			}
+		}
+
+		Topology::Ptr copyTopology = ShallowCopy()->AddContents(addedContents, 0);
+		GlobalCluster::GetInstance().AddTopology(copyTopology);
+		return copyTopology;
+	}
+
 	void Topology::AddContext(const std::shared_ptr<Context>& rkContext)
 	{
-		// 1. Get the center of mass of the content
-		Vertex::Ptr pCenterOfMass = CenterOfMass();
-
-		// 4. Register to ContextManager
+		// 1. Register to ContextManager
 		ContextManager::GetInstance().Add(GetOcctShape(), rkContext);
 
-		// 5. Register to ContentManager
+		// 2. Register to ContentManager
 		ContentManager::GetInstance().Add(rkContext->Topology()->GetOcctShape(), Topology::ByOcctShape(GetOcctShape(), GetInstanceGUID()));
 	}
 
@@ -623,8 +650,39 @@ namespace TopologicCore
 		ContentManager::GetInstance().Remove(rkContext->Topology()->GetOcctShape(), GetOcctShape());
 	}
 
+	Topology::Ptr Topology::RemoveContexts(const std::list<Context::Ptr>& rkContexts)
+	{
+		std::list<Context::Ptr> contexts;
+		Contexts(contexts);
+
+		Topology::Ptr copyTopology = ShallowCopy();
+		for (const Context::Ptr& kpContext : contexts)
+		{
+			bool isRemoved = false;
+			for (const Context::Ptr& kpRemovedContext : rkContexts)
+			{
+				if (kpContext->Topology()->IsSame(kpRemovedContext->Topology()))
+				{
+					isRemoved = true;
+					break;
+				}
+			}
+
+			if (!isRemoved)
+			{
+				Topology::Ptr copyContextTopology = kpContext->Topology()->DeepCopy();
+				Context::Ptr copyContext = Context::ByTopologyParameters(copyContextTopology, kpContext->U(), kpContext->V(), kpContext->W());
+				copyTopology->AddContext(copyContext);
+			}
+		}
+
+		GlobalCluster::GetInstance().AddTopology(copyTopology);
+		return copyTopology;
+	}
+
 	void Topology::SharedTopologies(const Topology::Ptr& kpTopology, std::list<Topology::Ptr>& rkSharedTopologies) const
 	{
+		
 	}
 
 	void Topology::PathsTo(const Topology::Ptr& kpTopology, const Topology::Ptr& kpParentTopology, const int kMaxLevels, const int kMaxPaths, std::list<std::list<std::shared_ptr<TopologicalQuery>>>& rkPaths) const

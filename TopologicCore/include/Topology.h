@@ -122,7 +122,14 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="rkTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API void RemoveContent(const Topology::Ptr& rkTopology);
+		void RemoveContent(const Topology::Ptr& rkTopology);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkTopologies"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API Topology::Ptr RemoveContents(const std::list<Topology::Ptr>& rkTopologies);
 
 		/// <summary>
 		/// 
@@ -136,7 +143,14 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="rkContext"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API void RemoveContext(const std::shared_ptr<Context>& rkContext);
+		void RemoveContext(const std::shared_ptr<Context>& rkContext);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkContexts"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API Topology::Ptr RemoveContexts(const std::list<std::shared_ptr<Context>>& rkContexts);
 
 		/// <summary>
 		/// 

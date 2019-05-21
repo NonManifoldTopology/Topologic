@@ -725,6 +725,38 @@ namespace Topologic
 		throw gcnew NotImplementedException();
 	}
 
+	Topology^ Topology::RemoveContents(List<Topology^> contentTopologies)
+	{
+		TopologicCore::Topology::Ptr pCoreParentTopology =
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		std::list<TopologicCore::Topology::Ptr> coreContentTopologies;
+		for each(Topology^ contentTopology in contentTopologies)
+		{
+			TopologicCore::Topology::Ptr pCoreContentTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(contentTopology->GetCoreTopologicalQuery());
+			coreContentTopologies.push_back(pCoreContentTopology);
+		}
+
+		TopologicCore::Topology::Ptr pCoreNewTopology = pCoreParentTopology->RemoveContents(coreContentTopologies);
+
+		return Topology::ByCoreTopology(pCoreNewTopology);
+	}
+
+	Topology^ Topology::RemoveContexts(List<Context^>^ contexts)
+	{
+		TopologicCore::Topology::Ptr pCoreParentTopology =
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		std::list<TopologicCore::Context::Ptr> coreContexts;
+		for each(Context^ context in contexts)
+		{
+			TopologicCore::Context::Ptr pCoreContext = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Context>(context->GetCoreTopologicalQuery());
+			coreContexts.push_back(pCoreContext);
+		}
+
+		TopologicCore::Topology::Ptr pCoreNewTopology = pCoreParentTopology->RemoveContexts(coreContexts);
+
+		return Topology::ByCoreTopology(pCoreNewTopology);
+	}
+
 	Topology ^ Topology::AddApertures(System::Collections::Generic::IEnumerable<Topology^>^ apertureTopologies)
 	{
 		// 1. Copy this topology
@@ -778,12 +810,10 @@ namespace Topologic
 		return Topology::ByCoreTopology(pCoreInstanceTopology);
 	}
 
-	Topology^ Topology::RemoveContext(Context^ context)
+	/*Topology^ Topology::RemoveContext(Context^ context)
 	{
-		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		pCoreTopology->RemoveContext(TopologicCore::TopologicalQuery::Downcast<TopologicCore::Context>(context->GetCoreTopologicalQuery()));
-		return this;
-	}
+		
+	}*/
 
 	List<Topology^>^ Topology::SharedTopologies(Topology^ topology)
 	{

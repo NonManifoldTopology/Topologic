@@ -185,6 +185,20 @@ namespace Topologic
 		Topology^ RemoveContent(Topology^ contentTopology);
 
 		/// <summary>
+		/// Removes contents (non-constituent members) from a Topology.
+		/// </summary>
+		/// <param name="contentTopologies">The Topologies of the contents</param>
+		/// <returns name="Topology">The new Topology</returns>
+		Topology^ RemoveContents(List<Topology^> contentTopologies);
+
+		/// <summary>
+		/// Removes contexts from a Topology.
+		/// </summary>
+		/// <param name="contexts">The Contexts</param>
+		/// <returns name="Topology">The new Topology</returns>
+		Topology^ RemoveContexts(List<Context^>^ contexts);
+
+		/// <summary>
 		/// Adds Apertures to a Topology.
 		/// </summary>
 		/// <param name="apertureTopologies">A list of Topologies associated to the apertures</param>
@@ -198,12 +212,15 @@ namespace Topologic
 		/// <returns name="Topology">The new Topology</returns>
 		Topology^ AddContext(Context^ context);
 
-		/// <summary>
+		/*/// <summary>
 		/// Removes a context from a Topology.
 		/// </summary>
 		/// <param name="context">A context</param>
 		/// <returns name="Topology">The new Topology</returns>
-		Topology^ RemoveContext(Context^ context);
+#ifdef TOPOLOGIC_DYNAMO
+		[IsVisibleInDynamoLibrary(false)]
+#endif
+		Topology^ RemoveContext(Context^ context);*/
 
 		/// <summary>
 		/// Returns the shared Topologies between the input Topology and another Topology.

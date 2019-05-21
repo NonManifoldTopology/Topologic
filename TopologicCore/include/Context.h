@@ -50,7 +50,7 @@ namespace TopologicCore
 		TOPOLOGIC_API double V() const { return m_v; }
 
 		/// <summary>
-		/// Returns the U parameter.
+		/// Returns the W parameter.
 		/// </summary>
 		/// <returns>The W parameter</returns>
 		TOPOLOGIC_API double W() const { return m_w; }
