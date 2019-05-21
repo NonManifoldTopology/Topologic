@@ -80,7 +80,7 @@ namespace Topologic
 	//	return gcnew Aperture(pCoreAperture);
 	//}
 
-	Topologic::Topology^ Aperture::Topology()
+	Topologic::Topology^ Aperture::Topology::get()
 	{
 		TopologicCore::Aperture::Ptr pCoreAperture = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Aperture>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreTopology = pCoreAperture->Topology();
@@ -218,6 +218,6 @@ namespace Topologic
 
 	Object^ Aperture::BasicGeometry::get()
 	{
-		return Topology()->BasicGeometry;
+		return Topology->BasicGeometry;
 	}
 }

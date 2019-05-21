@@ -33,6 +33,7 @@ namespace TopologicCore
 	class Edge;
 	class Wire;
 	class Context;
+	class Aperture;
 	class TopologyFactory;
 
 	/// <summary>
@@ -63,7 +64,7 @@ namespace TopologicCore
 
 		/// <summary>
 		/// 
-		/// </summary>
+		///		</summary>
 		/// <param name="kpContext"></param>
 		/// <returns></returns>
 		static Topology::Ptr ByContext(const std::shared_ptr<Context>& kpContext);
@@ -98,7 +99,7 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="rkTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API void AddContent(const Topology::Ptr& rkTopology);
+		void AddContent(const Topology::Ptr& rkTopology);
 
 		/// <summary>
 		/// 
@@ -106,14 +107,29 @@ namespace TopologicCore
 		/// <param name="rkTopology"></param>
 		/// <param name="kTypeFilter"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API void AddContent(const Topology::Ptr& rkTopology, const int kTypeFilter);
+		void AddContent(const Topology::Ptr& rkTopology, const int kTypeFilter);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkContentTopologies"></param>
+		/// <param name="kTypeFilter"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API Topology::Ptr AddContents(const std::list<Topology::Ptr>& rkContentTopologies, const int kTypeFilter);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkTopology"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API void RemoveContent(const Topology::Ptr& rkTopology);
+		void RemoveContent(const Topology::Ptr& rkTopology);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkTopologies"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API Topology::Ptr RemoveContents(const std::list<Topology::Ptr>& rkTopologies);
 
 		/// <summary>
 		/// 
@@ -127,7 +143,14 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="rkContext"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API void RemoveContext(const std::shared_ptr<Context>& rkContext);
+		void RemoveContext(const std::shared_ptr<Context>& rkContext);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkContexts"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API Topology::Ptr RemoveContexts(const std::list<std::shared_ptr<Context>>& rkContexts);
 
 		/// <summary>
 		/// 
@@ -249,9 +272,8 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="rkOcctShape1"></param>
 		/// <param name="kpTopology2"></param>
-		static void TransferContents(const TopoDS_Shape& rkOcctShape1, const Topology::Ptr& kpTopology2);
+		TOPOLOGIC_API static void TransferContents(const TopoDS_Shape& rkOcctShape1, const Topology::Ptr& kpTopology2);
 
-		
 		static void TransferContents(const TopoDS_Shape& rkOcctShape1, const Topology::Ptr& kpTopology2, const BOPCol_ListOfShape& rkOcctDeletedSubshapes);
 
 		/// <summary>
@@ -271,6 +293,14 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="rApertures"></param>
+		TOPOLOGIC_API void Apertures(std::list<std::shared_ptr<Aperture>>& rApertures) const;
+
+		static void Apertures(const TopoDS_Shape& rkOcctShape, std::list<std::shared_ptr<Aperture>>& rApertures);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="rSubContents"></param>
 		TOPOLOGIC_API void SubContents(std::list<Topology::Ptr>& rSubContents) const;
 
@@ -279,7 +309,7 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="rkOcctShape"></param>
 		/// <param name="rSubContents"></param>
-		static void SubContents(const TopoDS_Shape& rkOcctShape, std::list<Topology::Ptr>& rSubContents);
+		static TOPOLOGIC_API void SubContents(const TopoDS_Shape& rkOcctShape, std::list<Topology::Ptr>& rSubContents);
 
 		/// <summary>
 		/// 
@@ -308,6 +338,8 @@ namespace TopologicCore
 		/// <param name="rkPath"></param>
 		/// <returns></returns>
 		static TOPOLOGIC_API Topology::Ptr ByImportedBRep(const std::string& rkPath);
+
+		static TOPOLOGIC_API void Filter(const std::list<Topology::Ptr>& rkTopologies, const int kTypeFilter, std::list<Topology::Ptr>& rFilteredTopologies);
 
 		/// <summary>
 		/// 

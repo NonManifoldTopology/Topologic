@@ -545,6 +545,56 @@ namespace TopologicCore
 		));
 	}
 
+	Topology::Ptr Topology::AddContents(const std::list<Topology::Ptr>& rkContentTopologies, const int kTypeFilter)
+	{
+		Topology::Ptr pCopyTopology = std::dynamic_pointer_cast<Topology>(DeepCopy());
+		std::string contextInstanceGUID;
+
+		for (const Topology::Ptr& kpContentTopology : rkContentTopologies)
+		{
+			TopoDS_Shape occtCopyContextShape;
+			if (kTypeFilter == 0)
+			{
+				occtCopyContextShape = pCopyTopology->GetOcctShape();
+				contextInstanceGUID = pCopyTopology->GetInstanceGUID();
+			}
+			else
+			{
+				Vertex::Ptr pCenterOfMass = kpContentTopology->CenterOfMass();
+				Topology::Ptr selectedSubtopology = pCopyTopology->SelectSubtopology(pCenterOfMass, kTypeFilter);
+				if (selectedSubtopology == nullptr)
+				{
+					throw std::exception("No suitable constituent members with the desired type to attach the content to.");
+				}
+				occtCopyContextShape = selectedSubtopology->GetOcctShape();
+				contextInstanceGUID = selectedSubtopology->GetInstanceGUID();
+			}
+
+			bool hasContent = ContentManager::GetInstance().HasContent(occtCopyContextShape, kpContentTopology->GetOcctShape());
+			if (hasContent)
+			{
+				continue;
+			}
+
+			Topology::Ptr pCopyContentTopology = std::dynamic_pointer_cast<Topology>(kpContentTopology->DeepCopy());
+			GlobalCluster::GetInstance().AddTopology(pCopyContentTopology->GetOcctShape());
+				
+			ContentManager::GetInstance().Add(occtCopyContextShape, pCopyContentTopology);
+
+			const double kDefaultParameter = 0.0; // TODO: calculate the parameters
+			ContextManager::GetInstance().Add(
+				pCopyContentTopology->GetOcctShape(),
+				TopologicCore::Context::ByTopologyParameters(
+					Topology::ByOcctShape(occtCopyContextShape, contextInstanceGUID),
+					kDefaultParameter, kDefaultParameter, kDefaultParameter
+				));
+		}
+
+		GlobalCluster::GetInstance().AddTopology(pCopyTopology->GetOcctShape());
+
+		return pCopyTopology;
+	}
+
 	void Topology::RemoveContent(const Topology::Ptr& rkTopology)
 	{
 		ContentManager::GetInstance().Remove(GetOcctShape(), rkTopology->GetOcctShape());
@@ -552,15 +602,42 @@ namespace TopologicCore
 		ContextManager::GetInstance().Remove(rkTopology->GetOcctShape(), GetOcctShape());
 	}
 
+	Topology::Ptr Topology::RemoveContents(const std::list<Topology::Ptr>& rkTopologies)
+	{
+		std::list<Topology::Ptr> contents;
+		Contents(contents);
+		
+		std::list<Topology::Ptr> addedContents;
+		for (const Topology::Ptr& kpContent : contents)
+		{
+			bool isRemoved = false;
+			for (const Topology::Ptr& kpRemovedContent : rkTopologies)
+			{
+				if (kpContent->IsSame(kpRemovedContent))
+				{
+					isRemoved = true;
+					break;
+				}
+			}
+
+			if (!isRemoved)
+			{
+				Topology::Ptr copyContent = kpContent->DeepCopy();
+				addedContents.push_back(copyContent);
+			}
+		}
+
+		Topology::Ptr copyTopology = ShallowCopy()->AddContents(addedContents, 0);
+		GlobalCluster::GetInstance().AddTopology(copyTopology);
+		return copyTopology;
+	}
+
 	void Topology::AddContext(const std::shared_ptr<Context>& rkContext)
 	{
-		// 1. Get the center of mass of the content
-		Vertex::Ptr pCenterOfMass = CenterOfMass();
-
-		// 4. Register to ContextManager
+		// 1. Register to ContextManager
 		ContextManager::GetInstance().Add(GetOcctShape(), rkContext);
 
-		// 5. Register to ContentManager
+		// 2. Register to ContentManager
 		ContentManager::GetInstance().Add(rkContext->Topology()->GetOcctShape(), Topology::ByOcctShape(GetOcctShape(), GetInstanceGUID()));
 	}
 
@@ -573,8 +650,39 @@ namespace TopologicCore
 		ContentManager::GetInstance().Remove(rkContext->Topology()->GetOcctShape(), GetOcctShape());
 	}
 
+	Topology::Ptr Topology::RemoveContexts(const std::list<Context::Ptr>& rkContexts)
+	{
+		std::list<Context::Ptr> contexts;
+		Contexts(contexts);
+
+		Topology::Ptr copyTopology = ShallowCopy();
+		for (const Context::Ptr& kpContext : contexts)
+		{
+			bool isRemoved = false;
+			for (const Context::Ptr& kpRemovedContext : rkContexts)
+			{
+				if (kpContext->Topology()->IsSame(kpRemovedContext->Topology()))
+				{
+					isRemoved = true;
+					break;
+				}
+			}
+
+			if (!isRemoved)
+			{
+				Topology::Ptr copyContextTopology = kpContext->Topology()->DeepCopy();
+				Context::Ptr copyContext = Context::ByTopologyParameters(copyContextTopology, kpContext->U(), kpContext->V(), kpContext->W());
+				copyTopology->AddContext(copyContext);
+			}
+		}
+
+		GlobalCluster::GetInstance().AddTopology(copyTopology);
+		return copyTopology;
+	}
+
 	void Topology::SharedTopologies(const Topology::Ptr& kpTopology, std::list<Topology::Ptr>& rkSharedTopologies) const
 	{
+		
 	}
 
 	void Topology::PathsTo(const Topology::Ptr& kpTopology, const Topology::Ptr& kpParentTopology, const int kMaxLevels, const int kMaxPaths, std::list<std::list<std::shared_ptr<TopologicalQuery>>>& rkPaths) const
@@ -710,6 +818,26 @@ namespace TopologicCore
 		ContentManager::GetInstance().Find(rkOcctShape, rContents);
 	}
 
+	void Topology::Apertures(std::list<Aperture::Ptr>& rApertures) const
+	{
+		Apertures(GetOcctShape(), rApertures);
+	}
+
+	void Topology::Apertures(const TopoDS_Shape & rkOcctShape, std::list<Aperture::Ptr>& rApertures)
+	{
+		std::list<Topology::Ptr> contents;
+		ContentManager::GetInstance().Find(rkOcctShape, contents);
+
+		for (const Topology::Ptr& kpContent : contents)
+		{
+			if (kpContent->GetType() == TOPOLOGY_APERTURE)
+			{
+				std::shared_ptr<Aperture> aperture = TopologicalQuery::Downcast<Aperture>(kpContent);
+				rApertures.push_back(aperture);
+			}
+		}
+	}
+
 	void Topology::SubContents(std::list<Topology::Ptr>& rSubContents) const
 	{
 		SubContents(GetOcctShape(), rSubContents);
@@ -761,6 +889,20 @@ namespace TopologicCore
 
 		GlobalCluster::GetInstance().AddTopology(pTopology);
 		return pTopology;
+	}
+
+	void Topology::Filter(const std::list<Topology::Ptr>& rkTopologies, const int kTypeFilter, std::list<Topology::Ptr>& rFilteredTopologies)
+	{
+		for (const Topology::Ptr& kpTopology : rkTopologies)
+		{
+			int shapeType = (int)kpTopology->GetType();
+			if ((shapeType & kTypeFilter) == 0)
+			{
+				continue;
+			}
+
+			rFilteredTopologies.push_back(kpTopology);
+		}
 	}
 
 	std::string Topology::Analyze(const TopoDS_Shape& rkShape, const int kLevel)
@@ -1175,70 +1317,6 @@ namespace TopologicCore
 			throw std::exception(errorStream.str().c_str());
 		}
 	}
-
-	//std::shared_ptr<Topology> Topology::TransferBooleanContents(
-	//	const std::shared_ptr<Topology>& kpAnotherTopology,
-	//	BOPAlgo_CellsBuilder& rOcctCellsBuilder,
-	//	BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceA,
-	//	BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceB)
-	//{
-	//	std::list<Topology::Ptr> thisContents;
-	//	SubContents(thisContents);
-
-	//	BOPCol_ListOfShape occtSubTopologies;
-	//	SubTopologies(rOcctCellsBuilder.Shape(), occtSubTopologies);
-	//	//TopoDS_Shape queryShape = rOcctCellsBuilder.Shape();
-	//	TopoDS_Shape queryShape = Simplify(rOcctCellsBuilder.Shape());
-	//	queryShape = MakeBooleanContainers(queryShape);
-	//	GlobalCluster::GetInstance().AddTopology(queryShape);
-
-	//	Topology::Ptr pBooleanResult = Topology::ByOcctShape(queryShape, "");
-	//	// queryShape (pBooleanResult) is the member of the Boolean result, it doesn't have any content yet.
-
-	//	// For now, handle the case where queryShape is a cellComplex and t
-	//	if (GetType() != TOPOLOGY_CELL || pBooleanResult->GetType() != TOPOLOGY_CELLCOMPLEX)
-	//	{
-	//		return pBooleanResult;
-	//	}
-
-	//	// For now, only handle a cell topology
-	//	Cell* pCell = Topology::Downcast<Cell>(this);
-
-	//	std::list<Face::Ptr> originalFaces;
-	//	pCell->Faces(originalFaces);
-	//	for (const Face::Ptr& kpOriginalFace : originalFaces)
-	//	{
-	//		// Get the fixed face
-	//		TopoDS_Shape occtFixedFace;
-	//		try {
-	//			occtFixedFace = rOcctMapFaceToFixedFaceA.Find(kpOriginalFace->GetOcctFace());
-	//		}
-	//		catch (...)
-	//		{
-	//			continue;
-	//		}
-
-	//		// Get the modified fixed faces
-	//		TopTools_ListOfShape occtModifiedFixedFaces = rOcctCellsBuilder.Modified(occtFixedFace);
-	//		for (TopTools_ListIteratorOfListOfShape occtModifiedFixedFaceIterator(occtModifiedFixedFaces);
-	//			occtModifiedFixedFaceIterator.More();
-	//			occtModifiedFixedFaceIterator.Next())
-	//		{
-	//			const TopoDS_Shape& rkOcctModifiedFixedFace = occtModifiedFixedFaceIterator.Value();
-	//			std::shared_ptr<Topology> pModifiedFixedFace = Topology::ByOcctShape(rkOcctModifiedFixedFace, "");
-
-	//			// Transfer the contents from kpOriginalFace to pModifiedFixedFace
-	//			std::list<Topology::Ptr> contents;
-	//			kpOriginalFace->Contents(contents);
-	//			for(const Topology::Ptr& kpTopology : contents)
-	//			{
-	//				pModifiedFixedFace->AddContent(kpTopology);
-	//			}
-	//		}
-	//	}
-
-	//	return pBooleanResult;
-	//}
 
 	void Topology::TransferContents(const TopoDS_Shape& rkOcctShape1, const Topology::Ptr& kpTopology2)
 	{

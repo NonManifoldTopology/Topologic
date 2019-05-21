@@ -16,6 +16,7 @@ using namespace Autodesk::DesignScript::Runtime;
 
 namespace Topologic
 {
+	ref class Aperture;
 	ref class CellComplex;
 	ref class Cell;
 	ref class Shell;
@@ -125,6 +126,15 @@ namespace Topologic
 		}
 
 		/// <summary>
+		/// Returns the Apertures of the input Topology.
+		/// </summary>
+		/// <returns name="Aperture[]">A list of Topologies contained in the input Topology as Apertures</returns>
+		property List<Aperture^>^ Apertures
+		{
+			List<Aperture^>^ get();
+		}
+
+		/// <summary>
 		/// Returns the sub-contents (contents of the constituent members) of a Topology.
 		/// </summary>
 		/// <returns name="Context[]">A list of the sub-contents (contents of the constituent members) of a Topology</returns>
@@ -145,23 +155,23 @@ namespace Topologic
 			List<Context^>^ get();
 		}
 
-		/// <summary>
+		/*/// <summary>
 		/// Adds this Topology as a content (non-constituent member) to another Topology.
 		/// </summary>
 		/// <param name="topology">The Topology of the content</param>
 		/// <returns>The new Topology</returns>
-		Topology^ AddContent(Topology^ topology);
+		Topology^ AddContent(Topology^ topology);*/
 		
 		/// <summary>
-		/// Adds this Topology as a content (non-constituent member) to another Topology of a specific type.
+		/// Adds this Topology as a content (non-constituent member) to another Topology of a specific type. If the type filter is 0, the contents will be added to the parent topology. Otherwise, the contents will be added to the closest sub-topology which matches the filter.
 		/// </summary>
-		/// <param name="contentTopology">The Topology of the content</param>
+		/// <param name="contentTopologies">The Topologies of the content</param>
 		/// <param name="typeFilter">The type of the context Topology</param>
 		/// <returns>The new Topology</returns>
 #ifdef TOPOLOGIC_DYNAMO
-		Topology^ AddContent(Topology^ contentTopology, [DefaultArgument("255")] int typeFilter);
+		Topology^ AddContents(List<Topology^>^ contentTopologies, [DefaultArgument("0")] int typeFilter);
 #else
-		Topology^ AddContent(Topology^ contentTopology, int typeFilter);
+		Topology^ AddContents(List<Topology^>^ contentTopologies, int typeFilter);
 #endif
 
 		/// <summary>
@@ -173,6 +183,20 @@ namespace Topologic
 		[IsVisibleInDynamoLibrary(false)]
 #endif
 		Topology^ RemoveContent(Topology^ contentTopology);
+
+		/// <summary>
+		/// Removes contents (non-constituent members) from a Topology.
+		/// </summary>
+		/// <param name="contentTopologies">The Topologies of the contents</param>
+		/// <returns name="Topology">The new Topology</returns>
+		Topology^ RemoveContents(List<Topology^> contentTopologies);
+
+		/// <summary>
+		/// Removes contexts from a Topology.
+		/// </summary>
+		/// <param name="contexts">The Contexts</param>
+		/// <returns name="Topology">The new Topology</returns>
+		Topology^ RemoveContexts(List<Context^>^ contexts);
 
 		/// <summary>
 		/// Adds Apertures to a Topology.
@@ -188,12 +212,15 @@ namespace Topologic
 		/// <returns name="Topology">The new Topology</returns>
 		Topology^ AddContext(Context^ context);
 
-		/// <summary>
+		/*/// <summary>
 		/// Removes a context from a Topology.
 		/// </summary>
 		/// <param name="context">A context</param>
 		/// <returns name="Topology">The new Topology</returns>
-		Topology^ RemoveContext(Context^ context);
+#ifdef TOPOLOGIC_DYNAMO
+		[IsVisibleInDynamoLibrary(false)]
+#endif
+		Topology^ RemoveContext(Context^ context);*/
 
 		/// <summary>
 		/// Returns the shared Topologies between the input Topology and another Topology.
@@ -451,6 +478,14 @@ namespace Topologic
 		{
 			int get();
 		}
+
+		/// <summary>
+		/// Filter a list of topologies by type. This methods returns a list of topologies of the type specified in the typefilter.
+		/// </summary>
+		/// <param name="topologies">A list of Topologies</param>
+		/// <param name="typeFilter">The type of the filtered Topologies</param>
+		/// <returns>The filtered topologies</returns>
+		static List<Topology^>^ Filter(List<Topology^>^ topologies, int typeFilter);
 
 #ifdef TOPOLOGIC_DYNAMO
 		[IsVisibleInDynamoLibrary(false)]

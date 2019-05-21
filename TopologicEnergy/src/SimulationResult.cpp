@@ -9,15 +9,17 @@ using namespace System::Linq;
 namespace TopologicEnergy
 {
 
-	SimulationResult^ SimulationResult::ByEnergySimulation(EnergySimulation^ energySimulation, String ^ EPReportName, String ^ EPReportForString, String ^ EPTableName, String ^ EPColumnName, String ^ EPUnits)
+	Object^ SimulationResult::ByEnergySimulation(EnergySimulation^ energySimulation, String ^ EPReportName, String ^ EPReportForString, String ^ EPTableName, String ^ EPColumnName, String ^ EPUnits)
 	{
 		OpenStudio::OptionalDouble^ totalSE = energySimulation->OsSqlFile->totalSiteEnergy();
+
 		double totalSEGJ = totalSE->__float__();
 		double totalSEkwh = totalSEGJ * 277.8;
 		OpenStudio::OptionalDouble^ totalEU = energySimulation->OsSqlFile->electricityTotalEndUses();
 		double totalEUGJ = totalEU->__float__();
 		double totalEUkwh = totalEUGJ * 277.8;
 		OpenStudio::OptionalString^ spaceNameTemp = energySimulation->OsSpaces[0]->name();
+		
 		String^ spaceName = spaceNameTemp->get();
 		String^ EPRowName = spaceName + "_THERMAL_ZONE";
 
@@ -59,6 +61,7 @@ namespace TopologicEnergy
 			minValue = maxValue - (maxValue * 0.0001);
 		}
 
+
 		// Create a map: space name -> cell
 		Dictionary<String^, Dictionary<String^, Object^>^>^ data = gcnew Dictionary<String^, Dictionary<String^, Object^>^>();
 
@@ -79,26 +82,18 @@ namespace TopologicEnergy
 				throw gcnew Exception("Fails to execute SQL query. There is an incorrect argument.");
 			}
 
-			// Map the outputVariable to a ratio between 0 and 1
-			/*double ratio = (outputVariable - minValue) / (maxValue - minValue);
-			DSCore::Color^ color = EnergyModel::GetColor(ratio);*/
-
 			Dictionary<String^, Object^>^ attributes = gcnew Dictionary<String^, Object^>();
 			attributes->Add("Value", outputVariable);
 			attributes->Add("Unit", EPUnits);
-			/*attributes->Add("r", (long long int)color->Red);
-			attributes->Add("g", (long long int)color->Green);
-			attributes->Add("b", (long long int)color->Blue);
-			delete color;*/
 			data->Add(spaceName, attributes);
 		}
 
 		return gcnew SimulationResult(data);
 	}
 
-	List<Modifiers::GeometryColor^>^ SimulationResult::Display(EnergySimulation ^ energySimulation, List<DSCore::Color^>^ colors)
+	List<Modifiers::GeometryColor^>^ SimulationResult::Display(EnergyModel^ energyModel, List<DSCore::Color^>^ colors)
 	{
-		if (energySimulation->Topology->Count != colors->Count)
+		if (energyModel->Topology->Count != colors->Count)
 		{
 			throw gcnew Exception("The number of colors does not match the number of cells.");
 		}
@@ -107,21 +102,17 @@ namespace TopologicEnergy
 		List<Modifiers::GeometryColor^>^ dynamoApertures = gcnew List<Modifiers::GeometryColor^>();
 		for(int i = 0; i < colors->Count; ++i)
 		{
-			Cell^ cell = energySimulation->Topology[i];
+			Cell^ cell = energyModel->Topology[i];
 			DSCore::Color^ color = colors[i];
 
 			{
-				bool hasGeometry = false;
 				System::Object^ cellGeometry = cell->BasicGeometry;
 				Autodesk::DesignScript::Geometry::Geometry^ dynamoGeometry = dynamic_cast<Autodesk::DesignScript::Geometry::Geometry^>(cellGeometry);
 				if (dynamoGeometry != nullptr)
 				{
 					Modifiers::GeometryColor^ dynamoGeometryColor = Modifiers::GeometryColor::ByGeometryColor(dynamoGeometry, color);
 					dynamoGeometryColors->Add(dynamoGeometryColor);
-					hasGeometry = true;
-				}
-
-				if (!hasGeometry)
+				}else
 				{
 					// 2. Try a list of Dynamo geometries
 					List<Object^>^ listOfObjects = dynamic_cast<List<Object^>^>(cellGeometry);
@@ -145,17 +136,13 @@ namespace TopologicEnergy
 			List<Topologic::Topology^>^ subcontents = cell->SubContents;
 			for each(Topologic::Topology^ subcontent in subcontents)
 			{
-				bool hasContentGeometry = false;
 				System::Object^ contentGeometry = subcontent->BasicGeometry;
 				Autodesk::DesignScript::Geometry::Geometry^ dynamoContentGeometry = dynamic_cast<Autodesk::DesignScript::Geometry::Geometry^>(contentGeometry);
 				if (dynamoContentGeometry != nullptr)
 				{
 					Modifiers::GeometryColor^ dynamoGeometryColor = Modifiers::GeometryColor::ByGeometryColor(dynamoContentGeometry, contentColor);
 					dynamoApertures->Add(dynamoGeometryColor);
-					hasContentGeometry = true;
-				}
-
-				if (!hasContentGeometry)
+				}else
 				{
 					// 2. Try a list of Dynamo geometries
 					List<Object^>^ listOfObjects = dynamic_cast<List<Object^>^>(contentGeometry);
@@ -193,49 +180,6 @@ namespace TopologicEnergy
 		}
 
 		return colors;
-
-		//if (count < 2)
-		//{
-		//	throw gcnew Exception("The number of steps must be more than 2.");
-		//}
-
-		//List<double>^ domain = Domain;
-		//double finalMinDomain = Enumerable::Min(domain);
-		//double finalMaxDomain = Enumerable::Max(domain);
-
-		//if (minDomain.HasValue)
-		//{
-		//	finalMinDomain = minDomain.Value;
-		//}
-		//if (maxDomain.HasValue)
-		//{
-		//	finalMaxDomain = maxDomain.Value;
-		//}
-
-		//double deltaFinalDomain = finalMaxDomain - finalMinDomain;
-		//if (deltaFinalDomain < 0.00001)
-		//{
-		//	throw gcnew Exception("The domain is too small. Please provide a larger interval.");
-		//}
-
-		//List<List<int>^>^ colors = gcnew List<List<int>^>();
-		//List<Object^>^ valuesAsObjects = gcnew List<Object^>();
-		//double countMinusOne = (double)count;
-		//for (int i = 0; i < count; ++i)
-		//{
-		//	double doubleI = (double)i;	// 0..10
-		//	double ratio = doubleI / countMinusOne; // 0..1
-		//	double value = finalMinDomain + deltaFinalDomain * ratio;
-		//	valuesAsObjects->Add(value);
-		//	List<int>^ color = EnergyModel::GetColor(ratio);
-		//	colors->Add(color);
-		//}
-
-		///*List<List<Object^>^>^ output = gcnew List<List<Object^>^>();
-		//output->Add(colorsAsObjects);
-		//output->Add(valuesAsObjects);*/
-
-		//return colors;
 	}
 
 	List<double>^ SimulationResult::LegendValues(Nullable<double> minDomain, Nullable<double> maxDomain, int count)
@@ -252,45 +196,6 @@ namespace TopologicEnergy
 		}
 
 		return values;
-
-		//if (count < 2)
-		//{
-		//	throw gcnew Exception("The number of steps must be more than 2.");
-		//}
-
-		//List<double>^ domain = Domain;
-		//double finalMinDomain = Enumerable::Min(domain);
-		//double finalMaxDomain = Enumerable::Max(domain);
-
-		//if (minDomain.HasValue)
-		//{
-		//	finalMinDomain = minDomain.Value;
-		//}
-		//if (maxDomain.HasValue)
-		//{
-		//	finalMaxDomain = maxDomain.Value;
-		//}
-
-		//double deltaFinalDomain = finalMaxDomain - finalMinDomain;
-		//if (deltaFinalDomain < 0.00001)
-		//{
-		//	throw gcnew Exception("The domain is too small. Please provide a larger interval.");
-		//}
-
-		//List<List<int>^>^ colors = gcnew List<List<int>^>();
-		//List<double>^ values = gcnew List<double>();
-		//double countMinusOne = (double)count;
-		//for (int i = 0; i < count; ++i)
-		//{
-		//	double doubleI = (double)i;	// 0..10
-		//	double ratio = doubleI / countMinusOne; // 0..1
-		//	double value = finalMinDomain + deltaFinalDomain * ratio;
-		//	values->Add(value);
-		//	List<int>^ color = EnergyModel::GetColor(ratio);
-		//	colors->Add(color);
-		//}
-
-		//return values;
 	}
 
 	List<String^>^ SimulationResult::Names::get()

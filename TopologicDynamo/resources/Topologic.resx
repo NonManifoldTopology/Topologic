@@ -349,7 +349,7 @@
   <data name="Topologic.Topology.AddApertures.Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Topologic.Large.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Topologic.Topology.AddContent.Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="Topologic.Topology.AddContents.Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Topologic.Large.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Topologic.Topology.AddContext.Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
@@ -388,10 +388,10 @@
   <data name="Topologic.Topology.Merge.Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Topologic.Large.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Topologic.Topology.RemoveContent.Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="Topologic.Topology.RemoveContents.Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Topologic.Large.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Topologic.Topology.RemoveContext.Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="Topologic.Topology.RemoveContexts.Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Topologic.Large.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Topologic.Topology.SelectSubtopology.Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
@@ -422,6 +422,12 @@
     <value>Topologic.Large.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Topologic.Topology.Contents.Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Topologic.Large.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Topologic.Topology.Apertures.Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Topologic.Large.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Topologic.Topology.Filter.Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Topologic.Large.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Topologic.Topology.Contexts.Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
@@ -910,7 +916,7 @@
   <data name="Topologic.Topology.AddApertures.Small" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Topologic.Small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Topologic.Topology.AddContent.Small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="Topologic.Topology.AddContents.Small" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Topologic.Small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Topologic.Topology.AddContext.Small" type="System.Resources.ResXFileRef, System.Windows.Forms">
@@ -949,10 +955,10 @@
   <data name="Topologic.Topology.Merge.Small" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Topologic.Small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Topologic.Topology.RemoveContent.Small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="Topologic.Topology.RemoveContents.Small" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Topologic.Small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Topologic.Topology.RemoveContext.Small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="Topologic.Topology.RemoveContexts.Small" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Topologic.Small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Topologic.Topology.SelectSubtopology.Small" type="System.Resources.ResXFileRef, System.Windows.Forms">
@@ -983,6 +989,12 @@
     <value>Topologic.Small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Topologic.Topology.Contents.Small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Topologic.Small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Topologic.Topology.Apertures.Small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Topologic.Small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Topologic.Topology.Filter.Small" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Topologic.Small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Topologic.Topology.Contexts.Small" type="System.Resources.ResXFileRef, System.Windows.Forms">

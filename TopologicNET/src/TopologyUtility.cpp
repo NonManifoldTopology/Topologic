@@ -63,6 +63,26 @@ namespace Topologic
 		}
 
 		Topology ^ TopologyUtility::Transform(Topology ^ topology,
+			double translationX, double translationY, double translationZ,
+			double rotation11, double rotation12, double rotation13,
+			double rotation21, double rotation22, double rotation23,
+			double rotation31, double rotation32, double rotation33)
+		{
+			TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
+			TopologicCore::Vertex::Ptr pCoreCenterOfMass = pCoreTopology->CenterOfMass();
+
+			TopologicCore::Topology::Ptr pCoreTransformedTopology =
+				TopologicUtilities::TopologyUtility::Transform(
+					pCoreTopology, 
+					translationX, translationY, translationZ, 
+					rotation11, rotation12, rotation13,
+					rotation21, rotation22, rotation23,
+					rotation31, rotation32, rotation33);
+
+			return Topology::ByCoreTopology(pCoreTransformedTopology);
+		}
+
+		/*Topology ^ TopologyUtility::Transform(Topology ^ topology,
 			double zAxisX, double zAxisY, double zAxisZ,
 			double xAxisX, double xAxisY, double xAxisZ)
 		{
@@ -76,6 +96,6 @@ namespace Topologic
 						xAxisX, xAxisY, xAxisZ);
 
 			return Topology::ByCoreTopology(pCoreTransformedTopology);
-		}
+		}*/
 	}
 }

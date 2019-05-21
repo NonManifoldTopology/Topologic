@@ -12,11 +12,6 @@ namespace TopologicEnergy
 	{
 	public:
 
-		property List<Topologic::Cell^>^ Topology
-		{
-			List<Topologic::Cell^>^ get();
-		}
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -33,7 +28,7 @@ namespace TopologicEnergy
 		/// </summary>
 		/// <param name="cells"></param>
 		/// <param name="oswPath">Used to deduce the SQL path</param>
-		EnergySimulation(List<Topologic::Cell^>^ cells, System::String^ oswPath, OpenStudio::Model^ osModel, List<OpenStudio::Space^>^ osSpaces);
+		EnergySimulation(List<Topologic::Cell^>^ cells, System::String^ oswPath, OpenStudio::Model^ osModel, OpenStudio::SpaceVector^ osSpaces);
 		~EnergySimulation();
 
 		property OpenStudio::SqlFile^ OsSqlFile
@@ -44,23 +39,20 @@ namespace TopologicEnergy
 			}
 		}
 
-		property List<OpenStudio::Space^>^ OsSpaces
+		property OpenStudio::SpaceVector^ OsSpaces
 		{
-			List<OpenStudio::Space^>^ get()
+			OpenStudio::SpaceVector^ get()
 			{
 				return m_osSpaces;
 			}
 		}
 
 	protected:
-		// The cells. The geometry is deduced from here.
-		List<Topologic::Cell^>^ m_cells;
-
 		// The SqlFile
 		OpenStudio::SqlFile^ m_osSqlFile;
 
 		OpenStudio::Model^ m_osModel;
 		
-		List<OpenStudio::Space^>^ m_osSpaces;
+		OpenStudio::SpaceVector^ m_osSpaces;
 	};
 }

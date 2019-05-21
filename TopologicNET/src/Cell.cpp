@@ -427,12 +427,12 @@ namespace Topologic
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Cell>(
 				TopologicUtilities::TopologyUtility::Scale(pCoreCell, coreCentroid, xScale, yScale, zScale));*/
 
-		pCoreCell =
+		/*pCoreCell =
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Cell>(
 				TopologicUtilities::TopologyUtility::Transform(
 					pCoreCell, coreCentroid, 
 					pDynamoCoordinateSystem->ZAxis->X, pDynamoCoordinateSystem->ZAxis->Y, pDynamoCoordinateSystem->ZAxis->Z,
-					-pDynamoCoordinateSystem->XAxis->X, -pDynamoCoordinateSystem->XAxis->Y, -pDynamoCoordinateSystem->XAxis->Z));
+					-pDynamoCoordinateSystem->XAxis->X, -pDynamoCoordinateSystem->XAxis->Y, -pDynamoCoordinateSystem->XAxis->Z));*/
 
 		delete pDynamoCentroid;
 		delete pDynamoCoordinateSystem;
