@@ -1149,7 +1149,7 @@ namespace Topologic
 		delete m_pCoreFace;
 	}
 
-	Face^ Face::AddApertureDesign(Face^ face, Face^ apertureDesign, int numEdgeSamples)
+	Face^ Face::AddApertureDesign(Face^ apertureDesign, int numEdgeSamples)
 	{
 		if (numEdgeSamples <= 0)
 		{
@@ -1208,7 +1208,7 @@ namespace Topologic
 					}
 
 					// Find the point with the same UV-coordinate on the surface, add it to the list
-					Vertex^ pMappedSampleVertex = Topologic::Utilities::FaceUtility::VertexAtParameters(face, checkedU, checkedV);
+					Vertex^ pMappedSampleVertex = Topologic::Utilities::FaceUtility::VertexAtParameters(this, checkedU, checkedV);
 					pMappedSampleVertices->Add(pMappedSampleVertex);
 				}
 
@@ -1221,14 +1221,14 @@ namespace Topologic
 			Wire^ pMappedApertureWire = Wire::ByEdges(pMappedApertureEdges);
 
 			//// Use the wire to make a face on the same supporting surface as the input face's
-			Face^ pMappedApertureFace = Topologic::Utilities::FaceUtility::TrimByWire(face, pMappedApertureWire);
+			Face^ pMappedApertureFace = Topologic::Utilities::FaceUtility::TrimByWire(this, pMappedApertureWire);
 			pFaces->Add(pMappedApertureFace);
 
 			// and attach it as an aperture to the face.
 			/*Context^ pFaceContext = Context::ByTopologyParameters(face, 0.0, 0.0, 0.0);
 			Aperture^ pMappedAperture = Aperture::ByTopologyContext(pMappedApertureFace, pFaceContext);*/
 		}
-		Face^ pCopyFace = safe_cast<Face^>(face->AddApertures(pFaces));
+		Face^ pCopyFace = safe_cast<Face^>(AddApertures(pFaces));
 
 		return pCopyFace;
 	}
