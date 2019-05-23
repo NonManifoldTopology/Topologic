@@ -93,7 +93,7 @@ namespace TopologicUtilities
 
 			std::list<TopologicCore::Topology::Ptr> transformedSubcontents;
 			transformedSubcontents.push_back(transformedSubcontent);
-			pCoreTransformedTopology->AddContents(transformedSubcontents, contextType);
+			pCoreTransformedTopology = pCoreTransformedTopology->AddContents(transformedSubcontents, contextType);
 		}
 
 		TopologicCore::GlobalCluster::GetInstance().AddTopology(pCoreTransformedTopology);
@@ -155,7 +155,8 @@ namespace TopologicUtilities
 
 			std::list<TopologicCore::Topology::Ptr> transformedSubcontents;
 			transformedSubcontents.push_back(transformedSubcontent);
-			pCoreTransformedTopology->AddContents(transformedSubcontents, contextType);
+			pCoreTransformedTopology = pCoreTransformedTopology->AddContents(transformedSubcontents, contextType);
+
 		}
 
 		TopologicCore::GlobalCluster::GetInstance().AddTopology(pCoreTransformedTopology);

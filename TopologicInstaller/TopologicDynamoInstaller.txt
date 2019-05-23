@@ -247,6 +247,7 @@ Section "TopologicEnergy" SectionTopologicEnergy
 	File ..\output\x64\Release\TopologicEnergy_DynamoCustomization.xml
 	File ..\output\x64\Release\OpenStudio.dll
 	File ..\output\x64\Release\openstudio_csharp.dll
+	File ..\output\x64\Release\openstudio_model_csharp.dll
 	File ..\output\x64\Release\openstudio_translators_csharp.dll
 SectionEnd
 	
