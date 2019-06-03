@@ -10,12 +10,15 @@
 #include <Geom_Point.hxx>
 #include <gp_Ax1.hxx>
 #include <gp_Ax3.hxx>
+#include <ShapeFix_Shape.hxx>
 
 namespace TopologicUtilities
 {
 	double TopologyUtility::Distance(const TopologicCore::Topology::Ptr& kpTopology, const TopologicCore::Topology::Ptr& kpAnotherTopology)
 	{
-		BRepExtrema_DistShapeShape occtDistance(kpTopology->GetOcctShape(), kpAnotherTopology->GetOcctShape());
+		ShapeFix_Shape occtShapeFix1(kpTopology->GetOcctShape());
+		ShapeFix_Shape occtShapeFix2(kpAnotherTopology->GetOcctShape());
+		BRepExtrema_DistShapeShape occtDistance(occtShapeFix1.Shape(), occtShapeFix2.Shape(), Extrema_ExtFlag_MAX);
 		return occtDistance.Value();
 	}
 

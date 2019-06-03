@@ -161,8 +161,10 @@ namespace TopologicUtilities
 
 	double CellUtility::Volume(const TopologicCore::Cell::Ptr & kpCell)
 	{
+		ShapeFix_Solid occtSolidFix(kpCell->GetOcctSolid());
+		occtSolidFix.Perform();
 		GProp_GProps occtShapeProperties;
-		BRepGProp::VolumeProperties(kpCell->GetOcctShape(), occtShapeProperties);
+		BRepGProp::VolumeProperties(occtSolidFix.Shape(), occtShapeProperties);
 		return occtShapeProperties.Mass();
 	}
 
