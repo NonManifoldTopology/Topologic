@@ -13,7 +13,7 @@ namespace TopologicGrasshopper
     {
 
         public BitwiseNot()
-          : base("Bitwise.Not", "Bitwise.Not", "Performs a bitwise Not operation", "Topologic", "Bitwise")
+          : base("Bitwise.Not", "Bitwise.Not", "Performs a bitwise Not operation", "TopologicUtilities", "Bitwise")
         {
         }
 

@@ -9,11 +9,11 @@ using Rhino.Geometry;
 
 namespace TopologicGrasshopper
 {
-    public class BitwiseAnd : GH_Component
+    public class TopologyUtilityRotate : GH_Component
     {
 
-        public BitwiseAnd()
-          : base("Bitwise.And", "Bitwise.And", "Performs a bitwise And operation", "TopologicUtilities", "Bitwise")
+        public TopologyUtilityRotate()
+          : base("TopologyUtility.Rotate", "TopologyUtility.Rotate", "Rotates a Topology", "TopologicUtilities", "TopologyUtility")
         {
         }
 
@@ -22,7 +22,12 @@ namespace TopologicGrasshopper
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddIntegerParameter("Arguments", "Arguments", "Arguments", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Topology", "Topology", "Topology", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Origin", "Origin", "Origin", GH_ParamAccess.item);
+            pManager.AddNumberParameter("X Vector", "X Vector", "X Vector", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Y Vector", "Y Vector", "Y Vector", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Z Vector", "Z Vector", "Z Vector", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Degree", "Degree", "Degree", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -30,7 +35,7 @@ namespace TopologicGrasshopper
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddIntegerParameter("Arguments", "Arguments", "Arguments", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Topology", "Topology", "Topology", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -40,25 +45,37 @@ namespace TopologicGrasshopper
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             // Declare a variable for the input String
-            List<int> arguments = null;
+            Topologic.Topology topology = null;
+            Topologic.Vertex origin = null;
+            double xVector = 0.0;
+            double yVector = 0.0;
+            double zVector = 0.0;
+            double degree = 0.0;
 
             // Use the DA object to retrieve the data inside the first input parameter.
             // If the retieval fails (for example if there is no data) we need to abort.
-            if (!DA.GetData(0, ref arguments)) { return; }
+            if (!DA.GetData(0, ref topology)) { return; }
+            if (!DA.GetData(1, ref origin)) { return; }
+            if (!DA.GetData(2, ref xVector)) { return; }
+            if (!DA.GetData(3, ref yVector)) { return; }
+            if (!DA.GetData(4, ref zVector)) { return; }
+            if (!DA.GetData(5, ref degree)) { return; }
 
             // If the retrieved data is Nothing, we need to abort.
             // We're also going to abort on a zero-length String.
-            if (arguments == null) { return; }
+            if (topology == null) { return; }
+            if (origin == null) { return; }
+            //if (endVertex == null) { return; }
             //if (data.Length == 0) { return; }
 
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
 
             // Reverse the array of character.
-            int result = Topologic.Utilities.Bitwise.And(arguments);
+            Topologic.Topology rotatedTopology = Topologic.Utilities.TopologyUtility.Rotate(topology, origin, xVector, yVector, zVector, degree);
 
             // Use the DA object to assign a new String to the first output parameter.
-            DA.SetData(0, result);
+            DA.SetData(0, rotatedTopology);
         }
 
         /// <summary>
@@ -79,7 +96,7 @@ namespace TopologicGrasshopper
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("af6f15fe-f64c-430b-92c0-11f85ff1ebb7"); }
+            get { return new Guid("b8e6598b-0ecd-4d6a-b950-5da9f37e0be3"); }
         }
     }
 }

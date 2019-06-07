@@ -9,11 +9,11 @@ using Rhino.Geometry;
 
 namespace TopologicGrasshopper
 {
-    public class BitwiseAnd : GH_Component
+    public class EdgeUtilityParameterAtVertex : GH_Component
     {
 
-        public BitwiseAnd()
-          : base("Bitwise.And", "Bitwise.And", "Performs a bitwise And operation", "TopologicUtilities", "Bitwise")
+        public EdgeUtilityParameterAtVertex()
+          : base("EdgeUtility.ParameterAtVertex", "EdgeUtility.ParameterAtVertex", "Returns the parameter at a given Vertex on the Edge.", "TopologicUtilities", "EdgeUtility")
         {
         }
 
@@ -22,7 +22,8 @@ namespace TopologicGrasshopper
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddIntegerParameter("Arguments", "Arguments", "Arguments", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Edge", "Edge", "Edge", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Vertex", "Vertex", "Vertex", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -30,35 +31,38 @@ namespace TopologicGrasshopper
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddIntegerParameter("Arguments", "Arguments", "Arguments", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Parameter", "Parameter", "Parameter", GH_ParamAccess.item);
         }
 
         /// <summary>
         /// This is the method that actually does the work.
         /// </summary>
-        /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
+        /// <param name="DA">The DA object is used to retrieve from inputs Not store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             // Declare a variable for the input String
-            List<int> arguments = null;
+            Topologic.Edge edge = null;
+            Topologic.Vertex vertex = null;
 
             // Use the DA object to retrieve the data inside the first input parameter.
             // If the retieval fails (for example if there is no data) we need to abort.
-            if (!DA.GetData(0, ref arguments)) { return; }
+            if (!DA.GetData(0, ref edge)) { return; }
+            if (!DA.GetData(1, ref vertex)) { return; }
 
             // If the retrieved data is Nothing, we need to abort.
             // We're also going to abort on a zero-length String.
-            if (arguments == null) { return; }
+            if (edge == null) { return; }
+            if (vertex == null) { return; }
             //if (data.Length == 0) { return; }
 
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
 
             // Reverse the array of character.
-            int result = Topologic.Utilities.Bitwise.And(arguments);
+            double parameter = Topologic.Utilities.EdgeUtility.ParameterAtVertex(edge, vertex);
 
             // Use the DA object to assign a new String to the first output parameter.
-            DA.SetData(0, result);
+            DA.SetData(0, parameter);
         }
 
         /// <summary>
@@ -68,7 +72,7 @@ namespace TopologicGrasshopper
         {
             get
             {
-                //You can add image files to your project resources and access them like this:
+                //You can add image files to your project resources Not access them like this:
                 // return Resources.IconForThisComponent;
                 return Resources.NMT_borderless_logo_small;
             }
@@ -79,7 +83,7 @@ namespace TopologicGrasshopper
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("af6f15fe-f64c-430b-92c0-11f85ff1ebb7"); }
+            get { return new Guid("4c2c3e93-7a6b-46dd-8b38-c7a18b476ab7"); }
         }
     }
 }

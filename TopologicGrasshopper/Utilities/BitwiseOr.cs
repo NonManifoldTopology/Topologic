@@ -13,7 +13,7 @@ namespace TopologicGrasshopper
     {
 
         public BitwiseOr()
-          : base("Bitwise.Or", "Bitwise.Or", "Performs a bitwise Or operation", "Topologic", "Bitwise")
+          : base("Bitwise.Or", "Bitwise.Or", "Performs a bitwise Or operation", "TopologicUtilities", "Bitwise")
         {
         }
 

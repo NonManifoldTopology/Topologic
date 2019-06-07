@@ -9,11 +9,11 @@ using Rhino.Geometry;
 
 namespace TopologicGrasshopper
 {
-    public class BitwiseAnd : GH_Component
+    public class ShellUtilityByLoft : GH_Component
     {
 
-        public BitwiseAnd()
-          : base("Bitwise.And", "Bitwise.And", "Performs a bitwise And operation", "TopologicUtilities", "Bitwise")
+        public ShellUtilityByLoft()
+          : base("ShellUtility.ByLoft", "ShellUtility.ByLoft", "Creates a Shell by lofting through a set of Wires.", "TopologicUtilities", "ShellUtility")
         {
         }
 
@@ -22,7 +22,7 @@ namespace TopologicGrasshopper
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddIntegerParameter("Arguments", "Arguments", "Arguments", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Wires", "Wires", "Wires", GH_ParamAccess.list);
         }
 
         /// <summary>
@@ -30,35 +30,35 @@ namespace TopologicGrasshopper
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddIntegerParameter("Arguments", "Arguments", "Arguments", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Shell", "Shell", "Shell", GH_ParamAccess.item);
         }
 
         /// <summary>
         /// This is the method that actually does the work.
         /// </summary>
-        /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
+        /// <param name="DA">The DA object is used to retrieve from inputs Not store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             // Declare a variable for the input String
-            List<int> arguments = null;
+            List<Topologic.Wire> wires = null;
 
             // Use the DA object to retrieve the data inside the first input parameter.
             // If the retieval fails (for example if there is no data) we need to abort.
-            if (!DA.GetData(0, ref arguments)) { return; }
+            if (!DA.GetData(0, ref wires)) { return; }
 
             // If the retrieved data is Nothing, we need to abort.
             // We're also going to abort on a zero-length String.
-            if (arguments == null) { return; }
+            if (wires == null) { return; }
             //if (data.Length == 0) { return; }
 
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
 
             // Reverse the array of character.
-            int result = Topologic.Utilities.Bitwise.And(arguments);
+            Topologic.Shell shell = Topologic.Utilities.ShellUtility.ByLoft(wires);
 
             // Use the DA object to assign a new String to the first output parameter.
-            DA.SetData(0, result);
+            DA.SetData(0, shell);
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace TopologicGrasshopper
         {
             get
             {
-                //You can add image files to your project resources and access them like this:
+                //You can add image files to your project resources Not access them like this:
                 // return Resources.IconForThisComponent;
                 return Resources.NMT_borderless_logo_small;
             }
@@ -79,7 +79,7 @@ namespace TopologicGrasshopper
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("af6f15fe-f64c-430b-92c0-11f85ff1ebb7"); }
+            get { return new Guid("95b114ab-a920-471d-a944-33c4f8bc4886"); }
         }
     }
 }

@@ -9,11 +9,11 @@ using Rhino.Geometry;
 
 namespace TopologicGrasshopper
 {
-    public class BitwiseAnd : GH_Component
+    public class FaceUtilityNormalAtParameters : GH_Component
     {
 
-        public BitwiseAnd()
-          : base("Bitwise.And", "Bitwise.And", "Performs a bitwise And operation", "TopologicUtilities", "Bitwise")
+        public FaceUtilityNormalAtParameters()
+          : base("FaceUtility.NormalAtParameters", "FaceUtility.NormalAtParameters", "Returns the normal (vector) at a parameter of a Face.", "TopologicUtilities", "FaceUtility")
         {
         }
 
@@ -22,7 +22,9 @@ namespace TopologicGrasshopper
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddIntegerParameter("Arguments", "Arguments", "Arguments", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Face", "Face", "Face", GH_ParamAccess.item);
+            pManager.AddNumberParameter("U", "U", "U", GH_ParamAccess.item);
+            pManager.AddNumberParameter("V", "V", "V", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -30,35 +32,43 @@ namespace TopologicGrasshopper
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddIntegerParameter("Arguments", "Arguments", "Arguments", GH_ParamAccess.item);
+            pManager.AddNumberParameter("X", "X", "X", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Y", "Y", "Y", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Z", "Z", "Z", GH_ParamAccess.item);
         }
 
         /// <summary>
         /// This is the method that actually does the work.
         /// </summary>
-        /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
+        /// <param name="DA">The DA object is used to retrieve from inputs Not store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             // Declare a variable for the input String
-            List<int> arguments = null;
+            Topologic.Face face = null;
+            double u = 0.0;
+            double v = 0.0;
 
             // Use the DA object to retrieve the data inside the first input parameter.
             // If the retieval fails (for example if there is no data) we need to abort.
-            if (!DA.GetData(0, ref arguments)) { return; }
+            if (!DA.GetData(0, ref face)) { return; }
+            if (!DA.GetData(1, ref u)) { return; }
+            if (!DA.GetData(2, ref v)) { return; }
 
             // If the retrieved data is Nothing, we need to abort.
             // We're also going to abort on a zero-length String.
-            if (arguments == null) { return; }
+            if (face == null) { return; }
             //if (data.Length == 0) { return; }
 
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
 
             // Reverse the array of character.
-            int result = Topologic.Utilities.Bitwise.And(arguments);
+            List<double> normal = Topologic.Utilities.FaceUtility.NormalAtParameters(face, u, v);
 
             // Use the DA object to assign a new String to the first output parameter.
-            DA.SetData(0, result);
+            DA.SetData(0, normal[0]);
+            DA.SetData(1, normal[1]);
+            DA.SetData(2, normal[2]);
         }
 
         /// <summary>
@@ -68,7 +78,7 @@ namespace TopologicGrasshopper
         {
             get
             {
-                //You can add image files to your project resources and access them like this:
+                //You can add image files to your project resources Not access them like this:
                 // return Resources.IconForThisComponent;
                 return Resources.NMT_borderless_logo_small;
             }
@@ -79,7 +89,7 @@ namespace TopologicGrasshopper
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("af6f15fe-f64c-430b-92c0-11f85ff1ebb7"); }
+            get { return new Guid("56086ec8-1f8b-4c24-b56a-4154f9d7c61a"); }
         }
     }
 }

@@ -57,6 +57,11 @@
     <Compile Include="AboutVersion.cs" />
     <Compile Include="ApertureByTopologyContext.cs" />
     <Compile Include="ApertureTopology.cs" />
+    <Compile Include="Utilities\FaceUtilityNormalAtParameters.cs" />
+    <Compile Include="Utilities\FaceUtilityParametersAtVertex.cs" />
+    <Compile Include="Utilities\BitwiseNot.cs" />
+    <Compile Include="Utilities\BitwiseOr.cs" />
+    <Compile Include="Utilities\BitwiseXor.cs" />
     <Compile Include="CellAdjacentCells.cs" />
     <Compile Include="CellByFaces.cs" />
     <Compile Include="CellByShell.cs" />
@@ -167,6 +172,21 @@
     <Compile Include="TopologyVertices.cs" />
     <Compile Include="TopologyWires.cs" />
     <Compile Include="TopologyXOR.cs" />
+    <Compile Include="Utilities\BitwiseAnd.cs" />
+    <Compile Include="Utilities\CellUtilityByLoft.cs" />
+    <Compile Include="Utilities\EdgeUtilityParameterAtVertex.cs" />
+    <Compile Include="Utilities\EdgeUtilityByVertices.cs" />
+    <Compile Include="Utilities\EdgeUtilityVertexAtParameter.cs" />
+    <Compile Include="Utilities\FaceUtilityArea.cs" />
+    <Compile Include="Utilities\FaceUtilityByVertices.cs" />
+    <Compile Include="Utilities\FaceUtilityTrimByWire.cs" />
+    <Compile Include="Utilities\FaceUtilityVertexAtParameters.cs" />
+    <Compile Include="Utilities\ShellByLoft.cs" />
+    <Compile Include="Utilities\TopologyUtilityCenterOfMass.cs" />
+    <Compile Include="Utilities\TopologyUtilityDistance.cs" />
+    <Compile Include="Utilities\TopologyUtilityRotate.cs" />
+    <Compile Include="Utilities\TopologyUtilityScale.cs" />
+    <Compile Include="Utilities\TopologyUtilityTranslate.cs" />
     <Compile Include="VertexType.cs" />
     <Compile Include="VertexZ.cs" />
     <Compile Include="VertexByCoordinates.cs" />
@@ -197,6 +217,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\Topologic.Small.png" />
+    <Compile Include="Utilities\CellUtilityVolume.cs" />
+    <Compile Include="Utilities\CellUtilityContains.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\NMT-borderless-logo-small.png" />
