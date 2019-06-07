@@ -25,7 +25,6 @@
   <ItemGroup>
     <ClInclude Include="..\TopologicNET\include\About.h" />
     <ClInclude Include="..\TopologicNET\include\Aperture.h" />
-    <ClInclude Include="..\TopologicNET\include\ApertureFactory.h" />
     <ClInclude Include="..\TopologicNET\include\Cell.h" />
     <ClInclude Include="..\TopologicNET\include\CellComplex.h" />
     <ClInclude Include="..\TopologicNET\include\Cluster.h" />
@@ -106,11 +105,13 @@
       <Filter>Factories</Filter>
     </ClInclude>
     <ClInclude Include="..\TopologicNET\include\Graph.h" />
+    <ClInclude Include="..\TopologicNET\include\ApertureFactory.h">
+      <Filter>Factories</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\TopologicNET\src\About.cpp" />
     <ClCompile Include="..\TopologicNET\src\Aperture.cpp" />
-    <ClCompile Include="..\TopologicNET\src\ApertureFactory.cpp" />
     <ClCompile Include="..\TopologicNET\src\Cell.cpp" />
     <ClCompile Include="..\TopologicNET\src\CellComplex.cpp" />
     <ClCompile Include="..\TopologicNET\src\Cluster.cpp" />
@@ -183,5 +184,8 @@
       <Filter>Factories</Filter>
     </ClCompile>
     <ClCompile Include="..\TopologicNET\src\Graph.cpp" />
+    <ClCompile Include="..\TopologicNET\src\ApertureFactory.cpp">
+      <Filter>Factories</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
