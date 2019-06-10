@@ -281,7 +281,7 @@ namespace Topologic {
 		/// <param name="startVertex">The start Vertex</param>
 		/// <param name="endVertex">The end Vertex</param>
 		/// <returns name="double">The number of Edges connecting the two input Vertices</returns>
-		double Distance(Vertex^ startVertex, Vertex^ endVertex);
+		int Distance(Vertex^ startVertex, Vertex^ endVertex);
 
 		/// <summary>
 		/// Returns True if the input sequence satisfies the Erdoes Gallai theorem. It returns False otherwise.

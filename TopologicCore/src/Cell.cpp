@@ -24,6 +24,8 @@
 #include <BRepPrimAPI_MakeCylinder.hxx>
 #include <BRepPrimAPI_MakeSphere.hxx>
 #include <GProp_GProps.hxx>
+#include <Message_ProgressIndicator.hxx>
+#include <ShapeFix_Solid.hxx>
 #include <StdFail_NotDone.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
@@ -116,8 +118,10 @@ namespace TopologicCore
 
 	TopoDS_Vertex Cell::CenterOfMass(const TopoDS_Solid & rkOcctSolid)
 	{
+		ShapeFix_Solid occtSolidFix(rkOcctSolid);
+		occtSolidFix.Perform();
 		GProp_GProps occtShapeProperties;
-		BRepGProp::VolumeProperties(rkOcctSolid, occtShapeProperties);
+		BRepGProp::VolumeProperties(occtSolidFix.Shape(), occtShapeProperties);
 		return BRepBuilderAPI_MakeVertex(occtShapeProperties.CentreOfMass());
 	}
 

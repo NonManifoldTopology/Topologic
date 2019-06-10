@@ -22,18 +22,24 @@ namespace Topologic
 		bool toExteriorApertures)
 	{
 		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
-		TopologicCore::Graph::Ptr pCoreGraph = TopologicCore::Graph::ByTopology(
-			pCoreTopology,
-			direct,
-			viaSharedTopologies,
-			viaSharedApertures,
-			toExteriorTopologies,
-			toExteriorApertures);
-		if (pCoreGraph == nullptr)
-		{
-			return nullptr;
+		try {
+			TopologicCore::Graph::Ptr pCoreGraph = TopologicCore::Graph::ByTopology(
+				pCoreTopology,
+				direct,
+				viaSharedTopologies,
+				viaSharedApertures,
+				toExteriorTopologies,
+				toExteriorApertures);
+			if (pCoreGraph == nullptr)
+			{
+				return nullptr;
+			}
+			return gcnew Graph(pCoreGraph);
 		}
-		return gcnew Graph(pCoreGraph);
+		catch (std::exception& e)
+		{
+			throw gcnew Exception(gcnew String(e.what()));
+		}
 	}
 
 	List<Vertex^>^ Graph::VerticesAtCoordinates(double x, double y, double z, double tolerance)
@@ -145,7 +151,7 @@ namespace Topologic
 		}
 	}
 
-	double Graph::Distance(Vertex ^ startVertex, Vertex ^ endVertex)
+	int Graph::Distance(Vertex ^ startVertex, Vertex ^ endVertex)
 	{
 		TopologicCore::Vertex::Ptr pCoreStartVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(startVertex->GetCoreTopologicalQuery());
 		TopologicCore::Vertex::Ptr pCoreEndVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(endVertex->GetCoreTopologicalQuery());
@@ -168,15 +174,19 @@ namespace Topologic
 		TopologicCore::Graph::Ptr pCoreGraph = *m_pCoreGraph;
 		TopologicCore::Graph::Ptr pCoreCopyGraph = std::make_shared<TopologicCore::Graph>(pCoreGraph.get());
 
-		std::list<TopologicCore::Vertex::Ptr> coreVertices;
+		std::list<TopologicCore::Vertex::Ptr> coreIdenticalVertices; // find by coordinates
 		for each(Vertex^ vertex in vertices)
 		{
-			TopologicCore::Vertex::Ptr pCoreVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex->GetCoreTopologicalQuery());
-			TopologicCore::Vertex::Ptr pCoreCopyVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(pCoreVertex->DeepCopy());
-			coreVertices.push_back(pCoreCopyVertex);
+			List<double>^ coordinate = vertex->Coordinates;
+			List<Vertex^>^ identicalVertices = VerticesAtCoordinates(coordinate[0], coordinate[1], coordinate[2], 0.001);
+			for each(Vertex^ identicalVertex in identicalVertices)
+			{
+				TopologicCore::Vertex::Ptr pCoreIdenticalVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(identicalVertex->GetCoreTopologicalQuery());
+				coreIdenticalVertices.push_back(pCoreIdenticalVertex);
+			}
 		}
 
-		pCoreCopyGraph->RemoveVertices(coreVertices);
+		pCoreCopyGraph->RemoveVertices(coreIdenticalVertices);
 
 		return gcnew Graph(pCoreCopyGraph);
 	}
