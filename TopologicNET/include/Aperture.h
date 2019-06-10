@@ -14,8 +14,6 @@ namespace Topologic
 
 	/// <summary>
 	/// An Aperture is any designed opening in a building including but not limited to any door, gate, window, skylight, or hatch.
-	/// An Aperture also defines a connection path between two Topologies that share a common Topology or between a
-	/// Topology and the outside space. A connection path can be uni-directional or bi-directional.
 	/// </summary>
 
 	public ref class Aperture : public Topology

@@ -7,7 +7,7 @@ namespace Topologic
 	namespace Factories
 	{
 		/// <summary>
-		/// (private) A private factory class to create a CellComplex.
+		/// (private) A factory class to create a CellComplex.
 		/// </summary>
 		ref class CellComplexFactory : TopologyFactory
 		{

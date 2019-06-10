@@ -7,7 +7,7 @@ namespace Topologic
 	namespace Attributes
 	{
 		/// <summary>
-		/// (private) A private factory class to create an integer Attribute.
+		/// (private) A factory class to create an integer Attribute.
 		/// </summary>
 		ref class IntAttributeFactory : AttributeFactory
 		{

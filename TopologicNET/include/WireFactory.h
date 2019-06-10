@@ -7,7 +7,7 @@ namespace Topologic
 	namespace Factories
 	{
 		/// <summary>
-		/// (private) A private factory class to create a Wire.
+		/// (private) A factory class to create a Wire.
 		/// </summary>
 		ref class WireFactory : TopologyFactory
 		{

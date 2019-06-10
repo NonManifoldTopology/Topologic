@@ -32,8 +32,8 @@ namespace Topologic
 		/// <summary>
 		/// Adds Topology to a Cluster and returns the resulting Topology.
 		/// </summary>
-		/// <param name="topology"></param>
-		/// <returns></returns>
+		/// <param name="topology">A Topology</param>
+		/// <returns>The created Topology</returns>
 #ifdef TOPOLOGIC_DYNAMO
 		[IsVisibleInDynamoLibrary(false)]
 #endif
@@ -42,8 +42,8 @@ namespace Topologic
 		/// <summary>
 		/// Removes Topology from a Cluster and returns the resulting Topology.
 		/// </summary>
-		/// <param name="topology"></param>
-		/// <returns></returns>
+		/// <param name="topology">A Topology</param>
+		/// <returns>The created Topology</returns>
 #ifdef TOPOLOGIC_DYNAMO
 		[IsVisibleInDynamoLibrary(false)]
 #endif
@@ -121,6 +121,10 @@ namespace Topologic
 			List<CellComplex^>^ get();
 		}
 
+		/// <summary>
+		/// Returns the type associated to Cluster.
+		/// </summary>
+		/// <returns>The type associated to Cluster</returns>
 		static int Type();
 
 	public protected:

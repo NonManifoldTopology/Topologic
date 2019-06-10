@@ -37,7 +37,7 @@ namespace Topologic {
 			static List<double>^ ParametersAtVertex(Face^ face, Vertex^ vertex);
 
 			/// <summary>
-			/// Returns the normal (vector) at a parameter of a Face.
+			/// Returns the normal (vector) given the UV parameters of a Face.
 			/// </summary>
 			/// <param name="face">A Face</param>
 			/// <param name="u">The u parameter of the Face</param>

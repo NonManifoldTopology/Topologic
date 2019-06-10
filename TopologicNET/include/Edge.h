@@ -32,17 +32,17 @@ namespace Topologic {
 		}
 
 		/// <summary>
-		/// Get the start vertex of the edge.
+		/// Returns the start Vertex of the Edge.
 		/// </summary>
-		/// <returns name="Vertex"></returns>
+		/// <returns name="Vertex">The start Vertex of the Edge</returns>
 		property Vertex^ StartVertex {
 			Vertex^ get();
 		}
 
 		/// <summary>
-		/// Get the end vertex of the edge.
+		/// Returns the end Vertex of the Edge.
 		/// </summary>
-		/// <returns name="Vertex"></returns>
+		/// <returns name="Vertex">The end Vertex of the Edge</returns>
 		property Vertex^ EndVertex {
 			Vertex^ get();
 		}
@@ -65,10 +65,10 @@ namespace Topologic {
 		}
 
 		/// <summary>
-		/// Return the shared Vertices between two edges.
+		/// Returns the shared Vertices between two Edges.
 		/// </summary>
 		/// <param name="edge">Another Edge</param>
-		/// <returns name="Vertex[]">The shared Vertices between the two Edges</returns>
+		/// <returns name="Vertex[]">A list of shared Vertices between the two Edges</returns>
 		List<Vertex^>^ SharedVertices(Edge^ edge);
 
 		/// <summary>
@@ -110,31 +110,31 @@ namespace Topologic {
 		Autodesk::DesignScript::Geometry::Curve^ Curve(Handle(Geom_Curve) pOcctCurve, const double u0, const double u1);
 
 		/// <summary>
-		/// Create a curved edge by a Dynamo curve.
+		/// Creates a curved Edge by a Dynamo curve.
 		/// </summary>
-		/// <param name="curve">A Dynamo curve.</param>
-		/// <returns name="Edge">The created Topologic edge</returns>
+		/// <param name="curve">A Dynamo curve</param>
+		/// <returns name="Edge">The created Topologic Edge</returns>
 		static Edge^ ByCurve(Autodesk::DesignScript::Geometry::Curve^ curve);
 
 		/// <summary>
-		/// Initialises the edge given a NurbsCurve argument. 
+		/// Creates an Edge by a NurbsCurve. 
 		/// </summary>
-		/// <param name="pDynamoNurbsCurve"></param>
-		/// <returns></returns>
+		/// <param name="pDynamoNurbsCurve">A Dynamo NURBS curve</param>
+		/// <returns>The created Topologic Edge</returns>
 		static Edge^ ByCurve(Autodesk::DesignScript::Geometry::NurbsCurve^ pDynamoNurbsCurve);
 
 		/// <summary>
-		/// 
+		/// Creates an Edge by a Dynamo circle.
 		/// </summary>
-		/// <param name="pDynamoCircle"></param>
-		/// <returns></returns>
+		/// <param name="pDynamoCircle">A Dynamo circle</param>
+		/// <returns>The created Topologic Edge</returns>
 		static Edge^ ByCurve(Autodesk::DesignScript::Geometry::Circle^ pDynamoCircle);
 
 		/// <summary>
-		/// 
+		/// Creates an Edge by a Dynamo line.
 		/// </summary>
-		/// <param name="pDynamoLine"></param>
-		/// <returns></returns>
+		/// <param name="pDynamoLine">A Dynamo line</param>
+		/// <returns>The created Topologic Edge</returns>
 		static Edge^ ByCurve(Autodesk::DesignScript::Geometry::Line^ pDynamoLine);
 #endif
 

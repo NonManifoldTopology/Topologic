@@ -16,7 +16,7 @@ namespace Topologic {
 		public:
 
 			/// <summary>
-			/// Translates (moves) a Topology a certain distance according to x, y, z values.
+			/// Translates (moves) a Topology a certain distance according to XYZ values.
 			/// </summary>
 			/// <param name="topology">The topology to be translated</param>
 			/// <param name="x">The x value</param>
@@ -26,7 +26,7 @@ namespace Topologic {
 			static Topology^ Translate(Topology^ topology, double x, double y, double z);
 
 			/// <summary>
-			///
+			/// Rotates a Topology given an origin, XYZ factors and a degree.
 			/// </summary>
 			/// <param name="topology"></param>
 			/// <param name="origin"></param>
@@ -41,7 +41,7 @@ namespace Topologic {
 				double degree);
 
 			/// <summary>
-			///
+			/// Scales a Topology according to an origin and XYZ factors.
 			/// </summary>
 			/// <param name="topology"></param>
 			/// <param name="origin"></param>
@@ -66,6 +66,15 @@ namespace Topologic {
 			/// <returns>The center of mass of the given Topology</returns>
 			static Vertex^ CenterOfMass(Topology^ topology);
 
+			/// <summary>
+			/// Transforms a Topology according to translation and rotation factors.
+			/// </summary>
+			/// <param name="topology"></param>
+			/// <param name="origin"></param>
+			/// <param name="xFactor"></param>
+			/// <param name="yFactor"></param>
+			/// <param name="zFactor"></param>
+			/// <returns></returns>
 #ifdef TOPOLOGIC_DYNAMO
 			[IsVisibleInDynamoLibrary(false)]
 #endif

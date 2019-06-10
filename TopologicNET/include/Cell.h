@@ -167,7 +167,7 @@ namespace Topologic
 
 #ifdef TOPOLOGIC_DYNAMO
 		/// <summary>
-		/// Creates a cell from a solid.
+		/// Creates a Cell from a solid.
 		/// </summary>
 		/// <param name="solid">A solid</param>
 		/// <param name="tolerance">A tolerance value</param>
@@ -175,30 +175,31 @@ namespace Topologic
 		static Cell^ BySolid(Autodesk::DesignScript::Geometry::Solid^ solid, [DefaultArgument("0.001")] double tolerance);
 
 		/// <summary>
-		/// Creates a cell from a sphere.
+		/// Creates a Cell from a sphere.
 		/// </summary>
 		/// <param name="sphere">A sphere</param>
 		/// <returns name="Cell">The created Cell</returns>
 		static Cell^ BySphere(Autodesk::DesignScript::Geometry::Sphere^ sphere);
 
 		/// <summary>
-		/// Creates a cell from a cylinder.
+		/// Creates a Cell from a cylinder.
 		/// </summary>
 		/// <param name="cylinder">A cylinder</param>
 		/// <returns name="Cell">The created Cell</returns>
 		static Cell^ ByCylinder(Autodesk::DesignScript::Geometry::Cylinder^ cylinder);
 
 		/// <summary>
-		/// Creates a cell from a cone.
+		/// Creates a Cell from a cone.
 		/// </summary>
 		/// <param name="cone">A cone</param>
 		/// <returns name="Cell">The created Cell</returns>
 		static Cell^ ByCone(Autodesk::DesignScript::Geometry::Cone^ cone);
 
 		/// <summary>
-		/// 
+		/// Creates a Cell from a cuboid.
 		/// </summary>
-		/// <param name="cuboid"></param>
+		/// <param name="cuboid">A cuboid</param>
+		/// <returns name="Cell">The created Cell</returns>
 		static Cell^ ByCuboid(Autodesk::DesignScript::Geometry::Cuboid^ cuboid);
 #endif
 

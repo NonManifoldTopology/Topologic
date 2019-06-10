@@ -29,7 +29,7 @@ namespace Topologic
 		}
 
 		/// <summary>
-		/// Returns the constituent Faces of the Shell. 
+		/// Returns the Faces constituent to the Shell. 
 		/// </summary>
 		/// <returns name="Face[]">A list of the constituent Faces</returns>
 		property List<Face^>^ Faces
@@ -38,7 +38,7 @@ namespace Topologic
 		}
 
 		/// <summary>
-		/// Returns the constituent Wires of the Shell.
+		/// Returns the Wires constituent to the Shell.
 		/// </summary>
 		/// <returns name="Wire[]">A list of the constituent Wires</returns>
 		property List<Wire^>^ Wires
@@ -47,7 +47,7 @@ namespace Topologic
 		}
 
 		/// <summary>
-		/// Returns the constituent Edges of the Shell.
+		/// Returns the Edges constituent to the Shell.
 		/// </summary>
 		/// <returns name="Edge[]">A list of the constituent Edges</returns>
 		property List<Edge^>^ Edges
@@ -56,7 +56,7 @@ namespace Topologic
 		}
 
 		/// <summary>
-		/// Returns the constituent Vertices of the Shell.
+		/// Returns the Vertices constituent to the Shell.
 		/// </summary>
 		/// <returns name="Vertex[]">A list of the constituent Vertices</returns>
 		property List<Vertex^>^ Vertices

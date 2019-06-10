@@ -96,7 +96,7 @@ namespace Topologic
 		Vertex(const std::shared_ptr<TopologicCore::Vertex>& kpCoreVertex);
 
 		/// <summary>
-		/// Create a vertex by a point.
+		/// Creates a vertex by a point.
 		/// </summary>
 		/// <param name="point">A point.</param>
 		/// <returns name="Vertex">

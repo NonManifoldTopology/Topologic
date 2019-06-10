@@ -7,7 +7,7 @@ namespace Topologic
 	namespace Factories
 	{
 		/// <summary>
-		/// (private) A private factory class to create an Edge.
+		/// (private) A factory class to create an Edge.
 		/// </summary>
 		ref class EdgeFactory : TopologyFactory
 		{

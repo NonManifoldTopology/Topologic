@@ -101,13 +101,17 @@ namespace Topologic
 			virtual Object^ get();
 		}
 
+		/// <summary>
+		/// Returns the geometry of the contents in a recursive way. 
+		/// </summary>
+		/// <returns>The geometry of the contents in a recursive way</returns>
 #ifdef TOPOLOGIC_DYNAMO
 		[IsVisibleInDynamoLibrary(false)]
 #endif
 		void Topology::RecursiveGeometry(List<Object^>^% output);
 
 		/// <summary>
-		/// Returns a Topology 
+		/// Returns the original Topology with a dictionary. 
 		/// </summary>
 		/// <param name="attributes">A dictionary</param>
 		/// <returns>The original Topology with a dictionary</returns>
@@ -117,7 +121,7 @@ namespace Topologic
 		Topology^ AddAttributesNoCopy(Dictionary<String^, Object^>^ attributes);
 
 		/// <summary>
-		/// Returns the non-constituent members of the input Topology.
+		/// Returns the contents (non-constituent members) of the input Topology.
 		/// </summary>
 		/// <returns name="Topology[]">A list of Topologies contained in the input Topology as non-constituent members</returns>
 		property List<Topology^>^ Contents
@@ -147,7 +151,7 @@ namespace Topologic
 		}
 
 		/// <summary>
-		/// Returns the Topologies containing the input topology as a content.
+		/// Returns the Topologies containing the input Topology as a content.
 		/// </summary>
 		/// <returns name="Context[]">A list of the non-constituent members containing the input Topology</returns>
 		property List<Context^>^ Contexts
@@ -163,7 +167,7 @@ namespace Topologic
 		Topology^ AddContent(Topology^ topology);*/
 		
 		/// <summary>
-		/// Adds this Topology as a content (non-constituent member) to another Topology of a specific type. If the type filter is 0, the contents will be added to the parent topology. Otherwise, the contents will be added to the closest sub-topology which matches the filter.
+		/// Adds a list of Topologies as contents (non-constituent members) to another Topology of a specific type. If the type filter is 0, the contents will be added to the parent topology. Otherwise, the contents will be added to the closest sub-topology which matches the filter.
 		/// </summary>
 		/// <param name="contentTopologies">The Topologies of the content</param>
 		/// <param name="typeFilter">The type of the context Topology</param>
@@ -206,7 +210,7 @@ namespace Topologic
 		Topology^ AddApertures(System::Collections::Generic::IEnumerable<Topology^>^ apertureTopologies);
 
 		/*/// <summary>
-		/// Adds a context to a Topology.
+		/// Adds a list of contexts to a Topology.
 		/// </summary>
 		/// <param name="contexts">A context</param>
 		/// <returns name="Topology">The new Topology</returns>
@@ -423,7 +427,7 @@ namespace Topologic
 		bool IsSame(Topology^ topology);
 
 		/// <summary>
-		/// Returns the sub-topology that is the closest and the simplest (i.e. has the lowest dimensionality) to the selector.
+		/// Returns the sub-topology that is the closest to the selector and the simplest (i.e. has the lowest dimensionality).
 		/// </summary>
 		/// <param name="selector">A Topology</param>
 		/// <returns>The closest and simplest sub-topology to the selector</returns>
@@ -480,7 +484,7 @@ namespace Topologic
 		}
 
 		/// <summary>
-		/// Filter a list of topologies by type. This methods returns a list of topologies of the type specified in the typefilter.
+		/// Filters a list of Topologies by type. This methods returns a list of Topologies of the type specified in the typefilter.
 		/// </summary>
 		/// <param name="topologies">A list of Topologies</param>
 		/// <param name="typeFilter">The type of the filtered Topologies</param>
@@ -527,8 +531,16 @@ namespace Topologic
 		/// <returns name="Topology"></returns>
 		Topology^ SetKeysValues(List<String^>^ keys, List<Object^>^ values);*/
 
+		/// <summary>
+		/// Sets a dictionary for a Topology.
+		/// </summary>
+		/// <returns name="Topology"></returns>
 		Topology^ SetDictionary(Dictionary<String^, Object^>^ dictionary);
 
+		/// <summary>
+		/// Returns the dictionary of a Topology.
+		/// </summary>
+		/// <returns name="Dictionary"></returns>
 		property System::Collections::Generic::Dictionary<String^, Object^>^ Dictionary
 		{
 			System::Collections::Generic::Dictionary<String^, Object^>^ get();

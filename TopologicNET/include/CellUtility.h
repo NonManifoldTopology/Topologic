@@ -31,7 +31,7 @@ namespace Topologic {
 			static Cell^ ByLoft(System::Collections::Generic::IEnumerable<Wire^>^ wires);
 
 			/// <summary>
-			/// Creates a Cell by a Cuboid
+			/// Creates a Cell by a Cuboid.
 			/// </summary>
 			/// <param name="xCentroid">The X coordinate of the centroid</param>
 			/// <param name="yCentroid">The Y coordinate of the centroid</param>
@@ -55,7 +55,7 @@ namespace Topologic {
 				double xAxisX, double yAxisX, double ZAxisX);
 
 			/// <summary>
-			/// Creates a Cell by a Sphere
+			/// Creates a Cell by a Sphere.
 			/// </summary>
 			/// <param name="xCentroid">The X coordinate of the centroid</param>
 			/// <param name="yCentroid">The Y coordinate of the centroid</param>
@@ -68,7 +68,7 @@ namespace Topologic {
 			static Cell^ BySphere(double xCentroid, double yCentroid, double zCentroid, double radius);
 
 			/// <summary>
-			/// Creates an Axis-Aligned Bounding Box Cell by two Vertices at the minimum and maximum corners
+			/// Creates an Axis-Aligned Bounding Box Cell by two Vertices at the minimum and maximum corners.
 			/// </summary>
 			/// <param name="minVertex">The minimum Vertex</param>
 			/// <param name="maxVertex">The maximum Vertex</param>
@@ -86,7 +86,7 @@ namespace Topologic {
 			static double Volume(Cell^ cell);
 
 			/// <summary>
-			/// Check if a vertex is contained in a Cell or not.
+			/// Checks if a vertex is contained in a Cell or not.
 			/// </summary>
 			/// <param name="cell">The Cell</param>
 			/// <param name="vertex">The Vertex</param>

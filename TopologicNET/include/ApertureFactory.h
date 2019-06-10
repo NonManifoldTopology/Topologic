@@ -10,7 +10,7 @@ namespace Topologic
 	namespace Factories
 	{
 		/// <summary>
-		/// (private) A private factory class to create an Aperture.
+		/// (private) A factory class to create an Aperture.
 		/// </summary>
 		ref class ApertureFactory : TopologyFactory
 		{
