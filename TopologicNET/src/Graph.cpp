@@ -151,7 +151,7 @@ namespace Topologic
 		}
 	}
 
-	double Graph::Distance(Vertex ^ startVertex, Vertex ^ endVertex)
+	int Graph::Distance(Vertex ^ startVertex, Vertex ^ endVertex)
 	{
 		TopologicCore::Vertex::Ptr pCoreStartVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(startVertex->GetCoreTopologicalQuery());
 		TopologicCore::Vertex::Ptr pCoreEndVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(endVertex->GetCoreTopologicalQuery());
