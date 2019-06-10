@@ -137,7 +137,7 @@ namespace Topologic {
 		/// <summary>
 		/// Adds an Aperture design to a Face.
 		/// </summary>
-		/// <param name="apertureDesign">The Aperture design (topologic Face) to be added</param>
+		/// <param name="apertureDesign">The Aperture design (Topologic Face) to be added</param>
 		/// <param name="numEdgeSamples">The number of sample points along the Aperture Edges</param>
 		/// <returns name="Face">The new Face</returns>
 		Face^ AddApertureDesign(Face^ apertureDesign, int numEdgeSamples);
