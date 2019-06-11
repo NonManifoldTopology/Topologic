@@ -63,9 +63,29 @@ namespace TopologicGrasshopper {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap CreateCell {
+            get {
+                object obj = ResourceManager.GetObject("CreateCell", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap NMT_borderless_logo_small {
             get {
                 object obj = ResourceManager.GetObject("NMT_borderless_logo_small", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap QueryVertices {
+            get {
+                object obj = ResourceManager.GetObject("QueryVertices", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

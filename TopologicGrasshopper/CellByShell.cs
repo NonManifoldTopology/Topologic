@@ -71,7 +71,7 @@ namespace TopologicGrasshopper
             {
                 //You can add image files to your project resources and access them like this:
                 // return Resources.IconForThisComponent;
-                return Resources.NMT_borderless_logo_small;
+                return Resources.CreateCell;
             }
         }
 
