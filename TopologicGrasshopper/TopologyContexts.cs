@@ -58,7 +58,7 @@ namespace TopologicGrasshopper
             List<Topologic.Context> contexts = topology.Contexts;
 
             // Use the DA object to assign a new String to the first output parameter.
-            DA.SetData(0, contexts);
+            DA.SetDataList(0, contexts);
         }
 
         /// <summary>

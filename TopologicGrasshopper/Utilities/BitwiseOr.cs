@@ -30,7 +30,7 @@ namespace TopologicGrasshopper
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddIntegerParameter("Arguments", "Arguments", "Arguments", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Integer", "Integer", "Integer", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -40,11 +40,11 @@ namespace TopologicGrasshopper
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             // Declare a variable for the input String
-            List<int> arguments = null;
+            List<int> arguments = new List<int>();
 
             // Use the DA object to retrieve the data inside the first input parameter.
             // If the retieval fails (for example if there is no data) we need to abort.
-            if (!DA.GetData(0, ref arguments)) { return; }
+            if (!DA.GetDataList(0, arguments)) { return; }
 
             // If the retrieved data is Nothing, we need to abort.
             // We're also going to abort on a zero-length String.

@@ -62,7 +62,7 @@ namespace TopologicGrasshopper
             List<Topologic.Vertex> sharedVertices = face1.SharedVertices(face2);
 
             // Use the DA object to assign a new String to the first output parameter.
-            DA.SetData(0, sharedVertices);
+            DA.SetDataList(0, sharedVertices);
         }
 
         /// <summary>

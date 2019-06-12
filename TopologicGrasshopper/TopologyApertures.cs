@@ -58,7 +58,7 @@ namespace TopologicGrasshopper
             List<Topologic.Aperture> apertures = topology.Apertures;
 
             // Use the DA object to assign a new String to the first output parameter.
-            DA.SetData(0, apertures);
+            DA.SetDataList(0, apertures);
         }
 
         /// <summary>

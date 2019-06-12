@@ -69,7 +69,7 @@ namespace TopologicGrasshopper
             List<Topologic.Wire> paths = graph.AllPaths(startVertex, endVertex, timeLimitInSeconds);
 
             // Use the DA object to assign a new String to the first output parameter.
-            DA.SetData(0, paths);
+            DA.SetDataList(0, paths);
         }
 
         /// <summary>

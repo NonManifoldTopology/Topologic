@@ -42,12 +42,12 @@ namespace TopologicGrasshopper
         {
             // Declare a variable for the input String
             Topologic.Graph graph = null;
-            List<Topologic.Vertex> vertices = null;
+            List<Topologic.Vertex> vertices = new List<Topologic.Vertex>();
 
             // Use the DA object to retrieve the data inside the first input parameter.
             // If the retieval fails (for example if there is no data) we need to abort.
             if (!DA.GetData(0, ref graph)) { return; }
-            if (!DA.GetData(1, ref vertices)) { return; }
+            if (!DA.GetDataList(1, vertices)) { return; }
 
             // If the retrieved data is Nothing, we need to abort.
             // We're also going to abort on a zero-length String.

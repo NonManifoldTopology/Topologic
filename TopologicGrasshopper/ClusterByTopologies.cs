@@ -44,7 +44,7 @@ namespace TopologicGrasshopper
 
             // Use the DA object to retrieve the data inside the first input parameter.
             // If the retieval fails (for example if there is no data) we need to abort.
-            if (!DA.GetData(0, ref topologies)) { return; }
+            if (!DA.GetDataList(0, topologies)) { return; }
 
             // If the retrieved data is Nothing, we need to abort.
             // We're also going to abort on a zero-length String.

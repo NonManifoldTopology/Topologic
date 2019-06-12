@@ -41,12 +41,12 @@ namespace TopologicGrasshopper
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             // Declare a variable for the input String
-            List<Topologic.Topology> topologies = null;
+            List<Topologic.Topology> topologies = new List<Topologic.Topology>();
             int typeFilter = 0;
 
             // Use the DA object to retrieve the data inside the first input parameter.
             // If the retieval fails (for example if there is no data) we need to abort.
-            if (!DA.GetData(0, ref topologies)) { return; }
+            if (!DA.GetDataList(0, topologies)) { return; }
             if (!DA.GetData(1, ref typeFilter)) { return; }
 
             // If the retrieved data is Nothing, we need to abort.
@@ -61,7 +61,7 @@ namespace TopologicGrasshopper
             List<Topologic.Topology> filteredTopologies = Topologic.Topology.Filter(topologies, typeFilter);
 
             // Use the DA object to assign a new String to the first output parameter.
-            DA.SetData(0, filteredTopologies);
+            DA.SetDataList(0, filteredTopologies);
         }
 
         /// <summary>

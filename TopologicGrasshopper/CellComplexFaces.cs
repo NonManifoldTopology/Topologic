@@ -58,7 +58,7 @@ namespace TopologicGrasshopper
             List<Topologic.Face> faces = cellComplex.Faces;
 
             // Use the DA object to assign a new String to the first output parameter.
-            DA.SetData(0, faces);
+            DA.SetDataList(0, faces);
         }
 
         /// <summary>

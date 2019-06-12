@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 using Grasshopper.Kernel;
 using Rhino.Geometry;
+using Rhino.Geometry.Collections;
 
 namespace TopologicGrasshopper
 {
     public class TopologyByGeometry : GH_Component
     {
-
         public TopologyByGeometry()
           : base("Topology.ByGeometry", "Topology.ByGeometry", "Creates a Topology by geometry.", "Topologic", "Topology")
         {
@@ -22,7 +22,7 @@ namespace TopologicGrasshopper
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Geometry", "Geometry", "Geometry", GH_ParamAccess.item);
+            pManager.AddGeometryParameter("Geometry", "Geometry", "Geometry", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -39,27 +39,127 @@ namespace TopologicGrasshopper
         /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            // Declare a variable for the input String
-            //Topologic.Topology topology = null;
+            GeometryBase ghGeometryBase = null;
+            if (!DA.GetData(0, ref ghGeometryBase)) { return; }
 
-            //// Use the DA object to retrieve the data inside the first input parameter.
-            //// If the retieval fails (for example if there is no data) we need to abort.
-            //if (!DA.GetData(0, ref topology)) { return; }
+            if (ghGeometryBase == null) { return; }
+            
+            Topologic.Topology topology = null;
+            Point ghPoint = ghGeometryBase as Point;
+            if (ghPoint != null)
+            {
+                topology = ByPoint(ghPoint.Location);
+                DA.SetData(0, topology);
+                return;
+            }
 
-            //// If the retrieved data is Nothing, we need to abort.
-            //// We're also going to abort on a zero-length String.
-            //if (topology == null) { return; }
-            //if (data.Length == 0) { return; }
+            Curve ghCurve = ghGeometryBase as Curve;
+            if (ghCurve != null)
+            {
+                LineCurve ghLine = ghCurve as LineCurve;
+                if (ghLine != null)
+                {
+                    topology = ByLine(ghLine);
+                    DA.SetData(0, topology);
+                    return;
+                }
 
-            // Convert the String to a character array.
-            //char[] chars = data.ToCharArray();
+                NurbsCurve ghNurbsCurve = ghCurve as NurbsCurve;
+                if(ghNurbsCurve != null)
+                {
+                    //ghNurbsCurve.points
+                }
 
-            // Reverse the array of character.
-            throw new NotImplementedException();
+                PolylineCurve ghPolylineCurve = ghCurve as PolylineCurve;
+                if (ghPolylineCurve != null)
+                {
+                    topology = ByPolylineCurve(ghPolylineCurve);
+                    DA.SetData(0, topology);
+                    return;
+                }
 
-            // Use the DA object to assign a new String to the first output parameter.
-            //DA.SetData(0, cells);
+                throw new Exception("This type of curve is not yet supported.");
+            }
+
+            throw new Exception("This type of geometry is not yet supported.");
+
+            //Surface ghSurface = ghGeometryBase as Surface;
+            //if (ghSurface != null)
+            //{
+            //    BrepFace ghBrepFace = ghSurface as BrepFace;
+            //    if (ghBrepFace != null)
+            //    {
+            //        topology = ByBrepFace(ghBrepFace);
+            //        DA.SetData(0, topology);
+            //        return;
+            //    }
+
+            //    throw new Exception("This type of surface is not yet supported.");
+            //}
+
+
+            //Brep ghBrep = ghGeometryBase as Brep;
+            //if(ghBrep != null)
+            //{
+            //    topology = ByBrep(ghBrep);
+            //    DA.SetData(0, topology);
+            //    return;
+            //}
+
         }
+
+        Topologic.Vertex ByPoint(Point3d ghPoint)
+        {
+            return Topologic.Vertex.ByCoordinates(ghPoint.X, ghPoint.Y, ghPoint.Z);
+        }
+
+        Topologic.Edge ByLine(LineCurve ghLine)
+        {
+            Topologic.Vertex vertex1 = ByPoint(ghLine.PointAtStart);
+            Topologic.Vertex vertex2 = ByPoint(ghLine.PointAtEnd);
+            return Topologic.Edge.ByStartVertexEndVertex(vertex1, vertex2);
+        }
+
+        Topologic.Wire ByPolylineCurve(PolylineCurve ghPolylineCurve)
+        {
+            int numPoints = ghPolylineCurve.PointCount;
+            if(numPoints < 1)
+            {
+                return null;
+            }
+
+            List<Topologic.Vertex> vertices = new List<Topologic.Vertex>();
+            List<int> indices = new List<int>();
+            for(int i = 0; i < numPoints; ++i)
+            {
+                Point3d ghPoint = ghPolylineCurve.Point(i);
+                Topologic.Vertex vertex = ByPoint(ghPoint);
+                vertices.Add(vertex);
+                indices.Add(0);
+            }
+
+            if(ghPolylineCurve.IsClosed)
+            {
+                vertices.Add(vertices[0]);
+                indices.Add(0);
+                List<List<int>> listOfIndices = new List<List<int>>();
+                listOfIndices.Add(indices);
+                return Topologic.Topology.ByVerticesIndices(vertices, listOfIndices)[0].Wires[0];
+            }
+            else
+            {
+                List<List<int>> listOfIndices = new List<List<int>>();
+                listOfIndices.Add(indices);
+                return Topologic.Topology.ByVerticesIndices(vertices, listOfIndices)[0] as Topologic.Wire;
+            }
+        }
+
+        //Topologic.Face ByBrepFace(BrepFace ghBrepFace)
+        //{
+        //    BrepLoop ghOuterLoop = ghBrepFace.OuterLoop;
+        //    BrepLoopList ghLoops = ghBrepFace.Loops;
+        //    Topologic.Face face = Topologic.Face.ByExternalInternalBoundaries();
+        //}
 
         /// <summary>
         /// Provides an Icon for the component.

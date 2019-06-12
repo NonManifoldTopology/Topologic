@@ -22,7 +22,7 @@ namespace TopologicGrasshopper
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Shell", "Shell", "Shell", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Shell", "Shell", "Shell", GH_ParamAccess.item);
         }
 
         /// <summary>

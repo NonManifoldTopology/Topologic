@@ -22,7 +22,7 @@ namespace TopologicGrasshopper
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Shell", "Shell", "Shell", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Cells", "Cells", "Cells", GH_ParamAccess.list);
         }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace TopologicGrasshopper
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Cell", "Cell", "Cell", GH_ParamAccess.item);
+            pManager.AddGenericParameter("CellComplex", "CellComplex", "CellComplex", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -40,15 +40,15 @@ namespace TopologicGrasshopper
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             // Declare a variable for the input String
-            Topologic.Shell shell = null;
+            List<Topologic.Cell> cells = new List<Topologic.Cell>();
 
             // Use the DA object to retrieve the data inside the first input parameter.
             // If the retieval fails (for example if there is no data) we need to abort.
-            if (!DA.GetData(0, ref shell)) { return; }
+            if (!DA.GetDataList(0, cells)) { return; }
 
             // If the retrieved data is Nothing, we need to abort.
             // We're also going to abort on a zero-length String.
-            if (shell == null) { return; }
+            if (cells == null) { return; }
             //if (endVertex == null) { return; }
             //if (data.Length == 0) { return; }
 
@@ -56,10 +56,10 @@ namespace TopologicGrasshopper
             //char[] chars = data.ToCharArray();
 
             // Reverse the array of character.
-            Topologic.Cell cell = Topologic.Cell.ByShell(shell);
+            Topologic.CellComplex cellComplex = Topologic.CellComplex.ByCells(cells);
 
             // Use the DA object to assign a new String to the first output parameter.
-            DA.SetData(0, cell);
+            DA.SetData(0, cellComplex);
         }
 
         /// <summary>

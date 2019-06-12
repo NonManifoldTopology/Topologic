@@ -62,7 +62,7 @@ namespace TopologicGrasshopper
             List<Topologic.Edge> sharedEdges = face1.SharedEdges(face2);
 
             // Use the DA object to assign a new String to the first output parameter.
-            DA.SetData(0, sharedEdges);
+            DA.SetDataList(0, sharedEdges);
         }
 
         /// <summary>

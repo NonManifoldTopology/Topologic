@@ -58,7 +58,7 @@ namespace TopologicGrasshopper
             List<Topologic.Wire> wires = topology.Wires;
 
             // Use the DA object to assign a new String to the first output parameter.
-            DA.SetData(0, wires);
+            DA.SetDataList(0, wires);
         }
 
         /// <summary>

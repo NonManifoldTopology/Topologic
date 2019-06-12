@@ -58,7 +58,7 @@ namespace TopologicGrasshopper
             List<Topologic.Cell> cells = cluster.Cells;
 
             // Use the DA object to assign a new String to the first output parameter.
-            DA.SetData(0, cells);
+            DA.SetDataList(0, cells);
         }
 
         /// <summary>

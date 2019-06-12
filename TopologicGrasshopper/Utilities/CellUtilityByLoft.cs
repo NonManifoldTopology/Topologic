@@ -40,11 +40,11 @@ namespace TopologicGrasshopper
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             // Declare a variable for the input String
-            List<Topologic.Wire> wires = null;
+            List<Topologic.Wire> wires = new List<Topologic.Wire>();
 
             // Use the DA object to retrieve the data inside the first input parameter.
             // If the retieval fails (for example if there is no data) we need to abort.
-            if (!DA.GetData(0, ref wires)) { return; }
+            if (!DA.GetDataList(0, wires)) { return; }
 
             // If the retrieved data is Nothing, we need to abort.
             // We're also going to abort on a zero-length String.

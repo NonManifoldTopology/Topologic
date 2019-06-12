@@ -30,7 +30,7 @@ namespace TopologicGrasshopper
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Vertex", "Vertex", "Vertex", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Vertices", "Vertices", "Vertices", GH_ParamAccess.list);
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace TopologicGrasshopper
             List<Topologic.Vertex> vertices = edge.Vertices;
 
             // Use the DA object to assign a new String to the first output parameter.
-            DA.SetData(0, vertices);
+            DA.SetDataList(0, vertices);
         }
 
         /// <summary>

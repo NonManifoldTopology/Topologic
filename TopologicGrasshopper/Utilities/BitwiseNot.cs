@@ -22,7 +22,7 @@ namespace TopologicGrasshopper
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddIntegerParameter("Arguments", "Arguments", "Arguments", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Argument", "Argument", "Argument", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace TopologicGrasshopper
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddIntegerParameter("Arguments", "Arguments", "Arguments", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Integer", "Integer", "Integer", GH_ParamAccess.item);
         }
 
         /// <summary>

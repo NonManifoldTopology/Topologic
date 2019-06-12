@@ -42,12 +42,12 @@ namespace TopologicGrasshopper
         {
             // Declare a variable for the input String
             Topologic.Face face = null;
-            List<Topologic.Wire> internalBoundaries = null;
+            List<Topologic.Wire> internalBoundaries = new List<Topologic.Wire>();
 
             // Use the DA object to retrieve the data inside the first input parameter.
             // If the retieval fails (for example if there is no data) we need to abort.
             if (!DA.GetData(0, ref face)) { return; }
-            if (!DA.GetData(1, ref internalBoundaries)) { return; }
+            if (!DA.GetDataList(1, internalBoundaries)) { return; }
 
             // If the retrieved data is Nothing, we need to abort.
             // We're also going to abort on a zero-length String.

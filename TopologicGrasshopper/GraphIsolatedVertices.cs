@@ -58,7 +58,7 @@ namespace TopologicGrasshopper
             List<Topologic.Vertex> isolatedVertices = graph.IsolatedVertices;
 
             // Use the DA object to assign a new String to the first output parameter.
-            DA.SetData(0, isolatedVertices);
+            DA.SetDataList(0, isolatedVertices);
         }
 
         /// <summary>

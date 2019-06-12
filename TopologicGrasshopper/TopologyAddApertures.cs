@@ -41,12 +41,12 @@ namespace TopologicGrasshopper
         {
             // Declare a variable for the input String
             Topologic.Topology topology = null;
-            List<Topologic.Topology> apertureTopologies = null;
+            List<Topologic.Topology> apertureTopologies = new List<Topologic.Topology>();
 
             // Use the DA object to retrieve the data inside the first input parameter.
             // If the retieval fails (for example if there is no data) we need to abort.
             if (!DA.GetData(0, ref topology)) { return; }
-            if (!DA.GetData(1, ref apertureTopologies)) { return; }
+            if (!DA.GetDataList(1, apertureTopologies)) { return; }
 
             // If the retrieved data is Nothing, we need to abort.
             // We're also going to abort on a zero-length String.

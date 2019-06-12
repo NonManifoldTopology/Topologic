@@ -30,9 +30,9 @@ namespace TopologicGrasshopper
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddNumberParameter("X", "X", "X", GH_ParamAccess.list);
-            pManager.AddNumberParameter("Y", "Y", "Y", GH_ParamAccess.list);
-            pManager.AddNumberParameter("Z", "Z", "Z", GH_ParamAccess.list);
+            pManager.AddNumberParameter("X", "X", "X", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Y", "Y", "Y", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Z", "Z", "Z", GH_ParamAccess.item);
         }
 
         /// <summary>

@@ -43,13 +43,13 @@ namespace TopologicGrasshopper
         {
             // Declare a variable for the input String
             Topologic.Graph graph = null;
-            List<Topologic.Edge> edges = null;
+            List<Topologic.Edge> edges = new List<Topologic.Edge>();
             double tolerance = 0.0;
 
             // Use the DA object to retrieve the data inside the first input parameter.
             // If the retieval fails (for example if there is no data) we need to abort.
             if (!DA.GetData(0, ref graph)) { return; }
-            if (!DA.GetData(1, ref edges)) { return; }
+            if (!DA.GetDataList(1, edges)) { return; }
             if (!DA.GetData(2, ref tolerance)) { return; }
 
             // If the retrieved data is Nothing, we need to abort.

@@ -23,7 +23,7 @@ namespace TopologicGrasshopper
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Faces", "Faces", "Faces", GH_ParamAccess.list);
-            pManager.AddNumberParameter("Tolerance", "Tolerance", "Tolerance", GH_ParamAccess.list, 0.001);
+            pManager.AddNumberParameter("Tolerance", "Tolerance", "Tolerance", GH_ParamAccess.item, 0.001);
         }
 
         /// <summary>
@@ -41,12 +41,12 @@ namespace TopologicGrasshopper
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             // Declare a variable for the input String
-            List<Topologic.Face> faces = null;
+            List<Topologic.Face> faces = new List<Topologic.Face>();
             double tolerance = 0.0001;
 
             // Use the DA object to retrieve the data inside the first input parameter.
             // If the retieval fails (for example if there is no data) we need to abort.
-            if (!DA.GetData(0, ref faces)) { return; }
+            if (!DA.GetDataList(0, faces)) { return; }
             if (!DA.GetData(1, ref tolerance)) { return; }
 
             // If the retrieved data is Nothing, we need to abort.

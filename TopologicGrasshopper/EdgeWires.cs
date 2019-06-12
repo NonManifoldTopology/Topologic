@@ -30,7 +30,7 @@ namespace TopologicGrasshopper
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Wire", "Wire", "Wire", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Wires", "Wires", "Wires", GH_ParamAccess.list);
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace TopologicGrasshopper
             List<Topologic.Wire> wires = edge.Wires;
 
             // Use the DA object to assign a new String to the first output parameter.
-            DA.SetData(0, wires);
+            DA.SetDataList(0, wires);
         }
 
         /// <summary>

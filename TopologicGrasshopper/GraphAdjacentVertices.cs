@@ -60,7 +60,7 @@ namespace TopologicGrasshopper
             List<Topologic.Vertex> adjacentVertices = graph.AdjacentVertices(vertex);
 
             // Use the DA object to assign a new String to the first output parameter.
-            DA.SetData(0, adjacentVertices);
+            DA.SetDataList(0, adjacentVertices);
         }
 
         /// <summary>

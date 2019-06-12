@@ -41,13 +41,13 @@ namespace TopologicGrasshopper
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             // Declare a variable for the input String
-            List<Topologic.Vertex> vertices = null;
-            List<List<int>> indices = null;
+            List<Topologic.Vertex> vertices = new List<Topologic.Vertex>();
+            List<List<int>> indices = new List<List<int>>();
 
             //// Use the DA object to retrieve the data inside the first input parameter.
             //// If the retieval fails (for example if there is no data) we need to abort.
-            if (!DA.GetData(0, ref vertices)) { return; }
-            if (!DA.GetData(1, ref indices)) { return; }
+            if (!DA.GetDataList(0, vertices)) { return; }
+            if (!DA.GetDataList(1, indices)) { return; }
 
             //// If the retrieved data is Nothing, we need to abort.
             //// We're also going to abort on a zero-length String.
@@ -62,7 +62,7 @@ namespace TopologicGrasshopper
             List<Topologic.Topology> topologies = Topologic.Topology.ByVerticesIndices(vertices, indices);
 
             // Use the DA object to assign a new String to the first output parameter.
-            DA.SetData(0, topologies);
+            DA.SetDataList(0, topologies);
         }
 
         /// <summary>
