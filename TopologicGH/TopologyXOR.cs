@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
 
-namespace TopologicGrasshopper
+namespace TopologicGH
 {
     public class TopologyXOR : GH_Component
     {

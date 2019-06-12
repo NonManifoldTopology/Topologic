@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
 
-namespace TopologicGrasshopper
+namespace TopologicGH
 {
     public class AboutVersion : GH_Component
     {
@@ -39,7 +39,8 @@ namespace TopologicGrasshopper
         /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            String version = Topologic.About.Version();
+            //String version = Topologic.About.Version();
+            String version = "0.7.5.1";
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetData(0, version);

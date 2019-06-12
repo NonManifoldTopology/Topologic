@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
 
-namespace TopologicGrasshopper
+namespace TopologicGH
 {
     public class ClusterByTopologies : GH_Component
     {
@@ -40,7 +40,7 @@ namespace TopologicGrasshopper
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             // Declare a variable for the input String
-            List<Topologic.Topology> topologies = null;
+            List<Topologic.Topology> topologies = new List<Topologic.Topology>();
 
             // Use the DA object to retrieve the data inside the first input parameter.
             // If the retieval fails (for example if there is no data) we need to abort.

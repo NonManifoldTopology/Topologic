@@ -8,7 +8,7 @@ using Grasshopper.Kernel;
 using Rhino.Geometry;
 using Rhino.Geometry.Collections;
 
-namespace TopologicGrasshopper
+namespace TopologicGH
 {
     public class TopologyByGeometry : GH_Component
     {
