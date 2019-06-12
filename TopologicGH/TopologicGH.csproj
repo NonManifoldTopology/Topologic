@@ -7,8 +7,8 @@
     <ProjectGuid>{25256EB9-AA86-4DFA-A710-F2908C04C2C9}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TopologicGrasshopper</RootNamespace>
-    <AssemblyName>TopologicGrasshopper</AssemblyName>
+    <RootNamespace>TopologicGH</RootNamespace>
+    <AssemblyName>TopologicGH</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -260,7 +260,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>Copy "$(TargetDir)\TopologicGrasshopper.dll" "$(TargetDir)\TopologicGrasshopper.gha"
-Erase "$(TargetDir)\TopologicGrasshopper.dll"</PostBuildEvent>
+    <PostBuildEvent>Copy "$(TargetDir)\TopologicGH.dll" "$(TargetDir)\TopologicGH.gha"
+Erase "$(TargetDir)\TopologicGH.dll"</PostBuildEvent>
   </PropertyGroup>
 </Project>

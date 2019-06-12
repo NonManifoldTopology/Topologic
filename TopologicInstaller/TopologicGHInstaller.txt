@@ -19,7 +19,7 @@
 
   ;Name and file
   Name "Topologic"
-  OutFile "TopologicGrasshopperInstaller.exe"
+  OutFile "TopologicGHInstaller.exe"
 
   ;Default installation folder
   InstallDir "$APPDATA\Grasshopper\Libraries"
@@ -67,7 +67,7 @@ Section "TopologicGrasshopper" SectionTopologicGrasshopper
     File ..\output\x64\Release\TopologicUtilities.dll
     File ..\output\x64\Release\license.file
     File ..\output\x64\Release\TK*.dll
-	File ..\output\x64\Release\TopologicGrasshopper.gha
+	File ..\output\x64\Release\TopologicGH.gha
 
 	Call CheckVCRedistributable
     WriteUninstaller "Uninstall.exe"
@@ -144,7 +144,7 @@ Section "Uninstall"
   Delete "$INSTDIR\TopologicUtilities.dll"
   Delete "$INSTDIR\license.file"
   Delete "$INSTDIR\TK*.dll"
-  Delete "$INSTDIR\TopologicGrasshopper.gha"
+  Delete "$INSTDIR\TopologicGH.gha"
   ;RMDir "$INSTDIR"
 
 SectionEnd
