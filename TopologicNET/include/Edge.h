@@ -22,6 +22,8 @@ namespace Topologic {
 		/// <returns name="Edge">The created Edge</returns>
 		static Edge^ ByStartVertexEndVertex(Vertex^ startVertex, Vertex^ endVertex);
 
+		static Edge^ ByNurbsParameters(List<Vertex^>^ controlPoints, List<double>^ weights, List<double>^ knots, bool isRational, bool isPeriodic, int degree);
+
 		/// <summary>
 		/// Returns the Edges adjacent to the Edge.
 		/// </summary>

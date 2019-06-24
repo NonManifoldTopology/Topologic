@@ -352,89 +352,30 @@ namespace Topologic
 	{
 		// Transfer the poles/control points
 		array<Autodesk::DesignScript::Geometry::Point^>^ pDynamoControlPoints = pDynamoNurbsCurve->ControlPoints();
-		TColgp_Array1OfPnt occtPoles(0, pDynamoControlPoints->Length - 1);
-		for (int i = occtPoles.Lower(); i <= occtPoles.Upper(); i++)
+		List<Vertex^>^ vertices = gcnew List<Vertex^>();
+		for each(Autodesk::DesignScript::Geometry::Point^ pDynamoControlPoint in pDynamoControlPoints)
 		{
-			occtPoles.SetValue(i, gp_Pnt(pDynamoControlPoints[i]->X, pDynamoControlPoints[i]->Y, pDynamoControlPoints[i]->Z));
+			vertices->Add(Vertex::ByPoint(pDynamoControlPoint));
 		}
-
+		
 		// Transfer the weights
 		array<double>^ pDynamoWeights = pDynamoNurbsCurve->Weights();
-		TColStd_Array1OfReal occtWeights(0, pDynamoWeights->Length - 1);
-		for (int i = occtWeights.Lower(); i <= occtWeights.Upper(); i++)
-		{
-			double weight = pDynamoWeights[i];
-			occtWeights.SetValue(i, weight);
-		}
 
 		// Transfer the knots and multiplicities. Note the format difference. OCCT has a separate multiplicity list, while Dynamo simply repeats the knots.
 		array<double>^ pDynamoKnots = pDynamoNurbsCurve->Knots();
-		List<double>^ pKnots = gcnew List<double>();
-		List<int>^ pMultiplicities = gcnew List<int>();
-		double previousKnot = pDynamoKnots[0] - 1.0;
-		int multiplicity = 0;
-		for each(double knot in pDynamoKnots)
-		{
-			if (knot > previousKnot)
-			{
-				if (previousKnot > pDynamoKnots[0] - 1.0)
-					pMultiplicities->Add(multiplicity);
-				pKnots->Add(knot);
-				multiplicity = 1;
-			}
-			else
-			{
-				multiplicity++;
-			}
-			previousKnot = knot;
-		}
-		pMultiplicities->Add(multiplicity);
-
-		TColStd_Array1OfReal occtKnots(0, pKnots->Count - 1);
-		for (int i = occtKnots.Lower(); i <= occtKnots.Upper(); i++)
-		{
-			occtKnots.SetValue(i, pKnots[i]);
-		}
-
-		TColStd_Array1OfInteger occtMultiplicities(0, pMultiplicities->Count - 1);
-		for (int i = occtMultiplicities.Lower(); i <= occtMultiplicities.Upper(); i++)
-		{
-			occtMultiplicities.SetValue(i, pMultiplicities[i]);
-		}
 
 		bool isRational = pDynamoNurbsCurve->IsRational;
 		bool isPeriodic = pDynamoNurbsCurve->IsPeriodic;
 		int degree = pDynamoNurbsCurve->Degree;
 
-		Exception^ e = nullptr;
-		TopologicCore::Edge::Ptr pCoreEdge = nullptr;
-		try {
-			pCoreEdge = TopologicCore::Edge::ByCurve(
-				occtPoles,
-				occtWeights,
-				occtKnots,
-				occtMultiplicities,
-				degree,
-				isPeriodic,
-				isRational
-			);
-		}
-		catch (const std::exception& rkException)
-		{
-			e = gcnew Exception(gcnew String(rkException.what()));
-		}
+		Edge^ edge = ByNurbsParameters(vertices, gcnew List<double>(pDynamoWeights), gcnew List<double>(pDynamoKnots), isRational, isPeriodic, degree);
 
 		for each(Autodesk::DesignScript::Geometry::Point^ pDynamoControlPoint in pDynamoControlPoints)
 		{
 			delete pDynamoControlPoint;
 		}
 
-		if (e != nullptr)
-		{
-			throw e;
-		}
-
-		return gcnew Edge(pCoreEdge);
+		return edge;
 	}
 
 	Edge^ Edge::ByCurve(Autodesk::DesignScript::Geometry::Circle^ pDynamoCircle)
@@ -514,6 +455,83 @@ namespace Topologic
 		return gcnew Edge(pCoreEdge);
 	}
 #endif
+
+	Edge^ Edge::ByNurbsParameters(List<Vertex^>^ controlPoints, List<double>^ weights, List<double>^ knots, bool isRational, bool isPeriodic, int degree)
+	{
+		// Transfer the poles/control points
+		TColgp_Array1OfPnt occtPoles(0, controlPoints->Count - 1);
+		for (int i = occtPoles.Lower(); i <= occtPoles.Upper(); i++)
+		{
+			occtPoles.SetValue(i, gp_Pnt(controlPoints[i]->X, controlPoints[i]->Y, controlPoints[i]->Z));
+		}
+
+		// Transfer the weights
+		TColStd_Array1OfReal occtWeights(0, weights->Count - 1);
+		for (int i = occtWeights.Lower(); i <= occtWeights.Upper(); i++)
+		{
+			double weight = weights[i];
+			occtWeights.SetValue(i, weight);
+		}
+
+		// Transfer the knots and multiplicities. Note the format difference. OCCT has a separate multiplicity list, while Dynamo simply repeats the knots.
+		List<double>^ uniqueKnots = gcnew List<double>();
+		List<int>^ pMultiplicities = gcnew List<int>();
+		double previousKnot = knots[0] - 1.0;
+		int multiplicity = 0;
+		for each(double knot in knots)
+		{
+			if (knot > previousKnot)
+			{
+				if (previousKnot > knots[0] - 1.0)
+					pMultiplicities->Add(multiplicity);
+				uniqueKnots->Add(knot);
+				multiplicity = 1;
+			}
+			else
+			{
+				multiplicity++;
+			}
+			previousKnot = knot;
+		}
+		pMultiplicities->Add(multiplicity);
+
+		TColStd_Array1OfReal occtKnots(0, uniqueKnots->Count - 1);
+		for (int i = occtKnots.Lower(); i <= occtKnots.Upper(); i++)
+		{
+			occtKnots.SetValue(i, uniqueKnots[i]);
+		}
+
+		TColStd_Array1OfInteger occtMultiplicities(0, pMultiplicities->Count - 1);
+		for (int i = occtMultiplicities.Lower(); i <= occtMultiplicities.Upper(); i++)
+		{
+			occtMultiplicities.SetValue(i, pMultiplicities[i]);
+		}
+
+		Exception^ e = nullptr;
+		TopologicCore::Edge::Ptr pCoreEdge = nullptr;
+		try {
+			pCoreEdge = TopologicCore::Edge::ByCurve(
+				occtPoles,
+				occtWeights,
+				occtKnots,
+				occtMultiplicities,
+				degree,
+				isPeriodic,
+				isRational
+			);
+		}
+		catch (const std::exception& rkException)
+		{
+			e = gcnew Exception(gcnew String(rkException.what()));
+		}
+
+		if (e != nullptr)
+		{
+			throw e;
+		}
+
+		return gcnew Edge(pCoreEdge);
+	}
 
 	//Edge^ Edge::ByVertices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices)
 	//{

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
 using Rhino.Geometry.Collections;
+using Topologic;
 
 namespace TopologicGH
 {
@@ -56,71 +57,169 @@ namespace TopologicGH
             Curve ghCurve = ghGeometryBase as Curve;
             if (ghCurve != null)
             {
-                LineCurve ghLine = ghCurve as LineCurve;
-                if (ghLine != null)
-                {
-                    topology = ByLine(ghLine);
-                    DA.SetData(0, topology);
-                    return;
-                }
-
-                NurbsCurve ghNurbsCurve = ghCurve as NurbsCurve;
-                if(ghNurbsCurve != null)
-                {
-                    //ghNurbsCurve.points
-                }
-
-                PolylineCurve ghPolylineCurve = ghCurve as PolylineCurve;
-                if (ghPolylineCurve != null)
-                {
-                    topology = ByPolylineCurve(ghPolylineCurve);
-                    DA.SetData(0, topology);
-                    return;
-                }
-
-                throw new Exception("This type of curve is not yet supported.");
+                topology = ByCurve(ghCurve);
+                DA.SetData(0, topology);
+                return;
             }
 
-            throw new Exception("This type of geometry is not yet supported.");
+            Surface ghSurface = ghGeometryBase as Surface;
+            if (ghSurface != null)
+            {
+                topology = BySurface(ghSurface);
+                DA.SetData(0, topology);
+                return;
+            }
 
-            //Surface ghSurface = ghGeometryBase as Surface;
-            //if (ghSurface != null)
+            Brep ghBrep = ghGeometryBase as Brep;
+            if (ghBrep != null)
+            {
+                topology = ByBrep(ghBrep);
+                DA.SetData(0, topology);
+                return;
+            }
+
+            Mesh ghMesh = ghGeometryBase as Mesh;
+            if (ghMesh != null)
+            {
+                topology = ByMesh(ghMesh);
+                DA.SetData(0, topology);
+                return;
+            }
+
+            //BrepLoop ghBrepLoop = ghGeometryBase as BrepLoop;
+            //if (ghBrepLoop != null)
             //{
-            //    BrepFace ghBrepFace = ghSurface as BrepFace;
-            //    if (ghBrepFace != null)
-            //    {
-            //        topology = ByBrepFace(ghBrepFace);
-            //        DA.SetData(0, topology);
-            //        return;
-            //    }
-
-            //    throw new Exception("This type of surface is not yet supported.");
-            //}
-
-
-            //Brep ghBrep = ghGeometryBase as Brep;
-            //if(ghBrep != null)
-            //{
-            //    topology = ByBrep(ghBrep);
+            //    topology = ByBrepLoop(ghBrepLoop);
             //    DA.SetData(0, topology);
             //    return;
             //}
 
+            throw new Exception("This type of geometry is not yet supported.");
         }
 
-        Topologic.Vertex ByPoint(Point3d ghPoint)
+        //private Topology ByBrepLoop(BrepLoop ghBrepLoop)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        private Topologic.Vertex ByPoint(Point3d ghPoint)
         {
             return Topologic.Vertex.ByCoordinates(ghPoint.X, ghPoint.Y, ghPoint.Z);
         }
 
-        Topologic.Edge ByLine(LineCurve ghLine)
+        private Topologic.Topology ByCurve(Curve ghCurve)
+        {
+            LineCurve ghLine = ghCurve as LineCurve;
+            if (ghLine != null)
+            {
+                return ByLine(ghLine);
+            }
+
+            NurbsCurve ghNurbsCurve = ghCurve as NurbsCurve;
+            if (ghNurbsCurve != null)
+            {
+                return ByNurbsCurve(ghNurbsCurve);
+            }
+
+            ArcCurve ghArcCurve = ghCurve as ArcCurve;
+            if (ghArcCurve != null)
+            {
+                return ByArcCurve(ghArcCurve);
+            }
+
+            BrepEdge ghBrepEdge = ghCurve as BrepEdge;
+            if (ghBrepEdge != null)
+            {
+                return ByBrepEdge(ghBrepEdge);
+            }
+
+            //BrepTrim ghBrepTrim = ghCurve as BrepTrim;
+            //if (ghBrepTrim != null)
+            //{
+            //    return ByBrepTrim(ghBrepTrim);
+            //}
+
+            PolylineCurve ghPolylineCurve = ghCurve as PolylineCurve;
+            if (ghPolylineCurve != null)
+            {
+                return ByPolylineCurve(ghPolylineCurve);
+            }
+
+            PolyCurve ghPolyCurve = ghCurve as PolyCurve;
+            if (ghPolyCurve != null)
+            {
+                return ByPolyCurve(ghPolyCurve);
+            }
+            
+            throw new Exception("This type of curve is not yet supported.");
+        }
+
+        private Topologic.Wire ByPolyCurve(PolyCurve ghPolyCurve)
+        {
+            Curve[] ghCurves = ghPolyCurve.Explode();
+            List<Topologic.Edge> edges = new List<Topologic.Edge>();
+            foreach(Curve ghCurve in ghCurves)
+            {
+                Topologic.Topology topology = ByCurve(ghCurve);
+
+                Topologic.Edge edge = topology as Topologic.Edge;
+                if(edge != null)
+                {
+                    edges.Add(edge);
+                    continue;
+                }
+
+                Topologic.Wire wire = topology as Topologic.Wire;
+                if(wire != null)
+                {
+                    edges.AddRange(wire.Edges);
+                    continue;
+                }
+            }
+
+            return Topologic.Wire.ByEdges(edges);
+        }
+
+        private Topologic.Edge ByBrepEdge(BrepEdge ghBrepEdge)
+        {
+            NurbsCurve ghNurbsCurve = ghBrepEdge.ToNurbsCurve();
+            return ByNurbsCurve(ghNurbsCurve);
+        }
+
+        private Topologic.Edge ByArcCurve(ArcCurve ghArcCurve)
+        {
+            NurbsCurve ghNurbsCurve = ghArcCurve.ToNurbsCurve();
+            return ByNurbsCurve(ghNurbsCurve);
+        }
+
+        private Topologic.Edge ByNurbsCurve(NurbsCurve ghNurbsCurve)
+        {
+            int degree = ghNurbsCurve.Degree;
+            bool isClosed = ghNurbsCurve.IsClosed;
+            bool isPeriodic = ghNurbsCurve.IsPeriodic;
+            bool isRational = ghNurbsCurve.IsRational;
+            NurbsCurveKnotList ghKnots = ghNurbsCurve.Knots;
+            List<double> knots = ghKnots.ToList();
+            NurbsCurvePointList ghControlPoints = ghNurbsCurve.Points;
+            List<Topologic.Vertex> controlPoints = new List<Topologic.Vertex>();
+            List<double> weights = new List<double>();
+            for (int i = 0; i < ghControlPoints.Count; ++i)
+            {
+                controlPoints.Add(ByPoint(ghControlPoints[i].Location));
+                weights.Add(ghControlPoints[i].Weight);
+            }
+
+            return Topologic.Edge.ByNurbsParameters(controlPoints, weights, knots, isRational, isPeriodic, degree);
+        }
+
+        private Topologic.Edge ByLine(LineCurve ghLine)
         {
             Topologic.Vertex vertex1 = ByPoint(ghLine.PointAtStart);
             Topologic.Vertex vertex2 = ByPoint(ghLine.PointAtEnd);
             return Topologic.Edge.ByStartVertexEndVertex(vertex1, vertex2);
         }
 
-        Topologic.Wire ByPolylineCurve(PolylineCurve ghPolylineCurve)
+        private Topologic.Wire ByPolylineCurve(PolylineCurve ghPolylineCurve)
         {
             int numPoints = ghPolylineCurve.PointCount;
             if(numPoints < 1)
@@ -152,6 +251,71 @@ namespace TopologicGH
                 listOfIndices.Add(indices);
                 return Topologic.Topology.ByVerticesIndices(vertices, listOfIndices)[0] as Topologic.Wire;
             }
+        }
+
+        private Topologic.Face BySurface(Surface ghSurface)
+        {
+            SumSurface ghSumSurface = ghSurface as SumSurface;
+            if (ghSumSurface != null)
+            {
+                return BySumSurface(ghSumSurface);
+            }
+
+            RevSurface ghRevSurface = ghSurface as RevSurface;
+            if (ghRevSurface != null)
+            {
+                return ByRevSurface(ghRevSurface);
+            }
+
+            PlaneSurface ghPlaneSurface = ghSurface as PlaneSurface;
+            if (ghPlaneSurface != null)
+            {
+                return ByPlaneSurface(ghPlaneSurface);
+            }
+
+            //ClippingPlaneSurface ghClippingPlaneSurface = ghSurface as ClippingPlaneSurface;
+            //if (ghClippingPlaneSurface != null)
+            //{
+            //    return ByClippingPlaneSurface(ghClippingPlaneSurface);
+            //}
+
+            Extrusion ghExtrusion = ghSurface as Extrusion;
+            if (ghExtrusion != null)
+            {
+                return ByExtrusion(ghExtrusion);
+            }
+
+            NurbsSurface ghNurbsSurface = ghSurface as NurbsSurface;
+            if (ghNurbsSurface != null)
+            {
+                return ByNurbsSurface(ghNurbsSurface);
+            }
+
+            BrepFace ghBrepFace = ghSurface as BrepFace;
+            if (ghBrepFace != null)
+            {
+                return ByBrepFace(ghBrepFace);
+            }
+
+            throw new Exception("This type of surface is not yet supported.");
+        }
+
+        private Topologic.Face ByPlaneSurface(PlaneSurface ghPlaneSurface)
+        {
+            NurbsSurface ghNurbsSurface = ghPlaneSurface.ToNurbsSurface();
+            return ByNurbsSurface(ghNurbsSurface);
+        }
+
+        private Topologic.Face ByRevSurface(RevSurface ghRevSurface)
+        {
+            NurbsSurface ghNurbsSurface = ghRevSurface.ToNurbsSurface();
+            return ByNurbsSurface(ghNurbsSurface);
+        }
+
+        private Topologic.Face BySumSurface(SumSurface ghSumSurface)
+        {
+            NurbsSurface ghNurbsSurface = ghSumSurface.ToNurbsSurface();
+            return ByNurbsSurface(ghNurbsSurface);
         }
 
         //Topologic.Face ByBrepFace(BrepFace ghBrepFace)
