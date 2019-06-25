@@ -249,8 +249,9 @@ namespace TopologicCore
 		for (TopExp_Explorer occtExplorer(occtEnvelopeShape, TopAbs_SOLID); occtExplorer.More(); occtExplorer.Next())
 		{
 			 Cell::Ptr pCell = std::make_shared<Cell>(TopoDS::Solid(occtExplorer.Current()));
-			 GlobalCluster::GetInstance().AddTopology(pCell->GetOcctShape());
-			 return pCell;
+			 Cell::Ptr pCellCopy = TopologicalQuery::Downcast<TopologicCore::Cell>(pCell->DeepCopy());
+			 GlobalCluster::GetInstance().AddTopology(pCellCopy->GetOcctShape());
+			 return pCellCopy;
 		}
 		return nullptr;
 	}
