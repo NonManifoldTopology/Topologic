@@ -22,7 +22,7 @@
   OutFile "TopologicGHInstaller.exe"
 
   ;Default installation folder
-  InstallDir "$APPDATA\Grasshopper\Libraries"
+  InstallDir "$APPDATA\Grasshopper\Libraries\Topologic"
   
   ;Request application privileges for Windows Vista
   RequestExecutionLevel admin 

@@ -168,13 +168,27 @@ namespace TopologicUtilities
 		return occtShapeProperties.Mass();
 	}
 
-	bool CellUtility::DoesContain(const TopologicCore::Cell::Ptr & kpCell, const TopologicCore::Vertex::Ptr & kpVertex)
+	CellContainmentState CellUtility::Contains(const TopologicCore::Cell::Ptr & kpCell, const TopologicCore::Vertex::Ptr & kpVertex)
 	{
 		ShapeFix_Solid occtSolidFix(kpCell->GetOcctSolid());
 		occtSolidFix.Perform();
 		BRepClass3d_SolidClassifier occtSolidClassifier(occtSolidFix.Solid(), kpVertex->Point()->Pnt(), Precision::Confusion());
 		TopAbs_State occtState = occtSolidClassifier.State();
-		return (occtState == TopAbs_IN || occtState == TopAbs_ON);
+		
+		if (occtState == TopAbs_IN)
+		{
+			return INSIDE;
+		}
+		else if (occtState == TopAbs_ON)
+		{
+			return ON_BOUNDARY;
+		}
+		else if (occtState == TopAbs_OUT)
+		{
+			return OUTSIDE;
+		}
+		
+		return UNKNOWN;
 	}
 
 	void CellUtility::GetMinMax(const TopologicCore::Cell::Ptr & kpCell, double & rMinX, double & rMaxX, double & rMinY, double & rMaxY, double & rMinZ, double & rMaxZ)

@@ -87,6 +87,8 @@ namespace Topologic {
 		/// <returns name="Face">The created Face</returns>
 		static Face^ ByExternalInternalBoundaries(Wire^ externalBoundary, System::Collections::Generic::IEnumerable<Wire^>^ internalBoundaries);
 
+		static Face^ ByNurbsParameters(List<List<Vertex^>^>^ controlPoints, List<List<double>^>^ weights, List<double>^ uKnots, List<double>^ vKnots, bool isRational, bool isUPeriodic, bool isVPeriodic, int uDegree, int vDegree);
+
 		/// <summary>
 		/// Creates a Face by a list of Edges.
 		/// </summary>

@@ -1114,7 +1114,7 @@ namespace TopologicEnergy
 
 		if (faceAngle < 5.0 || faceAngle > 175.0)
 		{
-			bool isInside = Topologic::Utilities::CellUtility::Contains(buildingSpace, pOffsetVertex);
+			bool isInside = Topologic::Utilities::CellUtility::Contains(buildingSpace, pOffsetVertex, true);
 			// The offset vertex has to be false, so if isInside is true, reverse the face.
 
 			if (isInside)

@@ -13,7 +13,7 @@ namespace TopologicGH
     {
 
         public CellComplexByCells()
-          : base("CellComplex.ByCells", "CellComplex.ByCells", "Creates a CellComplex by a set of Cells.", "Topologic", "Cell")
+          : base("CellComplex.ByCells", "CellComplex.ByCells", "Creates a CellComplex by a set of Cells.", "Topologic", "CellComplex")
         {
         }
 

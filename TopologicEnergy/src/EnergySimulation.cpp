@@ -9,6 +9,11 @@ namespace TopologicEnergy
 {
 	EnergySimulation^ EnergySimulation::ByEnergyModel(EnergyModel ^ energyModel, String ^ openStudioExePath, String ^ openStudioOutputDirectory, bool run)
 	{
+		if (!run)
+		{
+			return nullptr;
+		}
+
 		String^ oswPath = nullptr;
 
 		String^ timestamp = DateTime::Now.ToString("yyyy-MM-dd_HH-mm-ss-fff");

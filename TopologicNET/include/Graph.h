@@ -146,7 +146,7 @@ namespace Topologic {
 		/// </summary>
 		/// <param name="vertex">The input Vertex</param>
 		/// <returns name="int">The degree of a Vertex</returns>
-		int Degree(Vertex^ vertex);
+		int VertexDegree(Vertex^ vertex);
 
 		/// <summary>
 		/// Returns a list of Vertices that are connected to the input Vertex by an Edge.

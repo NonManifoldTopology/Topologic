@@ -12,7 +12,7 @@ namespace TopologicGH
     public class GraphAdjacentVertices : GH_Component
     {
         public GraphAdjacentVertices()
-          : base("Graph.Topology", "Graph.Topology", "Returns a list of Vertices that are connected to the input Vertex by an Edge.", "Topologic", "Graph")
+          : base("Graph.AdjacentVertices", "Graph.AdjacentVertices", "Returns a list of Vertices that are connected to the input Vertex by an Edge.", "Topologic", "Graph")
         {
         }
 

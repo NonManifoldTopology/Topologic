@@ -291,13 +291,51 @@ namespace TopologicGH
                 return ByNurbsSurface(ghNurbsSurface);
             }
 
-            BrepFace ghBrepFace = ghSurface as BrepFace;
-            if (ghBrepFace != null)
-            {
-                return ByBrepFace(ghBrepFace);
-            }
+            //BrepFace ghBrepFace = ghSurface as BrepFace;
+            //if (ghBrepFace != null)
+            //{
+            //    return ByBrepFace(ghBrepFace);
+            //}
 
             throw new Exception("This type of surface is not yet supported.");
+        }
+
+        private Face ByNurbsSurface(NurbsSurface ghNurbsSurface)
+        {
+            int uDegree = ghNurbsSurface.Degree(0);
+            int vDegree = ghNurbsSurface.Degree(1);
+            bool isUClosed = ghNurbsSurface.IsClosed(0);
+            bool isVClosed = ghNurbsSurface.IsClosed(1);
+            bool isUPeriodic = ghNurbsSurface.IsPeriodic(0);
+            bool isVPeriodic = ghNurbsSurface.IsPeriodic(1);
+            bool isRational = ghNurbsSurface.IsRational;
+            NurbsSurfaceKnotList ghUKnots = ghNurbsSurface.KnotsU;
+            List<double> uKnots = ghUKnots.ToList();
+            NurbsSurfaceKnotList ghVKnots = ghNurbsSurface.KnotsV;
+            List<double> vKnots = ghVKnots.ToList();
+            NurbsSurfacePointList ghControlPoints = ghNurbsSurface.Points;
+            List<List<Topologic.Vertex>> controlPoints = new List<List<Topologic.Vertex>>();
+            List<List<double>> weights = new List<List<double>>();
+            for (int i = 0; i < ghControlPoints.CountU; ++i)
+            {
+                List<Topologic.Vertex> controlPoints1D = new List<Topologic.Vertex>();
+                List<double> weights1D = new List<double>();
+                for (int j = 0; j < ghControlPoints.CountV; ++j)
+                {
+                    ControlPoint ghControlPoint = ghControlPoints.GetControlPoint(i, j);
+                    controlPoints1D.Add(ByPoint(ghControlPoint.Location));
+                    weights1D.Add(ghControlPoint.Weight);
+                }
+                controlPoints.Add(controlPoints1D);
+            }
+
+            return Topologic.Face.ByNurbsParameters(controlPoints, weights, uKnots, vKnots, isRational, isUPeriodic, isVPeriodic, uDegree, vDegree);
+        }
+
+        private Face ByExtrusion(Extrusion ghExtrusion)
+        {
+            NurbsSurface ghNurbsSurface = ghExtrusion.ToNurbsSurface();
+            return ByNurbsSurface(ghNurbsSurface);
         }
 
         private Topologic.Face ByPlaneSurface(PlaneSurface ghPlaneSurface)

@@ -308,11 +308,11 @@ namespace Topologic
 		return edges;
 	}
 
-	int Graph::Degree(Vertex^ vertex)
+	int Graph::VertexDegree(Vertex^ vertex)
 	{
 		TopologicCore::Vertex::Ptr pCoreVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex->GetCoreTopologicalQuery());
 
-		return (*m_pCoreGraph)->Degree(pCoreVertex);
+		return (*m_pCoreGraph)->VertexDegree(pCoreVertex);
 	}
 
 	List<Vertex^>^ Graph::AdjacentVertices(Vertex ^ vertex)

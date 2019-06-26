@@ -101,11 +101,34 @@ namespace Topologic {
 			return TopologicUtilities::CellUtility::Volume(pCoreCell);
 		}
 
-		bool CellUtility::Contains(Cell^ cell, Vertex ^ vertex)
+		bool CellUtility::Contains(Cell^ cell, Vertex ^ vertex, bool allowOnBoundary)
 		{
 			TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(cell->GetCoreTopologicalQuery());
 			TopologicCore::Vertex::Ptr pCoreVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex->GetCoreTopologicalQuery());
-			return TopologicUtilities::CellUtility::DoesContain(pCoreCell, pCoreVertex);
+			TopologicUtilities::CellContainmentState isContained = TopologicUtilities::CellUtility::Contains(pCoreCell, pCoreVertex);
+			if (allowOnBoundary)
+			{
+				if (isContained == TopologicUtilities::INSIDE || isContained == TopologicUtilities::ON_BOUNDARY)
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			else
+			{
+				if (isContained == TopologicUtilities::INSIDE)
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+
+			}
 		}
 
 		List<double>^ CellUtility::GetMinMax(Cell ^ cell)

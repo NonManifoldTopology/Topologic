@@ -13,7 +13,7 @@ namespace TopologicGH
     {
 
         public GraphVerticesAtCoordinates()
-          : base("Graph.Topology", "Graph.Topology", "Returns a list of Vertices in the Graph located at the input coordinates within the input tolerance distance.", "Topologic", "Graph")
+          : base("Graph.VerticesAtCoordinates", "Graph.VerticesAtCoordinates", "Returns a list of Vertices in the Graph located at the input coordinates within the input tolerance distance.", "Topologic", "Graph")
         {
         }
 

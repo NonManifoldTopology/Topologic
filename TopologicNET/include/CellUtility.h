@@ -90,8 +90,9 @@ namespace Topologic {
 			/// </summary>
 			/// <param name="cell">The Cell</param>
 			/// <param name="vertex">The Vertex</param>
+			/// <param name="allowOnBoundary">Is the Vertex allowed on the Cell's boundary?</param>
 			/// <returns>True or false</returns>
-			static bool Contains(Cell^ cell, Vertex^ vertex);
+			static bool Contains(Cell^ cell, Vertex^ vertex, bool allowOnBoundary);
 
 			/// <summary>
 			/// Returns six values associated to the x, y, z coordinates of the bounding box of the Cell.

@@ -50,9 +50,9 @@ namespace TopologicCore
 
 		TOPOLOGIC_API void AddEdges(const std::list<std::shared_ptr<Edge>>& rkEdges, const double kTolerance);
 
-		TOPOLOGIC_API int Degree(const std::shared_ptr<Vertex>& kpVertex) const;
+		TOPOLOGIC_API int VertexDegree(const std::shared_ptr<Vertex>& kpVertex) const;
 
-		int Degree(const TopoDS_Vertex& kpVertex) const;
+		int VertexDegree(const TopoDS_Vertex& kpVertex) const;
 
 		TOPOLOGIC_API void AdjacentVertices(const std::shared_ptr<Vertex>& kpVertex, std::list<std::shared_ptr<Vertex>>& rAdjacentVertices) const;
 

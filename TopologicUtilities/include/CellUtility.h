@@ -10,6 +10,14 @@
 
 namespace TopologicUtilities
 {
+	enum CellContainmentState
+	{
+		INSIDE,
+		ON_BOUNDARY,
+		OUTSIDE,
+		UNKNOWN
+	};
+
 	class CellUtility
 	{
 	public:
@@ -102,7 +110,7 @@ namespace TopologicUtilities
 		/// <param name="kpCell"></param>
 		/// <param name="kpVertex"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_UTILITIES_API bool DoesContain(const TopologicCore::Cell::Ptr & kpCell, const TopologicCore::Vertex::Ptr& kpVertex);
+		static TOPOLOGIC_UTILITIES_API CellContainmentState Contains(const TopologicCore::Cell::Ptr & kpCell, const TopologicCore::Vertex::Ptr& kpVertex);
 
 		static TOPOLOGIC_UTILITIES_API void GetMinMax(const TopologicCore::Cell::Ptr & kpCell, double &rMinX, double &rMaxX, double &rMinY, double &rMaxY, double &rMinZ, double &rMaxZ);
 	};

@@ -258,12 +258,12 @@ namespace TopologicCore
 		}
 	}
 
-	int Graph::Degree(const std::shared_ptr<Vertex>& kpVertex) const
+	int Graph::VertexDegree(const std::shared_ptr<Vertex>& kpVertex) const
 	{
-		return Degree(kpVertex->GetOcctVertex());
+		return VertexDegree(kpVertex->GetOcctVertex());
 	}
 
-	int Graph::Degree(const TopoDS_Vertex & rkOcctVertex) const
+	int Graph::VertexDegree(const TopoDS_Vertex & rkOcctVertex) const
 	{
 		if (m_graphDictionary.find(rkOcctVertex) == m_graphDictionary.end())
 		{
@@ -371,7 +371,7 @@ namespace TopologicCore
 		for (const std::pair<TopoDS_Vertex, TopTools_MapOfShape>& rkDictionaryPair : m_graphDictionary)
 		{
 			Vertex::Ptr vertex = std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(rkDictionaryPair.first));
-			rDegreeSequence.push_back(Degree(vertex));
+			rDegreeSequence.push_back(VertexDegree(vertex));
 		}
 
 		 rDegreeSequence.sort(std::greater<int>());
@@ -416,7 +416,7 @@ namespace TopologicCore
 
 		for (const std::pair<TopoDS_Vertex, TopTools_MapOfShape>& kpPair : m_graphDictionary)
 		{
-			int vertexDegree = Degree(kpPair.first);
+			int vertexDegree = VertexDegree(kpPair.first);
 			if (vertexDegree < minimumDelta)
 			{
 				minimumDelta = vertexDegree;
@@ -431,7 +431,7 @@ namespace TopologicCore
 
 		for (const std::pair<TopoDS_Vertex, TopTools_MapOfShape>& kpPair : m_graphDictionary)
 		{
-			int vertexDegree = Degree(kpPair.first);
+			int vertexDegree = VertexDegree(kpPair.first);
 			if (vertexDegree > maximumDelta)
 			{
 				maximumDelta = vertexDegree;
