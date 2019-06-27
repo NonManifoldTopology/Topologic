@@ -575,6 +575,8 @@ namespace TopologicCore
 
 		static TopoDS_Vertex CenterOfMass(const TopoDS_Shape& rkOcctShape);
 
+		TOPOLOGIC_API std::shared_ptr<Vertex> Centroid() const;
+
 		/// <summary>
 		/// <para>
 		/// Identifies the class type by GUID. Used in the factory class system since GUID is easily extendable.

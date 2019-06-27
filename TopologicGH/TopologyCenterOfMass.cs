@@ -9,11 +9,10 @@ using Rhino.Geometry;
 
 namespace TopologicGH
 {
-    public class TopologyUtilityCenterOfMass : GH_Component
+    public class TopologyCenterOfMass : GH_Component
     {
-
-        public TopologyUtilityCenterOfMass()
-          : base("TopologyUtility.CenterOfMass", "TopologyUtility.CenterOfMass", "Returns the center of mass of any Topology.", "TopologicUtilities", "TopologyUtility")
+        public TopologyCenterOfMass()
+          : base("Topology.CenterOfMass", "Topology.CenterOfMass", "Returns the center of mass of any Topology.", "Topologic", "Topology")
         {
         }
 
@@ -56,7 +55,7 @@ namespace TopologicGH
             //char[] chars = data.ToCharArray();
 
             // Reverse the array of character.
-            Topologic.Vertex centerOfMass = Topologic.Utilities.TopologyUtility.CenterOfMass(topology);
+            Topologic.Vertex centerOfMass = topology.CenterOfMass;
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetData(0, centerOfMass);

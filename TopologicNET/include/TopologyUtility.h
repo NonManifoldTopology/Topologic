@@ -59,13 +59,6 @@ namespace Topologic {
 			/// <returns>The distance between the two Topologies</returns>
 			static double Distance(Topology^ topology, Topology^ anotherTopology);
 
-			/// <summary>
-			/// Returns the center of mass of any Topology.
-			/// </summary>
-			/// <param name="topology">A Topology</param>
-			/// <returns>The center of mass of the given Topology</returns>
-			static Vertex^ CenterOfMass(Topology^ topology);
-
 #ifdef TOPOLOGIC_DYNAMO
 			[IsVisibleInDynamoLibrary(false)]
 #endif

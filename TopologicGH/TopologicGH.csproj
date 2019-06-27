@@ -86,6 +86,7 @@
     <Compile Include="GraphTopology.cs" />
     <Compile Include="GraphVertices.cs" />
     <Compile Include="GraphVerticesAtCoordinates.cs" />
+    <Compile Include="TopologyCentroid.cs" />
     <Compile Include="Utilities\FaceUtilityNormalAtParameters.cs" />
     <Compile Include="Utilities\FaceUtilityParametersAtVertex.cs" />
     <Compile Include="Utilities\BitwiseNot.cs" />
@@ -211,7 +212,7 @@
     <Compile Include="Utilities\FaceUtilityTrimByWire.cs" />
     <Compile Include="Utilities\FaceUtilityVertexAtParameters.cs" />
     <Compile Include="Utilities\ShellByLoft.cs" />
-    <Compile Include="Utilities\TopologyUtilityCenterOfMass.cs" />
+    <Compile Include="TopologyCenterOfMass.cs" />
     <Compile Include="Utilities\TopologyUtilityDistance.cs" />
     <Compile Include="Utilities\TopologyUtilityRotate.cs" />
     <Compile Include="Utilities\TopologyUtilityScale.cs" />
