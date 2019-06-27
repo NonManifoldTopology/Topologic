@@ -9,11 +9,11 @@ using Rhino.Geometry;
 
 namespace TopologicGH
 {
-    public class GraphDegree : GH_Component
+    public class GraphVertexDegree : GH_Component
     {
 
-        public GraphDegree()
-          : base("Graph.Degree", "Graph.Degree", "Returns the number of Edges connected to the input Vertex.", "Topologic", "Graph")
+        public GraphVertexDegree()
+          : base("Graph.VertexDegree", "Graph.VertexDegree", "Returns the number of Edges connected to the input Vertex.", "Topologic", "Graph")
         {
         }
 
@@ -59,7 +59,7 @@ namespace TopologicGH
             //char[] chars = data.ToCharArray();
 
             // Reverse the array of character.
-            int degree = graph.Degree(vertex);
+            int degree = graph.VertexDegree(vertex);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetData(0, degree);

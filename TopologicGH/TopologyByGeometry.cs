@@ -24,6 +24,7 @@ namespace TopologicGH
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGeometryParameter("Geometry", "Geometry", "Geometry", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Tolerance", "Tolerance", "Tolerance", GH_ParamAccess.item, 0.0001);
         }
 
         /// <summary>
@@ -41,7 +42,9 @@ namespace TopologicGH
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             GeometryBase ghGeometryBase = null;
+            double tolerance = 0.0001;
             if (!DA.GetData(0, ref ghGeometryBase)) { return; }
+            if (!DA.GetData(1, ref tolerance)) { return; }
 
             if (ghGeometryBase == null) { return; }
             
@@ -73,7 +76,7 @@ namespace TopologicGH
             Brep ghBrep = ghGeometryBase as Brep;
             if (ghBrep != null)
             {
-                topology = ByBrep(ghBrep);
+                topology = ByBrep(ghBrep, tolerance);
                 DA.SetData(0, topology);
                 return;
             }
@@ -95,6 +98,124 @@ namespace TopologicGH
             //}
 
             throw new Exception("This type of geometry is not yet supported.");
+        }
+
+        // https://developer.rhino3d.com/guides/cpp/brep-data-structure/
+        private Topology ByBrep(Brep ghBrep, double tolerance)
+        {
+            BrepFaceList ghBrepFaces = ghBrep.Faces;
+            List<Face> faces = new List<Face>();
+            foreach (BrepFace ghBrepFace in ghBrepFaces)
+            {
+                Face face = ByBrepFace(ghBrepFace);
+                faces.Add(face);
+            }
+
+            if (faces.Count == 0)
+            {
+                return null;
+            } else if (faces.Count == 1)
+            {
+                return faces[0];
+            }
+            else
+            {
+                return Shell.ByFaces(faces, tolerance);
+            }
+        }
+
+        private Face ByBrepFace(BrepFace ghBrepFace)
+        {
+            Surface ghSurface = ghBrepFace.DuplicateSurface();
+            Face untrimmedFace = BySurface(ghSurface);
+
+            BrepLoop ghOuterLoop = ghBrepFace.OuterLoop;
+            Wire outerWire = null;
+            BrepLoopList ghLoops = ghBrepFace.Loops;
+            List<Wire> innerWires = new List<Wire>();
+            foreach(BrepLoop ghLoop in ghLoops)
+            {
+                BrepTrimList ghTrims = ghLoop.Trims;
+                List<Edge> trimmingEdges = new List<Edge>();
+                foreach (BrepTrim ghTrim in ghTrims)
+                {
+                    BrepEdge ghEdge = ghTrim.Edge;
+                    if(ghEdge == null)
+                    {
+                        throw new Exception("An invalid Rhino edge is encountered.");
+                    }
+
+                    Topology topology = ByCurve(ghEdge.DuplicateCurve());
+
+                    // Edge or Wire?
+                    Edge trimmingEdge = topology as Edge;
+                    if(trimmingEdge != null)
+                    {
+                        trimmingEdges.Add(trimmingEdge);
+                    }
+
+                    Wire partialTrimmingWire = topology as Wire;
+                    if(partialTrimmingWire != null)
+                    {
+                        List<Edge> partialTrimmingEdges = partialTrimmingWire.Edges;
+                        trimmingEdges.AddRange(partialTrimmingEdges);
+                    }
+                }
+                Wire trimmingWire = Wire.ByEdges(trimmingEdges);
+
+                if (ghLoop == ghOuterLoop)
+                {
+                    outerWire = trimmingWire;
+                }
+                else
+                {
+                    innerWires.Add(trimmingWire);
+                }
+            }
+
+            Face outerTrimmedFace = Topologic.Utilities.FaceUtility.TrimByWire(untrimmedFace, outerWire);
+            Face finalFace = outerTrimmedFace.AddInternalBoundaries(innerWires);
+
+            return finalFace;
+        }
+
+        private Topology ByMesh(Mesh ghMesh)
+        {
+            MeshVertexList ghMeshVertices = ghMesh.Vertices;
+            int ghMeshVertexCount = ghMeshVertices.Count;
+            MeshFaceList ghMeshFaces = ghMesh.Faces;
+            int ghMeshFaceCount = ghMeshFaces.Count;
+
+            List<global::Topologic.Vertex> vertices = new List<global::Topologic.Vertex>();
+            for (int i = 0; i < ghMeshVertexCount; ++i)
+            {
+                Point3f ghPoint = ghMeshVertices[i];
+                Vertex vertex = ByPoint(ghPoint);
+                vertices.Add(vertex);
+            }
+
+            List<List<int>> indices2D = new List<List<int>>();
+            for (int i = 0; i < ghMeshFaceCount; ++i)
+            {
+                MeshFace ghMeshFace = ghMeshFaces[i];
+                List<int> indices1D = new List<int>();
+                indices1D.Add(ghMeshFace.A);
+                indices1D.Add(ghMeshFace.B);
+                indices1D.Add(ghMeshFace.C);
+                if (ghMeshFace.IsQuad)
+                {
+                    indices1D.Add(ghMeshFace.D);
+                }
+                indices1D.Add(ghMeshFace.A);
+
+                indices2D.Add(indices1D);
+            }
+
+            List<Topology> topologies = Topology.ByVerticesIndices(vertices, indices2D);
+
+            Cluster cluster = Cluster.ByTopologies(topologies);
+            Topology topology = cluster.SelfMerge();
+            return topology;
         }
 
         //private Topology ByBrepLoop(BrepLoop ghBrepLoop)

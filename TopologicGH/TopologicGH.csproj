@@ -66,7 +66,7 @@
     <Compile Include="GraphConnect.cs" />
     <Compile Include="GraphContainsEdge.cs" />
     <Compile Include="GraphContainsVertex.cs" />
-    <Compile Include="GraphDegree.cs" />
+    <Compile Include="GraphVertexDegree.cs" />
     <Compile Include="GraphDegreeSequence.cs" />
     <Compile Include="GraphDensity.cs" />
     <Compile Include="GraphDiameter.cs" />
