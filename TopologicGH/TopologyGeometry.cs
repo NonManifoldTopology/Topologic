@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using Grasshopper.Kernel;
 using Rhino.Geometry;
+using Topologic;
 
 namespace TopologicGH
 {
@@ -55,10 +56,39 @@ namespace TopologicGH
             //char[] chars = data.ToCharArray();
 
             // Reverse the array of character.
-            throw new NotImplementedException();
+            Object geometry = ToGeometry(topology);
 
             // Use the DA object to assign a new String to the first output parameter.
-            //DA.SetData(0, cells);
+            DA.SetData(0, geometry);
+        }
+
+        private object ToGeometry(Topology topology)
+        {
+            Vertex vertex = topology as Vertex;
+            if (vertex != null)
+            {
+                return ToPoint(vertex);
+            }
+
+            Edge edge = topology as Edge;
+            if (edge != null)
+            {
+                return ToCurve(edge);
+            }
+
+
+            throw new Exception("The type of the input topology is not recognized.");
+        }
+
+        private object ToCurve(Edge edge)
+        {
+            throw new NotImplementedException();
+        }
+
+        private Point3d ToPoint(Vertex vertex)
+        {
+            List<double> coordinates = vertex.Coordinates;
+            return new Point3d(coordinates[0], coordinates[1], coordinates[2]);
         }
 
         /// <summary>
