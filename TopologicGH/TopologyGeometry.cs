@@ -12,7 +12,6 @@ namespace TopologicGH
 {
     public class TopologyGeometry : GH_Component
     {
-
         public TopologyGeometry()
           : base("Topology.Geometry", "Topology.Geometry", "Creates a geometry from the Topology.", "Topologic", "Topology")
         {
@@ -82,7 +81,44 @@ namespace TopologicGH
 
         private object ToCurve(Edge edge)
         {
-            throw new NotImplementedException();
+            Object edgeGeometry = edge.BasicGeometry;
+
+            Topologic.Line line = edgeGeometry as Topologic.Line;
+            if(line != null)
+            {
+                return ToLine(edge);
+            }
+
+            Topologic.NurbsCurve nurbsCurve = edgeGeometry as Topologic.NurbsCurve;
+            if (nurbsCurve != null)
+            {
+                return ToNurbsCurve(nurbsCurve);
+            }
+
+            throw new Exception("This Edge creates an unrecognized Geometry.");
+        }
+
+        private object ToNurbsCurve(Topologic.NurbsCurve nurbsCurve)
+        {
+            bool isPeriodic = nurbsCurve.IsPeriodic;
+            int degree = nurbsCurve.Degree;
+            List<Topologic.Vertex> controlVertices = nurbsCurve.ControlVertices;
+            List<Point3d> ghControlPoints = new List<Point3d>();
+            foreach(Topologic.Vertex controlVertex in controlVertices)
+            {
+                Point3d ghControlPoint = ToPoint(controlVertex);
+                ghControlPoints.Add(ghControlPoint);
+            }
+            return Rhino.Geometry.NurbsCurve.Create(isPeriodic, degree, ghControlPoints);
+        }
+
+        private object ToLine(Edge edge)
+        {
+            Vertex startVertex = edge.StartVertex;
+            Point3d ghStartPoint = ToPoint(startVertex);
+            Vertex endVertex = edge.EndVertex;
+            Point3d ghEndPoint = ToPoint(endVertex);
+            return new Rhino.Geometry.LineCurve(ghStartPoint, ghEndPoint);
         }
 
         private Point3d ToPoint(Vertex vertex)

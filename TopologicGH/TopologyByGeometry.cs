@@ -236,7 +236,7 @@ namespace TopologicGH
                 return ByLine(ghLine);
             }
 
-            NurbsCurve ghNurbsCurve = ghCurve as NurbsCurve;
+            Rhino.Geometry.NurbsCurve ghNurbsCurve = ghCurve as Rhino.Geometry.NurbsCurve;
             if (ghNurbsCurve != null)
             {
                 return ByNurbsCurve(ghNurbsCurve);
@@ -303,17 +303,17 @@ namespace TopologicGH
 
         private Topologic.Edge ByBrepEdge(BrepEdge ghBrepEdge)
         {
-            NurbsCurve ghNurbsCurve = ghBrepEdge.ToNurbsCurve();
+            Rhino.Geometry.NurbsCurve ghNurbsCurve = ghBrepEdge.ToNurbsCurve();
             return ByNurbsCurve(ghNurbsCurve);
         }
 
         private Topologic.Edge ByArcCurve(ArcCurve ghArcCurve)
         {
-            NurbsCurve ghNurbsCurve = ghArcCurve.ToNurbsCurve();
+            Rhino.Geometry.NurbsCurve ghNurbsCurve = ghArcCurve.ToNurbsCurve();
             return ByNurbsCurve(ghNurbsCurve);
         }
 
-        private Topologic.Edge ByNurbsCurve(NurbsCurve ghNurbsCurve)
+        private Topologic.Edge ByNurbsCurve(Rhino.Geometry.NurbsCurve ghNurbsCurve)
         {
             int degree = ghNurbsCurve.Degree;
             bool isClosed = ghNurbsCurve.IsClosed;

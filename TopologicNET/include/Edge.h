@@ -7,6 +7,7 @@
 namespace Topologic {
 	ref class Vertex;
 	ref class Wire;
+	ref class Geometry;
 
 	/// <summary>
 	/// An Edge is a one-dimensional entity defined by two vertices. It is important to note that while a topologic edge is made of two vertices, its geometry can be a curve with multiple control vertices.
@@ -141,6 +142,8 @@ namespace Topologic {
 		/// <param name="pDynamoLine"></param>
 		/// <returns></returns>
 		static Edge^ ByCurve(Autodesk::DesignScript::Geometry::Line^ pDynamoLine);
+#else
+		Topologic::Geometry^ Curve();
 #endif
 
 		/// <summary>

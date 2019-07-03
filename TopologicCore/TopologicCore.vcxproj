@@ -179,6 +179,7 @@ copy "$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\bind\*.pdb
     <ClInclude Include="include\Context.h" />
     <ClInclude Include="include\ContextManager.h" />
     <ClInclude Include="include\DoubleAttribute.h" />
+    <ClInclude Include="include\Geometry.h" />
     <ClInclude Include="include\GlobalCluster.h" />
     <ClInclude Include="include\Edge.h" />
     <ClInclude Include="include\EdgeFactory.h" />
@@ -187,6 +188,8 @@ copy "$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\bind\*.pdb
     <ClInclude Include="include\Graph.h" />
     <ClInclude Include="include\InstanceGUIDManager.h" />
     <ClInclude Include="include\IntAttribute.h" />
+    <ClInclude Include="include\Line.h" />
+    <ClInclude Include="include\NurbsCurve.h" />
     <ClInclude Include="include\Shell.h" />
     <ClInclude Include="include\ShellFactory.h" />
     <ClInclude Include="include\StringAttribute.h" />
@@ -217,6 +220,7 @@ copy "$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\bind\*.pdb
     <ClCompile Include="src\Context.cpp" />
     <ClCompile Include="src\ContextManager.cpp" />
     <ClCompile Include="src\DoubleAttribute.cpp" />
+    <ClCompile Include="src\Geometry.cpp" />
     <ClCompile Include="src\GlobalCluster.cpp" />
     <ClCompile Include="src\Edge.cpp" />
     <ClCompile Include="src\EdgeFactory.cpp" />
@@ -225,6 +229,8 @@ copy "$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\bind\*.pdb
     <ClCompile Include="src\Graph.cpp" />
     <ClCompile Include="src\InstanceGUIDManager.cpp" />
     <ClCompile Include="src\IntAttribute.cpp" />
+    <ClCompile Include="src\Line.cpp" />
+    <ClCompile Include="src\NurbsCurve.cpp" />
     <ClCompile Include="src\Shell.cpp" />
     <ClCompile Include="src\ShellFactory.cpp" />
     <ClCompile Include="src\StringAttribute.cpp" />

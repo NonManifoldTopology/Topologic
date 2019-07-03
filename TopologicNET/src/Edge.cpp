@@ -1,6 +1,11 @@
 #include "Edge.h"
-#include <Vertex.h>
-#include <Wire.h>
+#include "Vertex.h"
+#include "Wire.h"
+
+#ifndef TOPOLOGIC_DYNAMO
+#include "Line.h"
+#include "NurbsCurve.h"
+#endif
 
 #include <TopologicUtilities/include/EdgeUtility.h>
 
@@ -454,6 +459,37 @@ namespace Topologic
 
 		return gcnew Edge(pCoreEdge);
 	}
+#else
+	Geometry^ Edge::Curve()
+	{
+		double u0 = 0.0, u1 = 0.0;
+		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		TopoDS_Shape occtShape = pCoreTopology->GetOcctShape();
+		try {
+			TopoDS_Edge occtEdge = TopoDS::Edge(occtShape);
+			Handle(Geom_Curve) pOcctCurve = BRep_Tool::Curve(occtEdge, u0, u1);
+
+			Handle(Geom_Line) pOcctLine = Handle_Geom_Line::DownCast(pOcctCurve);
+			if (!pOcctLine.IsNull())
+			{
+				TopologicCore::Line::Ptr coreLine = std::make_shared<TopologicCore::Line>(pOcctLine);
+				return gcnew Line(coreLine);
+			}
+
+			Handle(Geom_BSplineCurve) pOcctBsplineCurve = GeomConvert::CurveToBSplineCurve(pOcctCurve);
+			if (!pOcctBsplineCurve.IsNull())
+			{
+				TopologicCore::NurbsCurve::Ptr coreNurbsCurve = std::make_shared<TopologicCore::NurbsCurve>(pOcctBsplineCurve);
+				return gcnew NurbsCurve(coreNurbsCurve);
+			}
+
+			throw gcnew Exception("This type of Edge is not currently handled.");
+		}
+		catch (Standard_Failure e)
+		{
+			throw gcnew Exception(gcnew String(e.GetMessageString()));
+		}
+	}
 #endif
 
 	Edge^ Edge::ByNurbsParameters(List<Vertex^>^ controlPoints, List<double>^ weights, List<double>^ knots, bool isRational, bool isPeriodic, int degree)
@@ -589,11 +625,7 @@ namespace Topologic
 
 	Object^ Edge::BasicGeometry::get()
 	{
-#ifdef TOPOLOGIC_DYNAMO
 		return Curve();
-#else
-		return nullptr;
-#endif
 	}
 
 	std::shared_ptr<TopologicCore::TopologicalQuery> Edge::GetCoreTopologicalQuery()
