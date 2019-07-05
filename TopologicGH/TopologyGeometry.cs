@@ -269,9 +269,10 @@ namespace TopologicGH
         {
             PolyCurve ghPolyCurve = new PolyCurve();
             List<Edge> edges = wire.Edges;
-            foreach(Edge edge in edges)
+            foreach (Edge edge in edges)
             {
                 Curve ghCurve = ToCurve(edge);
+
                 try
                 {
                     ghPolyCurve.Append(ghCurve);
@@ -281,6 +282,13 @@ namespace TopologicGH
                     throw new Exception("Fails creating a PolyCurve from a Wire.");
                 }
             }
+
+            String log = "";
+            if(!ghPolyCurve.IsValidWithLog(out log))
+            {
+                throw new Exception(log);
+            }
+
             return ghPolyCurve;
         }
 

@@ -32,7 +32,7 @@ namespace TopologicCore
 		pFirstVertex->Edges(adjacentEdgesToFirstVertex);
 
 		int numOfBranches = NumberOfBranches();
-		if(numOfBranches >= 0 
+		if(numOfBranches > 0 
 		  ||
 		  (!IsClosed() && adjacentEdgesToFirstVertex.size() > 1)) // open and the first vertex is adjacent to > 1 edges
 		{

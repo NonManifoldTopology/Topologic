@@ -58,7 +58,7 @@ namespace TopologicGH
             bool isClosed = wire.IsClosed;
 
             // Use the DA object to assign a new String to the first output parameter.
-            DA.SetData(0, wire);
+            DA.SetData(0, isClosed);
         }
 
         /// <summary>

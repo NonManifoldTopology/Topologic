@@ -368,13 +368,13 @@ namespace TopologicGH
                 Point3d ghPoint = ghPolylineCurve.Point(i);
                 Topologic.Vertex vertex = ByPoint(ghPoint);
                 vertices.Add(vertex);
-                indices.Add(0);
+                indices.Add(i);
             }
 
             if(ghPolylineCurve.IsClosed)
             {
-                vertices.Add(vertices[0]);
-                indices.Add(0);
+                //vertices.Add(vertices[0]);
+                //indices.Add(0);
                 List<List<int>> listOfIndices = new List<List<int>>();
                 listOfIndices.Add(indices);
                 return Topologic.Topology.ByVerticesIndices(vertices, listOfIndices)[0].Wires[0];
