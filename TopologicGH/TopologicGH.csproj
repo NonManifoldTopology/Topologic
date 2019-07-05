@@ -233,12 +233,6 @@
     <Compile Include="WireVertices.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TopologicNET\TopologicNET.vcxproj">
-      <Project>{c90904ec-87d6-4a5e-b7c2-9dec3b078d85}</Project>
-      <Name>TopologicNET</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -258,6 +252,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\QueryVertices.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TopologicNET\TopologicNET.vcxproj">
+      <Project>{c90904ec-87d6-4a5e-b7c2-9dec3b078d85}</Project>
+      <Name>TopologicNET</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

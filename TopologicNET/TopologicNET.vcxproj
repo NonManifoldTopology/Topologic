@@ -171,6 +171,7 @@
     <ClInclude Include="include\LicenseManager.h" />
     <ClInclude Include="include\Line.h" />
     <ClInclude Include="include\NurbsCurve.h" />
+    <ClInclude Include="include\NurbsSurface.h" />
     <ClInclude Include="include\Shell.h" />
     <ClInclude Include="include\ShellFactory.h" />
     <ClInclude Include="include\ShellUtility.h" />
@@ -213,6 +214,7 @@
     <ClCompile Include="src\IntAttributeFactory.cpp" />
     <ClCompile Include="src\Line.cpp" />
     <ClCompile Include="src\NurbsCurve.cpp" />
+    <ClCompile Include="src\NurbsSurface.cpp" />
     <ClCompile Include="src\Shell.cpp" />
     <ClCompile Include="src\ShellFactory.cpp" />
     <ClCompile Include="src\ShellUtility.cpp" />

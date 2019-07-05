@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
 using Rhino.Geometry.Collections;
 using Topologic;
@@ -41,18 +42,27 @@ namespace TopologicGH
         /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            GeometryBase ghGeometryBase = null;
+            Object ghGeometryBase = null;
             double tolerance = 0.0001;
             if (!DA.GetData(0, ref ghGeometryBase)) { return; }
             if (!DA.GetData(1, ref tolerance)) { return; }
 
             if (ghGeometryBase == null) { return; }
-            
+            Type type = ghGeometryBase.GetType();
+
             Topologic.Topology topology = null;
-            Point ghPoint = ghGeometryBase as Point;
+            GH_Point ghPoint = ghGeometryBase as GH_Point;
             if (ghPoint != null)
             {
-                topology = ByPoint(ghPoint.Location);
+                topology = ByPoint(ghPoint.Value);
+                DA.SetData(0, topology);
+                return;
+            }
+
+            GH_Line ghLine = ghGeometryBase as GH_Line;
+            if (ghLine != null)
+            {
+                topology = ByLine(ghLine.Value);
                 DA.SetData(0, topology);
                 return;
             }
@@ -230,11 +240,11 @@ namespace TopologicGH
 
         private Topologic.Topology ByCurve(Curve ghCurve)
         {
-            LineCurve ghLine = ghCurve as LineCurve;
-            if (ghLine != null)
-            {
-                return ByLine(ghLine);
-            }
+            //LineCurve ghLine = ghCurve as LineCurve;
+            //if (ghLine != null)
+            //{
+            //    return ByLine(ghLine.);
+            //}
 
             Rhino.Geometry.NurbsCurve ghNurbsCurve = ghCurve as Rhino.Geometry.NurbsCurve;
             if (ghNurbsCurve != null)
@@ -333,10 +343,10 @@ namespace TopologicGH
             return Topologic.Edge.ByNurbsParameters(controlPoints, weights, knots, isRational, isPeriodic, degree);
         }
 
-        private Topologic.Edge ByLine(LineCurve ghLine)
+        private Topologic.Edge ByLine(Rhino.Geometry.Line ghLine)
         {
-            Topologic.Vertex vertex1 = ByPoint(ghLine.PointAtStart);
-            Topologic.Vertex vertex2 = ByPoint(ghLine.PointAtEnd);
+            Topologic.Vertex vertex1 = ByPoint(ghLine.From);
+            Topologic.Vertex vertex2 = ByPoint(ghLine.To);
             return Topologic.Edge.ByStartVertexEndVertex(vertex1, vertex2);
         }
 
@@ -406,7 +416,7 @@ namespace TopologicGH
                 return ByExtrusion(ghExtrusion);
             }
 
-            NurbsSurface ghNurbsSurface = ghSurface as NurbsSurface;
+            Rhino.Geometry.NurbsSurface ghNurbsSurface = ghSurface as Rhino.Geometry.NurbsSurface;
             if (ghNurbsSurface != null)
             {
                 return ByNurbsSurface(ghNurbsSurface);
@@ -421,7 +431,7 @@ namespace TopologicGH
             throw new Exception("This type of surface is not yet supported.");
         }
 
-        private Face ByNurbsSurface(NurbsSurface ghNurbsSurface)
+        private Face ByNurbsSurface(Rhino.Geometry.NurbsSurface ghNurbsSurface)
         {
             int uDegree = ghNurbsSurface.Degree(0);
             int vDegree = ghNurbsSurface.Degree(1);
@@ -455,25 +465,25 @@ namespace TopologicGH
 
         private Face ByExtrusion(Extrusion ghExtrusion)
         {
-            NurbsSurface ghNurbsSurface = ghExtrusion.ToNurbsSurface();
+            Rhino.Geometry.NurbsSurface ghNurbsSurface = ghExtrusion.ToNurbsSurface();
             return ByNurbsSurface(ghNurbsSurface);
         }
 
         private Topologic.Face ByPlaneSurface(PlaneSurface ghPlaneSurface)
         {
-            NurbsSurface ghNurbsSurface = ghPlaneSurface.ToNurbsSurface();
+            Rhino.Geometry.NurbsSurface ghNurbsSurface = ghPlaneSurface.ToNurbsSurface();
             return ByNurbsSurface(ghNurbsSurface);
         }
 
         private Topologic.Face ByRevSurface(RevSurface ghRevSurface)
         {
-            NurbsSurface ghNurbsSurface = ghRevSurface.ToNurbsSurface();
+            Rhino.Geometry.NurbsSurface ghNurbsSurface = ghRevSurface.ToNurbsSurface();
             return ByNurbsSurface(ghNurbsSurface);
         }
 
         private Topologic.Face BySumSurface(SumSurface ghSumSurface)
         {
-            NurbsSurface ghNurbsSurface = ghSumSurface.ToNurbsSurface();
+            Rhino.Geometry.NurbsSurface ghNurbsSurface = ghSumSurface.ToNurbsSurface();
             return ByNurbsSurface(ghNurbsSurface);
         }
 

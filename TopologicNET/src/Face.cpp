@@ -1,12 +1,16 @@
 #include "Face.h"
-#include <Vertex.h>
-#include <Edge.h>
-#include <Wire.h>
-#include <Shell.h>
-#include <Cell.h>
-#include <FaceFactory.h>
-#include <FaceUtility.h>
-#include <EdgeUtility.h>
+#include "Vertex.h"
+#include "Edge.h"
+#include "Wire.h"
+#include "Shell.h"
+#include "Cell.h"
+#include "FaceFactory.h"
+#include "FaceUtility.h"
+#include "EdgeUtility.h"
+
+#ifndef TOPOLOGIC_DYNAMO
+#include "NurbsSurface.h"
+#endif
 
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepMesh_IncrementalMesh.hxx>
@@ -22,6 +26,7 @@
 #include <Geom_OffsetSurface.hxx>
 #include <Geom_SurfaceOfLinearExtrusion.hxx>
 #include <Geom_SurfaceOfRevolution.hxx>
+#include <GeomConvert.hxx>
 #include <GeomPlate_Surface.hxx>
 #include <ShapeAnalysis.hxx>
 #include <ShapeFix_Edge.hxx>
@@ -1099,6 +1104,36 @@ namespace Topologic
 			return gcnew Face(pCoreFace);
 		}
 	}
+#else
+	NurbsSurface^ Face::Surface(Handle(Geom_BSplineSurface) pOcctBSplineSurface)
+	{
+		TopologicCore::NurbsSurface::Ptr pCoreNurbsSurface = std::make_shared<TopologicCore::NurbsSurface>(pOcctBSplineSurface, *m_pCoreFace);
+		return gcnew NurbsSurface(pCoreNurbsSurface);
+	}
+
+	Object^ Face::Surface()
+	{
+		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
+		Handle(Geom_Surface) pOcctSurface = pCoreFace->Surface();
+
+		Handle(Geom_BSplineSurface) pOcctBSplineSurface = Handle_Geom_BSplineSurface::DownCast(pOcctSurface);
+
+		// If not BSpline Surface, create one.
+		if (!pOcctBSplineSurface.IsNull())
+		{
+			return Surface(pOcctBSplineSurface);
+		}
+
+		try {
+			pOcctBSplineSurface = GeomConvert::SurfaceToBSplineSurface(pOcctSurface);
+			return Surface(pOcctBSplineSurface);
+		}
+		catch (Standard_DomainError)
+		{
+			// https://www.opencascade.com/doc/occt-7.2.0/refman/html/class_geom_convert.html#aec7d0c9e937cc0bcbe97fba8b3c360bf
+			throw gcnew Exception("This surface is not previously defined.");
+		}
+	}
 #endif
 
 	List<Edge^>^ Face::SharedEdges(Face^ face)
@@ -1249,7 +1284,7 @@ namespace Topologic
 			return TriangulatedMesh();
 		}
 #else
-		return nullptr;
+		return Surface();
 #endif
 	}
 

@@ -14,7 +14,7 @@ namespace Topologic {
 	public ref class Line : Geometry
 	{
 	public:
-
+		void A() {}
 	public protected:
 		Line(const std::shared_ptr<TopologicCore::Line>& kpCoreLine);
 		virtual ~Line();

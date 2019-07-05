@@ -17,6 +17,11 @@ namespace TopologicCore
 		return m_pOcctBSplineCurve->IsPeriodic();
 	}
 
+	bool NurbsCurve::IsRational() const
+	{
+		return m_pOcctBSplineCurve->IsRational();
+	}
+
 	int NurbsCurve::Degree() const
 	{
 		return m_pOcctBSplineCurve->Degree();
@@ -30,6 +35,20 @@ namespace TopologicCore
 			const gp_Pnt& rkControlPoint = occtControlPoints.Value(i);
 			Vertex::Ptr pControlVertex = Vertex::ByCoordinates(rkControlPoint.X(), rkControlPoint.Y(), rkControlPoint.Z());
 			rControlVertices.push_back(pControlVertex);
+		}
+	}
+
+	void NurbsCurve::Knots(std::list<double>& rKnots) const
+	{
+		const TColStd_Array1OfReal& krOcctKnots = m_pOcctBSplineCurve->Knots();
+		for (int i = krOcctKnots.Lower(); i <= krOcctKnots.Upper(); i++)
+		{
+			int multiplicity = m_pOcctBSplineCurve->Multiplicity(i);
+			for (int j = 0; j < multiplicity; j++)
+			{
+				double occtKnot = krOcctKnots.Value(i);
+				rKnots.push_back(occtKnot);
+			}
 		}
 	}
 }

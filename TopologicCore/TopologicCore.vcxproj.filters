@@ -83,6 +83,12 @@
     <ClInclude Include="include\Geometry.h">
       <Filter>Geometries</Filter>
     </ClInclude>
+    <ClInclude Include="include\PlanarSurface.h">
+      <Filter>Geometries</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NurbsSurface.h">
+      <Filter>Geometries</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
@@ -158,6 +164,12 @@
       <Filter>Geometries</Filter>
     </ClCompile>
     <ClCompile Include="src\Geometry.cpp">
+      <Filter>Geometries</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PlanarSurface.cpp">
+      <Filter>Geometries</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NurbsSurface.cpp">
       <Filter>Geometries</Filter>
     </ClCompile>
   </ItemGroup>

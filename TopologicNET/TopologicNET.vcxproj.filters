@@ -95,6 +95,9 @@
     <ClInclude Include="include\NurbsCurve.h">
       <Filter>Geometries</Filter>
     </ClInclude>
+    <ClInclude Include="include\NurbsSurface.h">
+      <Filter>Geometries</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\About.cpp" />
@@ -181,6 +184,9 @@
       <Filter>Geometries</Filter>
     </ClCompile>
     <ClCompile Include="src\NurbsCurve.cpp">
+      <Filter>Geometries</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NurbsSurface.cpp">
       <Filter>Geometries</Filter>
     </ClCompile>
   </ItemGroup>

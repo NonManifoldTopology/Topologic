@@ -22,9 +22,13 @@ namespace TopologicCore
 
 		TOPOLOGIC_API bool IsPeriodic() const;
 
+		TOPOLOGIC_API bool IsRational() const;
+
 		TOPOLOGIC_API int Degree() const;
 
 		TOPOLOGIC_API void ControlVertices(std::list<std::shared_ptr<Vertex>>& rControlVertices) const;
+
+		TOPOLOGIC_API void Knots(std::list<double>& rKnots) const;
 
 	protected:
 		Handle(Geom_BSplineCurve) m_pOcctBSplineCurve;

@@ -190,6 +190,8 @@ copy "$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\bind\*.pdb
     <ClInclude Include="include\IntAttribute.h" />
     <ClInclude Include="include\Line.h" />
     <ClInclude Include="include\NurbsCurve.h" />
+    <ClInclude Include="include\NurbsSurface.h" />
+    <ClInclude Include="include\PlanarSurface.h" />
     <ClInclude Include="include\Shell.h" />
     <ClInclude Include="include\ShellFactory.h" />
     <ClInclude Include="include\StringAttribute.h" />
@@ -231,6 +233,8 @@ copy "$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\bind\*.pdb
     <ClCompile Include="src\IntAttribute.cpp" />
     <ClCompile Include="src\Line.cpp" />
     <ClCompile Include="src\NurbsCurve.cpp" />
+    <ClCompile Include="src\NurbsSurface.cpp" />
+    <ClCompile Include="src\PlanarSurface.cpp" />
     <ClCompile Include="src\Shell.cpp" />
     <ClCompile Include="src\ShellFactory.cpp" />
     <ClCompile Include="src\StringAttribute.cpp" />

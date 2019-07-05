@@ -20,6 +20,11 @@ namespace Topologic {
 		{
 			bool get();
 		}
+		
+		property bool IsRational
+		{
+			bool get();
+		}
 
 		property int Degree
 		{
@@ -29,6 +34,11 @@ namespace Topologic {
 		property List<Vertex^>^ ControlVertices
 		{
 			List<Vertex^>^ get();
+		}
+
+		property List<double>^ Knots
+		{
+			List<double>^ get();
 		}
 
 	public protected:

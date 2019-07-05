@@ -19,6 +19,11 @@ namespace Topologic
 		return (*m_pCoreNurbsCurve)->IsPeriodic();
 	}
 
+	bool NurbsCurve::IsRational::get()
+	{
+		return (*m_pCoreNurbsCurve)->IsRational();
+	}
+
 	int NurbsCurve::Degree::get()
 	{
 		return (*m_pCoreNurbsCurve)->Degree();
@@ -36,5 +41,18 @@ namespace Topologic
 			controlVertices->Add(vertex);
 		}
 		return controlVertices;
+	}
+
+	List<double>^ NurbsCurve::Knots::get()
+	{
+		std::list<double> coreKnots;
+		(*m_pCoreNurbsCurve)->Knots(coreKnots);
+
+		List<double>^ knots = gcnew List<double>();
+		for (const double kKnot : coreKnots)
+		{
+			knots->Add(kKnot);
+		}
+		return knots;
 	}
 }
