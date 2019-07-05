@@ -591,9 +591,9 @@ namespace Topologic
 	{
 		TopologicCore::Vertex::Ptr pCoreStartVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(startVertex->GetCoreTopologicalQuery());
 		TopologicCore::Vertex::Ptr pCoreEndVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(endVertex->GetCoreTopologicalQuery());
-		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Edge::ByStartVertexEndVertex(pCoreStartVertex, pCoreEndVertex);
-	
+
 		try {
+			TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Edge::ByStartVertexEndVertex(pCoreStartVertex, pCoreEndVertex);
 			return gcnew Edge(pCoreEdge);
 		}
 		catch (const std::exception& rkException)

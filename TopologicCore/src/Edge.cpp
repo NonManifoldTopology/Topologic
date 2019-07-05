@@ -156,9 +156,9 @@ namespace TopologicCore
 
 	Edge::Ptr Edge::ByStartVertexEndVertex(const std::shared_ptr<Vertex>& kpStartVertex, const std::shared_ptr<Vertex>& kpEndVertex)
 	{
-		if (kpStartVertex == nullptr)
+		if (kpStartVertex == nullptr || kpEndVertex == nullptr)
 		{
-			throw std::exception();
+			return nullptr;
 		}
 
 		BRepBuilderAPI_MakeEdge occtMakeEdge(

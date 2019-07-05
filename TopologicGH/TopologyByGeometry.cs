@@ -67,10 +67,10 @@ namespace TopologicGH
                 return;
             }
 
-            Curve ghCurve = ghGeometryBase as Curve;
+            GH_Curve ghCurve = ghGeometryBase as GH_Curve;
             if (ghCurve != null)
             {
-                topology = ByCurve(ghCurve);
+                topology = ByCurve(ghCurve.Value);
                 DA.SetData(0, topology);
                 return;
             }
@@ -331,6 +331,9 @@ namespace TopologicGH
             bool isRational = ghNurbsCurve.IsRational;
             NurbsCurveKnotList ghKnots = ghNurbsCurve.Knots;
             List<double> knots = ghKnots.ToList();
+            // OCCT-compatible
+            knots.Insert(0, knots[0]);
+            knots.Add(knots.Last());
             NurbsCurvePointList ghControlPoints = ghNurbsCurve.Points;
             List<Topologic.Vertex> controlPoints = new List<Topologic.Vertex>();
             List<double> weights = new List<double>();

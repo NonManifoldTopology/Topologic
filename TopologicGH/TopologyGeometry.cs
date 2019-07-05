@@ -312,8 +312,8 @@ namespace TopologicGH
             List<Topologic.Vertex> controlVertices = nurbsCurve.ControlVertices;
             List<Point3d> ghControlPoints = new List<Point3d>();
 
-            Rhino.Geometry.NurbsCurve ghNurbsCurve = new Rhino.Geometry.NurbsCurve(3, isRational, degree + 1, ghControlPoints.Count);// isPeriodic, degree, ghControlPoints);
-
+            Rhino.Geometry.NurbsCurve ghNurbsCurve = new Rhino.Geometry.NurbsCurve(3, isRational, degree + 1, controlVertices.Count);
+            
             int i = 0;
             foreach(Topologic.Vertex controlVertex in controlVertices)
             {
@@ -323,15 +323,17 @@ namespace TopologicGH
                 ++i;
             }
 
-            i = 0;
             List<double> knots = nurbsCurve.Knots;
+            knots = knots.GetRange(1, knots.Count - 2);
+            i = 0;
             foreach (double knot in knots)
             {
                 ghNurbsCurve.Knots[i] = knot;
                 ++i;
             }
 
-            if(ghNurbsCurve.IsValid)
+            String log = "";
+            if(ghNurbsCurve.IsValidWithLog(out log))
             {
                 return ghNurbsCurve;
             }
