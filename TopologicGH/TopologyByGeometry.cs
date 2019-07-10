@@ -75,10 +75,10 @@ namespace TopologicGH
                 return;
             }
 
-            Surface ghSurface = ghGeometryBase as Surface;
+            GH_Surface ghSurface = ghGeometryBase as GH_Surface;
             if (ghSurface != null)
             {
-                topology = BySurface(ghSurface);
+                topology = BySurface(ghSurface.Value.Surfaces[0]);
                 DA.SetData(0, topology);
                 return;
             }
@@ -331,9 +331,11 @@ namespace TopologicGH
             bool isRational = ghNurbsCurve.IsRational;
             NurbsCurveKnotList ghKnots = ghNurbsCurve.Knots;
             List<double> knots = ghKnots.ToList();
+            
             // OCCT-compatible
             knots.Insert(0, knots[0]);
             knots.Add(knots.Last());
+
             NurbsCurvePointList ghControlPoints = ghNurbsCurve.Points;
             List<Topologic.Vertex> controlPoints = new List<Topologic.Vertex>();
             List<double> weights = new List<double>();
@@ -445,8 +447,16 @@ namespace TopologicGH
             bool isRational = ghNurbsSurface.IsRational;
             NurbsSurfaceKnotList ghUKnots = ghNurbsSurface.KnotsU;
             List<double> uKnots = ghUKnots.ToList();
+
             NurbsSurfaceKnotList ghVKnots = ghNurbsSurface.KnotsV;
             List<double> vKnots = ghVKnots.ToList();
+
+            // OCCT-compatible
+            uKnots.Insert(0, uKnots[0]);
+            uKnots.Add(uKnots.Last());
+            vKnots.Insert(0, vKnots[0]);
+            vKnots.Add(vKnots.Last());
+
             NurbsSurfacePointList ghControlPoints = ghNurbsSurface.Points;
             List<List<Topologic.Vertex>> controlPoints = new List<List<Topologic.Vertex>>();
             List<List<double>> weights = new List<List<double>>();
@@ -461,6 +471,7 @@ namespace TopologicGH
                     weights1D.Add(ghControlPoint.Weight);
                 }
                 controlPoints.Add(controlPoints1D);
+                weights.Add(weights1D);
             }
 
             return Topologic.Face.ByNurbsParameters(controlPoints, weights, uKnots, vKnots, isRational, isUPeriodic, isVPeriodic, uDegree, vDegree);

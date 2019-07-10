@@ -619,6 +619,8 @@ namespace TopologicCore
 
 		TOPOLOGIC_API void RegisterFactory(const std::string& rkGuid, const std::shared_ptr<TopologyFactory>& kpTopologyFactory);
 
+		TOPOLOGIC_API bool IsReversed();
+
 	protected:
 		Topology(const int kDimensionality, const TopoDS_Shape& rkOcctShape, const std::string& rkGuid = "");
 

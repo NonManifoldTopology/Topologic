@@ -361,6 +361,14 @@ namespace Topologic
 		/// <returns name="String">The topological information of the input Topology</returns>
 		String^ Analyze();
 
+#ifdef TOPOLOGIC_DYNAMO
+		[IsVisibleInDynamoLibrary(false)]
+#endif
+		property bool IsReversed
+		{
+			bool get();
+		}
+
 		/// <summary>
 		/// Returns all sub-topologies (immediate constituent members) of a Topology.
 		/// </summary>

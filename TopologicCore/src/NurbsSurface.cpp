@@ -62,7 +62,9 @@ namespace TopologicCore
 
 	Vertex::Ptr NurbsSurface::ControlVertex(const int u, const int v) const
 	{
-		const gp_Pnt& rkControlPoint = m_pOcctBSplineSurface->Poles().Value(u,v);
+		const gp_Pnt& rkControlPoint = m_pOcctBSplineSurface->Poles().Value(
+			m_pOcctBSplineSurface->Poles().LowerRow() + u,
+			m_pOcctBSplineSurface->Poles().LowerCol() + v);
 		Vertex::Ptr vertex = Vertex::ByCoordinates(rkControlPoint.X(), rkControlPoint.Y(), rkControlPoint.Z());
 		return vertex;
 	}

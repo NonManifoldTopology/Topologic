@@ -1184,4 +1184,11 @@ namespace Topologic
 		pCoreSimplifiedTopology->Simplify();
 		return Topology::ByCoreTopology(pCoreSimplifiedTopology);
 	}*/
+
+	bool Topology::IsReversed::get()
+	{
+		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+
+		return pCoreTopology->IsReversed();
+	}
 }

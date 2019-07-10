@@ -2686,6 +2686,11 @@ namespace TopologicCore
 		return isSame;
 	}
 
+	bool Topology::IsReversed()
+	{
+		return GetOcctShape().Orientation() == TopAbs_REVERSED;
+	}
+
 	void Topology::Members(TopTools_ListOfShape& rOcctMembers) const
 	{
 		const TopoDS_Shape& rkOcctShape = GetOcctShape();
