@@ -56,6 +56,8 @@ namespace TopologicCore
 
 		TOPOLOGIC_API void AdjacentVertices(const std::shared_ptr<Vertex>& kpVertex, std::list<std::shared_ptr<Vertex>>& rAdjacentVertices) const;
 
+		void AdjacentVertices(const TopoDS_Vertex& rkOcctVertex, TopTools_MapOfShape& rOcctAdjacentVertices) const;
+
 		TOPOLOGIC_API void Connect(const std::shared_ptr<Vertex>& kpVertex1, const std::shared_ptr<Vertex>& kpVertex2, const double kTolerance);
 
 		TOPOLOGIC_API bool ContainsVertex(const std::shared_ptr<Vertex>& kpVertex, const double kTolerance) const;
@@ -114,6 +116,24 @@ namespace TopologicCore
 			const TopoDS_Vertex& rkOcctEndVertex,
 			const std::string& rkVertexKey,
 			const std::string& rkEdgeKey) const;
+
+		TOPOLOGIC_API void ShortestPaths(
+			const Vertex::Ptr& kpStartVertex,
+			const Vertex::Ptr& kpEndVertex,
+			const std::string& rkVertexKey,
+			const std::string& rkEdgeKey,
+			const bool kUseTimeLimit,
+			const int kTimeLimitInSeconds,
+			std::list<std::shared_ptr<Wire>>& rPaths) const;
+
+		void ShortestPaths(
+			const TopoDS_Vertex& rkOcctStartVertex,
+			const TopoDS_Vertex& rkOcctEndVertex,
+			const std::string& rkVertexKey,
+			const std::string& rkEdgeKey,
+			const bool kUseTimeLimit,
+			const int kTimeLimitInSeconds,
+			std::list<std::shared_ptr<Wire>>& rPaths) const;
 
 		TOPOLOGIC_API int Diameter() const;
 
@@ -194,7 +214,7 @@ namespace TopologicCore
 		TopoDS_Vertex GetCoincidentVertex(const TopoDS_Vertex& rkVertex, const double kTolerance) const;
 
 		double ComputeCost(const TopoDS_Vertex& rkVertex1, const TopoDS_Vertex& rkVertex2, const std::string& rkVertexKey, const std::string& rkEdgeKey) const;
-		double ComputeVertexCost(const TopoDS_Vertex& rkVertex1, const TopoDS_Vertex& rkVertex2, const std::string& rkVertexKey) const;
+		double ComputeVertexCost(const TopoDS_Vertex& rkVertex, const std::string& rkVertexKey) const;
 		double ComputeEdgeCost(const TopoDS_Vertex& rkVertex1, const TopoDS_Vertex& rkVertex2, const std::string& rkEdgeKey) const;
 
 		TopoDS_Edge FindEdge(const TopoDS_Vertex& rkVertex1, const TopoDS_Vertex& rkVertex2, const double kTolerance = 0.0001) const;

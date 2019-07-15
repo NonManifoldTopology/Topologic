@@ -2688,7 +2688,8 @@ namespace TopologicCore
 
 	bool Topology::IsReversed()
 	{
-		return GetOcctShape().Orientation() == TopAbs_REVERSED;
+		TopAbs_Orientation occtOrientation = GetOcctShape().Orientation();
+		return occtOrientation == TopAbs_REVERSED;
 	}
 
 	void Topology::Members(TopTools_ListOfShape& rOcctMembers) const

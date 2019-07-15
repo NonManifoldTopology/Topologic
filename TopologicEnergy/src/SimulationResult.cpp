@@ -9,7 +9,7 @@ using namespace System::Linq;
 namespace TopologicEnergy
 {
 
-	Object^ SimulationResult::ByEnergySimulation(EnergySimulation^ energySimulation, String ^ EPReportName, String ^ EPReportForString, String ^ EPTableName, String ^ EPColumnName, String ^ EPUnits)
+	SimulationResult^ SimulationResult::ByEnergySimulation(EnergySimulation^ energySimulation, String ^ EPReportName, String ^ EPReportForString, String ^ EPTableName, String ^ EPColumnName, String ^ EPUnits)
 	{
 		OpenStudio::OptionalDouble^ totalSE = energySimulation->OsSqlFile->totalSiteEnergy();
 

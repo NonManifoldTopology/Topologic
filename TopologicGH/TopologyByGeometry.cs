@@ -83,18 +83,26 @@ namespace TopologicGH
                 return;
             }
 
-            Brep ghBrep = ghGeometryBase as Brep;
+            GH_Brep ghBrep = ghGeometryBase as GH_Brep;
             if (ghBrep != null)
             {
-                topology = ByBrep(ghBrep, tolerance);
+                topology = ByBrep(ghBrep.Value, tolerance);
                 DA.SetData(0, topology);
                 return;
             }
 
-            Mesh ghMesh = ghGeometryBase as Mesh;
+            GH_Box ghBox = ghGeometryBase as GH_Box;
+            if (ghBox != null)
+            {
+                topology = ByBox(ghBox.Value);
+                DA.SetData(0, topology);
+                return;
+            }
+
+            GH_Mesh ghMesh = ghGeometryBase as GH_Mesh;
             if (ghMesh != null)
             {
-                topology = ByMesh(ghMesh);
+                topology = ByMesh(ghMesh.Value);
                 DA.SetData(0, topology);
                 return;
             }
@@ -108,6 +116,11 @@ namespace TopologicGH
             //}
 
             throw new Exception("This type of geometry is not yet supported.");
+        }
+
+        private Topologic.Topology ByBox(Box ghBox)
+        {
+            return ByBrep(ghBox.ToBrep(), 0.0001);
         }
 
         // https://developer.rhino3d.com/guides/cpp/brep-data-structure/
@@ -240,11 +253,11 @@ namespace TopologicGH
 
         private Topologic.Topology ByCurve(Curve ghCurve)
         {
-            //LineCurve ghLine = ghCurve as LineCurve;
-            //if (ghLine != null)
-            //{
-            //    return ByLine(ghLine.);
-            //}
+            LineCurve ghLine = ghCurve as LineCurve;
+            if (ghLine != null)
+            {
+                return ByLine(ghLine.Line);
+            }
 
             Rhino.Geometry.NurbsCurve ghNurbsCurve = ghCurve as Rhino.Geometry.NurbsCurve;
             if (ghNurbsCurve != null)

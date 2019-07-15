@@ -87,6 +87,30 @@ namespace TopologicGH
                 return ToSurface(face);
             }
 
+            Shell shell = topology as Shell;
+            if (shell != null)
+            {
+                return ToBrep(shell);
+            }
+
+            Cell cell = topology as Cell;
+            if (cell != null)
+            {
+                return ToBrep(cell);
+            }
+
+            CellComplex cellComplex = topology as CellComplex;
+            if (cellComplex != null)
+            {
+                return ToBrep(cellComplex);
+            }
+
+            Cluster cluster = topology as Cluster;
+            if (cluster != null)
+            {
+                return ToList(cluster);
+            }
+
             Aperture aperture = topology as Aperture;
             if (aperture != null)
             {
@@ -94,6 +118,45 @@ namespace TopologicGH
             }
 
             throw new Exception("The type of the input topology is not recognized.");
+        }
+
+        private object ToList(Cluster cluster)
+        {
+            List<Topology> subTopologies = cluster.SubTopologies;
+            List<Object> ghGeometries = new List<Object>();
+            foreach(Topology subTopology in subTopologies)
+            {
+                Object ghGeometry = ToGeometry(subTopology);
+                ghGeometries.Add(ghGeometry);
+            }
+            return ghGeometries;
+        }
+
+        private Brep ToBrep(Topology topology)
+        {
+            List<Face> faces = topology.Faces;
+            List<Brep> ghBrepSurfaces = new List<Brep>();
+            foreach(Face face in faces)
+            {
+                Brep ghBrepSurface = ToSurface(face);
+                ghBrepSurfaces.Add(ghBrepSurface);
+            }
+            
+            if(ghBrepSurfaces.Count == 0)
+            {
+                return null;
+            }else if(ghBrepSurfaces.Count == 1)
+            {
+                return ghBrepSurfaces[0];
+            }else
+            {
+                Brep ghBrep = ghBrepSurfaces[0];
+                for (int i = 1; i < ghBrepSurfaces.Count-1; ++i)
+                {
+                    ghBrep.Join(ghBrepSurfaces[i], 0.0001, false);
+                }
+                return ghBrep;
+            }
         }
 
         private Brep ToSurface(Face face)
@@ -152,6 +215,7 @@ namespace TopologicGH
             }
 
             // 2. Create the Brep
+            //Brep ghBrep = ghNurbsSurface.ToBrep();
             Brep ghBrep = new Brep();
 
             // 2a. Add vertices
@@ -189,7 +253,7 @@ namespace TopologicGH
                 {
                     Point3d ghBrepPoint = ghBrepVertex.Location;
 
-                    if(startVertexIndex == -1 && ghBrepPoint.DistanceTo(ghStartPoint) < 0.0001)
+                    if (startVertexIndex == -1 && ghBrepPoint.DistanceTo(ghStartPoint) < 0.0001)
                     {
                         startVertexIndex = ghBrepVertex.VertexIndex;
                     }
@@ -199,13 +263,7 @@ namespace TopologicGH
                         endVertexIndex = ghBrepVertex.VertexIndex;
                     }
                 }
-                
-                if(edge.IsReversed)
-                {
-                    int temp = startVertexIndex;
-                    startVertexIndex = endVertexIndex;
-                    endVertexIndex = temp;
-                }
+
                 BrepEdge ghBrepEdge = ghBrep.Edges.Add(startVertexIndex, endVertexIndex, curve3DID, 0.0001);
 
                 String brepEdgeLog = "";
@@ -231,6 +289,7 @@ namespace TopologicGH
             BrepLoop ghBrepOuterLoop = ghBrep.Loops.Add(BrepLoopType.Outer, ghBrepFace);
 
             // 2f.For each loop, add a trim(2D edge)
+            List<BrepEdge> ghOuterEdges = new List<BrepEdge>();
             foreach (Edge outerEdge in outerEdges)
             {
                 int outerEdge2DIndex = edge2DIndices.
@@ -257,8 +316,13 @@ namespace TopologicGH
                     throw new Exception("Fails to create a valid Brep with the following message: " + ghBrepEdgeLog);
                 }
 
+                ghOuterEdges.Add(ghBrepEdge);
+            //}
+
+            //for ()
+            //{ 
                 BrepTrim ghBrepTrim = ghBrep.Trims.Add(ghBrepEdge, false, ghBrepOuterLoop, outerEdge2DIndex);
-                ghBrepTrim.IsoStatus = IsoStatus.None;
+                ghBrepTrim.IsoStatus = ghNurbsSurface.IsIsoparametric(ghOuterCurve2D);
                 ghBrepTrim.TrimType = BrepTrimType.Boundary;
                 ghBrepTrim.SetTolerances(0.0, 0.0);
 
@@ -274,7 +338,6 @@ namespace TopologicGH
             {
                 throw new Exception("Fails to create a valid outer BrepLoop with the following message: " + brepLoopLog);
             }
-
 
             // 2g. Create inner loops
             List<Wire> innerWires = face.InternalBoundaries;
@@ -319,7 +382,6 @@ namespace TopologicGH
                     throw new Exception("Fails to create a valid inner BrepLoop with the following message: " + brepInnerLoopLog);
                 }
             }
-            //ghBrepFace.OrientationIsReversed = false;
 
             String brepFaceLog = "";
             if (!ghBrepFace.IsValidWithLog(out brepFaceLog))
@@ -384,20 +446,31 @@ namespace TopologicGH
         private Curve ToCurve(Edge edge)
         {
             Object edgeGeometry = edge.BasicGeometry;
-
+            Curve ghCurve = null;
             Topologic.Line line = edgeGeometry as Topologic.Line;
             if(line != null)
             {
-                return ToLine(edge);
+                ghCurve = ToLine(edge);
             }
 
             Topologic.NurbsCurve nurbsCurve = edgeGeometry as Topologic.NurbsCurve;
             if (nurbsCurve != null)
             {
-                return ToNurbsCurve(nurbsCurve);
+                ghCurve = ToNurbsCurve(nurbsCurve);
             }
 
-            throw new Exception("This Edge creates an unrecognized Geometry.");
+            if (ghCurve == null)
+            {
+                throw new Exception("This Edge creates an unrecognized Geometry.");
+            }
+
+            bool isReversed = edge.IsReversed;
+            if (isReversed)
+            {
+                bool successful = ghCurve.Reverse();
+            }
+
+            return ghCurve;
         }
 
         private Rhino.Geometry.NurbsCurve ToNurbsCurve(Topologic.NurbsCurve nurbsCurve)
