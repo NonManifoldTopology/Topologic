@@ -290,6 +290,7 @@ namespace TopologicGH
 
             // 2f.For each loop, add a trim(2D edge)
             List<BrepEdge> ghOuterEdges = new List<BrepEdge>();
+            List<Tuple<Curve, int>> gh2DCurves = new List<Tuple<Curve, int>>();
             foreach (Edge outerEdge in outerEdges)
             {
                 int outerEdge2DIndex = edge2DIndices.
@@ -303,6 +304,8 @@ namespace TopologicGH
                 //    FirstOrDefault();
 
                 Curve ghOuterCurve2D = ghBrep.Curves2D[outerEdge2DIndex];
+                gh2DCurves.Add(Tuple.Create(ghOuterCurve2D, outerEdge2DIndex));
+
                 //Curve ghOuterCurve3D = ghBrep.Curves3D[outerEdge3DIndex];
 
                 BrepEdge ghBrepEdge = edgeIndices.
@@ -317,12 +320,39 @@ namespace TopologicGH
                 }
 
                 ghOuterEdges.Add(ghBrepEdge);
-            //}
+            }
 
-            //for ()
-            //{ 
-                BrepTrim ghBrepTrim = ghBrep.Trims.Add(ghBrepEdge, false, ghBrepOuterLoop, outerEdge2DIndex);
-                ghBrepTrim.IsoStatus = ghNurbsSurface.IsIsoparametric(ghOuterCurve2D);
+            for (int currentEntryID = 0; currentEntryID < gh2DCurves.Count; ++currentEntryID)
+            {
+                int previousEntryID = currentEntryID - 1;
+                if (previousEntryID < 0)
+                {
+                    previousEntryID = outerEdges.Count - 1;
+                }
+
+                bool isCurrentStartEqualToPreviousStart = gh2DCurves[currentEntryID].Item1.PointAtStart.DistanceTo(
+                                                            gh2DCurves[previousEntryID].Item1.PointAtStart) < 0.0001;
+                bool isCurrentStartEqualToPreviousEnd = gh2DCurves[currentEntryID].Item1.PointAtStart.DistanceTo(
+                                                            gh2DCurves[previousEntryID].Item1.PointAtEnd) < 0.0001;
+                bool isTrimReversed = false;
+                if (!isCurrentStartEqualToPreviousStart && !isCurrentStartEqualToPreviousEnd)
+                {
+                    // Reverse trim
+                    isTrimReversed = true;
+                    //bool isReversed = ghCurrentTrim.IsReversed();
+                    //Point3d temp = ghCurrentTrim.PointAtStart;
+                    //bool isSuccesful = ghCurrentTrim.SetStartPoint(ghCurrentTrim.PointAtEnd);
+                    //isSuccesful = ghCurrentTrim.SetEndPoint(temp);
+                }
+
+                Curve duplicateCurve = gh2DCurves[currentEntryID].Item1.DuplicateCurve();
+                if (isTrimReversed)
+                {
+                    bool success = duplicateCurve.Reverse();
+                }
+
+                BrepTrim ghBrepTrim = ghBrep.Trims.Add(ghOuterEdges[currentEntryID], isTrimReversed, ghBrepOuterLoop, gh2DCurves[currentEntryID].Item2);
+                ghBrepTrim.IsoStatus = ghNurbsSurface.IsIsoparametric(gh2DCurves[currentEntryID].Item1);
                 ghBrepTrim.TrimType = BrepTrimType.Boundary;
                 ghBrepTrim.SetTolerances(0.0, 0.0);
 
@@ -465,10 +495,10 @@ namespace TopologicGH
             }
 
             bool isReversed = edge.IsReversed;
-            if (isReversed)
-            {
-                bool successful = ghCurve.Reverse();
-            }
+            //if (isReversed)
+            //{
+            //    bool successful = ghCurve.Reverse();
+            //}
 
             return ghCurve;
         }
