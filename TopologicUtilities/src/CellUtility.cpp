@@ -87,16 +87,17 @@ namespace TopologicUtilities
 	TopologicCore::Cell::Ptr CellUtility::ByCuboid(
 		const double kXCentroid, const double kYCentroid, const double kZCentroid,
 		const double kXDimension, const double kYDimension, const double kZDimension,
-		const double kXNormal, const double kYNormal, const double kZNormal,
-		const double kXAxisX, const double kYAxisX, const double kZAxisX)
+		const double kXNormal, const double kYNormal, const double kZNormal, // axis Z
+		const double kXAxisX, const double kYAxisX, const double kZAxisX,
+		const double kXAxisY, const double kYAxisY, const double kZAxisY)
 	{
-		gp_Pnt occtLowCorner(
-			kXCentroid - kXDimension / 2.0,
-			kYCentroid - kYDimension / 2.0,
-			kZCentroid - kZDimension / 2.0
-		);
+		gp_Pnt occtCentroid(kXCentroid, kYCentroid, kZCentroid);
+		gp_Pnt occtTransformedLowCorner = occtCentroid.Translated(gp_Vec(-kXNormal, -kYNormal, -kZNormal).Scaled(kZDimension/2.0));
+		occtTransformedLowCorner.Translate(gp_Vec(-kXAxisX, -kYAxisX, -kZAxisX).Scaled(kXDimension / 2.0));
+		occtTransformedLowCorner.Translate(gp_Vec(-kXAxisY, -kYAxisY, -kZAxisY).Scaled(kYDimension / 2.0));
+
 		gp_Ax2 occtAxes(
-			occtLowCorner,
+			occtTransformedLowCorner,
 			gp_Dir(kXNormal, kYNormal, kZNormal),
 			gp_Dir(kXAxisX, kYAxisX, kZAxisX));
 		BRepPrimAPI_MakeBox occtMakeBox(occtAxes, kXDimension, kYDimension, kZDimension);

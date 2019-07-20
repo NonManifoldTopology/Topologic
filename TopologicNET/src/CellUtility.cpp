@@ -51,14 +51,16 @@ namespace Topologic {
 		Cell^ CellUtility::ByCuboid(double xCentroid, double yCentroid, double zCentroid,
 			double xDimension, double yDimension, double zDimension,
 			double xNormal, double yNormal, double zNormal,
-			double xAxisX, double yAxisX, double ZAxisX)
+			double xAxisX, double yAxisX, double ZAxisX,
+			double xAxisY, double yAxisY, double ZAxisY)
 		{
 			try {
 				TopologicCore::Cell::Ptr pCoreCell = TopologicUtilities::CellUtility::ByCuboid(
 					xCentroid, yCentroid, zCentroid, 
 					xDimension, yDimension, zDimension,
 					xNormal, yNormal, zNormal,
-					xAxisX, yAxisX, ZAxisX);
+					xAxisX, yAxisX, ZAxisX,
+					xAxisY, yAxisY, ZAxisY);
 				return gcnew Cell(pCoreCell);
 			}
 			catch (std::exception&)

@@ -151,24 +151,20 @@ namespace Topologic
 		}
 	}
 	
-	List<Wire^>^ Graph::ShortestPaths(Vertex ^ startVertex, Vertex ^ endVertex, String^ vertexKey, String^ edgeKey, Nullable<int> timeLimitInSeconds)
+	List<Wire^>^ Graph::ShortestPaths(Vertex ^ startVertex, Vertex ^ endVertex, Nullable<int> timeLimitInSeconds)
 	{
 		TopologicCore::Vertex::Ptr pCoreStartVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(startVertex->GetCoreTopologicalQuery());
 		TopologicCore::Vertex::Ptr pCoreEndVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(endVertex->GetCoreTopologicalQuery());
-		String^ fixedVertexKey = vertexKey == nullptr ? gcnew String("") : vertexKey;
-		std::string coreVertexKey = msclr::interop::marshal_as<std::string>(fixedVertexKey);
-		String^ fixedEdgeKey = edgeKey == nullptr ? gcnew String("") : edgeKey;
-		std::string coreEdgeKey = msclr::interop::marshal_as<std::string>(fixedEdgeKey);
-
+		
 		try {
 			std::list<TopologicCore::Wire::Ptr> corePaths;
 			if (timeLimitInSeconds.HasValue)
 			{
-				(*m_pCoreGraph)->ShortestPaths(pCoreStartVertex, pCoreEndVertex, coreVertexKey, coreEdgeKey, true, timeLimitInSeconds.Value, corePaths);
+				(*m_pCoreGraph)->ShortestPaths(pCoreStartVertex, pCoreEndVertex, true, timeLimitInSeconds.Value, corePaths);
 			}
 			else
 			{
-				(*m_pCoreGraph)->ShortestPaths(pCoreStartVertex, pCoreEndVertex, coreVertexKey, coreEdgeKey, false, 0, corePaths);
+				(*m_pCoreGraph)->ShortestPaths(pCoreStartVertex, pCoreEndVertex, false, 0, corePaths);
 			}
 
 			List<Wire^>^ paths = gcnew List<Wire^>();

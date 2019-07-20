@@ -279,14 +279,6 @@ namespace Topologic {
 #ifdef TOPOLOGIC_DYNAMO
 			[Autodesk::DesignScript::Runtime::DefaultArgument("null")]
 #endif
-		String^ vertexKey,
-#ifdef TOPOLOGIC_DYNAMO
-			[Autodesk::DesignScript::Runtime::DefaultArgument("null")]
-#endif
-		String^ edgeKey,
-#ifdef TOPOLOGIC_DYNAMO
-			[Autodesk::DesignScript::Runtime::DefaultArgument("null")]
-#endif
 		Nullable<int> timeLimitInSeconds);
 
 		/// <summary>

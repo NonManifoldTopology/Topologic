@@ -44,7 +44,8 @@ namespace TopologicUtilities
 			const double kXCentroid, const double kYCentroid, const double kZCentroid,
 			const double kXDimension, const double kYDimension, const double kZDimension,
 			const double kXNormal, const double kYNormal, const double kZNormal,
-			const double kXAxisX, const double kYAxisX, const double kZAxisX);
+			const double kXAxisX, const double kYAxisX, const double kZAxisX,
+			const double kXAxisY, const double kYAxisY, const double kZAxisY);
 
 		/// <summary>
 		/// 
