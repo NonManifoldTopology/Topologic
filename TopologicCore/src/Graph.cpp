@@ -678,16 +678,20 @@ namespace TopologicCore
 	void Graph::ShortestPaths(
 		const Vertex::Ptr & kpStartVertex,
 		const Vertex::Ptr & kpEndVertex,
+		const std::string& rkVertexKey,
+		const std::string& rkEdgeKey,
 		const bool kUseTimeLimit,
 		const int kTimeLimitInSeconds,
 		std::list<std::shared_ptr<Wire>>& rPaths) const
 	{
-		return ShortestPaths(kpStartVertex->GetOcctVertex(), kpEndVertex->GetOcctVertex(), kUseTimeLimit, kTimeLimitInSeconds, rPaths);
+		return ShortestPaths(kpStartVertex->GetOcctVertex(), kpEndVertex->GetOcctVertex(), rkVertexKey, rkEdgeKey, kUseTimeLimit, kTimeLimitInSeconds, rPaths);
 	}
 
 	void Graph::ShortestPaths(
 		const TopoDS_Vertex & rkOcctStartVertex,
 		const TopoDS_Vertex & rkOcctEndVertex,
+		const std::string& rkVertexKey,
+		const std::string& rkEdgeKey,
 		const bool kUseTimeLimit,
 		const int kTimeLimitInSeconds,
 		std::list<std::shared_ptr<Wire>>& rPaths) const
@@ -758,10 +762,10 @@ namespace TopologicCore
 						adjacentVertex.path = currentNode.path;
 						adjacentVertex.path.push_back(occtAdjacentVertex);
 
-						double edgeCost = ComputeEdgeCost(currentNode.val, occtAdjacentVertex, "");
+						double edgeCost = ComputeEdgeCost(currentNode.val, occtAdjacentVertex, rkEdgeKey);
 						adjacentVertex.distance = currentNode.distance + edgeCost;
 
-						double vertexCost = ComputeVertexCost(occtAdjacentVertex, "");
+						double vertexCost = ComputeVertexCost(occtAdjacentVertex, rkVertexKey);
 						adjacentVertex.distance += vertexCost;
 
 						distanceMap[occtAdjacentVertex] = adjacentVertex.distance;
@@ -773,6 +777,11 @@ namespace TopologicCore
 
 		for (const Node& rkNode : occtNodePaths)
 		{
+			if (rkNode.distance > minDistance)
+			{
+				continue;
+			}
+
 			std::list<Vertex::Ptr> vertices;
 			for (const TopoDS_Vertex& rkOcctVertex : rkNode.path)
 			{

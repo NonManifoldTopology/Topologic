@@ -120,6 +120,8 @@ namespace TopologicCore
 		TOPOLOGIC_API void ShortestPaths(
 			const Vertex::Ptr& kpStartVertex,
 			const Vertex::Ptr& kpEndVertex,
+			const std::string& rkVertexKey,
+			const std::string& rkEdgeKey,
 			const bool kUseTimeLimit,
 			const int kTimeLimitInSeconds,
 			std::list<std::shared_ptr<Wire>>& rPaths) const;
@@ -127,6 +129,8 @@ namespace TopologicCore
 		void ShortestPaths(
 			const TopoDS_Vertex& rkOcctStartVertex,
 			const TopoDS_Vertex& rkOcctEndVertex,
+			const std::string& rkVertexKey,
+			const std::string& rkEdgeKey,
 			const bool kUseTimeLimit,
 			const int kTimeLimitInSeconds,
 			std::list<std::shared_ptr<Wire>>& rPaths) const;

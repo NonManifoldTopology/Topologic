@@ -170,15 +170,19 @@ namespace TopologicUtilities
 		const TopologicCore::Topology::Ptr & kpTopology, const TopologicCore::Vertex::Ptr & kpOrigin,
 		const double kXFactor, const double kYFactor, const double kZFactor)
 	{
-		Handle(Geom_Point) pOcctOrigin = kpOrigin->Point();
+		TopologicCore::Vertex::Ptr centreOfMass = kpTopology->CenterOfMass();
+		Handle(Geom_Point) pOcctCentreOfMass = centreOfMass->Point();
+		Handle(Geom_Point) pOcctScaleOrigin = kpOrigin->Point();
 		gp_GTrsf occtGTransformation(
 			gp_Mat(
 				kXFactor, 0.0, 0.0,
 				0.0, kYFactor, 0.0,
 				0.0, 0.0, kZFactor),
-			gp_XYZ(pOcctOrigin->X(), pOcctOrigin->Y(), pOcctOrigin->Z())
+			gp_XYZ(pOcctCentreOfMass->X() - pOcctScaleOrigin->X(), 
+				pOcctCentreOfMass->Y() - pOcctScaleOrigin->Y(), 
+				pOcctCentreOfMass->Z() - pOcctScaleOrigin->Z())
 		);
-		BRepBuilderAPI_GTransform occtTransform(kpTopology->DeepCopy()->GetOcctShape(), occtGTransformation);
+		BRepBuilderAPI_GTransform occtTransform(kpTopology->DeepCopy()->GetOcctShape(), occtGTransformation, true);
 		TopoDS_Shape occtTransformedShape = occtTransform.Shape();
 		TopologicCore::Topology::Ptr pCoreTransformedTopology = TopologicCore::Topology::ByOcctShape(occtTransformedShape, kpTopology->GetClassGUID());
 
