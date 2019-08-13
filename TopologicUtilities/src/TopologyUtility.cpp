@@ -170,9 +170,28 @@ namespace TopologicUtilities
 		const TopologicCore::Topology::Ptr & kpTopology, const TopologicCore::Vertex::Ptr & kpOrigin,
 		const double kXFactor, const double kYFactor, const double kZFactor)
 	{
-		TopologicCore::Vertex::Ptr centreOfMass = kpTopology->CenterOfMass();
-		Handle(Geom_Point) pOcctCentreOfMass = centreOfMass->Point();
 		Handle(Geom_Point) pOcctScaleOrigin = kpOrigin->Point();
+		gp_Trsf transformation1;
+		transformation1.SetTranslation(gp_Vec(-pOcctScaleOrigin->X(), -pOcctScaleOrigin->Y(), -pOcctScaleOrigin->Z()));
+		BRepBuilderAPI_Transform transform1(kpTopology->GetOcctShape(), transformation1, true);
+
+		gp_GTrsf occtGTransformation(
+			gp_Mat(
+				kXFactor, 0.0, 0.0,
+				0.0, kYFactor, 0.0,
+				0.0, 0.0, kZFactor),
+			gp_XYZ(0.0, 0.0, 0.0)
+		);
+
+		BRepBuilderAPI_GTransform occtTransform(transform1.Shape(), occtGTransformation, true);
+		gp_Trsf transformation2;
+		transformation2.SetTranslation(gp_Vec(pOcctScaleOrigin->X(), pOcctScaleOrigin->Y(), pOcctScaleOrigin->Z()));
+		BRepBuilderAPI_Transform transform2(occtTransform.Shape(), transformation2, true);
+		TopoDS_Shape occtTransformedShape = transform2.Shape();
+		TopologicCore::Topology::Ptr pCoreTransformedTopology = TopologicCore::Topology::ByOcctShape(transform2.Shape(), kpTopology->GetClassGUID());
+
+		/*TopologicCore::Vertex::Ptr centreOfMass = kpTopology->CenterOfMass();
+		Handle(Geom_Point) pOcctCentreOfMass = centreOfMass->Point();
 		gp_GTrsf occtGTransformation(
 			gp_Mat(
 				kXFactor, 0.0, 0.0,
@@ -184,7 +203,7 @@ namespace TopologicUtilities
 		);
 		BRepBuilderAPI_GTransform occtTransform(kpTopology->DeepCopy()->GetOcctShape(), occtGTransformation, true);
 		TopoDS_Shape occtTransformedShape = occtTransform.Shape();
-		TopologicCore::Topology::Ptr pCoreTransformedTopology = TopologicCore::Topology::ByOcctShape(occtTransformedShape, kpTopology->GetClassGUID());
+		TopologicCore::Topology::Ptr pCoreTransformedTopology = TopologicCore::Topology::ByOcctShape(occtTransformedShape, kpTopology->GetClassGUID());*/
 
 		TopologicCore::AttributeManager::GetInstance().CopyAttributes(kpTopology->GetOcctShape(), pCoreTransformedTopology->GetOcctShape());
 

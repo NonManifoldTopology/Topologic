@@ -57,7 +57,7 @@ namespace TopologicGH
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
 
-            // Reverse the array of character.
+            
             List<Topologic.Topology> filteredTopologies = Topologic.Topology.Filter(topologies, typeFilter);
 
             // Use the DA object to assign a new String to the first output parameter.

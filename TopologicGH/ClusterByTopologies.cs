@@ -55,7 +55,7 @@ namespace TopologicGH
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
 
-            // Reverse the array of character.
+            
             Topologic.Cluster cluster = Topologic.Cluster.ByTopologies(topologies);
 
             // Use the DA object to assign a new String to the first output parameter.

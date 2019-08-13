@@ -339,19 +339,19 @@ namespace TopologicGH
                 {
                     // Reverse trim
                     isTrimReversed = true;
-                    //bool isReversed = ghCurrentTrim.IsReversed();
-                    //Point3d temp = ghCurrentTrim.PointAtStart;
-                    //bool isSuccesful = ghCurrentTrim.SetStartPoint(ghCurrentTrim.PointAtEnd);
-                    //isSuccesful = ghCurrentTrim.SetEndPoint(temp);
                 }
 
-                Curve duplicateCurve = gh2DCurves[currentEntryID].Item1.DuplicateCurve();
+                BrepTrim ghBrepTrim = ghBrep.Trims.Add(
+                    ghOuterEdges[currentEntryID],       // 3D edge
+                    isTrimReversed,                     // is reversed?
+                    ghBrepOuterLoop,                    // 2D loop
+                    gh2DCurves[currentEntryID].Item2);  // 2D curve index
+
                 if (isTrimReversed)
                 {
-                    bool success = duplicateCurve.Reverse();
+                    bool success = ghBrepTrim.Reverse();
                 }
 
-                BrepTrim ghBrepTrim = ghBrep.Trims.Add(ghOuterEdges[currentEntryID], isTrimReversed, ghBrepOuterLoop, gh2DCurves[currentEntryID].Item2);
                 ghBrepTrim.IsoStatus = ghNurbsSurface.IsIsoparametric(gh2DCurves[currentEntryID].Item1);
                 ghBrepTrim.TrimType = BrepTrimType.Boundary;
                 ghBrepTrim.SetTolerances(0.0, 0.0);
@@ -495,6 +495,8 @@ namespace TopologicGH
             }
 
             bool isReversed = edge.IsReversed;
+
+            // IF ENABLED, WILL MAKE THE FACE VALID, BUT CELL INVALID
             //if (isReversed)
             //{
             //    bool successful = ghCurve.Reverse();

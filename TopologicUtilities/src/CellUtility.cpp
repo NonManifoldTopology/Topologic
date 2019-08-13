@@ -92,14 +92,14 @@ namespace TopologicUtilities
 		const double kXAxisY, const double kYAxisY, const double kZAxisY)
 	{
 		gp_Pnt occtCentroid(kXCentroid, kYCentroid, kZCentroid);
-		gp_Pnt occtTransformedLowCorner = occtCentroid.Translated(gp_Vec(-kXNormal, -kYNormal, -kZNormal).Scaled(kZDimension/2.0));
-		occtTransformedLowCorner.Translate(gp_Vec(-kXAxisX, -kYAxisX, -kZAxisX).Scaled(kXDimension / 2.0));
-		occtTransformedLowCorner.Translate(gp_Vec(-kXAxisY, -kYAxisY, -kZAxisY).Scaled(kYDimension / 2.0));
+		gp_Pnt occtTransformedLowCorner = occtCentroid.Translated(gp_Vec(-kXNormal, -kYNormal, -kZNormal).Normalized().Scaled(kZDimension / 2.0));
+		occtTransformedLowCorner.Translate(gp_Vec(-kXAxisX, -kYAxisX, -kZAxisX).Normalized().Scaled(kXDimension/2.0));
+		occtTransformedLowCorner.Translate(gp_Vec(-kXAxisY, -kYAxisY, -kZAxisY).Normalized().Scaled(kYDimension / 2.0));
 
 		gp_Ax2 occtAxes(
 			occtTransformedLowCorner,
-			gp_Dir(kXNormal, kYNormal, kZNormal),
-			gp_Dir(kXAxisX, kYAxisX, kZAxisX));
+			gp_Dir(gp_Vec(kXNormal, kYNormal, kZNormal).Normalized()),
+			gp_Dir(gp_Vec(kXAxisX, kYAxisX, kZAxisX).Normalized()));
 		BRepPrimAPI_MakeBox occtMakeBox(occtAxes, kXDimension, kYDimension, kZDimension);
 		occtMakeBox.Build();
 

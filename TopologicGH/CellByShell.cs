@@ -55,7 +55,7 @@ namespace TopologicGH
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
 
-            // Reverse the array of character.
+            
             Topologic.Cell cell = Topologic.Cell.ByShell(shell);
 
             // Use the DA object to assign a new String to the first output parameter.

@@ -61,7 +61,7 @@ namespace TopologicGH
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
 
-            // Reverse the array of character.
+            
             Topologic.Graph newGraph = graph.AddVertices(vertices, tolerance);
 
             // Use the DA object to assign a new String to the first output parameter.

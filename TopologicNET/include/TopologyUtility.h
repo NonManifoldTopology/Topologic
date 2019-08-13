@@ -22,7 +22,7 @@ namespace Topologic {
 			/// <param name="x">The x value</param>
 			/// <param name="y">The y value</param>
 			/// <param name="z">The z value</param>
-			/// <returns>The Topology in its new location</returns>
+			/// <returns name="Topology">The Topology in its new location</returns>
 			static Topology^ Translate(Topology^ topology, double x, double y, double z);
 
 			/// <summary>
@@ -34,7 +34,7 @@ namespace Topologic {
 			/// <param name="yVector"></param>
 			/// <param name="zVector"></param>
 			/// <param name="degree"></param>
-			/// <returns></returns>
+			/// <returns name="Topology"></returns>
 			static Topology^ Rotate(Topology^ topology,
 				Vertex^ origin,
 				double xVector, double yVector, double zVector,
@@ -48,7 +48,7 @@ namespace Topologic {
 			/// <param name="xFactor"></param>
 			/// <param name="yFactor"></param>
 			/// <param name="zFactor"></param>
-			/// <returns></returns>
+			/// <returns name="Topology"></returns>
 			static Topology^ Scale(Topology^ topology, Vertex^ origin, double xFactor, double yFactor, double zFactor);
 
 			/// <summary>

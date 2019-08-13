@@ -325,7 +325,7 @@ namespace Topologic
 		/// Returns the center of mass of any Topology.
 		/// </summary>
 		/// <param name="topology">A Topology</param>
-		/// <returns>The center of mass of the given Topology</returns>
+		/// <returns name="Vertex">The center of mass of the given Topology</returns>
 		property Vertex^ CenterOfMass
 		{
 			Vertex^ get();
@@ -335,7 +335,7 @@ namespace Topologic
 		/// Returns the centroid of any Topology.
 		/// </summary>
 		/// <param name="topology">A Topology</param>
-		/// <returns>The centroid of the given Topology</returns>
+		/// <returns name="Vertex">The centroid of the given Topology</returns>
 		property Vertex^ Centroid
 		{
 			Vertex^ get();

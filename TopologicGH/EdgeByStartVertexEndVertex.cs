@@ -58,7 +58,7 @@ namespace TopologicGH
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
 
-            // Reverse the array of character.
+            
             Topologic.Edge edge = Topologic.Edge.ByStartVertexEndVertex(startVertex, endVertex);
 
             // Use the DA object to assign a new String to the first output parameter.
