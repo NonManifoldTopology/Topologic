@@ -22,7 +22,7 @@ namespace Topologic {
 			/// <param name="x">The x value</param>
 			/// <param name="y">The y value</param>
 			/// <param name="z">The z value</param>
-			/// <returns>The Topology in its new location</returns>
+			/// <returns name="Topology">The Topology in its new location</returns>
 			static Topology^ Translate(Topology^ topology, double x, double y, double z);
 
 			/// <summary>
@@ -34,7 +34,7 @@ namespace Topologic {
 			/// <param name="yVector">The Y vector</param>
 			/// <param name="zVector">The Z vector</param>
 			/// <param name="degree">The angle in degrees</param>
-			/// <returns>The Topology after its rotation</returns>
+			/// <returns name="Topology">The Topology after its rotation</returns>
 			static Topology^ Rotate(Topology^ topology,
 				Vertex^ origin,
 				double xVector, double yVector, double zVector,
@@ -48,7 +48,7 @@ namespace Topologic {
 			/// <param name="xFactor">The X factor</param>
 			/// <param name="yFactor">The Y factor</param>
 			/// <param name="zFactor">The Z factor</param>
-			/// <returns>The Topology after its scaling</returns>
+			/// <returns name="Topology">The Topology after its scaling</returns>
 			static Topology^ Scale(Topology^ topology, Vertex^ origin, double xFactor, double yFactor, double zFactor);
 
 			/// <summary>
@@ -58,13 +58,6 @@ namespace Topologic {
 			/// <param name="anotherTopology">Another Topology</param>
 			/// <returns>The distance between the two Topologies</returns>
 			static double Distance(Topology^ topology, Topology^ anotherTopology);
-
-			/// <summary>
-			/// Returns the center of mass of any Topology.
-			/// </summary>
-			/// <param name="topology">A Topology</param>
-			/// <returns>The center of mass of the given Topology</returns>
-			static Vertex^ CenterOfMass(Topology^ topology);
 
 			/// <summary>
 			/// Transforms a Topology according to translation and rotation factors.

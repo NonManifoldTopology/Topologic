@@ -24,7 +24,8 @@ namespace Topologic
 			}
 		}
 		
-		return gcnew Cluster(TopologicCore::Cluster::ByTopologies(coreTopologies));
+		TopologicCore::Cluster::Ptr pCoreCluster = TopologicCore::Cluster::ByTopologies(coreTopologies);
+		return gcnew Cluster(pCoreCluster);
 	}
 
 	Cluster^ Cluster::AddTopology(Topology^ topology)

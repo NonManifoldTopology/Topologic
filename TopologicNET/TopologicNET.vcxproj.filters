@@ -86,6 +86,18 @@
     <ClInclude Include="include\ShellUtility.h">
       <Filter>Utilities</Filter>
     </ClInclude>
+    <ClInclude Include="include\Geometry.h">
+      <Filter>Geometries</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Line.h">
+      <Filter>Geometries</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NurbsCurve.h">
+      <Filter>Geometries</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NurbsSurface.h">
+      <Filter>Geometries</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\About.cpp" />
@@ -165,6 +177,18 @@
     <ClCompile Include="src\ShellUtility.cpp">
       <Filter>Utilities</Filter>
     </ClCompile>
+    <ClCompile Include="src\Geometry.cpp">
+      <Filter>Geometries</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Line.cpp">
+      <Filter>Geometries</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NurbsCurve.cpp">
+      <Filter>Geometries</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NurbsSurface.cpp">
+      <Filter>Geometries</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Attributes">
@@ -175,6 +199,9 @@
     </Filter>
     <Filter Include="Utilities">
       <UniqueIdentifier>{b6e76095-26a7-4f46-a76d-e407c5946786}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Geometries">
+      <UniqueIdentifier>{950015f1-cf89-4bad-9386-10f1c8a68a45}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

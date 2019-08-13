@@ -87,18 +87,19 @@ namespace TopologicUtilities
 	TopologicCore::Cell::Ptr CellUtility::ByCuboid(
 		const double kXCentroid, const double kYCentroid, const double kZCentroid,
 		const double kXDimension, const double kYDimension, const double kZDimension,
-		const double kXNormal, const double kYNormal, const double kZNormal,
-		const double kXAxisX, const double kYAxisX, const double kZAxisX)
+		const double kXNormal, const double kYNormal, const double kZNormal, // axis Z
+		const double kXAxisX, const double kYAxisX, const double kZAxisX,
+		const double kXAxisY, const double kYAxisY, const double kZAxisY)
 	{
-		gp_Pnt occtLowCorner(
-			kXCentroid - kXDimension / 2.0,
-			kYCentroid - kYDimension / 2.0,
-			kZCentroid - kZDimension / 2.0
-		);
+		gp_Pnt occtCentroid(kXCentroid, kYCentroid, kZCentroid);
+		gp_Pnt occtTransformedLowCorner = occtCentroid.Translated(gp_Vec(-kXNormal, -kYNormal, -kZNormal).Normalized().Scaled(kZDimension / 2.0));
+		occtTransformedLowCorner.Translate(gp_Vec(-kXAxisX, -kYAxisX, -kZAxisX).Normalized().Scaled(kXDimension/2.0));
+		occtTransformedLowCorner.Translate(gp_Vec(-kXAxisY, -kYAxisY, -kZAxisY).Normalized().Scaled(kYDimension / 2.0));
+
 		gp_Ax2 occtAxes(
-			occtLowCorner,
-			gp_Dir(kXNormal, kYNormal, kZNormal),
-			gp_Dir(kXAxisX, kYAxisX, kZAxisX));
+			occtTransformedLowCorner,
+			gp_Dir(gp_Vec(kXNormal, kYNormal, kZNormal).Normalized()),
+			gp_Dir(gp_Vec(kXAxisX, kYAxisX, kZAxisX).Normalized()));
 		BRepPrimAPI_MakeBox occtMakeBox(occtAxes, kXDimension, kYDimension, kZDimension);
 		occtMakeBox.Build();
 
@@ -168,13 +169,27 @@ namespace TopologicUtilities
 		return occtShapeProperties.Mass();
 	}
 
-	bool CellUtility::DoesContain(const TopologicCore::Cell::Ptr & kpCell, const TopologicCore::Vertex::Ptr & kpVertex)
+	CellContainmentState CellUtility::Contains(const TopologicCore::Cell::Ptr & kpCell, const TopologicCore::Vertex::Ptr & kpVertex)
 	{
 		ShapeFix_Solid occtSolidFix(kpCell->GetOcctSolid());
 		occtSolidFix.Perform();
 		BRepClass3d_SolidClassifier occtSolidClassifier(occtSolidFix.Solid(), kpVertex->Point()->Pnt(), Precision::Confusion());
 		TopAbs_State occtState = occtSolidClassifier.State();
-		return (occtState == TopAbs_IN || occtState == TopAbs_ON);
+		
+		if (occtState == TopAbs_IN)
+		{
+			return INSIDE;
+		}
+		else if (occtState == TopAbs_ON)
+		{
+			return ON_BOUNDARY;
+		}
+		else if (occtState == TopAbs_OUT)
+		{
+			return OUTSIDE;
+		}
+		
+		return UNKNOWN;
 	}
 
 	void CellUtility::GetMinMax(const TopologicCore::Cell::Ptr & kpCell, double & rMinX, double & rMaxX, double & rMinY, double & rMaxY, double & rMinZ, double & rMaxZ)

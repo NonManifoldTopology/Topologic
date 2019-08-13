@@ -7,6 +7,7 @@
 namespace Topologic {
 	ref class Vertex;
 	ref class Wire;
+	ref class Geometry;
 
 	/// <summary>
 	/// An Edge is a one-dimensional entity defined by two vertices. It is important to note that while a topologic edge is made of two vertices, its geometry can be a curve with multiple control vertices.
@@ -21,6 +22,11 @@ namespace Topologic {
 		/// <param name="endVertex">The end Vertex</param>
 		/// <returns name="Edge">The created Edge</returns>
 		static Edge^ ByStartVertexEndVertex(Vertex^ startVertex, Vertex^ endVertex);
+
+#ifdef TOPOLOGIC_DYNAMO
+		[IsVisibleInDynamoLibrary(false)]
+#endif
+		static Edge^ ByNurbsParameters(List<Vertex^>^ controlPoints, List<double>^ weights, List<double>^ knots, bool isRational, bool isPeriodic, int degree);
 
 		/// <summary>
 		/// Returns the Edges adjacent to the Edge.
@@ -136,6 +142,8 @@ namespace Topologic {
 		/// <param name="pDynamoLine">A Dynamo line</param>
 		/// <returns>The created Topologic Edge</returns>
 		static Edge^ ByCurve(Autodesk::DesignScript::Geometry::Line^ pDynamoLine);
+#else
+		Topologic::Geometry^ Curve();
 #endif
 
 		/// <summary>

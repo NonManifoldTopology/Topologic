@@ -217,6 +217,9 @@ Function FunctionInstallVersionLeave
   ${NSD_LB_GetSelectionIndex} $ListBoxHWND $LB_output
   System::Call user32::SendMessage(i$HiddenPathListBoxHWND,i${LB_GETTEXT},i$LB_output,t.r0)
   StrCpy $path $0 ;this stores the path
+  StrCpy $OUTDIR $path
+  StrCpy $path $OUTDIR
+  
 FunctionEnd
 
 

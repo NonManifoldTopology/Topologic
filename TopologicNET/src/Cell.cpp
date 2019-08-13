@@ -418,7 +418,10 @@ namespace Topologic
 			pDynamoCoordinateSystem->ZAxis->Z,
 			pDynamoCoordinateSystem->XAxis->X,
 			pDynamoCoordinateSystem->XAxis->Y,
-			pDynamoCoordinateSystem->XAxis->Z
+			pDynamoCoordinateSystem->XAxis->Z,
+			pDynamoCoordinateSystem->YAxis->X,
+			pDynamoCoordinateSystem->YAxis->Y,
+			pDynamoCoordinateSystem->YAxis->Z
 		);
 
 		TopologicCore::Vertex::Ptr coreCentroid = pCoreCell->CenterOfMass();

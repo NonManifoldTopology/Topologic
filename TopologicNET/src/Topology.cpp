@@ -1163,6 +1163,20 @@ namespace Topologic
 		return pCellComplexes;
 	}
 
+	Vertex^ Topology::CenterOfMass::get()
+	{
+		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		TopologicCore::Vertex::Ptr pCoreCenterOfMass = pCoreTopology->CenterOfMass();
+		return gcnew Vertex(pCoreCenterOfMass);
+	}
+
+	Vertex^ Topology::Centroid::get()
+	{
+		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		TopologicCore::Vertex::Ptr pCoreCentroid = pCoreTopology->Centroid();
+		return gcnew Vertex(pCoreCentroid);
+	}
+
 	/*Topology^ Topology::Simplify()
 	{
 		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
@@ -1170,4 +1184,11 @@ namespace Topologic
 		pCoreSimplifiedTopology->Simplify();
 		return Topology::ByCoreTopology(pCoreSimplifiedTopology);
 	}*/
+
+	bool Topology::IsReversed::get()
+	{
+		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+
+		return pCoreTopology->IsReversed();
+	}
 }

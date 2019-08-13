@@ -1,12 +1,16 @@
 #include "Face.h"
-#include <Vertex.h>
-#include <Edge.h>
-#include <Wire.h>
-#include <Shell.h>
-#include <Cell.h>
-#include <FaceFactory.h>
-#include <FaceUtility.h>
-#include <EdgeUtility.h>
+#include "Vertex.h"
+#include "Edge.h"
+#include "Wire.h"
+#include "Shell.h"
+#include "Cell.h"
+#include "FaceFactory.h"
+#include "FaceUtility.h"
+#include "EdgeUtility.h"
+
+#ifndef TOPOLOGIC_DYNAMO
+#include "NurbsSurface.h"
+#endif
 
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepMesh_IncrementalMesh.hxx>
@@ -22,6 +26,7 @@
 #include <Geom_OffsetSurface.hxx>
 #include <Geom_SurfaceOfLinearExtrusion.hxx>
 #include <Geom_SurfaceOfRevolution.hxx>
+#include <GeomConvert.hxx>
 #include <GeomPlate_Surface.hxx>
 #include <ShapeAnalysis.hxx>
 #include <ShapeFix_Edge.hxx>
@@ -120,6 +125,145 @@ namespace Topologic
 		}
 
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Face::ByExternalInternalBoundaries(pCoreExternalBoundary, coreInternalBoundaries);
+
+		return gcnew Face(pCoreFace);
+	}
+
+	Face^ Face::ByNurbsParameters(List<List<Vertex^>^>^ controlPoints, List<List<double>^>^ weights, List<double>^ uKnots, List<double>^ vKnots, bool isRational, bool isUPeriodic, bool isVPeriodic, int uDegree, int vDegree)
+	{
+		if (controlPoints->Count == 0 || controlPoints[0]->Count == 0 ||
+			weights->Count == 0 || weights[0]->Count == 0)
+		{
+			return nullptr;
+		}
+		// 1. NURBS parameters
+		// Transfer the poles/control points
+		//array<array<Autodesk::DesignScript::Geometry::Point^>^>^ pDynamoControlPoints = pDynamoNurbsSurface->ControlPoints();
+
+		TColgp_Array2OfPnt occtPoles(0, controlPoints->Count - 1, 0, controlPoints[0]->Count - 1);
+		for (int i = occtPoles.LowerRow(); i <= occtPoles.UpperRow(); i++)
+		{
+			List<Vertex^>^ controlPoints1D = controlPoints[i];
+			for (int j = occtPoles.LowerCol(); j <= occtPoles.UpperCol(); j++)
+			{
+				List<double>^ coordinates = controlPoints1D[j]->Coordinates;
+				occtPoles.SetValue(i, j, gp_Pnt(coordinates[0], coordinates[1], coordinates[2]));
+			}
+		}
+
+		// Transfer the weights
+		//array<array<double>^>^ pDynamoWeights = pDynamoNurbsSurface->Weights();
+		TColStd_Array2OfReal occtWeights(0, weights->Count - 1, 0, weights[0]->Count - 1);
+		for (int i = occtWeights.LowerRow(); i <= occtWeights.UpperRow(); i++)
+		{
+			List<double>^ weights1D = weights[i];
+			for (int j = occtWeights.LowerCol(); j <= occtWeights.UpperCol(); j++)
+			{
+				double weight = weights1D[j];
+				occtWeights.SetValue(i, j, weight);
+			}
+		}
+
+		// Transfer the U knots and U multiplicities. Note the format difference. OCCT has a separate multiplicity list, while Dynamo simply repeats the knots.
+		//array<double>^ pDynamoUKnots = pDynamoNurbsSurface->UKnots();
+		/*array<double>^ pDynamoUKnotsCopy = gcnew array<double>(pDynamoUKnots->Length);
+		Array::Copy(pDynamoUKnots, pDynamoUKnotsCopy, pDynamoUKnots->Length);
+		Array::Sort(pDynamoUKnotsCopy);*/
+		List<double>^ uniqueUKnots = gcnew List<double>();
+		List<int>^ pUMultiplicities = gcnew List<int>();
+		double previousUKnot = uKnots[0] - 1.0;
+		int uMultiplicity = 0;
+		for each(double uKnot in uKnots)
+		{
+			if (uKnot > previousUKnot)
+			{
+				if (previousUKnot > uKnots[0] - 1.0)
+					pUMultiplicities->Add(uMultiplicity);
+				uniqueUKnots->Add(uKnot);
+				uMultiplicity = 1;
+			}
+			else
+			{
+				uMultiplicity++;
+			}
+			previousUKnot = uKnot;
+		}
+		pUMultiplicities->Add(uMultiplicity);
+
+		TColStd_Array1OfReal occtUKnots(0, uniqueUKnots->Count - 1);
+		for (int i = occtUKnots.Lower(); i <= occtUKnots.Upper(); i++)
+		{
+			occtUKnots.SetValue(i, uniqueUKnots[i]);
+		}
+
+		TColStd_Array1OfInteger occtUMultiplicities(0, pUMultiplicities->Count - 1);
+		for (int i = occtUMultiplicities.Lower(); i <= occtUMultiplicities.Upper(); i++)
+		{
+			occtUMultiplicities.SetValue(i, pUMultiplicities[i]);
+		}
+
+		// Transfer the V knots and V multiplicities. Note the format difference. OCCT has a separate multiplicity list, while Dynamo simply repeats the knots.
+		/*array<double>^ pDynamoVKnots = pDynamoNurbsSurface->VKnots();
+		array<double>^ pDynamoVKnotsCopy = gcnew array<double>(pDynamoVKnots->Length);
+		Array::Copy(pDynamoVKnots, pDynamoVKnotsCopy, pDynamoVKnots->Length);
+		Array::Sort(pDynamoVKnotsCopy);*/
+		List<double>^ uniqueVKnots = gcnew List<double>();
+		List<int>^ pVMultiplicities = gcnew List<int>();
+		double previousVKnot = vKnots[0] - 1.0;
+		int vMultiplicity = 0;
+		for each(double vKnot in vKnots)
+		{
+			if (vKnot > previousVKnot)
+			{
+				if (previousVKnot > vKnots[0] - 1.0)
+					pVMultiplicities->Add(vMultiplicity);
+				uniqueVKnots->Add(vKnot);
+				vMultiplicity = 1;
+			}
+			else
+			{
+				vMultiplicity++;
+			}
+			previousVKnot = vKnot;
+		}
+		pVMultiplicities->Add(vMultiplicity);
+
+		TColStd_Array1OfReal occtVKnots(0, uniqueVKnots->Count - 1);
+		for (int i = occtVKnots.Lower(); i <= occtVKnots.Upper(); i++)
+		{
+			occtVKnots.SetValue(i, uniqueVKnots[i]);
+		}
+
+		TColStd_Array1OfInteger occtVMultiplicities(0, pVMultiplicities->Count - 1);
+		for (int i = occtVMultiplicities.Lower(); i <= occtVMultiplicities.Upper(); i++)
+		{
+			occtVMultiplicities.SetValue(i, pVMultiplicities[i]);
+		}
+
+		// Get other arguments: degrees, periodicness, and rationality
+		
+		TopologicCore::Face::Ptr pCoreFace = nullptr;
+		try {
+			pCoreFace = TopologicCore::Face::BySurface(
+				occtPoles,
+				occtWeights,
+				occtUKnots,
+				occtVKnots,
+				occtUMultiplicities,
+				occtVMultiplicities,
+				uDegree,
+				vDegree,
+				isUPeriodic,
+				isVPeriodic,
+				isRational,
+				nullptr,
+				std::list<TopologicCore::Wire::Ptr>()
+			);
+		}
+		catch (const std::exception& rkException)
+		{
+			throw gcnew Exception(gcnew String(rkException.what()));
+		}
 
 		return gcnew Face(pCoreFace);
 	}
@@ -960,6 +1104,36 @@ namespace Topologic
 			return gcnew Face(pCoreFace);
 		}
 	}
+#else
+	NurbsSurface^ Face::Surface(Handle(Geom_BSplineSurface) pOcctBSplineSurface)
+	{
+		TopologicCore::NurbsSurface::Ptr pCoreNurbsSurface = std::make_shared<TopologicCore::NurbsSurface>(pOcctBSplineSurface, *m_pCoreFace);
+		return gcnew NurbsSurface(pCoreNurbsSurface);
+	}
+
+	Object^ Face::Surface()
+	{
+		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
+		Handle(Geom_Surface) pOcctSurface = pCoreFace->Surface();
+
+		Handle(Geom_BSplineSurface) pOcctBSplineSurface = Handle_Geom_BSplineSurface::DownCast(pOcctSurface);
+
+		// If not BSpline Surface, create one.
+		if (!pOcctBSplineSurface.IsNull())
+		{
+			return Surface(pOcctBSplineSurface);
+		}
+
+		try {
+			pOcctBSplineSurface = GeomConvert::SurfaceToBSplineSurface(pOcctSurface);
+			return Surface(pOcctBSplineSurface);
+		}
+		catch (Standard_DomainError)
+		{
+			// https://www.opencascade.com/doc/occt-7.2.0/refman/html/class_geom_convert.html#aec7d0c9e937cc0bcbe97fba8b3c360bf
+			throw gcnew Exception("This surface is not previously defined.");
+		}
+	}
 #endif
 
 	List<Edge^>^ Face::SharedEdges(Face^ face)
@@ -1110,7 +1284,7 @@ namespace Topologic
 			return TriangulatedMesh();
 		}
 #else
-		return nullptr;
+		return Surface();
 #endif
 	}
 

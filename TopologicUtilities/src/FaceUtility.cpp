@@ -123,7 +123,13 @@ namespace TopologicUtilities
 
 		GeomLProp_SLProps occtProperties(kpFace->Surface(), occtU, occtV, 1, Precision::Confusion());
 
-		return occtProperties.Normal();
+		gp_Dir occtNormal = occtProperties.Normal();
+		if (kpFace->IsReversed())
+		{
+			occtNormal.Reverse();
+		}
+		return occtNormal;
+
 	}
 
 	void FaceUtility::UVSamplePoints(

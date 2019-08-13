@@ -602,6 +602,36 @@ namespace TopologicCore
 		ContextManager::GetInstance().Remove(rkTopology->GetOcctShape(), GetOcctShape());
 	}
 
+	Vertex::Ptr Topology::Centroid() const
+	{
+		std::list<Vertex::Ptr> vertices;
+		Vertices(vertices);
+
+		if (vertices.empty())
+		{
+			return nullptr;
+		}
+
+		double averageX = 0.0;
+		double averageY = 0.0;
+		double averageZ = 0.0;
+		for (const Vertex::Ptr kpVertex : vertices)
+		{
+			std::tuple<double, double, double> coordinates = kpVertex->Coordinates();
+			averageX += std::get<0>(coordinates);
+			averageY += std::get<1>(coordinates);
+			averageZ += std::get<2>(coordinates);
+		}
+
+		double numOfVertices = (double)vertices.size();
+		averageX /= numOfVertices;
+		averageY /= numOfVertices;
+		averageZ /= numOfVertices;
+
+		Vertex::Ptr centroid = Vertex::ByCoordinates(averageX, averageY, averageZ);
+		return centroid;
+	}
+
 	Topology::Ptr Topology::RemoveContents(const std::list<Topology::Ptr>& rkTopologies)
 	{
 		std::list<Topology::Ptr> contents;
@@ -2654,6 +2684,12 @@ namespace TopologicCore
 	{
 		bool isSame = GetOcctShape().IsSame(kpTopology->GetOcctShape());
 		return isSame;
+	}
+
+	bool Topology::IsReversed()
+	{
+		TopAbs_Orientation occtOrientation = GetOcctShape().Orientation();
+		return occtOrientation == TopAbs_REVERSED;
 	}
 
 	void Topology::Members(TopTools_ListOfShape& rOcctMembers) const

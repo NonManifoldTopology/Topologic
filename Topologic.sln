@@ -15,7 +15,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TopologicUtilities", "Topol
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TopologicNET", "TopologicNET\TopologicNET.vcxproj", "{C90904EC-87D6-4A5E-B7C2-9DEC3B078D85}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TopologicGrasshopper", "TopologicGrasshopper\TopologicGrasshopper.csproj", "{25256EB9-AA86-4DFA-A710-F2908C04C2C9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TopologicGH", "TopologicGH\TopologicGH.csproj", "{25256EB9-AA86-4DFA-A710-F2908C04C2C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,0 +1,152 @@
+;NSIS Modern User Interface
+;Basic Example Script
+;Written by Joost Verburg
+
+;--------------------------------
+;Include Modern UI
+
+  !include "MUI2.nsh"
+  !include "Sections.nsh"
+  !include "LogicLib.nsh"
+  !include "NSISList.nsh"
+  !include "WinMessages.nsh"
+  ReserveFile "${NSISDIR}\Plugins\NSISList.dll"
+ 
+
+;--------------------------------
+;General
+  !define /date MyTIMESTAMP "%Y-%m-%d-%H-%M-%S"
+
+  ;Name and file
+  Name "Topologic"
+  OutFile "TopologicGHInstaller.exe"
+
+  ;Default installation folder
+  InstallDir "$APPDATA\Grasshopper\Libraries\Topologic"
+  
+  ;Request application privileges for Windows Vista
+  RequestExecutionLevel admin 
+
+;--------------------------------
+;Interface Settings
+
+  !define MUI_ABORTWARNING
+;--------------------------------
+;Pages
+  ;!define MUI_WELCOMEPAGE_TITLE "Test"
+  !define MUI_WELCOMEPAGE_TEXT "This Setup will guide you through the installation of Topologic as a Grasshopper plugin.$\r$\n$\r$\nNOTE: Please close all Rhino/Grasshopper instances before proceeding with the next installation steps.$\r$\n$\r$\nClick Next to continue."
+  
+  !define MUI_ICON "Topologic-Logo-ColourOnWhite.ico"
+  !define MUI_HEADERIMAGE
+  !define MUI_HEADERIMAGE_BITMAP "TopoLogic-Logo.bmp"
+  !define MUI_HEADERIMAGE_UNBITMAP "TopoLogic-Logo.bmp"
+  !define MUI_HEADERIMAGE_RIGHT
+  
+  !insertmacro MUI_PAGE_WELCOME
+  !insertmacro MUI_PAGE_LICENSE "TopologicLicense.rtf"
+  !insertmacro MUI_PAGE_COMPONENTS
+  ;!insertmacro MUI_PAGE_DIRECTORY
+  ;Page custom FunctionInstallVersionEnter FunctionInstallVersionLeave ;Custom page
+  !insertmacro MUI_PAGE_INSTFILES
+  
+  !insertmacro MUI_UNPAGE_CONFIRM
+  !insertmacro MUI_UNPAGE_INSTFILES
+  
+;--------------------------------
+;Languages
+ 
+  !insertmacro MUI_LANGUAGE "English"
+
+;--------------------------------
+;Installer Sections
+LangString PAGE_TITLE ${LANG_ENGLISH} "Choose Install Location"
+
+Section "TopologicGrasshopper" SectionTopologicGrasshopper
+	SetOutPath "$INSTDIR"
+	File ..\output\x64\Release\TopologicCore.dll
+    File ..\output\x64\Release\TopologicUtilities.dll
+    File ..\output\x64\Release\TopologicNET.dll
+    File ..\output\x64\Release\license.file
+    File ..\output\x64\Release\TK*.dll
+	File ..\output\x64\Release\TopologicGH.gha
+
+	Call CheckVCRedistributable
+    WriteUninstaller "Uninstall.exe"
+SectionEnd
+
+; Section "TopologicEnergy" SectionTopologicEnergy	
+	; File ..\output\x64\Release\TopologicEnergy.dll
+	; File ..\output\x64\Release\TopologicEnergy.customization.dll
+	; File ..\output\x64\Release\TopologicEnergy.xml
+	; File ..\output\x64\Release\TopologicEnergy_DynamoCustomization.xml
+	; File ..\output\x64\Release\OpenStudio.dll
+	; File ..\output\x64\Release\openstudio_csharp.dll
+	; File ..\output\x64\Release\openstudio_model_csharp.dll
+	; File ..\output\x64\Release\openstudio_translators_csharp.dll
+; SectionEnd
+	
+Function .onInit
+  IntOp $R0 ${SF_RO} | ${SF_SELECTED}
+  SectionSetFlags ${SectionTopologicGrasshopper} $R0
+  ;SectionSetFlags ${SectionTopologicEnergy} 0
+  
+FunctionEnd
+
+Function CheckVCRedistributable
+  ClearErrors
+  SetRegView 64
+  ReadRegDWORD $0 HKLM "SOFTWARE\WOW6432Node\Microsoft\VisualStudio\14.0\VC\Runtimes\x64" "Installed"
+  ${If} ${Errors}
+    ;Install Redistributable
+	Call InstallVCRedistributable
+  ${Else}
+    ${If} $0 == ""
+      ;Install Redistributable, although this should not happen.
+	  Call InstallVCRedistributable
+    ${Else} ; Compare version
+	  ReadRegDWORD $1 HKLM "SOFTWARE\WOW6432Node\Microsoft\VisualStudio\14.0\VC\Runtimes\x64" "Major"
+	  ${If} $1 < 14
+	    ;Install Redistributable
+	    Call InstallVCRedistributable
+	  ${Else}
+	    ReadRegDWORD $2 HKLM "SOFTWARE\WOW6432Node\Microsoft\VisualStudio\14.0\VC\Runtimes\x64" "Minor"
+		${If} $2 < 14
+	      ;Install Redistributable
+	      Call InstallVCRedistributable
+	    ${EndIf}
+	  ${EndIf}
+    ${EndIf}
+  ${EndIf}
+FunctionEnd
+
+Function InstallVCRedistributable
+  MessageBox MB_YESNO "No Visual Studio 2017 Redistributable (x64) installation is found. Press Yes to install it, otherwise press No to skip this process (you will need to download and install it separately)." IDYES InstallVCRedistributableYes IDNO InstallVCRedistributableFinish
+  InstallVCRedistributableYes:
+	File vc_redist.x64.exe
+    ExecWait "$INSTDIR\vc_redist.x64.exe" $0
+    ${If} $0 <> 0
+      MessageBox MB_OK "Visual Studio 2017 Redistributable (x64) was not installed."
+    ${EndIf}
+  InstallVCRedistributableFinish:
+  Delete $INSTDIR\vc_redist.x64.exe ;bug: if the installation halts (e.g. not restarted), this file is not deleted
+FunctionEnd
+;--------------------------------
+;Descriptions
+
+
+;--------------------------------
+;Uninstaller Section
+
+Section "Uninstall"
+
+  ;ADD YOUR OWN FILES HERE...
+  Delete "$INSTDIR\Uninstall.exe"
+  Delete "$INSTDIR\TopologicCore.dll"
+  Delete "$INSTDIR\TopologicUtilities.dll"
+  Delete "$INSTDIR\TopologicNET.dll"
+  Delete "$INSTDIR\license.file"
+  Delete "$INSTDIR\TK*.dll"
+  Delete "$INSTDIR\TopologicGH.gha"
+  ;RMDir "$INSTDIR"
+
+SectionEnd

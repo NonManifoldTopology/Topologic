@@ -24,7 +24,7 @@ namespace TopologicEnergy
 		/// <param name="EPColumnName"></param>
 		/// <param name="EPUnits"></param>
 		/// <returns name="SimulationResult"></returns>
-		static Object^ ByEnergySimulation(EnergySimulation^ energySimulation, String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPUnits);
+		static SimulationResult^ ByEnergySimulation(EnergySimulation^ energySimulation, String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPUnits);
 
 		/*/// <summary>
 		/// 

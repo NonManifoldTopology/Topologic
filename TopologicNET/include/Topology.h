@@ -324,6 +324,27 @@ namespace Topologic
 		/// <returns name="Topology">The result of the Trim operation</returns>
 		Topology^ Trim(Topology^ topology);*/
 
+
+		/// <summary>
+		/// Returns the center of mass of any Topology.
+		/// </summary>
+		/// <param name="topology">A Topology</param>
+		/// <returns name="Vertex">The center of mass of the given Topology</returns>
+		property Vertex^ CenterOfMass
+		{
+			Vertex^ get();
+		}
+
+		/// <summary>
+		/// Returns the centroid of any Topology.
+		/// </summary>
+		/// <param name="topology">A Topology</param>
+		/// <returns name="Vertex">The centroid of the given Topology</returns>
+		property Vertex^ Centroid
+		{
+			Vertex^ get();
+		}
+
 		/// <summary>
 		/// Exports a Topology to a BRep file (.brep).
 		/// </summary>
@@ -343,6 +364,14 @@ namespace Topologic
 		/// </summary>
 		/// <returns name="String">The topological information of the input Topology</returns>
 		String^ Analyze();
+
+#ifdef TOPOLOGIC_DYNAMO
+		[IsVisibleInDynamoLibrary(false)]
+#endif
+		property bool IsReversed
+		{
+			bool get();
+		}
 
 		/// <summary>
 		/// Returns all sub-topologies (immediate constituent members) of a Topology.

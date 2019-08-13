@@ -575,6 +575,8 @@ namespace TopologicCore
 
 		static TopoDS_Vertex CenterOfMass(const TopoDS_Shape& rkOcctShape);
 
+		TOPOLOGIC_API std::shared_ptr<Vertex> Centroid() const;
+
 		/// <summary>
 		/// <para>
 		/// Identifies the class type by GUID. Used in the factory class system since GUID is easily extendable.
@@ -616,6 +618,8 @@ namespace TopologicCore
 #endif
 
 		TOPOLOGIC_API void RegisterFactory(const std::string& rkGuid, const std::shared_ptr<TopologyFactory>& kpTopologyFactory);
+
+		TOPOLOGIC_API bool IsReversed();
 
 	protected:
 		Topology(const int kDimensionality, const TopoDS_Shape& rkOcctShape, const std::string& rkGuid = "");

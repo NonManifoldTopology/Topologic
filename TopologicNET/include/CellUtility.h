@@ -52,7 +52,8 @@ namespace Topologic {
 			static Cell^ ByCuboid(double xCentroid, double yCentroid, double zCentroid,
 				double xDimension, double yDimension, double zDimension,
 				double xNormal, double yNormal, double zNormal,
-				double xAxisX, double yAxisX, double ZAxisX);
+				double xAxisX, double yAxisX, double ZAxisX,
+				double xAxisY, double yAxisY, double ZAxisY);
 
 			/// <summary>
 			/// Creates a Cell by a Sphere.
@@ -90,8 +91,9 @@ namespace Topologic {
 			/// </summary>
 			/// <param name="cell">The Cell</param>
 			/// <param name="vertex">The Vertex</param>
+			/// <param name="allowOnBoundary">Is the Vertex allowed on the Cell's boundary?</param>
 			/// <returns>True or false</returns>
-			static bool Contains(Cell^ cell, Vertex^ vertex);
+			static bool Contains(Cell^ cell, Vertex^ vertex, bool allowOnBoundary);
 
 			/// <summary>
 			/// Returns six values associated to the x, y, z coordinates of the bounding box of the Cell.

@@ -4,12 +4,20 @@
 
 #include <TopologicCore/include/Face.h>
 
+#ifndef TOPOLOGIC_DYNAMO
+#include <Geom_BSplineSurface.hxx>
+#endif
+
 namespace Topologic {
 	ref class Vertex;
 	ref class Edge;
 	ref class Wire;
 	ref class Shell;
 	ref class Cell;
+
+#ifndef TOPOLOGIC_DYNAMO
+	ref class NurbsSurface;
+#endif
 
 	/// <summary>
 	/// A Face is a two-dimensional region defined by a collection of closed Wires. The geometry of a face can be flat or undulating.
@@ -86,6 +94,11 @@ namespace Topologic {
 		/// <param name="internalBoundaries">A set of internal Wires</param>
 		/// <returns name="Face">The created Face</returns>
 		static Face^ ByExternalInternalBoundaries(Wire^ externalBoundary, System::Collections::Generic::IEnumerable<Wire^>^ internalBoundaries);
+
+#ifdef TOPOLOGIC_DYNAMO
+		[IsVisibleInDynamoLibrary(false)]
+#endif
+		static Face^ ByNurbsParameters(List<List<Vertex^>^>^ controlPoints, List<List<double>^>^ weights, List<double>^ uKnots, List<double>^ vKnots, bool isRational, bool isUPeriodic, bool isVPeriodic, int uDegree, int vDegree);
 
 		/// <summary>
 		/// Creates a Face by a list of Edges.
@@ -199,6 +212,18 @@ namespace Topologic {
 		/// <returns></returns>
 		static Face^ BySurface(Autodesk::DesignScript::Geometry::NurbsSurface^ pDynamoNurbsSurface,
 			array<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoPerimeterCurves);
+#else
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		Object^ Surface();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		NurbsSurface^ Surface(Handle(Geom_BSplineSurface) pOcctBSplineSurface);
 #endif
 
 	protected:

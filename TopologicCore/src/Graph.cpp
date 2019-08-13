@@ -18,6 +18,7 @@
 
 #include <algorithm>
 #include <numeric>
+#include <queue>
 
 namespace TopologicCore
 {
@@ -27,11 +28,11 @@ namespace TopologicCore
 	}
 
 	Graph::Ptr Graph::ByTopology(
-		const Topology::Ptr topology, 
+		const Topology::Ptr topology,
 		const bool kDirect,
-		const bool kViaSharedTopologies, 
-		const bool kViaSharedApertures, 
-		const bool kToExteriorTopologies, 
+		const bool kViaSharedTopologies,
+		const bool kViaSharedApertures,
+		const bool kToExteriorTopologies,
 		const bool kToExteriorApertures)
 	{
 		switch (topology->GetType())
@@ -61,7 +62,7 @@ namespace TopologicCore
 			kToExteriorTopologies,
 			kToExteriorApertures);
 
-		case TOPOLOGY_APERTURE: 
+		case TOPOLOGY_APERTURE:
 			return Graph::ByTopology(
 				std::dynamic_pointer_cast<Aperture>(topology)->Topology(),
 				kDirect,
@@ -85,6 +86,7 @@ namespace TopologicCore
 
 	Graph::Graph(const Graph* kpAnotherGraph)
 		: m_graphDictionary(kpAnotherGraph->m_graphDictionary)
+		, m_occtEdges(kpAnotherGraph->m_occtEdges)
 	{
 	}
 
@@ -258,12 +260,12 @@ namespace TopologicCore
 		}
 	}
 
-	int Graph::Degree(const std::shared_ptr<Vertex>& kpVertex) const
+	int Graph::VertexDegree(const std::shared_ptr<Vertex>& kpVertex) const
 	{
-		return Degree(kpVertex->GetOcctVertex());
+		return VertexDegree(kpVertex->GetOcctVertex());
 	}
 
-	int Graph::Degree(const TopoDS_Vertex & rkOcctVertex) const
+	int Graph::VertexDegree(const TopoDS_Vertex & rkOcctVertex) const
 	{
 		if (m_graphDictionary.find(rkOcctVertex) == m_graphDictionary.end())
 		{
@@ -279,13 +281,9 @@ namespace TopologicCore
 
 	void Graph::AdjacentVertices(const std::shared_ptr<Vertex>& kpVertex, std::list<std::shared_ptr<Vertex>>& rAdjacentVertices) const
 	{
-		TopoDS_Vertex occtQueryVertex = kpVertex->GetOcctVertex();
-		if (!ContainsVertex(occtQueryVertex, 0.0001))
-		{
-			return;
-		}
+		TopTools_MapOfShape occtAdjacentVertices;
+		AdjacentVertices(kpVertex->GetOcctVertex(), occtAdjacentVertices);
 
-		TopTools_MapOfShape occtAdjacentVertices = m_graphDictionary.find(occtQueryVertex)->second;
 		for (TopTools_MapIteratorOfMapOfShape mapIterator(occtAdjacentVertices);
 			mapIterator.More();
 			mapIterator.Next())
@@ -293,6 +291,16 @@ namespace TopologicCore
 			Vertex::Ptr adjacentVertex = std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(mapIterator.Value()));
 			rAdjacentVertices.push_back(adjacentVertex);
 		}
+	}
+
+	void Graph::AdjacentVertices(const TopoDS_Vertex& rkOcctVertex, TopTools_MapOfShape& rOcctAdjacentVertices) const
+	{
+		if (!ContainsVertex(rkOcctVertex, 0.0001))
+		{
+			return;
+		}
+
+		rOcctAdjacentVertices = m_graphDictionary.find(rkOcctVertex)->second;
 	}
 
 	void Graph::Connect(const std::shared_ptr<Vertex>& kpVertex1, const std::shared_ptr<Vertex>& kpVertex2, const double kTolerance)
@@ -371,15 +379,15 @@ namespace TopologicCore
 		for (const std::pair<TopoDS_Vertex, TopTools_MapOfShape>& rkDictionaryPair : m_graphDictionary)
 		{
 			Vertex::Ptr vertex = std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(rkDictionaryPair.first));
-			rDegreeSequence.push_back(Degree(vertex));
+			rDegreeSequence.push_back(VertexDegree(vertex));
 		}
 
-		 rDegreeSequence.sort(std::greater<int>());
+		rDegreeSequence.sort(std::greater<int>());
 	}
 
 	double Graph::Density() const
 	{
-		int numOfVertices = (int) m_graphDictionary.size();
+		int numOfVertices = (int)m_graphDictionary.size();
 
 		std::list<Edge::Ptr> edges;
 		Edges(edges);
@@ -416,7 +424,7 @@ namespace TopologicCore
 
 		for (const std::pair<TopoDS_Vertex, TopTools_MapOfShape>& kpPair : m_graphDictionary)
 		{
-			int vertexDegree = Degree(kpPair.first);
+			int vertexDegree = VertexDegree(kpPair.first);
 			if (vertexDegree < minimumDelta)
 			{
 				minimumDelta = vertexDegree;
@@ -431,7 +439,7 @@ namespace TopologicCore
 
 		for (const std::pair<TopoDS_Vertex, TopTools_MapOfShape>& kpPair : m_graphDictionary)
 		{
-			int vertexDegree = Degree(kpPair.first);
+			int vertexDegree = VertexDegree(kpPair.first);
 			if (vertexDegree > maximumDelta)
 			{
 				maximumDelta = vertexDegree;
@@ -441,7 +449,7 @@ namespace TopologicCore
 	}
 
 	void Graph::AllPaths(
-		const Vertex::Ptr & kpStartVertex, 
+		const Vertex::Ptr & kpStartVertex,
 		const Vertex::Ptr & kpEndVertex,
 		const bool kUseTimeLimit,
 		const int kTimeLimitInSeconds,
@@ -453,12 +461,12 @@ namespace TopologicCore
 	}
 
 	void Graph::AllPaths(
-		const Vertex::Ptr & kpStartVertex, 
+		const Vertex::Ptr & kpStartVertex,
 		const Vertex::Ptr & kpEndVertex,
 		const bool kUseTimeLimit,
 		const int kTimeLimitInSeconds,
 		const std::chrono::system_clock::time_point& rkStartingTime,
-		std::list<Vertex::Ptr>& rPath, 
+		std::list<Vertex::Ptr>& rPath,
 		std::list<Wire::Ptr>& rPaths) const
 	{
 		if (kUseTimeLimit)
@@ -470,7 +478,7 @@ namespace TopologicCore
 				return;
 			}
 		}
-		
+
 		if (!ContainsVertex(kpStartVertex, 0.0001))
 		{
 			return;
@@ -552,7 +560,7 @@ namespace TopologicCore
 		}
 
 		if (kpStartVertex->IsSame(kpEndVertex))
-		//if (kpStartVertex == kpEndVertex)
+			//if (kpStartVertex == kpEndVertex)
 		{
 			Wire::Ptr pathWire = ConstructPath(rPath);
 			return pathWire;
@@ -622,7 +630,6 @@ namespace TopologicCore
 			if (occtVertexMinDistance == rkOcctEndVertex)
 			{
 				std::list<Vertex::Ptr> path;
-				//path.push_front(std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(rkOcctEndVertex)));
 				TopoDS_Vertex occtCurrentVertex = occtVertexMinDistance;
 				if (parentMap.find(occtCurrentVertex) != parentMap.end() ||
 					occtVertexMinDistance == rkOcctStartVertex)
@@ -654,7 +661,6 @@ namespace TopologicCore
 				double length = 0.0;
 				if (!occtVertexMinDistance.IsSame(occtNeighbour))
 				{
-					//length = 1.0; // to be replaced by the cost
 					length = ComputeCost(occtVertexMinDistance, occtNeighbour, rkVertexKey, rkEdgeKey);
 				}
 				double alternativeDistance = distanceMap[occtVertexMinDistance] + length;
@@ -667,6 +673,130 @@ namespace TopologicCore
 		}
 
 		return nullptr;
+	}
+
+	void Graph::ShortestPaths(
+		const Vertex::Ptr & kpStartVertex,
+		const Vertex::Ptr & kpEndVertex,
+		const std::string& rkVertexKey,
+		const std::string& rkEdgeKey,
+		const bool kUseTimeLimit,
+		const int kTimeLimitInSeconds,
+		std::list<std::shared_ptr<Wire>>& rPaths) const
+	{
+		return ShortestPaths(kpStartVertex->GetOcctVertex(), kpEndVertex->GetOcctVertex(), rkVertexKey, rkEdgeKey, kUseTimeLimit, kTimeLimitInSeconds, rPaths);
+	}
+
+	void Graph::ShortestPaths(
+		const TopoDS_Vertex & rkOcctStartVertex,
+		const TopoDS_Vertex & rkOcctEndVertex,
+		const std::string& rkVertexKey,
+		const std::string& rkEdgeKey,
+		const bool kUseTimeLimit,
+		const int kTimeLimitInSeconds,
+		std::list<std::shared_ptr<Wire>>& rPaths) const
+	{
+		auto startingTime = std::chrono::system_clock::now();
+
+		struct Node
+		{
+			TopoDS_Vertex val;
+			std::list<TopoDS_Vertex> path;
+			double distance;
+		};
+
+		const double kInfiniteDistance = std::numeric_limits<double>::max();
+
+		std::map<TopoDS_Vertex, double, OcctShapeComparator> distanceMap;
+		std::list<Vertex::Ptr> vertices;
+		Vertices(vertices);
+		for (const Vertex::Ptr& kpVertex : vertices)
+		{
+			distanceMap.insert(std::pair<TopoDS_Vertex, double>(kpVertex->GetOcctVertex(), kInfiniteDistance));
+		}
+		std::queue<Node> occtVertexQueue;
+		std::list<Node> occtNodePaths;
+		Node startNode;
+		startNode.val = rkOcctStartVertex;
+		startNode.path.push_back(rkOcctStartVertex);
+		startNode.distance = 0.0;
+		occtVertexQueue.push(startNode);
+
+		double minDistance = kInfiniteDistance;
+		distanceMap[rkOcctStartVertex] = 0.0;
+
+		while (!occtVertexQueue.empty())
+		{
+			if (kUseTimeLimit)
+			{
+				auto currentTime = std::chrono::system_clock::now();
+				auto timeDifferenceInSeconds = std::chrono::duration_cast<std::chrono::seconds>(currentTime - startingTime);
+				if (timeDifferenceInSeconds.count() > kTimeLimitInSeconds)
+				{
+					break;
+				}
+			}
+
+			Node currentNode = occtVertexQueue.front();
+			occtVertexQueue.pop();
+			if (currentNode.val == rkOcctEndVertex && currentNode.distance <= minDistance)
+			{
+				minDistance = currentNode.distance;
+				occtNodePaths.push_back(currentNode);
+			}
+
+			if (currentNode.distance <= minDistance)
+			{
+				TopTools_MapOfShape occtAdjacentVertices;
+				AdjacentVertices(currentNode.val, occtAdjacentVertices);
+				for (TopTools_MapIteratorOfMapOfShape occtAdjacentVertexIterator(occtAdjacentVertices);
+					occtAdjacentVertexIterator.More();
+					occtAdjacentVertexIterator.Next())
+				{
+					TopoDS_Vertex occtAdjacentVertex = TopoDS::Vertex(occtAdjacentVertexIterator.Value());
+					double currentDistance = distanceMap[occtAdjacentVertex];
+					if (distanceMap[occtAdjacentVertex] >= currentNode.distance)
+					{
+						Node adjacentVertex;
+						adjacentVertex.val = occtAdjacentVertex;
+						adjacentVertex.path = currentNode.path;
+						adjacentVertex.path.push_back(occtAdjacentVertex);
+
+						double edgeCost = ComputeEdgeCost(currentNode.val, occtAdjacentVertex, rkEdgeKey);
+						adjacentVertex.distance = currentNode.distance + edgeCost;
+
+						double vertexCost = ComputeVertexCost(occtAdjacentVertex, rkVertexKey);
+						adjacentVertex.distance += vertexCost;
+
+						distanceMap[occtAdjacentVertex] = adjacentVertex.distance;
+						occtVertexQueue.push(adjacentVertex);
+					}
+				}
+			}
+		}
+
+		for (const Node& rkNode : occtNodePaths)
+		{
+			if (rkNode.distance > minDistance)
+			{
+				continue;
+			}
+
+			std::list<Vertex::Ptr> vertices;
+			for (const TopoDS_Vertex& rkOcctVertex : rkNode.path)
+			{
+				Vertex::Ptr vertex = std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(rkOcctVertex));
+				vertices.push_back(vertex);
+			}
+			if (vertices.size() > 1)
+			{
+				Wire::Ptr path = ConstructPath(vertices);
+				if (path != nullptr)
+				{
+					rPaths.push_back(path);
+				}
+			}
+		}
 	}
 
 	int Graph::Diameter() const
@@ -734,7 +864,7 @@ namespace TopologicCore
 			return std::numeric_limits<int>::max(); // infinite distance
 		}
 
-		TopTools_MapOfShape occtAdjacentVertices = occtAdjacentVerticesPair->second; 
+		TopTools_MapOfShape occtAdjacentVertices = occtAdjacentVerticesPair->second;
 		int eccentricity = 0;
 		for (TopTools_MapIteratorOfMapOfShape mapIterator(occtAdjacentVertices);
 			mapIterator.More();
@@ -774,15 +904,15 @@ namespace TopologicCore
 
 			for (const int k : range)
 			{
-				int left = std::accumulate(sequenceVector.begin(), sequenceVector.begin()+k, 0);
+				int left = std::accumulate(sequenceVector.begin(), sequenceVector.begin() + k, 0);
 				std::vector<int> endSequence;
-				for (std::vector<int>::iterator x = sequenceVector.begin()+k;
+				for (std::vector<int>::iterator x = sequenceVector.begin() + k;
 					x != sequenceVector.end();
 					x++)
 				{
 					endSequence.push_back(std::min(*x, k));
 				}
-				int right = k * (k-1) + std::accumulate(endSequence.begin(), endSequence.end(), 0);
+				int right = k * (k - 1) + std::accumulate(endSequence.begin(), endSequence.end(), 0);
 				if (left > right)
 				{
 					return false;
@@ -822,7 +952,7 @@ namespace TopologicCore
 			if (vertexIterator != m_graphDictionary.end())
 			{
 				TopTools_MapOfShape& rOcctConnectedVertices = vertexIterator->second;
-				for(TopTools_MapIteratorOfMapOfShape occtConnectedVertexIterator(rOcctConnectedVertices);
+				for (TopTools_MapIteratorOfMapOfShape occtConnectedVertexIterator(rOcctConnectedVertices);
 					occtConnectedVertexIterator.More();
 					occtConnectedVertexIterator.Next())
 				{
@@ -916,7 +1046,7 @@ namespace TopologicCore
 		{
 			return nullptr;
 		}
-		
+
 		TopTools_MapOfShape adjacentVerticesToVertex1 = kAdjacentVerticesIterator1->second;
 		if (!adjacentVerticesToVertex1.Contains(occtQueryVertex2))
 		{
@@ -1492,7 +1622,6 @@ namespace TopologicCore
 
 			std::list<Vertex::Ptr>::const_iterator nextVertexIterator = vertexIterator;
 			nextVertexIterator++;
-			//Edge::Ptr edge = Edge::ByStartVertexEndVertex(*vertexIterator, *nextVertexIterator);
 			TopoDS_Edge occtEdge = FindEdge((*vertexIterator)->GetOcctVertex(), (*nextVertexIterator)->GetOcctVertex());
 
 			Edge::Ptr edge = nullptr;
@@ -1565,11 +1694,11 @@ namespace TopologicCore
 		{
 			return edgeCost;
 		}
-		double vertexCost = ComputeVertexCost(rkVertex1, rkVertex2, rkVertexKey);
+		double vertexCost = ComputeVertexCost(rkVertex2, rkVertexKey);
 		return vertexCost + edgeCost;
 	}
 
-	double Graph::ComputeVertexCost(const TopoDS_Vertex & rkVertex1, const TopoDS_Vertex & rkVertex2, const std::string & rkVertexKey) const
+	double Graph::ComputeVertexCost(const TopoDS_Vertex & rkVertex, const std::string & rkVertexKey) const
 	{
 		if (rkVertexKey.compare("") == 0)
 		{
@@ -1578,7 +1707,7 @@ namespace TopologicCore
 
 
 		AttributeManager::AttributeMap attributeMap;
-		bool hasAttribute = AttributeManager::GetInstance().FindAll(rkVertex2, attributeMap);
+		bool hasAttribute = AttributeManager::GetInstance().FindAll(rkVertex, attributeMap);
 		if (!hasAttribute)
 		{
 			return 0.0;

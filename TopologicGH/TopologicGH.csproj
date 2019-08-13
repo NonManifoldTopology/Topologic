@@ -1,0 +1,267 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{25256EB9-AA86-4DFA-A710-F2908C04C2C9}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TopologicGH</RootNamespace>
+    <AssemblyName>TopologicGH</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\output\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
+    <DocumentationFile>
+    </DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\output\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="GH_IO">
+      <HintPath>..\references\Rhinoceros 5\GH_IO.dll</HintPath>
+    </Reference>
+    <Reference Include="Grasshopper">
+      <HintPath>..\references\Rhinoceros 5\Grasshopper.dll</HintPath>
+    </Reference>
+    <Reference Include="RhinoCommon">
+      <HintPath>..\references\Rhinoceros 5\RhinoCommon.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AboutVersion.cs" />
+    <Compile Include="ApertureByTopologyContext.cs" />
+    <Compile Include="ApertureTopology.cs" />
+    <Compile Include="GraphAddEdges.cs" />
+    <Compile Include="GraphAddVertices.cs" />
+    <Compile Include="GraphAdjacentVertices.cs" />
+    <Compile Include="GraphAllPaths.cs" />
+    <Compile Include="GraphByTopology.cs" />
+    <Compile Include="GraphConnect.cs" />
+    <Compile Include="GraphContainsEdge.cs" />
+    <Compile Include="GraphContainsVertex.cs" />
+    <Compile Include="GraphVertexDegree.cs" />
+    <Compile Include="GraphDegreeSequence.cs" />
+    <Compile Include="GraphDensity.cs" />
+    <Compile Include="GraphDiameter.cs" />
+    <Compile Include="GraphDistance.cs" />
+    <Compile Include="GraphEdgeAtVertices.cs" />
+    <Compile Include="GraphEdges.cs" />
+    <Compile Include="GraphIncidentEdges.cs" />
+    <Compile Include="GraphIsComplete.cs" />
+    <Compile Include="GraphIsErdoesGallai.cs" />
+    <Compile Include="GraphIsolatedVertices.cs" />
+    <Compile Include="GraphMaximumDelta.cs" />
+    <Compile Include="GraphMinimumDelta.cs" />
+    <Compile Include="GraphPath.cs" />
+    <Compile Include="GraphRemoveEdges.cs" />
+    <Compile Include="GraphRemoveVertices.cs" />
+    <Compile Include="GraphShortestPath.cs" />
+    <Compile Include="GraphTopology.cs" />
+    <Compile Include="GraphVertices.cs" />
+    <Compile Include="GraphVerticesAtCoordinates.cs" />
+    <Compile Include="TopologyCentroid.cs" />
+    <Compile Include="Utilities\FaceUtilityNormalAtParameters.cs" />
+    <Compile Include="Utilities\FaceUtilityParametersAtVertex.cs" />
+    <Compile Include="Utilities\BitwiseNot.cs" />
+    <Compile Include="Utilities\BitwiseOr.cs" />
+    <Compile Include="Utilities\BitwiseXor.cs" />
+    <Compile Include="CellAdjacentCells.cs" />
+    <Compile Include="CellByFaces.cs" />
+    <Compile Include="CellByShell.cs" />
+    <Compile Include="CellCellComplexes.cs" />
+    <Compile Include="CellComplexByFaces.cs" />
+    <Compile Include="CellComplexByCells.cs" />
+    <Compile Include="CellComplexCells.cs" />
+    <Compile Include="CellComplexEdges.cs" />
+    <Compile Include="CellComplexExternalBoundary.cs" />
+    <Compile Include="CellComplexFaces.cs" />
+    <Compile Include="CellComplexInternalBoundaries.cs" />
+    <Compile Include="CellComplexNonManifoldFaces.cs" />
+    <Compile Include="CellComplexShells.cs" />
+    <Compile Include="CellComplexType.cs" />
+    <Compile Include="CellComplexVertices.cs" />
+    <Compile Include="CellComplexWires.cs" />
+    <Compile Include="CellEdges.cs" />
+    <Compile Include="CellExternalBoundary.cs" />
+    <Compile Include="CellFaces.cs" />
+    <Compile Include="CellInternalBoundaries.cs" />
+    <Compile Include="CellSharedEdges.cs" />
+    <Compile Include="CellSharedFaces.cs" />
+    <Compile Include="CellSharedVertices.cs" />
+    <Compile Include="CellShells.cs" />
+    <Compile Include="CellType.cs" />
+    <Compile Include="CellVertices.cs" />
+    <Compile Include="CellWires.cs" />
+    <Compile Include="ClusterByTopologies.cs" />
+    <Compile Include="ClusterCellComplexes.cs" />
+    <Compile Include="ClusterCells.cs" />
+    <Compile Include="ClusterEdges.cs" />
+    <Compile Include="ClusterFaces.cs" />
+    <Compile Include="ClusterShells.cs" />
+    <Compile Include="ClusterType.cs" />
+    <Compile Include="ClusterVertices.cs" />
+    <Compile Include="ClusterWires.cs" />
+    <Compile Include="ContextTopology.cs" />
+    <Compile Include="EdgeAdjacentEdges.cs" />
+    <Compile Include="EdgeByStartVertexEndVertex.cs" />
+    <Compile Include="EdgeEndVertex.cs" />
+    <Compile Include="EdgeSharedVertices.cs" />
+    <Compile Include="EdgeStartVertex.cs" />
+    <Compile Include="EdgeType.cs" />
+    <Compile Include="EdgeVertices.cs" />
+    <Compile Include="EdgeWires.cs" />
+    <Compile Include="FaceAddApertureDesign.cs" />
+    <Compile Include="FaceAddInternalBoundaries.cs" />
+    <Compile Include="FaceAdjacentFaces.cs" />
+    <Compile Include="FaceByEdges.cs" />
+    <Compile Include="FaceByExternalInternalBoundaries.cs" />
+    <Compile Include="FaceByWire.cs" />
+    <Compile Include="FaceCells.cs" />
+    <Compile Include="FaceEdges.cs" />
+    <Compile Include="FaceExternalBoundary.cs" />
+    <Compile Include="FaceInternalBoundaries.cs" />
+    <Compile Include="FaceSharedEdges.cs" />
+    <Compile Include="FaceSharedVertices.cs" />
+    <Compile Include="FaceShells.cs" />
+    <Compile Include="FaceType.cs" />
+    <Compile Include="FaceVertices.cs" />
+    <Compile Include="Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ShellByFaces.cs" />
+    <Compile Include="ShellCells.cs" />
+    <Compile Include="ShellFaces.cs" />
+    <Compile Include="ShellEdges.cs" />
+    <Compile Include="ShellIsClosed.cs" />
+    <Compile Include="ShellType.cs" />
+    <Compile Include="ShellVertices.cs" />
+    <Compile Include="ShellWires.cs" />
+    <Compile Include="TopologyAddApertures.cs" />
+    <Compile Include="TopologyAddContents.cs" />
+    <Compile Include="TopologyAnalyze.cs" />
+    <Compile Include="TopologyApertures.cs" />
+    <Compile Include="TopologyByGeometry.cs" />
+    <Compile Include="TopologyByImportedBRep.cs" />
+    <Compile Include="TopologyByVerticesIndices.cs" />
+    <Compile Include="TopologyCellComplexes.cs" />
+    <Compile Include="TopologyCells.cs" />
+    <Compile Include="TopologyClosestSimplestSubshape.cs" />
+    <Compile Include="TopologyContents.cs" />
+    <Compile Include="TopologyContexts.cs" />
+    <Compile Include="TopologyDictionary.cs" />
+    <Compile Include="TopologyDifference.cs" />
+    <Compile Include="TopologyDimensionality.cs" />
+    <Compile Include="TopologyDivide.cs" />
+    <Compile Include="TopologyEdges.cs" />
+    <Compile Include="TopologyExportToBRep.cs" />
+    <Compile Include="TopologyFaces.cs" />
+    <Compile Include="TopologyFilter.cs" />
+    <Compile Include="TopologyGeometry.cs" />
+    <Compile Include="TopologyImpose.cs" />
+    <Compile Include="TopologyImprint.cs" />
+    <Compile Include="TopologyIntersect.cs" />
+    <Compile Include="TopologyIsSame.cs" />
+    <Compile Include="TopologyMerge.cs" />
+    <Compile Include="TopologySelfMerge.cs" />
+    <Compile Include="TopologySetDictionary.cs" />
+    <Compile Include="TopologyShallowCopy.cs" />
+    <Compile Include="TopologyShells.cs" />
+    <Compile Include="TopologySlice.cs" />
+    <Compile Include="TopologyType.cs" />
+    <Compile Include="TopologyTypeAsString.cs" />
+    <Compile Include="TopologyUnion.cs" />
+    <Compile Include="TopologyVertices.cs" />
+    <Compile Include="TopologyWires.cs" />
+    <Compile Include="TopologyXOR.cs" />
+    <Compile Include="Utilities\BitwiseAnd.cs" />
+    <Compile Include="Utilities\CellUtilityByLoft.cs" />
+    <Compile Include="Utilities\EdgeUtilityParameterAtVertex.cs" />
+    <Compile Include="Utilities\EdgeUtilityByVertices.cs" />
+    <Compile Include="Utilities\EdgeUtilityVertexAtParameter.cs" />
+    <Compile Include="Utilities\FaceUtilityArea.cs" />
+    <Compile Include="Utilities\FaceUtilityByVertices.cs" />
+    <Compile Include="Utilities\FaceUtilityTrimByWire.cs" />
+    <Compile Include="Utilities\FaceUtilityVertexAtParameters.cs" />
+    <Compile Include="Utilities\ShellByLoft.cs" />
+    <Compile Include="TopologyCenterOfMass.cs" />
+    <Compile Include="Utilities\TopologyUtilityDistance.cs" />
+    <Compile Include="Utilities\TopologyUtilityRotate.cs" />
+    <Compile Include="Utilities\TopologyUtilityScale.cs" />
+    <Compile Include="Utilities\TopologyUtilityTranslate.cs" />
+    <Compile Include="VertexType.cs" />
+    <Compile Include="VertexZ.cs" />
+    <Compile Include="VertexByCoordinates.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VertexCoordinates.cs" />
+    <Compile Include="VertexEdges.cs" />
+    <Compile Include="VertexX.cs" />
+    <Compile Include="VertexY.cs" />
+    <Compile Include="WireByEdges.cs" />
+    <Compile Include="WireEdges.cs" />
+    <Compile Include="WireFaces.cs" />
+    <Compile Include="WireIsClosed.cs" />
+    <Compile Include="WireType.cs" />
+    <Compile Include="WireVertices.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\Topologic.Small.png" />
+    <Compile Include="Utilities\CellUtilityVolume.cs" />
+    <Compile Include="Utilities\CellUtilityContains.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\NMT-borderless-logo-small.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\CreateCell.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\QueryVertices.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TopologicNET\TopologicNET.vcxproj">
+      <Project>{c90904ec-87d6-4a5e-b7c2-9dec3b078d85}</Project>
+      <Name>TopologicNET</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>Copy "$(TargetDir)\TopologicGH.dll" "$(TargetDir)\TopologicGH.gha"
+Erase "$(TargetDir)\TopologicGH.dll"</PostBuildEvent>
+  </PropertyGroup>
+</Project>

@@ -1087,7 +1087,7 @@ namespace TopologicEnergy
 		}
 
 		Face^ firstFace = faces[0];
-		Vertex^ centerPoint = Topologic::Utilities::TopologyUtility::CenterOfMass(firstFace);
+		Vertex^ centerPoint = firstFace->CenterOfMass;
 		Autodesk::DesignScript::Geometry::Point^ dynamoCenterPoint =
 			safe_cast<Autodesk::DesignScript::Geometry::Point^>(centerPoint->BasicGeometry);
 
@@ -1114,7 +1114,7 @@ namespace TopologicEnergy
 
 		if (faceAngle < 5.0 || faceAngle > 175.0)
 		{
-			bool isInside = Topologic::Utilities::CellUtility::Contains(buildingSpace, pOffsetVertex);
+			bool isInside = Topologic::Utilities::CellUtility::Contains(buildingSpace, pOffsetVertex, true);
 			// The offset vertex has to be false, so if isInside is true, reverse the face.
 
 			if (isInside)
@@ -1159,7 +1159,7 @@ namespace TopologicEnergy
 	int EnergyModel::StoryNumber(Cell^ buildingCell, double buildingHeight, List<double>^ floorLevels)
 	{
 		double volume = Utilities::CellUtility::Volume(buildingCell);
-		Vertex^ centreOfMass = Utilities::TopologyUtility::CenterOfMass(buildingCell);
+		Vertex^ centreOfMass = buildingCell->CenterOfMass;
 		for (int i = 0; i < floorLevels->Count - 1; ++i)
 		{
 			if (centreOfMass->Z > floorLevels[i] && centreOfMass->Z < floorLevels[i + 1])

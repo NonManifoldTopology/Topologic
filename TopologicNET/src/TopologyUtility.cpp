@@ -55,13 +55,6 @@ namespace Topologic
 			return TopologicUtilities::TopologyUtility::Distance(pCoreTopology, pCoreOtherTopology);
 		}
 
-		Vertex^ TopologyUtility::CenterOfMass(Topology^ topology)
-		{
-			TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
-			TopologicCore::Vertex::Ptr pCoreCenterOfMass = pCoreTopology->CenterOfMass();
-			return gcnew Vertex(pCoreCenterOfMass);
-		}
-
 		Topology ^ TopologyUtility::Transform(Topology ^ topology,
 			double translationX, double translationY, double translationZ,
 			double rotation11, double rotation12, double rotation13,

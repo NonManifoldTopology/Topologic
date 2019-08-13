@@ -146,7 +146,7 @@ namespace Topologic {
 		/// </summary>
 		/// <param name="vertex">The input Vertex</param>
 		/// <returns name="int">The degree of a Vertex</returns>
-		int Degree(Vertex^ vertex);
+		int VertexDegree(Vertex^ vertex);
 
 		/// <summary>
 		/// Returns a list of Vertices that are connected to the input Vertex by an Edge.
@@ -274,6 +274,20 @@ namespace Topologic {
 			[Autodesk::DesignScript::Runtime::DefaultArgument("null")]
 #endif
 		String^ edgeKey);
+
+		List<Wire^>^ ShortestPaths(Vertex^ startVertex, Vertex^ endVertex,
+#ifdef TOPOLOGIC_DYNAMO
+			[Autodesk::DesignScript::Runtime::DefaultArgument("null")]
+#endif
+			String^ vertexKey,
+#ifdef TOPOLOGIC_DYNAMO
+			[Autodesk::DesignScript::Runtime::DefaultArgument("null")]
+#endif
+			String^ edgeKey,
+#ifdef TOPOLOGIC_DYNAMO
+			[Autodesk::DesignScript::Runtime::DefaultArgument("null")]
+#endif
+		Nullable<int> timeLimitInSeconds);
 
 		/// <summary>
 		/// Returns the number of Edges of the shortest path connecting the two input Vertices.

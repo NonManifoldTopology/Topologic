@@ -328,3 +328,4 @@ doc/
 /TopologicInstaller/*.exe
 developer_doc/
 user_doc/
+/TopologicInstaller/TopologicGHInstaller-Debug.txt

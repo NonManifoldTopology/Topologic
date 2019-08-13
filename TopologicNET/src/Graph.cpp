@@ -150,6 +150,41 @@ namespace Topologic
 			throw gcnew Exception(gcnew String(e.what()));
 		}
 	}
+	
+	List<Wire^>^ Graph::ShortestPaths(Vertex ^ startVertex, Vertex ^ endVertex,	String^ vertexKey, String^ edgeKey, Nullable<int> timeLimitInSeconds)
+	{
+		TopologicCore::Vertex::Ptr pCoreStartVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(startVertex->GetCoreTopologicalQuery());
+		TopologicCore::Vertex::Ptr pCoreEndVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(endVertex->GetCoreTopologicalQuery());
+		String^ fixedVertexKey = vertexKey == nullptr ? gcnew String("") : vertexKey;
+		std::string coreVertexKey = msclr::interop::marshal_as<std::string>(fixedVertexKey);
+		String^ fixedEdgeKey = edgeKey == nullptr ? gcnew String("") : edgeKey;
+		std::string coreEdgeKey = msclr::interop::marshal_as<std::string>(fixedEdgeKey);
+
+		try {
+			std::list<TopologicCore::Wire::Ptr> corePaths;
+			if (timeLimitInSeconds.HasValue)
+			{
+				(*m_pCoreGraph)->ShortestPaths(pCoreStartVertex, pCoreEndVertex, coreVertexKey, coreEdgeKey, true, timeLimitInSeconds.Value, corePaths);
+			}
+			else
+			{
+				(*m_pCoreGraph)->ShortestPaths(pCoreStartVertex, pCoreEndVertex, coreVertexKey, coreEdgeKey, false, 0, corePaths);
+			}
+
+			List<Wire^>^ paths = gcnew List<Wire^>();
+			for (const TopologicCore::Wire::Ptr& rkCorePath : corePaths)
+			{
+				Wire^ path = safe_cast<Wire^>(Topologic::Topology::ByCoreTopology(rkCorePath));
+				paths->Add(path);
+			}
+
+			return paths;
+		}
+		catch (std::exception& e)
+		{
+			throw gcnew Exception(gcnew String(e.what()));
+		}
+	}
 
 	int Graph::Distance(Vertex ^ startVertex, Vertex ^ endVertex)
 	{
@@ -308,11 +343,11 @@ namespace Topologic
 		return edges;
 	}
 
-	int Graph::Degree(Vertex^ vertex)
+	int Graph::VertexDegree(Vertex^ vertex)
 	{
 		TopologicCore::Vertex::Ptr pCoreVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex->GetCoreTopologicalQuery());
 
-		return (*m_pCoreGraph)->Degree(pCoreVertex);
+		return (*m_pCoreGraph)->VertexDegree(pCoreVertex);
 	}
 
 	List<Vertex^>^ Graph::AdjacentVertices(Vertex ^ vertex)
