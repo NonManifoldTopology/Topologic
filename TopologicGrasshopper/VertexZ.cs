@@ -13,7 +13,7 @@ namespace TopologicGrasshopper
     {
 
         public VertexZ()
-          : base("Vertex.Z", "Vertex.Z", "Returns the Z coordinate of the Vertex", "Topologic", "Vertex")
+          : base("Vertex.Z", "Vertex.Z", "Returns the Z coordinate of the Vertex.", "Topologic", "Vertex")
         {
         }
 

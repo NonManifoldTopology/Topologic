@@ -13,7 +13,7 @@ namespace TopologicGrasshopper
     {
 
         public ApertureByTopologyContext()
-          : base("Aperture.ByTopologyContext", "Aperture.ByTopologyContext", "Creates an Aperture by a Topology and a context.", "Topologic", "Aperture")
+          : base("Aperture.ByTopologyContext", "Aperture.ByTopologyContext", "Creates an Aperture by a Topology and a Context.", "Topologic", "Aperture")
         {
         }
 
@@ -22,8 +22,8 @@ namespace TopologicGrasshopper
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Topology", "Topology", "Topology", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Context", "Context", "Context", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Topology", "Topology", "A Topology", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Context", "Context", "A Context", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace TopologicGrasshopper
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Aperture", "Aperture", "Aperture", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Aperture", "Aperture", "An Aperture", GH_ParamAccess.item);
         }
 
         /// <summary>

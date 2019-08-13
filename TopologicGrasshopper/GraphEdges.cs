@@ -13,7 +13,7 @@ namespace TopologicGrasshopper
     {
 
         public GraphEdges()
-          : base("Graph.Edges", "Graph.Edges", "Returns all the Edges of a Graph.", "Topologic", "Graph")
+          : base("Graph.Edges", "Graph.Edges", "Returns a list of all the Edges in a Graph.", "Topologic", "Graph")
         {
         }
 

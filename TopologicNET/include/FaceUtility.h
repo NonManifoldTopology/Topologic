@@ -40,8 +40,8 @@ namespace Topologic {
 			/// Returns the normal (vector) given the UV parameters of a Face.
 			/// </summary>
 			/// <param name="face">A Face</param>
-			/// <param name="u">The u parameter of the Face</param>
-			/// <param name="v">The v parameter of the Face</param>
+			/// <param name="u">The U parameter of the Face</param>
+			/// <param name="v">The U parameter of the Face</param>
 			/// <returns>The normal (vector) at a parameter of a Face</returns>
 			static List<double>^ NormalAtParameters(Face^ face, double u, double v);
 
@@ -49,8 +49,8 @@ namespace Topologic {
 			/// Returns the Vertex at a given parameter of the Face.
 			/// </summary>
 			/// <param name="face">A Face</param>
-			/// <param name="u">The U parametric coordinate of the Vertex on the Face</param>
-			/// <param name="v">The V parametric coordinate of the Vertex on the Face</param>
+			/// <param name="u">The U parameterof the Vertex on the Face</param>
+			/// <param name="v">The V parameter of the Vertex on the Face</param>
 			/// <returns name="Vertex">The Vertex at the given parameter of the Face</returns>
 			static Vertex^ VertexAtParameters(Face^ face, double u, double v);
 

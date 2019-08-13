@@ -13,7 +13,7 @@ namespace TopologicGrasshopper
     {
 
         public CellType()
-          : base("Cell.Type", "Cell.Type", "Returns the type associated to Cell", "Topologic", "Cell")
+          : base("Cell.Type", "Cell.Type", "Returns the type associated to Cell.", "Topologic", "Cell")
         {
         }
 

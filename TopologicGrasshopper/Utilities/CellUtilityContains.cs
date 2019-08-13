@@ -13,7 +13,7 @@ namespace TopologicGrasshopper
     {
 
         public CellUtilityContains()
-          : base("CellUtility.Contains", "CellUtility.Contains", "Check if a vertex is contained in a Cell or not.", "TopologicUtilities", "CellUtility")
+          : base("CellUtility.Contains", "CellUtility.Contains", "Check if a Vertex is contained in a Cell or not.", "TopologicUtilities", "CellUtility")
         {
         }
 

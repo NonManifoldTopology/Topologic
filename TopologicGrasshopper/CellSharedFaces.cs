@@ -13,7 +13,7 @@ namespace TopologicGrasshopper
     {
 
         public CellSharedFaces()
-          : base("Cell.SharedFaces", "Cell.SharedFaces", "Return the shared Faces between two Cells", "Topologic", "Cell")
+          : base("Cell.SharedFaces", "Cell.SharedFaces", "Return the shared Faces between two Cells.", "Topologic", "Cell")
         {
         }
 

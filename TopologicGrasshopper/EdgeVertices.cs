@@ -13,7 +13,7 @@ namespace TopologicGrasshopper
     {
 
         public EdgeVertices()
-          : base("Edge.Vertices", "Edge.Vertices", "Returns the Vertices at the ends of the Edge", "Topologic", "Edge")
+          : base("Edge.Vertices", "Edge.Vertices", "Returns the Vertices at the ends of the Edge.", "Topologic", "Edge")
         {
         }
 

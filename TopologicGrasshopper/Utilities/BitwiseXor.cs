@@ -13,7 +13,7 @@ namespace TopologicGrasshopper
     {
 
         public BitwiseXor()
-          : base("Bitwise.Xor", "Bitwise.Xor", "Performs a bitwise Xor operation", "TopologicUtilities", "Bitwise")
+          : base("Bitwise.Xor", "Bitwise.Xor", "Performs a bitwise Xor operation between the arguments (in their binary form).", "TopologicUtilities", "Bitwise")
         {
         }
 

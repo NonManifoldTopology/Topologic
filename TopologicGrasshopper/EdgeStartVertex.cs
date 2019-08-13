@@ -13,7 +13,7 @@ namespace TopologicGrasshopper
     {
 
         public EdgeStartVertex()
-          : base("Edge.StartVertex", "Edge.StartVertex", "Get the start vertex of the edge", "Topologic", "Edge")
+          : base("Edge.StartVertex", "Edge.StartVertex", "Returns the start Vertex of the Edge.", "Topologic", "Edge")
         {
         }
 

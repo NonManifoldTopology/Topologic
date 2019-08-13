@@ -22,7 +22,7 @@ namespace TopologicGrasshopper
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Shell", "Shell", "Shell", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Shell", "Shell", "A Shell", GH_ParamAccess.list);
         }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace TopologicGrasshopper
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Cell", "Cell", "Cell", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Cell", "Cell", "The created Cell", GH_ParamAccess.item);
         }
 
         /// <summary>

@@ -13,7 +13,7 @@ namespace TopologicGrasshopper
     {
 
         public ContextTopology()
-          : base("Context.Topology", "Context.Topology", "Returns the associated Topology to the context.", "Topologic", "Context")
+          : base("Context.Topology", "Context.Topology", "Returns the associated Topology to the Context.", "Topologic", "Context")
         {
         }
 

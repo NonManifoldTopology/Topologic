@@ -13,7 +13,7 @@ namespace TopologicGrasshopper
     {
 
         public CellEdges()
-          : base("Cell.Edges", "Cell.Edges", "Returns the constituent Edges of the Cell.", "Topologic", "Cell")
+          : base("Cell.Edges", "Cell.Edges", "Returns the Edges constituent to the Cell.", "Topologic", "Cell")
         {
         }
 

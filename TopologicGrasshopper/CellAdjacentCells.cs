@@ -13,7 +13,7 @@ namespace TopologicGrasshopper
     {
 
         public CellAdjacentCells()
-          : base("Cell.AdjacentCells", "Cell.AdjacentCells", "Returns the Cells adjacent to the Cell", "Topologic", "Cell")
+          : base("Cell.AdjacentCells", "Cell.AdjacentCells", "Returns the Cells adjacent to the Cell.", "Topologic", "Cell")
         {
         }
 
@@ -22,7 +22,7 @@ namespace TopologicGrasshopper
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Cell", "Cell", "Cell", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Cell", "Cell", "A Cell", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace TopologicGrasshopper
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Cell", "Cell", "Cell", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Cell", "Cell", "A list of Cells adjacent to the Cell", GH_ParamAccess.list);
         }
 
         /// <summary>

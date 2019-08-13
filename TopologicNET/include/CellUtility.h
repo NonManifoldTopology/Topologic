@@ -86,7 +86,7 @@ namespace Topologic {
 			static double Volume(Cell^ cell);
 
 			/// <summary>
-			/// Checks if a vertex is contained in a Cell or not.
+			/// Checks if a Vertex is contained in a Cell or not.
 			/// </summary>
 			/// <param name="cell">The Cell</param>
 			/// <param name="vertex">The Vertex</param>

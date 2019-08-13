@@ -13,7 +13,7 @@ namespace TopologicGrasshopper
     {
 
         public ShellType()
-          : base("Shell.Type", "Shell.Type", "Returns the type associated to Shell", "Topologic", "Shell")
+          : base("Shell.Type", "Shell.Type", "Returns the type associated to Shell.", "Topologic", "Shell")
         {
         }
 

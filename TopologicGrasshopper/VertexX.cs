@@ -12,7 +12,7 @@ namespace TopologicGrasshopper
     public class VertexX : GH_Component
     {
         public VertexX()
-          : base("Vertex.X", "Vertex.X", "Returns the X coordinate of the Vertex", "Topologic", "Vertex")
+          : base("Vertex.X", "Vertex.X", "Returns the X coordinate of the Vertex.", "Topologic", "Vertex")
         {
         }
 

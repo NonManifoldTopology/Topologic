@@ -13,7 +13,7 @@ namespace TopologicGrasshopper
     {
 
         public GraphByTopology()
-          : base("Graph.ByTopology", "Graph.ByTopology", "Creates a Graph from any topology.", "Topologic", "Graph")
+          : base("Graph.ByTopology", "Graph.ByTopology", "Creates a Graph from any Topology.", "Topologic", "Graph")
         {
         }
 

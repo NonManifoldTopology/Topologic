@@ -68,7 +68,7 @@ namespace Topologic {
 		}
 
 		/// <summary>
-		/// Returns all the Edges of a Graph.
+		/// Returns a list of all the Edges in a Graph.
 		/// </summary>
 		/// <returns name="Edge[]">A list of the Edges in this Graph</returns>
 		property List<Edge^>^ Edges
@@ -191,7 +191,7 @@ namespace Topologic {
 		/// <summary>
 		/// Returns the ratio of the number of Edges to the total number of Edges the Graph could have.
 		/// </summary>
-		/// <returns name="double">The graph's density</returns>
+		/// <returns name="double">The Graph's density</returns>
 		property double Density
 		{
 			double get();
@@ -200,7 +200,7 @@ namespace Topologic {
 		/// <summary>
 		/// Returns True if the Graph has a density of 1. Returns False otherwise.
 		/// </summary>
-		/// <returns name="bool">True if the Graph has a density of 1, False otherwise</returns>
+		/// <returns name="bool">True if the Graph has a density of 1, otherwise false</returns>
 		property bool IsComplete
 		{
 			bool get();
@@ -239,7 +239,7 @@ namespace Topologic {
 		/// <param name="startVertex">The start Vertex</param>
 		/// <param name="endVertex">The end Vertex</param>
 		/// <param name="timeLimitInSeconds">Time limit in seconds</param>
-		/// <returns name="Wire[]">The paths</returns>
+		/// <returns name="Wire[]">A list of paths</returns>
 		List<Wire^>^ AllPaths(
 			Vertex^ startVertex, 
 			Vertex^ endVertex, 
@@ -287,7 +287,7 @@ namespace Topologic {
 		/// Returns True if the input sequence satisfies the Erdoes Gallai theorem. It returns False otherwise.
 		/// </summary>
 		/// <param name="sequence">The input sequence</param>
-		/// <returns name="bool">True if the input sequence satisfies the Erdoes Gallai theorem, False otherwise</returns>
+		/// <returns name="bool">True if the input sequence satisfies the Erdoes Gallai theorem, otherwise false</returns>
 		bool IsErdoesGallai(List<int>^ sequence);
 
 		/// <summary>

@@ -22,8 +22,8 @@ namespace TopologicGrasshopper
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Faces", "Faces", "Faces", GH_ParamAccess.list);
-            pManager.AddNumberParameter("Tolerance", "Tolerance", "Tolerance", GH_ParamAccess.list, 0.001);
+            pManager.AddGenericParameter("Faces", "Faces", "A set of Faces", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Tolerance", "Tolerance", "A positive tolerance value", GH_ParamAccess.list, 0.001);
         }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace TopologicGrasshopper
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Cell", "Cell", "Cell", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Cell", "Cell", "The created Cell", GH_ParamAccess.item);
         }
 
         /// <summary>

@@ -13,7 +13,7 @@ namespace TopologicGrasshopper
     {
 
         public ShellVertices()
-          : base("Shell.Vertices", "Shell.Vertices", "Returns the constituent Vertices of the Shell.", "Topologic", "Shell")
+          : base("Shell.Vertices", "Shell.Vertices", "Returns the Vertices constituent to the Shell.", "Topologic", "Shell")
         {
         }
 

@@ -13,7 +13,7 @@ namespace TopologicGrasshopper
     {
 
         public FaceAddApertureDesign()
-          : base("Face.AddApertureDesign", "Face.AddApertureDesign", "Adds an Aperture to a Face.", "Topologic", "Face")
+          : base("Face.AddApertureDesign", "Face.AddApertureDesign", "Adds an Aperture design to a Face.", "Topologic", "Face")
         {
         }
 

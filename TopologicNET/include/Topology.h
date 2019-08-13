@@ -42,7 +42,7 @@ namespace Topologic
 		/// Creates a Topology by geometry.
 		/// </summary>
 		/// <param name="geometry">A geometry</param>
-		/// <param name="tolerance">A tolerance value</param>
+		/// <param name="tolerance">A positive tolerance value</param>
 		/// <returns name="Topology">The created Topology</returns>
 		static Topology^ ByGeometry(Autodesk::DesignScript::Geometry::Geometry^ geometry, [DefaultArgument("0.001")] double tolerance);
 
@@ -141,7 +141,7 @@ namespace Topologic
 		/// <summary>
 		/// Returns the sub-contents (contents of the constituent members) of a Topology.
 		/// </summary>
-		/// <returns name="Context[]">A list of the sub-contents (contents of the constituent members) of a Topology</returns>
+		/// <returns name="Topology[]">A list of the sub-contents (contents of the constituent members) of a Topology</returns>
 #ifdef TOPOLOGIC_DYNAMO
 		[IsVisibleInDynamoLibrary(false)]
 #endif
@@ -488,7 +488,7 @@ namespace Topologic
 		/// </summary>
 		/// <param name="topologies">A list of Topologies</param>
 		/// <param name="typeFilter">The type of the filtered Topologies</param>
-		/// <returns>The filtered topologies</returns>
+		/// <returns>The filtered opologies</returns>
 		static List<Topology^>^ Filter(List<Topology^>^ topologies, int typeFilter);
 
 #ifdef TOPOLOGIC_DYNAMO
@@ -534,13 +534,13 @@ namespace Topologic
 		/// <summary>
 		/// Sets a dictionary for a Topology.
 		/// </summary>
-		/// <returns name="Topology"></returns>
+		/// <returns name="Topology">The Topology with the dictionary</returns>
 		Topology^ SetDictionary(Dictionary<String^, Object^>^ dictionary);
 
 		/// <summary>
 		/// Returns the dictionary of a Topology.
 		/// </summary>
-		/// <returns name="Dictionary"></returns>
+		/// <returns name="Dictionary">The dictionary</returns>
 		property System::Collections::Generic::Dictionary<String^, Object^>^ Dictionary
 		{
 			System::Collections::Generic::Dictionary<String^, Object^>^ get();

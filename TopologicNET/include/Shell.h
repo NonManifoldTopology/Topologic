@@ -76,7 +76,7 @@ namespace Topologic
 		/// Creates a Shell by a set of connected Faces.
 		/// </summary>
 		/// <param name="faces">A set of Faces</param>
-		/// <param name="tolerance">A tolerance value</param>
+		/// <param name="tolerance">A positive tolerance value</param>
 		/// <returns name="Shell">The created Shell</returns>
 #ifdef TOPOLOGIC_DYNAMO
 		static Shell^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces, [DefaultArgument("0.001")] double tolerance);

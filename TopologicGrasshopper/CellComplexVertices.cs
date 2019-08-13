@@ -13,7 +13,7 @@ namespace TopologicGrasshopper
     {
 
         public CellComplexVertices()
-          : base("CellComplex.Vertices", "CellComplex.Vertices", "Returns the constituent Vertices of the CellComplex.", "Topologic", "CellComplex")
+          : base("CellComplex.Vertices", "CellComplex.Vertices", "Returns the Vertices constituent to the CellComplex.", "Topologic", "CellComplex")
         {
         }
 

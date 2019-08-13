@@ -20,10 +20,10 @@ namespace Topologic
 	{
 	public:
 		/// <summary>
-		/// Creates an Aperture by a Topology and a context.
+		/// Creates an Aperture by a Topology and a Context.
 		/// </summary>
 		/// <param name="topology">A Topology</param>
-		/// <param name="context">A context</param>
+		/// <param name="context">A Context</param>
 		/// <returns name="Aperture">An Aperture</returns>
 		static Aperture^ ByTopologyContext(Topology^ topology, Context^ context);
 

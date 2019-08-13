@@ -13,7 +13,7 @@ namespace TopologicGrasshopper
     {
 
         public ClusterType()
-          : base("Cluster.Type", "Cluster.Type", "Returns the type associated to Cluster", "Topologic", "Cluster")
+          : base("Cluster.Type", "Cluster.Type", "Returns the type associated to Cluster.", "Topologic", "Cluster")
         {
         }
 

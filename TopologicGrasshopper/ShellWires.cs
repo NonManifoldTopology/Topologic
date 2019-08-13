@@ -13,7 +13,7 @@ namespace TopologicGrasshopper
     {
 
         public ShellWires()
-          : base("Shell.Wires", "Shell.Wires", "Returns the constituent Wires of the Shell.", "Topologic", "Shell")
+          : base("Shell.Wires", "Shell.Wires", "Returns the Wires constituent to the Shell.", "Topologic", "Shell")
         {
         }
 

@@ -13,7 +13,7 @@ namespace TopologicGrasshopper
     {
 
         public BitwiseAnd()
-          : base("Bitwise.And", "Bitwise.And", "Performs a bitwise And operation", "TopologicUtilities", "Bitwise")
+          : base("Bitwise.And", "Bitwise.And", "Performs a bitwise And operation between the arguments (in their binary form).", "TopologicUtilities", "Bitwise")
         {
         }
 
