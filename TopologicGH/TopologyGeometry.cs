@@ -234,7 +234,7 @@ namespace TopologicGH
 
             // 2b. Add 3D curves and edges. The index dictionaries are used to identify the IDs of the edges.
             List<Edge> edges = face.Edges;
-            Dictionary<Edge, int> edge2DIndices = new Dictionary<Edge, int>();
+            Dictionary<Edge, Tuple<int, int>> edge2DIndices = new Dictionary<Edge, Tuple<int, int>>(); // edge, curve, reverse curve
             Dictionary<Edge, int> edge3DIndices = new Dictionary<Edge, int>();
             Dictionary<Edge, BrepEdge> edgeIndices = new Dictionary<Edge, BrepEdge>();
             foreach (Edge edge in edges)
@@ -243,6 +243,10 @@ namespace TopologicGH
                 Curve ghCurve2D = ghNurbsSurface.Pullback(ghCurve3D, 0.0001);
                 int curve3DID = ghBrep.Curves3D.Add(ghCurve3D);
                 int curve2DID = ghBrep.Curves2D.Add(ghCurve2D);
+
+                Curve ghReverseCurve2D = ghCurve2D.DuplicateCurve();
+                ghReverseCurve2D.Reverse();
+                int reverseCurve2DID = ghBrep.Curves2D.Add(ghReverseCurve2D);
 
                 Point3d ghStartPoint = ghCurve3D.PointAtStart;
                 Point3d ghEndPoint = ghCurve3D.PointAtEnd;
@@ -273,7 +277,7 @@ namespace TopologicGH
                 }
 
                 edge3DIndices.Add(edge, curve3DID);
-                edge2DIndices.Add(edge, curve2DID);
+                edge2DIndices.Add(edge, Tuple.Create(curve2DID, reverseCurve2DID));
                 edgeIndices.Add(edge, ghBrepEdge);
             }
 
@@ -290,23 +294,20 @@ namespace TopologicGH
 
             // 2f.For each loop, add a trim(2D edge)
             List<BrepEdge> ghOuterEdges = new List<BrepEdge>();
-            List<Tuple<Curve, int>> gh2DCurves = new List<Tuple<Curve, int>>();
+            List<Tuple<Curve, int, Curve, int>> gh2DCurves = new List<Tuple<Curve, int, Curve, int>>(); // original curve, index, reverse curve, reverse index
             foreach (Edge outerEdge in outerEdges)
             {
-                int outerEdge2DIndex = edge2DIndices.
+                Tuple<int, int> outerEdge2DIndices = edge2DIndices.
                     Where(edgeIndexPair => edgeIndexPair.Key.IsSame(outerEdge)).
                     Select(edgeIndexPair => edgeIndexPair.Value).
                     FirstOrDefault();
 
-                //int outerEdge3DIndex = edge3DIndices.
-                //    Where(edgeIndexPair => edgeIndexPair.Key.IsSame(outerEdge)).
-                //    Select(edgeIndexPair => edgeIndexPair.Value).
-                //    FirstOrDefault();
+                int outerEdge2DIndex = outerEdge2DIndices.Item1;
+                int outerReverseEdge2DIndex = outerEdge2DIndices.Item2;
 
                 Curve ghOuterCurve2D = ghBrep.Curves2D[outerEdge2DIndex];
-                gh2DCurves.Add(Tuple.Create(ghOuterCurve2D, outerEdge2DIndex));
-
-                //Curve ghOuterCurve3D = ghBrep.Curves3D[outerEdge3DIndex];
+                Curve ghOuterReverseCurve2D = ghBrep.Curves2D[outerReverseEdge2DIndex];
+                gh2DCurves.Add(Tuple.Create(ghOuterCurve2D, outerEdge2DIndex, ghOuterReverseCurve2D, outerReverseEdge2DIndex));
 
                 BrepEdge ghBrepEdge = edgeIndices.
                     Where(edgeIndexPair => edgeIndexPair.Key.IsSame(outerEdge)).
@@ -345,13 +346,9 @@ namespace TopologicGH
                     ghOuterEdges[currentEntryID],       // 3D edge
                     isTrimReversed,                     // is reversed?
                     ghBrepOuterLoop,                    // 2D loop
-                    gh2DCurves[currentEntryID].Item2);  // 2D curve index
-
-                if (isTrimReversed)
-                {
-                    bool success = ghBrepTrim.Reverse();
-                }
-
+                    //gh2DCurves[currentEntryID].Item2);  // 2D curve index
+                    isTrimReversed? gh2DCurves[currentEntryID].Item4 : gh2DCurves[currentEntryID].Item2);  // 2D curve index, use the reversed one if reversed
+                
                 ghBrepTrim.IsoStatus = ghNurbsSurface.IsIsoparametric(gh2DCurves[currentEntryID].Item1);
                 ghBrepTrim.TrimType = BrepTrimType.Boundary;
                 ghBrepTrim.SetTolerances(0.0, 0.0);
@@ -377,25 +374,35 @@ namespace TopologicGH
                 List<Edge> innerEdges = innerWire.Edges;
                 foreach (Edge innerEdge in innerEdges)
                 {
-                    int innerEdge2DIndex = edge2DIndices.
-                        Where(edgeIndexPair => edgeIndexPair.Key.IsSame(innerEdge)).
-                        Select(edgeIndexPair => edgeIndexPair.Value).
-                        FirstOrDefault();
-
-                    //int innerEdge3DIndex = edge3DIndices.
+                    //int innerEdge2DIndex = edge2DIndices.
                     //    Where(edgeIndexPair => edgeIndexPair.Key.IsSame(innerEdge)).
                     //    Select(edgeIndexPair => edgeIndexPair.Value).
-                    //    FirstOrDefault();
+                    //    FirstOrDefault().Item1;
+                    Tuple<int, int> innerEdge2DIndices = edge2DIndices.
+                    Where(edgeIndexPair => edgeIndexPair.Key.IsSame(innerEdge)).
+                    Select(edgeIndexPair => edgeIndexPair.Value).
+                    FirstOrDefault();
 
-                    //Curve ghinnerCurve2D = ghBrep.Curves2D[innerEdge2DIndex];
-                    //Curve ghinnerCurve3D = ghBrep.Curves3D[innerEdge3DIndex];
+                    int innerEdge2DIndex = innerEdge2DIndices.Item1;
+                    int innerReverseEdge2DIndex = innerEdge2DIndices.Item2;
+
+                    Curve ghInnerCurve2D = ghBrep.Curves2D[innerEdge2DIndex];
+                    Curve ghInnerReverseCurve2D = ghBrep.Curves2D[innerReverseEdge2DIndex];
+                    gh2DCurves.Add(Tuple.Create(ghInnerCurve2D, innerEdge2DIndex, ghInnerReverseCurve2D, innerReverseEdge2DIndex));
+
 
                     BrepEdge ghBrepEdge = edgeIndices.
                         Where(edgeIndexPair => edgeIndexPair.Key.IsSame(innerEdge)).
                         Select(edgeIndexPair => edgeIndexPair.Value).
                         FirstOrDefault();
 
-                    BrepTrim ghBrepTrim = ghBrep.Trims.Add(ghBrepEdge, false, ghBrepInnerLoop, innerEdge2DIndex);
+                    BrepTrim ghBrepTrim = ghBrep.Trims.Add(
+                        ghBrepEdge,
+                        isTrimReversed,
+                        ghBrepInnerLoop,
+                        //innerEdge2DIndex);
+                        isTrimReversed ? gh2DCurves[currentEntryID].Item4 : gh2DCurves[currentEntryID].Item2);
+
                     ghBrepTrim.IsoStatus = IsoStatus.None;
                     ghBrepTrim.TrimType = BrepTrimType.Boundary; ghBrepTrim.SetTolerances(0.0, 0.0);
 

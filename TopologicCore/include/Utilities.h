@@ -19,8 +19,8 @@ namespace TopologicCore {
 		TOPOLOGY_CELL = 32,
 		TOPOLOGY_CELLCOMPLEX = 64,
 		TOPOLOGY_CLUSTER = 128,
-		TOPOLOGY_ALL = 255,
-		TOPOLOGY_APERTURE = 256
+		TOPOLOGY_APERTURE = 256,
+		TOPOLOGY_ALL = 511
 	};
 
 	struct OcctShapeComparator {
