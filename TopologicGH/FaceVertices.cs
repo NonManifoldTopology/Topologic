@@ -13,7 +13,7 @@ namespace TopologicGH
     {
 
         public FaceVertices()
-          : base("Face.Vertices", "Face.Vertices", "Returns the Vertices incident to the Face.", "Topologic", "Face")
+          : base("Face.Vertices", "Face.Vertices", "Returns the Vertices constituent to the Face.", "Topologic", "Face")
         {
         }
 

@@ -13,7 +13,7 @@ namespace TopologicGH
     {
 
         public EdgeSharedVertices()
-          : base("Edge.SharedVertices", "Edge.SharedVertices", "Return the shared Vertices between two edges", "Topologic", "Edge")
+          : base("Edge.SharedVertices", "Edge.SharedVertices", "Returns the shared Vertices between two Edges.", "Topologic", "Edge")
         {
         }
 

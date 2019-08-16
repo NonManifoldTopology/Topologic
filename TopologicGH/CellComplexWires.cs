@@ -13,7 +13,7 @@ namespace TopologicGH
     {
 
         public CellComplexWires()
-          : base("CellComplex.Wires", "CellComplex.Wires", "Returns the constituent Wires of the CellComplex.", "Topologic", "CellComplex")
+          : base("CellComplex.Wires", "CellComplex.Wires", "Returns the Wires constituent to the CellComplex.", "Topologic", "CellComplex")
         {
         }
 

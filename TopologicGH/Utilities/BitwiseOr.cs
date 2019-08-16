@@ -13,7 +13,7 @@ namespace TopologicGH
     {
 
         public BitwiseOr()
-          : base("Bitwise.Or", "Bitwise.Or", "Performs a bitwise Or operation", "TopologicUtilities", "Bitwise")
+          : base("Bitwise.Or", "Bitwise.Or", "Performs a bitwise Or operation between the arguments (in their binary form).", "TopologicUtilities", "Bitwise")
         {
         }
 

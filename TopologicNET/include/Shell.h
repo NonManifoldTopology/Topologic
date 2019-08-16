@@ -29,7 +29,7 @@ namespace Topologic
 		}
 
 		/// <summary>
-		/// Returns the constituent Faces of the Shell. 
+		/// Returns the Faces constituent to the Shell. 
 		/// </summary>
 		/// <returns name="Face[]">A list of the constituent Faces</returns>
 		property List<Face^>^ Faces
@@ -38,7 +38,7 @@ namespace Topologic
 		}
 
 		/// <summary>
-		/// Returns the constituent Wires of the Shell.
+		/// Returns the Wires constituent to the Shell.
 		/// </summary>
 		/// <returns name="Wire[]">A list of the constituent Wires</returns>
 		property List<Wire^>^ Wires
@@ -47,7 +47,7 @@ namespace Topologic
 		}
 
 		/// <summary>
-		/// Returns the constituent Edges of the Shell.
+		/// Returns the Edges constituent to the Shell.
 		/// </summary>
 		/// <returns name="Edge[]">A list of the constituent Edges</returns>
 		property List<Edge^>^ Edges
@@ -56,7 +56,7 @@ namespace Topologic
 		}
 
 		/// <summary>
-		/// Returns the constituent Vertices of the Shell.
+		/// Returns the Vertices constituent to the Shell.
 		/// </summary>
 		/// <returns name="Vertex[]">A list of the constituent Vertices</returns>
 		property List<Vertex^>^ Vertices
@@ -76,7 +76,7 @@ namespace Topologic
 		/// Creates a Shell by a set of connected Faces.
 		/// </summary>
 		/// <param name="faces">A set of Faces</param>
-		/// <param name="tolerance">A tolerance value</param>
+		/// <param name="tolerance">A positive tolerance value</param>
 		/// <returns name="Shell">The created Shell</returns>
 #ifdef TOPOLOGIC_DYNAMO
 		static Shell^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces, [DefaultArgument("0.001")] double tolerance);

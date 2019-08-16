@@ -10,7 +10,7 @@ namespace Topologic {
 	ref class Face;
 
 	/// <summary>
-	/// A Wire is a contiguous collection of Edges where adjacent Edges are connected by shared Vertices. It may be open or closed and may be manifold or non-manifold. 
+	/// A Wire is a contiguous collection of Edges, where adjacent Edges are connected by shared Vertices. It may be open or closed and may be manifold or non-manifold. 
 	/// </summary>
 
 	public ref class Wire : Topology
@@ -52,9 +52,9 @@ namespace Topologic {
 		}
 
 		/// <summary>
-		/// 
+		/// Returns the number of branches of the Wire.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>The number of branches</returns>
 #ifdef TOPOLOGIC_DYNAMO
 		[IsVisibleInDynamoLibrary(false)]
 #endif
@@ -95,7 +95,7 @@ namespace Topologic {
 
 #ifdef TOPOLOGIC_DYNAMO
 		/// <summary>
-		/// Create a wire by a polycurve (including a polygon).
+		/// Creates a Wire by a Dynamo polycurve (including a polygon).
 		/// </summary>
 		/// <param name="polyCurve">The polycurve</param>
 		/// <returns name="Wire">The created Topologic wire</returns>

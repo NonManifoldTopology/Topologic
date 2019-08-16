@@ -22,7 +22,7 @@ namespace TopologicGH
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Aperture", "Aperture", "Aperture", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Aperture", "Aperture", "An Aperture", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace TopologicGH
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Topology", "Topology", "Topology", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Topology", "Topology", "The underlying Topology", GH_ParamAccess.item);
         }
 
         /// <summary>

@@ -13,7 +13,7 @@ namespace TopologicGH
     {
 
         public ShellFaces()
-          : base("Shell.Faces", "Shell.Faces", "Returns the constituent Faces of the Shell.", "Topologic", "Shell")
+          : base("Shell.Faces", "Shell.Faces", "Returns the Faces constituent to the Shell.", "Topologic", "Shell")
         {
         }
 

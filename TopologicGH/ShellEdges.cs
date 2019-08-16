@@ -13,7 +13,7 @@ namespace TopologicGH
     {
 
         public ShellEdges()
-          : base("Shell.Edges", "Shell.Edges", "Returns the constituent Edges of the Shell.", "Topologic", "Shell")
+          : base("Shell.Edges", "Shell.Edges", "Returns the Edges constituent to the Shell.", "Topologic", "Shell")
         {
         }
 

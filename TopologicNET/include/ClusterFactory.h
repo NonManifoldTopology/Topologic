@@ -7,7 +7,7 @@ namespace Topologic
 	namespace Factories
 	{
 		/// <summary>
-		/// (private) A private factory class to create a Cluster.
+		/// (private) A factory class to create a Cluster.
 		/// </summary>
 		ref class ClusterFactory : TopologyFactory
 		{

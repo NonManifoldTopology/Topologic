@@ -13,7 +13,7 @@ namespace TopologicGH
     {
 
         public BitwiseNot()
-          : base("Bitwise.Not", "Bitwise.Not", "Performs a bitwise Not operation", "TopologicUtilities", "Bitwise")
+          : base("Bitwise.Not", "Bitwise.Not", "Performs a bitwise Not operation between the arguments (in their binary form).", "TopologicUtilities", "Bitwise")
         {
         }
 

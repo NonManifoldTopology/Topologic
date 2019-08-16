@@ -13,7 +13,7 @@ namespace TopologicGH
     {
 
         public VertexY()
-          : base("Vertex.Y", "Vertex.Y", "Returns the Y coordinate of the Vertex", "Topologic", "Vertex")
+          : base("Vertex.Y", "Vertex.Y", "Returns the Y coordinate of the Vertex.", "Topologic", "Vertex")
         {
         }
 

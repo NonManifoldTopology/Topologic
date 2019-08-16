@@ -7,7 +7,7 @@ namespace Topologic
 	namespace Factories
 	{
 		/// <summary>
-		/// (private) A private factory class to create a Shell.
+		/// (private) A factory class to create a Shell.
 		/// </summary>
 		ref class ShellFactory : TopologyFactory
 		{

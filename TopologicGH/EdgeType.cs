@@ -13,7 +13,7 @@ namespace TopologicGH
     {
 
         public EdgeType()
-          : base("Edge.Type", "Edge.Type", "Returns the type associated to Edge", "Topologic", "Edge")
+          : base("Edge.Type", "Edge.Type", "Returns the type associated to Edge.", "Topologic", "Edge")
         {
         }
 

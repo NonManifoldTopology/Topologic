@@ -13,7 +13,7 @@ namespace TopologicGH
     {
 
         public VertexType ()
-          : base("Vertex.Type", "Vertex.Type", "Returns the type associated to Vertex", "Topologic", "Vertex")
+          : base("Vertex.Type", "Vertex.Type", "Returns the type associated to Vertex.", "Topologic", "Vertex")
         {
         }
 

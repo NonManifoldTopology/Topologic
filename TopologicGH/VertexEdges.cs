@@ -13,7 +13,7 @@ namespace TopologicGH
     {
 
         public VertexEdges()
-          : base("Vertex.Edges", "Vertex.Edges", "Returns the Edges incident to the Vertex", "Topologic", "Vertex")
+          : base("Vertex.Edges", "Vertex.Edges", "Returns the Edges incident to the Vertex.", "Topologic", "Vertex")
         {
         }
 

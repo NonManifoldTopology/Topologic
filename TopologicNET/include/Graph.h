@@ -16,16 +16,16 @@ namespace Topologic {
 	ref class Topology;
 
 	/// <summary>
-	/// A Graph consists of a set of Vertices and a set of Edges that connect the Vertices. It can be a Wire, Vertex, Edge or Cluster and is defined by the input Topology. It can be manifold or non-manifold.
+	/// A Graph consists of a set of Vertices and a set of Edges that connect the Vertices. It is always a Cluster and it can be manifold or non-manifold.
 	/// </summary>
 	public ref class Graph
 	{
 	public:
 
 		/// <summary>
-		/// Creates a Graph from any topology.
+		/// Creates a Graph from any Topology.
 		/// </summary>
-		/// <param name="direct"></param>
+		/// <param name="direct">Use the centroids of the Topologies</param>
 		/// <param name="viaSharedTopologies">Use shared Topologies</param>
 		/// <param name="viaSharedApertures">Use shared Apertures</param>
 		/// <param name="toExteriorTopologies">Use exterior Topologies</param>
@@ -52,7 +52,7 @@ namespace Topologic {
 		/// <summary>
 		/// Returns a list of all the Vertices in a Graph.
 		/// </summary>
-		/// <returns name="Vertex[]">The Vertices in this Graph</returns>
+		/// <returns name="Vertex[]">A list of Vertices in this Graph</returns>
 		property List<Vertex^>^ Vertices
 		{
 			List<Vertex^>^ get();
@@ -61,16 +61,16 @@ namespace Topologic {
 		/// <summary>
 		/// Returns a list of Vertices that are not connected by Edges.
 		/// </summary>
-		/// <returns name="Vertex[]">The isolated Vertices in this Graph</returns>
+		/// <returns name="Vertex[]">A list of the isolated Vertices in this Graph</returns>
 		property List<Vertex^>^ IsolatedVertices
 		{
 			List<Vertex^>^ get();
 		}
 
 		/// <summary>
-		/// Returns all the Edges of a Graph.
+		/// Returns a list of all the Edges in a Graph.
 		/// </summary>
-		/// <returns name="Edge[]">The Edges in this Graph</returns>
+		/// <returns name="Edge[]">A list of the Edges in this Graph</returns>
 		property List<Edge^>^ Edges
 		{
 			List<Edge^>^ get();
@@ -92,7 +92,7 @@ namespace Topologic {
 		/// <param name="y">The Y coordinate</param>
 		/// <param name="z">The Z coordinate</param>
 		/// <param name="tolerance">A positive tolerance value</param>
-		/// <returns name="Vertex[]">The Vertices at the given coordinates</returns>
+		/// <returns name="Vertex[]">A list of the Vertices at the given coordinates</returns>
 		List<Vertex^>^ VerticesAtCoordinates(
 			double x, double y, double z, 
 #ifdef TOPOLOGIC_DYNAMO
@@ -152,7 +152,7 @@ namespace Topologic {
 		/// Returns a list of Vertices that are connected to the input Vertex by an Edge.
 		/// </summary>
 		/// <param name="vertex">The input Vertex</param>
-		/// <returns name="Vertex[]">The Vertices adjacent to a Vertex</returns>
+		/// <returns name="Vertex[]">A list of the Vertices adjacent to a Vertex</returns>
 		List<Vertex^>^ AdjacentVertices(Vertex^ vertex);
 
 		/// <summary>
@@ -191,7 +191,7 @@ namespace Topologic {
 		/// <summary>
 		/// Returns the ratio of the number of Edges to the total number of Edges the Graph could have.
 		/// </summary>
-		/// <returns name="double">The graph's density</returns>
+		/// <returns name="double">The Graph's density</returns>
 		property double Density
 		{
 			double get();
@@ -200,7 +200,7 @@ namespace Topologic {
 		/// <summary>
 		/// Returns True if the Graph has a density of 1. Returns False otherwise.
 		/// </summary>
-		/// <returns name="bool">True if the Graph has a density of 1, False otherwise</returns>
+		/// <returns name="bool">True if the Graph has a density of 1, otherwise false</returns>
 		property bool IsComplete
 		{
 			bool get();
@@ -239,7 +239,7 @@ namespace Topologic {
 		/// <param name="startVertex">The start Vertex</param>
 		/// <param name="endVertex">The end Vertex</param>
 		/// <param name="timeLimitInSeconds">Time limit in seconds</param>
-		/// <returns name="Wire[]">The paths</returns>
+		/// <returns name="Wire[]">A list of paths</returns>
 		List<Wire^>^ AllPaths(
 			Vertex^ startVertex, 
 			Vertex^ endVertex, 
@@ -249,7 +249,7 @@ namespace Topologic {
 			Nullable<int> timeLimitInSeconds);
 
 		/// <summary>
-		/// Returns the first Path found between the input vertices.
+		/// Returns the first Path found between the input Vertices.
 		/// </summary>
 		/// <param name="startVertex">The start Vertex</param>
 		/// <param name="endVertex">The end Vertex</param>
@@ -301,7 +301,7 @@ namespace Topologic {
 		/// Returns True if the input sequence satisfies the Erdoes Gallai theorem. It returns False otherwise.
 		/// </summary>
 		/// <param name="sequence">The input sequence</param>
-		/// <returns name="bool">True if the input sequence satisfies the Erdoes Gallai theorem, False otherwise</returns>
+		/// <returns name="bool">True if the input sequence satisfies the Erdoes Gallai theorem, otherwise false</returns>
 		bool IsErdoesGallai(List<int>^ sequence);
 
 		/// <summary>

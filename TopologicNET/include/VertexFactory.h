@@ -7,7 +7,7 @@ namespace Topologic
 	namespace Factories
 	{
 		/// <summary>
-		/// (private) A private factory class to create a Vertex.
+		/// (private) A factory class to create a Vertex.
 		/// </summary>
 		ref class VertexFactory : TopologyFactory
 		{

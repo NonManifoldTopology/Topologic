@@ -13,7 +13,7 @@ namespace TopologicGH
     {
 
         public CellSharedVertices()
-          : base("Cell.SharedVertices", "Cell.SharedVertices", "Return the shared SharedVertices between two Cells", "Topologic", "Cell")
+          : base("Cell.SharedVertices", "Cell.SharedVertices", "Return the shared shared Vertices between two Cells.", "Topologic", "Cell")
         {
         }
 

@@ -7,7 +7,7 @@ namespace Topologic
 	namespace Attributes
 	{
 		/// <summary>
-		/// (private) A private factory class to create a String Attribute.
+		/// (private) A factory class to create a String Attribute.
 		/// </summary>
 		ref class StringAttributeFactory : AttributeFactory
 		{

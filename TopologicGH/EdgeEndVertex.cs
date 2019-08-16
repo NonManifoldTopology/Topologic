@@ -13,7 +13,7 @@ namespace TopologicGH
     {
 
         public EdgeEndVertex()
-          : base("Edge.EndVertex", "Edge.EndVertex", "Get the end vertex of the edge", "Topologic", "Edge")
+          : base("Edge.EndVertex", "Edge.EndVertex", "Returns the end Vertex of the Edge.", "Topologic", "Edge")
         {
         }
 

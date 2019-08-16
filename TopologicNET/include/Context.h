@@ -30,7 +30,7 @@ namespace Topologic
 		static Context^ ByTopologyParameters__(Topology^ topology, double U, double V, double W);*/
 
 		/// <summary>
-		/// Returns the associated Topology to the context.
+		/// Returns the associated Topology to the Context.
 		/// </summary>
 		/// <returns name="Topology">The associated Topology</returns>
 		property Topology^ Topology

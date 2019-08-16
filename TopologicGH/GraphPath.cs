@@ -13,7 +13,7 @@ namespace TopologicGH
     {
 
         public GraphPath()
-          : base("Graph.Path", "Graph.Path", "Returns the first Path found between the input vertices.", "Topologic", "Graph")
+          : base("Graph.Path", "Graph.Path", "Returns the first path found between the input Vertices.", "Topologic", "Graph")
         {
         }
 

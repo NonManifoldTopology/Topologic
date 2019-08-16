@@ -30,7 +30,7 @@ namespace TopologicGH
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddTextParameter("Version", "Version", "Version", GH_ParamAccess.item);
+            pManager.AddTextParameter("Version", "Version", "The current version of Topologic", GH_ParamAccess.item);
         }
 
         /// <summary>

@@ -13,7 +13,7 @@ namespace TopologicGH
     {
 
         public CellSharedEdges()
-          : base("Cell.SharedEdges", "Cell.SharedEdges", "Return the shared Edges between two Cells", "Topologic", "Cell")
+          : base("Cell.SharedEdges", "Cell.SharedEdges", "Return the shared Edges between two Cells.", "Topologic", "Cell")
         {
         }
 

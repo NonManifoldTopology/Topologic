@@ -13,7 +13,7 @@ namespace TopologicGH
     {
 
         public CellVertices()
-          : base("Cell.Vertices", "Cell.Vertices", "Returns the constituent Vertices of the Cell.", "Topologic", "Cell")
+          : base("Cell.Vertices", "Cell.Vertices", "Returns the Vertices constituent to the Cell.", "Topologic", "Cell")
         {
         }
 

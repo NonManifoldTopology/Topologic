@@ -13,7 +13,7 @@ namespace TopologicGH
     {
 
         public EdgeWires()
-          : base("Edge.Wires", "Edge.Wires", "Returns the Wires incident to the Edge", "Topologic", "Edge")
+          : base("Edge.Wires", "Edge.Wires", "Returns the Wires incident to the Edge.", "Topologic", "Edge")
         {
         }
 

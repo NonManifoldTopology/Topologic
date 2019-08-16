@@ -13,7 +13,7 @@ namespace TopologicGH
     {
 
         public VertexByCoordinates()
-          : base("Vertex.ByCoordinates", "Vertex.ByCoordinates", "Creates a Vertex by XYZ coordinates", "Topologic", "Vertex")
+          : base("Vertex.ByCoordinates", "Vertex.ByCoordinates", "Creates a Vertex by XYZ coordinates.", "Topologic", "Vertex")
         {
         }
 

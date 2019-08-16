@@ -13,7 +13,7 @@ namespace TopologicGH
     {
 
         public WireType()
-          : base("Wire.Type", "Wire.Type", "Returns the type associated to Wire", "Topologic", "Wire")
+          : base("Wire.Type", "Wire.Type", "Returns the type associated to Wire.", "Topologic", "Wire")
         {
         }
 

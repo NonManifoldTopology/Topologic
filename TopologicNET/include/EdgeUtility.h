@@ -15,14 +15,14 @@ namespace Topologic {
 		{
 		public:
 			/// <summary>
-			/// Create an Edge (of any type) by a set of Vertices.
+			/// Creates an Edge (of any type) by a set of Vertices.
 			/// </summary>
 			/// <param name="vertices">A set of Vertices</param>
 			/// <returns>The created Edge</returns>
 			static Edge^ ByVertices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices);
 
 			/// <summary>
-			/// Create an Edge by a circle.
+			/// Creates an Edge by a circle.
 			/// </summary>
 			/// <param name="centerPoint">The center point of the circle</param>
 			/// <param name="radius">The radius of the circle</param>
@@ -42,7 +42,7 @@ namespace Topologic {
 				double normalX, double normalY, double normalZ);
 
 			/// <summary>
-			/// Create an Edge by an ellipse.
+			/// Creates an Edge by an ellipse.
 			/// </summary>
 			/// <param name="centerPoint">The center point of the ellipse</param>
 			/// <param name="majorRadius">The major radius of the ellipse</param>
@@ -62,6 +62,16 @@ namespace Topologic {
 				double xAxisX, double xAxisY, double xAxisZ,
 				double normalX, double normalY, double normalZ);
 
+			/// <summary>
+			/// Creates an Edge by a NURBS curve.
+			/// </summary>
+			/// <param name="controlPoints">A list of control points</param>
+			/// <param name="knots">A list of knots</param>
+			/// <param name="weights">A list of weights</param>
+			/// <param name="degree">The degree</param>
+			/// <param name="isPeriodic">True if it is periodic, otherwise false</param>
+			/// <param name="isRational">True if it is rational, otherwise false</param>
+			/// <returns>The created Edge</returns>
 #ifdef TOPOLOGIC_DYNAMO
 			[IsVisibleInDynamoLibrary(false)]
 #endif	

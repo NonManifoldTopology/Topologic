@@ -13,7 +13,7 @@ namespace TopologicGH
     {
 
         public EdgeByStartVertexEndVertex()
-          : base("Edge.ByStartVertexEndVertex", "Edge.ByStartVertexEndVertex", "Creates a straight Edge by the startVertex and endVertex", "Topologic", "Edge")
+          : base("Edge.ByStartVertexEndVertex", "Edge.ByStartVertexEndVertex", "Creates a straight Edge by the startVertex and endVertex.", "Topologic", "Edge")
         {
         }
 

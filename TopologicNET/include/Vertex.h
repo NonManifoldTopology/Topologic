@@ -34,7 +34,7 @@ namespace Topologic
 		/// <summary>
 		/// Returns the Edges incident to the Vertex.
 		/// </summary>
-		/// <returns name="Edge[]">The Edges incident to the Vertex</returns>
+		/// <returns name="Edge[]">A list of the Edges incident to the Vertex</returns>
 		property List<Edge^>^ Edges
 		{
 			List<Edge^>^ get();
@@ -96,12 +96,10 @@ namespace Topologic
 		Vertex(const std::shared_ptr<TopologicCore::Vertex>& kpCoreVertex);
 
 		/// <summary>
-		/// Create a vertex by a point.
+		/// Creates a Vertex by a point.
 		/// </summary>
-		/// <param name="point">A point.</param>
-		/// <returns name="Vertex">
-		/// A vertex.
-		/// </returns>
+		/// <param name="point">A Dynamo point</param>
+		/// <returns name="Vertex">The created Vertex</returns>
 #ifdef TOPOLOGIC_DYNAMO
 		static Vertex^ ByPoint(Autodesk::DesignScript::Geometry::Point^ point);
 

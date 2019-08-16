@@ -13,7 +13,7 @@ namespace TopologicGH
     {
 
         public FaceType()
-          : base("Face.Type", "Face.Type", "Returns the type associated to Face", "Topologic", "Face")
+          : base("Face.Type", "Face.Type", "Returns the type associated to Face.", "Topologic", "Face")
         {
         }
 

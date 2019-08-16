@@ -13,7 +13,7 @@ namespace TopologicGH
     {
 
         public CellFaces()
-          : base("Cell.Faces", "Cell.Faces", "Returns the constituent Faces of the Cell.", "Topologic", "Cell")
+          : base("Cell.Faces", "Cell.Faces", "Returns the Faces constituent to the Cell.", "Topologic", "Cell")
         {
         }
 
