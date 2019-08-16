@@ -63,11 +63,19 @@ namespace Topologic {
 			/// Transforms a Topology according to translation and rotation factors.
 			/// </summary>
 			/// <param name="topology">A Topology</param>
-			/// <param name="origin">The origin</param>
-			/// <param name="xFactor">The X factor</param>
-			/// <param name="yFactor">The Y factor</param>
-			/// <param name="zFactor">The Z factor</param>
-			/// <returns></returns>
+			/// <param name="translationX"></param>
+			/// <param name="translationY"></param>
+			/// <param name="translationZ"></param>
+			/// <param name="rotation11"></param>
+			/// <param name="rotation12"></param>
+			/// <param name="rotation13"></param>
+			/// <param name="rotation21"></param>
+			/// <param name="rotation22"></param>
+			/// <param name="rotation23"></param>
+			/// <param name="rotation31"></param>
+			/// <param name="rotation32"></param>
+			/// <param name="rotation33"></param>
+			/// <returns name="Topology"></returns>
 #ifdef TOPOLOGIC_DYNAMO
 			[IsVisibleInDynamoLibrary(false)]
 #endif
