@@ -79,7 +79,7 @@ namespace Topologic
 		/// <param name="tolerance">A positive tolerance value</param>
 		/// <returns name="Shell">The created Shell</returns>
 #ifdef TOPOLOGIC_DYNAMO
-		static Shell^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces, [DefaultArgument("0.001")] double tolerance);
+		static Shell^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces, [DefaultArgument("0.0001")] double tolerance);
 #else
 		static Shell^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces, double tolerance);
 #endif

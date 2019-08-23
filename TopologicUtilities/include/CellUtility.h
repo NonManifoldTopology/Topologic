@@ -110,8 +110,9 @@ namespace TopologicUtilities
 		/// </summary>
 		/// <param name="kpCell"></param>
 		/// <param name="kpVertex"></param>
+		/// <param name="kTolerance"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_UTILITIES_API CellContainmentState Contains(const TopologicCore::Cell::Ptr & kpCell, const TopologicCore::Vertex::Ptr& kpVertex);
+		static TOPOLOGIC_UTILITIES_API CellContainmentState Contains(const TopologicCore::Cell::Ptr & kpCell, const TopologicCore::Vertex::Ptr& kpVertex, const double kTolerance = 0.0001);
 
 		static TOPOLOGIC_UTILITIES_API void GetMinMax(const TopologicCore::Cell::Ptr & kpCell, double &rMinX, double &rMaxX, double &rMinY, double &rMaxY, double &rMinZ, double &rMaxZ);
 	};

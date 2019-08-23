@@ -166,7 +166,7 @@ namespace TopologicCore
 		//
 		occtMakerVolume.Perform(); //perform the operation
 		if (occtMakerVolume.HasErrors()) { //check error status
-			throw std::exception("Cannot create a cell complex from the cells.");
+			throw std::exception("Cannot create a cell complex from the faces.");
 		}
 
 		//

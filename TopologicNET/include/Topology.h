@@ -44,7 +44,7 @@ namespace Topologic
 		/// <param name="geometry">A geometry</param>
 		/// <param name="tolerance">A positive tolerance value</param>
 		/// <returns name="Topology">The created Topology</returns>
-		static Topology^ ByGeometry(Autodesk::DesignScript::Geometry::Geometry^ geometry, [DefaultArgument("0.001")] double tolerance);
+		static Topology^ ByGeometry(Autodesk::DesignScript::Geometry::Geometry^ geometry, [DefaultArgument("0.0001")] double tolerance);
 
 		/// <summary>
 		/// Creates a Shell by a polysurface [NOTE: This method is deleted].

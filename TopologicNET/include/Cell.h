@@ -27,7 +27,7 @@ namespace Topologic
 		/// <param name="tolerance">A positive tolerance value</param>
 		/// <returns name="Cell">The created Cell</returns>
 #ifdef TOPOLOGIC_DYNAMO
-		static Cell^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces, [DefaultArgument("0.001")] double tolerance);
+		static Cell^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces, [DefaultArgument("0.0001")] double tolerance);
 #else
 		static Cell^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces, double tolerance);
 #endif
@@ -172,7 +172,7 @@ namespace Topologic
 		/// <param name="solid">A solid</param>
 		/// <param name="tolerance">A positive tolerance value</param>
 		/// <returns name="Cell">The created Cell</returns>
-		static Cell^ BySolid(Autodesk::DesignScript::Geometry::Solid^ solid, [DefaultArgument("0.001")] double tolerance);
+		static Cell^ BySolid(Autodesk::DesignScript::Geometry::Solid^ solid, [DefaultArgument("0.0001")] double tolerance);
 
 		/// <summary>
 		/// Creates a Cell from a sphere.

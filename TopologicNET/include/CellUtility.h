@@ -92,8 +92,17 @@ namespace Topologic {
 			/// <param name="cell">The Cell</param>
 			/// <param name="vertex">The Vertex</param>
 			/// <param name="allowOnBoundary">Is the Vertex allowed on the Cell's boundary?</param>
+			/// <param name="tolerance">A positive tolerance value</param>
 			/// <returns>True or false</returns>
-			static bool Contains(Cell^ cell, Vertex^ vertex, bool allowOnBoundary);
+			static bool Contains(
+				Cell^ cell, 
+				Vertex^ vertex, 
+				bool allowOnBoundary,
+#ifdef TOPOLOGIC_DYNAMO
+				[Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")]
+#endif
+				double tolerance
+			);
 
 			/// <summary>
 			/// Returns six values associated to the x, y, z coordinates of the bounding box of the Cell.

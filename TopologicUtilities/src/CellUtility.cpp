@@ -169,7 +169,7 @@ namespace TopologicUtilities
 		return occtShapeProperties.Mass();
 	}
 
-	CellContainmentState CellUtility::Contains(const TopologicCore::Cell::Ptr & kpCell, const TopologicCore::Vertex::Ptr & kpVertex)
+	CellContainmentState CellUtility::Contains(const TopologicCore::Cell::Ptr & kpCell, const TopologicCore::Vertex::Ptr & kpVertex, const double kTolerance)
 	{
 		ShapeFix_Solid occtSolidFix(kpCell->GetOcctSolid());
 		occtSolidFix.Perform();
