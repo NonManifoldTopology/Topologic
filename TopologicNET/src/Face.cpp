@@ -1387,7 +1387,7 @@ namespace Topologic
 			Wire^ pMappedApertureWire = Wire::ByEdges(pMappedApertureEdges);
 
 			//// Use the wire to make a face on the same supporting surface as the input face's
-			Face^ pMappedApertureFace = Topologic::Utilities::FaceUtility::TrimByWire(this, pMappedApertureWire);
+			Face^ pMappedApertureFace = Topologic::Utilities::FaceUtility::TrimByWire(this, pMappedApertureWire, false);
 			pFaces->Add(pMappedApertureFace);
 
 			// and attach it as an aperture to the face.

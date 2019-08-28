@@ -78,8 +78,9 @@ namespace TopologicUtilities
 		/// </summary>
 		/// <param name="kpFace"></param>
 		/// <param name="kpWire"></param>
+		/// <param name="kReverseWire"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_UTILITIES_API TopologicCore::Face::Ptr TrimByWire(const TopologicCore::Face::Ptr& kpFace, const TopologicCore::Wire::Ptr& kpWire);
+		static TOPOLOGIC_UTILITIES_API TopologicCore::Face::Ptr TrimByWire(const TopologicCore::Face::Ptr& kpFace, const TopologicCore::Wire::Ptr& kpWire, const bool kReverseWire);
 
 		static TOPOLOGIC_UTILITIES_API void Triangulate(const TopologicCore::Face::Ptr& kpFace, const double kDeflection, std::list<TopologicCore::Face::Ptr>& rTriangles);
 

@@ -24,6 +24,7 @@ namespace TopologicGH
         {
             pManager.AddGenericParameter("Face", "Face", "Face", GH_ParamAccess.item);
             pManager.AddGenericParameter("Wire", "Wire", "Wire", GH_ParamAccess.item);
+            pManager.AddBooleanParameter("Reverse Wire", "Reverse Wire", "Reverse Wire", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -43,11 +44,13 @@ namespace TopologicGH
             // Declare a variable for the input String
             Topologic.Face face = null;
             Topologic.Wire wire = null;
+            bool reverseWire = false;
 
             // Use the DA object to retrieve the data inside the first input parameter.
             // If the retieval fails (for example if there is no data) we need to abort.
             if (!DA.GetData(0, ref face)) { return; }
             if (!DA.GetData(1, ref wire)) { return; }
+            if (!DA.GetData(2, ref reverseWire)) { return; }
 
             // If the retrieved data is Nothing, we need to abort.
             // We're also going to abort on a zero-length String.
@@ -59,7 +62,7 @@ namespace TopologicGH
             //char[] chars = data.ToCharArray();
 
             
-            Topologic.Face newFace = Topologic.Utilities.FaceUtility.TrimByWire(face, wire);
+            Topologic.Face newFace = Topologic.Utilities.FaceUtility.TrimByWire(face, wire, reverseWire);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetData(0, newFace);

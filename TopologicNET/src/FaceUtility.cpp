@@ -77,12 +77,12 @@ namespace Topologic {
 			return nullptr;
 		}
 
-		Face^ FaceUtility::TrimByWire(Face^ face, Wire^ wire)
+		Face^ FaceUtility::TrimByWire(Face^ face, Wire^ wire, bool reverseWire)
 		{
 			TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
 			TopologicCore::Wire::Ptr pCoreWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>(wire->GetCoreTopologicalQuery());
 
-			TopologicCore::Face::Ptr pTrimmedFace = TopologicUtilities::FaceUtility::TrimByWire(pCoreFace, pCoreWire);
+			TopologicCore::Face::Ptr pTrimmedFace = TopologicUtilities::FaceUtility::TrimByWire(pCoreFace, pCoreWire, reverseWire);
 			return safe_cast<Face^>(Topology::ByCoreTopology(pTrimmedFace));
 		}
 

@@ -59,8 +59,9 @@ namespace Topologic {
 			/// </summary>
 			/// <param name="face">The Face to be trimmed</param>
 			/// <param name="wire">The Wire with which the Face will be trimmed</param>
+			/// <param name="reverseWire">If true, reverse the orientation of the wire</param>
 			/// <returns name="Face">The trimmed Face</returns>
-			static Face^ TrimByWire(Face^ face, Wire^ wire);
+			static Face^ TrimByWire(Face^ face, Wire^ wire, bool reverseWire);
 
 			/// <summary>
 			/// Triangulates a Face given a deflection value.

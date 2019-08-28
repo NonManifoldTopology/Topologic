@@ -78,7 +78,9 @@ namespace TopologicGH
             GH_Surface ghSurface = ghGeometryBase as GH_Surface;
             if (ghSurface != null)
             {
-                topology = BySurface(ghSurface.Value.Surfaces[0]);
+                //topology = ByBrep(ghSurface.Value.Faces[0].ToBrep(), tolerance);
+                //topology = ByBrepFace(ghSurface.Value.Faces[0]);
+                topology = ByBrep(ghSurface.Value, tolerance);
                 DA.SetData(0, topology);
                 return;
             }
@@ -143,13 +145,20 @@ namespace TopologicGH
             }
             else
             {
-                return Shell.ByFaces(faces, tolerance);
+                Shell shell = Shell.ByFaces(faces, tolerance);
+                if(ghBrep.IsSolid)
+                {
+                    Cell cell = Cell.ByShell(shell);
+                    return cell;
+                }
+
+                return shell;
             }
         }
 
         private Face ByBrepFace(BrepFace ghBrepFace)
         {
-            Surface ghSurface = ghBrepFace.DuplicateSurface();
+            Surface ghSurface = ghBrepFace.UnderlyingSurface();
             Face untrimmedFace = BySurface(ghSurface);
 
             BrepLoop ghOuterLoop = ghBrepFace.OuterLoop;
@@ -165,7 +174,8 @@ namespace TopologicGH
                     BrepEdge ghEdge = ghTrim.Edge;
                     if(ghEdge == null)
                     {
-                        throw new Exception("An invalid Rhino edge is encountered.");
+                        continue;
+                        //throw new Exception("An invalid Rhino edge is encountered.");
                     }
 
                     Topology topology = ByCurve(ghEdge.DuplicateCurve());
