@@ -165,10 +165,6 @@ namespace Topologic
 		}
 
 		// Transfer the U knots and U multiplicities. Note the format difference. OCCT has a separate multiplicity list, while Dynamo simply repeats the knots.
-		//array<double>^ pDynamoUKnots = pDynamoNurbsSurface->UKnots();
-		/*array<double>^ pDynamoUKnotsCopy = gcnew array<double>(pDynamoUKnots->Length);
-		Array::Copy(pDynamoUKnots, pDynamoUKnotsCopy, pDynamoUKnots->Length);
-		Array::Sort(pDynamoUKnotsCopy);*/
 		List<double>^ uniqueUKnots = gcnew List<double>();
 		List<int>^ pUMultiplicities = gcnew List<int>();
 		double previousUKnot = uKnots[0] - 1.0;
@@ -203,10 +199,6 @@ namespace Topologic
 		}
 
 		// Transfer the V knots and V multiplicities. Note the format difference. OCCT has a separate multiplicity list, while Dynamo simply repeats the knots.
-		/*array<double>^ pDynamoVKnots = pDynamoNurbsSurface->VKnots();
-		array<double>^ pDynamoVKnotsCopy = gcnew array<double>(pDynamoVKnots->Length);
-		Array::Copy(pDynamoVKnots, pDynamoVKnotsCopy, pDynamoVKnots->Length);
-		Array::Sort(pDynamoVKnotsCopy);*/
 		List<double>^ uniqueVKnots = gcnew List<double>();
 		List<int>^ pVMultiplicities = gcnew List<int>();
 		double previousVKnot = vKnots[0] - 1.0;

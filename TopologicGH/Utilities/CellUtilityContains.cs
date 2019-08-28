@@ -25,6 +25,7 @@ namespace TopologicGH
             pManager.AddGenericParameter("Cell", "Cell", "Cell", GH_ParamAccess.item);
             pManager.AddGenericParameter("Vertex", "Vertex", "Vertex", GH_ParamAccess.item);
             pManager.AddBooleanParameter("AllowOnBoundary", "AllowOnBoundary", "AllowOnBoundary", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Tolerance", "Tolerance", "Tolerance", GH_ParamAccess.item, 0.0001);
         }
 
         /// <summary>
@@ -45,12 +46,14 @@ namespace TopologicGH
             Topologic.Cell cell = null;
             Topologic.Vertex vertex = null;
             bool allowOnBoundary = false;
+            double tolerance = 0.0001;
 
             // Use the DA object to retrieve the data inside the first input parameter.
             // If the retieval fails (for example if there is no data) we need to abort.
             if (!DA.GetData(0, ref cell)) { return; }
             if (!DA.GetData(1, ref vertex)) { return; }
             if (!DA.GetData(2, ref allowOnBoundary)) { return; }
+            if (!DA.GetData(3, ref tolerance)) { return; }
 
             // If the retrieved data is Nothing, we need to abort.
             // We're also going to abort on a zero-length String.
@@ -62,7 +65,7 @@ namespace TopologicGH
             //char[] chars = data.ToCharArray();
 
             
-            bool isContained = Topologic.Utilities.CellUtility.Contains(cell, vertex, allowOnBoundary);
+            bool isContained = Topologic.Utilities.CellUtility.Contains(cell, vertex, allowOnBoundary, tolerance);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetData(0, isContained);

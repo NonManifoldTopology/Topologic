@@ -24,7 +24,7 @@ namespace TopologicGH
         {
             pManager.AddGenericParameter("Topology", "Topology", "Topology", GH_ParamAccess.item);
             pManager.AddGenericParameter("Contents", "Contents", "Contents", GH_ParamAccess.list);
-            pManager.AddNumberParameter("Type Filter", "Type Filter", "Type Filter", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Type Filter", "Type Filter", "Type Filter", GH_ParamAccess.item);
         }
 
         /// <summary>

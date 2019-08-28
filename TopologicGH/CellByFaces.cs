@@ -23,7 +23,7 @@ namespace TopologicGH
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Faces", "Faces", "A set of Faces", GH_ParamAccess.list);
-            pManager.AddNumberParameter("Tolerance", "Tolerance", "A positive tolerance value", GH_ParamAccess.list, 0.001);
+            pManager.AddNumberParameter("Tolerance", "Tolerance", "A positive tolerance value", GH_ParamAccess.item, 0.001);
         }
 
         /// <summary>

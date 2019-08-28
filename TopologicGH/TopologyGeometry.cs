@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Data;
 using Rhino.Geometry;
 using Topologic;
 
@@ -30,7 +31,7 @@ namespace TopologicGH
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Geometry", "Geometry", "Geometry", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Geometry", "Geometry", "Geometry", GH_ParamAccess.tree);
         }
 
         /// <summary>
@@ -49,20 +50,95 @@ namespace TopologicGH
             // If the retrieved data is Nothing, we need to abort.
             // We're also going to abort on a zero-length String.
             if (topology == null) { return; }
-            //if (data.Length == 0) { return; }
 
-            // Convert the String to a character array.
-            //char[] chars = data.ToCharArray();
+            //Object geometry = ToGeometry(topology);
 
-            // Reverse the array of character.
+            //List<Object> output = new List<Object>();
+            Grasshopper.DataTree<Object> output = new Grasshopper.DataTree<Object>();
+            List<int> path = new List<int>();
+            path.Add(0);
+            RecursiveGeometry(topology, path, ref output);
+
+            //Grasshopper.DataTree<Object> tree = new Grasshopper.DataTree<Object>();
+            //int i = 0;
+            //foreach (Object o in output)
+            //{
+            //    // a list
+            //    ICollection<Object> innerList = o as ICollection<Object>;
+            //    if (innerList != null)
+            //    {
+            //        tree.AddRange(innerList, new GH_Path(new int[] { 0, i }));
+            //    }else
+            //    {
+            //        tree.Add(o, new GH_Path(i));
+            //    }
+            //    i++;
+            //}
+            
+            DA.SetDataTree(0, output);
+        }
+
+        GH_Path ListToTreePath(List<int> path)
+        {
+            if(path.Count == 0)
+            {
+                return null;
+            }
+
+            if(path.Count == 1)
+            {
+                return new GH_Path(path[0]);
+            }
+
+            return new GH_Path(path.ToArray());
+        }
+
+        void AddObjectToTree(Object o, List<int> path, ref Grasshopper.DataTree<Object> output)
+        {
+            ICollection<Object> innerList = o as ICollection<Object>;
+            if (innerList != null)
+            {
+                List<int> newPath = new List<int>(path);
+                newPath.Add(0);
+                int i = 0;
+                foreach (Object innerO in innerList)
+                {
+                    List<int> newPath2 = new List<int>(path);
+                    newPath2.Add(i);
+                    AddObjectToTree(innerO, newPath2, ref output);
+                    ++i;
+                }
+            }
+            else
+            {
+                output.Add(o, ListToTreePath(path));
+            }
+        }
+
+        void RecursiveGeometry(Topology topology, List<int> path, ref Grasshopper.DataTree<Object> output)
+        {
             Object geometry = ToGeometry(topology);
+            AddObjectToTree(geometry, path, ref output);
 
-            // Use the DA object to assign a new String to the first output parameter.
-            DA.SetData(0, geometry);
+            List<Topology> subContents = topology.SubContents;
+            int i = 0;
+            foreach(Topology subContent in subContents)
+            {
+                List<int> newPath = new List<int>(path);
+                newPath.Add(1);
+                newPath.Add(i);
+                RecursiveGeometry(subContent, newPath, ref output);
+                ++i;
+            }
         }
 
         private object ToGeometry(Topology topology)
         {
+            if(topology == null)
+            {
+                return null;
+            }
+
             Vertex vertex = topology as Vertex;
             if (vertex != null)
             {
@@ -102,7 +178,7 @@ namespace TopologicGH
             CellComplex cellComplex = topology as CellComplex;
             if (cellComplex != null)
             {
-                return ToBrep(cellComplex);
+                return ToList(cellComplex);
             }
 
             Cluster cluster = topology as Cluster;
@@ -120,9 +196,9 @@ namespace TopologicGH
             throw new Exception("The type of the input topology is not recognized.");
         }
 
-        private object ToList(Cluster cluster)
+        private object ToList(Topology topology)
         {
-            List<Topology> subTopologies = cluster.SubTopologies;
+            List<Topology> subTopologies = topology.SubTopologies;
             List<Object> ghGeometries = new List<Object>();
             foreach(Topology subTopology in subTopologies)
             {
@@ -151,11 +227,92 @@ namespace TopologicGH
             }else
             {
                 Brep ghBrep = ghBrepSurfaces[0];
-                for (int i = 1; i < ghBrepSurfaces.Count-1; ++i)
+                for (int i = 1; i < ghBrepSurfaces.Count; ++i)
                 {
-                    ghBrep.Join(ghBrepSurfaces[i], 0.0001, false);
+                    ghBrep.Join(ghBrepSurfaces[i], 0.0001, true);
                 }
                 return ghBrep;
+            }
+        }
+
+        private void ProcessFace(
+            Wire wire, ref Brep ghBrep, BrepFace ghBrepFace, BrepLoopType ghBrepLoopType, Rhino.Geometry.NurbsSurface ghNurbsSurface, 
+            Dictionary<Edge, Tuple<int, int>> edge2DIndices, Dictionary<Edge, BrepEdge> edgeIndices)
+        {
+            List<Edge> edges = wire.Edges;
+            BrepLoop ghBrepLoop = ghBrep.Loops.Add(ghBrepLoopType, ghBrepFace);
+
+            // 2f.For each loop, add a trim(2D edge)
+            List<BrepEdge> ghEdges = new List<BrepEdge>();
+            List<Tuple<Curve, int, Curve, int>> gh2DCurves = new List<Tuple<Curve, int, Curve, int>>(); // original curve, index, reverse curve, reverse index
+            foreach (Edge edge in edges)
+            {
+                Tuple<int, int> thisEdge2DIndices = edge2DIndices.
+                    Where(edgeIndexPair => edgeIndexPair.Key.IsSame(edge)).
+                    Select(edgeIndexPair => edgeIndexPair.Value).
+                    FirstOrDefault();
+
+                int thisEdge2DIndex = thisEdge2DIndices.Item1;
+                int thisReverseEdge2DIndex = thisEdge2DIndices.Item2;
+
+                Curve ghCurve2D = ghBrep.Curves2D[thisEdge2DIndex];
+                Curve ghReverseCurve2D = ghBrep.Curves2D[thisReverseEdge2DIndex];
+                gh2DCurves.Add(Tuple.Create(ghCurve2D, thisEdge2DIndex, ghReverseCurve2D, thisReverseEdge2DIndex));
+
+                BrepEdge ghBrepEdge = edgeIndices.
+                    Where(edgeIndexPair => edgeIndexPair.Key.IsSame(edge)).
+                    Select(edgeIndexPair => edgeIndexPair.Value).
+                    FirstOrDefault();
+
+                String ghBrepEdgeLog = "";
+                if (!ghBrepEdge.IsValidWithLog(out ghBrepEdgeLog))
+                {
+                    throw new Exception("Fails to create a valid Brep with the following message: " + ghBrepEdgeLog);
+                }
+
+                ghEdges.Add(ghBrepEdge);
+            }
+
+            for (int currentEntryID = 0; currentEntryID < gh2DCurves.Count; ++currentEntryID)
+            {
+                int previousEntryID = currentEntryID - 1;
+                if (previousEntryID < 0)
+                {
+                    previousEntryID = edges.Count - 1;
+                }
+
+                bool isCurrentStartEqualToPreviousStart = gh2DCurves[currentEntryID].Item1.PointAtStart.DistanceTo(
+                                                            gh2DCurves[previousEntryID].Item1.PointAtStart) < 0.0001;
+                bool isCurrentStartEqualToPreviousEnd = gh2DCurves[currentEntryID].Item1.PointAtStart.DistanceTo(
+                                                            gh2DCurves[previousEntryID].Item1.PointAtEnd) < 0.0001;
+                bool isTrimReversed = false;
+                if (!isCurrentStartEqualToPreviousStart && !isCurrentStartEqualToPreviousEnd)
+                {
+                    // Reverse trim
+                    isTrimReversed = true;
+                }
+
+                BrepTrim ghBrepTrim = ghBrep.Trims.Add(
+                    ghEdges[currentEntryID],       // 3D edge
+                    isTrimReversed,                // is reversed?
+                    ghBrepLoop,                    // 2D loop
+                    isTrimReversed ? gh2DCurves[currentEntryID].Item4 : gh2DCurves[currentEntryID].Item2);  // 2D curve index, use the reversed one if reversed
+
+                ghBrepTrim.IsoStatus = ghNurbsSurface.IsIsoparametric(gh2DCurves[currentEntryID].Item1);
+                ghBrepTrim.TrimType = BrepTrimType.Boundary;
+                ghBrepTrim.SetTolerances(0.0, 0.0);
+
+                String ghBrepTrimLog = "";
+                if (!ghBrepTrim.IsValidWithLog(out ghBrepTrimLog))
+                {
+                    throw new Exception("Fails to create a valid BrepTrim with the following message: " + ghBrepTrimLog);
+                }
+            }
+
+            String brepLoopLog = "";
+            if (!ghBrepLoop.IsValidWithLog(out brepLoopLog))
+            {
+                throw new Exception("Fails to create a valid outer BrepLoop with the following message: " + brepLoopLog);
             }
         }
 
@@ -289,135 +446,13 @@ namespace TopologicGH
 
             // 2e.Create outer loop
             Wire outerWire = face.ExternalBoundary;
-            List<Edge> outerEdges = outerWire.Edges;
-            BrepLoop ghBrepOuterLoop = ghBrep.Loops.Add(BrepLoopType.Outer, ghBrepFace);
-
-            // 2f.For each loop, add a trim(2D edge)
-            List<BrepEdge> ghOuterEdges = new List<BrepEdge>();
-            List<Tuple<Curve, int, Curve, int>> gh2DCurves = new List<Tuple<Curve, int, Curve, int>>(); // original curve, index, reverse curve, reverse index
-            foreach (Edge outerEdge in outerEdges)
-            {
-                Tuple<int, int> outerEdge2DIndices = edge2DIndices.
-                    Where(edgeIndexPair => edgeIndexPair.Key.IsSame(outerEdge)).
-                    Select(edgeIndexPair => edgeIndexPair.Value).
-                    FirstOrDefault();
-
-                int outerEdge2DIndex = outerEdge2DIndices.Item1;
-                int outerReverseEdge2DIndex = outerEdge2DIndices.Item2;
-
-                Curve ghOuterCurve2D = ghBrep.Curves2D[outerEdge2DIndex];
-                Curve ghOuterReverseCurve2D = ghBrep.Curves2D[outerReverseEdge2DIndex];
-                gh2DCurves.Add(Tuple.Create(ghOuterCurve2D, outerEdge2DIndex, ghOuterReverseCurve2D, outerReverseEdge2DIndex));
-
-                BrepEdge ghBrepEdge = edgeIndices.
-                    Where(edgeIndexPair => edgeIndexPair.Key.IsSame(outerEdge)).
-                    Select(edgeIndexPair => edgeIndexPair.Value).
-                    FirstOrDefault();
-
-                String ghBrepEdgeLog = "";
-                if (!ghBrepEdge.IsValidWithLog(out ghBrepEdgeLog))
-                {
-                    throw new Exception("Fails to create a valid Brep with the following message: " + ghBrepEdgeLog);
-                }
-
-                ghOuterEdges.Add(ghBrepEdge);
-            }
-
-            for (int currentEntryID = 0; currentEntryID < gh2DCurves.Count; ++currentEntryID)
-            {
-                int previousEntryID = currentEntryID - 1;
-                if (previousEntryID < 0)
-                {
-                    previousEntryID = outerEdges.Count - 1;
-                }
-
-                bool isCurrentStartEqualToPreviousStart = gh2DCurves[currentEntryID].Item1.PointAtStart.DistanceTo(
-                                                            gh2DCurves[previousEntryID].Item1.PointAtStart) < 0.0001;
-                bool isCurrentStartEqualToPreviousEnd = gh2DCurves[currentEntryID].Item1.PointAtStart.DistanceTo(
-                                                            gh2DCurves[previousEntryID].Item1.PointAtEnd) < 0.0001;
-                bool isTrimReversed = false;
-                if (!isCurrentStartEqualToPreviousStart && !isCurrentStartEqualToPreviousEnd)
-                {
-                    // Reverse trim
-                    isTrimReversed = true;
-                }
-
-                BrepTrim ghBrepTrim = ghBrep.Trims.Add(
-                    ghOuterEdges[currentEntryID],       // 3D edge
-                    isTrimReversed,                     // is reversed?
-                    ghBrepOuterLoop,                    // 2D loop
-                    //gh2DCurves[currentEntryID].Item2);  // 2D curve index
-                    isTrimReversed? gh2DCurves[currentEntryID].Item4 : gh2DCurves[currentEntryID].Item2);  // 2D curve index, use the reversed one if reversed
-                
-                ghBrepTrim.IsoStatus = ghNurbsSurface.IsIsoparametric(gh2DCurves[currentEntryID].Item1);
-                ghBrepTrim.TrimType = BrepTrimType.Boundary;
-                ghBrepTrim.SetTolerances(0.0, 0.0);
-
-                String ghBrepTrimLog = "";
-                if (!ghBrepTrim.IsValidWithLog(out ghBrepTrimLog))
-                {
-                    throw new Exception("Fails to create a valid BrepTrim with the following message: " + ghBrepTrimLog);
-                }
-            }
-
-            String brepLoopLog = "";
-            if (!ghBrepOuterLoop.IsValidWithLog(out brepLoopLog))
-            {
-                throw new Exception("Fails to create a valid outer BrepLoop with the following message: " + brepLoopLog);
-            }
+            ProcessFace(outerWire, ref ghBrep, ghBrepFace, BrepLoopType.Outer, ghNurbsSurface, edge2DIndices, edgeIndices);
 
             // 2g. Create inner loops
             List<Wire> innerWires = face.InternalBoundaries;
             foreach (Wire innerWire in innerWires)
             {
-                BrepLoop ghBrepInnerLoop = ghBrep.Loops.Add(BrepLoopType.Inner, ghBrepFace);
-                List<Edge> innerEdges = innerWire.Edges;
-                foreach (Edge innerEdge in innerEdges)
-                {
-                    //int innerEdge2DIndex = edge2DIndices.
-                    //    Where(edgeIndexPair => edgeIndexPair.Key.IsSame(innerEdge)).
-                    //    Select(edgeIndexPair => edgeIndexPair.Value).
-                    //    FirstOrDefault().Item1;
-                    Tuple<int, int> innerEdge2DIndices = edge2DIndices.
-                    Where(edgeIndexPair => edgeIndexPair.Key.IsSame(innerEdge)).
-                    Select(edgeIndexPair => edgeIndexPair.Value).
-                    FirstOrDefault();
-
-                    int innerEdge2DIndex = innerEdge2DIndices.Item1;
-                    int innerReverseEdge2DIndex = innerEdge2DIndices.Item2;
-
-                    Curve ghInnerCurve2D = ghBrep.Curves2D[innerEdge2DIndex];
-                    Curve ghInnerReverseCurve2D = ghBrep.Curves2D[innerReverseEdge2DIndex];
-                    gh2DCurves.Add(Tuple.Create(ghInnerCurve2D, innerEdge2DIndex, ghInnerReverseCurve2D, innerReverseEdge2DIndex));
-
-
-                    BrepEdge ghBrepEdge = edgeIndices.
-                        Where(edgeIndexPair => edgeIndexPair.Key.IsSame(innerEdge)).
-                        Select(edgeIndexPair => edgeIndexPair.Value).
-                        FirstOrDefault();
-
-                    BrepTrim ghBrepTrim = ghBrep.Trims.Add(
-                        ghBrepEdge,
-                        isTrimReversed,
-                        ghBrepInnerLoop,
-                        //innerEdge2DIndex);
-                        isTrimReversed ? gh2DCurves[currentEntryID].Item4 : gh2DCurves[currentEntryID].Item2);
-
-                    ghBrepTrim.IsoStatus = IsoStatus.None;
-                    ghBrepTrim.TrimType = BrepTrimType.Boundary; ghBrepTrim.SetTolerances(0.0, 0.0);
-
-                    String ghBrepTrimLog = "";
-                    if (!ghBrepTrim.IsValidWithLog(out ghBrepTrimLog))
-                    {
-                        throw new Exception("Fails to create a valid BrepTrim with the following message: " + ghBrepTrimLog);
-                    }
-                }
-
-                String brepInnerLoopLog = "";
-                if (!ghBrepInnerLoop.IsValidWithLog(out brepInnerLoopLog))
-                {
-                    throw new Exception("Fails to create a valid inner BrepLoop with the following message: " + brepInnerLoopLog);
-                }
+                ProcessFace(innerWire, ref ghBrep, ghBrepFace, BrepLoopType.Inner, ghNurbsSurface, edge2DIndices, edgeIndices);
             }
 
             String brepFaceLog = "";
@@ -426,7 +461,7 @@ namespace TopologicGH
                 throw new Exception("Fails to create a valid Face with the following message: " + brepFaceLog);
             }
 
-            ghBrep.Compact();
+            //ghBrep.Compact();
 
             String brepLog = "";
             if (!ghBrep.IsValidWithLog(out brepLog))

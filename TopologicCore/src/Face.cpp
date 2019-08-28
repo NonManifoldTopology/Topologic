@@ -219,7 +219,7 @@ namespace TopologicCore
 				kIsUPeriodic, kIsVPeriodic);
 			if (kpOuterWire != nullptr)
 			{
-				occtMakeFace = BRepBuilderAPI_MakeFace(pOcctBSplineSurface, TopoDS::Wire(kpOuterWire->GetOcctShape().Reversed()), true);
+				occtMakeFace = BRepBuilderAPI_MakeFace(pOcctBSplineSurface, TopoDS::Wire(kpOuterWire->GetOcctShape()), true);
 			}
 			else
 			{
@@ -311,7 +311,6 @@ namespace TopologicCore
 
 		Face::Ptr pFace = std::make_shared<Face>(occtMakeFace);
 		GlobalCluster::GetInstance().AddTopology(pFace->GetOcctFace());
-
 		return pFace;
 	}
 

@@ -40,7 +40,7 @@ namespace TopologicGH
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             //String version = Topologic.About.Version();
-            String version = "0.7.6";
+            String version = "0.8.5.5";
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetData(0, version);
