@@ -533,7 +533,8 @@ namespace TopologicGH
 
             if (ghCurve == null)
             {
-                throw new Exception("This Edge creates an unrecognized Geometry.");
+                //throw new Exception("This Edge creates an unrecognized Geometry.");
+                return null;
             }
 
             bool isReversed = edge.IsReversed;

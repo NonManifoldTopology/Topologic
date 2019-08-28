@@ -17,8 +17,17 @@
 #include <GProp_GProps.hxx>
 #include <ShapeAnalysis.hxx>
 #include <ShapeAnalysis_Surface.hxx>
+#include <ShapeFix_Edge.hxx>
 #include <ShapeFix_Face.hxx>
+#include <ShapeFix_Shape.hxx>
+#include <ShapeFix_Wire.hxx>
+#include <ShapeFix.hxx>
+#include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
+
+#include <BRepCheck_Analyzer.hxx>
+#include <BRepCheck_Face.hxx>
+#include <ShapeBuild_ReShape.hxx>
 
 namespace TopologicUtilities
 {
@@ -235,18 +244,84 @@ namespace TopologicUtilities
 		}
 	}
 
-	TopologicCore::Face::Ptr FaceUtility::TrimByWire(const TopologicCore::Face::Ptr& kpFace, const TopologicCore::Wire::Ptr& kpWire)
+	TopologicCore::Face::Ptr TrimByWireImpl(const TopologicCore::Face::Ptr& kpFace, const TopoDS_Wire& rkOcctWire, const bool kReverseWire)
 	{
 		Handle(Geom_Surface) pOcctSurface = kpFace->Surface();
-		const TopoDS_Wire& rkWire = kpWire->GetOcctWire();
 
-		BRepBuilderAPI_MakeFace occtTrimMakeFace(pOcctSurface, rkWire);
+		ShapeFix_Wire wireFix;
+		wireFix.Load(rkOcctWire);
+		wireFix.Perform();
+
+		TopoDS_Wire trimmingWire;
+		if (kReverseWire)
+		{
+			trimmingWire = TopoDS::Wire(wireFix.Wire().Reversed());
+		}
+		else
+		{
+			trimmingWire = TopoDS::Wire(wireFix.Wire());
+		}
+		BRepBuilderAPI_MakeFace occtTrimMakeFace(pOcctSurface, trimmingWire);
 		if (occtTrimMakeFace.Error() != BRepBuilderAPI_FaceDone)
 		{
 			TopologicCore::Face::Throw(occtTrimMakeFace);
 		}
-		TopologicCore::Face::Ptr pFace = std::make_shared<TopologicCore::Face>(TopoDS::Face(occtTrimMakeFace.Shape()));
 
+		TopoDS_Face coreResultingFace = occtTrimMakeFace;
+
+		ShapeFix_Shape occtFixShape(coreResultingFace);
+		occtFixShape.Perform();
+		
+		// Fix edges
+		{
+			TopTools_MapOfShape occtEdges;
+			for (TopExp_Explorer occtExplorer(coreResultingFace, TopAbs_EDGE); occtExplorer.More(); occtExplorer.Next())
+			{
+				const TopoDS_Shape& occtCurrent = occtExplorer.Current();
+				TopoDS_Edge occtEdge = TopoDS::Edge(occtCurrent);
+				ShapeFix_Edge occtFixEdge;
+				bool result1 = occtFixEdge.FixAddCurve3d(occtEdge);
+				bool result2 = occtFixEdge.FixVertexTolerance(occtEdge);
+			}
+		}
+
+		// Fix wires
+		{
+			TopTools_MapOfShape occtWires;
+			for (TopExp_Explorer occtExplorer(coreResultingFace, TopAbs_WIRE); occtExplorer.More(); occtExplorer.Next())
+			{
+				const TopoDS_Shape& occtCurrent = occtExplorer.Current();
+				const TopoDS_Wire& occtWire = TopoDS::Wire(occtCurrent);
+				ShapeFix_Wire occtFixWire(occtWire, coreResultingFace, 0.0001);
+				bool result1 = occtFixWire.Perform();
+			}
+		}
+
+		ShapeFix_Face faceFix(coreResultingFace);
+		int result = faceFix.Perform();
+
+		Handle(ShapeBuild_ReShape) occtContext = new ShapeBuild_ReShape();
+		occtContext->Apply(faceFix.Face());
+
+		TopoDS_Face occtFinalFace = TopoDS::Face(ShapeFix::RemoveSmallEdges(coreResultingFace, 0.0001, occtContext));
+
+#ifdef _DEBUG
+		BRepCheck_Analyzer occtAnalyzer(occtFinalFace);
+		bool isValid = occtAnalyzer.IsValid();
+
+		BRepCheck_Face occtFaceCheck(TopoDS::Face(occtFinalFace));
+		bool isUnorientable = occtFaceCheck.IsUnorientable();
+		BRepCheck_Status orientationStatus = occtFaceCheck.OrientationOfWires();
+		BRepCheck_Status intersectionStatus = occtFaceCheck.IntersectWires();
+		BRepCheck_Status classificationStatus = occtFaceCheck.ClassifyWires();
+#endif
+
+		return std::make_shared<TopologicCore::Face>(TopoDS::Face(occtFinalFace));
+	}
+
+	TopologicCore::Face::Ptr FaceUtility::TrimByWire(const TopologicCore::Face::Ptr& kpFace, const TopologicCore::Wire::Ptr& kpWire, const bool kReverseWire)
+	{
+		TopologicCore::Face::Ptr pFace = TrimByWireImpl(kpFace, kpWire->GetOcctWire(), kReverseWire);
 		TopologicCore::Face::Ptr pCopyFace = std::dynamic_pointer_cast<TopologicCore::Face>(pFace->DeepCopy());
 		TopologicCore::GlobalCluster::GetInstance().AddTopology(pCopyFace->GetOcctFace());
 		return pCopyFace;

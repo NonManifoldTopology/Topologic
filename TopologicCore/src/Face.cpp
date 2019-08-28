@@ -219,7 +219,7 @@ namespace TopologicCore
 				kIsUPeriodic, kIsVPeriodic);
 			if (kpOuterWire != nullptr)
 			{
-				occtMakeFace = BRepBuilderAPI_MakeFace(pOcctBSplineSurface, TopoDS::Wire(kpOuterWire->GetOcctShape()), true);
+				occtMakeFace = BRepBuilderAPI_MakeFace(pOcctBSplineSurface, TopoDS::Wire(kpOuterWire->GetOcctShape().Reversed()), true);
 			}
 			else
 			{
