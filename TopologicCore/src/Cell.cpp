@@ -148,7 +148,7 @@ namespace TopologicCore
 	{
 		if (!kpShell->IsClosed())
 		{
-			return nullptr;
+			throw std::exception("The input shell is open.");
 		}
 
 		BRepBuilderAPI_MakeSolid occtMakeSolid;

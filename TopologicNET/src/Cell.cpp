@@ -35,8 +35,14 @@ namespace Topologic
 
 	Cell^ Cell::ByShell(Shell^ shell)
 	{
-		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Cell::ByShell(TopologicCore::Topology::Downcast<TopologicCore::Shell>(shell->GetCoreTopologicalQuery()));
-		return gcnew Cell(pCoreCell);
+		try {
+			TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Cell::ByShell(TopologicCore::Topology::Downcast<TopologicCore::Shell>(shell->GetCoreTopologicalQuery()));
+			return gcnew Cell(pCoreCell);
+		}
+		catch (const std::exception& rkException)
+		{
+			throw gcnew Exception(gcnew String(rkException.what()));
+		}
 	}
 
 	List<CellComplex^>^ Cell::CellComplexes::get()
