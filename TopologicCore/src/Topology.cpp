@@ -133,12 +133,12 @@ namespace TopologicCore
 			{
 				const TopoDS_Shape rkCurrentChildShape = occtExplorer.Current();
 				TopoDS_Shape checkDistanceShape = rkCurrentChildShape;
-				if (i == 3)
+				/*if (i == 3)
 				{
 					ShapeFix_Solid occtSolidFix(TopoDS::Solid(rkCurrentChildShape));
 					occtSolidFix.Perform();
 					checkDistanceShape = occtSolidFix.Shape();
-				}
+				}*/
 				BRepExtrema_DistShapeShape occtDistanceCalculation(checkDistanceShape, kOcctSelectorShape);
 				bool isDone = occtDistanceCalculation.Perform();
 				if (isDone)
