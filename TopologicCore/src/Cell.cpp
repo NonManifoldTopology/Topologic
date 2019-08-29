@@ -133,6 +133,7 @@ namespace TopologicCore
 		}
 
 		Shell::Ptr pShell = Shell::ByFaces(rkFaces, kTolerance);
+
 		Cell::Ptr pCell = ByShell(pShell);
 
 		for(const Face::Ptr& kpFace : rkFaces)
@@ -145,6 +146,11 @@ namespace TopologicCore
 
 	Cell::Ptr Cell::ByShell(const Shell::Ptr& kpShell)
 	{
+		if (!kpShell->IsClosed())
+		{
+			return nullptr;
+		}
+
 		BRepBuilderAPI_MakeSolid occtMakeSolid;
 		try {
 			occtMakeSolid = BRepBuilderAPI_MakeSolid(kpShell->GetOcctShell());
