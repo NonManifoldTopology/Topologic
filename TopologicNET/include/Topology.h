@@ -102,15 +102,6 @@ namespace Topologic
 		}
 
 		/// <summary>
-		/// Returns the geometry of the contents in a recursive way. 
-		/// </summary>
-		/// <returns>The geometry of the contents in a recursive way</returns>
-#ifdef TOPOLOGIC_DYNAMO
-		[IsVisibleInDynamoLibrary(false)]
-#endif
-		void Topology::RecursiveGeometry(List<Object^>^% output);
-
-		/// <summary>
 		/// Returns the original Topology with a dictionary. 
 		/// </summary>
 		/// <param name="attributes">A dictionary</param>

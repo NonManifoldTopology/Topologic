@@ -253,32 +253,9 @@ namespace Topologic
 		return pTopologies;
 	}
 
-	void Topology::RecursiveGeometry(List<Object^>^% output)
-	{
-		List<Object^>^ objects = gcnew List<Object^>();
-		objects->Add(BasicGeometry);
-
-		List<Topology^>^ subContents = SubContents;
-		List<Object^>^ subContentGeometries = gcnew List<Object^>();
-		for each(Topology^ subContent in subContents)
-		{
-			List<Object^>^ dynamoThisGeometries = gcnew List<Object^>();
-			subContent->RecursiveGeometry(subContentGeometries);
-		}
-
-		if (subContentGeometries->Count > 0)
-		{
-			objects->Add(subContentGeometries);
-		}
-
-		output->Add(objects);
-	}
-
 	Object^ Topology::Geometry::get()
 	{
-		List<Object^>^ output = gcnew List<Object^>();
-		RecursiveGeometry(output);
-		return output;
+		return BasicGeometry;
 	}
 
 	bool Topology::ExportToBRep(String^ path)
