@@ -37,7 +37,21 @@ namespace Topologic {
 			/// <returns name="Topology">The Topology after its rotation</returns>
 			static Topology^ Rotate(Topology^ topology,
 				Vertex^ origin,
-				double xVector, double yVector, double zVector,
+#ifdef TOPOLOGIC_DYNAMO
+				[Autodesk::DesignScript::Runtime::DefaultArgument("0.0")]
+#endif
+				double xVector, 
+#ifdef TOPOLOGIC_DYNAMO
+				[Autodesk::DesignScript::Runtime::DefaultArgument("0.0")]
+#endif
+				double yVector,
+#ifdef TOPOLOGIC_DYNAMO
+				[Autodesk::DesignScript::Runtime::DefaultArgument("0.0")]
+#endif
+				double zVector,
+#ifdef TOPOLOGIC_DYNAMO
+				[Autodesk::DesignScript::Runtime::DefaultArgument("0.0")]
+#endif
 				double degree);
 
 			/// <summary>
@@ -49,7 +63,19 @@ namespace Topologic {
 			/// <param name="yFactor">The Y factor</param>
 			/// <param name="zFactor">The Z factor</param>
 			/// <returns name="Topology">The Topology after its scaling</returns>
-			static Topology^ Scale(Topology^ topology, Vertex^ origin, double xFactor, double yFactor, double zFactor);
+			static Topology^ Scale(Topology^ topology, Vertex^ origin, 
+#ifdef TOPOLOGIC_DYNAMO
+				[Autodesk::DesignScript::Runtime::DefaultArgument("1.0")]
+#endif
+				double xFactor, 
+#ifdef TOPOLOGIC_DYNAMO
+					[Autodesk::DesignScript::Runtime::DefaultArgument("1.0")]
+#endif
+				double yFactor, 
+#ifdef TOPOLOGIC_DYNAMO
+					[Autodesk::DesignScript::Runtime::DefaultArgument("1.0")]
+#endif
+				double zFactor);
 
 			/// <summary>
 			/// Returns the distance between two Topologies.

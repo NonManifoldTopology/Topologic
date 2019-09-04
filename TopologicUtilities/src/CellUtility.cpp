@@ -162,18 +162,14 @@ namespace TopologicUtilities
 
 	double CellUtility::Volume(const TopologicCore::Cell::Ptr & kpCell)
 	{
-		ShapeFix_Solid occtSolidFix(kpCell->GetOcctSolid());
-		occtSolidFix.Perform();
 		GProp_GProps occtShapeProperties;
-		BRepGProp::VolumeProperties(occtSolidFix.Shape(), occtShapeProperties);
+		BRepGProp::VolumeProperties(kpCell->GetOcctSolid(), occtShapeProperties);
 		return occtShapeProperties.Mass();
 	}
 
 	CellContainmentState CellUtility::Contains(const TopologicCore::Cell::Ptr & kpCell, const TopologicCore::Vertex::Ptr & kpVertex, const double kTolerance)
 	{
-		ShapeFix_Solid occtSolidFix(kpCell->GetOcctSolid());
-		occtSolidFix.Perform();
-		BRepClass3d_SolidClassifier occtSolidClassifier(occtSolidFix.Solid(), kpVertex->Point()->Pnt(), Precision::Confusion());
+		BRepClass3d_SolidClassifier occtSolidClassifier(kpCell->GetOcctSolid(), kpVertex->Point()->Pnt(), Precision::Confusion());
 		TopAbs_State occtState = occtSolidClassifier.State();
 		
 		if (occtState == TopAbs_IN)

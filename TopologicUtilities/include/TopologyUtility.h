@@ -31,7 +31,8 @@ namespace TopologicUtilities
 		/// <param name="y"></param>
 		/// <param name="z"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_UTILITIES_API TopologicCore::Topology::Ptr Translate(const TopologicCore::Topology::Ptr& kpTopology, const double x, const double y, const double z);
+		static TOPOLOGIC_UTILITIES_API TopologicCore::Topology::Ptr Translate(
+			const TopologicCore::Topology::Ptr& kpTopology, const double x = 0.0, const double y = 0.0, const double z = 0.0);
 
 		/// <summary>
 		/// 
@@ -45,8 +46,8 @@ namespace TopologicUtilities
 		/// <returns></returns>
 		static TOPOLOGIC_UTILITIES_API TopologicCore::Topology::Ptr Rotate(const TopologicCore::Topology::Ptr& kpTopology,
 			const TopologicCore::Vertex::Ptr& kpOrigin,
-			const double kDirectionX, const double kDirectionY, const double kDirectionZ,
-			const double kDegree);
+			const double kDirectionX = 0.0, const double kDirectionY = 0.0, const double kDirectionZ = 1.0,
+			const double kDegree = 0.0);
 
 		/*/// <summary>
 		/// 
@@ -66,10 +67,10 @@ namespace TopologicUtilities
 			const double kXAxisX, const double kXAxisY, const double kXAxisZ);*/
 
 		static TOPOLOGIC_UTILITIES_API TopologicCore::Topology::Ptr Transform(const TopologicCore::Topology::Ptr& kpTopology,
-			const double kTranslationX, const double kTranslationY, const double kTranslationZ,
-			const double kRotation11, const double kRotation12, const double kRotation13,
-			const double kRotation21, const double kRotation22, const double kRotation23,
-			const double kRotation31, const double kRotation32, const double kRotation33);
+			const double kTranslationX = 0.0, const double kTranslationY = 0.0, const double kTranslationZ = 0.0,
+			const double kRotation11 = 1.0, const double kRotation12 = 0.0, const double kRotation13 = 0.0,
+			const double kRotation21 = 0.0, const double kRotation22 = 1.0, const double kRotation23 = 0.0,
+			const double kRotation31 = 0.0, const double kRotation32 = 0.0, const double kRotation33 = 1.0);
 
 		/// <summary>
 		/// 
@@ -82,7 +83,7 @@ namespace TopologicUtilities
 		/// <returns></returns>
 		static TOPOLOGIC_UTILITIES_API TopologicCore::Topology::Ptr Scale(
 			const TopologicCore::Topology::Ptr& kpTopology, const TopologicCore::Vertex::Ptr& kpOrigin, 
-			const double kXFactor, const double kYFactor, const double kZFactor);
+			const double kXFactor = 1.0, const double kYFactor = 1.0, const double kZFactor = 1.0);
 
 		static TOPOLOGIC_UTILITIES_API double DegreeToRadian(const double kDegree);
 

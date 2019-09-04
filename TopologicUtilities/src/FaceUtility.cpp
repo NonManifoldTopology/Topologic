@@ -321,10 +321,12 @@ namespace TopologicUtilities
 
 	TopologicCore::Face::Ptr FaceUtility::TrimByWire(const TopologicCore::Face::Ptr& kpFace, const TopologicCore::Wire::Ptr& kpWire, const bool kReverseWire)
 	{
-		TopologicCore::Face::Ptr pFace = TrimByWireImpl(kpFace, kpWire->GetOcctWire(), kReverseWire);
-		TopologicCore::Face::Ptr pCopyFace = std::dynamic_pointer_cast<TopologicCore::Face>(pFace->DeepCopy());
-		TopologicCore::GlobalCluster::GetInstance().AddTopology(pCopyFace->GetOcctFace());
-		return pCopyFace;
+		TopologicCore::Face::Ptr pCopyInputFace = std::dynamic_pointer_cast<TopologicCore::Face>(kpFace->ShallowCopy());
+		TopologicCore::Wire::Ptr pCopyInputWire = std::dynamic_pointer_cast<TopologicCore::Wire>(kpWire->ShallowCopy());
+		TopologicCore::Face::Ptr pFace = TrimByWireImpl(pCopyInputFace, pCopyInputWire->GetOcctWire(), kReverseWire);
+		TopologicCore::Face::Ptr pCopyOutputFace = std::dynamic_pointer_cast<TopologicCore::Face>(pFace->DeepCopy());
+		TopologicCore::GlobalCluster::GetInstance().AddTopology(pCopyOutputFace->GetOcctFace());
+		return pCopyOutputFace;
 	}
 
 	void FaceUtility::Triangulate(const TopologicCore::Face::Ptr & kpFace, const double kDeflection, std::list<TopologicCore::Face::Ptr>& rTriangles)

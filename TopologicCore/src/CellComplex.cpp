@@ -26,6 +26,7 @@
 #include <IntTools_Context.hxx>
 
 #include <BOPAlgo_MakerVolume.hxx>
+#include <ShapeFix_Face.hxx>
 #include <algorithm>
 
 #include <assert.h>
@@ -122,6 +123,11 @@ namespace TopologicCore
 			}
 			std::shared_ptr<Cluster> otherCellsAsCluster = Cluster::ByTopologies(topologies);
 			std::shared_ptr<Topology> pMergeTopology = firstTopology->Merge(otherCellsAsCluster);
+
+			if (pMergeTopology->GetType() != TOPOLOGY_CELLCOMPLEX)
+			{
+				throw std::exception("The Cells cannot be combined into a Cell Complex.");
+			}
 			//std::shared_ptr<Topology> pMergeTopology = copyFirstTopology->Merge(otherCellsAsCluster);
 
 			std::list<Cell::Ptr> cells;
@@ -163,6 +169,9 @@ namespace TopologicCore
 		occtMakerVolume.SetRunParallel(isParallel);
 		occtMakerVolume.SetIntersect(doesIntersection);
 		occtMakerVolume.SetFuzzyValue(kTolerance);
+		//occtMakerVolume.SetGlue(BOPAlgo_GlueFull);
+		//occtMakerVolume.SetAvoidInternalShapes(false);
+		//occtMakerVolume.SetNonDestructive(false);
 		//
 		occtMakerVolume.Perform(); //perform the operation
 		if (occtMakerVolume.HasErrors()) { //check error status
@@ -190,7 +199,8 @@ namespace TopologicCore
 				if (!occtShapes.Contains(occtCurrent))
 				{
 					occtShapes.Add(occtCurrent);
-					cells.push_back(std::make_shared<Cell>(TopoDS::Solid(occtCurrent)));
+					Cell::Ptr cell = std::make_shared<Cell>(TopoDS::Solid(occtCurrent));
+					cells.push_back(cell);
 				}
 			}
 		}

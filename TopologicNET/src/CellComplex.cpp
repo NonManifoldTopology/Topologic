@@ -32,9 +32,18 @@ namespace Topologic
 		{
 			coreFaces.push_back(TopologicCore::Topology::Downcast<TopologicCore::Face>(pFace->GetCoreTopologicalQuery()));
 		}
-		TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::CellComplex::ByFaces(coreFaces, tolerance);
+		/*TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::CellComplex::ByFaces(coreFaces, tolerance);
 		CellComplex^ pCellComplex = gcnew CellComplex(pCoreCellComplex);
-		return pCellComplex;
+		return pCellComplex;*/
+		try {
+			TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::CellComplex::ByFaces(coreFaces, tolerance);
+			CellComplex^ pCellComplex = gcnew CellComplex(pCoreCellComplex);
+			return pCellComplex;
+		}
+		catch (const std::exception& rkException)
+		{
+			throw gcnew Exception(gcnew String(rkException.what()));
+		}
 	}
 
 	List<Cell^>^ CellComplex::Cells::get()

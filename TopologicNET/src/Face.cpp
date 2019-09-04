@@ -428,6 +428,8 @@ namespace Topologic
 					pOcctBSplineSurface->VDegree()
 				);
 
+			//return pDynamoUntrimmedSurface;
+
 			// The newly created surface corresponds to the whole surface in OCCT. 
 			// It needs to be trimmed by the outer wire and inner wires.
 			List<Autodesk::DesignScript::Geometry::PolyCurve^>^ pDynamoEdgeLoops = gcnew List<Autodesk::DesignScript::Geometry::PolyCurve^>();
@@ -440,6 +442,7 @@ namespace Topologic
 					Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoWireGeometry = safe_cast<Autodesk::DesignScript::Geometry::PolyCurve^>(pWireGeometry);
 					if (pDynamoWireGeometry != nullptr)
 					{
+
 						pDynamoEdgeLoops->Add(pDynamoWireGeometry);
 					}
 				}
@@ -486,6 +489,7 @@ namespace Topologic
 			}
 			catch (Exception^ e)
 			{
+				//throw e;
 				String^ str(e->Message);
 				//if (e->Message->Equals(gcnew String("trim_with_edge_loops requires all curves to touch surface")))
 				{
@@ -494,12 +498,29 @@ namespace Topologic
 
 					for each(Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoEdgeLoop in pDynamoEdgeLoops)
 					{
-						Autodesk::DesignScript::Geometry::Curve^ pDynamoProjectedCurve = pDynamoEdgeLoop->PullOntoSurface(pDynamoUntrimmedSurface);
-						List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoProjectedCurves = gcnew List<Autodesk::DesignScript::Geometry::Curve^>();
-						pDynamoProjectedCurves->Add(pDynamoProjectedCurve);
-						Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoProjectedPolyCurve = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoProjectedCurves, 0.001);
-						pDynamoProjectedEdgeLoops->Add(pDynamoProjectedPolyCurve);
-						pDynamoProjectedCurves->Clear();
+						List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoProjectedCurves =
+							gcnew List<Autodesk::DesignScript::Geometry::Curve^>();
+						try {
+							array<Autodesk::DesignScript::Geometry::Curve^>^ dynamoLoopCurves = pDynamoEdgeLoop->Curves();
+
+							for each(Autodesk::DesignScript::Geometry::Curve^ dynamoLoopCurve in dynamoLoopCurves)
+							{
+								Autodesk::DesignScript::Geometry::Curve^ pDynamoProjectedCurve =
+									dynamoLoopCurve->PullOntoSurface(pDynamoUntrimmedSurface);
+								pDynamoProjectedCurves->Add(pDynamoProjectedCurve);
+							}
+							Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoProjectedPolyCurve =
+								Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoProjectedCurves, 0.001);
+							if (pDynamoProjectedPolyCurve->NumberOfCurves == pDynamoProjectedCurves->Count)
+							{
+								pDynamoProjectedEdgeLoops->Add(pDynamoProjectedPolyCurve);
+								pDynamoProjectedCurves->Clear();
+							}
+						}
+						catch (...)
+						{
+						}
+
 						for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoProjectedCurve in pDynamoProjectedCurves)
 						{
 							delete pDynamoProjectedCurve;
@@ -507,28 +528,45 @@ namespace Topologic
 					}
 
 					Autodesk::DesignScript::Geometry::Surface^ pDynamoTrimmedSurfaceByParameters = nullptr;
-					try {
-						pDynamoTrimmedSurfaceByParameters =
-							pDynamoUntrimmedSurface->TrimWithEdgeLoops(pDynamoProjectedEdgeLoops);
-					}
-					catch (...)
+
+					if (pDynamoProjectedEdgeLoops->Count > 0)
 					{
+						try {
+							pDynamoTrimmedSurfaceByParameters =
+								pDynamoUntrimmedSurface->TrimWithEdgeLoops(pDynamoProjectedEdgeLoops);
+						}
+						catch (...)
+						{
+							pDynamoTrimmedSurfaceByParameters = pDynamoUntrimmedSurface;
+						}
+
+						for each(Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoEdgeLoop in pDynamoEdgeLoops)
+						{
+							delete pDynamoEdgeLoop;
+						}
+
+						for each(Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoProjectedEdgeLoop in pDynamoProjectedEdgeLoops)
+						{
+							delete pDynamoProjectedEdgeLoop;
+						}
+
+						if (pDynamoTrimmedSurfaceByParameters != pDynamoUntrimmedSurface)
+						{
+							delete pDynamoUntrimmedSurface;
+						}
+
+						return pDynamoTrimmedSurfaceByParameters;
 					}
-
-
-					for each(Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoEdgeLoop in pDynamoEdgeLoops)
+					else
 					{
-						delete pDynamoEdgeLoop;
-					}
 
-					for each(Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoProjectedEdgeLoop in pDynamoProjectedEdgeLoops)
-					{
-						delete pDynamoProjectedEdgeLoop;
-					}
+						for each(Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoEdgeLoop in pDynamoEdgeLoops)
+						{
+							delete pDynamoEdgeLoop;
+						}
 
-					delete pDynamoUntrimmedSurface;
-
-					return pDynamoTrimmedSurfaceByParameters;
+						return pDynamoUntrimmedSurface;
+					}					
 				}
 			}
 			catch (...)

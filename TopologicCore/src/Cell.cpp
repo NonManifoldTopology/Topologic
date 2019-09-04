@@ -162,7 +162,9 @@ namespace TopologicCore
 
 		// Create a cell from the shell. The faces are the same and the contents
 		// are automatically passed.
-		Cell::Ptr pCell = std::make_shared<Cell>(occtMakeSolid);
+		ShapeFix_Solid occtSolidFix(occtMakeSolid);
+		occtSolidFix.Perform();
+		Cell::Ptr pCell = std::make_shared<Cell>(TopoDS::Solid(occtSolidFix.Shape()));
 		Cell::Ptr pCellCopy = std::dynamic_pointer_cast<Cell>(pCell->DeepCopy());
 		GlobalCluster::GetInstance().AddTopology(pCellCopy->GetOcctSolid());
 		return pCellCopy;
