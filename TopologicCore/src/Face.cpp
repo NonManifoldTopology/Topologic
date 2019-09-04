@@ -186,7 +186,9 @@ namespace TopologicCore
 		{
 			Throw(occtMakeFace);
 		}
-		Face::Ptr pFace = std::make_shared<Face>(occtMakeFace);
+		ShapeFix_Face occtShapeFix(occtMakeFace);
+		occtShapeFix.Perform();
+		Face::Ptr pFace = std::make_shared<Face>(TopoDS::Face(occtShapeFix.Result()));
 		GlobalCluster::GetInstance().AddTopology(pFace->GetOcctFace());
 		return pFace;
 	}
@@ -219,7 +221,7 @@ namespace TopologicCore
 				kIsUPeriodic, kIsVPeriodic);
 			if (kpOuterWire != nullptr)
 			{
-				occtMakeFace = BRepBuilderAPI_MakeFace(pOcctBSplineSurface, TopoDS::Wire(kpOuterWire->GetOcctShape().Reversed()), true);
+				occtMakeFace = BRepBuilderAPI_MakeFace(pOcctBSplineSurface, TopoDS::Wire(kpOuterWire->GetOcctShape()), true);
 			}
 			else
 			{
@@ -309,7 +311,10 @@ namespace TopologicCore
 			occtMakeFace.Add(kInnerWire->GetOcctWire());
 		}
 
-		Face::Ptr pFace = std::make_shared<Face>(occtMakeFace);
+		ShapeFix_Face occtShapeFix(occtMakeFace);
+		occtShapeFix.Perform();
+
+		Face::Ptr pFace = std::make_shared<Face>(TopoDS::Face(occtShapeFix.Result()));
 		GlobalCluster::GetInstance().AddTopology(pFace->GetOcctFace());
 		return pFace;
 	}
@@ -425,7 +430,7 @@ namespace TopologicCore
 
 		for (const Wire::Ptr& kpWire : rkWires)
 		{
-			occtMakeFace.Add(kpWire->GetOcctWire());
+			occtMakeFace.Add(TopoDS::Wire(kpWire->GetOcctWire().Reversed()));
 		}
 
 		m_occtFace = occtMakeFace;
@@ -494,8 +499,8 @@ namespace TopologicCore
 
 	Face::Face(const TopoDS_Face& rkOcctFace, const std::string& rkGuid)
 		: Topology(2, rkOcctFace, rkGuid.compare("") == 0 ? GetClassGUID() : rkGuid)
-		, m_occtFace(rkOcctFace)
 	{
+		m_occtFace = TopoDS::Face(rkOcctFace);
 		RegisterFactory(GetClassGUID(), std::make_shared<FaceFactory>());
 	}
 
