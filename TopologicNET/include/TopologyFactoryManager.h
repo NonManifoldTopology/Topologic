@@ -56,7 +56,7 @@ namespace Topologic
 
 		private:
 			TopologyFactoryManager() {}
-			TopologyFactoryManager(const TopologyFactoryManager%) { throw gcnew System::InvalidOperationException("singleton cannot be copy-constructed"); }
+			TopologyFactoryManager(const TopologyFactoryManager%) { throw gcnew System::InvalidOperationException("Singleton cannot be copy-constructed"); }
 			static TopologyFactoryManager m_instance;
 			Dictionary<String^, TopologyFactory^>^ m_TopologyFactoryDict = gcnew Dictionary<String^, TopologyFactory^>();
 		};

@@ -133,15 +133,22 @@ namespace TopologicCore
 		}
 
 		Shell::Ptr pShell = Shell::ByFaces(rkFaces, kTolerance);
+		
+		try {
 
-		Cell::Ptr pCell = ByShell(pShell);
+			Cell::Ptr pCell = ByShell(pShell);
 
-		for(const Face::Ptr& kpFace : rkFaces)
-		{
-			TransferContents(kpFace->GetOcctShape(), pCell);
+			for (const Face::Ptr& kpFace : rkFaces)
+			{
+				TransferContents(kpFace->GetOcctShape(), pCell);
+			}
+
+			return pCell;
 		}
-
-		return pCell;
+		catch (...)
+		{
+			throw std::exception("The input Faces do not form a closed Shell.");
+		}
 	}
 
 	Cell::Ptr Cell::ByShell(const Shell::Ptr& kpShell)

@@ -24,6 +24,7 @@ namespace TopologicEnergy
 		String^ buildingName,
 		String^ buildingType,
 		String^ defaultSpaceType,
+		double northAxis,
 		Nullable<double> glazingRatio,
 		double coolingTemp,
 		double heatingTemp,
@@ -41,7 +42,7 @@ namespace TopologicEnergy
 
 		double buildingHeight = Enumerable::Max(floorLevels);
 		int numFloors = floorLevels->Count - 1;
-		OpenStudio::Building^ osBuilding = ComputeBuilding(osModel, buildingName, buildingType, buildingHeight, numFloors, defaultSpaceType);
+		OpenStudio::Building^ osBuilding = ComputeBuilding(osModel, buildingName, buildingType, buildingHeight, numFloors, northAxis, defaultSpaceType);
 		List<Cell^>^ pBuildingCells = buildingCopy->Cells;
 
 		// Create OpenStudio spaces
@@ -384,6 +385,7 @@ namespace TopologicEnergy
 		String^ buildingType,
 		double buildingHeight,
 		int numFloors,
+		double northAxis,
 		String^ spaceType)
 	{
 		OpenStudio::Building^ osBuilding = osModel->getBuilding();
@@ -408,6 +410,7 @@ namespace TopologicEnergy
 			}
 		}
 		buildingStories = CreateBuildingStories(osModel, numFloors);
+		osBuilding->setNorthAxis(northAxis);
 		return osBuilding;
 	}
 

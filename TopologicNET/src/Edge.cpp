@@ -144,7 +144,7 @@ namespace Topologic
 		}
 		else if (curve->GetType() == Autodesk::DesignScript::Geometry::PolyCurve::typeid)
 		{
-			throw gcnew System::Exception("Cannot create an Edge from a PolyCurve. Create a wire instead.");
+			throw gcnew System::Exception("Cannot create an Edge from a PolyCurve. Create a Wire instead.");
 		}
 		else if (curve->GetType() == Autodesk::DesignScript::Geometry::Curve::typeid) // a generic curve
 		{

@@ -102,11 +102,11 @@ namespace TopologicCore
 			}
 			catch (TopoDS_FrozenShape&)
 			{
-				throw std::exception("The cell is not free and cannot be modified.");
+				throw std::exception("The Cell is not free and cannot be modified.");
 			}
 			catch (TopoDS_UnCompatibleShapes&)
 			{
-				throw std::exception("The cell and face are not compatible.");
+				throw std::exception("The Cell and Face are not compatible.");
 			}
 		}
 		else
@@ -126,7 +126,7 @@ namespace TopologicCore
 
 			if (pMergeTopology->GetType() != TOPOLOGY_CELLCOMPLEX)
 			{
-				throw std::exception("The Cells cannot be combined into a Cell Complex.");
+				throw std::exception("The input Cells do not form a CellComplex.");
 			}
 			//std::shared_ptr<Topology> pMergeTopology = copyFirstTopology->Merge(otherCellsAsCluster);
 
@@ -139,11 +139,11 @@ namespace TopologicCore
 				}
 				catch (TopoDS_FrozenShape&)
 				{
-					throw std::exception("The cell is not free and cannot be modified.");
+					throw std::exception("The Cell is not free and cannot be modified.");
 				}
 				catch (TopoDS_UnCompatibleShapes&)
 				{
-					throw std::exception("The cell and face are not compatible.");
+					throw std::exception("The Cell and Face are not compatible.");
 				}
 			}
 		}
@@ -175,7 +175,7 @@ namespace TopologicCore
 		//
 		occtMakerVolume.Perform(); //perform the operation
 		if (occtMakerVolume.HasErrors()) { //check error status
-			throw std::exception("Cannot create a cell complex from the faces.");
+			throw std::exception("The input Faces do not form a CellComplex.");
 		}
 
 		//

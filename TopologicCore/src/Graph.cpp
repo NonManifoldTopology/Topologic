@@ -1792,8 +1792,6 @@ namespace TopologicCore
 						return (double) intAttribute->IntValue();
 					}
 
-					/*std::string strException = std::string("The attribute with the key " + rkEdgeKey + " cannot be converted to a double value.");
-					throw std::exception(strException.c_str());*/
 					return 1.0;
 				}
 			}

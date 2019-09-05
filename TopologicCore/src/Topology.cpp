@@ -133,12 +133,6 @@ namespace TopologicCore
 			{
 				const TopoDS_Shape rkCurrentChildShape = occtExplorer.Current();
 				TopoDS_Shape checkDistanceShape = rkCurrentChildShape;
-				/*if (i == 3)
-				{
-					ShapeFix_Solid occtSolidFix(TopoDS::Solid(rkCurrentChildShape));
-					occtSolidFix.Perform();
-					checkDistanceShape = occtSolidFix.Shape();
-				}*/
 				BRepExtrema_DistShapeShape occtDistanceCalculation(checkDistanceShape, kOcctSelectorShape);
 				bool isDone = occtDistanceCalculation.Perform();
 				if (isDone)
@@ -333,11 +327,11 @@ namespace TopologicCore
 				}
 				catch (TopoDS_FrozenShape&)
 				{
-					throw std::exception("The cell is not free and cannot be modified.");
+					throw std::exception("The Cell is not free and cannot be modified.");
 				}
 				catch (TopoDS_UnCompatibleShapes&)
 				{
-					throw std::exception("The cell and face are not compatible.");
+					throw std::exception("The Cell and Face are not compatible.");
 				}
 			}
 		}
@@ -1225,7 +1219,7 @@ namespace TopologicCore
 				}
 				catch (TopoDS_FrozenShape)
 				{
-					throw std::exception("Topology is locked, cannot remove subtopology.");
+					throw std::exception("Topology is locked, cannot remove subtopology. Please contact the developer.");
 				}
 				catch (TopoDS_UnCompatibleShapes)
 				{
@@ -1970,8 +1964,11 @@ namespace TopologicCore
 			return Topology::ByOcctShape(occtFinalCompound, "");
 		}
 
+		TopoDS_Shape occtCurrentShape = occtCellsBuilder2.Shape();
+		TopoDS_Shape occtPostprocessedShape = occtCurrentShape.IsNull() ? occtCurrentShape : PostprocessBooleanResult(occtCurrentShape);
+
 		// Otherwise, return the result final merge result
-		return Topology::ByOcctShape(occtCellsBuilder2.Shape(), "")->DeepCopy();
+		return Topology::ByOcctShape(occtPostprocessedShape, "")->DeepCopy();
 	}
 
 	Topology::Ptr Topology::Slice(const Topology::Ptr & kpOtherTopology)
@@ -2535,7 +2532,7 @@ namespace TopologicCore
 	}
 #endif
 
-	void Topology::UpwardNavigation(const TopoDS_Shape & rkOcctShape, const TopoDS_Shape & rkOcctParentShape, const TopAbs_ShapeEnum kShapeEnum, TopTools_ListOfShape & rOcctMembers)
+	/*void Topology::UpwardNavigation(const TopoDS_Shape & rkOcctShape, const TopoDS_Shape & rkOcctParentShape, const TopAbs_ShapeEnum kShapeEnum, TopTools_ListOfShape & rOcctMembers)
 	{
 		TopTools_ListOfShape occtAncestors;
 		TopTools_IndexedDataMapOfShapeListOfShape occtShapeMap;
@@ -2546,6 +2543,64 @@ namespace TopologicCore
 			occtShapeMap);
 
 		occtShapeMap.FindFromKey(rkOcctShape, occtAncestors);
+	}*/
+
+	void Topology::UpwardNavigation(const TopoDS_Shape & rkOcctHostTopology, const int kTopologyType, std::list<std::shared_ptr<Topology>>& rAncestors) const
+	{
+		switch (kTopologyType)
+		{
+			case TOPOLOGY_VERTEX:
+				return; // no lower dimensional topology
+			case TOPOLOGY_EDGE:
+			{
+				std::list<Edge::Ptr> edges;
+				UpwardNavigation(rkOcctHostTopology, edges);
+				std::for_each(edges.begin(), edges.end(), [&rAncestors](Topology::Ptr n) { rAncestors.push_back(n); });
+				return;
+			}
+			case TOPOLOGY_WIRE:
+			{
+				std::list<Wire::Ptr> wires;
+				UpwardNavigation(rkOcctHostTopology, wires);
+				std::for_each(wires.begin(), wires.end(), [&rAncestors](Topology::Ptr n) { rAncestors.push_back(n); });
+				return;
+			}
+			case TOPOLOGY_FACE:
+			{
+				std::list<Face::Ptr> faces;
+				UpwardNavigation(rkOcctHostTopology, faces);
+				std::for_each(faces.begin(), faces.end(), [&rAncestors](Topology::Ptr n) { rAncestors.push_back(n); });
+				return;
+			}
+			case TOPOLOGY_SHELL:
+			{
+				std::list<Shell::Ptr> shells;
+				UpwardNavigation(rkOcctHostTopology, shells);
+				std::for_each(shells.begin(), shells.end(), [&rAncestors](Topology::Ptr n) { rAncestors.push_back(n); });
+				return;
+			}
+			case TOPOLOGY_CELL:
+			{
+				std::list<Cell::Ptr> cells;
+				UpwardNavigation(rkOcctHostTopology, cells);
+				std::for_each(cells.begin(), cells.end(), [&rAncestors](Topology::Ptr n) { rAncestors.push_back(n); });
+				return;
+			}
+			case TOPOLOGY_CELLCOMPLEX:
+			{
+				std::list<CellComplex::Ptr> cellComplexes;
+				UpwardNavigation(rkOcctHostTopology, cellComplexes);
+				std::for_each(cellComplexes.begin(), cellComplexes.end(), [&rAncestors](Topology::Ptr n) { rAncestors.push_back(n); });
+				return;
+			}
+			case TOPOLOGY_CLUSTER:
+			{
+				std::list<Cluster::Ptr> clusters;
+				UpwardNavigation(rkOcctHostTopology, clusters);
+				std::for_each(clusters.begin(), clusters.end(), [&rAncestors](Topology::Ptr n) { rAncestors.push_back(n); });
+				return;
+			}
+		}
 	}
 
 	void Topology::DownwardNavigation(const TopoDS_Shape& rkOcctShape, const TopAbs_ShapeEnum & rkShapeEnum, TopTools_MapOfShape & rOcctMembers)

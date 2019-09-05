@@ -30,6 +30,7 @@ namespace TopologicEnergy
 		/// <param name="buildingName"></param>
 		/// <param name="buildingType"></param>
 		/// <param name="defaultSpaceType"></param>
+		/// <param name="northAxis">Specify the angle at the north axis in degrees, with 0 signifying positive Y-axis. Positve values indivate a counter-clockwise rotation.</param>
 		/// <param name="glazingRatio"></param>
 		/// <param name="coolingTemp"></param>
 		/// <param name="heatingTemp"></param>
@@ -45,6 +46,7 @@ namespace TopologicEnergy
 			[Autodesk::DesignScript::Runtime::DefaultArgument("Building")] String^ buildingName,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("Commercial")] String^ buildingType,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("ASHRAE 189.1-2009 ClimateZone 4-8 MediumOffice")] String^ defaultSpaceType,
+			[Autodesk::DesignScript::Runtime::DefaultArgument("0.0")] double northAxis,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Nullable<double> glazingRatio,
 			double coolingTemp,
 			double heatingTemp,
@@ -184,6 +186,7 @@ namespace TopologicEnergy
 			String^ buildingType,
 			double buildingHeight,
 			int numFloors,
+			double northAxis,
 			String^ spaceType);
 
 
