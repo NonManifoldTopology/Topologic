@@ -21,6 +21,7 @@
 #include <BOPAlgo_MakerVolume.hxx>
 #include <BRep_Builder.hxx>
 #include <BRepAlgoAPI_Fuse.hxx>
+#include <BRepClass3d_SolidClassifier.hxx>
 #include <BRepBuilderAPI_Copy.hxx>
 #include <BRepBuilderAPI_Sewing.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
@@ -111,7 +112,6 @@ namespace TopologicCore
 
 	Topology::Ptr Topology::SelectSubtopology(const Topology::Ptr & kpSelectorTopology, const int kTypeFilter) const
 	{
-		//TopTools_DataMapOfShapeInteger occtShapeToDistanceMap;
 		TopoDS_Shape occtClosestSubshape;
 		double minDistance = std::numeric_limits<double>::max();
 		const TopoDS_Shape& kOcctThisShape = GetOcctShape();
@@ -561,7 +561,28 @@ namespace TopologicCore
 			else
 			{
 				Vertex::Ptr pCenterOfMass = kpContentTopology->CenterOfMass();
-				Topology::Ptr selectedSubtopology = pCopyTopology->SelectSubtopology(pCenterOfMass, kTypeFilter);
+				Topology::Ptr selectedSubtopology = nullptr;
+				if ((kTypeFilter & Cell::Type()) != 0)
+				{
+					// If the desired topology includes Cell, use containment test.
+					std::list<Cell::Ptr> cells;
+					pCopyTopology->Cells(cells);
+					for(const Cell::Ptr& kpCell : cells)
+					{
+						BRepClass3d_SolidClassifier occtSolidClassifier(kpCell->GetOcctSolid(), pCenterOfMass->Point()->Pnt(), 0.0001);
+						TopAbs_State occtState = occtSolidClassifier.State();
+
+						if (occtState == TopAbs_IN)
+						{
+							selectedSubtopology = kpCell;
+							break;
+						}
+					}
+				}
+				else
+				{
+					selectedSubtopology = pCopyTopology->SelectSubtopology(pCenterOfMass, kTypeFilter);
+				}
 				if (selectedSubtopology == nullptr)
 				{
 					throw std::exception("No suitable constituent members with the desired type to attach the content to.");
