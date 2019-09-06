@@ -88,5 +88,11 @@ namespace TopologicUtilities
 		static TOPOLOGIC_UTILITIES_API double DegreeToRadian(const double kDegree);
 
 		static TOPOLOGIC_UTILITIES_API double RadianToDegree(const double kRadian);
+
+		static TOPOLOGIC_UTILITIES_API void AdjacentTopologies(
+			const TopologicCore::Topology::Ptr& kpCoreTopology, 
+			const TopologicCore::Topology::Ptr& kpCoreParentTopology, 
+			const int kTopologyType,
+			std::list<TopologicCore::Topology::Ptr>& rCoreAncestors);
 	};
 }

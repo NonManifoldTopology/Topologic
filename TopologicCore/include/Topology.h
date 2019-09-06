@@ -471,6 +471,8 @@ namespace TopologicCore
 		template <class Subclass>
 		void UpwardNavigation(const TopoDS_Shape& rkOcctHostTopology, std::list<std::shared_ptr<Subclass>>& rAncestors) const;
 
+		TOPOLOGIC_API void UpwardNavigation(const TopoDS_Shape& rkOcctHostTopology, const int kTopologyType, std::list<std::shared_ptr<Topology>>& rAncestors) const;
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -478,7 +480,7 @@ namespace TopologicCore
 		/// <param name="rkOcctParentShape"></param>
 		/// <param name="kShapeEnum"></param>
 		/// <param name="rOcctMembers"></param>
-		static void UpwardNavigation(const TopoDS_Shape& rkOcctShape, const TopoDS_Shape& rkOcctParentShape, const TopAbs_ShapeEnum kShapeEnum, TopTools_ListOfShape& rOcctMembers);
+		//static void UpwardNavigation(const TopoDS_Shape& rkOcctShape, const TopoDS_Shape& rkOcctParentShape, const TopAbs_ShapeEnum kShapeEnum, TopTools_ListOfShape& rOcctMembers);
 
 		/// <summary>
 		/// 

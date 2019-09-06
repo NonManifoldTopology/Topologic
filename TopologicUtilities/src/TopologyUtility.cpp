@@ -244,4 +244,10 @@ namespace TopologicUtilities
 	{
 		return kRadian * 180.0 / M_PI;
 	}
+
+	void TopologyUtility::AdjacentTopologies(const TopologicCore::Topology::Ptr & kpTopology, const TopologicCore::Topology::Ptr & kpParentTopology, const int kTopologyType,
+		std::list<TopologicCore::Topology::Ptr>& rCoreAncestors)
+	{
+		kpTopology->UpwardNavigation(kpParentTopology->GetOcctShape(), kTopologyType, rCoreAncestors);
+	}
 }
