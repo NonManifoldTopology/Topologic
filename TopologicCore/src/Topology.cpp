@@ -271,7 +271,7 @@ namespace TopologicCore
 		: m_dimensionality(kDimensionality)
 	{
 		// If no guid is given, use the default class GUID in TopologicCore classes.
-		InstanceGUIDManager::GetInstance().Add(rkOcctShape, rkGuid);
+		SetInstanceGUID(rkOcctShape, rkGuid);
 		m_numOfTopologies++;
 	}
 
@@ -2804,6 +2804,11 @@ namespace TopologicCore
 	const std::string Topology::GetInstanceGUID() const
 	{
 		return GetInstanceGUID(GetOcctShape());
+	}
+
+	void Topology::SetInstanceGUID(const TopoDS_Shape& rkOcctShape, const std::string& rkGuid)
+	{
+		InstanceGUIDManager::GetInstance().Add(rkOcctShape, rkGuid);
 	}
 
 	const std::string Topology::GetInstanceGUID(const TopoDS_Shape & rkOcctShape)

@@ -433,6 +433,7 @@ namespace TopologicCore
 			occtMakeFace.Add(TopoDS::Wire(kpWire->GetOcctWire().Reversed()));
 		}
 
+		SetInstanceGUID(occtMakeFace, GetInstanceGUID());
 		m_occtFace = occtMakeFace;
 	}
 

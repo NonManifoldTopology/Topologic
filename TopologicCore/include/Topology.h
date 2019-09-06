@@ -596,9 +596,7 @@ namespace TopologicCore
 
 		static const std::string GetInstanceGUID(const TopoDS_Shape& rkOcctShape);
 
-		/*TOPOLOGIC_API void SetInstanceGUID(const std::string& rkGuid) {
-			m_guid = rkGuid;
-		}*/
+		void SetInstanceGUID(const TopoDS_Shape& rkOcctShape, const std::string& rkGuid);
 
 		static TopologyType GetTopologyType(const TopAbs_ShapeEnum& rkOcctType);
 
