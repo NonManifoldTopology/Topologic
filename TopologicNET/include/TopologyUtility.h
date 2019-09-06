@@ -111,6 +111,14 @@ namespace Topologic {
 				double rotation21, double rotation22, double rotation23,
 				double rotation31, double rotation32, double rotation33);
 
+			static List<Topology^>^ AdjacentTopologies(Topology^ topology, Topology^ parentTopology, int topologyType);
+
+			static List<Edge^>^ AdjacentEdges(Topology^ topology, Topology^ parentTopology);
+
+			static List<Face^>^ AdjacentFaces(Topology^ topology, Topology^ parentTopology);
+
+			static List<Cell^>^ AdjacentCells(Topology^ topology, Topology^ parentTopology);
+
 		public protected:
 			TopologyUtility() {}
 

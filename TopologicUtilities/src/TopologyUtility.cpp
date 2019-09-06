@@ -12,6 +12,8 @@
 #include <gp_Ax3.hxx>
 #include <ShapeFix_Shape.hxx>
 
+#include <algorithm>
+
 namespace TopologicUtilities
 {
 	double TopologyUtility::Distance(const TopologicCore::Topology::Ptr& kpTopology, const TopologicCore::Topology::Ptr& kpAnotherTopology)
@@ -245,9 +247,54 @@ namespace TopologicUtilities
 		return kRadian * 180.0 / M_PI;
 	}
 
-	void TopologyUtility::AdjacentTopologies(const TopologicCore::Topology::Ptr & kpTopology, const TopologicCore::Topology::Ptr & kpParentTopology, const int kTopologyType,
-		std::list<TopologicCore::Topology::Ptr>& rCoreAncestors)
+	void TopologyUtility::AdjacentTopologies(const TopologicCore::Topology::Ptr & kpCoreTopology, const TopologicCore::Topology::Ptr & kpParentTopology, const int kTopologyType,
+		std::list<TopologicCore::Topology::Ptr>& rCoreAdjacentTopologiess)
 	{
-		kpTopology->UpwardNavigation(kpParentTopology->GetOcctShape(), kTopologyType, rCoreAncestors);
+		kpCoreTopology->UpwardNavigation(kpCoreTopology->GetOcctShape(), kTopologyType, rCoreAdjacentTopologiess);
+	}
+	
+	void TopologyUtility::AdjacentEdges(
+		const TopologicCore::Topology::Ptr & kpCoreTopology, 
+		const TopologicCore::Topology::Ptr & kpCoreParentTopology, 
+		std::list<TopologicCore::Edge::Ptr>& rCoreEdgeAdjacentTopologiess)
+	{
+		std::list<TopologicCore::Topology::Ptr> coreAdjacentTopologiess;
+		kpCoreTopology->UpwardNavigation(kpCoreTopology->GetOcctShape(), TopologicCore::Edge::Type(), coreAdjacentTopologiess);
+		std::for_each(
+			coreAdjacentTopologiess.begin(), 
+			coreAdjacentTopologiess.end(), 
+			[&rCoreEdgeAdjacentTopologiess](TopologicCore::Topology::Ptr n) { 
+				rCoreEdgeAdjacentTopologiess.push_back(TopologicCore::TopologicalQuery::Downcast<TopologicCore::Edge>(n));
+		});
+	}
+
+	void TopologyUtility::AdjacentFaces(
+		const TopologicCore::Topology::Ptr & kpCoreTopology, 
+		const TopologicCore::Topology::Ptr & kpCoreParentTopology, 
+		std::list<TopologicCore::Face::Ptr>& rCoreFaceAdjacentTopologiess)
+	{
+		std::list<TopologicCore::Topology::Ptr> coreAdjacentTopologiess;
+		kpCoreTopology->UpwardNavigation(kpCoreTopology->GetOcctShape(), TopologicCore::Face::Type(), coreAdjacentTopologiess);
+		std::for_each(
+			coreAdjacentTopologiess.begin(),
+			coreAdjacentTopologiess.end(),
+			[&rCoreFaceAdjacentTopologiess](TopologicCore::Topology::Ptr n) {
+			rCoreFaceAdjacentTopologiess.push_back(TopologicCore::TopologicalQuery::Downcast<TopologicCore::Face>(n));
+		});
+	}
+	
+	void TopologyUtility::AdjacentCells(
+		const TopologicCore::Topology::Ptr & kpCoreTopology, 
+		const TopologicCore::Topology::Ptr & kpCoreParentTopology, 
+		std::list<TopologicCore::Cell::Ptr>& rCoreCellAdjacentTopologiess)
+	{
+		std::list<TopologicCore::Topology::Ptr> coreAdjacentTopologiess;
+		kpCoreTopology->UpwardNavigation(kpCoreTopology->GetOcctShape(), TopologicCore::Cell::Type(), coreAdjacentTopologiess);
+		std::for_each(
+			coreAdjacentTopologiess.begin(),
+			coreAdjacentTopologiess.end(),
+			[&rCoreCellAdjacentTopologiess](TopologicCore::Topology::Ptr n) {
+			rCoreCellAdjacentTopologiess.push_back(TopologicCore::TopologicalQuery::Downcast<TopologicCore::Cell>(n));
+		});
 	}
 }

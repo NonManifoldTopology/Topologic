@@ -1,5 +1,8 @@
 #include "TopologyUtility.h"
 #include "Vertex.h"
+#include "Edge.h"
+#include "Face.h"
+#include "Cell.h"
 
 #include <TopologicUtilities/include/TopologyUtility.h>
 
@@ -73,6 +76,86 @@ namespace Topologic
 					rotation31, rotation32, rotation33);
 
 			return Topology::ByCoreTopology(pCoreTransformedTopology);
+		}
+
+		List<Topology^>^ TopologyUtility::AdjacentTopologies(Topology ^ topology, Topology ^ parentTopology, int topologyType)
+		{
+			TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
+			TopologicCore::Topology::Ptr pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
+
+			std::list<TopologicCore::Topology::Ptr> coreAdjacentTopologies;
+			TopologicUtilities::TopologyUtility::AdjacentTopologies(pCoreTopology, pCoreParentTopology, topologyType, coreAdjacentTopologies);
+
+			List<Topology^>^ adjacentTopologies = gcnew List<Topology^>();
+			for (std::list<TopologicCore::Topology::Ptr>::const_iterator kAdjacentTopologyIterator = coreAdjacentTopologies.begin();
+				kAdjacentTopologyIterator != coreAdjacentTopologies.end();
+				kAdjacentTopologyIterator++)
+			{
+				Topology^ topology = Topology::ByCoreTopology(*kAdjacentTopologyIterator);
+				adjacentTopologies->Add(topology);
+			}
+
+			return adjacentTopologies;
+		}
+
+		List<Edge^>^ TopologyUtility::AdjacentEdges(Topology ^ topology, Topology ^ parentTopology)
+		{
+			TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
+			TopologicCore::Topology::Ptr pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
+
+			std::list<TopologicCore::Edge::Ptr> coreAdjacentEdges;
+			TopologicUtilities::TopologyUtility::AdjacentEdges(pCoreTopology, pCoreParentTopology, coreAdjacentEdges);
+
+			List<Edge^>^ adjacentEdges = gcnew List<Edge^>();
+			for (std::list<TopologicCore::Edge::Ptr>::const_iterator kAdjacentEdgeIterator = coreAdjacentEdges.begin();
+				kAdjacentEdgeIterator != coreAdjacentEdges.end();
+				kAdjacentEdgeIterator++)
+			{
+				Edge^ edge = gcnew Edge(*kAdjacentEdgeIterator);
+				adjacentEdges->Add(edge);
+			}
+
+			return adjacentEdges;
+		}
+
+		List<Face^>^ TopologyUtility::AdjacentFaces(Topology ^ topology, Topology ^ parentTopology)
+		{
+			TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
+			TopologicCore::Topology::Ptr pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
+
+			std::list<TopologicCore::Face::Ptr> coreAdjacentFaces;
+			TopologicUtilities::TopologyUtility::AdjacentFaces(pCoreTopology, pCoreParentTopology, coreAdjacentFaces);
+
+			List<Face^>^ adjacentFaces = gcnew List<Face^>();
+			for (std::list<TopologicCore::Face::Ptr>::const_iterator kAdjacentFaceIterator = coreAdjacentFaces.begin();
+				kAdjacentFaceIterator != coreAdjacentFaces.end();
+				kAdjacentFaceIterator++)
+			{
+				Face^ Face = gcnew Topologic::Face(*kAdjacentFaceIterator);
+				adjacentFaces->Add(Face);
+			}
+
+			return adjacentFaces;
+		}
+
+		List<Cell^>^ TopologyUtility::AdjacentCells(Topology ^ topology, Topology ^ parentTopology)
+		{
+			TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
+			TopologicCore::Topology::Ptr pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
+
+			std::list<TopologicCore::Cell::Ptr> coreAdjacentCells;
+			TopologicUtilities::TopologyUtility::AdjacentCells(pCoreTopology, pCoreParentTopology, coreAdjacentCells);
+
+			List<Cell^>^ adjacentCells = gcnew List<Cell^>();
+			for (std::list<TopologicCore::Cell::Ptr>::const_iterator kAdjacentCellIterator = coreAdjacentCells.begin();
+				kAdjacentCellIterator != coreAdjacentCells.end();
+				kAdjacentCellIterator++)
+			{
+				Cell^ Cell = gcnew Topologic::Cell(*kAdjacentCellIterator);
+				adjacentCells->Add(Cell);
+			}
+
+			return adjacentCells;
 		}
 
 		/*Topology ^ TopologyUtility::Transform(Topology ^ topology,

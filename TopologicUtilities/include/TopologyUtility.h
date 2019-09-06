@@ -5,6 +5,9 @@
 #include <memory>
 
 #include <TopologicCore/include/Topology.h>
+#include <TopologicCore/include/Cell.h>
+#include <TopologicCore/include/Face.h>
+#include <TopologicCore/include/Edge.h>
 #include <TopologicCore/include/Vertex.h>
 
 namespace TopologicUtilities
@@ -93,6 +96,21 @@ namespace TopologicUtilities
 			const TopologicCore::Topology::Ptr& kpCoreTopology, 
 			const TopologicCore::Topology::Ptr& kpCoreParentTopology, 
 			const int kTopologyType,
-			std::list<TopologicCore::Topology::Ptr>& rCoreAncestors);
+			std::list<TopologicCore::Topology::Ptr>& rCoreAdjacentTopologiess);
+
+		static TOPOLOGIC_UTILITIES_API void AdjacentEdges(
+			const TopologicCore::Topology::Ptr& kpCoreTopology,
+			const TopologicCore::Topology::Ptr& kpCoreParentTopology,
+			std::list<TopologicCore::Edge::Ptr>& rCoreEdgeAdjacentTopologiess);
+
+		static TOPOLOGIC_UTILITIES_API void AdjacentFaces(
+			const TopologicCore::Topology::Ptr& kpCoreTopology,
+			const TopologicCore::Topology::Ptr& kpCoreParentTopology,
+			std::list<TopologicCore::Face::Ptr>& rCoreFaceAdjacentTopologiess);
+
+		static TOPOLOGIC_UTILITIES_API void AdjacentCells(
+			const TopologicCore::Topology::Ptr& kpCoreTopology,
+			const TopologicCore::Topology::Ptr& kpCoreParentTopology,
+			std::list<TopologicCore::Cell::Ptr>& rCoreCellAdjacentTopologiess);
 	};
 }
