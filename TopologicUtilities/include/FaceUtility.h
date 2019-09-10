@@ -2,7 +2,9 @@
 
 #include "Utilities.h"
 
+#include <TopologicCore/include/Cell.h>
 #include <TopologicCore/include/Face.h>
+#include <TopologicCore/include/Shell.h>
 #include <TopologicCore/include/Vertex.h>
 #include <TopologicCore/include/Wire.h>
 
@@ -103,6 +105,16 @@ namespace TopologicUtilities
 		/// <param name="rNonNormalizedU"></param>
 		/// <param name="rNonNormalizedV"></param>
 		static void NonNormalizeUV(const TopologicCore::Face::Ptr& kpFace, const double kNormalizedU, const double kNormalizedV, double& rNonNormalizedU, double& rNonNormalizedV);
+
+		static TOPOLOGIC_UTILITIES_API void AdjacentShells(
+			const TopologicCore::Face::Ptr & kpFace,
+			const TopologicCore::Topology::Ptr & kpParentTopology,
+			std::list<TopologicCore::Shell::Ptr>& rCoreAdjacentShells);
+
+		static TOPOLOGIC_UTILITIES_API void AdjacentCells(
+			const TopologicCore::Face::Ptr & kpFace,
+			const TopologicCore::Topology::Ptr & kpParentTopology,
+			std::list<TopologicCore::Cell::Ptr>& rCoreAdjacentCells);
 
 	};
 }

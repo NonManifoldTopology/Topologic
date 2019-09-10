@@ -74,6 +74,22 @@ namespace Topologic {
 #endif
 			static List<Face^>^ Triangulate(Face^ face, double deflection);
 
+			/// <summary>
+			/// Returns a list of Shells that are the adjacent to the input Face.
+			/// </summary>
+			/// <param name="face">A Face</param>
+			/// <param name="parentTopology">A parent Topology</param>
+			/// <returns name="Shell[]">A list of Shells adjacent to the input Face</returns>
+			static List<Shell^>^ AdjacentShells(Face^ face, Topology^ parentTopology);
+
+			/// <summary>
+			/// Returns a list of Cells that are the adjacent to the input Face.
+			/// </summary>
+			/// <param name="face">A Face</param>
+			/// <param name="parentTopology">A parent Topology</param>
+			/// <returns name="Cell[]">A list of Cells adjacent to the input Face</returns>
+			static List<Cell^>^ AdjacentCells(Face^ face, Topology^ parentTopology);
+
 		public protected:
 			FaceUtility() {}
 		};

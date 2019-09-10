@@ -99,6 +99,14 @@ namespace Topologic {
 			/// <returns>The Vertex at a given parameter of the Edge</returns>
 			static Vertex^ VertexAtParameter(Edge^ edge, double u);
 
+			/// <summary>
+			/// Returns a list of Wires that are the adjacent to the input Edge.
+			/// </summary>
+			/// <param name="edge">An Edge</param>
+			/// <param name="parentTopology">A parent Topology</param>
+			/// <returns name="Wire[]">A list of Wires adjacent to the input edge</returns>
+			static List<Wire^>^ AdjacentWires(Edge^ edge, Topology^ parentTopology);
+
 		public protected:
 			EdgeUtility() {}
 		};

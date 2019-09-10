@@ -58,6 +58,7 @@
     <Compile Include="AboutVersion.cs" />
     <Compile Include="ApertureByTopologyContext.cs" />
     <Compile Include="ApertureTopology.cs" />
+    <Compile Include="Utilities\FaceUtilityAdjacentCells.cs" />
     <Compile Include="GraphAddEdges.cs" />
     <Compile Include="GraphAddVertices.cs" />
     <Compile Include="GraphAdjacentVertices.cs" />
@@ -87,6 +88,8 @@
     <Compile Include="GraphVertices.cs" />
     <Compile Include="GraphVerticesAtCoordinates.cs" />
     <Compile Include="TopologyCentroid.cs" />
+    <Compile Include="Utilities\EdgeUtilityAdjacentWires.cs" />
+    <Compile Include="Utilities\FaceUtilityAdjacentShells.cs" />
     <Compile Include="Utilities\FaceUtilityNormalAtParameters.cs" />
     <Compile Include="Utilities\FaceUtilityParametersAtVertex.cs" />
     <Compile Include="Utilities\BitwiseNot.cs" />
@@ -213,10 +216,13 @@
     <Compile Include="Utilities\FaceUtilityVertexAtParameters.cs" />
     <Compile Include="Utilities\ShellByLoft.cs" />
     <Compile Include="TopologyCenterOfMass.cs" />
+    <Compile Include="Utilities\TopologyUtilityAdjacentTopologies.cs" />
     <Compile Include="Utilities\TopologyUtilityDistance.cs" />
     <Compile Include="Utilities\TopologyUtilityRotate.cs" />
     <Compile Include="Utilities\TopologyUtilityScale.cs" />
     <Compile Include="Utilities\TopologyUtilityTranslate.cs" />
+    <Compile Include="Utilities\VertexUtilityAdjacentEdges.cs" />
+    <Compile Include="Utilities\WireUtilityAdjacentShells.cs" />
     <Compile Include="VertexType.cs" />
     <Compile Include="VertexZ.cs" />
     <Compile Include="VertexByCoordinates.cs" />
@@ -243,6 +249,7 @@
     <None Include="resources\Topologic.Small.png" />
     <Compile Include="Utilities\CellUtilityVolume.cs" />
     <Compile Include="Utilities\CellUtilityContains.cs" />
+    <Compile Include="Utilities\WireUtilityAdjacentCells.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\NMT-borderless-logo-small.png" />

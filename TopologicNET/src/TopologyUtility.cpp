@@ -78,13 +78,19 @@ namespace Topologic
 			return Topology::ByCoreTopology(pCoreTransformedTopology);
 		}
 
-		List<Topology^>^ TopologyUtility::AdjacentTopologies(Topology ^ topology, Topology ^ parentTopology, int topologyType)
+		List<Topology^>^ TopologyUtility::AdjacentTopologies(Topology ^ topology, Topology ^ parentTopology, int typeFilter)
 		{
 			TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 			TopologicCore::Topology::Ptr pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
 
 			std::list<TopologicCore::Topology::Ptr> coreAdjacentTopologies;
-			TopologicUtilities::TopologyUtility::AdjacentTopologies(pCoreTopology, pCoreParentTopology, topologyType, coreAdjacentTopologies);
+			try {
+				TopologicUtilities::TopologyUtility::AdjacentTopologies(pCoreTopology, pCoreParentTopology, typeFilter, coreAdjacentTopologies);
+			}
+			catch (const std::exception& rkException)
+			{
+				throw gcnew Exception(gcnew String(rkException.what()));
+			}
 
 			List<Topology^>^ adjacentTopologies = gcnew List<Topology^>();
 			for (std::list<TopologicCore::Topology::Ptr>::const_iterator kAdjacentTopologyIterator = coreAdjacentTopologies.begin();
@@ -98,7 +104,7 @@ namespace Topologic
 			return adjacentTopologies;
 		}
 
-		List<Edge^>^ TopologyUtility::AdjacentEdges(Topology ^ topology, Topology ^ parentTopology)
+		/*List<Edge^>^ TopologyUtility::AdjacentEdges(Topology ^ topology, Topology ^ parentTopology)
 		{
 			TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 			TopologicCore::Topology::Ptr pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
@@ -156,7 +162,7 @@ namespace Topologic
 			}
 
 			return adjacentCells;
-		}
+		}*/
 
 		/*Topology ^ TopologyUtility::Transform(Topology ^ topology,
 			double zAxisX, double zAxisY, double zAxisZ,

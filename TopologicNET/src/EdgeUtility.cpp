@@ -1,5 +1,6 @@
 #include "EdgeUtility.h"
 #include "Vertex.h"
+#include "Wire.h"
 
 #include <TopologicUtilities/include/EdgeUtility.h>
 
@@ -81,6 +82,32 @@ namespace Topologic
 			TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(edge->GetCoreTopologicalQuery());
 			TopologicCore::Vertex::Ptr pCoreVertex = TopologicUtilities::EdgeUtility::PointAtParameter(pCoreEdge, u);
 			return gcnew Vertex(pCoreVertex);
+		}
+
+		List<Wire^>^ EdgeUtility::AdjacentWires(Edge ^ edge, Topology ^ parentTopology)
+		{
+			TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(edge->GetCoreTopologicalQuery());
+			TopologicCore::Topology::Ptr pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
+
+			std::list<TopologicCore::Wire::Ptr> coreAdjacentWires;
+			try {
+				TopologicUtilities::EdgeUtility::AdjacentWires(pCoreEdge, pCoreParentTopology, coreAdjacentWires);
+			}
+			catch (const std::exception& rkException)
+			{
+				throw gcnew Exception(gcnew String(rkException.what()));
+			}
+
+			List<Wire^>^ adjacentWires = gcnew List<Wire^>();
+			for (std::list<TopologicCore::Wire::Ptr>::const_iterator kAdjacentWireIterator = coreAdjacentWires.begin();
+				kAdjacentWireIterator != coreAdjacentWires.end();
+				kAdjacentWireIterator++)
+			{
+				Wire^ wire = gcnew Wire(*kAdjacentWireIterator);
+				adjacentWires->Add(wire);
+			}
+
+			return adjacentWires;
 		}
 	}
 }

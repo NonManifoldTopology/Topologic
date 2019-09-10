@@ -1,6 +1,8 @@
 #include "FaceUtility.h"
 #include "Vertex.h"
 #include "Wire.h"
+#include "Shell.h"
+#include "Cell.h"
 
 #include <TopologicUtilities/include/FaceUtility.h>
 
@@ -101,5 +103,56 @@ namespace Topologic {
 			return faces;
 		}
 
+		List<Shell^>^ FaceUtility::AdjacentShells(Face ^ face, Topology ^ parentTopology)
+		{
+			TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
+			TopologicCore::Topology::Ptr pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
+
+			std::list<TopologicCore::Shell::Ptr> coreAdjacentShells;
+			try {
+				TopologicUtilities::FaceUtility::AdjacentShells(pCoreFace, pCoreParentTopology, coreAdjacentShells);
+			}
+			catch (const std::exception& rkException)
+			{
+				throw gcnew Exception(gcnew String(rkException.what()));
+			}
+
+			List<Shell^>^ adjacentShells = gcnew List<Shell^>();
+			for (std::list<TopologicCore::Shell::Ptr>::const_iterator kAdjacentShellIterator = coreAdjacentShells.begin();
+				kAdjacentShellIterator != coreAdjacentShells.end();
+				kAdjacentShellIterator++)
+			{
+				Shell^ shell = gcnew Shell(*kAdjacentShellIterator);
+				adjacentShells->Add(shell);
+			}
+
+			return adjacentShells;
+		}
+
+		List<Cell^>^ FaceUtility::AdjacentCells(Face ^ face, Topology ^ parentTopology)
+		{
+			TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
+			TopologicCore::Topology::Ptr pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
+
+			std::list<TopologicCore::Cell::Ptr> coreAdjacentCells;
+			try {
+				TopologicUtilities::FaceUtility::AdjacentCells(pCoreFace, pCoreParentTopology, coreAdjacentCells);
+			}
+			catch (const std::exception& rkException)
+			{
+				throw gcnew Exception(gcnew String(rkException.what()));
+			}
+
+			List<Cell^>^ adjacentCells = gcnew List<Cell^>();
+			for (std::list<TopologicCore::Cell::Ptr>::const_iterator kAdjacentCellIterator = coreAdjacentCells.begin();
+				kAdjacentCellIterator != coreAdjacentCells.end();
+				kAdjacentCellIterator++)
+			{
+				Cell^ cell = gcnew Cell(*kAdjacentCellIterator);
+				adjacentCells->Add(cell);
+			}
+
+			return adjacentCells;
+		}
 	}
 }

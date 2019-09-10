@@ -95,22 +95,7 @@ namespace TopologicUtilities
 		static TOPOLOGIC_UTILITIES_API void AdjacentTopologies(
 			const TopologicCore::Topology::Ptr& kpCoreTopology, 
 			const TopologicCore::Topology::Ptr& kpCoreParentTopology, 
-			const int kTopologyType,
-			std::list<TopologicCore::Topology::Ptr>& rCoreAdjacentTopologiess);
-
-		static TOPOLOGIC_UTILITIES_API void AdjacentEdges(
-			const TopologicCore::Topology::Ptr& kpCoreTopology,
-			const TopologicCore::Topology::Ptr& kpCoreParentTopology,
-			std::list<TopologicCore::Edge::Ptr>& rCoreEdgeAdjacentTopologiess);
-
-		static TOPOLOGIC_UTILITIES_API void AdjacentFaces(
-			const TopologicCore::Topology::Ptr& kpCoreTopology,
-			const TopologicCore::Topology::Ptr& kpCoreParentTopology,
-			std::list<TopologicCore::Face::Ptr>& rCoreFaceAdjacentTopologiess);
-
-		static TOPOLOGIC_UTILITIES_API void AdjacentCells(
-			const TopologicCore::Topology::Ptr& kpCoreTopology,
-			const TopologicCore::Topology::Ptr& kpCoreParentTopology,
-			std::list<TopologicCore::Cell::Ptr>& rCoreCellAdjacentTopologiess);
+			const int kTypeFilter,
+			std::list<TopologicCore::Topology::Ptr>& rCoreAdjacentTopologies);
 	};
 }

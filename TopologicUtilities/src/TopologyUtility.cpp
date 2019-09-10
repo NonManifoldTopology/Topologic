@@ -3,6 +3,9 @@
 #include "TopologicCore/include/GlobalCluster.h"
 #include "TopologicCore/include/AttributeManager.h"
 #include "TopologicCore/include/Context.h"
+#include "TopologicCore/include/Shell.h"
+#include "TopologicCore/include/CellComplex.h"
+#include "TopologicCore/include/Cluster.h"
 
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRepBuilderAPI_GTransform.hxx>
@@ -247,54 +250,19 @@ namespace TopologicUtilities
 		return kRadian * 180.0 / M_PI;
 	}
 
-	void TopologyUtility::AdjacentTopologies(const TopologicCore::Topology::Ptr & kpCoreTopology, const TopologicCore::Topology::Ptr & kpParentTopology, const int kTopologyType,
-		std::list<TopologicCore::Topology::Ptr>& rCoreAdjacentTopologiess)
+	void TopologyUtility::AdjacentTopologies(const TopologicCore::Topology::Ptr & kpCoreTopology, const TopologicCore::Topology::Ptr & kpParentTopology, const int kTypeFilter,
+		std::list<TopologicCore::Topology::Ptr>& rCoreAdjacentTopologies)
 	{
-		kpCoreTopology->UpwardNavigation(kpCoreTopology->GetOcctShape(), kTopologyType, rCoreAdjacentTopologiess);
-	}
-	
-	void TopologyUtility::AdjacentEdges(
-		const TopologicCore::Topology::Ptr & kpCoreTopology, 
-		const TopologicCore::Topology::Ptr & kpCoreParentTopology, 
-		std::list<TopologicCore::Edge::Ptr>& rCoreEdgeAdjacentTopologiess)
-	{
-		std::list<TopologicCore::Topology::Ptr> coreAdjacentTopologiess;
-		kpCoreTopology->UpwardNavigation(kpCoreTopology->GetOcctShape(), TopologicCore::Edge::Type(), coreAdjacentTopologiess);
-		std::for_each(
-			coreAdjacentTopologiess.begin(), 
-			coreAdjacentTopologiess.end(), 
-			[&rCoreEdgeAdjacentTopologiess](TopologicCore::Topology::Ptr n) { 
-				rCoreEdgeAdjacentTopologiess.push_back(TopologicCore::TopologicalQuery::Downcast<TopologicCore::Edge>(n));
-		});
-	}
+		// Reject: Shell, Cell, CellComplex, Cluster
+		if (kpCoreTopology->GetType() == TopologicCore::Shell::Type() ||
+			kpCoreTopology->GetType() == TopologicCore::Cell::Type() ||
+			kpCoreTopology->GetType() == TopologicCore::CellComplex::Type() ||
+			kpCoreTopology->GetType() == TopologicCore::Cluster::Type())
+		{
+			std::string errorMessage = "Does not accept an input Topology of type " + kpCoreTopology->GetTypeAsString();
+			throw std::exception(errorMessage.c_str());
+		}
 
-	void TopologyUtility::AdjacentFaces(
-		const TopologicCore::Topology::Ptr & kpCoreTopology, 
-		const TopologicCore::Topology::Ptr & kpCoreParentTopology, 
-		std::list<TopologicCore::Face::Ptr>& rCoreFaceAdjacentTopologiess)
-	{
-		std::list<TopologicCore::Topology::Ptr> coreAdjacentTopologiess;
-		kpCoreTopology->UpwardNavigation(kpCoreTopology->GetOcctShape(), TopologicCore::Face::Type(), coreAdjacentTopologiess);
-		std::for_each(
-			coreAdjacentTopologiess.begin(),
-			coreAdjacentTopologiess.end(),
-			[&rCoreFaceAdjacentTopologiess](TopologicCore::Topology::Ptr n) {
-			rCoreFaceAdjacentTopologiess.push_back(TopologicCore::TopologicalQuery::Downcast<TopologicCore::Face>(n));
-		});
-	}
-	
-	void TopologyUtility::AdjacentCells(
-		const TopologicCore::Topology::Ptr & kpCoreTopology, 
-		const TopologicCore::Topology::Ptr & kpCoreParentTopology, 
-		std::list<TopologicCore::Cell::Ptr>& rCoreCellAdjacentTopologiess)
-	{
-		std::list<TopologicCore::Topology::Ptr> coreAdjacentTopologiess;
-		kpCoreTopology->UpwardNavigation(kpCoreTopology->GetOcctShape(), TopologicCore::Cell::Type(), coreAdjacentTopologiess);
-		std::for_each(
-			coreAdjacentTopologiess.begin(),
-			coreAdjacentTopologiess.end(),
-			[&rCoreCellAdjacentTopologiess](TopologicCore::Topology::Ptr n) {
-			rCoreCellAdjacentTopologiess.push_back(TopologicCore::TopologicalQuery::Downcast<TopologicCore::Cell>(n));
-		});
+		kpCoreTopology->UpwardNavigation(kpCoreTopology->GetOcctShape(), kTypeFilter, rCoreAdjacentTopologies);
 	}
 }

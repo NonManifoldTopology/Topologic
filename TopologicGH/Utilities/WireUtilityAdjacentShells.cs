@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
 
-namespace TopologicGH
+namespace TopologicGH.Utilities
 {
-    public class BitwiseAnd : GH_Component
+    public class WireUtilityAdjacentShells : GH_Component
     {
-        public BitwiseAnd()
-          : base("Bitwise.And", "Bitwise.And", "Performs a bitwise And operation between the arguments (in their binary form).", "TopologicUtilities", "Bitwise")
+        public WireUtilityAdjacentShells()
+          : base("WireUtility.AdjacentShells", "WireUtility.AdjacentShells", "Returns a list of Shells that are the adjacent to the input Wire.", "TopologicUtilities", "WireUtility")
         {
         }
 
@@ -21,7 +21,8 @@ namespace TopologicGH
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddIntegerParameter("Arguments", "Arguments", "Arguments", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Wire", "Wire", "Wire", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Parent Topology", "Parent Topology", "Parent Topology", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -29,7 +30,7 @@ namespace TopologicGH
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddIntegerParameter("Integer", "Integer", "Integer", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Shells", "Shells", "Shells", GH_ParamAccess.list);
         }
 
         /// <summary>
@@ -39,25 +40,27 @@ namespace TopologicGH
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             // Declare a variable for the input String
-            List<int> arguments = new List<int>();
+            global::Topologic.Wire wire = null;
+            global::Topologic.Topology parentTopology = null;
 
             // Use the DA object to retrieve the data inside the first input parameter.
             // If the retieval fails (for example if there is no data) we need to abort.
-            if (!DA.GetDataList(0, arguments)) { return; }
+            if (!DA.GetData(0, ref wire)) { return; }
+            if (!DA.GetData(1, ref parentTopology)) { return; }
 
             // If the retrieved data is Nothing, we need to abort.
             // We're also going to abort on a zero-length String.
-            if (arguments == null) { return; }
+            if (wire == null) { return; }
+            if (parentTopology == null) { return; }
             //if (data.Length == 0) { return; }
 
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
 
-            
-            int result = Topologic.Utilities.Bitwise.And(arguments);
+            List<global::Topologic.Shell> adjacentShells = global::Topologic.Utilities.WireUtility.AdjacentShells(wire, parentTopology);
 
             // Use the DA object to assign a new String to the first output parameter.
-            DA.SetData(0, result);
+            DA.SetDataList(0, adjacentShells);
         }
 
         /// <summary>
@@ -78,7 +81,7 @@ namespace TopologicGH
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("af6f15fe-f64c-430b-92c0-11f85ff1ebb7"); }
+            get { return new Guid("f00c22e9-cc73-4bd8-9ff7-6498ba5360cd"); }
         }
     }
 }

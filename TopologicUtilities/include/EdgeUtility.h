@@ -4,6 +4,7 @@
 
 #include <TopologicCore/include/Edge.h>
 #include <TopologicCore/include/Vertex.h>
+#include <TopologicCore/include/Wire.h>
 
 #include <memory>
 
@@ -75,5 +76,10 @@ namespace TopologicUtilities
 		/// <param name="kpEdge"></param>
 		/// <returns></returns>
 		static TOPOLOGIC_UTILITIES_API double Length(const TopologicCore::Edge::Ptr& kpEdge);
+
+		static TOPOLOGIC_UTILITIES_API void AdjacentWires(
+			const TopologicCore::Edge::Ptr & kpEdge,
+			const TopologicCore::Topology::Ptr & kpParentTopology,
+			std::list<TopologicCore::Wire::Ptr>& rCoreAdjacentWires);
 	};
 }

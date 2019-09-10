@@ -161,6 +161,8 @@
     <ClInclude Include="include\TransformationMatrix2D.h" />
     <ClInclude Include="include\Utilities.h" />
     <ClInclude Include="include\Vector.h" />
+    <ClInclude Include="include\VertexUtility.h" />
+    <ClInclude Include="include\WireUtility.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\CellUtility.cpp" />
@@ -171,6 +173,8 @@
     <ClCompile Include="src\TopologyUtility.cpp" />
     <ClCompile Include="src\TransformationMatrix2D.cpp" />
     <ClCompile Include="src\Vector.cpp" />
+    <ClCompile Include="src\VertexUtility.cpp" />
+    <ClCompile Include="src\WireUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TopologicCore\TopologicCore.vcxproj">

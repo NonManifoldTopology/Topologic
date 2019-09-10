@@ -693,8 +693,14 @@ namespace Topologic
 			coreContentTopologies.push_back(pCoreContentTopology);
 		}
 
-		TopologicCore::Topology::Ptr pCoreCopyParentTopology = pCoreParentTopology->AddContents(coreContentTopologies, typeFilter);
-		return Topology::ByCoreTopology(pCoreCopyParentTopology);
+		try {
+			TopologicCore::Topology::Ptr pCoreCopyParentTopology = pCoreParentTopology->AddContents(coreContentTopologies, typeFilter);
+			return Topology::ByCoreTopology(pCoreCopyParentTopology);
+		}
+		catch (std::exception& e)
+		{
+			throw gcnew Exception(gcnew String(e.what()));
+		}
 	}
 
 	Topology^ Topology::RemoveContent(Topology^ topology)

@@ -221,4 +221,19 @@ namespace TopologicUtilities
 		return occtShapeProperties.Mass();
 	}
 
+	void EdgeUtility::AdjacentWires(
+		const TopologicCore::Edge::Ptr & kpEdge, 
+		const TopologicCore::Topology::Ptr & kpParentTopology, 
+		std::list<TopologicCore::Wire::Ptr>& rCoreAdjacentWires)
+	{
+		 std::list<TopologicCore::Topology::Ptr> coreAdjacentTopologies;
+		 kpEdge->UpwardNavigation(kpParentTopology->GetOcctShape(), TopologicCore::Wire::Type(), coreAdjacentTopologies);
+		 for (const TopologicCore::Topology::Ptr& kpAdjacentTopology : coreAdjacentTopologies)
+		 {
+			 rCoreAdjacentWires.push_back(
+				 TopologicCore::TopologicalQuery::Downcast<TopologicCore::Wire>(kpAdjacentTopology)
+			 );
+		 }
+	}
+
 }

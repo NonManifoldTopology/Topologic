@@ -183,8 +183,10 @@
     <ClInclude Include="include\TopologyUtility.h" />
     <ClInclude Include="include\Vertex.h" />
     <ClInclude Include="include\VertexFactory.h" />
+    <ClInclude Include="include\VertexUtility.h" />
     <ClInclude Include="include\Wire.h" />
     <ClInclude Include="include\WireFactory.h" />
+    <ClInclude Include="include\WireUtility.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\About.cpp" />
@@ -224,8 +226,10 @@
     <ClCompile Include="src\TopologyUtility.cpp" />
     <ClCompile Include="src\Vertex.cpp" />
     <ClCompile Include="src\VertexFactory.cpp" />
+    <ClCompile Include="src\VertexUtility.cpp" />
     <ClCompile Include="src\Wire.cpp" />
     <ClCompile Include="src\WireFactory.cpp" />
+    <ClCompile Include="src\WireUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TopologicCore\TopologicCore.vcxproj">

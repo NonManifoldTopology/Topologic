@@ -98,6 +98,12 @@
     <ClInclude Include="include\NurbsSurface.h">
       <Filter>Geometries</Filter>
     </ClInclude>
+    <ClInclude Include="include\VertexUtility.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="include\WireUtility.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\About.cpp" />
@@ -188,6 +194,12 @@
     </ClCompile>
     <ClCompile Include="src\NurbsSurface.cpp">
       <Filter>Geometries</Filter>
+    </ClCompile>
+    <ClCompile Include="src\VertexUtility.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WireUtility.cpp">
+      <Filter>Utilities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

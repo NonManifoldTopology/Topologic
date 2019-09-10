@@ -108,6 +108,12 @@
     <ClInclude Include="..\TopologicNET\include\ApertureFactory.h">
       <Filter>Factories</Filter>
     </ClInclude>
+    <ClInclude Include="..\TopologicNET\include\WireUtility.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TopologicNET\include\VertexUtility.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\TopologicNET\src\About.cpp" />
@@ -186,6 +192,12 @@
     <ClCompile Include="..\TopologicNET\src\Graph.cpp" />
     <ClCompile Include="..\TopologicNET\src\ApertureFactory.cpp">
       <Filter>Factories</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TopologicNET\src\VertexUtility.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TopologicNET\src\WireUtility.cpp">
+      <Filter>Utilities</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

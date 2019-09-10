@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
 
-namespace TopologicGH
+namespace TopologicGH.Utilities
 {
-    public class BitwiseAnd : GH_Component
+    public class TopologyUtilityAdjacentTopologies : GH_Component
     {
-        public BitwiseAnd()
-          : base("Bitwise.And", "Bitwise.And", "Performs a bitwise And operation between the arguments (in their binary form).", "TopologicUtilities", "Bitwise")
+        public TopologyUtilityAdjacentTopologies()
+          : base("TopologyUtility.AdjacentTopologies", "TopologyUtility.AdjacentTopologies", "Returns a list of Topologies that are the adjacent to the input Topology.", "TopologicUtilities", "TopologyUtility")
         {
         }
 
@@ -21,7 +21,9 @@ namespace TopologicGH
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddIntegerParameter("Arguments", "Arguments", "Arguments", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Topology", "Topology", "Topology", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Parent Topology", "Parent Topology", "Parent Topology", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Type Filter", "Type Filter", "Type Filter", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -29,7 +31,7 @@ namespace TopologicGH
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddIntegerParameter("Integer", "Integer", "Integer", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Topologies", "Topologies", "Topologies", GH_ParamAccess.list);
         }
 
         /// <summary>
@@ -39,25 +41,30 @@ namespace TopologicGH
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             // Declare a variable for the input String
-            List<int> arguments = new List<int>();
+            global::Topologic.Topology topology = null;
+            global::Topologic.Topology parentTopology = null;
+            int typeFilter = 0;
 
             // Use the DA object to retrieve the data inside the first input parameter.
             // If the retieval fails (for example if there is no data) we need to abort.
-            if (!DA.GetDataList(0, arguments)) { return; }
+            if (!DA.GetData(0, ref topology)) { return; }
+            if (!DA.GetData(1, ref parentTopology)) { return; }
+            if (!DA.GetData(2, ref typeFilter)) { return; }
 
             // If the retrieved data is Nothing, we need to abort.
             // We're also going to abort on a zero-length String.
-            if (arguments == null) { return; }
+            if (topology == null) { return; }
+            if (parentTopology == null) { return; }
             //if (data.Length == 0) { return; }
 
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
 
-            
-            int result = Topologic.Utilities.Bitwise.And(arguments);
+
+            List<global::Topologic.Topology> adjacentTopologies = global::Topologic.Utilities.TopologyUtility.AdjacentTopologies(topology, parentTopology, typeFilter);
 
             // Use the DA object to assign a new String to the first output parameter.
-            DA.SetData(0, result);
+            DA.SetDataList(0, adjacentTopologies);
         }
 
         /// <summary>
@@ -78,7 +85,7 @@ namespace TopologicGH
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("af6f15fe-f64c-430b-92c0-11f85ff1ebb7"); }
+            get { return new Guid("f178a6e8-6780-44f0-bf07-a93590391e30"); }
         }
     }
 }
