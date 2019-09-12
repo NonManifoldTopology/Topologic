@@ -163,8 +163,9 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <param name="kpTopology"></param>
-		/// <param name="rkSharedTopologies"></param>
-		TOPOLOGIC_API void SharedTopologies(const Topology::Ptr& kpTopology, std::list<Topology::Ptr>& rkSharedTopologies) const;
+		/// <param name="kFilterType"></param>
+		/// <param name="rSharedTopologies"></param>
+		TOPOLOGIC_API void SharedTopologies(const Topology::Ptr& kpTopology, const int kFilterType, std::list<Topology::Ptr>& rSharedTopologies) const;
 
 		/// <summary>
 		/// 

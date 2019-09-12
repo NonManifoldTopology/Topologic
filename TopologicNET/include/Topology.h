@@ -221,11 +221,14 @@ namespace Topologic
 		/// Returns the shared Topologies between the input Topology and another Topology.
 		/// </summary>
 		/// <param name="topology">Another Topology</param>
+		/// <param name="typeFilter">The type of the filtered Topologies</param>
 		/// <returns name="Topology[]">A list of shared Topologies between the input Topology and another Topology</returns>
+		List<Topology^>^ SharedTopologies(
+			Topology^ topology, 
 #ifdef TOPOLOGIC_DYNAMO
-		[IsVisibleInDynamoLibrary(false)]
+			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] 
 #endif
-		List<Topology^>^ SharedTopologies(Topology^ topology);
+			int typeFilter);
 
 		/// <summary>
 		/// 
@@ -457,7 +460,7 @@ namespace Topologic
 		/// Returns the sub-topology that is the closest to the selector and of a specific type.
 		/// </summary>
 		/// <param name="selector">A Topology</param>
-		/// <param name="typeFilter">A type</param>
+		/// <param name="typeFilter">The type of the filtered Topologies</param>
 		/// <returns>The closest sub-topology to the selector of the specified type</returns>
 #ifdef TOPOLOGIC_DYNAMO
 		[IsVisibleInDynamoLibrary(false)]

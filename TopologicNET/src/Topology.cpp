@@ -787,11 +787,18 @@ namespace Topologic
 		
 	}*/
 
-	List<Topology^>^ Topology::SharedTopologies(Topology^ topology)
+	List<Topology^>^ Topology::SharedTopologies(Topology^ topology, int typeFilter)
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		std::list<std::shared_ptr<TopologicCore::Topology>> coreSharedTopologies;
-		pCoreTopology->SharedTopologies(TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery()), coreSharedTopologies);
+
+		try{
+			pCoreTopology->SharedTopologies(TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery()), typeFilter, coreSharedTopologies);
+		}
+		catch (std::exception& e)
+		{
+			throw gcnew Exception(gcnew String(e.what()));
+		}
 		List<Topology^>^ pSharedTopologies = gcnew List<Topology^>();
 		for (std::list<std::shared_ptr<TopologicCore::Topology>>::const_iterator kCoreSharedTopologyIterator = coreSharedTopologies.begin();
 			kCoreSharedTopologyIterator != coreSharedTopologies.end();

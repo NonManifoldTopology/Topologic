@@ -1770,8 +1770,6 @@ namespace TopologicCore
 					}
 					else
 					{
-						/*std::string strException = std::string("No attribute with the key " + rkEdgeKey + " is found.");
-						throw std::exception(strException.c_str());*/
 						return 1.0;
 					}
 				}

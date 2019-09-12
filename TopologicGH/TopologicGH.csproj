@@ -216,6 +216,7 @@
     <Compile Include="Utilities\FaceUtilityVertexAtParameters.cs" />
     <Compile Include="Utilities\ShellByLoft.cs" />
     <Compile Include="TopologyCenterOfMass.cs" />
+    <Compile Include="Utilities\TopologySharedTopologies.cs" />
     <Compile Include="Utilities\TopologyUtilityAdjacentTopologies.cs" />
     <Compile Include="Utilities\TopologyUtilityDistance.cs" />
     <Compile Include="Utilities\TopologyUtilityRotate.cs" />

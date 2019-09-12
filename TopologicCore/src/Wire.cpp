@@ -63,6 +63,14 @@ namespace TopologicCore
 
 	void Wire::Vertices(std::list<Vertex::Ptr>& rVertices) const
 	{
+		std::list<Vertex::Ptr> vertices;
+		DownwardNavigation<Vertex>(vertices);
+
+		if (vertices.size() < 3)
+		{
+			rVertices = vertices;
+		}
+
 		int numOfBranches = NumberOfBranches();
 		if (numOfBranches == 0)
 		{
@@ -83,7 +91,7 @@ namespace TopologicCore
 		}
 		else
 		{
-			DownwardNavigation(rVertices);
+			rVertices = vertices;
 		}
 	}
 
