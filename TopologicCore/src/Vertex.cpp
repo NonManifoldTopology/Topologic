@@ -80,7 +80,7 @@ namespace TopologicCore
 		assert(!m_occtVertex.IsNull() && "Vertex::m_occtVertex is null.");
 		if (m_occtVertex.IsNull())
 		{
-			throw std::exception("Vertex::m_occtVertex is null.");
+			throw std::exception("A null Vertex is encountered.");
 		}
 
 		return m_occtVertex;
@@ -96,7 +96,7 @@ namespace TopologicCore
 		assert(!m_occtVertex.IsNull() && "Vertex::m_occtVertex is null.");
 		if (m_occtVertex.IsNull())
 		{
-			throw std::exception("Vertex::m_occtVertex is null.");
+			throw std::exception("A null Vertex is encountered.");
 		}
 
 		return m_occtVertex;

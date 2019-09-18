@@ -205,7 +205,7 @@ namespace TopologicCore
 		assert(!m_occtWire.IsNull() && "Wire::m_occtWire is null.");
 		if (m_occtWire.IsNull())
 		{
-			throw std::exception("Wire::m_occtWire is null.");
+			throw std::exception("A null Wire is encountered.");
 		}
 
 		return m_occtWire;
@@ -216,7 +216,7 @@ namespace TopologicCore
 		assert(!m_occtWire.IsNull()  && "Wire::m_occtWire is null.");
 		if (m_occtWire.IsNull())
 		{
-			throw std::exception("Wire::m_occtWire is null.");
+			throw std::exception("A null Wire is encountered.");
 		}
 
 		return m_occtWire;

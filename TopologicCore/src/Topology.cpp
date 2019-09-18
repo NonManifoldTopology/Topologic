@@ -21,6 +21,7 @@
 #include <BOPAlgo_MakerVolume.hxx>
 #include <BRep_Builder.hxx>
 #include <BRepAlgoAPI_Fuse.hxx>
+#include <BRepAlgoAPI_Common.hxx>
 #include <BRepClass3d_SolidClassifier.hxx>
 #include <BRepBuilderAPI_Copy.hxx>
 #include <BRepBuilderAPI_Sewing.hxx>
@@ -30,6 +31,9 @@
 #include <BRepCheck_Wire.hxx>
 #include <BRepExtrema_DistShapeShape.hxx>
 #include <BRepTools.hxx>
+#include <GeomAPI_IntSS.hxx>
+#include <Geom_RectangularTrimmedSurface.hxx>
+#include <ShapeAnalysis.hxx>
 #include <ShapeAnalysis_ShapeContents.hxx>
 #include <ShapeBuild_ReShape.hxx>
 #include <ShapeFix_Shape.hxx>
@@ -183,12 +187,15 @@ namespace TopologicCore
 			{
 				const TopoDS_Shape rkCurrentChildShape = occtExplorer.Current();
 				TopoDS_Shape checkDistanceShape = rkCurrentChildShape;
-				if (i == 3)
+				/*if (i == 3)
 				{
 					ShapeFix_Solid occtSolidFix(TopoDS::Solid(rkCurrentChildShape));
 					occtSolidFix.Perform();
 					checkDistanceShape = occtSolidFix.Shape();
-				}
+				}*/
+				ShapeFix_Shape occtShapeFix(rkCurrentChildShape);
+				occtShapeFix.Perform();
+				checkDistanceShape = occtShapeFix.Shape();
 				BRepExtrema_DistShapeShape occtDistanceCalculation(checkDistanceShape, rkOcctSelectorShape);
 				bool isDone = occtDistanceCalculation.Perform();
 				if (isDone)
@@ -566,10 +573,19 @@ namespace TopologicCore
 				{
 					// If the desired topology includes Cell, use containment test.
 					std::list<Cell::Ptr> cells;
-					pCopyTopology->Cells(cells);
+					if(pCopyTopology->GetType() == TOPOLOGY_CELL)
+					{
+						cells.push_back(TopologicalQuery::Downcast<Cell>(pCopyTopology));
+					}
+					else
+					{
+						pCopyTopology->Cells(cells);
+					}
 					for(const Cell::Ptr& kpCell : cells)
 					{
-						BRepClass3d_SolidClassifier occtSolidClassifier(kpCell->GetOcctSolid(), pCenterOfMass->Point()->Pnt(), 0.0001);
+						ShapeFix_Solid occtShapeFixSolid(kpCell->GetOcctSolid());
+						occtShapeFixSolid.Perform();
+						BRepClass3d_SolidClassifier occtSolidClassifier(occtShapeFixSolid.Solid(), pCenterOfMass->Point()->Pnt(), 0.1);
 						TopAbs_State occtState = occtSolidClassifier.State();
 
 						if (occtState == TopAbs_IN)
@@ -585,24 +601,30 @@ namespace TopologicCore
 				}
 				if (selectedSubtopology == nullptr)
 				{
-					throw std::exception("No suitable constituent members with the desired type to attach the content to.");
+					//throw std::exception("No suitable constituent members with the desired type to attach the content to.");
 				}
-				occtCopyContextShape = selectedSubtopology->GetOcctShape();
-				contextInstanceGUID = selectedSubtopology->GetInstanceGUID();
+				else
+				{
+					occtCopyContextShape = selectedSubtopology->GetOcctShape();
+					contextInstanceGUID = selectedSubtopology->GetInstanceGUID();
+				}
 			}
 
-			Topology::Ptr pCopyContentTopology = std::dynamic_pointer_cast<Topology>(kpContentTopology->DeepCopy());
-			GlobalCluster::GetInstance().AddTopology(pCopyContentTopology->GetOcctShape());
-				
-			ContentManager::GetInstance().Add(occtCopyContextShape, pCopyContentTopology);
+			if (!occtCopyContextShape.IsNull())
+			{
+				Topology::Ptr pCopyContentTopology = std::dynamic_pointer_cast<Topology>(kpContentTopology->DeepCopy());
+				GlobalCluster::GetInstance().AddTopology(pCopyContentTopology->GetOcctShape());
 
-			const double kDefaultParameter = 0.0; // TODO: calculate the parameters
-			ContextManager::GetInstance().Add(
-				pCopyContentTopology->GetOcctShape(),
-				TopologicCore::Context::ByTopologyParameters(
-					Topology::ByOcctShape(occtCopyContextShape, contextInstanceGUID),
-					kDefaultParameter, kDefaultParameter, kDefaultParameter
-				));
+				ContentManager::GetInstance().Add(occtCopyContextShape, pCopyContentTopology);
+
+				const double kDefaultParameter = 0.0; // TODO: calculate the parameters
+				ContextManager::GetInstance().Add(
+					pCopyContentTopology->GetOcctShape(),
+					TopologicCore::Context::ByTopologyParameters(
+						Topology::ByOcctShape(occtCopyContextShape, contextInstanceGUID),
+						kDefaultParameter, kDefaultParameter, kDefaultParameter
+					));
+			}
 		}
 
 		GlobalCluster::GetInstance().AddTopology(pCopyTopology->GetOcctShape());
@@ -760,9 +782,43 @@ namespace TopologicCore
 		return copyTopology;
 	}
 
-	void Topology::SharedTopologies(const Topology::Ptr& kpTopology, std::list<Topology::Ptr>& rkSharedTopologies) const
+	void Topology::SharedTopologies(const Topology::Ptr & kpTopology, const int kFilterType, std::list<Topology::Ptr>& rSharedTopologies) const
 	{
-		
+		const TopoDS_Shape& rkOcctShape1 = GetOcctShape();
+		const TopoDS_Shape& rkOcctShape2 = kpTopology->GetOcctShape();
+
+		// Bitwise shift
+		for(int i = 0; i < 9; ++i)
+		{
+			int intTopologyType = 1 << i;
+
+			if ((kFilterType & intTopologyType) == 0)
+			{
+				continue;
+			}
+			TopAbs_ShapeEnum occtSubtopologyType = GetOcctTopologyType((TopologyType)intTopologyType);
+			TopTools_MapOfShape occtSubtopologies1;
+			DownwardNavigation(rkOcctShape1, occtSubtopologyType, occtSubtopologies1);
+
+			TopTools_MapOfShape occtSubtopologies2;
+			DownwardNavigation(rkOcctShape2, occtSubtopologyType, occtSubtopologies2);
+
+			for (TopTools_MapIteratorOfMapOfShape occtSubtopologyIterator1(occtSubtopologies1);
+				occtSubtopologyIterator1.More();
+				occtSubtopologyIterator1.Next())
+			{
+				for (TopTools_MapIteratorOfMapOfShape occtSubtopologyIterator2(occtSubtopologies2);
+					occtSubtopologyIterator2.More();
+					occtSubtopologyIterator2.Next())
+				{
+					if (occtSubtopologyIterator1.Value().IsSame(occtSubtopologyIterator2.Value()))
+					{
+						Topology::Ptr topology = Topology::ByOcctShape(occtSubtopologyIterator1.Value(), "");
+						rSharedTopologies.push_back(topology);
+					}
+				}
+			}
+		}
 	}
 
 	void Topology::PathsTo(const Topology::Ptr& kpTopology, const Topology::Ptr& kpParentTopology, const int kMaxLevels, const int kMaxPaths, std::list<std::list<std::shared_ptr<TopologicalQuery>>>& rkPaths) const

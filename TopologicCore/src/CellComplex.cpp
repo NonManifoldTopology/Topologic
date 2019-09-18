@@ -27,6 +27,7 @@
 
 #include <BOPAlgo_MakerVolume.hxx>
 #include <ShapeFix_Face.hxx>
+#include <ShapeFix_Shape.hxx>
 #include <algorithm>
 
 #include <assert.h>
@@ -207,11 +208,18 @@ namespace TopologicCore
 
 		CellComplex::Ptr cellComplex = ByCells(cells);
 
+		// Should get us a CellComplex, otherwise an exception.
+		ShapeFix_Shape occtShapeFix(cellComplex->GetOcctCompSolid());
+		occtShapeFix.SetMaxTolerance(kTolerance);
+		occtShapeFix.Perform();
+
+		CellComplex::Ptr fixedCellComplex = std::make_shared<CellComplex>(TopoDS::CompSolid(occtShapeFix.Shape()));
+
 		for (const Face::Ptr& kpFace : rkFaces)
 		{
-			AttributeManager::GetInstance().CopyAttributes(kpFace->GetOcctFace(), cellComplex->GetOcctCompSolid());
+			AttributeManager::GetInstance().CopyAttributes(kpFace->GetOcctFace(), fixedCellComplex->GetOcctCompSolid());
 		}
-		return cellComplex;
+		return fixedCellComplex;
 	}
 
 	Cell::Ptr CellComplex::ExternalBoundary() const
@@ -330,7 +338,7 @@ namespace TopologicCore
 		assert(!m_occtCompSolid.IsNull() && "CellComplex::m_occtCompSolid is null.");
 		if (m_occtCompSolid.IsNull())
 		{
-			throw std::exception("CellComplex::m_occtCompSolid is null.");
+			throw std::exception("A null CellComplex is encountered.");
 		}
 
 		return m_occtCompSolid;
@@ -341,7 +349,7 @@ namespace TopologicCore
 		assert(!m_occtCompSolid.IsNull() && "CellComplex::m_occtCompSolid is null.");
 		if (m_occtCompSolid.IsNull())
 		{
-			throw std::exception("CellComplex::m_occtCompSolid is null.");
+			throw std::exception("A null CellComplex is encountered.");
 		}
 
 		return m_occtCompSolid;

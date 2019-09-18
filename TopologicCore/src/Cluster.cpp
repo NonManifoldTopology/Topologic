@@ -120,7 +120,7 @@ namespace TopologicCore
 		assert(!m_occtCompound.IsNull() && "Cluster::m_occtCompound is null.");
 		if (m_occtCompound.IsNull())
 		{
-			throw std::exception("Cluster::m_occtCompound is null.");
+			throw std::exception("A null Cluster is encountered.");
 		}
 
 		return m_occtCompound;
@@ -131,7 +131,7 @@ namespace TopologicCore
 		assert(!m_occtCompound.IsNull() && "Cluster::m_occtCompound is null.");
 		if (m_occtCompound.IsNull())
 		{
-			throw std::exception("Cluster::m_occtCompound is null.");
+			throw std::exception("A null Cluster is encountered.");
 		}
 
 		return m_occtCompound;

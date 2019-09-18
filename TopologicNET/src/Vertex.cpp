@@ -121,10 +121,16 @@ namespace Topologic
 	{
 		List<double>^ coordinate = gcnew List<double>();
 		TopologicCore::Vertex::Ptr pCoreVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(GetCoreTopologicalQuery());
-		std::tuple<double, double, double> coreCoordinate = pCoreVertex->Coordinates();
-		coordinate->Add(std::get<0>(coreCoordinate));
-		coordinate->Add(std::get<1>(coreCoordinate));
-		coordinate->Add(std::get<2>(coreCoordinate));
-		return coordinate;
+		try {
+			std::tuple<double, double, double> coreCoordinate = pCoreVertex->Coordinates();
+			coordinate->Add(std::get<0>(coreCoordinate));
+			coordinate->Add(std::get<1>(coreCoordinate));
+			coordinate->Add(std::get<2>(coreCoordinate));
+			return coordinate;
+		}
+		catch (const std::exception& e)
+		{
+			throw gcnew Exception(gcnew String(e.what()));
+		}
 	}
 }

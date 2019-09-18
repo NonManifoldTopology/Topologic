@@ -7,6 +7,7 @@
 #include "CellComplex.h"
 #include "CellFactory.h"
 #include "GlobalCluster.h"
+#include "AttributeManager.h"
 
 #include <BRep_Builder.hxx>
 #include <BRepAlgoAPI_Common.hxx>
@@ -137,6 +138,11 @@ namespace TopologicCore
 		try {
 
 			Cell::Ptr pCell = ByShell(pShell);
+
+			for (const Face::Ptr& kpFace : rkFaces)
+			{
+				AttributeManager::GetInstance().CopyAttributes(kpFace->GetOcctFace(), pCell->GetOcctSolid());
+			}
 
 			for (const Face::Ptr& kpFace : rkFaces)
 			{
@@ -299,7 +305,7 @@ namespace TopologicCore
 		assert(!m_occtSolid.IsNull() && "Cell::m_occtSolid is null.");
 		if (m_occtSolid.IsNull())
 		{
-			throw std::exception("Cell::m_occtSolid is null.");
+			throw std::exception("A null Cell is encountered.");
 		}
 
 		return m_occtSolid;
@@ -310,7 +316,7 @@ namespace TopologicCore
 		assert(!m_occtSolid.IsNull() && "Cell::m_occtSolid is null.");
 		if (m_occtSolid.IsNull())
 		{
-			throw std::exception("Cell::m_occtSolid is null.");
+			throw std::exception("A null Cell is encountered.");
 		}
 
 		return m_occtSolid;

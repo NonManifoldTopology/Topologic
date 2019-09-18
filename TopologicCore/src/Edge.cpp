@@ -15,6 +15,7 @@
 #include <GProp_GProps.hxx>
 #include <gp_Lin.hxx>
 #include <ShapeAnalysis_Edge.hxx>
+#include <ShapeFix_Shape.hxx>
 #include <TopExp.hxx>
 #include <TopoDS.hxx>
 
@@ -149,7 +150,8 @@ namespace TopologicCore
 			Throw(occtMakeEdge.Error());
 		}
 
-		Edge::Ptr pEdge = std::make_shared<Edge>(occtMakeEdge);
+		ShapeFix_Shape occtEdgeFix(occtMakeEdge.Edge());
+		Edge::Ptr pEdge = std::make_shared<Edge>(TopoDS::Edge(occtEdgeFix.Shape()));
 		GlobalCluster::GetInstance().AddTopology(pEdge->GetOcctEdge());
 		return pEdge;
 	}
@@ -240,7 +242,7 @@ namespace TopologicCore
 		assert(!m_occtEdge.IsNull() && "Edge::m_occtEdge is null.");
 		if (m_occtEdge.IsNull())
 		{
-			throw std::exception("Edge::m_occtEdge is null.");
+			throw std::exception("A null Edge is encountered.");
 		}
 
 		return m_occtEdge;
@@ -251,7 +253,7 @@ namespace TopologicCore
 		assert(!m_occtEdge.IsNull() && "Edge::m_occtEdge is null.");
 		if (m_occtEdge.IsNull())
 		{
-			throw std::exception("Edge::m_occtEdge is null.");
+			throw std::exception("A null Edge is encountered.");
 		}
 
 		return m_occtEdge;

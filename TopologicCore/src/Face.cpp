@@ -471,7 +471,7 @@ namespace TopologicCore
 		assert(!m_occtFace.IsNull() && "Face::m_occtFace is null.");
 		if (m_occtFace.IsNull())
 		{
-			throw std::exception("Face::m_occtFace is null.");
+			throw std::exception("A null Face is encountered.");
 		}
 
 		return m_occtFace;
@@ -482,7 +482,7 @@ namespace TopologicCore
 		assert(!m_occtFace.IsNull() && "Face::m_occtFace is null.");
 		if (m_occtFace.IsNull())
 		{
-			throw std::exception("Face::m_occtFace is null.");
+			throw std::exception("A null Face is encountered.");
 		}
 
 		return m_occtFace;

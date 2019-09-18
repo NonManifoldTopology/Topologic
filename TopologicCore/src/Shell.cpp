@@ -136,7 +136,7 @@ namespace TopologicCore
 		assert(!m_occtShell.IsNull() && "Shell::m_occtShell is null.");
 		if (m_occtShell.IsNull())
 		{
-			throw std::exception("Shell::m_occtShell is null.");
+			throw std::exception("A null Shell is encountered.");
 		}
 
 		return m_occtShell;
@@ -147,7 +147,7 @@ namespace TopologicCore
 		assert(!m_occtShell.IsNull() && "Shell::m_occtShell is null.");
 		if (m_occtShell.IsNull())
 		{
-			throw std::exception("Shell::m_occtShell is null.");
+			throw std::exception("A null Shell is encountered.");
 		}
 
 		return m_occtShell;
