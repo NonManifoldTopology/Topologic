@@ -625,6 +625,8 @@ namespace TopologicCore
 	protected:
 		Topology(const int kDimensionality, const TopoDS_Shape& rkOcctShape, const std::string& rkGuid = "");
 
+		static TopoDS_Shape FixShape(const TopoDS_Shape& rkOcctShape);
+
 		/// <summary>
 		/// 
 		/// </summary>

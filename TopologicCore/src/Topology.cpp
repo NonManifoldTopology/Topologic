@@ -282,6 +282,13 @@ namespace TopologicCore
 		m_numOfTopologies++;
 	}
 
+	TopoDS_Shape Topology::FixShape(const TopoDS_Shape & rkOcctShape)
+	{
+		ShapeFix_Shape occtShapeFix(rkOcctShape);
+		occtShapeFix.Perform();
+		return occtShapeFix.Shape();
+	}
+
 	void Topology::RegisterFactory(const std::string & rkGuid, const TopologyFactory::Ptr & kpTopologyFactory)
 	{
 		TopologyFactoryManager::GetInstance().Add(rkGuid, kpTopologyFactory);
@@ -571,8 +578,15 @@ namespace TopologicCore
 				Topology::Ptr selectedSubtopology = nullptr;
 				if ((kTypeFilter & Cell::Type()) != 0)
 				{
+					// Select the closest Face
+					Face::Ptr face = TopologicalQuery::Downcast<Face>(
+						pCopyTopology->SelectSubtopology(pCenterOfMass, Face::Type()));
+
+					std::list<Cell::Ptr> adjacentCells;
+					face->Cells(adjacentCells);
+
 					// If the desired topology includes Cell, use containment test.
-					std::list<Cell::Ptr> cells;
+					/*std::list<Cell::Ptr> cells;
 					if(pCopyTopology->GetType() == TOPOLOGY_CELL)
 					{
 						cells.push_back(TopologicalQuery::Downcast<Cell>(pCopyTopology));
@@ -580,8 +594,10 @@ namespace TopologicCore
 					else
 					{
 						pCopyTopology->Cells(cells);
-					}
-					for(const Cell::Ptr& kpCell : cells)
+					}*/
+
+					//for(const Cell::Ptr& kpCell : cells)
+					for (const Cell::Ptr& kpCell : adjacentCells)
 					{
 						ShapeFix_Solid occtShapeFixSolid(kpCell->GetOcctSolid());
 						occtShapeFixSolid.Perform();
@@ -599,6 +615,7 @@ namespace TopologicCore
 				{
 					selectedSubtopology = pCopyTopology->SelectSubtopology(pCenterOfMass, kTypeFilter);
 				}
+
 				if (selectedSubtopology == nullptr)
 				{
 					//throw std::exception("No suitable constituent members with the desired type to attach the content to.");

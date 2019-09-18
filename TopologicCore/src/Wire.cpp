@@ -128,7 +128,7 @@ namespace TopologicCore
 
 		try {
 			TransferMakeShapeContents(occtMakeWire, rkOcctEdges);
-
+			TopoDS_Wire occtWire = TopoDS::Wire(Topology::FixShape(occtMakeWire));
 			return occtMakeWire;
 		}
 		catch (StdFail_NotDone&)
@@ -246,16 +246,15 @@ namespace TopologicCore
 	{
 		TopoDS_Vertex occtCenterOfMass = CenterOfMass(GetOcctWire());
 		return std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtCenterOfMass));
-		/*GProp_GProps occtShapeProperties;
-		BRepGProp::LinearProperties(GetOcctShape(), occtShapeProperties);
-		return Vertex::ByPoint(new Geom_CartesianPoint(occtShapeProperties.CentreOfMass()));*/
 	}
 
 	TopoDS_Vertex Wire::CenterOfMass(const TopoDS_Wire & rkOcctWire)
 	{
 		GProp_GProps occtShapeProperties;
 		BRepGProp::LinearProperties(rkOcctWire, occtShapeProperties);
-		return BRepBuilderAPI_MakeVertex(occtShapeProperties.CentreOfMass());
+		TopoDS_Vertex occtCenterOfMass = BRepBuilderAPI_MakeVertex(occtShapeProperties.CentreOfMass());
+		TopoDS_Vertex occtFixedCenterOfMass = TopoDS::Vertex(Topology::FixShape(occtCenterOfMass));
+		return occtFixedCenterOfMass;
 	}
 
 	std::string Wire::GetTypeAsString() const

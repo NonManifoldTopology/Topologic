@@ -27,14 +27,18 @@ namespace TopologicCore
 
 	Vertex::Ptr Vertex::ByPoint(Handle(Geom_Point) pOcctPoint)
 	{
-		Vertex::Ptr pVertex = std::make_shared<Vertex>(BRepBuilderAPI_MakeVertex(pOcctPoint->Pnt()));
+		TopoDS_Vertex occtVertex = BRepBuilderAPI_MakeVertex(pOcctPoint->Pnt());
+		TopoDS_Vertex occtFixedVertex = TopoDS::Vertex(Topology::FixShape(occtVertex));
+		Vertex::Ptr pVertex = std::make_shared<Vertex>(occtFixedVertex);
 		GlobalCluster::GetInstance().AddTopology(pVertex->GetOcctVertex());
 		return pVertex;
 	}
 
 	Vertex::Ptr Vertex::ByCoordinates(const double kX, const double kY, const double kZ)
 	{
-		Vertex::Ptr pVertex = std::make_shared<Vertex>(BRepBuilderAPI_MakeVertex(gp_Pnt(kX, kY, kZ)));
+		TopoDS_Vertex occtVertex = BRepBuilderAPI_MakeVertex(gp_Pnt(kX, kY, kZ));
+		TopoDS_Vertex occtFixedVertex = TopoDS::Vertex(Topology::FixShape(occtVertex));
+		Vertex::Ptr pVertex = std::make_shared<Vertex>(occtFixedVertex);
 		GlobalCluster::GetInstance().AddTopology(pVertex->GetOcctVertex());
 		return pVertex;
 	}
@@ -135,12 +139,12 @@ namespace TopologicCore
 	{
 		TopoDS_Vertex occtCenterOfMass = CenterOfMass(GetOcctVertex());
 		return std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtCenterOfMass));
-		/*Handle(Geom_Point) pOcctPoint = Point();
-		return ByPoint(pOcctPoint);*/
 	}
 	TopoDS_Vertex Vertex::CenterOfMass(const TopoDS_Vertex & rkOcctVertex)
 	{
-		return BRepBuilderAPI_MakeVertex(BRep_Tool::Pnt(rkOcctVertex));
+		TopoDS_Vertex occtCenterOfMass = BRepBuilderAPI_MakeVertex(BRep_Tool::Pnt(rkOcctVertex));
+		TopoDS_Vertex occtFixedCenterOfMass = TopoDS::Vertex(Topology::FixShape(occtCenterOfMass));
+		return occtFixedCenterOfMass;
 	}
 	std::string Vertex::GetTypeAsString() const
 	{
