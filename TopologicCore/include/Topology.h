@@ -10,7 +10,10 @@
 #include <BRepBuilderAPI_MakeShape.hxx>
 #include <Standard_Handle.hxx>
 #include <Geom_Geometry.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS_Face.hxx>
 #include <TopoDS_CompSolid.hxx>
+#include <TopoDS_Shell.hxx>
 #include <TopExp.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 #include <TopTools_MapOfShape.hxx>
@@ -782,6 +785,10 @@ namespace TopologicCore
 		void GetDeletedBooleanSubtopologies(const TopoDS_Shape& rkOcctShape, BRepAlgoAPI_BooleanOperation& rOcctBooleanOperation, BOPCol_ListOfShape& rOcctDeletedShapes);
 
 		Topology::Ptr TrackContextAncestor();
+
+		static Topology::Ptr IntersectEdgeFace(const Topology::Ptr kpMergeTopology, Edge const * const kpkEdge, Face const * const kpkFace);
+
+		static Topology::Ptr IntersectEdgeShell(Edge * const kpkEdge, Shell const * const kpkShell);
 
 		int m_dimensionality;
 		static int m_numOfTopologies;

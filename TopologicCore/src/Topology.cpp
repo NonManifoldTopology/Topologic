@@ -18,8 +18,13 @@
 #include "Bitwise.h"
 #include "AttributeManager.h"
 
+#include <BRepCheck_Analyzer.hxx>
 #include <BOPAlgo_MakerVolume.hxx>
+#include <BOPAlgo_PaveFiller.hxx>
+#include <BRepAlgoAPI_Section.hxx>
+#include <BOPAlgo_Section.hxx>
 #include <BRep_Builder.hxx>
+#include <BOPDS_DS.hxx>
 #include <BRepAlgoAPI_Fuse.hxx>
 #include <BRepAlgoAPI_Common.hxx>
 #include <BRepClass3d_SolidClassifier.hxx>
@@ -31,6 +36,7 @@
 #include <BRepCheck_Wire.hxx>
 #include <BRepExtrema_DistShapeShape.hxx>
 #include <BRepTools.hxx>
+#include <GeomAPI_IntCS.hxx>
 #include <GeomAPI_IntSS.hxx>
 #include <Geom_RectangularTrimmedSurface.hxx>
 #include <ShapeAnalysis.hxx>
@@ -41,6 +47,8 @@
 #include <TopoDS.hxx>
 #include <TopoDS_FrozenShape.hxx>
 #include <TopoDS_UnCompatibleShapes.hxx>
+#include <Geom_TrimmedCurve.hxx>
+#include <IntTools_EdgeFace.hxx>
 
 #include <array>
 
@@ -1761,9 +1769,49 @@ namespace TopologicCore
 		}
 
 		occtCellsBuilder.MakeContainers();
-
+		
 		TopoDS_Shape occtResultShape = occtCellsBuilder.Shape();
 		TopoDS_Shape occtPostprocessedShape = occtResultShape.IsNull() ? occtResultShape : PostprocessBooleanResult(occtResultShape);
+
+		// Special case for Edge vs Face
+		if (occtPostprocessedShape.IsNull())
+		{
+			if (GetType() == TOPOLOGY_FACE && kpOtherTopology->GetType() == TOPOLOGY_EDGE)
+			{
+				Topology::Ptr mergeTopology = Merge(kpOtherTopology);
+				Topology::Ptr result = IntersectEdgeFace(
+					mergeTopology,
+					dynamic_cast<TopologicCore::Edge*>(kpOtherTopology.get()),
+					dynamic_cast<Face*>(this));
+				occtResultShape = result == nullptr? TopoDS_Shape() : result->GetOcctShape();
+			}
+			if (GetType() == TOPOLOGY_EDGE && kpOtherTopology->GetType() == TOPOLOGY_FACE)
+			{
+				Topology::Ptr mergeTopology = Merge(kpOtherTopology);
+				Topology::Ptr result = IntersectEdgeFace(
+					mergeTopology,
+					dynamic_cast<TopologicCore::Edge*>(this),
+					dynamic_cast<Face*>(kpOtherTopology.get()));
+				occtResultShape = result == nullptr ? TopoDS_Shape() : result->GetOcctShape();
+			}
+			if (GetType() == TOPOLOGY_SHELL && kpOtherTopology->GetType() == TOPOLOGY_EDGE)
+			{
+				Topology::Ptr result = IntersectEdgeShell(
+					dynamic_cast<TopologicCore::Edge*>(kpOtherTopology.get()),
+					dynamic_cast<Shell*>(this));
+				occtResultShape = result == nullptr ? TopoDS_Shape() : result->GetOcctShape();
+			}
+			if (GetType() == TOPOLOGY_EDGE && kpOtherTopology->GetType() == TOPOLOGY_SHELL)
+			{
+				Topology::Ptr result = IntersectEdgeShell(
+					dynamic_cast<TopologicCore::Edge*>(this),
+					dynamic_cast<Shell*>(kpOtherTopology.get()));
+				occtResultShape = result == nullptr ? TopoDS_Shape() : result->GetOcctShape();
+			}
+
+			occtPostprocessedShape = occtResultShape.IsNull() ? occtResultShape : PostprocessBooleanResult(occtResultShape);
+		}
+
 		Topology::Ptr pPostprocessedShape = Topology::ByOcctShape(occtPostprocessedShape, "");
 		if (pPostprocessedShape == nullptr)
 		{
@@ -2313,6 +2361,87 @@ namespace TopologicCore
 
 		// If empty or > 2
 		return shared_from_this();
+	}
+
+	Topology::Ptr Topology::IntersectEdgeShell(Edge * const kpkEdge, Shell const * const kpkShell)
+	{
+		std::list<Face::Ptr> faces;
+		kpkShell->Faces(faces);
+
+		std::list<Topology::Ptr> intersectionVertices;
+		for (const Face::Ptr& kpFace : faces)
+		{
+			Topology::Ptr mergeTopology = kpkEdge->Merge(kpFace);
+			Topology::Ptr cluster = IntersectEdgeFace(mergeTopology, kpkEdge, kpFace.get());
+			if (cluster == nullptr)
+			{
+				continue;
+			}
+			std::list<Vertex::Ptr> clusterVertices;
+			cluster->Vertices(clusterVertices);
+			intersectionVertices.insert(intersectionVertices.end(), clusterVertices.begin(), clusterVertices.end());
+		}
+
+		Cluster::Ptr cluster = Cluster::ByTopologies(intersectionVertices);
+		Topology::Ptr mergedCluster = cluster->SelfMerge();
+		return mergedCluster;
+	}
+
+	bool IsInList(const Vertex::Ptr kpNewVertex, const std::list<Vertex::Ptr>& rkOldVertices, const double kTolerance)
+	{
+		for (const Vertex::Ptr& kpOldVertex : rkOldVertices)
+		{
+			BRepExtrema_DistShapeShape occtEdgeDistance(kpOldVertex->GetOcctShape(), kpNewVertex->GetOcctShape(), Extrema_ExtFlag_MINMAX);
+			double distance = occtEdgeDistance.Value();
+
+			if (distance < kTolerance)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	Topology::Ptr Topology::IntersectEdgeFace(const Topology::Ptr kpMergeTopology, Edge const * const kpkEdge, Face const * const kpkFace)
+	{
+		double kTolerance = 0.0001;
+		std::list<Vertex::Ptr> edgeVertices;
+		kpkEdge->Vertices(edgeVertices);
+
+		std::list<Vertex::Ptr> faceVertices;
+		kpkFace->Vertices(faceVertices);
+
+		std::list<Vertex::Ptr> mergeVertices;
+		kpMergeTopology->Vertices(mergeVertices);
+
+		std::list<Topology::Ptr> intersectionVertices;
+		for (const Vertex::Ptr kpMergeVertex : mergeVertices)
+		{
+			bool isInEdgeVertices = IsInList(kpMergeVertex, edgeVertices, kTolerance);
+			bool isInFaceVertices = IsInList(kpMergeVertex, faceVertices, kTolerance);
+			if ((!isInEdgeVertices && !isInFaceVertices) ||
+				(isInEdgeVertices && isInFaceVertices))
+			{
+				intersectionVertices.push_back(kpMergeVertex);
+			}
+			else
+			{
+				BRepExtrema_DistShapeShape occtEdgeDistance(kpMergeVertex->GetOcctShape(), kpkEdge->GetOcctEdge(), Extrema_ExtFlag_MINMAX);
+				double edgeDistance = occtEdgeDistance.Value();
+
+				BRepExtrema_DistShapeShape occtFaceDistance(kpMergeVertex->GetOcctShape(), kpkFace->GetOcctFace(), Extrema_ExtFlag_MINMAX);
+				double faceDistance = occtFaceDistance.Value();
+
+				if (edgeDistance < kTolerance && faceDistance < kTolerance)
+				{
+					intersectionVertices.push_back(kpMergeVertex);
+				}
+			}
+		}
+
+		Cluster::Ptr cluster = Cluster::ByTopologies(intersectionVertices);
+		return cluster;
 	}
 
 	void Topology::AddBooleanOperands(
