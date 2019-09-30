@@ -16,6 +16,7 @@
 #include "TopologyFactoryManager.h"
 #include "GlobalCluster.h"
 #include "Bitwise.h"
+#include "Attribute.h"
 #include "AttributeManager.h"
 
 #include <BRepCheck_Analyzer.hxx>
@@ -593,18 +594,6 @@ namespace TopologicCore
 					std::list<Cell::Ptr> adjacentCells;
 					face->Cells(adjacentCells);
 
-					// If the desired topology includes Cell, use containment test.
-					/*std::list<Cell::Ptr> cells;
-					if(pCopyTopology->GetType() == TOPOLOGY_CELL)
-					{
-						cells.push_back(TopologicalQuery::Downcast<Cell>(pCopyTopology));
-					}
-					else
-					{
-						pCopyTopology->Cells(cells);
-					}*/
-
-					//for(const Cell::Ptr& kpCell : cells)
 					for (const Cell::Ptr& kpCell : adjacentCells)
 					{
 						ShapeFix_Solid occtShapeFixSolid(kpCell->GetOcctSolid());
@@ -844,6 +833,77 @@ namespace TopologicCore
 				}
 			}
 		}
+	}
+
+	Topology::Ptr Topology::SetDictionaries(
+		const std::list<Vertex::Ptr>& rkSelectors, 
+		const std::list<std::map<std::string, Attribute::Ptr>>& rkDictionaries,
+		const int kTypeFilter)
+	{
+		if (rkSelectors.size() != rkDictionaries.size())
+		{
+			throw std::exception("The lists of selectors and dictionaries do not have the same length.");
+		}
+
+		Topology::Ptr pCopyTopology = std::dynamic_pointer_cast<Topology>(DeepCopy());
+		std::string contextInstanceGUID;
+
+		auto rkDictionaryIterator = rkDictionaries.begin();
+		for (const Vertex::Ptr& kpSelector : rkSelectors)
+		{
+			if (kTypeFilter == 0)
+			{
+				throw std::exception("");
+			}
+			else
+			{
+				Topology::Ptr selectedSubtopology = nullptr;
+				if ((kTypeFilter & Cell::Type()) != 0)
+				{
+					// Select the closest Face
+					Face::Ptr face = TopologicalQuery::Downcast<Face>(
+						pCopyTopology->SelectSubtopology(kpSelector, Face::Type()));
+
+					std::list<Cell::Ptr> adjacentCells;
+					face->Cells(adjacentCells);
+
+					for (const Cell::Ptr& kpCell : adjacentCells)
+					{
+						BRepClass3d_SolidClassifier occtSolidClassifier(kpCell->GetOcctSolid(), kpSelector->Point()->Pnt(), 0.1);
+						TopAbs_State occtState = occtSolidClassifier.State();
+
+						if (occtState == TopAbs_IN)
+						{
+							selectedSubtopology = kpCell;
+							break;
+						}
+					}
+				}
+				else
+				{
+					selectedSubtopology = pCopyTopology->SelectSubtopology(kpSelector, kTypeFilter);
+				}
+
+				if (selectedSubtopology == nullptr)
+				{
+					//throw std::exception("No suitable constituent members with the desired type to attach the content to.");
+				}
+				else
+				{
+					AttributeManager::GetInstance().ClearOne(selectedSubtopology->GetOcctShape());
+					for (const auto kpAttributePair : *rkDictionaryIterator)
+					{
+						AttributeManager::GetInstance().Add(selectedSubtopology->GetOcctShape(), kpAttributePair.first, kpAttributePair.second);
+					}
+				}
+			}
+
+			rkDictionaryIterator++;
+		}
+
+		GlobalCluster::GetInstance().AddTopology(pCopyTopology->GetOcctShape());
+
+		return pCopyTopology;
 	}
 
 	void Topology::PathsTo(const Topology::Ptr& kpTopology, const Topology::Ptr& kpParentTopology, const int kMaxLevels, const int kMaxPaths, std::list<std::list<std::shared_ptr<TopologicalQuery>>>& rkPaths) const
@@ -2667,7 +2727,6 @@ namespace TopologicCore
 			}
 		}
 
-		//Topology::Ptr thisTopology = shared_from_this();
 		Topology::Ptr farthestTopology = TrackContextAncestor();
 
 		return farthestTopology->DeepCopy();
@@ -2854,6 +2913,8 @@ namespace TopologicCore
 				TopoDS_Shape occtMemberCopy = rOcctCopy.ModifiedShape(rOcctMember);
 				rOcctShapeCopyShapeMap.Bind(rOcctMember, occtMemberCopy);
 				rOcctShapeCopyShapeMap.Bind(occtMemberCopy, rOcctMember);
+
+				AttributeManager::GetInstance().CopyAttributes(rOcctMember, occtMemberCopy);
 			}
 			catch (Standard_NoSuchObject)
 			{
@@ -2868,10 +2929,10 @@ namespace TopologicCore
 		BRepBuilderAPI_Copy occtShapeCopier(rkOcctShape);
 		TopoDS_Shape occtShapeCopy = occtShapeCopier.Shape();
 
-		// TODO: copy the dictionary
 		AttributeManager::GetInstance().CopyAttributes(rkOcctShape, occtShapeCopy);
 
 		DeepCopyExplodeShape(rkOcctShape, occtShapeCopier, rOcctShapeCopyShapeMap);
+
 		// Explode
 		Topology::Ptr pShapeCopy = Topology::ByOcctShape(occtShapeCopy, Topology::GetInstanceGUID(rkOcctShape));
 

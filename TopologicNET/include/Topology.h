@@ -561,6 +561,19 @@ namespace Topologic
 		Topology^ SetDictionary(Dictionary<String^, Object^>^ dictionary);
 
 		/// <summary>
+		/// Sets a list of dictionaries for a Topology.
+		/// </summary>
+		/// <param name="selectors"></param>
+		/// <param name="dictionaries">A list of dictionaries</param>
+		/// <param name="typeFilter"></param>
+		/// <returns name="Topology">The Topology with the dictionary</returns>
+		Topology^ SetDictionaries(List<Vertex^>^ selectors, List<Dictionary<String^, Object^>^>^ dictionaries, 
+#ifdef TOPOLOGIC_DYNAMO
+			[Autodesk::DesignScript::Runtime::DefaultArgument("255")]
+#endif
+		int typeFilter);
+
+		/// <summary>
 		/// Returns the dictionary of a Topology.
 		/// </summary>
 		/// <returns name="Dictionary">The dictionary</returns>

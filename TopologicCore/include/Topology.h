@@ -27,6 +27,7 @@ class TopoDS_Shape;
 
 namespace TopologicCore
 {
+	class Attribute;
 	class Cluster;
 	class CellComplex;
 	class Cell;
@@ -169,6 +170,18 @@ namespace TopologicCore
 		/// <param name="kFilterType"></param>
 		/// <param name="rSharedTopologies"></param>
 		TOPOLOGIC_API void SharedTopologies(const Topology::Ptr& kpTopology, const int kFilterType, std::list<Topology::Ptr>& rSharedTopologies) const;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rkSelectors"></param>
+		/// <param name="rkDictionaries"></param>
+		/// <param name="kTypeFilter"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API Topology::Ptr SetDictionaries(
+			const std::list<std::shared_ptr<Vertex>>& rkSelectors, 
+			const std::list<std::map<std::string, std::shared_ptr<Attribute>>>& rkDictionaries,
+			const int kTypeFilter = TOPOLOGY_ALL);
 
 		/// <summary>
 		/// 

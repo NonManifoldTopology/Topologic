@@ -32,9 +32,12 @@
 #include <TopologyUtility.h>
 
 #include <TopologicCore/include/AttributeManager.h>
+#include <TopologicCore/include/Attribute.h>
 #include <TopologicCore/include/IntAttribute.h>
 #include <TopologicCore/include/DoubleAttribute.h>
 #include <TopologicCore/include/StringAttribute.h>
+
+#include <map>
 
 //using namespace System::Xml;
 using namespace System::Reflection;
@@ -333,6 +336,45 @@ namespace Topologic
 		TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->DeepCopy();
 		Topology^ copyTopology = Topology::ByCoreTopology(pCoreCopyTopology);
 		copyTopology->AddAttributesNoCopy(dictionary);
+
+		return copyTopology;
+	}
+
+	Topology ^ Topology::SetDictionaries(
+		List<Vertex^>^ selectors, 
+		List<System::Collections::Generic::Dictionary<String^, Object^>^>^ dictionaries,
+		int typeFilter)
+	{
+		TopologicCore::Topology::Ptr pCoreTopology =
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->DeepCopy();
+
+		std::list<TopologicCore::Vertex::Ptr> coreSelectors;
+		for each(Vertex^ selector in selectors)
+		{
+			TopologicCore::Vertex::Ptr pCoreVertex =
+				TopologicCore::TopologicalQuery::Downcast<TopologicCore::Vertex>(selector->GetCoreTopologicalQuery());
+			coreSelectors.push_back(pCoreVertex);
+		}
+		
+		std::list<std::map<std::string, TopologicCore::Attribute::Ptr>> coreDictionaries;
+		for each(System::Collections::Generic::Dictionary<String^, Object^>^ dictionary in dictionaries)
+		{
+			std::map<std::string, TopologicCore::Attribute::Ptr> coreDictionary;
+			for each(KeyValuePair<String^, Object^>^ entry in dictionary)
+			{
+				Attributes::AttributeFactory^ attributeFactory = 
+					Attributes::AttributeFactoryManager::Instance->GetFactory(entry->Value);
+				Attributes::Attribute^ attribute = attributeFactory->Create(entry->Key, entry->Value);
+				std::string cppKey = msclr::interop::marshal_as<std::string>(entry->Key);
+				TopologicCore::Attribute::Ptr coreAttribute = attribute->UtilitiesAttribute;
+				coreDictionary[cppKey] = coreAttribute;
+			}
+			coreDictionaries.push_back(coreDictionary);
+		}
+		TopologicCore::Topology::Ptr pCoreCopyTopologyWithDictionaries = 
+			pCoreCopyTopology->SetDictionaries(coreSelectors, coreDictionaries, typeFilter);
+		Topology^ copyTopology = Topology::ByCoreTopology(pCoreCopyTopologyWithDictionaries);
 
 		return copyTopology;
 	}

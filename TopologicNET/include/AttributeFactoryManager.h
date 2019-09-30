@@ -30,11 +30,11 @@ namespace Topologic
 
 			AttributeFactory^ GetFactory(const std::shared_ptr<TopologicCore::Attribute> kpUtilitiesAttribute);
 
+			AttributeFactory^ GetFactory(Object^ value);
+
 		private:
 			AttributeFactoryManager();
 			AttributeFactoryManager(const AttributeFactoryManager%) { throw gcnew System::InvalidOperationException("Singleton cannot be copy-constructed"); }
-
-			AttributeFactory^ GetFactory(Object^ value);
 
 			static AttributeFactoryManager m_instance;
 			Dictionary<String^, AttributeFactory^>^ m_attributeFactoryDict = gcnew Dictionary<String^, AttributeFactory^>();
