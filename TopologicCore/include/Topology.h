@@ -432,7 +432,7 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <param name="rVertices"></param>
-		TOPOLOGIC_API void Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const;
+		TOPOLOGIC_API virtual void Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const;
 
 		/// <summary>
 		/// 
