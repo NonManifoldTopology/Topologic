@@ -305,6 +305,8 @@ namespace TopologicCore
 
 		virtual bool IsContainerType() { return false; }
 
+		void Triangulate(const double kLinearDeflection, const double kAngularDeflection, std::list<TopologicCore::Face::Ptr>& rTriangles) const;
+
 	protected:
 		/// <summary>
 		/// The underlying OCCT face.

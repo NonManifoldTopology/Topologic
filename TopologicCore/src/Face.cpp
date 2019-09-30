@@ -11,14 +11,22 @@
 
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
+#include <BRepClass_FaceClassifier.hxx>
+#include <BRepMesh_IncrementalMesh.hxx>
 #include <BRepAlgoAPI_Section.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepTools_WireExplorer.hxx>
 #include <BSplCLib.hxx>
 #include <BRepGProp.hxx>
+#include <BRepBndLib.hxx>
+//#include <DBRep_IsoBuilder.hxx>
+//#include <DBRep_Face.hxx>
+#include <Geom2dAdaptor_Curve.hxx>
 #include <Geom_BSplineSurface.hxx>
+#include <GeomAPI_ProjectPointOnSurf.hxx>
 #include <GProp_GProps.hxx>
 #include <ShapeAnalysis.hxx>
+#include <ShapeAnalysis_Surface.hxx>
 #include <ShapeFix_Face.hxx>
 #include <StdFail_NotDone.hxx>
 #include <TopExp_Explorer.hxx>
@@ -435,6 +443,46 @@ namespace TopologicCore
 
 		SetInstanceGUID(occtMakeFace, GetInstanceGUID());
 		m_occtFace = occtMakeFace;
+	}
+
+	void Face::Triangulate(const double kDeflection, const double kAngularDeflection, std::list<TopologicCore::Face::Ptr>& rTriangles) const
+	{
+		const TopoDS_Face& rkOcctFace = GetOcctFace();
+
+		ShapeFix_Face occtFixFace(rkOcctFace);
+		occtFixFace.Perform();
+		//BRepMesh_IncrementalMesh occtIncrementalMesh(occtFixFace.Result(), kDeflection, false, kAngularDeflection);
+		BRepMesh_IncrementalMesh occtIncrementalMesh(occtFixFace.Result(), kDeflection);// , false, kAngularDeflection);
+		TopLoc_Location occtLocation;
+		Handle(Poly_Triangulation) pOcctTriangulation = BRep_Tool::Triangulation(TopoDS::Face(occtFixFace.Result()), occtLocation);
+		if (pOcctTriangulation.IsNull())
+		{
+			throw std::exception("No triangulation was produced.");
+		}
+		int numOfTriangles = pOcctTriangulation->NbTriangles();
+		for (int i = 1; i <= numOfTriangles; ++i)
+		{
+			int index1 = 0, index2 = 0, index3 = 0;
+			pOcctTriangulation->Triangle(i).Get(index1, index2, index3);
+			gp_Pnt point1 = pOcctTriangulation->Node(index1);
+			gp_Pnt point2 = pOcctTriangulation->Node(index2);
+			gp_Pnt point3 = pOcctTriangulation->Node(index3);
+
+			TopologicCore::Vertex::Ptr vertex1 = TopologicCore::Vertex::ByPoint(new Geom_CartesianPoint(point1));
+			TopologicCore::Vertex::Ptr vertex2 = TopologicCore::Vertex::ByPoint(new Geom_CartesianPoint(point2));
+			TopologicCore::Vertex::Ptr vertex3 = TopologicCore::Vertex::ByPoint(new Geom_CartesianPoint(point3));
+
+			TopologicCore::Edge::Ptr edge1 = TopologicCore::Edge::ByStartVertexEndVertex(vertex1, vertex2);
+			TopologicCore::Edge::Ptr edge2 = TopologicCore::Edge::ByStartVertexEndVertex(vertex2, vertex3);
+			TopologicCore::Edge::Ptr edge3 = TopologicCore::Edge::ByStartVertexEndVertex(vertex3, vertex1);
+			std::list<TopologicCore::Edge::Ptr> edges;
+			edges.push_back(edge1);
+			edges.push_back(edge2);
+			edges.push_back(edge3);
+
+			TopologicCore::Face::Ptr face = TopologicCore::Face::ByEdges(edges);
+			rTriangles.push_back(face);
+		}
 	}
 
 	bool Face::IsManifold() const
