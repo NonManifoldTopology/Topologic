@@ -30,5 +30,14 @@ namespace Topologic {
 
 			return adjacentEdges;
 		}
+
+		double VertexUtility::Distance(Vertex ^ vertex, Topology ^ topology)
+		{
+			TopologicCore::Vertex::Ptr pCoreVertex = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Vertex>(vertex->GetCoreTopologicalQuery());
+			TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
+
+			return TopologicUtilities::VertexUtility::Distance(pCoreVertex, pCoreTopology);
+		}
+
 	}
 }

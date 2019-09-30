@@ -50,14 +50,6 @@ namespace Topologic
 			return Topology::ByCoreTopology(pCoreScaledTopology);
 		}
 
-		double TopologyUtility::Distance(Topology ^ topology, Topology ^ anotherTopology)
-		{
-			TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
-			TopologicCore::Topology::Ptr pCoreOtherTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(anotherTopology->GetCoreTopologicalQuery());
-
-			return TopologicUtilities::TopologyUtility::Distance(pCoreTopology, pCoreOtherTopology);
-		}
-
 		Topology ^ TopologyUtility::Transform(Topology ^ topology,
 			double translationX, double translationY, double translationZ,
 			double rotation11, double rotation12, double rotation13,

@@ -154,5 +154,27 @@ namespace Topologic {
 
 			return adjacentCells;
 		}
+
+		Vertex^ FaceUtility::InternalVertex(Face^ face, double tolerance)
+		{
+			TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
+			try
+			{
+				TopologicCore::Vertex::Ptr pCoreVertex = TopologicUtilities::FaceUtility::InternalVertex(pCoreFace, tolerance);
+				return gcnew Vertex(pCoreVertex);
+			}
+			catch (const std::exception& rkException)
+			{
+				throw gcnew Exception(gcnew String(rkException.what()));
+			}
+		}
+
+		bool FaceUtility::IsInside(Face^ face, Vertex ^ vertex, double tolerance)
+		{
+			TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
+			TopologicCore::Vertex::Ptr pCoreVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex->GetCoreTopologicalQuery());
+			return TopologicUtilities::FaceUtility::IsInside(pCoreFace, pCoreVertex, tolerance);
+		}
+
 	}
 }

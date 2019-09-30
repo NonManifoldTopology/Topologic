@@ -90,6 +90,32 @@ namespace Topologic {
 			/// <returns name="Cell[]">A list of Cells adjacent to the input Face</returns>
 			static List<Cell^>^ AdjacentCells(Face^ face, Topology^ parentTopology);
 
+			/// <summary>
+			/// 
+			/// </summary>
+			/// <param name="face"></param>
+			/// <param name="tolerance"></param>
+			/// <returns></returns>
+			static Vertex^ InternalVertex(
+				Face^ face,
+#ifdef TOPOLOGIC_DYNAMO
+				[DefaultArgument("0.0001")]
+#endif
+			double tolerance);
+
+			/// <summary>
+			/// 
+			/// </summary>
+			/// <param name="face"></param>
+			/// <param name="vertex"></param>
+			/// <param name="tolerance"></param>
+			/// <returns></returns>
+			static bool IsInside(Face^ face, Vertex^ vertex,
+#ifdef TOPOLOGIC_DYNAMO
+			[DefaultArgument("0.0001")]
+#endif
+			double tolerance);
+
 		public protected:
 			FaceUtility() {}
 		};

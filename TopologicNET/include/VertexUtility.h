@@ -20,6 +20,14 @@ namespace Topologic {
 			/// <returns name="Edge[]">A list of Edges adjacent to the input Vertex</returns>
 			static List<Edge^>^ AdjacentEdges(Vertex^ vertex, Topology^ parentTopology);
 
+			/// <summary>
+			/// Returns the distance between a Vertex and a Topology.
+			/// </summary>
+			/// <param name="vertex">A Vertex</param>
+			/// <param name="topology">A Topology</param>
+			/// <returns>The distance between a Vertex and a Topology</returns>
+			static double Distance(Vertex^ vertex, Topology^ topology);
+
 		public protected:
 			VertexUtility() {}
 		};

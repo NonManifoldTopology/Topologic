@@ -7,7 +7,6 @@ namespace Topologic {
 	/// Utilities provide extended functionality including further topologic and geometric methods and properties. These include the Bitwise, CellUtility, EdgeUtility, FaceUtility, ShellUtility and TopologyUtility classes.
 	/// </summary>
 	namespace Utilities {
-	
 		/// <summary>
 		/// TopologyUtility includes geometric methods relevant to any Topology.
 		/// </summary>
@@ -23,7 +22,20 @@ namespace Topologic {
 			/// <param name="y">The y value</param>
 			/// <param name="z">The z value</param>
 			/// <returns name="Topology">The Topology in its new location</returns>
-			static Topology^ Translate(Topology^ topology, double x, double y, double z);
+			static Topology^ Translate(
+				Topology^ topology, 
+#ifdef TOPOLOGIC_DYNAMO
+	[Autodesk::DesignScript::Runtime::DefaultArgument("0.0")]
+#endif
+				double x,
+#ifdef TOPOLOGIC_DYNAMO
+				[Autodesk::DesignScript::Runtime::DefaultArgument("0.0")]
+#endif
+				double y, 
+#ifdef TOPOLOGIC_DYNAMO
+				[Autodesk::DesignScript::Runtime::DefaultArgument("0.0")]
+#endif
+				double z);
 
 			/// <summary>
 			/// Rotates a Topology given an origin, XYZ vectors and an angle.
@@ -76,14 +88,6 @@ namespace Topologic {
 					[Autodesk::DesignScript::Runtime::DefaultArgument("1.0")]
 #endif
 				double zFactor);
-
-			/// <summary>
-			/// Returns the distance between two Topologies.
-			/// </summary>
-			/// <param name="topology">A topology</param>
-			/// <param name="anotherTopology">Another Topology</param>
-			/// <returns>The distance between the two Topologies</returns>
-			static double Distance(Topology^ topology, Topology^ anotherTopology);
 
 			/// <summary>
 			/// Transforms a Topology according to translation and rotation factors.

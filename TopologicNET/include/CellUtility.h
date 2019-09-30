@@ -114,6 +114,19 @@ namespace Topologic {
 #endif
 			static List<double>^ GetMinMax(Cell^ cell);
 
+			/// <summary>
+			/// 
+			/// </summary>
+			/// <param name="cell"></param>
+			/// <param name="tolerance"></param>
+			/// <returns name="Vertex"></returns>
+			static Vertex^ InternalVertex(
+				Cell^ cell,
+#ifdef TOPOLOGIC_DYNAMO
+				[DefaultArgument("0.0001")]
+#endif
+			double tolerance);
+
 		public protected:
 			CellUtility() {}
 		};

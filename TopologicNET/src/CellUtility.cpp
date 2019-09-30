@@ -147,5 +147,20 @@ namespace Topologic {
 			minMaxes->Add(maxZ);
 			return minMaxes;
 		}
+
+		Vertex^ CellUtility::InternalVertex(Cell^ cell, double tolerance)
+		{
+			TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(cell->GetCoreTopologicalQuery());
+			try
+			{
+				TopologicCore::Vertex::Ptr pCoreVertex = TopologicUtilities::CellUtility::InternalVertex(pCoreCell, tolerance);
+				return gcnew Vertex(pCoreVertex);
+			}
+			catch (const std::exception& rkException)
+			{
+				throw gcnew Exception(gcnew String(rkException.what()));
+			}
+		}
+
 	}
 }
