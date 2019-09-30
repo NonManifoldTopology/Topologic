@@ -116,5 +116,20 @@ namespace TopologicUtilities
 			const TopologicCore::Topology::Ptr & kpParentTopology,
 			std::list<TopologicCore::Cell::Ptr>& rCoreAdjacentCells);
 
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpFace"></param>
+		/// <param name="kpVertex"></param>
+		/// <param name="kTolerance"></param>
+		/// <returns></returns>
+		static TOPOLOGIC_UTILITIES_API bool IsInside(const TopologicCore::Face::Ptr kpFace, const std::shared_ptr<TopologicCore::Vertex>& kpVertex, const double kTolerance);
+
+		static std::shared_ptr<TopologicCore::Vertex> ProjectToSurface(const TopologicCore::Face::Ptr kpFace, const std::shared_ptr<TopologicCore::Vertex>& kpVertex);
+
+		static TOPOLOGIC_UTILITIES_API std::shared_ptr<TopologicCore::Vertex> InternalVertex(
+			const TopologicCore::Face::Ptr kpFace, const double kTolerance);
+
 	};
 }

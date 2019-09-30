@@ -19,5 +19,16 @@ namespace TopologicUtilities
 			const TopologicCore::Vertex::Ptr & kpVertex, 
 			const TopologicCore::Topology::Ptr & kpParentTopology,
 			std::list<TopologicCore::Edge::Ptr>& rCoreAdjacentEdges);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpVertex"></param>
+		/// <param name="kpTopology"></param>
+		/// <returns></returns>
+		static TOPOLOGIC_UTILITIES_API double Distance(
+			const TopologicCore::Vertex::Ptr& kpVertex, 
+			const TopologicCore::Topology::Ptr& kpTopology);
+
 	};
 }

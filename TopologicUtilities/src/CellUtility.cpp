@@ -1,4 +1,6 @@
 #include "CellUtility.h"
+#include "FaceUtility.h"
+#include "VertexUtility.h"
 
 #include <TopologicCore/include/Cell.h>
 #include <TopologicCore/include/Face.h>
@@ -158,6 +160,78 @@ namespace TopologicUtilities
 		TopologicCore::Cell::Ptr pCell = std::make_shared<TopologicCore::Cell>(occtMakeCone.Solid());
 		TopologicCore::GlobalCluster::GetInstance().AddTopology(pCell->GetOcctSolid());
 		return pCell;
+	}
+
+	TopologicCore::Vertex::Ptr CellUtility::InternalVertex(const TopologicCore::Cell::Ptr kpCell, const double kTolerance)
+	{
+		// This methods accepts as input a Cell and outputs a Vertex guaranteed to be inside the Cell. 
+		// This method relies on #3 to first choose a Vertex on a random Face of the Cell, 
+		// then it shoots a Ray in the opposite direction of its normal and finds the closest intersection. 
+		// The midpoint is returned as a Vertex guaranteed to be inside the Cell.
+		
+		// Pick random Face
+		std::list<TopologicCore::Face::Ptr> faces;
+		kpCell->Faces(faces);
+		
+		for (const TopologicCore::Face::Ptr& kpFace : faces)
+		{
+			TopologicCore::Vertex::Ptr vertexInFace = FaceUtility::InternalVertex(kpFace, kTolerance);
+
+			// Get the bounding box diagonal length
+			double minX = 0.0, maxX = 0.0, minY = 0.0, maxY = 0.0, minZ = 0.0, maxZ = 0.0;
+			GetMinMax(kpCell, minX, maxX, minY, maxY, minZ, maxZ);
+			TopologicCore::Vertex::Ptr corner1 = TopologicCore::Vertex::ByCoordinates(minX, minY, minZ);
+			TopologicCore::Vertex::Ptr corner2 = TopologicCore::Vertex::ByCoordinates(maxX, maxY, maxZ);
+			double diagonalLength = VertexUtility::Distance(corner1, corner2);
+
+			// Get the normal at vertexInFace
+			double u = 0.0, v = 0.0;
+			FaceUtility::ParametersAtVertex(kpFace, vertexInFace, u, v);
+			gp_Dir occtNormal = FaceUtility::NormalAtParameters(kpFace, u, v);
+			gp_Dir occtReversedNormal = occtNormal.Reversed();
+
+			gp_Pnt occtRayEnd = vertexInFace->Point()->Pnt().Translated(diagonalLength * occtReversedNormal);
+			TopologicCore::Vertex::Ptr rayEnd = TopologicCore::Vertex::ByPoint(new Geom_CartesianPoint(occtRayEnd));
+
+			// Shoot the ray = edge vs cell intersection
+			TopologicCore::Edge::Ptr ray = TopologicCore::Edge::ByStartVertexEndVertex(vertexInFace, rayEnd);
+			TopologicCore::Topology::Ptr rayShot = kpCell->Intersect(ray);
+
+			// Get the vertices of the ray
+			std::list<TopologicCore::Vertex::Ptr> rayVertices;
+			rayShot->Vertices(rayVertices);
+
+			// Get the closest intersection (but not the original vertex in face)
+			double minDistance = std::numeric_limits<double>::max();
+			TopologicCore::Vertex::Ptr closestVertex = nullptr;
+			for (const TopologicCore::Vertex::Ptr& kpRayVertex : rayVertices)
+			{
+				double distance = VertexUtility::Distance(kpRayVertex, vertexInFace);
+				if (distance < kTolerance) // the same vertex
+				{
+					continue;
+				}
+
+				if (distance < minDistance)
+				{
+					minDistance = distance;
+					closestVertex = kpRayVertex;
+				}
+			}
+
+			if (closestVertex == nullptr)
+			{
+				throw std::exception("Ray casting fails to identify the closest vertex from a random point.");
+			}
+
+			// Create a line between the closest vertex and vertex in Face, then get the midpoint (center of mass)
+			TopologicCore::Edge::Ptr shortestEdge = TopologicCore::Edge::ByStartVertexEndVertex(vertexInFace, closestVertex);
+			TopologicCore::Vertex::Ptr shortestEdgeCenterOfMass = shortestEdge->CenterOfMass();
+
+			return shortestEdgeCenterOfMass;
+		}
+
+		return nullptr;
 	}
 
 	double CellUtility::Volume(const TopologicCore::Cell::Ptr & kpCell)

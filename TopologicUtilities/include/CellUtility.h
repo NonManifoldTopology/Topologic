@@ -102,6 +102,16 @@ namespace TopologicUtilities
 		/// 
 		/// </summary>
 		/// <param name="kpCell"></param>
+		/// <param name="kTolerance"></param>
+		/// <returns></returns>
+		static TOPOLOGIC_UTILITIES_API std::shared_ptr<TopologicCore::Vertex> InternalVertex(
+			const TopologicCore::Cell::Ptr kpCell, 
+			const double kTolerance);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpCell"></param>
 		/// <returns></returns>
 		static TOPOLOGIC_UTILITIES_API double Volume(const TopologicCore::Cell::Ptr& kpCell);
 

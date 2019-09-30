@@ -23,13 +23,6 @@ namespace TopologicUtilities
 		/// 
 		/// </summary>
 		/// <param name="kpTopology"></param>
-		/// <returns></returns>
-		static TOPOLOGIC_UTILITIES_API double Distance(const TopologicCore::Topology::Ptr& kpTopology, const TopologicCore::Topology::Ptr& kpAnotherTopology);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="kpTopology"></param>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <param name="z"></param>

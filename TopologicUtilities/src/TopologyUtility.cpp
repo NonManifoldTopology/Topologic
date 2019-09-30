@@ -9,7 +9,6 @@
 
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRepBuilderAPI_GTransform.hxx>
-#include <BRepExtrema_DistShapeShape.hxx>
 #include <Geom_Point.hxx>
 #include <gp_Ax1.hxx>
 #include <gp_Ax3.hxx>
@@ -19,14 +18,6 @@
 
 namespace TopologicUtilities
 {
-	double TopologyUtility::Distance(const TopologicCore::Topology::Ptr& kpTopology, const TopologicCore::Topology::Ptr& kpAnotherTopology)
-	{
-		ShapeFix_Shape occtShapeFix1(kpTopology->GetOcctShape());
-		ShapeFix_Shape occtShapeFix2(kpAnotherTopology->GetOcctShape());
-		BRepExtrema_DistShapeShape occtDistance(occtShapeFix1.Shape(), occtShapeFix2.Shape(), Extrema_ExtFlag_MAX);
-		return occtDistance.Value();
-	}
-
 	TopologicCore::Topology::Ptr TopologyUtility::Translate(const TopologicCore::Topology::Ptr& kpTopology, const double x, const double y, const double z)
 	{
 		gp_Trsf transformation;
