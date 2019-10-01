@@ -1,9 +1,9 @@
-#include "ShellUtility.h"
-#include "EdgeUtility.h"
-#include "FaceUtility.h"
+#include <Utilities/ShellUtility.h>
+#include <Utilities/EdgeUtility.h>
+#include <Utilities/FaceUtility.h>
 
-#include <TopologicCore/include/Aperture.h>
-#include <TopologicCore/include/GlobalCluster.h>
+#include <Aperture.h>
+#include <GlobalCluster.h>
 
 #include <BRep_Tool.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
@@ -22,7 +22,7 @@
 #include <TopoDS.hxx>
 
 // Earcut
-#include <mapbox/earcut.hpp>
+//#include <mapbox/earcut.hpp>
 
 //// GPC
 //extern "C" {

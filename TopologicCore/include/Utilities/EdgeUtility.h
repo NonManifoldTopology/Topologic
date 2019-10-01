@@ -1,10 +1,8 @@
 #pragma once
 
-#include "Utilities.h"
-
-#include <TopologicCore/include/Edge.h>
-#include <TopologicCore/include/Vertex.h>
-#include <TopologicCore/include/Wire.h>
+#include <Edge.h>
+#include <Vertex.h>
+#include <Wire.h>
 
 #include <memory>
 
@@ -22,7 +20,7 @@ namespace TopologicUtilities
 		/// </summary>
 		/// <param name="rkVertices"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_UTILITIES_API TopologicCore::Edge::Ptr ByVertices(const std::list<TopologicCore::Vertex::Ptr>& rkVertices);
+		static TOPOLOGIC_API TopologicCore::Edge::Ptr ByVertices(const std::list<TopologicCore::Vertex::Ptr>& rkVertices);
 
 		/// <summary>
 		/// 
@@ -36,17 +34,17 @@ namespace TopologicUtilities
 		/// <param name="kNormalY"></param>
 		/// <param name="kNormalZ"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_UTILITIES_API TopologicCore::Edge::Ptr ByCircle(
+		static TOPOLOGIC_API TopologicCore::Edge::Ptr ByCircle(
 			const TopologicCore::Vertex::Ptr& kpCenterPoint, const double kRadius,
 			const double kXAxisX, const double kXAxisY, const double kXAxisZ,
 			const double kNormalX, const double kNormalY, const double kNormalZ);
 		
-		static TOPOLOGIC_UTILITIES_API TopologicCore::Edge::Ptr ByEllipse(
+		static TOPOLOGIC_API TopologicCore::Edge::Ptr ByEllipse(
 			const std::shared_ptr<TopologicCore::Vertex>& kpCenterPoint, const double kMajorRadius, const double kMinorRadius,
 			const double kXAxisX, const double kXAxisY, const double kXAxisZ,
 			const double kNormalX, const double kNormalY, const double kNormalZ);
 
-		static TOPOLOGIC_UTILITIES_API TopologicCore::Edge::Ptr ByNurbsCurve(
+		static TOPOLOGIC_API TopologicCore::Edge::Ptr ByNurbsCurve(
 			const std::list<TopologicCore::Vertex::Ptr>& rkControlPoints,
 			const std::list<double>& rkKnots,
 			const std::list<double>& rkWeights,
@@ -60,7 +58,7 @@ namespace TopologicUtilities
 		/// <param name="kpEdge"></param>
 		/// <param name="kpVertex"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_UTILITIES_API double ParameterAtPoint(const TopologicCore::Edge::Ptr& kpEdge, const TopologicCore::Vertex::Ptr& kpVertex);
+		static TOPOLOGIC_API double ParameterAtPoint(const TopologicCore::Edge::Ptr& kpEdge, const TopologicCore::Vertex::Ptr& kpVertex);
 
 		/// <summary>
 		/// 
@@ -68,16 +66,16 @@ namespace TopologicUtilities
 		/// <param name="kpEdge"></param>
 		/// <param name="kParameter"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_UTILITIES_API TopologicCore::Vertex::Ptr PointAtParameter(const TopologicCore::Edge::Ptr& kpEdge, const double kParameter);
+		static TOPOLOGIC_API TopologicCore::Vertex::Ptr PointAtParameter(const TopologicCore::Edge::Ptr& kpEdge, const double kParameter);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpEdge"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_UTILITIES_API double Length(const TopologicCore::Edge::Ptr& kpEdge);
+		static TOPOLOGIC_API double Length(const TopologicCore::Edge::Ptr& kpEdge);
 
-		static TOPOLOGIC_UTILITIES_API void AdjacentWires(
+		static TOPOLOGIC_API void AdjacentWires(
 			const TopologicCore::Edge::Ptr & kpEdge,
 			const TopologicCore::Topology::Ptr & kpParentTopology,
 			std::list<TopologicCore::Wire::Ptr>& rCoreAdjacentWires);

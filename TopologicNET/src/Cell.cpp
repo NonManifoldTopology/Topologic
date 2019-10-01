@@ -6,8 +6,8 @@
 #include <Shell.h>
 #include <CellComplex.h>
 
-#include <TopologicUtilities/include/CellUtility.h>
-#include <TopologicUtilities/include/TopologyUtility.h>
+#include <TopologicCore/include/Utilities/CellUtility.h>
+#include <TopologicCore/include/Utilities/TopologyUtility.h>
 
 #include <assert.h>
 

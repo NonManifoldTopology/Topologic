@@ -1,11 +1,11 @@
-#include "TopologyUtility.h"
+#include <Utilities/TopologyUtility.h>
 
-#include "TopologicCore/include/GlobalCluster.h"
-#include "TopologicCore/include/AttributeManager.h"
-#include "TopologicCore/include/Context.h"
-#include "TopologicCore/include/Shell.h"
-#include "TopologicCore/include/CellComplex.h"
-#include "TopologicCore/include/Cluster.h"
+#include <GlobalCluster.h>
+#include <AttributeManager.h>
+#include <Context.h>
+#include <Shell.h>
+#include <CellComplex.h>
+#include <Cluster.h>
 
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRepBuilderAPI_GTransform.hxx>

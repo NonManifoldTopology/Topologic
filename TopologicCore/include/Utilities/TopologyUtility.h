@@ -1,14 +1,10 @@
 #pragma once
 
-#include "Utilities.h"
-
-#include <memory>
-
-#include <TopologicCore/include/Topology.h>
-#include <TopologicCore/include/Cell.h>
-#include <TopologicCore/include/Face.h>
-#include <TopologicCore/include/Edge.h>
-#include <TopologicCore/include/Vertex.h>
+#include <Topology.h>
+#include <Cell.h>
+#include <Face.h>
+#include <Edge.h>
+#include <Vertex.h>
 
 namespace TopologicUtilities
 {
@@ -27,7 +23,7 @@ namespace TopologicUtilities
 		/// <param name="y"></param>
 		/// <param name="z"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_UTILITIES_API TopologicCore::Topology::Ptr Translate(
+		static TOPOLOGIC_API TopologicCore::Topology::Ptr Translate(
 			const TopologicCore::Topology::Ptr& kpTopology, const double x = 0.0, const double y = 0.0, const double z = 0.0);
 
 		/// <summary>
@@ -40,7 +36,7 @@ namespace TopologicUtilities
 		/// <param name="kDirectionZ"></param>
 		/// <param name="kDegree"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_UTILITIES_API TopologicCore::Topology::Ptr Rotate(const TopologicCore::Topology::Ptr& kpTopology,
+		static TOPOLOGIC_API TopologicCore::Topology::Ptr Rotate(const TopologicCore::Topology::Ptr& kpTopology,
 			const TopologicCore::Vertex::Ptr& kpOrigin,
 			const double kDirectionX = 0.0, const double kDirectionY = 0.0, const double kDirectionZ = 1.0,
 			const double kDegree = 0.0);
@@ -57,12 +53,12 @@ namespace TopologicUtilities
 		/// <param name="kXAxisY"></param>
 		/// <param name="kXAxisZ"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_UTILITIES_API TopologicCore::Topology::Ptr Transform(const TopologicCore::Topology::Ptr& kpTopology,
+		static TOPOLOGIC_API TopologicCore::Topology::Ptr Transform(const TopologicCore::Topology::Ptr& kpTopology,
 			const TopologicCore::Vertex::Ptr& kpOrigin,
 			const double kNormalX, const double kNormalY, const double kNormalZ,
 			const double kXAxisX, const double kXAxisY, const double kXAxisZ);*/
 
-		static TOPOLOGIC_UTILITIES_API TopologicCore::Topology::Ptr Transform(const TopologicCore::Topology::Ptr& kpTopology,
+		static TOPOLOGIC_API TopologicCore::Topology::Ptr Transform(const TopologicCore::Topology::Ptr& kpTopology,
 			const double kTranslationX = 0.0, const double kTranslationY = 0.0, const double kTranslationZ = 0.0,
 			const double kRotation11 = 1.0, const double kRotation12 = 0.0, const double kRotation13 = 0.0,
 			const double kRotation21 = 0.0, const double kRotation22 = 1.0, const double kRotation23 = 0.0,
@@ -77,15 +73,15 @@ namespace TopologicUtilities
 		/// <param name="kYFactor"></param>
 		/// <param name="kZFactor"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_UTILITIES_API TopologicCore::Topology::Ptr Scale(
+		static TOPOLOGIC_API TopologicCore::Topology::Ptr Scale(
 			const TopologicCore::Topology::Ptr& kpTopology, const TopologicCore::Vertex::Ptr& kpOrigin, 
 			const double kXFactor = 1.0, const double kYFactor = 1.0, const double kZFactor = 1.0);
 
-		static TOPOLOGIC_UTILITIES_API double DegreeToRadian(const double kDegree);
+		static TOPOLOGIC_API double DegreeToRadian(const double kDegree);
 
-		static TOPOLOGIC_UTILITIES_API double RadianToDegree(const double kRadian);
+		static TOPOLOGIC_API double RadianToDegree(const double kRadian);
 
-		static TOPOLOGIC_UTILITIES_API void AdjacentTopologies(
+		static TOPOLOGIC_API void AdjacentTopologies(
 			const TopologicCore::Topology::Ptr& kpCoreTopology, 
 			const TopologicCore::Topology::Ptr& kpCoreParentTopology, 
 			const int kTypeFilter,

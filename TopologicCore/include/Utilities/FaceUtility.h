@@ -1,12 +1,10 @@
 #pragma once
 
-#include "Utilities.h"
-
-#include <TopologicCore/include/Cell.h>
-#include <TopologicCore/include/Face.h>
-#include <TopologicCore/include/Shell.h>
-#include <TopologicCore/include/Vertex.h>
-#include <TopologicCore/include/Wire.h>
+#include <Cell.h>
+#include <Face.h>
+#include <Shell.h>
+#include <Vertex.h>
+#include <Wire.h>
 
 #include <memory>
 
@@ -26,21 +24,21 @@ namespace TopologicUtilities
 		/// <param name="kU"></param>
 		/// <param name="kV"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_UTILITIES_API gp_Dir NormalAtParameters(const TopologicCore::Face::Ptr& kpFace, const double kU, const double kV);
+		static TOPOLOGIC_API gp_Dir NormalAtParameters(const TopologicCore::Face::Ptr& kpFace, const double kU, const double kV);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpFace"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_UTILITIES_API double Area(const TopologicCore::Face::Ptr& kpFace);
+		static TOPOLOGIC_API double Area(const TopologicCore::Face::Ptr& kpFace);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="coreVertices"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_UTILITIES_API TopologicCore::Face::Ptr ByVertices(const std::list<std::list<TopologicCore::Vertex::Ptr>>& rkVertices);
+		static TOPOLOGIC_API TopologicCore::Face::Ptr ByVertices(const std::list<std::list<TopologicCore::Vertex::Ptr>>& rkVertices);
 
 		/// <summary>
 		/// Note: Topologic UV values are normalized (from 0 and 1), but OCCT's values are not normalized.
@@ -50,7 +48,7 @@ namespace TopologicUtilities
 		/// <param name="rU"></param>
 		/// <param name="rV"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_UTILITIES_API void ParametersAtVertex(const TopologicCore::Face::Ptr& kpFace, const TopologicCore::Vertex::Ptr& kpVertex, double& rU, double &rV);
+		static TOPOLOGIC_API void ParametersAtVertex(const TopologicCore::Face::Ptr& kpFace, const TopologicCore::Vertex::Ptr& kpVertex, double& rU, double &rV);
 
 		/// <summary>
 		/// Note: Topologic UV values are normalized (from 0 and 1), but OCCT's values are not normalized.
@@ -59,7 +57,7 @@ namespace TopologicUtilities
 		/// <param name="kU"></param>
 		/// <param name="kV"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_UTILITIES_API TopologicCore::Vertex::Ptr VertexAtParameters(const TopologicCore::Face::Ptr& kpFace, const double kU, const double kV);
+		static TOPOLOGIC_API TopologicCore::Vertex::Ptr VertexAtParameters(const TopologicCore::Face::Ptr& kpFace, const double kU, const double kV);
 
 		static void UVSamplePoints(
 			const TopologicCore::Face::Ptr& kpFace,
@@ -82,9 +80,9 @@ namespace TopologicUtilities
 		/// <param name="kpWire"></param>
 		/// <param name="kReverseWire"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_UTILITIES_API TopologicCore::Face::Ptr TrimByWire(const TopologicCore::Face::Ptr& kpFace, const TopologicCore::Wire::Ptr& kpWire, const bool kReverseWire);
+		static TOPOLOGIC_API TopologicCore::Face::Ptr TrimByWire(const TopologicCore::Face::Ptr& kpFace, const TopologicCore::Wire::Ptr& kpWire, const bool kReverseWire);
 
-		static TOPOLOGIC_UTILITIES_API void Triangulate(const TopologicCore::Face::Ptr& kpFace, const double kDeflection, std::list<TopologicCore::Face::Ptr>& rTriangles);
+		static TOPOLOGIC_API void Triangulate(const TopologicCore::Face::Ptr& kpFace, const double kDeflection, std::list<TopologicCore::Face::Ptr>& rTriangles);
 
 		/// <summary>
 		/// 
@@ -106,12 +104,12 @@ namespace TopologicUtilities
 		/// <param name="rNonNormalizedV"></param>
 		static void NonNormalizeUV(const TopologicCore::Face::Ptr& kpFace, const double kNormalizedU, const double kNormalizedV, double& rNonNormalizedU, double& rNonNormalizedV);
 
-		static TOPOLOGIC_UTILITIES_API void AdjacentShells(
+		static TOPOLOGIC_API void AdjacentShells(
 			const TopologicCore::Face::Ptr & kpFace,
 			const TopologicCore::Topology::Ptr & kpParentTopology,
 			std::list<TopologicCore::Shell::Ptr>& rCoreAdjacentShells);
 
-		static TOPOLOGIC_UTILITIES_API void AdjacentCells(
+		static TOPOLOGIC_API void AdjacentCells(
 			const TopologicCore::Face::Ptr & kpFace,
 			const TopologicCore::Topology::Ptr & kpParentTopology,
 			std::list<TopologicCore::Cell::Ptr>& rCoreAdjacentCells);
@@ -124,11 +122,11 @@ namespace TopologicUtilities
 		/// <param name="kpVertex"></param>
 		/// <param name="kTolerance"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_UTILITIES_API bool IsInside(const TopologicCore::Face::Ptr kpFace, const std::shared_ptr<TopologicCore::Vertex>& kpVertex, const double kTolerance);
+		static TOPOLOGIC_API bool IsInside(const TopologicCore::Face::Ptr kpFace, const std::shared_ptr<TopologicCore::Vertex>& kpVertex, const double kTolerance);
 
 		static std::shared_ptr<TopologicCore::Vertex> ProjectToSurface(const TopologicCore::Face::Ptr kpFace, const std::shared_ptr<TopologicCore::Vertex>& kpVertex);
 
-		static TOPOLOGIC_UTILITIES_API std::shared_ptr<TopologicCore::Vertex> InternalVertex(
+		static TOPOLOGIC_API std::shared_ptr<TopologicCore::Vertex> InternalVertex(
 			const TopologicCore::Face::Ptr kpFace, const double kTolerance);
 
 	};

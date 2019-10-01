@@ -4,7 +4,7 @@
 #include "Edge.h"
 #include "Vertex.h"
 
-#include <TopologicUtilities/include/ShellUtility.h>
+#include <TopologicCore/include/Utilities/ShellUtility.h>
 
 namespace Topologic {
 	namespace Utilities {

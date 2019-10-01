@@ -1,4 +1,4 @@
-#include <Direction.h>
+#include <Utilities/Direction.h>
 
 namespace TopologicUtilities
 {

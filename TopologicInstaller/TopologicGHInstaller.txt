@@ -64,7 +64,6 @@ LangString PAGE_TITLE ${LANG_ENGLISH} "Choose Install Location"
 Section "TopologicGrasshopper" SectionTopologicGrasshopper
 	SetOutPath "$INSTDIR"
 	File ..\output\x64\Release\TopologicCore.dll
-    File ..\output\x64\Release\TopologicUtilities.dll
     File ..\output\x64\Release\TopologicNET.dll
     File ..\output\x64\Release\license.file
     File ..\output\x64\Release\TK*.dll
@@ -142,7 +141,6 @@ Section "Uninstall"
   ;ADD YOUR OWN FILES HERE...
   Delete "$INSTDIR\Uninstall.exe"
   Delete "$INSTDIR\TopologicCore.dll"
-  Delete "$INSTDIR\TopologicUtilities.dll"
   Delete "$INSTDIR\TopologicNET.dll"
   Delete "$INSTDIR\license.file"
   Delete "$INSTDIR\TK*.dll"

@@ -1,15 +1,15 @@
-#include "VertexUtility.h"
-#include "CellUtility.h"
+#include <Utilities/VertexUtility.h>
+#include <Utilities/CellUtility.h>
 
-#include <TopologicCore/include/Aperture.h>
-#include <TopologicCore/include/Cell.h>
-#include <TopologicCore/include/CellComplex.h>
-#include <TopologicCore/include/Cluster.h>
-#include <TopologicCore/include/Edge.h>
-#include <TopologicCore/include/Face.h>
-#include <TopologicCore/include/Vertex.h>
-#include <TopologicCore/include/Shell.h>
-#include <TopologicCore/include/Wire.h>
+#include <Aperture.h>
+#include <Cell.h>
+#include <CellComplex.h>
+#include <Cluster.h>
+#include <Edge.h>
+#include <Face.h>
+#include <Vertex.h>
+#include <Shell.h>
+#include <Wire.h>
 
 #include <BRepExtrema_DistShapeShape.hxx>
 #include <GeomAPI_ProjectPointOnSurf.hxx>

@@ -1,7 +1,7 @@
 #include "VertexUtility.h"
 #include "Edge.h"
 
-#include <TopologicUtilities/include/VertexUtility.h>
+#include <TopologicCore/include/Utilities/VertexUtility.h>
 
 namespace Topologic {
 	namespace Utilities {

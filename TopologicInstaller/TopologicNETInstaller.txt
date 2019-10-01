@@ -58,7 +58,6 @@ SectionGroup "TopologicCore" SectionGroupTopologicCore
   Section "Library" SectionTopologicCore
     SetOutPath "$INSTDIR"
     File ..\output\x64\Release\TopologicCore.dll
-    File ..\output\x64\Release\TopologicUtilities.dll
     File ..\output\x64\Release\license.file
   SectionEnd 
 

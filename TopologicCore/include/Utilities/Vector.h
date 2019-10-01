@@ -24,14 +24,14 @@ namespace TopologicUtilities
 		/// <param name="kY"></param>
 		/// <param name="kZ"></param>
 		/// <returns></returns>
-		TOPOLOGIC_UTILITIES_API static Vector::Ptr ByCoordinates(const double kX, const double kY, const double kZ);
+		TOPOLOGIC_API static Vector::Ptr ByCoordinates(const double kX, const double kY, const double kZ);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpAnotherVector"></param>
 		/// <returns></returns>
-		TOPOLOGIC_UTILITIES_API static Vector::Ptr ByReverseVector(const Vector::Ptr& kpAnotherVector);
+		TOPOLOGIC_API static Vector::Ptr ByReverseVector(const Vector::Ptr& kpAnotherVector);
 
 		/// <summary>
 		/// 
@@ -39,38 +39,38 @@ namespace TopologicUtilities
 		/// <param name="kpAnotherVector"></param>
 		/// <param name="kScalingFactor"></param>
 		/// <returns></returns>
-		TOPOLOGIC_UTILITIES_API static Vector::Ptr ByScaledVector(const Vector::Ptr& kpAnotherVector, const double kScalingFactor);
+		TOPOLOGIC_API static Vector::Ptr ByScaledVector(const Vector::Ptr& kpAnotherVector, const double kScalingFactor);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpAnotherVector"></param>
 		/// <returns></returns>
-		TOPOLOGIC_UTILITIES_API static Vector::Ptr ByNormalizedVector(const Vector::Ptr& kpAnotherVector);
+		TOPOLOGIC_API static Vector::Ptr ByNormalizedVector(const Vector::Ptr& kpAnotherVector);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		TOPOLOGIC_UTILITIES_API double Magnitude() const;
+		TOPOLOGIC_API double Magnitude() const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		TOPOLOGIC_UTILITIES_API double X() const;
+		TOPOLOGIC_API double X() const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		TOPOLOGIC_UTILITIES_API double Y() const;
+		TOPOLOGIC_API double Y() const;
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		TOPOLOGIC_UTILITIES_API double Z() const;
+		TOPOLOGIC_API double Z() const;
 
 	protected:
 		Handle(Geom_VectorWithMagnitude) m_pOcctVector;

@@ -1,10 +1,8 @@
 #pragma once
 
-#include "Utilities.h"
-
-#include <TopologicCore/include/Cell.h>
-#include <TopologicCore/include/Vertex.h>
-#include <TopologicCore/include/Wire.h>
+#include <Cell.h>
+#include <Vertex.h>
+#include <Wire.h>
 
 #include <memory>
 
@@ -30,17 +28,17 @@ namespace TopologicUtilities
 		/// <param name="rkVertices"></param>
 		/// <param name="rkFaceIndices"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_UTILITIES_API TopologicCore::Cell::Ptr ByVerticesFaceIndices(const std::vector<TopologicCore::Vertex::Ptr>& rkVertices, const std::list<std::list<int>>& rkFaceIndices);*/
+		static TOPOLOGIC_API TopologicCore::Cell::Ptr ByVerticesFaceIndices(const std::vector<TopologicCore::Vertex::Ptr>& rkVertices, const std::list<std::list<int>>& rkFaceIndices);*/
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="rkWires"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_UTILITIES_API TopologicCore::Cell::Ptr ByLoft(const std::list<TopologicCore::Wire::Ptr>& rkWires);
+		static TOPOLOGIC_API TopologicCore::Cell::Ptr ByLoft(const std::list<TopologicCore::Wire::Ptr>& rkWires);
 
 		//
-		static TOPOLOGIC_UTILITIES_API TopologicCore::Cell::Ptr ByCuboid(
+		static TOPOLOGIC_API TopologicCore::Cell::Ptr ByCuboid(
 			const double kXCentroid, const double kYCentroid, const double kZCentroid,
 			const double kXDimension, const double kYDimension, const double kZDimension,
 			const double kXNormal, const double kYNormal, const double kZNormal,
@@ -55,9 +53,9 @@ namespace TopologicUtilities
 		/// <param name="kCenterZ"></param>
 		/// <param name="kRadius"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_UTILITIES_API TopologicCore::Cell::Ptr BySphere(const double kCenterX, const double kCenterY, const double kCenterZ, const double kRadius);
+		static TOPOLOGIC_API TopologicCore::Cell::Ptr BySphere(const double kCenterX, const double kCenterY, const double kCenterZ, const double kRadius);
 
-		static TOPOLOGIC_UTILITIES_API TopologicCore::Cell::Ptr ByTwoCorners(const std::shared_ptr<TopologicCore::Vertex>& kpMinVertex, const std::shared_ptr<TopologicCore::Vertex>& kpMaxVertex);
+		static TOPOLOGIC_API TopologicCore::Cell::Ptr ByTwoCorners(const std::shared_ptr<TopologicCore::Vertex>& kpMinVertex, const std::shared_ptr<TopologicCore::Vertex>& kpMaxVertex);
 
 		/// <summary>
 		/// 
@@ -71,7 +69,7 @@ namespace TopologicUtilities
 		/// <param name="kRadius"></param>
 		/// <param name="kHeight"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_UTILITIES_API TopologicCore::Cell::Ptr ByCylinder(
+		static TOPOLOGIC_API TopologicCore::Cell::Ptr ByCylinder(
 			const double kReferencePointX, const double kReferencePointY, const double kReferencePointZ,
 			const double kNormalX, const double kNormalY, const double kNormalZ,
 			const double kRadius, const double kHeight);
@@ -92,7 +90,7 @@ namespace TopologicUtilities
 		/// <param name="kRadius2"></param>
 		/// <param name="kHeight"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_UTILITIES_API TopologicCore::Cell::Ptr ByCone(
+		static TOPOLOGIC_API TopologicCore::Cell::Ptr ByCone(
 			const double kReferencePointX, const double kReferencePointY, const double kReferencePointZ,
 			const double kNormalX, const double kNormalY, const double kNormalZ,
 			const double kXDirectionX, const double kXDirectionY, const double kDirectionZ,
@@ -104,7 +102,7 @@ namespace TopologicUtilities
 		/// <param name="kpCell"></param>
 		/// <param name="kTolerance"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_UTILITIES_API std::shared_ptr<TopologicCore::Vertex> InternalVertex(
+		static TOPOLOGIC_API std::shared_ptr<TopologicCore::Vertex> InternalVertex(
 			const TopologicCore::Cell::Ptr kpCell, 
 			const double kTolerance);
 
@@ -113,7 +111,7 @@ namespace TopologicUtilities
 		/// </summary>
 		/// <param name="kpCell"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_UTILITIES_API double Volume(const TopologicCore::Cell::Ptr& kpCell);
+		static TOPOLOGIC_API double Volume(const TopologicCore::Cell::Ptr& kpCell);
 
 		/// <summary>
 		/// 
@@ -122,8 +120,8 @@ namespace TopologicUtilities
 		/// <param name="kpVertex"></param>
 		/// <param name="kTolerance"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_UTILITIES_API CellContainmentState Contains(const TopologicCore::Cell::Ptr & kpCell, const TopologicCore::Vertex::Ptr& kpVertex, const double kTolerance = 0.0001);
+		static TOPOLOGIC_API CellContainmentState Contains(const TopologicCore::Cell::Ptr & kpCell, const TopologicCore::Vertex::Ptr& kpVertex, const double kTolerance = 0.0001);
 
-		static TOPOLOGIC_UTILITIES_API void GetMinMax(const TopologicCore::Cell::Ptr & kpCell, double &rMinX, double &rMaxX, double &rMinY, double &rMaxY, double &rMinZ, double &rMaxZ);
+		static TOPOLOGIC_API void GetMinMax(const TopologicCore::Cell::Ptr & kpCell, double &rMinX, double &rMaxX, double &rMinY, double &rMaxY, double &rMinZ, double &rMaxZ);
 	};
 }

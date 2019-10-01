@@ -1,8 +1,8 @@
-#include "WireUtility.h"
-#include "EdgeUtility.h"
+#include <Utilities/WireUtility.h>
+#include <Utilities/EdgeUtility.h>
 
-#include <TopologicCore/include/Edge.h>
-#include <TopologicCore/include/Vertex.h>
+#include <Edge.h>
+#include <Vertex.h>
 
 namespace TopologicUtilities
 {

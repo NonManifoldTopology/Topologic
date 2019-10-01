@@ -7,7 +7,7 @@
 #include "NurbsCurve.h"
 #endif
 
-#include <TopologicUtilities/include/EdgeUtility.h>
+#include <TopologicCore/include/Utilities/EdgeUtility.h>
 
 #include <BRep_Tool.hxx>
 #include <Geom_BSplineCurve.hxx>

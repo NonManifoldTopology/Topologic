@@ -25,9 +25,9 @@ namespace TopologicUtilities
 		/// <param name="kY"></param>
 		/// <param name="kZ"></param>
 		/// <returns></returns>
-		TOPOLOGIC_UTILITIES_API static Direction::Ptr ByCoordinates(const double kX, const double kY, const double kZ);
+		TOPOLOGIC_API static Direction::Ptr ByCoordinates(const double kX, const double kY, const double kZ);
 
-		TOPOLOGIC_UTILITIES_API static Direction::Ptr ByVector(const Vector::Ptr& kpVector);
+		TOPOLOGIC_API static Direction::Ptr ByVector(const Vector::Ptr& kpVector);
 
 	protected:
 

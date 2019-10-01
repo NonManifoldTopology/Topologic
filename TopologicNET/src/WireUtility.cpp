@@ -3,7 +3,7 @@
 #include "Shell.h"
 #include "Cell.h"
 
-#include <TopologicUtilities/include/WireUtility.h>
+#include <TopologicCore/include/Utilities/WireUtility.h>
 
 namespace Topologic {
 	namespace Utilities {

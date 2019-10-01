@@ -40,6 +40,10 @@ namespace Topologic
 		{
 			throw gcnew Exception(gcnew String(e.what()));
 		}
+		catch (...)
+		{
+			throw gcnew Exception("Unknown exception");
+		}
 	}
 
 	List<Vertex^>^ Graph::VerticesAtCoordinates(double x, double y, double z, double tolerance)

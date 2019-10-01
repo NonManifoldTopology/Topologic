@@ -1,4 +1,4 @@
-#include "EdgeUtility.h"
+#include <Utilities/EdgeUtility.h>
 
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepGProp.hxx>

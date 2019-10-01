@@ -4,7 +4,7 @@
 #include "Face.h"
 #include "Cell.h"
 
-#include <TopologicUtilities/include/TopologyUtility.h>
+#include <TopologicCore/include/Utilities/TopologyUtility.h>
 
 namespace Topologic
 {

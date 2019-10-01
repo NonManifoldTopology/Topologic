@@ -1,10 +1,10 @@
-#include "CellUtility.h"
-#include "FaceUtility.h"
-#include "VertexUtility.h"
+#include "Utilities/CellUtility.h"
+#include "Utilities/FaceUtility.h"
+#include "Utilities/VertexUtility.h"
 
-#include <TopologicCore/include/Cell.h>
-#include <TopologicCore/include/Face.h>
-#include <TopologicCore/include/GlobalCluster.h>
+#include <Cell.h>
+#include <Face.h>
+#include <GlobalCluster.h>
 
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>

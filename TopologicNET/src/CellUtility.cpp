@@ -2,7 +2,7 @@
 #include "Wire.h"
 #include "Vertex.h"
 
-#include <TopologicUtilities/include/CellUtility.h>
+#include <TopologicCore/include/Utilities/CellUtility.h>
 
 namespace Topologic {
 	namespace Utilities {

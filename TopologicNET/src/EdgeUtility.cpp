@@ -2,7 +2,7 @@
 #include "Vertex.h"
 #include "Wire.h"
 
-#include <TopologicUtilities/include/EdgeUtility.h>
+#include <TopologicCore/include/Utilities/EdgeUtility.h>
 
 namespace Topologic
 {
