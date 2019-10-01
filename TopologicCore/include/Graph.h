@@ -32,7 +32,8 @@ namespace TopologicCore
 			const bool kViaSharedTopologies, 
 			const bool kViaSharedApertures, 
 			const bool kToExteriorTopologies, 
-			const bool kToExteriorApertures);
+			const bool kToExteriorApertures,
+			const double kTolerance);
 
 		Graph(const std::list<Vertex::Ptr>& rkVertices, const std::list<Edge::Ptr>& rkEdges);
 
@@ -161,45 +162,53 @@ namespace TopologicCore
 
 		static Graph::Ptr ByVertex(
 			const std::shared_ptr<Vertex> kpVertex,
-			const bool kToExteriorApertures);
+			const bool kToExteriorApertures,
+			const double kTolerance);
 
 		static Graph::Ptr ByEdge(
 			const std::shared_ptr<Edge> kpEdge,
 			const bool kDirect,
-			const bool kToExteriorApertures);
+			const bool kToExteriorApertures,
+			const double kTolerance);
 
 		static Graph::Ptr ByWire(const std::shared_ptr<Wire> kpWire,
 			const bool kDirect,
-			const bool kToExteriorApertures);
+			const bool kToExteriorApertures,
+			const double kTolerance);
 
 		static Graph::Ptr ByFace(const std::shared_ptr<Face> kpFace,
 			const bool kToExteriorTopologies,
-			const bool kToExteriorApertures);
+			const bool kToExteriorApertures,
+			const double kTolerance);
 
 		static Graph::Ptr ByShell(const std::shared_ptr<Shell> kpShell,
 			const bool kDirect,
 			const bool kViaSharedTopologies,
 			const bool kViaSharedApertures,
 			const bool kToExteriorTopologies,
-			const bool kToExteriorApertures);
+			const bool kToExteriorApertures,
+			const double kTolerance);
 
 		static Graph::Ptr ByCell(const std::shared_ptr<Cell> kpCell,
 			const bool kToExteriorTopologies,
-			const bool kToExteriorApertures);
+			const bool kToExteriorApertures,
+			const double kTolerance);
 
 		static Graph::Ptr ByCellComplex(const std::shared_ptr<CellComplex> kpCellComplex,
 			const bool kDirect,
 			const bool kViaSharedTopologies,
 			const bool kViaSharedApertures,
 			const bool kToExteriorTopologies,
-			const bool kToExteriorApertures);
+			const bool kToExteriorApertures,
+			const double kTolerance);
 
 		static Graph::Ptr ByCluster(const std::shared_ptr<Cluster> kpCluster,
 			const bool kDirect,
 			const bool kViaSharedTopologies,
 			const bool kViaSharedApertures,
 			const bool kToExteriorTopologies,
-			const bool kToExteriorApertures);
+			const bool kToExteriorApertures,
+			const double kTolerance);
 
 		std::shared_ptr<Wire> ConstructPath(const std::list<Vertex::Ptr>& rkPathVertices) const;
 

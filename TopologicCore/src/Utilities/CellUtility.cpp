@@ -164,6 +164,13 @@ namespace TopologicUtilities
 
 	TopologicCore::Vertex::Ptr CellUtility::InternalVertex(const TopologicCore::Cell::Ptr kpCell, const double kTolerance)
 	{
+		// Check the centroid first
+		TopologicCore::Vertex::Ptr centerOfMass = kpCell->CenterOfMass();
+		if (Contains(kpCell, centerOfMass, kTolerance))
+		{
+			return centerOfMass;
+		}
+
 		// This methods accepts as input a Cell and outputs a Vertex guaranteed to be inside the Cell. 
 		// This method relies on #3 to first choose a Vertex on a random Face of the Cell, 
 		// then it shoots a Ray in the opposite direction of its normal and finds the closest intersection. 

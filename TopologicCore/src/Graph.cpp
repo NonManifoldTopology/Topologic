@@ -11,6 +11,9 @@
 #include "IntAttribute.h"
 #include "AttributeManager.h"
 
+#include <Utilities/FaceUtility.h>
+#include <Utilities/CellUtility.h>
+
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepExtrema_DistShapeShape.hxx>
 #include <ShapeAnalysis_Edge.hxx>
@@ -33,34 +36,38 @@ namespace TopologicCore
 		const bool kViaSharedTopologies,
 		const bool kViaSharedApertures,
 		const bool kToExteriorTopologies,
-		const bool kToExteriorApertures)
+		const bool kToExteriorApertures,
+		const double kTolerance)
 	{
 		switch (topology->GetType())
 		{
-		case TOPOLOGY_VERTEX: return Graph::ByVertex(std::dynamic_pointer_cast<Vertex>(topology), kToExteriorApertures);
-		case TOPOLOGY_EDGE: return Graph::ByEdge(std::dynamic_pointer_cast<Edge>(topology), kDirect, kToExteriorApertures);
-		case TOPOLOGY_WIRE: return Graph::ByWire(std::dynamic_pointer_cast<Wire>(topology), kDirect, kToExteriorApertures);
-		case TOPOLOGY_FACE: return Graph::ByFace(std::dynamic_pointer_cast<Face>(topology), kToExteriorTopologies, kToExteriorApertures);
+		case TOPOLOGY_VERTEX: return Graph::ByVertex(std::dynamic_pointer_cast<Vertex>(topology), kToExteriorApertures, kTolerance);
+		case TOPOLOGY_EDGE: return Graph::ByEdge(std::dynamic_pointer_cast<Edge>(topology), kDirect, kToExteriorApertures, kTolerance);
+		case TOPOLOGY_WIRE: return Graph::ByWire(std::dynamic_pointer_cast<Wire>(topology), kDirect, kToExteriorApertures, kTolerance);
+		case TOPOLOGY_FACE: return Graph::ByFace(std::dynamic_pointer_cast<Face>(topology), kToExteriorTopologies, kToExteriorApertures, kTolerance);
 		case TOPOLOGY_SHELL: return Graph::ByShell(
 			std::dynamic_pointer_cast<Shell>(topology),
 			kDirect,
 			kViaSharedTopologies,
 			kViaSharedApertures,
 			kToExteriorTopologies,
-			kToExteriorApertures);
-		case TOPOLOGY_CELL: return Graph::ByCell(std::dynamic_pointer_cast<Cell>(topology), kToExteriorTopologies, kToExteriorApertures);
+			kToExteriorApertures,
+			kTolerance);
+		case TOPOLOGY_CELL: return Graph::ByCell(std::dynamic_pointer_cast<Cell>(topology), kToExteriorTopologies, kToExteriorApertures, kTolerance);
 		case TOPOLOGY_CELLCOMPLEX: return Graph::ByCellComplex(std::dynamic_pointer_cast<CellComplex>(topology),
 			kDirect,
 			kViaSharedTopologies,
 			kViaSharedApertures,
 			kToExteriorTopologies,
-			kToExteriorApertures);
+			kToExteriorApertures,
+			kTolerance);
 		case TOPOLOGY_CLUSTER: return Graph::ByCluster(std::dynamic_pointer_cast<Cluster>(topology),
 			kDirect,
 			kViaSharedTopologies,
 			kViaSharedApertures,
 			kToExteriorTopologies,
-			kToExteriorApertures);
+			kToExteriorApertures,
+			kTolerance);
 
 		case TOPOLOGY_APERTURE:
 			return Graph::ByTopology(
@@ -69,7 +76,8 @@ namespace TopologicCore
 				kViaSharedTopologies,
 				kViaSharedApertures,
 				kToExteriorTopologies,
-				kToExteriorApertures);
+				kToExteriorApertures,
+				kTolerance);
 		default:
 			throw std::exception("Fails to create a graph due to an unknown type of topology.");
 		}
@@ -1090,8 +1098,31 @@ namespace TopologicCore
 		}
 	}
 
+	Vertex::Ptr CalculateGraphVertexFromAperture(const Aperture::Ptr kpAperture, const double kTolerance)
+	{
+		Topology::Ptr apertureTopology = kpAperture->Topology();
+		if (apertureTopology->GetType() == TOPOLOGY_FACE)
+		{
+			return TopologicUtilities::FaceUtility::InternalVertex(
+				TopologicalQuery::Downcast<Face>(apertureTopology),
+				kTolerance
+			);
+		}
+		else if (apertureTopology->GetType() == TOPOLOGY_CELL)
+		{
+			return TopologicUtilities::CellUtility::InternalVertex(
+				TopologicalQuery::Downcast<Cell>(apertureTopology),
+				kTolerance
+			);
+		}
+
+		// else
+		return kpAperture->CenterOfMass();
+	}
+
 	Graph::Ptr Graph::ByVertex(const Vertex::Ptr kpVertex,
-		const bool kToExteriorApertures)
+		const bool kToExteriorApertures,
+		const double kTolerance)
 	{
 		std::list<Vertex::Ptr> apertureCentresOfMass;
 		if (kToExteriorApertures)
@@ -1103,7 +1134,8 @@ namespace TopologicCore
 			{
 				if (kpContent->GetType() == TOPOLOGY_APERTURE)
 				{
-					apertureCentresOfMass.push_back(kpContent->CenterOfMass());
+					Vertex::Ptr graphVertex = CalculateGraphVertexFromAperture(TopologicalQuery::Downcast<Aperture>(kpContent), kTolerance);
+					apertureCentresOfMass.push_back(graphVertex);
 				}
 			}
 		}
@@ -1124,7 +1156,8 @@ namespace TopologicCore
 
 	Graph::Ptr Graph::ByEdge(const Edge::Ptr kpEdge,
 		const bool kDirect,
-		const bool kToExteriorApertures)
+		const bool kToExteriorApertures,
+		const double kTolerance)
 	{
 		std::list<Vertex::Ptr> vertices;
 		std::list<Edge::Ptr> edges;
@@ -1146,7 +1179,9 @@ namespace TopologicCore
 			{
 				if (kpContent->GetType() == TOPOLOGY_APERTURE)
 				{
-					Vertex::Ptr contentCenterOfMass = kpContent->CenterOfMass();
+					Vertex::Ptr contentCenterOfMass = CalculateGraphVertexFromAperture(
+						TopologicalQuery::Downcast<Aperture>(kpContent),
+						kTolerance);
 					vertices.push_back(contentCenterOfMass);
 					std::list<Vertex::Ptr> edgeVertices;
 					kpEdge->Vertices(edgeVertices);
@@ -1165,7 +1200,8 @@ namespace TopologicCore
 
 	Graph::Ptr Graph::ByWire(const Wire::Ptr kpWire,
 		const bool kDirect,
-		const bool kToExteriorApertures)
+		const bool kToExteriorApertures,
+		const double kTolerance)
 	{
 		std::list<Vertex::Ptr> vertices;
 		std::list<Edge::Ptr> edges;
@@ -1191,7 +1227,8 @@ namespace TopologicCore
 				{
 					if (kpContent->GetType() == TOPOLOGY_APERTURE)
 					{
-						Vertex::Ptr contentCenterOfMass = kpContent->CenterOfMass();
+						Vertex::Ptr contentCenterOfMass = CalculateGraphVertexFromAperture(
+							TopologicalQuery::Downcast<Aperture>(kpContent), kTolerance);
 						vertices.push_back(contentCenterOfMass);
 						for (const Vertex::Ptr& edgeVertex :edgeVertices)
 						{
@@ -1208,13 +1245,14 @@ namespace TopologicCore
 
 	Graph::Ptr Graph::ByFace(const Face::Ptr kpFace,
 		const bool kToExteriorTopologies,
-		const bool kToExteriorApertures)
+		const bool kToExteriorApertures,
+		const double kTolerance)
 	{
 		std::list<Vertex::Ptr> vertices;
 		std::list<Edge::Ptr> edges;
 
-		Vertex::Ptr centerOfMass = kpFace->CenterOfMass();
-		vertices.push_back(centerOfMass);
+		Vertex::Ptr internalVertex = TopologicUtilities::FaceUtility::InternalVertex(kpFace, kTolerance);
+		vertices.push_back(internalVertex);
 		if (kToExteriorTopologies || kToExteriorApertures)
 		{
 			std::list<Edge::Ptr> faceEdges;
@@ -1224,7 +1262,7 @@ namespace TopologicCore
 			{
 				if (kToExteriorTopologies)
 				{
-					Edge::Ptr edge = Edge::ByStartVertexEndVertex(centerOfMass, centerOfMass);
+					Edge::Ptr edge = Edge::ByStartVertexEndVertex(internalVertex, kpFaceEdge->CenterOfMass());
 					edges.push_back(edge);
 				}
 
@@ -1237,9 +1275,10 @@ namespace TopologicCore
 					{
 						if (kpContent->GetType() == TOPOLOGY_APERTURE)
 						{
-							Vertex::Ptr pApertureCenterOfMass = kpContent->CenterOfMass();
+							Vertex::Ptr pApertureCenterOfMass = CalculateGraphVertexFromAperture(
+								TopologicalQuery::Downcast<Aperture>(kpContent), kTolerance);
 							vertices.push_back(pApertureCenterOfMass);
-							Edge::Ptr edge = Edge::ByStartVertexEndVertex(pApertureCenterOfMass, centerOfMass);
+							Edge::Ptr edge = Edge::ByStartVertexEndVertex(pApertureCenterOfMass, internalVertex);
 							edges.push_back(edge);
 						}
 					}
@@ -1255,7 +1294,8 @@ namespace TopologicCore
 		const bool kViaSharedTopologies,
 		const bool kViaSharedApertures,
 		const bool kToExteriorTopologies,
-		const bool kToExteriorApertures)
+		const bool kToExteriorApertures,
+		const double kTolerance)
 	{
 		if (kpShell == nullptr)
 		{
@@ -1271,8 +1311,8 @@ namespace TopologicCore
 		kpShell->Faces(faces);
 		for (const TopologicCore::Face::Ptr& kpFace : faces)
 		{
-			TopologicCore::Vertex::Ptr pCentroid = kpFace->CenterOfMass();
-			faceCentroids.insert(std::make_pair(kpFace->GetOcctFace(), pCentroid));
+			TopologicCore::Vertex::Ptr internalVertex = TopologicUtilities::FaceUtility::InternalVertex(kpFace, kTolerance);
+			faceCentroids.insert(std::make_pair(kpFace->GetOcctFace(), internalVertex));
 		}
 
 		// 2. Check the configurations. Add the edges to a cluster.
@@ -1323,8 +1363,7 @@ namespace TopologicCore
 					continue;
 				}
 				TopologicCore::Aperture::Ptr pAperture = TopologicalQuery::Downcast<TopologicCore::Aperture>(kpContent);
-				Topology::Ptr pApertureTopology = pAperture->Topology();
-				TopologicCore::Vertex::Ptr pApertureCentroid = pApertureTopology->CenterOfMass();
+				TopologicCore::Vertex::Ptr pApertureCentroid = CalculateGraphVertexFromAperture(pAperture, kTolerance);
 
 				apertureCentroids.push_back(pApertureCentroid);
 			}
@@ -1390,13 +1429,14 @@ namespace TopologicCore
 
 	Graph::Ptr Graph::ByCell(const Cell::Ptr kpCell,
 		const bool kToExteriorTopologies,
-		const bool kToExteriorApertures)
+		const bool kToExteriorApertures,
+		const double kTolerance)
 	{
 		std::list<Vertex::Ptr> vertices;
 		std::list<Edge::Ptr> edges;
 
-		Vertex::Ptr centerOfMass = kpCell->CenterOfMass();
-		vertices.push_back(kpCell->CenterOfMass());
+		Vertex::Ptr internalVertex = TopologicUtilities::CellUtility::InternalVertex(kpCell, kTolerance);
+		vertices.push_back(internalVertex);
 		if (kToExteriorTopologies || kToExteriorApertures)
 		{
 			std::list<Face::Ptr> cellFaces;
@@ -1406,9 +1446,9 @@ namespace TopologicCore
 			{
 				if (kToExteriorTopologies)
 				{
-					Vertex::Ptr pCellFaceCenterOfMass = kpCellFace->CenterOfMass();
+					Vertex::Ptr pCellFaceCenterOfMass = TopologicUtilities::CellUtility::InternalVertex(kpCell, kTolerance);
 					vertices.push_back(pCellFaceCenterOfMass);
-					Edge::Ptr edge = Edge::ByStartVertexEndVertex(pCellFaceCenterOfMass, centerOfMass);
+					Edge::Ptr edge = Edge::ByStartVertexEndVertex(pCellFaceCenterOfMass, internalVertex);
 					edges.push_back(edge);
 				}
 
@@ -1421,9 +1461,11 @@ namespace TopologicCore
 					{
 						if (kpContent->GetType() == TOPOLOGY_APERTURE)
 						{
-							Vertex::Ptr pApertureCenterOfMass = kpContent->CenterOfMass();
+							Vertex::Ptr pApertureCenterOfMass = CalculateGraphVertexFromAperture(
+								TopologicalQuery::Downcast<TopologicCore::Aperture>(kpContent),
+								kTolerance);
 							vertices.push_back(pApertureCenterOfMass);
-							Edge::Ptr edge = Edge::ByStartVertexEndVertex(pApertureCenterOfMass, centerOfMass);
+							Edge::Ptr edge = Edge::ByStartVertexEndVertex(pApertureCenterOfMass, internalVertex);
 							edges.push_back(edge);
 						}
 					}
@@ -1439,7 +1481,8 @@ namespace TopologicCore
 		const bool kViaSharedTopologies,
 		const bool kViaSharedApertures,
 		const bool kToExteriorTopologies,
-		const bool kToExteriorApertures)
+		const bool kToExteriorApertures,
+		const double kTolerance)
 	{
 		if (kpCellComplex == nullptr)
 		{
@@ -1455,7 +1498,7 @@ namespace TopologicCore
 		kpCellComplex->Cells(cells);
 		for (const TopologicCore::Cell::Ptr& kpCell : cells)
 		{
-			TopologicCore::Vertex::Ptr pCentroid = kpCell->CenterOfMass();
+			TopologicCore::Vertex::Ptr pCentroid = TopologicUtilities::CellUtility::InternalVertex(kpCell, kTolerance);
 			cellCentroids.insert(std::make_pair(kpCell->GetOcctSolid(), pCentroid));
 		}
 
@@ -1467,8 +1510,47 @@ namespace TopologicCore
 			// For each adjacent cells, connect the centroids
 			for (const TopologicCore::Cell::Ptr& kpCell : cells)
 			{
+				// Get faces
+				std::list<Face::Ptr> faces;
+				kpCell->Faces(faces);
+
+				// Get adjacent cells
 				std::list<TopologicCore::Cell::Ptr> adjacentCells;
-				kpCell->AdjacentCells(adjacentCells);
+				for (const Face::Ptr& kpFace : faces)
+				{
+					std::list<TopologicCore::Cell::Ptr> currentFaceAdjacentCells;
+					TopologicUtilities::FaceUtility::AdjacentCells(kpFace, kpCellComplex, adjacentCells);
+
+					for (const Cell::Ptr& kpCurrentFaceAdjacentCell : currentFaceAdjacentCells)
+					{
+						// The same as this Cell? Continue.
+						if (kpCurrentFaceAdjacentCell->IsSame(kpCell))
+						{
+							continue;
+						}
+
+						// Already added? Continue.
+						bool isAdded = false;
+						for(const TopologicCore::Cell::Ptr& kpAdjacentCell : adjacentCells)
+						{ 
+							if(kpCurrentFaceAdjacentCell->IsSame(kpAdjacentCell))
+							{
+								isAdded = true;
+								break;
+							}
+						}
+
+						if (isAdded)
+						{
+							continue;
+						}
+
+						// If passes the test, add to adjacentCells
+						adjacentCells.push_back(kpCurrentFaceAdjacentCell);
+					}
+				}
+
+				//kpCell->AdjacentCells(adjacentCells);
 
 				for (const TopologicCore::Cell::Ptr& kpAdjacentCell : adjacentCells)
 				{
@@ -1482,7 +1564,7 @@ namespace TopologicCore
 		kpCellComplex->Faces(faces);
 		for (const TopologicCore::Face::Ptr& kpFace : faces)
 		{
-			TopologicCore::Vertex::Ptr pCentroid = kpFace->CenterOfMass();
+			TopologicCore::Vertex::Ptr pCentroid = TopologicUtilities::FaceUtility::InternalVertex(kpFace, kTolerance);
 			bool isManifold = kpFace->IsManifold();
 			std::list<TopologicCore::Cell::Ptr> adjacentCells;
 			kpFace->Cells(adjacentCells);
@@ -1501,8 +1583,7 @@ namespace TopologicCore
 					continue;
 				}
 				TopologicCore::Aperture::Ptr pAperture = TopologicalQuery::Downcast<TopologicCore::Aperture>(kpContent);
-				Topology::Ptr pApertureTopology = pAperture->Topology();
-				TopologicCore::Vertex::Ptr pApertureCentroid = pApertureTopology->CenterOfMass();
+				TopologicCore::Vertex::Ptr pApertureCentroid = CalculateGraphVertexFromAperture(pAperture, kTolerance);
 
 				apertureCentroids.push_back(pApertureCentroid);
 			}
@@ -1572,7 +1653,8 @@ namespace TopologicCore
 		const bool kViaSharedTopologies,
 		const bool kViaSharedApertures,
 		const bool kToExteriorTopologies,
-		const bool kToExteriorApertures)
+		const bool kToExteriorApertures,
+		const double kTolerance)
 	{
 		std::list<Topology::Ptr> subtopologies;
 		cluster->SubTopologies(subtopologies);
@@ -1580,7 +1662,8 @@ namespace TopologicCore
 		std::list<Edge::Ptr> edges;
 		for (const Topology::Ptr& kpSubtopology : subtopologies)
 		{
-			Graph::Ptr graph = Graph::ByTopology(kpSubtopology, kDirect, kViaSharedTopologies, kViaSharedApertures, kToExteriorTopologies, kToExteriorApertures);
+			Graph::Ptr graph = Graph::ByTopology(
+				kpSubtopology, kDirect, kViaSharedTopologies, kViaSharedApertures, kToExteriorTopologies, kToExteriorApertures, kTolerance);
 			std::list<Vertex::Ptr> subtopologyVertices;
 			graph->Vertices(subtopologyVertices);
 			std::list<Edge::Ptr> subtopologyEdges;

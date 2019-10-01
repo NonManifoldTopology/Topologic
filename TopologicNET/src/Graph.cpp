@@ -19,7 +19,8 @@ namespace Topologic
 		bool viaSharedTopologies,
 		bool viaSharedApertures,
 		bool toExteriorTopologies,
-		bool toExteriorApertures)
+		bool toExteriorApertures,
+		bool tolerance)
 	{
 		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 		try {
@@ -29,7 +30,8 @@ namespace Topologic
 				viaSharedTopologies,
 				viaSharedApertures,
 				toExteriorTopologies,
-				toExteriorApertures);
+				toExteriorApertures,
+				tolerance);
 			if (pCoreGraph == nullptr)
 			{
 				return nullptr;
