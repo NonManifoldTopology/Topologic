@@ -115,11 +115,11 @@ namespace Topologic {
 			static List<double>^ GetMinMax(Cell^ cell);
 
 			/// <summary>
-			/// 
+			/// Returns a Vertex inside the Cell.
 			/// </summary>
-			/// <param name="cell"></param>
-			/// <param name="tolerance"></param>
-			/// <returns name="Vertex"></returns>
+			/// <param name="cell">A Cell</param>
+			/// <param name="tolerance">A positive tolerance value</param>
+			/// <returns name="Vertex">A Vertex inside the Cell</returns>
 			static Vertex^ InternalVertex(
 				Cell^ cell,
 #ifdef TOPOLOGIC_DYNAMO

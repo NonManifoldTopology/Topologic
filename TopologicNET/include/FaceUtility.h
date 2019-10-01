@@ -91,11 +91,11 @@ namespace Topologic {
 			static List<Cell^>^ AdjacentCells(Face^ face, Topology^ parentTopology);
 
 			/// <summary>
-			/// 
+			/// Returns a Vertex inside the Face.
 			/// </summary>
-			/// <param name="face"></param>
-			/// <param name="tolerance"></param>
-			/// <returns></returns>
+			/// <param name="face">A Face</param>
+			/// <param name="tolerance">A positive tolerance value</param>
+			/// <returns name="Vertex">A Vertex inside the Face</returns>
 			static Vertex^ InternalVertex(
 				Face^ face,
 #ifdef TOPOLOGIC_DYNAMO
@@ -104,12 +104,12 @@ namespace Topologic {
 			double tolerance);
 
 			/// <summary>
-			/// 
+			/// Checks if a Vertex is located inside a Face within a tolerance value.
 			/// </summary>
-			/// <param name="face"></param>
-			/// <param name="vertex"></param>
-			/// <param name="tolerance"></param>
-			/// <returns></returns>
+			/// <param name="face">A Face</param>
+			/// <param name="vertex">A Vertex</param>
+			/// <param name="tolerance">A positive tolerance value</param>
+			/// <returns name="bool">True if the Vertex is inside the Face within at tolerance value, otherwise False</returns>
 			static bool IsInside(Face^ face, Vertex^ vertex,
 #ifdef TOPOLOGIC_DYNAMO
 			[DefaultArgument("0.0001")]

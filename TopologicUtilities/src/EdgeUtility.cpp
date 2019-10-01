@@ -236,4 +236,18 @@ namespace TopologicUtilities
 		 }
 	}
 
+	double EdgeUtility::AngleBetween(const TopologicCore::Edge::Ptr & kpEdge1, const TopologicCore::Edge::Ptr & kpEdge2)
+	{
+		gp_Vec edgeVector1(
+			kpEdge1->StartVertex()->Point()->Pnt(),
+			kpEdge1->EndVertex()->Point()->Pnt()
+		);
+
+		gp_Vec edgeVector2(
+			kpEdge2->StartVertex()->Point()->Pnt(),
+			kpEdge2->EndVertex()->Point()->Pnt()
+		);
+
+		return edgeVector1.Angle(edgeVector2);
+	}
 }

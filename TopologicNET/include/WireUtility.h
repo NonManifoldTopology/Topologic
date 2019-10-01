@@ -26,6 +26,17 @@ namespace Topologic {
 			/// <returns name="Cell[]">A list of Cells adjacent to the input Wire</returns>
 			static List<Cell^>^ AdjacentCells(Wire^ wire, Topology^ parentTopology);
 
+			/// <summary>
+			/// Remove collinear edges in a Wire.
+			/// </summary>
+			/// <param name="wire">A Wire</param>
+			/// <param name="tolerance">A positive tolerance value</param>
+			/// <returns name="Wire">A Wire with collinear edges removed</returns>
+			static Wire^ RemoveCollinearEdges(Wire^ wire, 
+#ifdef TOPOLOGIC_DYNAMO
+				[DefaultArgument("0.0001")]
+#endif
+			double tolerance);
 		public protected:
 			WireUtility() {}
 		};

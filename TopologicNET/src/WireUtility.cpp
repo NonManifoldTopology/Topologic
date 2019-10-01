@@ -58,5 +58,19 @@ namespace Topologic {
 
 			return adjacentCells;
 		}
+
+		Wire ^ WireUtility::RemoveCollinearEdges(Wire ^ wire, double tolerance)
+		{
+			TopologicCore::Wire::Ptr pCoreWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>(wire->GetCoreTopologicalQuery());
+			
+			try {
+				TopologicCore::Wire::Ptr pCoreNewWire = TopologicUtilities::WireUtility::RemoveCollinearEdges(pCoreWire, tolerance);
+				return gcnew Wire(pCoreNewWire);
+			}
+			catch (const std::exception& rkException)
+			{
+				throw gcnew Exception(gcnew String(rkException.what()));
+			}
+		}
 	}
 }

@@ -81,5 +81,10 @@ namespace TopologicUtilities
 			const TopologicCore::Edge::Ptr & kpEdge,
 			const TopologicCore::Topology::Ptr & kpParentTopology,
 			std::list<TopologicCore::Wire::Ptr>& rCoreAdjacentWires);
+
+		static double AngleBetween(
+			const TopologicCore::Edge::Ptr & kpEdge1,
+			const TopologicCore::Edge::Ptr & kpEdge2
+		);
 	};
 }
