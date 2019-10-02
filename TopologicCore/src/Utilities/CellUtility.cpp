@@ -166,7 +166,7 @@ namespace TopologicUtilities
 	{
 		// Check the centroid first
 		TopologicCore::Vertex::Ptr centerOfMass = kpCell->CenterOfMass();
-		if (Contains(kpCell, centerOfMass, kTolerance))
+		if (Contains(kpCell, centerOfMass, kTolerance) == INSIDE)
 		{
 			return centerOfMass;
 		}

@@ -515,11 +515,18 @@ namespace TopologicUtilities
 
 	TopologicCore::Vertex::Ptr FaceUtility::InternalVertex(const TopologicCore::Face::Ptr kpFace, const double kTolerance)
 	{
+		// Check the centroid first
+		TopologicCore::Vertex::Ptr centerOfMass = kpFace->CenterOfMass();
+		if (IsInside(kpFace, centerOfMass, kTolerance))
+		{
+			return centerOfMass;
+		}
+
 		// METHOD 1: subdivision on the UV space
 		// 1: 0.5	(divide by 2^1 = 2)
 		// 1: 0.25, 0.5, 0.75	(divide by 2^2 = 4)
 		// 2: 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875 (etc...)
-		int level = 0;
+		int level = 1;
 		int maxLevel = 10;
 		std::list<double> parameters;
 		do {

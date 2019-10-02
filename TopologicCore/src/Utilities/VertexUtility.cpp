@@ -118,8 +118,8 @@ namespace TopologicUtilities
 		const TopologicCore::Vertex::Ptr& kpVertex,
 		const TopologicCore::Cell::Ptr& kpCell)
 	{
-		bool isContained = CellUtility::Contains(kpCell, kpVertex, 0.0001);
-		if (isContained)
+		CellContainmentState isContained = CellUtility::Contains(kpCell, kpVertex, 0.0001);
+		if (isContained == INSIDE || isContained == ON_BOUNDARY)
 		{
 			return 0.0;
 		}
