@@ -214,12 +214,14 @@ namespace TopologicCore
 		occtShapeFix.Perform();
 
 		CellComplex::Ptr fixedCellComplex = std::make_shared<CellComplex>(TopoDS::CompSolid(occtShapeFix.Shape()));
+		CellComplex::Ptr copyFixedCellCoplex = TopologicalQuery::Downcast<CellComplex>(fixedCellComplex->DeepCopy());
 
+		GlobalCluster::GetInstance().AddTopology(copyFixedCellCoplex->GetOcctCompSolid());
 		for (const Face::Ptr& kpFace : rkFaces)
 		{
-			AttributeManager::GetInstance().CopyAttributes(kpFace->GetOcctFace(), fixedCellComplex->GetOcctCompSolid());
+			AttributeManager::GetInstance().CopyAttributes(kpFace->GetOcctFace(), copyFixedCellCoplex->GetOcctCompSolid());
 		}
-		return fixedCellComplex;
+		return copyFixedCellCoplex;
 	}
 
 	Cell::Ptr CellComplex::ExternalBoundary() const

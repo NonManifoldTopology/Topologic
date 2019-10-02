@@ -59,17 +59,23 @@ namespace TopologicCore
 			kOcctFaceIterator++)
 		{
 			const TopoDS_Shape& rkOcctFace = *kOcctFaceIterator;
-			const TopTools_ListOfShape& rkIncidentCells = occtFaceSolidMap.FindFromKey(rkOcctFace);
+			try {
+				const TopTools_ListOfShape& rkIncidentCells = occtFaceSolidMap.FindFromKey(rkOcctFace);
 
-			for (TopTools_ListOfShape::const_iterator kOcctCellIterator = rkIncidentCells.cbegin();
-				kOcctCellIterator != rkIncidentCells.cend();
-				kOcctCellIterator++)
-			{
-				const TopoDS_Shape& rkIncidentCell = *kOcctCellIterator;
-				if (!rkOcctSolid.IsSame(rkIncidentCell))
+				for (TopTools_ListOfShape::const_iterator kOcctCellIterator = rkIncidentCells.cbegin();
+					kOcctCellIterator != rkIncidentCells.cend();
+					kOcctCellIterator++)
 				{
-					occtAdjacentSolids.Add(rkIncidentCell);
+					const TopoDS_Shape& rkIncidentCell = *kOcctCellIterator;
+					if (!rkOcctSolid.IsSame(rkIncidentCell))
+					{
+						occtAdjacentSolids.Add(rkIncidentCell);
+					}
 				}
+			}
+			catch (Standard_NoSuchObject)
+			{
+				throw std::exception("Cannot find a Face in the global cluster.");
 			}
 		}
 

@@ -30,6 +30,7 @@ namespace Topologic {
 		/// <param name="viaSharedApertures">Use shared Apertures</param>
 		/// <param name="toExteriorTopologies">Use exterior Topologies</param>
 		/// <param name="toExteriorApertures">Use exterior Apertures</param>
+		/// <param name="useFaceInternalVertex">Use the Faces' internal Vertices. WARNING: This process can take considerable time.</param>
 		/// <param name="tolerance">A positive tolerance value</param>
 		/// <returns name="Graph">The created Graph</returns>
 #ifdef TOPOLOGIC_DYNAMO
@@ -40,6 +41,7 @@ namespace Topologic {
 			[DefaultArgument("false")] bool viaSharedApertures,
 			[DefaultArgument("false")] bool toExteriorTopologies,
 			[DefaultArgument("false")] bool toExteriorApertures,
+			[DefaultArgument("false")] bool useFaceInternalVertex,
 			[DefaultArgument("0.0001")] bool tolerance);
 #else
 		static Graph^ ByTopology(
@@ -49,6 +51,7 @@ namespace Topologic {
 			bool viaSharedApertures,
 			bool toExteriorTopologies,
 			bool toExteriorApertures,
+			bool useFaceInternalVertex,
 			bool tolerance);
 #endif
 

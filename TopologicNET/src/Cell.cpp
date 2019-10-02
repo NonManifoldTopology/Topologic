@@ -162,7 +162,13 @@ namespace Topologic
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Cell::Ptr> coreAdjacentCells;
-		pCoreCell->AdjacentCells(coreAdjacentCells);
+		try {
+			pCoreCell->AdjacentCells(coreAdjacentCells);
+		}
+		catch (const std::exception& rkException)
+		{
+			throw gcnew Exception(gcnew String(rkException.what()));
+		}
 
 		List<Cell^>^ pAdjacentCells = gcnew List<Cell^>();
 		for (std::list<TopologicCore::Cell::Ptr>::const_iterator kCellIterator = coreAdjacentCells.begin();
