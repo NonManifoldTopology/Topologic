@@ -73,7 +73,7 @@ namespace TopologicUtilities
 			TopologicCore::Edge::Ptr nextEdge = *nextEdgeIterator;
 
 			double angle = EdgeUtility::AngleBetween(currentEdge, nextEdge);
-			if (angle > kTolerance)
+			if (std::abs(angle) > kTolerance)
 			{
 				vertices.push_back(currentEdge->EndVertex());
 			}
@@ -85,7 +85,7 @@ namespace TopologicUtilities
 			TopologicCore::Edge::Ptr nextEdge = *edges.begin();
 
 			double angle = EdgeUtility::AngleBetween(currentEdge, nextEdge);
-			if (angle > kTolerance)
+			if (std::abs(angle) > kTolerance)
 			{
 				vertices.push_back(nextEdge->StartVertex());
 			}

@@ -2162,6 +2162,8 @@ namespace TopologicCore
 				clusterCandidates.Append(merge2Topologies.Value());
 			}
 		}
+
+		TopoDS_Shape occtFinalResult;
 		if (clusterCandidates.Size() > 0)
 		{
 			SubTopologies(occtCellsBuilder2.Shape(), clusterCandidates);
@@ -2174,14 +2176,31 @@ namespace TopologicCore
 			{
 				occtFinalBuilder.Add(occtFinalCompound, clusterCandidateIterator.Value());
 			}
-			return Topology::ByOcctShape(occtFinalCompound, "");
+
+			//return Topology::ByOcctShape(occtFinalCompound, "");
+			occtFinalResult = occtFinalCompound;
+		}
+		else
+		{
+			TopoDS_Shape occtCurrentShape = occtCellsBuilder2.Shape();
+			TopoDS_Shape occtPostprocessedShape = occtCurrentShape.IsNull() ? occtCurrentShape : PostprocessBooleanResult(occtCurrentShape);
+			occtFinalResult = occtPostprocessedShape;
 		}
 
-		TopoDS_Shape occtCurrentShape = occtCellsBuilder2.Shape();
-		TopoDS_Shape occtPostprocessedShape = occtCurrentShape.IsNull() ? occtCurrentShape : PostprocessBooleanResult(occtCurrentShape);
+		// Shape fix
+		ShapeFix_Shape occtShapeFix(occtFinalResult);
+		occtShapeFix.Perform();
+		TopoDS_Shape fixedFinalShape = occtShapeFix.Shape();
 
-		// Otherwise, return the result final merge result
-		return Topology::ByOcctShape(occtPostprocessedShape, "")->DeepCopy();
+		Topology::Ptr finalTopology = Topology::ByOcctShape(fixedFinalShape, "")->DeepCopy();
+
+		// Copy dictionaries
+		AttributeManager::GetInstance().CopyAttributes(GetOcctShape(), finalTopology->GetOcctShape());
+
+		// Copy contents
+		TransferContents(GetOcctShape(), finalTopology);
+
+		return finalTopology;
 	}
 
 	Topology::Ptr Topology::Slice(const Topology::Ptr & kpOtherTopology)

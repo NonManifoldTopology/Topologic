@@ -248,6 +248,13 @@ namespace TopologicUtilities
 			kpEdge2->EndVertex()->Point()->Pnt()
 		);
 
-		return edgeVector1.Angle(edgeVector2);
+		double radAngle = edgeVector1.Angle(edgeVector2);
+
+		if (radAngle > M_PI / 2)
+		{
+			radAngle -= M_PI;
+		}
+
+		return radAngle;
 	}
 }

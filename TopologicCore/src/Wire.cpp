@@ -6,6 +6,8 @@
 #include "GlobalCluster.h"
 #include "AttributeManager.h"
 
+#include <Utilities/VertexUtility.h>
+
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepCheck_Wire.hxx>
@@ -20,31 +22,102 @@
 #include <TopExp_Explorer.hxx>
 
 #include <assert.h>
+#include <algorithm>
 
 namespace TopologicCore
 {
 	void Wire::Edges(std::list<Edge::Ptr>& rEdges) const
 	{
-		BRepTools_WireExplorer occtWireExplorer(GetOcctWire());
-		const TopoDS_Vertex& rkOcctFirstVertex = occtWireExplorer.CurrentVertex();
-		Vertex::Ptr pFirstVertex = std::make_shared<Vertex>(rkOcctFirstVertex);
-		std::list<Edge::Ptr> adjacentEdgesToFirstVertex;
-		pFirstVertex->Edges(adjacentEdgesToFirstVertex);
-
-		int numOfBranches = NumberOfBranches();
-		if(numOfBranches > 0 
-		  ||
-		  (!IsClosed() && adjacentEdgesToFirstVertex.size() > 1)) // open and the first vertex is adjacent to > 1 edges
+		if (!IsManifold())
 		{
 			DownwardNavigation(rEdges);
-		}else
+		}
+		else
 		{
-			// This query uses a specialised class BRepTools_WireExplorer 
-			for (BRepTools_WireExplorer occtWireExplorer(GetOcctWire()); occtWireExplorer.More(); occtWireExplorer.Next())
+			std::list<Vertex::Ptr> vertices;
+			DownwardNavigation<Vertex>(vertices);
+			if (vertices.empty())
 			{
-				const TopoDS_Edge& rkOcctEdge = occtWireExplorer.Current();
-				rEdges.push_back(std::make_shared<Edge>(rkOcctEdge, EdgeGUID::Get()));
+				return;
 			}
+			bool isClosed = IsClosed();
+			Vertex::Ptr startingVertex = nullptr;
+			if (isClosed)
+			{
+				// any vertex
+				startingVertex = *vertices.begin();
+			}else
+			{
+				for (const Vertex::Ptr& kpVertex : vertices)
+				{
+					std::list<Edge::Ptr> adjacentEdges;
+					kpVertex->Edges(adjacentEdges);
+
+					if (adjacentEdges.size() == 1)
+					{
+						startingVertex = kpVertex;
+						break;
+					}
+				}
+
+				if (startingVertex == nullptr)
+				{
+					throw std::exception("This Wire is closed, but is identified as an open Wire.");
+				}
+			}
+
+			// Get an adjacent edge
+			Vertex::Ptr currentVertex = startingVertex;
+			Edge::Ptr previousEdge = nullptr;
+			do {
+				std::list<Edge::Ptr> adjacentEdges;
+				TopologicUtilities::VertexUtility::AdjacentEdges(currentVertex, this, adjacentEdges);
+
+				Edge::Ptr currentEdge = nullptr;
+				for (const Edge::Ptr& kpAdjacentEdge : adjacentEdges)
+				{
+					if (previousEdge == nullptr)
+					{
+						if (kpAdjacentEdge->StartVertex()->IsSame(currentVertex))
+						{
+							currentEdge = kpAdjacentEdge;
+						}
+					}else if(!previousEdge->IsSame(kpAdjacentEdge))
+					{
+						currentEdge = kpAdjacentEdge;
+					}
+				}
+
+				// Still null? break. This happens in the open wire when the last Vertex is visited.
+				if (currentEdge == nullptr)
+				{
+					break;
+				}
+				
+				rEdges.push_back(currentEdge);
+				previousEdge = currentEdge;
+
+				// Get the other vertex
+				std::list<Vertex::Ptr> vertices;
+				currentEdge->Vertices(vertices);
+
+				for (const Vertex::Ptr& kpVertex : vertices)
+				{
+					if (kpVertex->IsSame(currentVertex))
+					{
+						continue;
+					}
+
+					currentVertex = kpVertex;
+					break;
+				}
+				
+				// If the starting vertex is revisited, break. This happens in the open wire.
+				if (currentVertex->IsSame(startingVertex))
+				{
+					break;
+				}
+			} while (true);
 		}
 	}
 
@@ -63,35 +136,40 @@ namespace TopologicCore
 
 	void Wire::Vertices(std::list<Vertex::Ptr>& rVertices) const
 	{
-		std::list<Vertex::Ptr> vertices;
-		DownwardNavigation<Vertex>(vertices);
+		TopTools_MapOfShape occtVertices;
+		std::list<Edge::Ptr> edges;
+		Edges(edges);
 
-		if (vertices.size() < 3)
+		for (const Edge::Ptr kpEdge : edges)
 		{
-			rVertices = vertices;
-		}
+			std::list<Vertex::Ptr> vertices;
+			kpEdge->Vertices(vertices);
 
-		int numOfBranches = NumberOfBranches();
-		if (numOfBranches == 0)
-		{
-			TopoDS_Edge lastEdge;
-			for (BRepTools_WireExplorer occtWireExplorer(GetOcctWire()); occtWireExplorer.More(); occtWireExplorer.Next())
+			// Special case when handling the second edge
+			if (rVertices.size() == 2)
 			{
-				const TopoDS_Vertex& rkOcctVertex = occtWireExplorer.CurrentVertex();
-				lastEdge = occtWireExplorer.Current();
-				rVertices.push_back(std::make_shared<Vertex>(rkOcctVertex, VertexGUID::Get()));
+				auto firstVertexIterator = rVertices.begin();
+
+				for (const Vertex::Ptr kpVertex : vertices)
+				{
+					if (kpVertex->IsSame(*firstVertexIterator))
+					{
+						Vertex::Ptr firstVertex = *firstVertexIterator;
+						rVertices.erase(firstVertexIterator);
+						rVertices.push_back(firstVertex);
+						break;
+					}
+				}
 			}
 
-			// If the wire is open, add the last one. This is not needed for a closed wire.
-			if (!IsClosed() && !lastEdge.IsNull())
+			for (const Vertex::Ptr kpVertex : vertices)
 			{
-				TopoDS_Vertex occtLastVertex = TopExp::LastVertex(lastEdge);
-				rVertices.push_back(std::make_shared<Vertex>(occtLastVertex));
+				if (!occtVertices.Contains(kpVertex->GetOcctShape()))
+				{
+					occtVertices.Add(kpVertex->GetOcctShape());
+					rVertices.push_back(kpVertex);
+				}
 			}
-		}
-		else
-		{
-			rVertices = vertices;
 		}
 	}
 
@@ -140,6 +218,12 @@ namespace TopologicCore
 
 	bool Wire::IsManifold() const
 	{
+		int numberOfBranches = NumberOfBranches();
+		if (numberOfBranches == 0)
+		{
+			return true;
+		}
+
 		return false;
 	}
 

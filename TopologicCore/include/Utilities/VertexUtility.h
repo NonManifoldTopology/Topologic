@@ -18,6 +18,11 @@ namespace TopologicUtilities
 			const TopologicCore::Topology::Ptr & kpParentTopology,
 			std::list<TopologicCore::Edge::Ptr>& rCoreAdjacentEdges);
 
+		static TOPOLOGIC_API void AdjacentEdges(
+			const TopologicCore::Vertex::Ptr & kpVertex,
+			TopologicCore::Topology const * const kpkParentTopology,
+			std::list<TopologicCore::Edge::Ptr>& rCoreAdjacentEdges);
+
 		/// <summary>
 		/// 
 		/// </summary>
