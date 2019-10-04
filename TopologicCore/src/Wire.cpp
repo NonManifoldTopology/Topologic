@@ -55,8 +55,14 @@ namespace TopologicCore
 
 					if (adjacentEdges.size() == 1)
 					{
-						startingVertex = kpVertex;
-						break;
+						Vertex::Ptr edgeStartVertex = (*adjacentEdges.begin())->StartVertex();
+
+						if (edgeStartVertex->IsSame(kpVertex))
+						{
+							// This vertex needs to be the start vertex of this edge
+							startingVertex = kpVertex;
+							break;
+						}
 					}
 				}
 
