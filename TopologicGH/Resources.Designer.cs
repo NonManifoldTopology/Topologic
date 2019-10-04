@@ -63,6 +63,16 @@ namespace TopologicGH {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Cell {
+            get {
+                object obj = ResourceManager.GetObject("Cell", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap CreateCell {
             get {
                 object obj = ResourceManager.GetObject("CreateCell", resourceCulture);

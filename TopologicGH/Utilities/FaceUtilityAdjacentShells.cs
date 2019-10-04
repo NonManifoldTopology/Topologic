@@ -81,7 +81,7 @@ namespace TopologicGH.Utilities
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("69dd85c5-8300-49c2-937a-965f123fc8da"); }
+            get { return new Guid("09263921-b778-4271-b0e1-db14326886ad"); }
         }
     }
 }

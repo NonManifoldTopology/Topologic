@@ -434,6 +434,10 @@ namespace TopologicCore
 
 	void Face::AddInternalBoundaries(const std::list<std::shared_ptr<Wire>>& rkWires)
 	{
+		if (rkWires.empty())
+		{
+			return;
+		}
 		BRepBuilderAPI_MakeFace occtMakeFace(GetOcctFace());
 
 		for (const Wire::Ptr& kpWire : rkWires)

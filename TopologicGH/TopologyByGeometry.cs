@@ -159,20 +159,21 @@ namespace TopologicGH
         private Face ByBrepFace(BrepFace ghBrepFace)
         {
             Surface ghSurface = ghBrepFace.UnderlyingSurface();
+            
             Face untrimmedFace = BySurface(ghSurface);
 
             BrepLoop ghOuterLoop = ghBrepFace.OuterLoop;
             Wire outerWire = null;
             BrepLoopList ghLoops = ghBrepFace.Loops;
             List<Wire> innerWires = new List<Wire>();
-            foreach(BrepLoop ghLoop in ghLoops)
+            foreach (BrepLoop ghLoop in ghLoops)
             {
                 BrepTrimList ghTrims = ghLoop.Trims;
                 List<Edge> trimmingEdges = new List<Edge>();
                 foreach (BrepTrim ghTrim in ghTrims)
                 {
                     BrepEdge ghEdge = ghTrim.Edge;
-                    if(ghEdge == null)
+                    if (ghEdge == null)
                     {
                         continue;
                         //throw new Exception("An invalid Rhino edge is encountered.");
@@ -182,19 +183,20 @@ namespace TopologicGH
 
                     // Edge or Wire?
                     Edge trimmingEdge = topology as Edge;
-                    if(trimmingEdge != null)
+                    if (trimmingEdge != null)
                     {
                         trimmingEdges.Add(trimmingEdge);
                     }
 
                     Wire partialTrimmingWire = topology as Wire;
-                    if(partialTrimmingWire != null)
+                    if (partialTrimmingWire != null)
                     {
                         List<Edge> partialTrimmingEdges = partialTrimmingWire.Edges;
                         trimmingEdges.AddRange(partialTrimmingEdges);
                     }
                 }
                 Wire trimmingWire = Wire.ByEdges(trimmingEdges);
+                List<Vertex> trimmingVertices = trimmingWire.Vertices;
 
                 if (ghLoop == ghOuterLoop)
                 {
@@ -206,7 +208,7 @@ namespace TopologicGH
                 }
             }
 
-            Face outerTrimmedFace = Topologic.Utilities.FaceUtility.TrimByWire(untrimmedFace, outerWire);
+            Face outerTrimmedFace = Topologic.Utilities.FaceUtility.TrimByWire(untrimmedFace, outerWire, true);
             Face finalFace = outerTrimmedFace.AddInternalBoundaries(innerWires);
 
             return finalFace;

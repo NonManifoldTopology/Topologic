@@ -31,7 +31,7 @@ namespace TopologicGH
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Geometry", "Geometry", "Geometry", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Geometry", "Geometry", "Geometry", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -51,31 +51,9 @@ namespace TopologicGH
             // We're also going to abort on a zero-length String.
             if (topology == null) { return; }
 
-            //Object geometry = ToGeometry(topology);
-
-            //List<Object> output = new List<Object>();
-            Grasshopper.DataTree<Object> output = new Grasshopper.DataTree<Object>();
-            List<int> path = new List<int>();
-            path.Add(0);
-            RecursiveGeometry(topology, path, ref output);
-
-            //Grasshopper.DataTree<Object> tree = new Grasshopper.DataTree<Object>();
-            //int i = 0;
-            //foreach (Object o in output)
-            //{
-            //    // a list
-            //    ICollection<Object> innerList = o as ICollection<Object>;
-            //    if (innerList != null)
-            //    {
-            //        tree.AddRange(innerList, new GH_Path(new int[] { 0, i }));
-            //    }else
-            //    {
-            //        tree.Add(o, new GH_Path(i));
-            //    }
-            //    i++;
-            //}
+            Object geometry = ToGeometry(topology);
             
-            DA.SetDataTree(0, output);
+            DA.SetData(0, geometry);
         }
 
         GH_Path ListToTreePath(List<int> path)
@@ -112,23 +90,6 @@ namespace TopologicGH
             else
             {
                 output.Add(o, ListToTreePath(path));
-            }
-        }
-
-        void RecursiveGeometry(Topology topology, List<int> path, ref Grasshopper.DataTree<Object> output)
-        {
-            Object geometry = ToGeometry(topology);
-            AddObjectToTree(geometry, path, ref output);
-
-            List<Topology> subContents = topology.SubContents;
-            int i = 0;
-            foreach(Topology subContent in subContents)
-            {
-                List<int> newPath = new List<int>(path);
-                newPath.Add(1);
-                newPath.Add(i);
-                RecursiveGeometry(subContent, newPath, ref output);
-                ++i;
             }
         }
 
@@ -347,7 +308,7 @@ namespace TopologicGH
                 for (int v = 0; v < vCount; ++v)
                 {
                     Topologic.Vertex controlVertex = nurbsSurface.ControlVertex(u, v);
-                    ghNurbsSurface.Points.SetControlPoint(u, v, ToPoint(controlVertex));
+                    ghNurbsSurface.Points.SetPoint(u, v, ToPoint(controlVertex));
                     ++i;
                 }
             }
@@ -398,6 +359,10 @@ namespace TopologicGH
             {
                 Curve ghCurve3D = ToCurve(edge);
                 Curve ghCurve2D = ghNurbsSurface.Pullback(ghCurve3D, 0.0001);
+
+                // 2D curves --> need to check if the endpoints are near to previously generated points
+                // if yes, change the value
+                
                 int curve3DID = ghBrep.Curves3D.Add(ghCurve3D);
                 int curve2DID = ghBrep.Curves2D.Add(ghCurve2D);
 
