@@ -28,6 +28,8 @@ namespace TopologicGH
             pManager.AddBooleanParameter("Via Shared Apertures", "Via Shared Apertures", "Via Shared Apertures", GH_ParamAccess.item, false);
             pManager.AddBooleanParameter("To Exterior Topologies", "To Exterior Topologies", "To Exterior Topologies", GH_ParamAccess.item, false);
             pManager.AddBooleanParameter("To Exterior Apertures", "To Exterior Apertures", "To Exterior Apertures", GH_ParamAccess.item, false);
+            pManager.AddBooleanParameter("Use Face Internal Vertex", "Use Face Internal Vertex", "Use Face Internal Vertex", GH_ParamAccess.item, false);
+            pManager.AddNumberParameter("Tolerance", "Tolerance", "Tolerance", GH_ParamAccess.item, 0.0001);
         }
 
         /// <summary>
@@ -51,6 +53,8 @@ namespace TopologicGH
             bool viaSharedApertures = false;
             bool toExteriorTopologies = false;
             bool toExteriorApertures = false;
+            bool useFaceInternalVertex = false;
+            double tolerance = 0.0001;
 
             // Use the DA object to retrieve the data inside the first input parameter.
             // If the retieval fails (for example if there is no data) we need to abort.
@@ -60,6 +64,8 @@ namespace TopologicGH
             if (!DA.GetData(3, ref viaSharedApertures)) { return; }
             if (!DA.GetData(4, ref toExteriorTopologies)) { return; }
             if (!DA.GetData(5, ref toExteriorApertures)) { return; }
+            if (!DA.GetData(6, ref useFaceInternalVertex)) { return; }
+            if (!DA.GetData(7, ref tolerance)) { return; }
 
             // If the retrieved data is Nothing, we need to abort.
             // We're also going to abort on a zero-length String.
@@ -70,7 +76,7 @@ namespace TopologicGH
             //char[] chars = data.ToCharArray();
 
             
-            Topologic.Graph graph = Topologic.Graph.ByTopology(topology, direct, viaSharedTopologies, viaSharedApertures, toExteriorTopologies, toExteriorApertures);
+            Topologic.Graph graph = Topologic.Graph.ByTopology(topology, direct, viaSharedTopologies, viaSharedApertures, toExteriorTopologies, toExteriorApertures, useFaceInternalVertex, tolerance);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetData(0, graph);

@@ -42,7 +42,7 @@ namespace Topologic {
 			[DefaultArgument("false")] bool toExteriorTopologies,
 			[DefaultArgument("false")] bool toExteriorApertures,
 			[DefaultArgument("false")] bool useFaceInternalVertex,
-			[DefaultArgument("0.0001")] bool tolerance);
+			[DefaultArgument("0.0001")] double tolerance);
 #else
 		static Graph^ ByTopology(
 			Topology^ topology,
@@ -52,7 +52,7 @@ namespace Topologic {
 			bool toExteriorTopologies,
 			bool toExteriorApertures,
 			bool useFaceInternalVertex,
-			bool tolerance);
+			double tolerance);
 #endif
 
 		/// <summary>

@@ -21,7 +21,7 @@ namespace Topologic
 		bool toExteriorTopologies,
 		bool toExteriorApertures,
 		bool useFaceInternalVertex,
-		bool tolerance)
+		double tolerance)
 	{
 		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 		try {

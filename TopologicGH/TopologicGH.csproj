@@ -221,7 +221,7 @@
     <Compile Include="TopologyCenterOfMass.cs" />
     <Compile Include="Utilities\TopologySharedTopologies.cs" />
     <Compile Include="Utilities\TopologyUtilityAdjacentTopologies.cs" />
-    <Compile Include="Utilities\TopologyUtilityDistance.cs" />
+    <Compile Include="Utilities\VertexUtilityDistance.cs" />
     <Compile Include="Utilities\TopologyUtilityRotate.cs" />
     <Compile Include="Utilities\TopologyUtilityScale.cs" />
     <Compile Include="Utilities\TopologyUtilityTranslate.cs" />

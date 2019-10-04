@@ -9,11 +9,11 @@ using Rhino.Geometry;
 
 namespace TopologicGH
 {
-    public class TopologyUtilityDistance : GH_Component
+    public class VertexUtilityDistance : GH_Component
     {
 
-        public TopologyUtilityDistance()
-          : base("TopologyUtility.Distance", "TopologyUtility.Distance", "Returns the distance between two Topologies.", "TopologicUtilities", "TopologyUtility")
+        public VertexUtilityDistance()
+          : base("VertexUtility.Distance", "VertexUtility.Distance", "Returns the distance between two Topologies.", "TopologicUtilities", "VertexUtility")
         {
         }
 
@@ -22,7 +22,7 @@ namespace TopologicGH
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Topology", "Topology", "Topology", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Vertex", "Vertex", "Vertex", GH_ParamAccess.item);
             pManager.AddGenericParameter("Topology", "Topology", "Topology", GH_ParamAccess.item);
         }
 
@@ -41,17 +41,17 @@ namespace TopologicGH
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             // Declare a variable for the input String
-            Topologic.Topology topology = null;
+            Topologic.Vertex vertex = null;
             Topologic.Topology otherTopology = null;
 
             // Use the DA object to retrieve the data inside the first input parameter.
             // If the retieval fails (for example if there is no data) we need to abort.
-            if (!DA.GetData(0, ref topology)) { return; }
+            if (!DA.GetData(0, ref vertex)) { return; }
             if (!DA.GetData(1, ref otherTopology)) { return; }
 
             // If the retrieved data is Nothing, we need to abort.
             // We're also going to abort on a zero-length String.
-            if (topology == null) { return; }
+            if (vertex == null) { return; }
             if (otherTopology == null) { return; }
             //if (endVertex == null) { return; }
             //if (data.Length == 0) { return; }
@@ -60,7 +60,7 @@ namespace TopologicGH
             //char[] chars = data.ToCharArray();
 
             
-            double distance = Topologic.Utilities.TopologyUtility.Distance(topology, otherTopology);
+            double distance = Topologic.Utilities.VertexUtility.Distance(vertex, otherTopology);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetData(0, distance);
