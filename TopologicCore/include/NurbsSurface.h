@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Utilities.h"
-#include "Geometry.h"
+#include "Surface.h"
 
 #include <Geom_BSplineSurface.hxx>
 
@@ -13,7 +13,7 @@ namespace TopologicCore
 	class Vertex;
 	class Face;
 
-	class NurbsSurface : Geometry
+	class NurbsSurface : Surface
 	{
 	public:
 		typedef std::shared_ptr<NurbsSurface> Ptr;

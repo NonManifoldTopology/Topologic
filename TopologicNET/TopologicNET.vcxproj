@@ -172,10 +172,12 @@
     <ClInclude Include="include\Line.h" />
     <ClInclude Include="include\NurbsCurve.h" />
     <ClInclude Include="include\NurbsSurface.h" />
+    <ClInclude Include="include\PlanarSurface.h" />
     <ClInclude Include="include\Shell.h" />
     <ClInclude Include="include\ShellFactory.h" />
     <ClInclude Include="include\ShellUtility.h" />
     <ClInclude Include="include\StringAttributeFactory.h" />
+    <ClInclude Include="include\Surface.h" />
     <ClInclude Include="include\TopologicalQuery.h" />
     <ClInclude Include="include\Topology.h" />
     <ClInclude Include="include\TopologyFactory.h" />
@@ -217,10 +219,12 @@
     <ClCompile Include="src\Line.cpp" />
     <ClCompile Include="src\NurbsCurve.cpp" />
     <ClCompile Include="src\NurbsSurface.cpp" />
+    <ClCompile Include="src\PlanarSurface.cpp" />
     <ClCompile Include="src\Shell.cpp" />
     <ClCompile Include="src\ShellFactory.cpp" />
     <ClCompile Include="src\ShellUtility.cpp" />
     <ClCompile Include="src\StringAttributeFactory.cpp" />
+    <ClCompile Include="src\Surface.cpp" />
     <ClCompile Include="src\Topology.cpp" />
     <ClCompile Include="src\TopologyFactoryManager.cpp" />
     <ClCompile Include="src\TopologyUtility.cpp" />

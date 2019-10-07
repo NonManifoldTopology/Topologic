@@ -70,7 +70,7 @@ namespace Topologic
 		/// <summary>
 		/// Returns the coordinates of the Vertex.
 		/// </summary>
-		/// <returns name="Geometry">The coordinates of the Vertex</returns>
+		/// <returns name="double[]">The coordinates of the Vertex</returns>
 		property List<double>^ Coordinates
 		{
 			virtual List<double>^ get();

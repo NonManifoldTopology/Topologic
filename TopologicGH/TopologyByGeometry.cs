@@ -158,7 +158,7 @@ namespace TopologicGH
 
         private Face ByBrepFace(BrepFace ghBrepFace)
         {
-            Surface ghSurface = ghBrepFace.UnderlyingSurface();
+            Rhino.Geometry.Surface ghSurface = ghBrepFace.UnderlyingSurface();
             
             Face untrimmedFace = BySurface(ghSurface);
 
@@ -414,7 +414,7 @@ namespace TopologicGH
             }
         }
 
-        private Topologic.Face BySurface(Surface ghSurface)
+        private Topologic.Face BySurface(Rhino.Geometry.Surface ghSurface)
         {
             SumSurface ghSumSurface = ghSurface as SumSurface;
             if (ghSumSurface != null)

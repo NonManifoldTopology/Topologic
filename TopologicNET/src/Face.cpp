@@ -10,6 +10,7 @@
 
 #ifndef TOPOLOGIC_DYNAMO
 #include "NurbsSurface.h"
+#include "PlanarSurface.h"
 #endif
 
 #include <BRepBuilderAPI_MakeFace.hxx>
@@ -1141,28 +1142,101 @@ namespace Topologic
 		return gcnew NurbsSurface(pCoreNurbsSurface);
 	}
 
+	PlanarSurface^ Face::Surface(Handle(Geom_Plane) pOcctPlane)
+	{
+		TopologicCore::PlanarSurface::Ptr pCorePlanarSurface = 
+			std::make_shared<TopologicCore::PlanarSurface>(pOcctPlane, (*m_pCoreFace)->GetOcctFace());
+		return gcnew PlanarSurface(pCorePlanarSurface);
+	}
+
 	Object^ Face::Surface()
 	{
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
 		Handle(Geom_Surface) pOcctSurface = pCoreFace->Surface();
 
-		Handle(Geom_BSplineSurface) pOcctBSplineSurface = Handle_Geom_BSplineSurface::DownCast(pOcctSurface);
+		Handle(Geom_BezierSurface) pOcctBezierSurface = Handle_Geom_BezierSurface::DownCast(pOcctSurface);
+		if (!pOcctBezierSurface.IsNull())
+		{
+			throw gcnew NotImplementedException("Feature not yet implemented");
+		}
 
-		// If not BSpline Surface, create one.
+		Handle(Geom_BSplineSurface) pOcctBSplineSurface = Handle_Geom_BSplineSurface::DownCast(pOcctSurface);
 		if (!pOcctBSplineSurface.IsNull())
 		{
 			return Surface(pOcctBSplineSurface);
 		}
 
-		try {
-			pOcctBSplineSurface = GeomConvert::SurfaceToBSplineSurface(pOcctSurface);
-			return Surface(pOcctBSplineSurface);
-		}
-		catch (Standard_DomainError)
+		Handle(Geom_RectangularTrimmedSurface) pOcctRectangularTrimmedSurface = Handle_Geom_RectangularTrimmedSurface::DownCast(pOcctSurface);
+		if (!pOcctRectangularTrimmedSurface.IsNull())
 		{
-			// https://www.opencascade.com/doc/occt-7.2.0/refman/html/class_geom_convert.html#aec7d0c9e937cc0bcbe97fba8b3c360bf
-			throw gcnew Exception("This surface is not previously defined.");
+			Handle(Geom_Surface) pOcctBasisSurface = pOcctRectangularTrimmedSurface->BasisSurface();
+			throw gcnew NotImplementedException("Feature not yet implemented");
 		}
+
+		Handle(Geom_ConicalSurface) pOcctConicalSurface = Handle_Geom_ConicalSurface::DownCast(pOcctSurface);
+		if (!pOcctConicalSurface.IsNull())
+		{
+			throw gcnew NotImplementedException("Feature not yet implemented");
+		}
+
+		Handle(Geom_CylindricalSurface) pOcctCylindricalSurface = Handle_Geom_CylindricalSurface::DownCast(pOcctSurface);
+		if (!pOcctCylindricalSurface.IsNull())
+		{
+			throw gcnew NotImplementedException("Feature not yet implemented");
+		}
+
+		Handle(Geom_Plane) pOcctPlane = Handle_Geom_Plane::DownCast(pOcctSurface);
+		if (!pOcctPlane.IsNull())
+		{
+			return Surface(pOcctPlane);
+		}
+		
+		Handle(Geom_SphericalSurface) pOcctSphericalSurface = Handle_Geom_SphericalSurface::DownCast(pOcctSurface);
+		if (!pOcctSphericalSurface.IsNull())
+		{
+			throw gcnew NotImplementedException("Feature not yet implemented");
+		}
+
+		Handle(Geom_ToroidalSurface) pOcctToroidalSurface = Handle_Geom_ToroidalSurface::DownCast(pOcctSurface);
+		if (!pOcctToroidalSurface.IsNull())
+		{
+			throw gcnew NotImplementedException("Feature not yet implemented");
+		}
+
+		Handle(Geom_OffsetSurface) pOcctOffsetSurface = Handle_Geom_OffsetSurface::DownCast(pOcctSurface);
+		if (!pOcctOffsetSurface.IsNull())
+		{
+			throw gcnew NotImplementedException("Feature not yet implemented");
+		}
+
+		Handle(Geom_SurfaceOfLinearExtrusion) pOcctSurfaceOfLinearExtrusion = Handle_Geom_SurfaceOfLinearExtrusion::DownCast(pOcctSurface);
+		if (!pOcctSurfaceOfLinearExtrusion.IsNull())
+		{
+			throw gcnew NotImplementedException("Feature not yet implemented");
+		}
+
+		Handle(Geom_SurfaceOfRevolution) pOcctSurfaceOfRevolution = Handle_Geom_SurfaceOfRevolution::DownCast(pOcctSurface);
+		if (!pOcctSurfaceOfRevolution.IsNull())
+		{
+			throw gcnew NotImplementedException("Feature not yet implemented");
+		}
+
+		Handle(GeomPlate_Surface) pOcctPlateSurface = Handle_GeomPlate_Surface::DownCast(pOcctSurface);
+		if (!pOcctPlateSurface.IsNull())
+		{
+			throw gcnew NotImplementedException("Feature not yet implemented");
+		}
+
+		throw gcnew NotImplementedException("The input Face creates an unrecognised Surface type.");
+		//try {
+		//	pOcctBSplineSurface = GeomConvert::SurfaceToBSplineSurface(pOcctSurface);
+		//	return Surface(pOcctBSplineSurface);
+		//}
+		//catch (Standard_DomainError)
+		//{
+		//	// https://www.opencascade.com/doc/occt-7.2.0/refman/html/class_geom_convert.html#aec7d0c9e937cc0bcbe97fba8b3c360bf
+		//	throw gcnew Exception("An infinite surface was created.");
+		//}
 	}
 #endif
 

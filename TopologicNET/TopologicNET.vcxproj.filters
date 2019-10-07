@@ -104,6 +104,12 @@
     <ClInclude Include="include\WireUtility.h">
       <Filter>Utilities</Filter>
     </ClInclude>
+    <ClInclude Include="include\PlanarSurface.h">
+      <Filter>Geometries</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Surface.h">
+      <Filter>Geometries</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\About.cpp" />
@@ -200,6 +206,12 @@
     </ClCompile>
     <ClCompile Include="src\WireUtility.cpp">
       <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PlanarSurface.cpp">
+      <Filter>Geometries</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Surface.cpp">
+      <Filter>Geometries</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

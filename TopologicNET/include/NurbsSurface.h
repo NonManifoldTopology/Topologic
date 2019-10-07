@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Geometry.h"
+#include "Surface.h"
 
 #include <TopologicCore/include/NurbsSurface.h>
 
@@ -14,7 +14,7 @@ namespace Topologic {
 
 	/// <summary>
 	/// </summary>
-	public ref class NurbsSurface : Geometry
+	public ref class NurbsSurface : Surface
 	{
 	public:
 

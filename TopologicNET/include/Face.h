@@ -6,6 +6,7 @@
 
 #ifndef TOPOLOGIC_DYNAMO
 #include <Geom_BSplineSurface.hxx>
+#include <Geom_Plane.hxx>
 #endif
 
 namespace Topologic {
@@ -17,6 +18,7 @@ namespace Topologic {
 
 #ifndef TOPOLOGIC_DYNAMO
 	ref class NurbsSurface;
+	ref class PlanarSurface;
 #endif
 
 	/// <summary>
@@ -224,6 +226,13 @@ namespace Topologic {
 		/// </summary>
 		/// <returns></returns>
 		NurbsSurface^ Surface(Handle(Geom_BSplineSurface) pOcctBSplineSurface);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="pOcctPlane"></param>
+		/// <returns></returns>
+		PlanarSurface^ Surface(Handle(Geom_Plane) pOcctPlane);
 #endif
 
 	protected:

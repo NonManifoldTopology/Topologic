@@ -195,6 +195,7 @@ copy "$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\bind\*.pdb
     <ClInclude Include="include\Shell.h" />
     <ClInclude Include="include\ShellFactory.h" />
     <ClInclude Include="include\StringAttribute.h" />
+    <ClInclude Include="include\Surface.h" />
     <ClInclude Include="include\TopologicalQuery.h" />
     <ClInclude Include="include\Topology.h" />
     <ClInclude Include="include\TopologyFactory.h" />
@@ -248,6 +249,7 @@ copy "$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\bind\*.pdb
     <ClCompile Include="src\Shell.cpp" />
     <ClCompile Include="src\ShellFactory.cpp" />
     <ClCompile Include="src\StringAttribute.cpp" />
+    <ClCompile Include="src\Surface.cpp" />
     <ClCompile Include="src\Topology.cpp" />
     <ClCompile Include="src\TopologyFactoryManager.cpp" />
     <ClCompile Include="src\Utilities.cpp" />

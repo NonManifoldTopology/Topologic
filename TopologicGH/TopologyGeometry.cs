@@ -197,7 +197,7 @@ namespace TopologicGH
         }
 
         private void ProcessFace(
-            Wire wire, ref Brep ghBrep, BrepFace ghBrepFace, BrepLoopType ghBrepLoopType, Rhino.Geometry.NurbsSurface ghNurbsSurface, 
+            Wire wire, ref Brep ghBrep, BrepFace ghBrepFace, BrepLoopType ghBrepLoopType, Rhino.Geometry.Surface ghSurface, 
             Dictionary<Edge, Tuple<int, int>> edge2DIndices, Dictionary<Edge, BrepEdge> edgeIndices)
         {
             List<Edge> edges = wire.Edges;
@@ -259,7 +259,7 @@ namespace TopologicGH
                     ghBrepLoop,                    // 2D loop
                     isTrimReversed ? gh2DCurves[currentEntryID].Item4 : gh2DCurves[currentEntryID].Item2);  // 2D curve index, use the reversed one if reversed
 
-                ghBrepTrim.IsoStatus = ghNurbsSurface.IsIsoparametric(gh2DCurves[currentEntryID].Item1);
+                ghBrepTrim.IsoStatus = ghSurface.IsIsoparametric(gh2DCurves[currentEntryID].Item1);
                 ghBrepTrim.TrimType = BrepTrimType.Boundary;
                 ghBrepTrim.SetTolerances(0.0, 0.0);
 
@@ -277,16 +277,8 @@ namespace TopologicGH
             }
         }
 
-        private Brep ToSurface(Face face)
+        private Rhino.Geometry.NurbsSurface ToRhinoNurbsSurface(Topologic.NurbsSurface nurbsSurface)
         {
-            // 1. Compute the base NURBS surface
-            // Based on https://developer.rhino3d.com/api/RhinoCommon/html/M_Rhino_Geometry_NurbsSurface_Create.htm
-            Topologic.NurbsSurface nurbsSurface = face.BasicGeometry as Topologic.NurbsSurface;
-            if(nurbsSurface == null)
-            {
-                throw new Exception("An invalid surface is created.");
-            }
-
             int uDegree = nurbsSurface.UDegree;
             int vDegree = nurbsSurface.VDegree;
             bool isRational = nurbsSurface.IsURational && nurbsSurface.IsVRational;
@@ -294,7 +286,7 @@ namespace TopologicGH
             int vCount = nurbsSurface.NumOfVControlVertices;
 
             Rhino.Geometry.NurbsSurface ghNurbsSurface = Rhino.Geometry.NurbsSurface.Create(
-                3, 
+                3,
                 isRational,
                 uDegree + 1,
                 vDegree + 1,
@@ -332,6 +324,59 @@ namespace TopologicGH
                 throw new Exception("A valid surface cannot be created from this Face.");
             }
 
+            return ghNurbsSurface;
+        }
+
+        private Rhino.Geometry.PlaneSurface ToRhinoPlaneSurface(PlanarSurface planarSurface)
+        {
+            List<double> coefficients = planarSurface.Coefficients;
+            double a = coefficients[0];
+            double b = coefficients[1];
+            double c = coefficients[2];
+            double d = coefficients[3];
+
+            Rhino.Geometry.Plane ghPlane = new Rhino.Geometry.Plane(a, b, c, d);
+            Interval xExtents = new Interval(
+                planarSurface.XMin,
+                planarSurface.XMax);
+            Interval yExtents = new Interval(
+                planarSurface.YMin,
+                planarSurface.YMax);
+
+            PlaneSurface ghPlaneSurface = new PlaneSurface(ghPlane, xExtents, yExtents);
+            if (!ghPlaneSurface.IsValid)
+            {
+                throw new Exception("A valid surface cannot be created from this Face.");
+            }
+
+            return ghPlaneSurface;
+        }
+
+        private Rhino.Geometry.Surface ToRhinoSurface(Face face)
+        {
+            Object faceGeometry = face.BasicGeometry;
+
+            // 1. Compute the base surface
+            // Based on https://developer.rhino3d.com/api/RhinoCommon/html/M_Rhino_Geometry_NurbsSurface_Create.htm
+            Topologic.NurbsSurface nurbsSurface = faceGeometry as Topologic.NurbsSurface;
+            if (nurbsSurface != null)
+            {
+                return ToRhinoNurbsSurface(nurbsSurface);
+            }
+
+            Topologic.PlanarSurface planarSurface = faceGeometry as Topologic.PlanarSurface;
+            if (planarSurface != null)
+            {
+                return ToRhinoPlaneSurface(planarSurface);
+            }
+
+            throw new Exception("An invalid surface is created.");
+        }
+
+        private Brep ToSurface(Face face)
+        {
+            Rhino.Geometry.Surface ghSurface = ToRhinoSurface(face);
+
             // 2. Create the Brep
             //Brep ghBrep = ghNurbsSurface.ToBrep();
             Brep ghBrep = new Brep();
@@ -358,7 +403,7 @@ namespace TopologicGH
             foreach (Edge edge in edges)
             {
                 Curve ghCurve3D = ToCurve(edge);
-                Curve ghCurve2D = ghNurbsSurface.Pullback(ghCurve3D, 0.0001);
+                Curve ghCurve2D = ghSurface.Pullback(ghCurve3D, 0.0001);
 
                 // 2D curves --> need to check if the endpoints are near to previously generated points
                 // if yes, change the value
@@ -404,20 +449,20 @@ namespace TopologicGH
             }
 
             // 2c. Add surface
-            int ghSurfaceIndex = ghBrep.AddSurface(ghNurbsSurface);
+            int ghSurfaceIndex = ghBrep.AddSurface(ghSurface);
 
             // 2d. Add face
             BrepFace ghBrepFace = ghBrep.Faces.Add(ghSurfaceIndex);
 
             // 2e.Create outer loop
             Wire outerWire = face.ExternalBoundary;
-            ProcessFace(outerWire, ref ghBrep, ghBrepFace, BrepLoopType.Outer, ghNurbsSurface, edge2DIndices, edgeIndices);
+            ProcessFace(outerWire, ref ghBrep, ghBrepFace, BrepLoopType.Outer, ghSurface, edge2DIndices, edgeIndices);
 
             // 2g. Create inner loops
             List<Wire> innerWires = face.InternalBoundaries;
             foreach (Wire innerWire in innerWires)
             {
-                ProcessFace(innerWire, ref ghBrep, ghBrepFace, BrepLoopType.Inner, ghNurbsSurface, edge2DIndices, edgeIndices);
+                ProcessFace(innerWire, ref ghBrep, ghBrepFace, BrepLoopType.Inner, ghSurface, edge2DIndices, edgeIndices);
             }
 
             String brepFaceLog = "";

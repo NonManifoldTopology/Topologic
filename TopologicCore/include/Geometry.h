@@ -2,8 +2,6 @@
 
 #include "Utilities.h"
 
-#include <Geom_BSplineCurve.hxx>
-
 namespace TopologicCore
 {
 	class Geometry

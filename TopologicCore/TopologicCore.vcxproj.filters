@@ -119,6 +119,9 @@
     <ClInclude Include="include\Utilities\WireUtility.h">
       <Filter>Utilities</Filter>
     </ClInclude>
+    <ClInclude Include="include\Surface.h">
+      <Filter>Geometries</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
@@ -231,6 +234,9 @@
     </ClCompile>
     <ClCompile Include="src\Utilities\WireUtility.cpp">
       <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Surface.cpp">
+      <Filter>Geometries</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
