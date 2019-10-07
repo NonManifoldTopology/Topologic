@@ -12,7 +12,7 @@ namespace TopologicGH
     public class BitwiseAnd : GH_Component
     {
         public BitwiseAnd()
-          : base("Bitwise.And", "Bitwise.And", "Performs a bitwise And operation between the arguments (in their binary form).", "TopologicUtilities", "Bitwise")
+          : base("Bitwise.AND", "Bitwise.AND", "Performs a bitwise AND operation between the arguments (in their binary form).", "TopologicUtilities", "Bitwise")
         {
         }
 
@@ -54,7 +54,7 @@ namespace TopologicGH
             //char[] chars = data.ToCharArray();
 
             
-            int result = Topologic.Utilities.Bitwise.And(arguments);
+            int result = Topologic.Utilities.Bitwise.AND(arguments);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetData(0, result);

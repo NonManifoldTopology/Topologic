@@ -13,7 +13,7 @@ namespace TopologicGH
     {
 
         public BitwiseXor()
-          : base("Bitwise.Xor", "Bitwise.Xor", "Performs a bitwise Xor operation between the arguments (in their binary form).", "TopologicUtilities", "Bitwise")
+          : base("Bitwise.XOR", "Bitwise.XOR", "Performs a bitwise XOR operation between the arguments (in their binary form).", "TopologicUtilities", "Bitwise")
         {
         }
 
@@ -55,7 +55,7 @@ namespace TopologicGH
             //char[] chars = data.ToCharArray();
 
             
-            int result = Topologic.Utilities.Bitwise.Xor(arguments);
+            int result = Topologic.Utilities.Bitwise.XOR(arguments);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetData(0, result);

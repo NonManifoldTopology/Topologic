@@ -18,32 +18,32 @@ namespace Topologic {
 		{
 		public:
 			/// <summary>
-			/// Performs a bitwise And operation between the arguments (in their binary form).
+			/// Performs a bitwise AND operation between the arguments (in their binary form).
 			/// </summary>
 			/// <param name="arguments">A list of arguments</param>
 			/// <returns>The bitwise result</returns>
-			static int And(List<int>^ arguments);
+			static int AND(List<int>^ arguments);
 
 			/// <summary>
-			/// Performs a bitwise Or operation between the arguments (in their binary form).
+			/// Performs a bitwise OR operation between the arguments (in their binary form).
 			/// </summary>
 			/// <param name="arguments">A list of arguments</param>
 			/// <returns>The bitwise result</returns>
-			static int Or(List<int>^ arguments);
+			static int OR(List<int>^ arguments);
 
 			/// <summary>
-			/// Performs a bitwise Xor operation between the arguments (in their binary form).
+			/// Performs a bitwise XOR operation between the arguments (in their binary form).
 			/// </summary>
 			/// <param name="arguments">A list of arguments</param>
 			/// <returns>The bitwise result</returns>
-			static int Xor(List<int>^ arguments);
+			static int XOR(List<int>^ arguments);
 
 			/// <summary>
-			/// Performs a bitwise Not operation between the arguments (in their binary form).
+			/// Performs a bitwise NOT operation between the arguments (in their binary form).
 			/// </summary>
 			/// <param name="arguments">A list of arguments</param>
 			/// <returns>The bitwise result</returns>
-			static int Not(int argument);
+			static int NOT(int argument);
 
 		protected:
 			Bitwise() {} 

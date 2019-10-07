@@ -13,7 +13,7 @@ namespace TopologicGH
     {
 
         public BitwiseOr()
-          : base("Bitwise.Or", "Bitwise.Or", "Performs a bitwise Or operation between the arguments (in their binary form).", "TopologicUtilities", "Bitwise")
+          : base("Bitwise.OR", "Bitwise.OR", "Performs a bitwise OR operation between the arguments (in their binary form).", "TopologicUtilities", "Bitwise")
         {
         }
 
@@ -55,7 +55,7 @@ namespace TopologicGH
             //char[] chars = data.ToCharArray();
 
             
-            int result = Topologic.Utilities.Bitwise.Or(arguments);
+            int result = Topologic.Utilities.Bitwise.OR(arguments);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetData(0, result);

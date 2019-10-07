@@ -56,7 +56,6 @@
       <Filter>Factories</Filter>
     </ClInclude>
     <ClInclude Include="include\GlobalCluster.h" />
-    <ClInclude Include="include\Bitwise.h" />
     <ClInclude Include="include\About.h" />
     <ClInclude Include="include\Graph.h" />
     <ClInclude Include="include\Attribute.h">
@@ -122,6 +121,9 @@
     <ClInclude Include="include\Surface.h">
       <Filter>Geometries</Filter>
     </ClInclude>
+    <ClInclude Include="include\Bitwise.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
@@ -175,7 +177,6 @@
     </ClCompile>
     <ClCompile Include="src\GlobalCluster.cpp" />
     <ClCompile Include="src\Utilities.cpp" />
-    <ClCompile Include="src\Bitwise.cpp" />
     <ClCompile Include="src\About.cpp" />
     <ClCompile Include="src\Graph.cpp" />
     <ClCompile Include="src\AttributeManager.cpp">
@@ -237,6 +238,9 @@
     </ClCompile>
     <ClCompile Include="src\Surface.cpp">
       <Filter>Geometries</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Bitwise.cpp">
+      <Filter>Utilities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

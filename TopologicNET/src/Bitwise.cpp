@@ -4,39 +4,39 @@ namespace Topologic
 {
 	namespace Utilities
 	{
-		int Bitwise::And(List<int>^ arguments)
+		int Bitwise::AND(List<int>^ arguments)
 		{
 			std::list<int> coreArguments;
 			for each(int argument in arguments)
 			{
 				coreArguments.push_back(argument);
 			}
-			return TopologicCore::Bitwise::And(coreArguments);
+			return TopologicUtilities::Bitwise::AND(coreArguments);
 		}
 
-		int Bitwise::Or(List<int>^ arguments)
+		int Bitwise::OR(List<int>^ arguments)
 		{
 			std::list<int> coreArguments;
 			for each(int argument in arguments)
 			{
 				coreArguments.push_back(argument);
 			}
-			return TopologicCore::Bitwise::Or(coreArguments);
+			return TopologicUtilities::Bitwise::OR(coreArguments);
 		}
 
-		int Bitwise::Xor(List<int>^ arguments)
+		int Bitwise::XOR(List<int>^ arguments)
 		{
 			std::list<int> coreArguments;
 			for each(int argument in arguments)
 			{
 				coreArguments.push_back(argument);
 			}
-			return TopologicCore::Bitwise::Xor(coreArguments);
+			return TopologicUtilities::Bitwise::XOR(coreArguments);
 		}
 
-		int Bitwise::Not(int argument)
+		int Bitwise::NOT(int argument)
 		{
-			return TopologicCore::Bitwise::Not(argument);
+			return TopologicUtilities::Bitwise::NOT(argument);
 		}
 	}
 }

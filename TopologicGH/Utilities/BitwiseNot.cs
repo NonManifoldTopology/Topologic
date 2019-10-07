@@ -13,7 +13,7 @@ namespace TopologicGH
     {
 
         public BitwiseNot()
-          : base("Bitwise.Not", "Bitwise.Not", "Performs a bitwise Not operation between the arguments (in their binary form).", "TopologicUtilities", "Bitwise")
+          : base("Bitwise.NOT", "Bitwise.AND", "Performs a bitwise NOT operation between the arguments (in their binary form).", "TopologicUtilities", "Bitwise")
         {
         }
 
@@ -55,7 +55,7 @@ namespace TopologicGH
             //char[] chars = data.ToCharArray();
 
             
-            int result = Topologic.Utilities.Bitwise.Not(argument);
+            int result = Topologic.Utilities.Bitwise.NOT(argument);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetData(0, result);
