@@ -31,7 +31,7 @@ namespace TopologicGH
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Geometry", "Geometry", "Geometry", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Geometry", "Geometry", "Geometry", GH_ParamAccess.list);
         }
 
         /// <summary>
@@ -51,9 +51,9 @@ namespace TopologicGH
             // We're also going to abort on a zero-length String.
             if (topology == null) { return; }
 
-            Object geometry = ToGeometry(topology);
+            List<Object> geometries = ToGeometry(topology);
             
-            DA.SetData(0, geometry);
+            DA.SetDataList(0, geometries);
         }
 
         GH_Path ListToTreePath(List<int> path)
@@ -93,59 +93,65 @@ namespace TopologicGH
             }
         }
 
-        private object ToGeometry(Topology topology)
+        private List<Object> ToGeometry(Topology topology)
         {
             if(topology == null)
             {
                 return null;
             }
 
+            List<Object> geometries = new List<Object>();
             Vertex vertex = topology as Vertex;
             if (vertex != null)
             {
-                return ToPoint(vertex);
+                geometries.Add(ToPoint(vertex));
+                return geometries;
             }
 
             Edge edge = topology as Edge;
             if (edge != null)
             {
-                return ToCurve(edge);
+                geometries.Add(ToCurve(edge));
+                return geometries;
             }
             
             Wire wire = topology as Wire;
             if (wire != null)
             {
-                return ToPolyCurve(wire);
+                return ToCurves(wire);
             }
 
             Face face = topology as Face;
             if (face != null)
             {
-                return ToSurface(face);
+                geometries.Add(ToSurface(face));
+                return geometries;
             }
 
             Shell shell = topology as Shell;
             if (shell != null)
             {
-                return ToBrep(shell);
+                geometries.Add(ToBrep(shell));
+                return geometries;
             }
 
             Cell cell = topology as Cell;
             if (cell != null)
             {
-                return ToBrep(cell);
+                geometries.Add(ToBrep(cell));
+                return geometries;
             }
 
             CellComplex cellComplex = topology as CellComplex;
             if (cellComplex != null)
             {
-                return ToList(cellComplex);
+                return ToBreps(cellComplex);
             }
 
             Cluster cluster = topology as Cluster;
             if (cluster != null)
             {
-                return ToList(cluster);
+                return ToGeometries(cluster);
             }
 
             Aperture aperture = topology as Aperture;
@@ -157,14 +163,35 @@ namespace TopologicGH
             throw new Exception("The type of the input topology is not recognized.");
         }
 
-        private object ToList(Topology topology)
+        private List<Object> ToBreps(CellComplex cellComplex)
+        {
+            List<Cell> cells = cellComplex.Cells;
+            List<Object> ghBreps = new List<Object>();
+            foreach (Cell cell in cells)
+            {
+                Object ghBrep = ToBrep(cell);
+                ghBreps.Add(ghBrep);
+            }
+            return ghBreps;
+        }
+
+        private List<Object> ToGeometries(Topology topology)
         {
             List<Topology> subTopologies = topology.SubTopologies;
             List<Object> ghGeometries = new List<Object>();
             foreach(Topology subTopology in subTopologies)
             {
                 Object ghGeometry = ToGeometry(subTopology);
-                ghGeometries.Add(ghGeometry);
+
+                List<Object> ghGeometryAsList = ghGeometry as List<Object>;
+                if (ghGeometryAsList != null)
+                {
+                    ghGeometries.AddRange(ghGeometryAsList);
+                }
+                else
+                {
+                    ghGeometries.Add(ghGeometry);
+                }
             }
             return ghGeometries;
         }
@@ -498,31 +525,35 @@ namespace TopologicGH
             return ghBrep;
         }
 
-        private PolyCurve ToPolyCurve(Wire wire)
+        private List<Object> ToCurves(Wire wire)
         {
-            PolyCurve ghPolyCurve = new PolyCurve();
             List<Edge> edges = wire.Edges;
+            List<Curve> ghOriginalCurves = new List<Curve>();
             foreach (Edge edge in edges)
             {
                 Curve ghCurve = ToCurve(edge);
-
-                try
-                {
-                    ghPolyCurve.Append(ghCurve);
-                }
-                catch
-                {
-                    throw new Exception("Fails creating a PolyCurve from a Wire.");
-                }
+                ghOriginalCurves.Add(ghCurve);
             }
 
-            String log = "";
-            if(!ghPolyCurve.IsValidWithLog(out log))
+            if(ghOriginalCurves.Count == 0)
             {
-                throw new Exception(log);
+                return null;
             }
 
-            return ghPolyCurve;
+            List<Curve> ghFinalCurves = Curve.JoinCurves(ghOriginalCurves).ToList();
+
+            List<Object> ghFinalCurvesAsObjects = new List<object>();
+            foreach (Curve ghFinalCurve in ghFinalCurves)
+            {
+                String log = "";
+                if (!ghFinalCurve.IsValidWithLog(out log))
+                {
+                    throw new Exception(log);
+                }
+                ghFinalCurvesAsObjects.Add(ghFinalCurve);
+            }
+
+            return ghFinalCurvesAsObjects;
         }
 
         private Curve ToCurve(Edge edge)
