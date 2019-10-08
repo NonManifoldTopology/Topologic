@@ -131,15 +131,13 @@ namespace TopologicGH
             Shell shell = topology as Shell;
             if (shell != null)
             {
-                geometries.Add(ToBrep(shell));
-                return geometries;
+                return ToBrep(shell);
             }
 
             Cell cell = topology as Cell;
             if (cell != null)
             {
-                geometries.Add(ToBrep(cell));
-                return geometries;
+                return ToBrep(cell);
             }
 
             CellComplex cellComplex = topology as CellComplex;
@@ -196,7 +194,7 @@ namespace TopologicGH
             return ghGeometries;
         }
 
-        private Brep ToBrep(Topology topology)
+        private List<Object> ToBrep(Topology topology)
         {
             List<Face> faces = topology.Faces;
             List<Brep> ghBrepSurfaces = new List<Brep>();
@@ -209,18 +207,12 @@ namespace TopologicGH
             if(ghBrepSurfaces.Count == 0)
             {
                 return null;
-            }else if(ghBrepSurfaces.Count == 1)
-            {
-                return ghBrepSurfaces[0];
-            }else
-            {
-                Brep ghBrep = ghBrepSurfaces[0];
-                for (int i = 1; i < ghBrepSurfaces.Count; ++i)
-                {
-                    ghBrep.Join(ghBrepSurfaces[i], 0.0001, true);
-                }
-                return ghBrep;
             }
+
+            Brep[] ghJoinedBreps = Brep.JoinBreps(ghBrepSurfaces, 0.1);
+            List<Object> ghJoinedBrepsAsObjects = new List<Object>();
+            ghJoinedBrepsAsObjects.AddRange(ghJoinedBreps);
+            return ghJoinedBrepsAsObjects;
         }
 
         private void ProcessFace(
@@ -354,23 +346,52 @@ namespace TopologicGH
             return ghNurbsSurface;
         }
 
-        private Rhino.Geometry.PlaneSurface ToRhinoPlaneSurface(PlanarSurface planarSurface)
+        private Rhino.Geometry.PlaneSurface ToRhinoPlaneSurface(PlanarSurface planarSurface, Face face)
         {
+            // From Topologic
             List<double> coefficients = planarSurface.Coefficients;
             double a = coefficients[0];
             double b = coefficients[1];
             double c = coefficients[2];
             double d = coefficients[3];
+            Vertex faceCenterOfMass = face.CenterOfMass;
+            Point3d ghFaceCenterOfMass = ToPoint(faceCenterOfMass);
 
             Rhino.Geometry.Plane ghPlane = new Rhino.Geometry.Plane(a, b, c, d);
+
+            double occtXMin = planarSurface.XMin;
+            double occtXMax = planarSurface.XMax;
+            double occtAbsDeltaX = Math.Abs(occtXMax - occtXMin);
+            double occtHalfDeltaX = occtAbsDeltaX / 2.0;
+
+            double occtYMin = planarSurface.YMin;
+            double occtYMax = planarSurface.YMax;
+            double occtAbsDeltaY = Math.Abs(occtYMax - occtYMin);
+            double occtHalfDeltaY = occtAbsDeltaY / 2.0;
+
+
+            double safetyMarginX = 0.0;
+            double safetyMarginY = 0.0;
+            //double safetyMarginX = Math.Abs(0.2 * occtHalfDeltaX);
+            //double safetyMarginY = Math.Abs(1.0 * occtHalfDeltaY);
+
+            double ghXMin = occtXMin;// - occtHalfDeltaX - safetyMarginX;
+            double ghXMax = occtXMax;// - occtHalfDeltaX + safetyMarginX;
+            double ghYMin = occtYMin;// - occtHalfDeltaY - safetyMarginY;
+            double ghYMax = occtYMax;// - occtHalfDeltaY + safetyMarginY;
+
+
             Interval xExtents = new Interval(
-                planarSurface.XMin,
-                planarSurface.XMax);
+                ghXMin,
+                ghXMax);
             Interval yExtents = new Interval(
-                planarSurface.YMin,
-                planarSurface.YMax);
+                ghYMin,
+                ghYMax);
 
             PlaneSurface ghPlaneSurface = new PlaneSurface(ghPlane, xExtents, yExtents);
+            Point3d ghCentroid = Rhino.Geometry.AreaMassProperties.Compute(ghPlaneSurface).Centroid;
+            Vector3d ghTranslationVector = ghFaceCenterOfMass - ghCentroid;
+            ghPlaneSurface.Translate(ghTranslationVector);
             if (!ghPlaneSurface.IsValid)
             {
                 throw new Exception("A valid surface cannot be created from this Face.");
@@ -394,7 +415,12 @@ namespace TopologicGH
             Topologic.PlanarSurface planarSurface = faceGeometry as Topologic.PlanarSurface;
             if (planarSurface != null)
             {
-                return ToRhinoPlaneSurface(planarSurface);
+                //Topologic.NurbsSurface planarSurfaceAsNurbs = planarSurface.ToNurbsSurface();
+                //return ToRhinoNurbsSurface(planarSurfaceAsNurbs);
+                PlaneSurface planeSurface = ToRhinoPlaneSurface(planarSurface, face);
+                return planeSurface;
+                //Rhino.Geometry.NurbsSurface planeSurfaceAsNurbsSurface = planeSurface.ToNurbsSurface();
+                //return planeSurfaceAsNurbsSurface;
             }
 
             throw new Exception("An invalid surface is created.");
@@ -403,126 +429,174 @@ namespace TopologicGH
         private Brep ToSurface(Face face)
         {
             Rhino.Geometry.Surface ghSurface = ToRhinoSurface(face);
+            ghSurface = ghSurface.Extend(IsoStatus.North, 2, true);
+            ghSurface = ghSurface.Extend(IsoStatus.South, 2, true);
+            ghSurface = ghSurface.Extend(IsoStatus.West, 2, true);
+            ghSurface = ghSurface.Extend(IsoStatus.East, 2, true);
+            //List<Wire> wires = face.Wires;
 
-            // 2. Create the Brep
+            //List<GeometryBase> ghGeometryBases = new List<GeometryBase>();
+            //foreach (Wire wire in wires)
+            //{
+            //    List<Object> ghCurves = ToCurves(wire);
+            //    foreach (Object ghCurve in ghCurves)
+            //    {
+            //        GeometryBase geometryBase = ghCurve as GeometryBase;
+            //        if (geometryBase != null)
+            //        {
+            //            ghGeometryBases.Add(geometryBase);
+            //        }
+            //    }
+            //}
+
+
+            //2.Create the Brep
             //Brep ghBrep = ghNurbsSurface.ToBrep();
-            Brep ghBrep = new Brep();
+            //Brep ghBrep = new Brep();
 
-            // 2a. Add vertices
-            List<Vertex> vertices = face.Vertices;
-            foreach (Vertex vertex in vertices)
-            {
-                Point3d ghPoint = ToPoint(vertex);
-                BrepVertex ghBrepVertex = ghBrep.Vertices.Add(ghPoint, 0.0);
+            //// 2a. Add vertices
+            //List<Vertex> vertices = face.Vertices;
+            //foreach (Vertex vertex in vertices)
+            //{
+            //    Point3d ghPoint = ToPoint(vertex);
+            //    BrepVertex ghBrepVertex = ghBrep.Vertices.Add(ghPoint, 0.0);
 
-                String ghBrepVertexLog = "";
-                if (!ghBrepVertex.IsValidWithLog(out ghBrepVertexLog))
-                {
-                    throw new Exception("Fails to create a valid BrepVertex with the following message: " + ghBrepVertexLog);
-                }
-            }
+            //    String ghBrepVertexLog = "";
+            //    if (!ghBrepVertex.IsValidWithLog(out ghBrepVertexLog))
+            //    {
+            //        throw new Exception("Fails to create a valid BrepVertex with the following message: " + ghBrepVertexLog);
+            //    }
+            //}
 
-            // 2b. Add 3D curves and edges. The index dictionaries are used to identify the IDs of the edges.
-            List<Edge> edges = face.Edges;
-            Dictionary<Edge, Tuple<int, int>> edge2DIndices = new Dictionary<Edge, Tuple<int, int>>(); // edge, curve, reverse curve
-            Dictionary<Edge, int> edge3DIndices = new Dictionary<Edge, int>();
-            Dictionary<Edge, BrepEdge> edgeIndices = new Dictionary<Edge, BrepEdge>();
-            foreach (Edge edge in edges)
-            {
-                Curve ghCurve3D = ToCurve(edge);
-                Curve ghCurve2D = ghSurface.Pullback(ghCurve3D, 0.0001);
+            //// 2b. Add 3D curves and edges. The index dictionaries are used to identify the IDs of the edges.
+            //List<Edge> edges = face.Edges;
+            //Dictionary<Edge, Tuple<int, int>> edge2DIndices = new Dictionary<Edge, Tuple<int, int>>(); // edge, curve, reverse curve
+            //Dictionary<Edge, int> edge3DIndices = new Dictionary<Edge, int>();
+            //Dictionary<Edge, BrepEdge> edgeIndices = new Dictionary<Edge, BrepEdge>();
+            //foreach (Edge edge in edges)
+            //{
+            //    Curve ghCurve3D = ToCurve(edge);
+            //    Curve ghCurve2D = ghSurface.Pullback(ghCurve3D, 0.0001);
 
-                // 2D curves --> need to check if the endpoints are near to previously generated points
-                // if yes, change the value
-                
-                int curve3DID = ghBrep.Curves3D.Add(ghCurve3D);
-                int curve2DID = ghBrep.Curves2D.Add(ghCurve2D);
+            //    // 2D curves --> need to check if the endpoints are near to previously generated points
+            //    // if yes, change the value
 
-                Curve ghReverseCurve2D = ghCurve2D.DuplicateCurve();
-                ghReverseCurve2D.Reverse();
-                int reverseCurve2DID = ghBrep.Curves2D.Add(ghReverseCurve2D);
+            //    int curve3DID = ghBrep.Curves3D.Add(ghCurve3D);
+            //    int curve2DID = ghBrep.Curves2D.Add(ghCurve2D);
 
-                Point3d ghStartPoint = ghCurve3D.PointAtStart;
-                Point3d ghEndPoint = ghCurve3D.PointAtEnd;
+            //    Curve ghReverseCurve2D = ghCurve2D.DuplicateCurve();
+            //    ghReverseCurve2D.Reverse();
+            //    int reverseCurve2DID = ghBrep.Curves2D.Add(ghReverseCurve2D);
 
-                int startVertexIndex = -1;
-                int endVertexIndex = -1;
-                foreach (BrepVertex ghBrepVertex in ghBrep.Vertices)
-                {
-                    Point3d ghBrepPoint = ghBrepVertex.Location;
+            //    Point3d ghStartPoint = ghCurve3D.PointAtStart;
+            //    Point3d ghEndPoint = ghCurve3D.PointAtEnd;
 
-                    if (startVertexIndex == -1 && ghBrepPoint.DistanceTo(ghStartPoint) < 0.0001)
-                    {
-                        startVertexIndex = ghBrepVertex.VertexIndex;
-                    }
+            //    int startVertexIndex = -1;
+            //    int endVertexIndex = -1;
+            //    foreach (BrepVertex ghBrepVertex in ghBrep.Vertices)
+            //    {
+            //        Point3d ghBrepPoint = ghBrepVertex.Location;
 
-                    if (endVertexIndex == -1 && ghBrepPoint.DistanceTo(ghEndPoint) < 0.0001)
-                    {
-                        endVertexIndex = ghBrepVertex.VertexIndex;
-                    }
-                }
+            //        if (startVertexIndex == -1 && ghBrepPoint.DistanceTo(ghStartPoint) < 0.0001)
+            //        {
+            //            startVertexIndex = ghBrepVertex.VertexIndex;
+            //        }
 
-                BrepEdge ghBrepEdge = ghBrep.Edges.Add(startVertexIndex, endVertexIndex, curve3DID, 0.0001);
+            //        if (endVertexIndex == -1 && ghBrepPoint.DistanceTo(ghEndPoint) < 0.0001)
+            //        {
+            //            endVertexIndex = ghBrepVertex.VertexIndex;
+            //        }
+            //    }
 
-                String brepEdgeLog = "";
-                if (!ghBrepEdge.IsValidWithLog(out brepEdgeLog))
-                {
-                    throw new Exception("Fails to create a valid BrepEdge with the following message: " + brepEdgeLog);
-                }
+            //    BrepEdge ghBrepEdge = ghBrep.Edges.Add(startVertexIndex, endVertexIndex, curve3DID, 0.0001);
 
-                edge3DIndices.Add(edge, curve3DID);
-                edge2DIndices.Add(edge, Tuple.Create(curve2DID, reverseCurve2DID));
-                edgeIndices.Add(edge, ghBrepEdge);
-            }
+            //    String brepEdgeLog = "";
+            //    if (!ghBrepEdge.IsValidWithLog(out brepEdgeLog))
+            //    {
+            //        throw new Exception("Fails to create a valid BrepEdge with the following message: " + brepEdgeLog);
+            //    }
 
-            // 2c. Add surface
-            int ghSurfaceIndex = ghBrep.AddSurface(ghSurface);
+            //    edge3DIndices.Add(edge, curve3DID);
+            //    edge2DIndices.Add(edge, Tuple.Create(curve2DID, reverseCurve2DID));
+            //    edgeIndices.Add(edge, ghBrepEdge);
+            //}
 
-            // 2d. Add face
-            BrepFace ghBrepFace = ghBrep.Faces.Add(ghSurfaceIndex);
+            //// 2c. Add surface
+            //int ghSurfaceIndex = ghBrep.AddSurface(ghSurface);
 
-            // 2e.Create outer loop
-            Wire outerWire = face.ExternalBoundary;
-            ProcessFace(outerWire, ref ghBrep, ghBrepFace, BrepLoopType.Outer, ghSurface, edge2DIndices, edgeIndices);
+            //// 2d. Add face
+            //BrepFace ghBrepFace = ghBrep.Faces.Add(ghSurfaceIndex);
 
-            // 2g. Create inner loops
-            List<Wire> innerWires = face.InternalBoundaries;
-            foreach (Wire innerWire in innerWires)
-            {
-                ProcessFace(innerWire, ref ghBrep, ghBrepFace, BrepLoopType.Inner, ghSurface, edge2DIndices, edgeIndices);
-            }
+            //// 2e. Create outer loop
+            //Wire outerWire = face.ExternalBoundary;
+            //ProcessFace(outerWire, ref ghBrep, ghBrepFace, BrepLoopType.Outer, ghSurface, edge2DIndices, edgeIndices);
 
-            String brepFaceLog = "";
-            if (!ghBrepFace.IsValidWithLog(out brepFaceLog))
-            {
-                throw new Exception("Fails to create a valid Face with the following message: " + brepFaceLog);
-            }
+            //// 2g. Create inner loops
+            //List<Wire> innerWires = face.InternalBoundaries;
+            //foreach (Wire innerWire in innerWires)
+            //{
+            //    ProcessFace(innerWire, ref ghBrep, ghBrepFace, BrepLoopType.Inner, ghSurface, edge2DIndices, edgeIndices);
+            //}
+
+            //String brepFaceLog = "";
+            //if (!ghBrepFace.IsValidWithLog(out brepFaceLog))
+            //{
+            //    throw new Exception("Fails to create a valid Face with the following message: " + brepFaceLog);
+            //}
 
             //ghBrep.Compact();
 
-            String brepLog = "";
-            if (!ghBrep.IsValidWithLog(out brepLog))
+            List<GeometryBase> ghGeometryBases = new List<GeometryBase>();
+
+            List<Edge> edges2 = face.Edges;
+            foreach (Edge edge in edges2)
             {
-                throw new Exception("Fails to create a valid Brep with the following message: " + brepLog);
+                Curve ghCurve3D = ToCurve(edge);
+                ghGeometryBases.Add(ghCurve3D);
             }
+            //ghGeometryBases.AddRange(ghBrep.Curves2D);
+            //ghGeometryBases.AddRange(ghBrep.Trims);
+            //ghGeometryBases.AddRange(ghBrep.Vertices);
 
-            if (!ghBrep.IsValidGeometry(out brepLog))
-            {
-                throw new Exception("Fails to create a valid Brep with the following message: " + brepLog);
-            }
+            Brep ghBrep2 = Brep.CreatePatch(
+                ghGeometryBases,
+                ghSurface,
+                20,
+                20,
+                true,
+                true,
+                0.1,
+                1,
+                1,
+                new Boolean[] { true, true, true, true },
+                0.0001);
 
-            if (!ghBrep.IsValidTopology(out brepLog))
-            {
-                throw new Exception("Fails to create a valid Brep with the following message: " + brepLog);
-            }
-
-            if (!ghBrep.IsValidTolerancesAndFlags(out brepLog))
-            {
-                throw new Exception("Fails to create a valid Brep with the following message: " + brepLog);
-            }
+            return ghBrep2;
 
 
-            return ghBrep;
+            //String brepLog = "";
+            //if (!ghBrep.IsValidWithLog(out brepLog))
+            //{
+            //    throw new Exception("Fails to create a valid Brep with the following message: " + brepLog);
+            //}
+
+            //if (!ghBrep.IsValidGeometry(out brepLog))
+            //{
+            //    throw new Exception("Fails to create a valid Brep with the following message: " + brepLog);
+            //}
+
+            //if (!ghBrep.IsValidTopology(out brepLog))
+            //{
+            //    throw new Exception("Fails to create a valid Brep with the following message: " + brepLog);
+            //}
+
+            //if (!ghBrep.IsValidTolerancesAndFlags(out brepLog))
+            //{
+            //    throw new Exception("Fails to create a valid Brep with the following message: " + brepLog);
+            //}
+
+
+            //return ghBrep;
         }
 
         private List<Object> ToCurves(Wire wire)
