@@ -10,6 +10,8 @@ using namespace System::Collections::Generic;
 /// <summary>
 /// </summary>
 namespace Topologic {
+	ref class NurbsSurface;
+
 	/// <summary>
 	/// </summary>
 	public ref class PlanarSurface : Surface
@@ -39,6 +41,8 @@ namespace Topologic {
 		{
 			double get();
 		}
+
+		NurbsSurface^ ToNurbsSurface();
 
 	public protected:
 		PlanarSurface(const std::shared_ptr<TopologicCore::PlanarSurface>& kpCorePlanarSurface);

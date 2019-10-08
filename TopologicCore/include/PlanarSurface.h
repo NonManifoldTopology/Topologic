@@ -10,6 +10,8 @@
 
 namespace TopologicCore
 {
+	class NurbsSurface;
+
 	class PlanarSurface : Geometry
 	{
 	public:
@@ -25,6 +27,8 @@ namespace TopologicCore
 		TOPOLOGIC_API double XMax() const;
 		TOPOLOGIC_API double YMin() const;
 		TOPOLOGIC_API double YMax() const;
+
+		TOPOLOGIC_API std::shared_ptr<NurbsSurface> ToNurbsSurface() const;
 
 	protected:
 		Handle(Geom_Plane) m_pOcctPlane;

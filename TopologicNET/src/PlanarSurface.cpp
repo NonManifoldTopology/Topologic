@@ -1,4 +1,5 @@
 #include "PlanarSurface.h"
+#include "NurbsSurface.h"
 
 #include <list>
 
@@ -47,5 +48,16 @@ namespace Topologic
 	double PlanarSurface::YMax::get()
 	{
 		return (*m_pCorePlanarSurface)->YMax();
+	}
+
+	NurbsSurface^ PlanarSurface::ToNurbsSurface()
+	{
+		try {
+			return gcnew NurbsSurface((*m_pCorePlanarSurface)->ToNurbsSurface());
+		}
+		catch (const std::exception& e)
+		{
+			throw gcnew Exception(gcnew String(e.what()));
+		}
 	}
 }

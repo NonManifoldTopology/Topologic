@@ -1,6 +1,9 @@
 #include "PlanarSurface.h"
+#include "NurbsSurface.h"
+#include "Face.h"
 
 #include <ShapeAnalysis.hxx>
+#include <GeomConvert.hxx>
 
 namespace TopologicCore
 {
@@ -50,5 +53,18 @@ namespace TopologicCore
 		double uMin = 0.0, uMax = 0.0, vMin = 0.0, vMax = 0.0;
 		ShapeAnalysis::GetFaceUVBounds(m_occtFace, uMin, uMax, vMin, vMax);
 		return vMax;
+	}
+
+	NurbsSurface::Ptr PlanarSurface::ToNurbsSurface() const
+	{
+		try {
+			
+			Handle(Geom_BSplineSurface) occtBSplineSurface = GeomConvert::SurfaceToBSplineSurface(m_pOcctPlane);
+			return std::make_shared<NurbsSurface>(occtBSplineSurface, std::make_shared<Face>(m_occtFace, ""));
+		}
+		catch (Standard_DomainError e)
+		{
+			throw std::exception(e.GetMessageString());
+		}
 	}
 }
