@@ -750,7 +750,7 @@ namespace Topologic
 		throw gcnew NotImplementedException();
 	}
 
-	Topology^ Topology::RemoveContents(List<Topology^> contentTopologies)
+	Topology^ Topology::RemoveContents(List<Topology^>^ contentTopologies)
 	{
 		TopologicCore::Topology::Ptr pCoreParentTopology =
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());

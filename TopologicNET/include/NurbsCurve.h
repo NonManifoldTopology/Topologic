@@ -41,6 +41,16 @@ namespace Topologic {
 			List<double>^ get();
 		}
 
+		property double FirstParameter
+		{
+			double get();
+		}
+
+		property double LastParameter
+		{
+			double get();
+		}
+
 	public protected:
 		NurbsCurve(const std::shared_ptr<TopologicCore::NurbsCurve>& kpCoreNurbsCurve);
 		virtual ~NurbsCurve();

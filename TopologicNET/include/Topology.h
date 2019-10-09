@@ -184,7 +184,7 @@ namespace Topologic
 		/// </summary>
 		/// <param name="contentTopologies">The Topologies of the contents</param>
 		/// <returns name="Topology">The new Topology</returns>
-		Topology^ RemoveContents(List<Topology^> contentTopologies);
+		Topology^ RemoveContents(List<Topology^>^ contentTopologies);
 
 		/*/// <summary>
 		/// Removes contexts from a Topology.

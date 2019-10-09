@@ -61,6 +61,11 @@
     <Compile Include="AboutVersion.cs" />
     <Compile Include="ApertureByTopologyContext.cs" />
     <Compile Include="ApertureTopology.cs" />
+    <Compile Include="FaceWires.cs" />
+    <Compile Include="GraphShortestPaths.cs" />
+    <Compile Include="TopologyRemoveContents.cs" />
+    <Compile Include="TopologySetDictionaries.cs" />
+    <Compile Include="Utilities\CellUtilityInternalVertex.cs" />
     <Compile Include="Utilities\FaceUtilityAdjacentCells.cs" />
     <Compile Include="GraphAddEdges.cs" />
     <Compile Include="GraphAddVertices.cs" />
@@ -93,6 +98,8 @@
     <Compile Include="TopologyCentroid.cs" />
     <Compile Include="Utilities\EdgeUtilityAdjacentWires.cs" />
     <Compile Include="Utilities\FaceUtilityAdjacentShells.cs" />
+    <Compile Include="Utilities\FaceUtilityInternalVertex.cs" />
+    <Compile Include="Utilities\FaceUtilityIsInside.cs" />
     <Compile Include="Utilities\FaceUtilityNormalAtParameters.cs" />
     <Compile Include="Utilities\FaceUtilityParametersAtVertex.cs" />
     <Compile Include="Utilities\BitwiseNot.cs" />
@@ -217,9 +224,9 @@
     <Compile Include="Utilities\FaceUtilityByVertices.cs" />
     <Compile Include="Utilities\FaceUtilityTrimByWire.cs" />
     <Compile Include="Utilities\FaceUtilityVertexAtParameters.cs" />
-    <Compile Include="Utilities\ShellByLoft.cs" />
+    <Compile Include="Utilities\ShellUtilityByLoft.cs" />
     <Compile Include="TopologyCenterOfMass.cs" />
-    <Compile Include="Utilities\TopologySharedTopologies.cs" />
+    <Compile Include="TopologySharedTopologies.cs" />
     <Compile Include="Utilities\TopologyUtilityAdjacentTopologies.cs" />
     <Compile Include="Utilities\VertexUtilityDistance.cs" />
     <Compile Include="Utilities\TopologyUtilityRotate.cs" />
@@ -227,6 +234,7 @@
     <Compile Include="Utilities\TopologyUtilityTranslate.cs" />
     <Compile Include="Utilities\VertexUtilityAdjacentEdges.cs" />
     <Compile Include="Utilities\WireUtilityAdjacentShells.cs" />
+    <Compile Include="Utilities\WireUtilityRemoveCollinearEdges.cs" />
     <Compile Include="VertexType.cs" />
     <Compile Include="VertexZ.cs" />
     <Compile Include="VertexByCoordinates.cs" />

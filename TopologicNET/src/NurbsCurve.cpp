@@ -55,4 +55,14 @@ namespace Topologic
 		}
 		return knots;
 	}
+
+	double NurbsCurve::FirstParameter::get()
+	{
+		return (*m_pCoreNurbsCurve)->FirstParameter();
+	}
+
+	double NurbsCurve::LastParameter::get()
+	{
+		return (*m_pCoreNurbsCurve)->LastParameter();
+	}
 }

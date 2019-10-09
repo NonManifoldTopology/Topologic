@@ -413,13 +413,14 @@ namespace TopologicCore
 		TopoDS_Iterator occtExplorer(rkFace, Standard_False);
 		while (occtExplorer.More())
 		{
-			if (occtExplorer.Value().ShapeType() != TopAbs_WIRE)
-				continue;
-			const TopoDS_Wire& rkWire = TopoDS::Wire(occtExplorer.Value());
-
-			if (!rkWire.IsSame(occtOuterWire))
+			if (occtExplorer.Value().ShapeType() == TopAbs_WIRE)
 			{
-				rInternalBoundaries.push_back(std::make_shared<Wire>(rkWire));
+				const TopoDS_Wire& rkWire = TopoDS::Wire(occtExplorer.Value());
+
+				if (!rkWire.IsSame(occtOuterWire))
+				{
+					rInternalBoundaries.push_back(std::make_shared<Wire>(rkWire));
+				}
 			}
 			occtExplorer.Next();
 		}

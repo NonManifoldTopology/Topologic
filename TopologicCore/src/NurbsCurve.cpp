@@ -1,10 +1,13 @@
 #include "NurbsCurve.h"
 #include "Vertex.h"
 
+#include <BRep_Tool.hxx>
+
 namespace TopologicCore
 {
-	NurbsCurve::NurbsCurve(Handle(Geom_BSplineCurve) pOcctBSplineCurve)
+	NurbsCurve::NurbsCurve(Handle(Geom_BSplineCurve) pOcctBSplineCurve, const TopoDS_Edge& rkOcctEdge)
 		: m_pOcctBSplineCurve(pOcctBSplineCurve)
+		, m_occtEdge(rkOcctEdge)
 	{
 	}
 
@@ -25,6 +28,20 @@ namespace TopologicCore
 	int NurbsCurve::Degree() const
 	{
 		return m_pOcctBSplineCurve->Degree();
+	}
+
+	double NurbsCurve::FirstParameter() const
+	{
+		double u0 = 0.0, u1 = 0.0;
+		Handle(Geom_Curve) pOcctCurve = BRep_Tool::Curve(m_occtEdge, u0, u1);
+		return u0;
+	}
+
+	double NurbsCurve::LastParameter() const
+	{
+		double u0 = 0.0, u1 = 0.0;
+		Handle(Geom_Curve) pOcctCurve = BRep_Tool::Curve(m_occtEdge, u0, u1);
+		return u1;
 	}
 
 	void NurbsCurve::ControlVertices(std::list<std::shared_ptr<Vertex>>& rControlVertices) const

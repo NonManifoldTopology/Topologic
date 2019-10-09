@@ -9,11 +9,10 @@ using Rhino.Geometry;
 
 namespace TopologicGH
 {
-    public class FaceAdjacentFaces : GH_Component
+    public class TopologySetDictionaries : GH_Component
     {
-
-        public FaceAdjacentFaces()
-          : base("Face.AdjacentFaces", "Face.AdjacentFaces", "Returns the Faces adjacent to the Face.", "Topologic", "Face")
+        public TopologySetDictionaries()
+          : base("Topology.SetDictionaries", "Topology.SetDictionaries", "Sets a list of dictionaries for a Topology.", "Topologic", "Topology")
         {
         }
 
@@ -22,7 +21,10 @@ namespace TopologicGH
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Face", "Face", "Face", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Topology", "Topology", "Topology", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Selectors", "Selectors", "Selectors", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Dictionaries", "Dictionaries", "Dictionaries", GH_ParamAccess.list);
+            pManager.AddIntegerParameter("Type Filter", "Type Filter", "Type Filter", GH_ParamAccess.item, 255);
         }
 
         /// <summary>
@@ -30,7 +32,7 @@ namespace TopologicGH
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Faces", "Faces", "Faces", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Topology", "Topology", "Topology", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -40,25 +42,33 @@ namespace TopologicGH
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             // Declare a variable for the input String
-            Topologic.Face face = null;
+            Topologic.Topology topology = null;
+            List<Topologic.Vertex> selectors = null;
+            List<Dictionary<String, Object>> dictionaries = null;
+            int typeFilter = 255;
 
             // Use the DA object to retrieve the data inside the first input parameter.
             // If the retieval fails (for example if there is no data) we need to abort.
-            if (!DA.GetData(0, ref face)) { return; }
+            if (!DA.GetData(0, ref topology)) { return; }
+            if (!DA.GetDataList(1, selectors)) { return; }
+            if (!DA.GetDataList(2, dictionaries)) { return; }
+            if (!DA.GetData(3, ref typeFilter)) { return; }
 
             // If the retrieved data is Nothing, we need to abort.
             // We're also going to abort on a zero-length String.
-            if (face == null) { return; }
+            if (topology == null) { return; }
+            if (selectors == null) { return; }
+            if (dictionaries == null) { return; }
             //if (data.Length == 0) { return; }
 
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
 
-            
-            List<Topologic.Face> faces = face.AdjacentFaces;
+
+            Topologic.Topology topologyWithDictionary = topology.SetDictionaries(selectors, dictionaries, typeFilter);
 
             // Use the DA object to assign a new String to the first output parameter.
-            DA.SetDataList(0, faces);
+            DA.SetData(0, topologyWithDictionary);
         }
 
         /// <summary>
@@ -79,7 +89,7 @@ namespace TopologicGH
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("01d35e5b-4273-4853-8dff-42a705abe07c"); }
+            get { return new Guid("2993ef3e-4d3f-4db3-94a7-3df116053638"); }
         }
     }
 }

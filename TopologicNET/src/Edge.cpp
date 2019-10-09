@@ -479,7 +479,7 @@ namespace Topologic
 			Handle(Geom_BSplineCurve) pOcctBsplineCurve = GeomConvert::CurveToBSplineCurve(pOcctCurve);
 			if (!pOcctBsplineCurve.IsNull())
 			{
-				TopologicCore::NurbsCurve::Ptr coreNurbsCurve = std::make_shared<TopologicCore::NurbsCurve>(pOcctBsplineCurve);
+				TopologicCore::NurbsCurve::Ptr coreNurbsCurve = std::make_shared<TopologicCore::NurbsCurve>(pOcctBsplineCurve, occtEdge);
 				return gcnew NurbsCurve(coreNurbsCurve);
 			}
 

@@ -4,6 +4,7 @@
 #include "Geometry.h"
 
 #include <Geom_BSplineCurve.hxx>
+#include <TopoDS_Edge.hxx>
 
 #include <list>
 
@@ -17,7 +18,7 @@ namespace TopologicCore
 		typedef std::shared_ptr<NurbsCurve> Ptr;
 
 	public:
-		TOPOLOGIC_API NurbsCurve(Handle(Geom_BSplineCurve) pOcctBSplineCurve);
+		TOPOLOGIC_API NurbsCurve(Handle(Geom_BSplineCurve) pOcctBSplineCurve, const TopoDS_Edge& rkOcctEdge);
 		virtual ~NurbsCurve();
 
 		TOPOLOGIC_API bool IsPeriodic() const;
@@ -30,7 +31,12 @@ namespace TopologicCore
 
 		TOPOLOGIC_API void Knots(std::list<double>& rKnots) const;
 
+		TOPOLOGIC_API double FirstParameter() const;
+
+		TOPOLOGIC_API double LastParameter() const;
+
 	protected:
 		Handle(Geom_BSplineCurve) m_pOcctBSplineCurve;
+		TopoDS_Edge m_occtEdge;
 	};
 }

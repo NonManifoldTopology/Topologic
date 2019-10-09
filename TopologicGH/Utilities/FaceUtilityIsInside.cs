@@ -9,11 +9,11 @@ using Rhino.Geometry;
 
 namespace TopologicGH
 {
-    public class FaceAdjacentFaces : GH_Component
+    public class FaceUtilityIsInside : GH_Component
     {
 
-        public FaceAdjacentFaces()
-          : base("Face.AdjacentFaces", "Face.AdjacentFaces", "Returns the Faces adjacent to the Face.", "Topologic", "Face")
+        public FaceUtilityIsInside()
+          : base("FaceUtility.IsInside", "FaceUtility.IsInside", "Checks if a Vertex is located inside a Face within a tolerance value.", "TopologicUtilities", "FaceUtility")
         {
         }
 
@@ -23,6 +23,8 @@ namespace TopologicGH
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Face", "Face", "Face", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Vertex", "Vertex", "Vertex", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Tolerance", "Tolerance", "Tolerance", GH_ParamAccess.item, 0.0001);
         }
 
         /// <summary>
@@ -30,35 +32,40 @@ namespace TopologicGH
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Faces", "Faces", "Faces", GH_ParamAccess.list);
+            pManager.AddBooleanParameter("Bool", "Bool", "Bool", GH_ParamAccess.item);
         }
 
         /// <summary>
         /// This is the method that actually does the work.
         /// </summary>
-        /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
+        /// <param name="DA">The DA object is used to retrieve from inputs Not store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             // Declare a variable for the input String
             Topologic.Face face = null;
+            Topologic.Vertex vertex = null;
+            double tolerance = 0.0001;
 
             // Use the DA object to retrieve the data inside the first input parameter.
             // If the retieval fails (for example if there is no data) we need to abort.
             if (!DA.GetData(0, ref face)) { return; }
+            if (!DA.GetData(1, ref vertex)) { return; }
+            if (!DA.GetData(2, ref tolerance)) { return; }
 
             // If the retrieved data is Nothing, we need to abort.
             // We're also going to abort on a zero-length String.
             if (face == null) { return; }
+            if (vertex == null) { return; }
             //if (data.Length == 0) { return; }
 
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
 
-            
-            List<Topologic.Face> faces = face.AdjacentFaces;
+
+            bool isContained = Topologic.Utilities.FaceUtility.IsInside(face, vertex, tolerance);
 
             // Use the DA object to assign a new String to the first output parameter.
-            DA.SetDataList(0, faces);
+            DA.SetData(0, isContained);
         }
 
         /// <summary>
@@ -68,7 +75,7 @@ namespace TopologicGH
         {
             get
             {
-                //You can add image files to your project resources and access them like this:
+                //You can add image files to your project resources Not access them like this:
                 // return Resources.IconForThisComponent;
                 return Resources.NMT_borderless_logo_small;
             }
@@ -79,7 +86,7 @@ namespace TopologicGH
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("01d35e5b-4273-4853-8dff-42a705abe07c"); }
+            get { return new Guid("14635c6a-1dfc-4562-9e94-52f705554f5e"); }
         }
     }
 }

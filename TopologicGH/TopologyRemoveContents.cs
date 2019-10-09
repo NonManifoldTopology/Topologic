@@ -9,11 +9,11 @@ using Rhino.Geometry;
 
 namespace TopologicGH
 {
-    public class AboutVersion : GH_Component
+    public class TopologyRemoveContents : GH_Component
     {
 
-        public AboutVersion()
-          : base("About.Version", "About.Version", "Returns the current version of Topologic.", "Topologic", "About")
+        public TopologyRemoveContents()
+          : base("Topology.RemoveContents", "Topology.RemoveContents", "Removes contents (non-constituent members) from a Topology.", "Topologic", "Topology")
         {
         }
 
@@ -22,7 +22,8 @@ namespace TopologicGH
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-
+            pManager.AddGenericParameter("Topology", "Topology", "Topology", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Content Topologies", "Content Topologies", "Content Topologies", GH_ParamAccess.list);
         }
 
         /// <summary>
@@ -30,7 +31,7 @@ namespace TopologicGH
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddTextParameter("Version", "Version", "The current version of Topologic", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Topology", "Topology", "Topology", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -39,10 +40,28 @@ namespace TopologicGH
         /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            String version = Topologic.About.Version();
+            // Declare a variable for the input String
+            Topologic.Topology topology = null;
+            List<Topologic.Topology> contents = new List<Topologic.Topology>();
+
+            // Use the DA object to retrieve the data inside the first input parameter.
+            // If the retieval fails (for example if there is no data) we need to abort.
+            if (!DA.GetData(0, ref topology)) { return; }
+            if (!DA.GetDataList(1, contents)) { return; }
+
+            // If the retrieved data is Nothing, we need to abort.
+            // We're also going to abort on a zero-length String.
+            if (topology == null) { return; }
+            if (contents == null) { return; }
+            //if (data.Length == 0) { return; }
+
+            // Convert the String to a character array.
+            //char[] chars = data.ToCharArray();
+
+            Topologic.Topology topologyWithoutContents = topology.RemoveContents(contents);
 
             // Use the DA object to assign a new String to the first output parameter.
-            DA.SetData(0, version);
+            DA.SetData(0, topologyWithoutContents);
         }
 
         /// <summary>
@@ -63,7 +82,7 @@ namespace TopologicGH
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("4e50840a-1b96-4edb-b658-5b6bede17022"); }
+            get { return new Guid("d0ca5afa-3ff7-4bac-9904-b4694fabe924"); }
         }
     }
 }

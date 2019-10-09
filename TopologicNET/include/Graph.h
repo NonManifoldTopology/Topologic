@@ -281,6 +281,14 @@ namespace Topologic {
 #endif
 		String^ edgeKey);
 
+		/// <summary>
+		/// Returns all paths with the fewest number of Edges between the two input Vertices.
+		/// </summary>
+		/// <param name="startVertex">The start Vertex</param>
+		/// <param name="endVertex">The end Vertex</param>
+		/// <param name="vertexKey">The key for the Vertex cost</param>
+		/// <param name="edgeKey">The key for the Edge cost</param>
+		/// <returns name="Wire[]">The shortest paths</returns>
 		List<Wire^>^ ShortestPaths(Vertex^ startVertex, Vertex^ endVertex,
 #ifdef TOPOLOGIC_DYNAMO
 			[Autodesk::DesignScript::Runtime::DefaultArgument("null")]

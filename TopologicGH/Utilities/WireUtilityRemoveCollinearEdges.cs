@@ -7,13 +7,12 @@ using System.Threading.Tasks;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
 
-namespace TopologicGH
+namespace TopologicGH.Utilities
 {
-    public class AboutVersion : GH_Component
+    public class WireUtilityRemoveCollinearEdges : GH_Component
     {
-
-        public AboutVersion()
-          : base("About.Version", "About.Version", "Returns the current version of Topologic.", "Topologic", "About")
+        public WireUtilityRemoveCollinearEdges()
+          : base("WireUtility.RemoveCollinearEdges", "WireUtility.RemoveCollinearEdges", "Remove collinear edges in a Wire.", "TopologicUtilities", "WireUtility")
         {
         }
 
@@ -22,7 +21,8 @@ namespace TopologicGH
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-
+            pManager.AddGenericParameter("Wire", "Wire", "Wire", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Tolerance", "Tolerance", "Tolerance", GH_ParamAccess.item, 0.0001);
         }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace TopologicGH
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddTextParameter("Version", "Version", "The current version of Topologic", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Wire", "Wire", "Wire", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -39,10 +39,27 @@ namespace TopologicGH
         /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            String version = Topologic.About.Version();
+            // Declare a variable for the input String
+            global::Topologic.Wire wire = null;
+            double tolerance = 0.0001;
+
+            // Use the DA object to retrieve the data inside the first input parameter.
+            // If the retieval fails (for example if there is no data) we need to abort.
+            if (!DA.GetData(0, ref wire)) { return; }
+            if (!DA.GetData(1, ref tolerance)) { return; }
+
+            // If the retrieved data is Nothing, we need to abort.
+            // We're also going to abort on a zero-length String.
+            if (wire == null) { return; }
+            //if (data.Length == 0) { return; }
+
+            // Convert the String to a character array.
+            //char[] chars = data.ToCharArray();
+
+            Topologic.Wire newWire = global::Topologic.Utilities.WireUtility.RemoveCollinearEdges(wire, tolerance);
 
             // Use the DA object to assign a new String to the first output parameter.
-            DA.SetData(0, version);
+            DA.SetData(0, newWire);
         }
 
         /// <summary>
@@ -63,7 +80,7 @@ namespace TopologicGH
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("4e50840a-1b96-4edb-b658-5b6bede17022"); }
+            get { return new Guid("26cd9fdf-3b7a-4f3a-a20a-e2f7eb51fa09"); }
         }
     }
 }
