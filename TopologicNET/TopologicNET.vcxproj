@@ -157,6 +157,7 @@
     <ClInclude Include="include\Cluster.h" />
     <ClInclude Include="include\ClusterFactory.h" />
     <ClInclude Include="include\Context.h" />
+    <ClInclude Include="include\Dictionary.h" />
     <ClInclude Include="include\DoubleAttributeFactory.h" />
     <ClInclude Include="include\Edge.h" />
     <ClInclude Include="include\EdgeFactory.h" />
@@ -205,6 +206,7 @@
     <ClCompile Include="src\Cluster.cpp" />
     <ClCompile Include="src\ClusterFactory.cpp" />
     <ClCompile Include="src\Context.cpp" />
+    <ClCompile Include="src\Dictionary.cpp" />
     <ClCompile Include="src\DoubleAttributeFactory.cpp" />
     <ClCompile Include="src\Edge.cpp" />
     <ClCompile Include="src\EdgeFactory.cpp" />

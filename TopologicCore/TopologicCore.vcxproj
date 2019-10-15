@@ -165,7 +165,6 @@ copy "$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\bind\*.pdb
     <ClInclude Include="include\About.h" />
     <ClInclude Include="include\Aperture.h" />
     <ClInclude Include="include\ApertureFactory.h" />
-    <ClInclude Include="include\AperturePath.h" />
     <ClInclude Include="include\Attribute.h" />
     <ClInclude Include="include\AttributeManager.h" />
     <ClInclude Include="include\Bitwise.h" />
@@ -220,7 +219,6 @@ copy "$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\bind\*.pdb
     <ClCompile Include="src\About.cpp" />
     <ClCompile Include="src\Aperture.cpp" />
     <ClCompile Include="src\ApertureFactory.cpp" />
-    <ClCompile Include="src\AperturePath.cpp" />
     <ClCompile Include="src\AttributeManager.cpp" />
     <ClCompile Include="src\Bitwise.cpp" />
     <ClCompile Include="src\Cell.cpp" />

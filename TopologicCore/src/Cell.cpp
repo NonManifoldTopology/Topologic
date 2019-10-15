@@ -1,3 +1,18 @@
+// This file is part of Topologic software library.
+// Copyright(C) 2019, Cardiff University and University College London
+//
+// This program is free software : you can redistribute it and/or modify it
+// under the terms of the GNU Affero General Public License version 3 (AGPL v3)
+// as published by the Free Software Foundation.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+//
+// Please consult the file LICENSE.txt included in Topologic distribution
+// for complete text of the license and disclaimer of any warranty.
+// Alternatively, please see https://www.gnu.org/licenses/agpl-3.0.en.html.
+
 #include "Cell.h"
 #include "Vertex.h"
 #include "Edge.h"
@@ -10,33 +25,15 @@
 #include "AttributeManager.h"
 
 #include <BRep_Builder.hxx>
-#include <BRepAlgoAPI_Common.hxx>
-#include <BRepAlgoAPI_Section.hxx>
-#include <BRepBuilderAPI_MakeEdge.hxx>
-#include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepBuilderAPI_MakeSolid.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
-#include <BRepBuilderAPI_MakeWire.hxx>
-#include <BRepCheck_Shell.hxx>
 #include <BRepClass3d.hxx>
 #include <BRepGProp.hxx>
-#include <BRepPrimAPI_MakeBox.hxx>
-#include <BRepPrimAPI_MakeCone.hxx>
-#include <BRepPrimAPI_MakeCylinder.hxx>
-#include <BRepPrimAPI_MakeSphere.hxx>
 #include <GProp_GProps.hxx>
 #include <Message_ProgressIndicator.hxx>
 #include <ShapeFix_Solid.hxx>
 #include <StdFail_NotDone.hxx>
-#include <TopExp.hxx>
-#include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
-#include <TopoDS_CompSolid.hxx>
-#include <TopoDS_FrozenShape.hxx>
-#include <TopoDS_UnCompatibleShapes.hxx>
-
-#include <TopTools_MapOfShape.hxx>
-#include <BOPTools_AlgoTools.hxx>
 
 #include <assert.h>
 
@@ -75,7 +72,7 @@ namespace TopologicCore
 			}
 			catch (Standard_NoSuchObject)
 			{
-				throw std::exception("Cannot find a Face in the global cluster.");
+				throw std::exception("Cannot find a Face in the global Cluster.");
 			}
 		}
 
@@ -134,6 +131,11 @@ namespace TopologicCore
 
 	Cell::Ptr Cell::ByFaces(const std::list<Face::Ptr>& rkFaces, double kTolerance)
 	{
+		if (kTolerance <= 0.0)
+		{
+			throw std::exception("The tolerance must have a positive value.");
+		}
+
 		if (rkFaces.empty())
 		{
 			throw std::exception("No face is passed.");
@@ -167,7 +169,7 @@ namespace TopologicCore
 	{
 		if (!kpShell->IsClosed())
 		{
-			throw std::exception("The input shell is open.");
+			throw std::exception("The input Shell is open.");
 		}
 
 		BRepBuilderAPI_MakeSolid occtMakeSolid;

@@ -110,6 +110,7 @@
     <ClInclude Include="include\Surface.h">
       <Filter>Geometries</Filter>
     </ClInclude>
+    <ClInclude Include="include\Dictionary.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\About.cpp" />
@@ -213,6 +214,7 @@
     <ClCompile Include="src\Surface.cpp">
       <Filter>Geometries</Filter>
     </ClCompile>
+    <ClCompile Include="src\Dictionary.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Attributes">

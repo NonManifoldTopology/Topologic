@@ -13,15 +13,8 @@
     <ClInclude Include="include\Utilities.h" />
     <ClInclude Include="include\TopologicalQuery.h" />
     <ClInclude Include="include\Aperture.h" />
-    <ClInclude Include="include\AperturePath.h" />
     <ClInclude Include="include\ContentManager.h" />
     <ClInclude Include="include\InstanceGUIDManager.h" />
-    <ClInclude Include="include\Context.h">
-      <Filter>Contexts</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ContextManager.h">
-      <Filter>Contexts</Filter>
-    </ClInclude>
     <ClInclude Include="include\TopologyFactory.h">
       <Filter>Factories</Filter>
     </ClInclude>
@@ -124,6 +117,8 @@
     <ClInclude Include="include\Bitwise.h">
       <Filter>Utilities</Filter>
     </ClInclude>
+    <ClInclude Include="include\Context.h" />
+    <ClInclude Include="include\ContextManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
@@ -136,15 +131,8 @@
     <ClCompile Include="src\Shell.cpp" />
     <ClCompile Include="src\Wire.cpp" />
     <ClCompile Include="src\Aperture.cpp" />
-    <ClCompile Include="src\AperturePath.cpp" />
     <ClCompile Include="src\ContentManager.cpp" />
     <ClCompile Include="src\InstanceGUIDManager.cpp" />
-    <ClCompile Include="src\Context.cpp">
-      <Filter>Contexts</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ContextManager.cpp">
-      <Filter>Contexts</Filter>
-    </ClCompile>
     <ClCompile Include="src\VertexFactory.cpp">
       <Filter>Factories</Filter>
     </ClCompile>
@@ -242,6 +230,8 @@
     <ClCompile Include="src\Bitwise.cpp">
       <Filter>Utilities</Filter>
     </ClCompile>
+    <ClCompile Include="src\Context.cpp" />
+    <ClCompile Include="src\ContextManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Attributes">
@@ -252,9 +242,6 @@
     </Filter>
     <Filter Include="Factories">
       <UniqueIdentifier>{a21958dd-917d-4441-b751-1a82742b61e7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Contexts">
-      <UniqueIdentifier>{ac751df2-d33d-4350-8a20-34c4c87e1c27}</UniqueIdentifier>
     </Filter>
     <Filter Include="Utilities">
       <UniqueIdentifier>{5a8fe480-d148-4b25-9360-dd01b4054261}</UniqueIdentifier>

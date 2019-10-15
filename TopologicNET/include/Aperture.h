@@ -1,3 +1,18 @@
+// This file is part of Topologic software library.
+// Copyright(C) 2019, Cardiff University and University College London
+//
+// This program is free software : you can redistribute it and/or modify it
+// under the terms of the GNU Affero General Public License version 3 (AGPL v3)
+// as published by the Free Software Foundation.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+//
+// Please consult the file LICENSE.txt included in Topologic distribution
+// for complete text of the license and disclaimer of any warranty.
+// Alternatively, please see https://www.gnu.org/licenses/agpl-3.0.en.html.
+
 #pragma once
 
 #include <Topology.h>
@@ -15,7 +30,6 @@ namespace Topologic
 	/// <summary>
 	/// An Aperture is any designed opening in a building including but not limited to any door, gate, window, skylight, or hatch.
 	/// </summary>
-
 	public ref class Aperture : public Topology
 	{
 	public:
@@ -27,35 +41,6 @@ namespace Topologic
 		/// <returns name="Aperture">An Aperture</returns>
 		static Aperture^ ByTopologyContext(Topology^ topology, Context^ context);
 
-		/*/// <summary>
-		/// Creates an Aperture by a Topology, a context, and an open status.
-		/// </summary>
-		/// <param name="topology">A Topology</param>
-		/// <param name="context">A context</param>
-		/// <param name="openStatus">An open status</param>
-		/// <returns name="Aperture">An Aperture</returns>
-		[IsVisibleInDynamoLibrary(false)]
-		static Aperture^ ByTopologyContextStatus(Topology^ topology, Context^ context, bool openStatus);*/
-
-		/*/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="hostFace"></param>
-		/// <param name="apertureBoundary"></param>
-		/// <param name="link"></param>
-		/// <param name="open"></param>
-		/// <returns name="Aperture"></returns>
-		[IsVisibleInDynamoLibrary(false)]
-		static Aperture^ ByBoundaryWithinHost(Face^ hostFace, Wire^ apertureBoundary, bool link, bool open);*/
-
-		/*/// <summary>
-		/// Creates an Aperture by a Topology and a context Topology.
-		/// </summary>
-		/// <param name="topology">A Topology</param>
-		/// <param name="contextTopology">A context Topology</param>
-		/// <returns name="Aperture">An Aperture</returns>
-		static Aperture^ ByTopologyContext(Topology^ topology, Topology^ contextTopology);*/
-
 		/// <summary>
 		/// Returns the underlying Topology.
 		/// </summary>
@@ -64,51 +49,6 @@ namespace Topologic
 		{
 			Topologic::Topology^ get();
 		}
-
-		/*/// <summary>
-		/// Checks if any aperture path is open.
-		/// </summary>
-		/// <returns name="bool">True if the aperture is open</returns>
-		bool IsOpen();
-
-		/// <summary>
-		/// Checks if the aperture path from the first to the second topologies is open.
-		/// </summary>
-		/// <param name="topologies">A list of exactly two topologies</param>
-		/// <returns name="bool">True if the aperture between the two paths is open</returns>
-		bool IsOpen(List<Topologic::Topology^>^ topologies);
-
-		/// <summary>
-		/// Returns all open paths.
-		/// </summary>
-		/// <returns name="Topology[][]">The open paths</returns>
-		List<List<Topologic::Topology^>^>^ Paths();
-
-		/// <summary>
-		/// Open the aperture paths connecting all adjacent topologies.
-		/// </summary>
-		/// <returns name="Aperture">An aperture</returns>
-		Aperture^ Open();
-
-		/// <summary>
-		/// Open the aperture path connecting the input topologies.
-		/// </summary>
-		/// <param name="topologies">Topologies</param>
-		/// <returns name="Aperture">An aperture</returns>
-		Aperture^ Open(List<Topologic::Topology^>^ topologies);
-
-		/// <summary>
-		/// Close all aperture paths.
-		/// </summary>
-		/// <returns name="Aperture"></returns>
-		Aperture^ Close();
-
-		/// <summary>
-		/// Close the aperture path between the input topologies.
-		/// </summary>
-		/// <param name="topologies">Topologies</param>
-		/// <returns name="Aperture">An aperture</returns>
-		Aperture^ Close(List<Topologic::Topology^>^ topologies);*/
 
 		/// <summary>
 		/// Creates a geometry from Aperture.

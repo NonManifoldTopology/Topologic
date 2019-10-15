@@ -1,216 +1,49 @@
-#include <Aperture.h>
-#include <Context.h>
-#include <Vertex.h>
-#include <Face.h>
-#include <Wire.h>
-#include <ApertureFactory.h>
+// This file is part of Topologic software library.
+// Copyright(C) 2019, Cardiff University and University College London
+//
+// This program is free software : you can redistribute it and/or modify it
+// under the terms of the GNU Affero General Public License version 3 (AGPL v3)
+// as published by the Free Software Foundation.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+//
+// Please consult the file LICENSE.txt included in Topologic distribution
+// for complete text of the license and disclaimer of any warranty.
+// Alternatively, please see https://www.gnu.org/licenses/agpl-3.0.en.html.
 
-#include <BRepGProp.hxx>
-#include <GProp_GProps.hxx>
-#include <TopExp.hxx>
-#include <TopExp_Explorer.hxx>
+#include <Aperture.h>
+#include <ApertureFactory.h>
+#include <Context.h>
+#include <Face.h>
+#include <Vertex.h>
 
 #include <assert.h>
 #include <array>
 
 namespace TopologicCore
 {
-	std::shared_ptr<Aperture> Aperture::ByTopologyContext(const Topology::Ptr& kpTopology, const std::shared_ptr<Context>& kpContext)
+	Aperture::Ptr Aperture::ByTopologyContext(const Topology::Ptr& kpTopology, const Context::Ptr& kpContext)
 	{
-		const bool kDefaultStatus = false;
-		return ByTopologyContextStatus(kpTopology, kpContext, kDefaultStatus);
+		return std::make_shared<Aperture>(kpTopology, kpContext);
 	}
 
-	std::shared_ptr<Aperture> Aperture::ByTopologyContext(const Topology::Ptr & kpTopology, const Topology::Ptr & kpContextTopology)
+	Aperture::Ptr Aperture::ByTopologyContext(const Topology::Ptr& kpTopology, const Topology::Ptr& kpContextTopology)
 	{
-		const bool kDefaultStatus = false;
-		const double  kDefaultParameter = 0.0;
+		const double kDefaultParameter = 0.0;
+
+		// Identify the closest simplest subshape
 		Topology::Ptr pClosestSimplestSubshape = kpContextTopology->ClosestSimplestSubshape(kpTopology->CenterOfMass());
 
+		// Create a Context from kpContextTopology
 		Context::Ptr pContext = Context::ByTopologyParameters(pClosestSimplestSubshape, kDefaultParameter, kDefaultParameter, kDefaultParameter);
 
-		std::shared_ptr<Aperture> pAperture = std::make_shared<Aperture>(kpTopology, pContext, kDefaultStatus);
+		// Create the Aperture
+		Aperture::Ptr pAperture = ByTopologyContext(kpTopology, pContext);
 		
 		return pAperture;
 	}
-
-	std::shared_ptr<Aperture> Aperture::ByTopologyContextStatus(const Topology::Ptr& kpTopology, const std::shared_ptr<Context>& kpContext, const bool kOpenStatus)
-	{
-		std::shared_ptr<Aperture> pAperture = std::make_shared<Aperture>(kpTopology, kpContext, kOpenStatus);
-		// HACK
-		kpContext->Topology()->AddContent(pAperture, Face::Type());
-		pAperture->AddContext(kpContext);
-		return pAperture;
-	}
-
-	//bool Aperture::IsOpen() const
-	//{
-	//	return !m_occtAperturePaths.empty();
-	//}
-
-	//bool Aperture::IsOpen(const std::array<Topology::Ptr, 2>& rkTopologies) const
-	//{
-	//	AperturePath aperturePath(
-	//		rkTopologies[0] == nullptr? TopoDS_Shape() : rkTopologies[0]->GetOcctShape(), 
-	//		rkTopologies[1] == nullptr? TopoDS_Shape() : rkTopologies[1]->GetOcctShape()
-	//	);
-	//	std::list<AperturePath>::const_iterator kTopologyPairIterator = 
-	//		std::find(m_occtAperturePaths.begin(), m_occtAperturePaths.end(), aperturePath);
-	//	return kTopologyPairIterator != m_occtAperturePaths.end();
-	//}
-
-	//void Aperture::Open()
-	//{
-	//	// 1. Get the immediate parent topology
-	//	int occtContextTopologyType = (int) GetMainContext()->Topology()->GetOcctShape().ShapeType();
-	//	if (occtContextTopologyType >= (int) TopAbs_COMPOUND)
-	//	{
-	//		return;
-	//	}
-	//	int occtParentTopologyTypeInt = occtContextTopologyType + 1; // always 1 level up
-
-	//	m_occtAperturePaths.clear();
-	//	TopTools_IndexedDataMapOfShapeListOfShape apertureToTopologyMap;
-	//	TopExp::MapShapesAndUniqueAncestors(, occtContextTopologyType, occtParentTopologyType, apertureToTopologyMap);
-
-	//	const TopTools_ListOfShape& rkOcctParentTopologies = apertureToTopologyMap.FindFromKey(m_pMainContext->Topology()->GetOcctShape());
-
-	//	if (rkOcctParentTopologies.IsEmpty())
-	//	{
-	//		m_occtAperturePaths.push_back(AperturePath(TopoDS_Shape(), TopoDS_Shape()));
-	//	}
-	//	else if (rkOcctParentTopologies.Size() == 1)
-	//	{
-	//		TopTools_ListOfShape::const_iterator kOcctParentIterator = rkOcctParentTopologies.begin();
-	//		m_occtAperturePaths.push_back(AperturePath(TopoDS_Shape(), *kOcctParentIterator));
-	//		m_occtAperturePaths.push_back(AperturePath(*kOcctParentIterator, TopoDS_Shape()));
-	//	}else
-	//	{
-	//		for(TopTools_ListIteratorOfListOfShape kOcctParentIterator1(rkOcctParentTopologies);
-	//			kOcctParentIterator1.More();
-	//			kOcctParentIterator1.Next())
-	//		{
-	//			for (TopTools_ListIteratorOfListOfShape kOcctParentIterator2(rkOcctParentTopologies);
-	//				kOcctParentIterator2.More();
-	//				kOcctParentIterator2.Next())
-	//			{
-	//				if (kOcctParentIterator1 == kOcctParentIterator2)
-	//				{
-	//					continue;
-	//				}
-
-	//				m_occtAperturePaths.push_back(AperturePath(kOcctParentIterator1.Value(), kOcctParentIterator2.Value()));
-	//			}
-	//		}
-	//	}
-	//}
-
-	//TopoDS_Shape FindSubentityAdjacentAndHigherDimensionalTo(const TopoDS_Shape& rkShape1, const TopoDS_Shape& rkShape2)
-	//{
-	//	TopAbs_ShapeEnum occtShape2Type = rkShape2.ShapeType();
-	//	TopAbs_ShapeEnum occtTypeToSearch = TopAbs_SHAPE;
-	//	if (occtShape2Type == TopAbs_VERTEX)
-	//	{
-	//		occtTypeToSearch = TopAbs_EDGE;
-	//	}
-	//	else if (occtShape2Type == TopAbs_EDGE)
-	//	{
-	//		occtTypeToSearch = TopAbs_WIRE;
-	//	}
-	//	else if (occtShape2Type == TopAbs_WIRE)
-	//	{
-	//		occtTypeToSearch = TopAbs_FACE;
-	//	}
-	//	else if (occtShape2Type == TopAbs_FACE)
-	//	{
-	//		occtTypeToSearch = TopAbs_SHELL;
-	//	}
-	//	else if (occtShape2Type == TopAbs_SHELL)
-	//	{
-	//		occtTypeToSearch = TopAbs_SOLID;
-	//	}
-	//	else if (occtShape2Type == TopAbs_SOLID)
-	//	{
-	//		occtTypeToSearch = TopAbs_COMPSOLID;
-	//	}
-	//	else
-	//	{
-	//		throw std::exception("Invalid topology");
-	//	}
-
-	//	TopExp_Explorer occtExplorer;
-	//	for (occtExplorer.Init(rkShape1, occtTypeToSearch); occtExplorer.More(); occtExplorer.Next())
-	//	{
-	//		const TopoDS_Shape& occtCurrent = occtExplorer.Current();
-	//		TopExp_Explorer occtCurrentExplorer;
-	//		for (occtCurrentExplorer.Init(occtCurrent, occtShape2Type); occtCurrentExplorer.More(); occtCurrentExplorer.Next())
-	//		{
-	//			const TopoDS_Shape& occtCurrentChild = occtCurrentExplorer.Current();
-	//			if (!occtCurrentChild.IsSame(rkShape2))
-	//			{
-	//				return occtCurrent;
-	//			}
-	//		}
-	//	}
-
-	//	return TopoDS_Shape(); // empty
-	//}
-
-	//void Aperture::Open(const std::array<Topology::Ptr, 2>& rkTopologies)
-	//{
-	//	AperturePath aperturePath(
-	//		rkTopologies[0] == nullptr ? 
-	//			TopoDS_Shape() : 
-	//			FindSubentityAdjacentAndHigherDimensionalTo(
-	//				rkTopologies[0]->GetOcctShape(), 
-	//				m_pMainContext->Topology()->GetOcctShape()),
-	//		rkTopologies[1] == nullptr ? 
-	//			TopoDS_Shape() : 
-	//			FindSubentityAdjacentAndHigherDimensionalTo(
-	//				rkTopologies[1]->GetOcctShape(), 
-	//				m_pMainContext->Topology()->GetOcctShape())
-	//	);
-	//	std::list<AperturePath>::const_iterator kTopologyPairIterator = std::find(m_occtAperturePaths.begin(), m_occtAperturePaths.end(), aperturePath);
-	//	if (kTopologyPairIterator == m_occtAperturePaths.end())
-	//	{
-	//		m_occtAperturePaths.push_back(aperturePath);
-	//	}
-	//}
-
-	//void Aperture::Close()
-	//{
-	//	m_occtAperturePaths.clear();
-	//}
-
-	//void Aperture::Close(const std::array<Topology::Ptr, 2>& rkTopologies)
-	//{
-	//	AperturePath aperturePath(
-	//		rkTopologies[0] == nullptr ? TopoDS_Shape() : rkTopologies[0]->GetOcctShape(),
-	//		rkTopologies[1] == nullptr ? TopoDS_Shape() : rkTopologies[1]->GetOcctShape()
-	//	);
-
-	//	for (std::list<AperturePath>::const_iterator kAperturePathIterator = m_occtAperturePaths.begin();
-	//		kAperturePathIterator != m_occtAperturePaths.end();
-	//		kAperturePathIterator++)
-	//	{
-	//		if (*kAperturePathIterator == aperturePath)
-	//		{
-	//			m_occtAperturePaths.erase(kAperturePathIterator);
-	//			break;
-	//		}
-	//	}
-	//}
-
-	//void Aperture::Paths(std::list<std::list<Topology::Ptr>>& rPaths) const
-	//{
-	//	for(const AperturePath& rkAperturePath : m_occtAperturePaths)
-	//	{
-	//		std::list<Topology::Ptr> path;
-	//		path.push_back(Topology::ByOcctShape(rkAperturePath.GetTopology1()));
-	//		path.push_back(Topology::ByOcctShape(rkAperturePath.GetTopology2()));
-	//		rPaths.push_back(path);
-	//	}
-	//}
 
 	Vertex::Ptr Aperture::CenterOfMass() const
 	{
@@ -257,13 +90,6 @@ namespace TopologicCore
 		return Topology()->IsContainerType();
 	}
 
-	Aperture::Ptr Aperture::ByBoundaryWithinHost(const Face::Ptr& kpHostFace, const Wire::Ptr& kpApertureBoundary, const bool kLink, const bool kOpenStatus)
-	{
-		/*Face::Ptr trimmedFace = kpHostFace->Trim(kpApertureBoundary);
-		return std::make_shared<Aperture>(trimmedFace, nullptr, kOpenStatus);*/
-		return nullptr;
-	}
-
 	Topology::Ptr Aperture::Topology() const
 	{
 		assert(m_pTopology != nullptr && "The underlying topology is null.");
@@ -274,7 +100,7 @@ namespace TopologicCore
 		return m_pTopology;
 	}
 
-	Aperture::Aperture(const Topology::Ptr& kpTopology, const std::shared_ptr<Context>& kpContext, const bool kOpenStatus, const std::string& rkGuid)
+	Aperture::Aperture(const Topology::Ptr& kpTopology, const std::shared_ptr<Context>& kpContext, const std::string& rkGuid)
 		: TopologicCore::Topology(kpTopology->Dimensionality(), kpTopology->GetOcctShape(), rkGuid.compare("") == 0 ? GetClassGUID() : rkGuid)
 		, m_pMainContext(kpContext)
 		, m_pTopology(kpTopology)
@@ -284,20 +110,11 @@ namespace TopologicCore
 		{
 			throw std::exception("A null topology is passed.");
 		}
-		/*if (kpContext == nullptr)
-		{
-			throw std::exception("A null context is passed.");
-		}*/
-
+		
 		if (kpContext != nullptr)
 		{
 			AddContext(kpContext);
 		}
-
-		/*if (kOpenStatus)
-		{
-			Open();
-		}*/
 	}
 
 	Aperture::~Aperture()

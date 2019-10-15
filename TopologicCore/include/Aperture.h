@@ -1,8 +1,37 @@
+// This file is part of Topologic software library.
+// Copyright(C) 2019, Cardiff University and University College London
+//
+// This program is free software : you can redistribute it and/or modify it
+// under the terms of the GNU Affero General Public License version 3 (AGPL v3)
+// as published by the Free Software Foundation.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+//
+// Please consult the file LICENSE.txt included in Topologic distribution
+// for complete text of the license and disclaimer of any warranty.
+// Alternatively, please see https://www.gnu.org/licenses/agpl-3.0.en.html.
+
+// This file is part of Topologic software library.
+// Copyright(C) 2019, Cardiff University and University College London
+//
+// This program is free software : you can redistribute it and/or modify it 
+// under the terms of the GNU Affero General Public License version 3 (AGPL v3)
+// as published by the Free Software Foundation.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+//
+// Please consult the file LICENSE.txt included in Topologic distribution
+// for complete text of the license and disclaimer of any warranty.
+// Alternatively, please see https://www.gnu.org/licenses/agpl-3.0.en.html.
+
 #pragma once
 
 #include "Utilities.h"
 #include "Topology.h"
-#include "AperturePath.h"
 
 #include <list>
 #include <memory>
@@ -23,8 +52,7 @@ namespace TopologicCore
 
 	/// <summary>
 	/// <para>
-	/// An Aperture defines a connection path between two Topologies that share a common Topology or between a
-	/// Topology and the outside space. A connection path can be uni-directional or bi-directional.
+	/// An Aperture is any designed opening in a building including but not limited to any door, gate, window, skylight, or hatch.
 	/// </para>
 	/// </summary>
 	class Aperture : public Topology
@@ -33,159 +61,114 @@ namespace TopologicCore
 		typedef std::shared_ptr<Aperture> Ptr;
 
 	public:
-		Aperture(const Topology::Ptr& kpTopology, const std::shared_ptr<Context>& kpContext, const bool kOpenStatus, const std::string& rkGuid = "");
+		Aperture(const Topology::Ptr& kpTopology, const std::shared_ptr<Context>& kpContext, const std::string& rkGuid = "");
 		~Aperture();
 
 		/// <summary>
-		/// Creates an aperture by a topology and a context.
+		/// Creates an Aperture by a topology and a context.
 		/// </summary>
-		/// <param name="kpTopology"></param>
-		/// <param name="kpContext"></param>
-		/// <returns></returns>
-		static TOPOLOGIC_API std::shared_ptr<Aperture> ByTopologyContext(const Topology::Ptr& kpTopology, const std::shared_ptr<Context>& kpContext);
+		/// <param name="kpTopology">A Topology</param>
+		/// <param name="kpContext">A Context</param>
+		/// <returns name="Aperture">An Aperture</returns>
+		TOPOLOGIC_API static std::shared_ptr<Aperture> ByTopologyContext(const Topology::Ptr& kpTopology, const std::shared_ptr<Context>& kpContext);
 
 		/// <summary>
-		/// Creates an aperture by a topology and a context topology.
+		/// Creates an Aperture by a topology and a context topology.
 		/// </summary>
-		/// <param name="kpTopology"></param>
-		/// <param name="kpContextTopology"></param>
-		/// <returns></returns>
-		static TOPOLOGIC_API std::shared_ptr<Aperture> ByTopologyContext(const Topology::Ptr& kpTopology, const Topology::Ptr& kpContextTopology);
-
+		/// <param name="kpTopology">A Topology</param>
+		/// <param name="kpContextTopology">Another Topology which represents the Context</param>
+		/// <returns name="Aperture">An Aperture</returns>
+		TOPOLOGIC_API static std::shared_ptr<Aperture> ByTopologyContext(const Topology::Ptr& kpTopology, const Topology::Ptr& kpContextTopology);
+		
 		/// <summary>
-		/// Creates an aperture by a topology and a context.
+		/// Returns the underlying Topology.
 		/// </summary>
-		/// <param name="kpTopology"></param>
-		/// <param name="kpContext"></param>
-		/// <param name="kOpenStatus"></param>
-		/// <returns></returns>
-		static TOPOLOGIC_API std::shared_ptr<Aperture> ByTopologyContextStatus(const Topology::Ptr& kpTopology, const std::shared_ptr<Context>& kpContext, const bool kOpenStatus);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="hostFace"></param>
-		/// <param name="apertureBoundary"></param>
-		/// <param name="kLink"></param>
-		/// <param name="kOpen"></param>
-		/// <returns></returns>
-		static TOPOLOGIC_API Aperture::Ptr ByBoundaryWithinHost(const std::shared_ptr<Face>& kpHostFace, const std::shared_ptr<Wire>& kpApertureBoundary, const bool kLink, const bool kOpenStatus);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
+		/// <returns name="Topology">The underlying Topology</returns>
 		TOPOLOGIC_API std::shared_ptr<Topology> Topology() const;
 
-		/*/// <summary>
-		/// Checks if any aperture path is open.
-		/// </summary>
-		/// <returns></returns>
-		TOPOLOGIC_API bool IsOpen() const;
-
 		/// <summary>
-		/// Checks if the topologies are adjacent.
+		/// Returns the main Context.
 		/// </summary>
-		/// <param name="rkTopologies"></param>
-		/// <returns></returns>
-		TOPOLOGIC_API bool IsOpen(const std::array<Topology::Ptr, 2>& rkTopologies) const;
-
-		/// <summary>
-		/// Returns all open aperture paths
-		/// </summary>
-		/// <param name="rPaths"></param>
-		TOPOLOGIC_API void Paths(std::list<std::list<Topology::Ptr>>& rPaths) const;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		TOPOLOGIC_API void Open();
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="rkTopologies"></param>
-		TOPOLOGIC_API void Open(const std::array<Topology::Ptr, 2>& rkTopologies);*/
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
+		/// <returns name="Context">The main Context</returns>
 		TOPOLOGIC_API std::shared_ptr<Context>& GetMainContext() { return m_pMainContext; }
 
 		/// <summary>
-		/// 
+		/// Returns the main Context.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="Context">The main Context</returns>
 		TOPOLOGIC_API const std::shared_ptr<Context>& GetMainContext() const { return m_pMainContext; }
 
 		/// <summary>
-		/// 
+		/// Creates a geometry from the underlying Topology.
 		/// </summary>
-		TOPOLOGIC_API void Close();
-		
-		/// <summary>
-		/// Checks if the topologies are adjacent.
-		/// </summary>
-		/// <param name="rkTopologies"></param>
-		TOPOLOGIC_API void Close(const std::array<Topology::Ptr, 2>& rkTopologies);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="rOcctGeometries"></param>
+		/// <param name="rOcctGeometries">The created geometries</param>
 		virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const;
 
 		/// <summary>
-		/// 
+		/// Returns the center of mass of the underlying Topology.
 		/// </summary>
+		/// <returns="Vertex">The center of mass</returns>
 		virtual std::shared_ptr<Vertex> CenterOfMass() const;
 
 		/// <summary>
-		/// 
+		/// Checks if the underlying Topology is manifold.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="bool">True if the underlying Topology is manifold, otherwise False</returns>
 		virtual bool IsManifold() const;
 
 		/// <summary>
-		/// 
+		/// Returns the type of the Aperture as a String.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="String">The type of the Aperture as a String</returns>
 		virtual std::string GetTypeAsString() const;
 
 		/// <summary>
-		/// 
+		/// Returns the underlying OCCT shape.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="TopoDS_Shape">The underlying OCCT shape</returns>
 		virtual TopoDS_Shape& GetOcctShape();
 
 		/// <summary>
-		/// 
+		/// Sets the underlying OCCT shape.
 		/// </summary>
-		/// <param name="rkOcctShape"></param>
+		/// <param name="rkOcctShape">A new underlying OCCT shape</param>
 		virtual void SetOcctShape(const TopoDS_Shape& rkOcctShape);
 
 		/// <summary>
-		/// 
+		/// Returns the underlying OCCT shape.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="TopoDS_Shape">The underlying OCCT shape</returns>
 		virtual const TopoDS_Shape& GetOcctShape() const;
 
 		/// <summary>
-		/// 
+		/// Returns the type of the Aperture.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="TopologyType">The type of the underlying Topology</returns>
 		virtual TopologyType GetType() const;
 
+		/// <summary>
+		/// Returns the class GUID.
+		/// </summary>
+		/// <returns name="String">The class GUID</returns>
 		virtual std::string GetClassGUID() const {
 			return ApertureGUID::Get();
 		}
 
+		/// <summary>
+		/// Checks if the underlying Topology is a container type (Wire, Shell, CellComplex, Cluster).
+		/// </summary>
+		/// <returns name="bool">True if the underlying Topology is a container type (Wire, Shell, CellComplex, Cluster), otherwise False</returns>
 		virtual bool IsContainerType();
 
 	protected:
-		//std::list<AperturePath> m_occtAperturePaths;
-		std::shared_ptr<Context> m_pMainContext; // the primary context passed in the constructor is stored here
+		/// <summary>
+		/// The primary Context passed in the constructor
+		/// </summary>
+		std::shared_ptr<Context> m_pMainContext; 
+
+		/// <summary>
+		/// The underlying Topology
+		/// </summary>
 		Topology::Ptr m_pTopology;
 	};
 }
