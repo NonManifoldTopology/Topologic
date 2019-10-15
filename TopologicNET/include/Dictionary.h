@@ -16,5 +16,21 @@
 
 #pragma once
 
+using namespace System;
+using namespace System::Collections::Generic;
+namespace Net = System::Collections::Generic;
+
 namespace Topologic {
+	public ref class Dictionary
+	{
+	public:
+		static Net::Dictionary<String^, Object^>^ ByKeysValues(List<String^>^ keys, List<Object^>^ values);
+
+		static Net::Dictionary<String^, Object^>^ SetValueAtKey(Net::Dictionary<String^, Object^>^ dictionary, String^ key, Object^ value);
+
+		static Object^ ValueAtKey(Net::Dictionary<String^, Object^>^ dictionary, String^ key);
+
+	public protected:
+		static Net::Dictionary<String^, Object^>^ Copy(Net::Dictionary<String^, Object^>^ dictionary);
+	};
 }

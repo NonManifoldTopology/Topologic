@@ -21,6 +21,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
 using Rhino.Geometry;
 
 namespace TopologicGH
@@ -72,9 +73,10 @@ namespace TopologicGH
 
             
             Dictionary<String, Object> dictionary = topology.Dictionary;
+            
+            IGH_Goo dictionaryGoo = new GH_ObjectWrapper(dictionary);
 
-            // Use the DA object to assign a new String to the first output parameter.
-            DA.SetData(0, dictionary);
+            DA.SetData(0, dictionaryGoo);
         }
 
         /// <summary>

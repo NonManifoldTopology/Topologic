@@ -61,6 +61,9 @@
     <Compile Include="AboutVersion.cs" />
     <Compile Include="ApertureByTopologyContext.cs" />
     <Compile Include="ApertureTopology.cs" />
+    <Compile Include="DictionaryByKeysValues.cs" />
+    <Compile Include="DictionarySetValueAtKey.cs" />
+    <Compile Include="DictionaryValueAtKey.cs" />
     <Compile Include="FaceWires.cs" />
     <Compile Include="GraphShortestPaths.cs" />
     <Compile Include="TopologyRemoveContents.cs" />

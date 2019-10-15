@@ -1,4 +1,4 @@
-// This file is part of Topologic software library.
+﻿// This file is part of Topologic software library.
 // Copyright(C) 2019, Cardiff University and University College London
 //
 // This program is free software: you can redistribute it and/or modify
@@ -14,11 +14,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -28,10 +26,11 @@ using Rhino.Geometry;
 
 namespace TopologicGH
 {
-    public class TopologySetDictionary : GH_Component
+    public class DictionaryByKeysValues : GH_Component
     {
-        public TopologySetDictionary()
-          : base("Topology.SetDictionary", "Topology.SetDictionary", "Sets a dictionary for a Topology.", "Topologic", "Topology")
+
+        public DictionaryByKeysValues()
+          : base("Dictionary.ByKeysValues", "Dictionary.ByKeysValues", "Create a Dictionary by keys and values", "Topologic", "Dictionary")
         {
         }
 
@@ -40,8 +39,8 @@ namespace TopologicGH
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Topology", "Topology", "Topology", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Dictionary", "Dictionary", "Dictionary", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Keys", "Keys", "Keys", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Values", "Values", "Values", GH_ParamAccess.list);
         }
 
         /// <summary>
@@ -49,7 +48,7 @@ namespace TopologicGH
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Topology", "Topology", "Topology", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Dictionary", "Dictionary", "Dictionary", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -59,47 +58,29 @@ namespace TopologicGH
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             // Declare a variable for the input String
-            Topologic.Topology topology = null;
-            GH_ObjectWrapper dictionaryGoo = null;
-            
+            List<String> keys = null;
+            List<Object> values = null;
+
             // Use the DA object to retrieve the data inside the first input parameter.
             // If the retieval fails (for example if there is no data) we need to abort.
-            if (!DA.GetData(0, ref topology)) { return; }
-            if (!DA.GetData(1, ref dictionaryGoo)) { return; }
-
-            Dictionary<String, Object> dictionary = dictionaryGoo.Value as Dictionary<String, Object>;
-
-            if (dictionary == null)
-            {
-                Dictionary<Object, Object> ooDictionary = dictionaryGoo.Value as Dictionary<Object, Object>;
-
-                dictionary = new Dictionary<String, Object>();
-                foreach (var ooKeyValuePair in ooDictionary)
-                {
-                    String oKey = ooKeyValuePair.Key as String;
-                    if (oKey == null)
-                    {
-                        throw new Exception("The dictionary contains a non-String key.");
-                    }
-
-                    dictionary.Add(oKey, ooKeyValuePair.Value);
-                }
-            }
+            if (!DA.GetDataList(0, keys)) { return; }
+            if (!DA.GetDataList(1, values)) { return; }
 
             // If the retrieved data is Nothing, we need to abort.
             // We're also going to abort on a zero-length String.
-            if (topology == null) { return; }
-            if (dictionary == null) { return; }
+            if (keys == null) { return; }
+            if (values == null) { return; }
             //if (data.Length == 0) { return; }
 
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
 
-            
-            Topologic.Topology topologyWithDictionary = topology.SetDictionary(dictionary);
 
-            // Use the DA object to assign a new String to the first output parameter.
-            DA.SetData(0, topologyWithDictionary);
+            Dictionary<String, Object> dictionary = Topologic.Dictionary.ByKeysValues(keys, values);
+
+            IGH_Goo dictionaryGoo = new GH_ObjectWrapper(dictionary);
+
+            DA.SetData(0, dictionaryGoo);
         }
 
         /// <summary>
@@ -120,7 +101,7 @@ namespace TopologicGH
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("d803e394-a22e-4a8e-a677-1935db26c0ad"); }
+            get { return new Guid("40650888-9046-48c5-8769-5e1e57caa753"); }
         }
     }
 }
