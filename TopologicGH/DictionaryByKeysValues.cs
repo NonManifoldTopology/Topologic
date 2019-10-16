@@ -58,8 +58,8 @@ namespace TopologicGH
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             // Declare a variable for the input String
-            List<String> keys = null;
-            List<Object> values = null;
+            List<String> keys = new List<string>();
+            List<Object> values = new List<Object>();
 
             // Use the DA object to retrieve the data inside the first input parameter.
             // If the retieval fails (for example if there is no data) we need to abort.
@@ -75,8 +75,9 @@ namespace TopologicGH
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
 
-
-            Dictionary<String, Object> dictionary = Topologic.Dictionary.ByKeysValues(keys, values);
+            List<Object> finalValues = GhToNetConverter.ConvertList(values);
+            
+            Dictionary<String, Object> dictionary = Topologic.Dictionary.ByKeysValues(keys, finalValues);
 
             IGH_Goo dictionaryGoo = new GH_ObjectWrapper(dictionary);
 

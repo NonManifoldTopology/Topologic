@@ -65,6 +65,7 @@
     <Compile Include="DictionarySetValueAtKey.cs" />
     <Compile Include="DictionaryValueAtKey.cs" />
     <Compile Include="FaceWires.cs" />
+    <Compile Include="GhToNetConverter.cs" />
     <Compile Include="GraphShortestPaths.cs" />
     <Compile Include="TopologyRemoveContents.cs" />
     <Compile Include="TopologySetDictionaries.cs" />

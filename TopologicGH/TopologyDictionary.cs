@@ -70,7 +70,6 @@ namespace TopologicGH
 
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
-
             
             Dictionary<String, Object> dictionary = topology.Dictionary;
             

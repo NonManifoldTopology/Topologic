@@ -69,22 +69,17 @@ namespace TopologicGH
 
             Dictionary<String, Object> dictionary = dictionaryGoo.Value as Dictionary<String, Object>;
 
-            if (dictionary == null)
+            if (dictionary != null)
+            {
+                dictionary = GhToNetConverter.ConvertDictionary(dictionary);
+            }
+            else
             {
                 Dictionary<Object, Object> ooDictionary = dictionaryGoo.Value as Dictionary<Object, Object>;
 
-                dictionary = new Dictionary<String, Object>();
-                foreach (var ooKeyValuePair in ooDictionary)
-                {
-                    String oKey = ooKeyValuePair.Key as String;
-                    if (oKey == null)
-                    {
-                        throw new Exception("The dictionary contains a non-String key.");
-                    }
-
-                    dictionary.Add(oKey, ooKeyValuePair.Value);
-                }
+                dictionary = GhToNetConverter.ConvertDictionary(ooDictionary);
             }
+
 
             // If the retrieved data is Nothing, we need to abort.
             // We're also going to abort on a zero-length String.
