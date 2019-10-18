@@ -39,7 +39,7 @@ namespace TopologicGH
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Keys", "Keys", "Keys", GH_ParamAccess.list);
+            pManager.AddTextParameter("Keys", "Keys", "Keys", GH_ParamAccess.list);
             pManager.AddGenericParameter("Values", "Values", "Values", GH_ParamAccess.list);
         }
 

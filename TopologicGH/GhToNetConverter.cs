@@ -39,8 +39,23 @@ namespace TopologicGH
             }
         }
 
-        public static String ConvertGhObject(GH_String ghString)
+        public static Object ConvertGhObject(GH_String ghString)
         {
+            // Try converting in this order: Int, Double, String
+            Int64 intResult = 0;
+            bool isInt = Int64.TryParse(ghString.Value, out intResult);
+            if(isInt)
+            {
+                return intResult;
+            }
+
+            double doubleResult = 0.0;
+            bool isDouble = Double.TryParse(ghString.Value, out doubleResult);
+            if (isDouble)
+            {
+                return doubleResult;
+            }
+
             return ghString.Value;
         }
 

@@ -25,6 +25,8 @@
 #include <TopologicCore/include/Utilities/CellUtility.h>
 #include <TopologicCore/include/Utilities/TopologyUtility.h>
 
+#include <gp_Quaternion.hxx>
+
 #include <assert.h>
 
 namespace Topologic
@@ -402,21 +404,53 @@ namespace Topologic
 
 	Cell ^ Cell::ByCone(Autodesk::DesignScript::Geometry::Cone ^ cone)
 	{
-		TopologicCore::Cell::Ptr pCoreCone = TopologicUtilities::CellUtility::ByCone(
-			cone->StartPoint->X,
-			cone->StartPoint->Y,
-			cone->StartPoint->Z,
+		// Open CASCADE always makes an upright cone. Dynamo can make a cone of any orientation
+		// Create the quaternion rotation first
+		gp_Vec occtUprightNormal(
 			cone->ContextCoordinateSystem->ZAxis->X,
 			cone->ContextCoordinateSystem->ZAxis->Y,
-			cone->ContextCoordinateSystem->ZAxis->Z,
+			cone->ContextCoordinateSystem->ZAxis->Z);
+		gp_Vec occtUprightXAxis(
 			cone->ContextCoordinateSystem->XAxis->X,
 			cone->ContextCoordinateSystem->XAxis->Y,
-			cone->ContextCoordinateSystem->XAxis->Z,
+			cone->ContextCoordinateSystem->XAxis->Z);
+		gp_Pnt occtStartPoint(cone->StartPoint->X, cone->StartPoint->Y, cone->StartPoint->Z);
+		gp_Pnt occtEndPoint(cone->EndPoint->X, cone->EndPoint->Y, cone->EndPoint->Z);
+		gp_Vec occtOrientedNormal(occtStartPoint, occtEndPoint);
+		gp_Quaternion occtQuaternion(occtUprightNormal, occtOrientedNormal);
+
+		// Rotate the upright normal and x axis
+		gp_Vec occtRotatedUprightNormal = occtQuaternion * occtUprightNormal;
+		gp_Vec occtRotatedUprightXAxis = occtQuaternion * occtUprightXAxis;
+
+		// Create the cone
+		TopologicCore::Cell::Ptr pCoreCone = TopologicUtilities::CellUtility::ByCone(
+			cone->ContextCoordinateSystem->Origin->X,
+			cone->ContextCoordinateSystem->Origin->Y,
+			cone->ContextCoordinateSystem->Origin->Z,
+			occtRotatedUprightNormal.X(),
+			occtRotatedUprightNormal.Y(),
+			occtRotatedUprightNormal.Z(),
+			occtRotatedUprightXAxis.X(),
+			occtRotatedUprightXAxis.Y(),
+			occtRotatedUprightXAxis.Z(), 
 			cone->StartRadius,
 			cone->EndRadius,
 			cone->StartPoint->DistanceTo(cone->EndPoint));
-		return gcnew Cell(pCoreCone);
+
+
+		// Translate to new start point
+		TopologicCore::Cell::Ptr pCoreTranslatedCone = 
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Cell>(
+				TopologicUtilities::TopologyUtility::Translate(
+				pCoreCone,
+				cone->StartPoint->X - cone->ContextCoordinateSystem->Origin->X,
+				cone->StartPoint->Y - cone->ContextCoordinateSystem->Origin->Y,
+				cone->StartPoint->Z - cone->ContextCoordinateSystem->Origin->Z));
+
+		return gcnew Cell(pCoreTranslatedCone);
 	}
+
 	Cell^ Cell::ByCuboid(Autodesk::DesignScript::Geometry::Cuboid^ cuboid)
 	{
 		Autodesk::DesignScript::Geometry::Point^ pDynamoCentroid = cuboid->Centroid();
@@ -444,12 +478,12 @@ namespace Topologic
 			pDynamoCoordinateSystem->ZAxis->X,
 			pDynamoCoordinateSystem->ZAxis->Y,
 			pDynamoCoordinateSystem->ZAxis->Z,
-			pDynamoCoordinateSystem->XAxis->X,
-			pDynamoCoordinateSystem->XAxis->Y,
-			pDynamoCoordinateSystem->XAxis->Z,
 			pDynamoCoordinateSystem->YAxis->X,
 			pDynamoCoordinateSystem->YAxis->Y,
-			pDynamoCoordinateSystem->YAxis->Z
+			pDynamoCoordinateSystem->YAxis->Z,
+			pDynamoCoordinateSystem->XAxis->X,
+			pDynamoCoordinateSystem->XAxis->Y,
+			pDynamoCoordinateSystem->XAxis->Z
 		);
 
 		TopologicCore::Vertex::Ptr coreCentroid = pCoreCell->CenterOfMass();
