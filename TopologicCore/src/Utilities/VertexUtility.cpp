@@ -16,6 +16,7 @@
 
 #include <Utilities/VertexUtility.h>
 #include <Utilities/CellUtility.h>
+#include <Utilities/FaceUtility.h>
 
 #include <Aperture.h>
 #include <Cell.h>
@@ -106,8 +107,20 @@ namespace TopologicUtilities
 		}
 
 		try {
-			double distance = occtProjection.LowerDistance();
-			return distance;
+			// If the projection is outside the Face (use IsInside), use distance to edges.
+			bool isInside = FaceUtility::IsInside(kpFace, kpVertex, 0.0001);
+
+			if (isInside)
+			{
+				double distance = occtProjection.LowerDistance();
+				return distance;
+			}
+			else
+			{
+
+				BRepExtrema_DistShapeShape occtDistance(kpVertex->GetOcctShape(), kpFace->GetOcctShape(), Extrema_ExtFlag_MINMAX);
+				return occtDistance.Value();
+			}
 		}
 		catch (...)
 		{

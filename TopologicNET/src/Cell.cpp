@@ -475,15 +475,15 @@ namespace Topologic
 			width,
 			length,
 			height,
-			pDynamoCoordinateSystem->ZAxis->X,
-			pDynamoCoordinateSystem->ZAxis->Y,
-			pDynamoCoordinateSystem->ZAxis->Z,
-			pDynamoCoordinateSystem->YAxis->X,
-			pDynamoCoordinateSystem->YAxis->Y,
-			pDynamoCoordinateSystem->YAxis->Z,
-			pDynamoCoordinateSystem->XAxis->X,
-			pDynamoCoordinateSystem->XAxis->Y,
-			pDynamoCoordinateSystem->XAxis->Z
+			pDynamoCoordinateSystem->Determinant * pDynamoCoordinateSystem->ZAxis->X,
+			pDynamoCoordinateSystem->Determinant * pDynamoCoordinateSystem->ZAxis->Y,
+			pDynamoCoordinateSystem->Determinant * pDynamoCoordinateSystem->ZAxis->Z,
+			pDynamoCoordinateSystem->Determinant * pDynamoCoordinateSystem->XAxis->X,
+			pDynamoCoordinateSystem->Determinant * pDynamoCoordinateSystem->XAxis->Y,
+			pDynamoCoordinateSystem->Determinant * pDynamoCoordinateSystem->XAxis->Z,
+			pDynamoCoordinateSystem->Determinant * pDynamoCoordinateSystem->YAxis->X,
+			pDynamoCoordinateSystem->Determinant * pDynamoCoordinateSystem->YAxis->Y,
+			pDynamoCoordinateSystem->Determinant * pDynamoCoordinateSystem->YAxis->Z
 		);
 
 		TopologicCore::Vertex::Ptr coreCentroid = pCoreCell->CenterOfMass();

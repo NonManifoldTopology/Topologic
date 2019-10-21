@@ -314,10 +314,10 @@ namespace Topologic
 		return ByCoreTopology(pClosestLowestSubshape);
 	}
 
-	Topology ^ Topology::SelectSubtopology(Topology ^ selector, int typeFilter)
+	Topology ^ Topology::SelectSubtopology(Vertex ^ selector, int typeFilter)
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		std::shared_ptr<TopologicCore::Topology> pCoreQueryTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(selector->GetCoreTopologicalQuery());
+		std::shared_ptr<TopologicCore::Vertex> pCoreQueryTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Vertex>(selector->GetCoreTopologicalQuery());
 
 		std::shared_ptr<TopologicCore::Topology> pSelectedSubtopology = pCoreTopology->SelectSubtopology(pCoreQueryTopology, typeFilter);
 		return ByCoreTopology(pSelectedSubtopology);
@@ -347,13 +347,18 @@ namespace Topologic
 
 	Topology ^ Topology::SetDictionary(System::Collections::Generic::Dictionary<String^, Object^>^ dictionary)
 	{
-		TopologicCore::Topology::Ptr pCoreTopology =
-		TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->DeepCopy();
-		Topology^ copyTopology = Topology::ByCoreTopology(pCoreCopyTopology);
-		copyTopology->AddAttributesNoCopy(dictionary);
-
-		return copyTopology;
+		try {
+			TopologicCore::Topology::Ptr pCoreTopology =
+				TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+			TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->DeepCopy();
+			Topology^ copyTopology = Topology::ByCoreTopology(pCoreCopyTopology);
+			copyTopology->AddAttributesNoCopy(dictionary);
+			return copyTopology;
+		}
+		catch (const std::exception& e)
+		{
+			throw gcnew Exception(gcnew String(e.what()));
+		}
 	}
 
 	Topology ^ Topology::SetDictionaries(
@@ -388,11 +393,18 @@ namespace Topologic
 			}
 			coreDictionaries.push_back(coreDictionary);
 		}
-		TopologicCore::Topology::Ptr pCoreCopyTopologyWithDictionaries = 
-			pCoreCopyTopology->SetDictionaries(coreSelectors, coreDictionaries, typeFilter);
-		Topology^ copyTopology = Topology::ByCoreTopology(pCoreCopyTopologyWithDictionaries);
+		try
+		{
+			TopologicCore::Topology::Ptr pCoreCopyTopologyWithDictionaries = 
+				pCoreCopyTopology->SetDictionaries(coreSelectors, coreDictionaries, typeFilter);
+			Topology^ copyTopology = Topology::ByCoreTopology(pCoreCopyTopologyWithDictionaries);
 
-		return copyTopology;
+			return copyTopology;
+		}
+		catch (const std::exception& e)
+		{
+			throw gcnew Exception(gcnew String(e.what()));
+		}
 	}
 
 	Dictionary<String^, Object^>^ Topology::Dictionary::get()
@@ -455,7 +467,7 @@ namespace Topologic
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->DeepCopy();
 
-		TopologicCore::AttributeManager::GetInstance().CopyAttributes(pCoreTopology->GetOcctShape(), pCoreCopyTopology->GetOcctShape());
+		TopologicCore::AttributeManager::GetInstance().DeepCopyAttributes(pCoreTopology->GetOcctShape(), pCoreCopyTopology->GetOcctShape());
 		
 		Topology^ topology = ByCoreTopology(pCoreCopyTopology);
 		return safe_cast<T>(topology);
@@ -468,7 +480,7 @@ namespace Topologic
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		TopologicCore::Topology::Ptr pCoreCopyTopology = pCoreTopology->DeepCopy();
 
-		TopologicCore::AttributeManager::GetInstance().CopyAttributes(pCoreTopology->GetOcctShape(), pCoreCopyTopology->GetOcctShape());
+		TopologicCore::AttributeManager::GetInstance().DeepCopyAttributes(pCoreTopology->GetOcctShape(), pCoreCopyTopology->GetOcctShape());
 
 		Topology^ topology = ByCoreTopology(pCoreCopyTopology);
 		return safe_cast<T>(topology);

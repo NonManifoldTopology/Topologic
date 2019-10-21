@@ -321,8 +321,18 @@ namespace Topologic
 
 	Topology^ Graph::Topology::get()
 	{
-		TopologicCore::Topology::Ptr coreTopology = (*m_pCoreGraph)->Topology();
-		return Topologic::Topology::ByCoreTopology(coreTopology);
+		try {
+			TopologicCore::Topology::Ptr coreTopology = (*m_pCoreGraph)->Topology();
+			return Topologic::Topology::ByCoreTopology(coreTopology);
+		}
+		catch (std::exception& e)
+		{
+			throw gcnew Exception(gcnew String(e.what()));
+		}
+		catch (...)
+		{
+			throw gcnew Exception("Unknown exception");
+		}
 	}
 
 	List<Vertex^>^ Graph::Vertices::get()
