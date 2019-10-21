@@ -596,10 +596,10 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpSelectorTopology"></param>
+		/// <param name="kpSelector"></param>
 		/// <param name="kTypeFilter"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology::Ptr SelectSubtopology(const Topology::Ptr& kpSelectorTopology, const int kTypeFilter = TOPOLOGY_ALL) const;
+		TOPOLOGIC_API Topology::Ptr SelectSubtopology(const std::shared_ptr<Vertex>& kpSelector, const int kTypeFilter = TOPOLOGY_ALL) const;
 
 		static TopoDS_Shape SelectSubtopology(const TopoDS_Shape& rkOcctShape, const TopoDS_Shape& rkOcctSelectorShape, const int kTypeFilter = TOPOLOGY_ALL);
 
