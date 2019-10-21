@@ -93,10 +93,10 @@ namespace TopologicCore
 		CellComplex::Ptr pCopyCellComplex = std::dynamic_pointer_cast<CellComplex>(pCellComplex->DeepCopy());
 
 		// Is this necessary? Dictionaries are already copied in ByOcctSolids and DeepCopy
-		/*for (const Cell::Ptr& kpCell : rkCells)
+		for (const Cell::Ptr& kpCell : rkCells)
 		{
 			AttributeManager::GetInstance().DeepCopyAttributes(kpCell->GetOcctSolid(), pCopyCellComplex->GetOcctCompSolid());
-		}*/
+		}
 		GlobalCluster::GetInstance().AddTopology(pCopyCellComplex->GetOcctCompSolid());
 		return pCopyCellComplex;
 	}
