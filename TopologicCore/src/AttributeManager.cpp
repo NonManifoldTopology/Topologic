@@ -101,38 +101,56 @@ namespace TopologicCore
 	void AttributeManager::CopyAttributes(const TopoDS_Shape & rkOcctShape1, const TopoDS_Shape & rkOcctShape2)
 	{
 		std::map<std::string, Attribute::Ptr> attributes;
-		bool isFound = FindAll(rkOcctShape1, attributes);
-		if (isFound)
+		bool isFound1 = FindAll(rkOcctShape1, attributes);
+		if (isFound1)
 		{
-			if (rkOcctShape1.ShapeType() == rkOcctShape2.ShapeType())
+			std::map<std::string, Attribute::Ptr> attributes2;
+			bool isFound2 = FindAll(rkOcctShape2, attributes2);
+			if (isFound2)
+			{
+				for(auto keyValuePair : attributes)
+				{
+					attributes2[keyValuePair.first] = keyValuePair.second;
+				}
+				m_occtShapeToAttributesMap[rkOcctShape2] = attributes2;
+			}else
 			{
 				m_occtShapeToAttributesMap[rkOcctShape2] = std::map<std::string, Attribute::Ptr>(attributes);
 			}
-			else
-			{
-				TopoDS_Shape occtSelectedSubtopology = Topology::SelectSubtopology(rkOcctShape2, Topology::CenterOfMass(rkOcctShape1), Topology::GetTopologyType(rkOcctShape1.ShapeType()));
-				if (!occtSelectedSubtopology.IsNull())
-				{
-					m_occtShapeToAttributesMap[occtSelectedSubtopology] = std::map<std::string, Attribute::Ptr>(attributes);
-				}
-			}
 		}
-		
-		// Explore all subshapes and transfer the attribute to the closest simplest subshape of the same type
+	}
+
+
+	void AttributeManager::DeepCopyAttributes(const TopoDS_Shape& rkOcctShape1, const TopoDS_Shape& rkOcctShape2)
+	{
+		// For parent topology
+		TopoDS_Shape occtSelectedSubtopology = Topology::SelectSubtopology(
+			rkOcctShape2, Topology::CenterOfMass(rkOcctShape1), Topology::GetTopologyType(rkOcctShape1.ShapeType()));
+		if (!occtSelectedSubtopology.IsNull())
+		{
+			CopyAttributes(rkOcctShape1, occtSelectedSubtopology);
+		}
+
+		// Get all subtopologies
 		for (int occtShapeTypeInt = (int)rkOcctShape1.ShapeType() + 1; occtShapeTypeInt < (int)TopAbs_SHAPE; ++occtShapeTypeInt)
 		{
 			TopAbs_ShapeEnum occtShapeType = (TopAbs_ShapeEnum)occtShapeTypeInt;
 			for (TopExp_Explorer occtExplorer(rkOcctShape1, occtShapeType); occtExplorer.More(); occtExplorer.Next())
 			{
+				TopoDS_Shape occtSubshape1 = occtExplorer.Current();
 				std::map<std::string, Attribute::Ptr> attributes;
-				bool isFound = FindAll(occtExplorer.Current(), attributes);
-				if (isFound)
+				bool isFound1 = FindAll(occtSubshape1, attributes);
+				if (!isFound1)
 				{
-					TopoDS_Shape occtSelectedSubtopology = Topology::SelectSubtopology(rkOcctShape2, occtExplorer.Current(), Topology::GetTopologyType(occtExplorer.Current().ShapeType()));
-					if (!occtSelectedSubtopology.IsNull())
-					{
-						m_occtShapeToAttributesMap[occtSelectedSubtopology] = std::map<std::string, Attribute::Ptr>(attributes);
-					}
+					continue;
+				}
+
+				// WARNING: very costly. Only do this if necessary.
+				TopoDS_Shape occtSelectedSubtopology = Topology::SelectSubtopology(
+					rkOcctShape2, Topology::CenterOfMass(occtSubshape1), Topology::GetTopologyType(occtSubshape1.ShapeType()));
+				if (!occtSelectedSubtopology.IsNull())
+				{
+					CopyAttributes(occtSubshape1, occtSelectedSubtopology);
 				}
 			}
 		}

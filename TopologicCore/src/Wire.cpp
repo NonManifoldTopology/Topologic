@@ -214,7 +214,7 @@ namespace TopologicCore
 		Wire::Ptr pCopyWire = std::dynamic_pointer_cast<Wire>(pWire->DeepCopy());
 		for (const Edge::Ptr& kpEdge : rkEdges)
 		{
-			AttributeManager::GetInstance().CopyAttributes(kpEdge->GetOcctEdge(), pCopyWire->GetOcctWire());
+			AttributeManager::GetInstance().DeepCopyAttributes(kpEdge->GetOcctEdge(), pCopyWire->GetOcctWire());
 		}
 
 		GlobalCluster::GetInstance().AddTopology(pCopyWire->GetOcctWire());

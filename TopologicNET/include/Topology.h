@@ -473,17 +473,17 @@ namespace Topologic
 		Topology^ ClosestSimplestSubshape(Topology^ selector);
 
 		/// <summary>
-		/// Returns the sub-topology that is the closest to the selector and of a specific type.
+		/// Returns the sub-topology that is the closest to the selector Vertex and of a specific type.
 		/// </summary>
-		/// <param name="selector">A Topology</param>
+		/// <param name="selector">A Vertex</param>
 		/// <param name="typeFilter">The type of the filtered Topologies</param>
 		/// <returns>The closest sub-topology to the selector of the specified type</returns>
 #ifdef TOPOLOGIC_DYNAMO
 		[IsVisibleInDynamoLibrary(false)]
-		Topology^ SelectSubtopology(Topology^ selector,
+		Topology^ SelectSubtopology(Vertex^ selector,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] int typeFilter);
 #else
-		Topology^ SelectSubtopology(Topology^ selector, int typeFilter);
+		Topology^ SelectSubtopology(Vertex^ selector, int typeFilter);
 #endif
 		
 		/// <summary>

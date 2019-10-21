@@ -41,7 +41,7 @@ namespace TopologicUtilities
 		BRepBuilderAPI_Transform transform(kpTopology->GetOcctShape(), transformation, true);
 		TopologicCore::Topology::Ptr pCoreTransformedTopology = TopologicCore::Topology::ByOcctShape(transform.Shape(), kpTopology->GetClassGUID());
 
-		TopologicCore::AttributeManager::GetInstance().CopyAttributes(kpTopology->GetOcctShape(), pCoreTransformedTopology->GetOcctShape());
+		TopologicCore::AttributeManager::GetInstance().DeepCopyAttributes(kpTopology->GetOcctShape(), pCoreTransformedTopology->GetOcctShape());
 
 		std::list<TopologicCore::Topology::Ptr> subContents;
 		TopologicCore::Topology::SubContents(kpTopology->GetOcctShape(), subContents);
@@ -84,7 +84,7 @@ namespace TopologicUtilities
 		BRepBuilderAPI_Transform transform(kpTopology->GetOcctShape(), transformation, true);
 		TopologicCore::Topology::Ptr pCoreTransformedTopology = TopologicCore::Topology::ByOcctShape(transform.Shape(), kpTopology->GetClassGUID());
 
-		TopologicCore::AttributeManager::GetInstance().CopyAttributes(kpTopology->GetOcctShape(), pCoreTransformedTopology->GetOcctShape());
+		TopologicCore::AttributeManager::GetInstance().DeepCopyAttributes(kpTopology->GetOcctShape(), pCoreTransformedTopology->GetOcctShape());
 
 		std::list<TopologicCore::Topology::Ptr> subContents;
 		TopologicCore::Topology::SubContents(kpTopology->GetOcctShape(), subContents);
@@ -127,7 +127,7 @@ namespace TopologicUtilities
 		BRepBuilderAPI_Transform transform(kpTopology->GetOcctShape(), transformation, true);
 		TopologicCore::Topology::Ptr pCoreTransformedTopology = TopologicCore::Topology::ByOcctShape(transform.Shape());
 
-		TopologicCore::AttributeManager::GetInstance().CopyAttributes(kpTopology->GetOcctShape(), pCoreTransformedTopology->GetOcctShape());
+		TopologicCore::AttributeManager::GetInstance().DeepCopyAttributes(kpTopology->GetOcctShape(), pCoreTransformedTopology->GetOcctShape());
 		TopologicCore::Topology::TransferContents(kpTopology->GetOcctShape(), pCoreTransformedTopology);
 
 		TopologicCore::GlobalCluster::GetInstance().AddTopology(pCoreTransformedTopology);
@@ -143,7 +143,7 @@ namespace TopologicUtilities
 		BRepBuilderAPI_GTransform gTransform(kpTopology->GetOcctShape(), gTransformation, true);
 		TopologicCore::Topology::Ptr pCoreTransformedTopology = TopologicCore::Topology::ByOcctShape(gTransform.Shape(), kpTopology->GetClassGUID());
 
-		TopologicCore::AttributeManager::GetInstance().CopyAttributes(kpTopology->GetOcctShape(), pCoreTransformedTopology->GetOcctShape());
+		TopologicCore::AttributeManager::GetInstance().DeepCopyAttributes(kpTopology->GetOcctShape(), pCoreTransformedTopology->GetOcctShape());
 
 		std::list<TopologicCore::Topology::Ptr> subContents;
 		TopologicCore::Topology::SubContents(kpTopology->GetOcctShape(), subContents);
@@ -217,7 +217,7 @@ namespace TopologicUtilities
 		TopoDS_Shape occtTransformedShape = occtTransform.Shape();
 		TopologicCore::Topology::Ptr pCoreTransformedTopology = TopologicCore::Topology::ByOcctShape(occtTransformedShape, kpTopology->GetClassGUID());*/
 
-		TopologicCore::AttributeManager::GetInstance().CopyAttributes(kpTopology->GetOcctShape(), pCoreTransformedTopology->GetOcctShape());
+		TopologicCore::AttributeManager::GetInstance().DeepCopyAttributes(kpTopology->GetOcctShape(), pCoreTransformedTopology->GetOcctShape());
 
 		std::list<TopologicCore::Topology::Ptr> subContents;
 		TopologicCore::Topology::SubContents(kpTopology->GetOcctShape(), subContents);

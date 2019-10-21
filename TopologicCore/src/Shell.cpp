@@ -106,7 +106,7 @@ namespace TopologicCore
 			for (TopTools_ListIteratorOfListOfShape occtShapeIterator(occtShapes); occtShapeIterator.More(); occtShapeIterator.Next())
 			{
 				occtBuilder.Add(occtShell, TopoDS::Face(occtShapeIterator.Value()));
-				AttributeManager::GetInstance().CopyAttributes(occtShapeIterator.Value(), occtShell);
+				AttributeManager::GetInstance().DeepCopyAttributes(occtShapeIterator.Value(), occtShell);
 			}
 			Shell::Ptr pShell = std::make_shared<Shell>(occtShell);
 			GlobalCluster::GetInstance().AddTopology(pShell);
@@ -120,7 +120,7 @@ namespace TopologicCore
 			Shell::Ptr pCopyShell = std::dynamic_pointer_cast<Shell>(pShell->DeepCopy());
 			for (const Face::Ptr& kpFace: rkFaces)
 			{
-				AttributeManager::GetInstance().CopyAttributes(kpFace->GetOcctFace(), pCopyShell->GetOcctShell());
+				AttributeManager::GetInstance().DeepCopyAttributes(kpFace->GetOcctFace(), pCopyShell->GetOcctShell());
 			}
 
 			GlobalCluster::GetInstance().AddTopology(pCopyShell);

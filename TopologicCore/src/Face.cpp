@@ -149,7 +149,7 @@ namespace TopologicCore
 	{
 		std::list<Wire::Ptr> internalBoundaries;
 		Face::Ptr face = ByExternalInternalBoundaries(kpExternalBoundary, internalBoundaries);
-		AttributeManager::GetInstance().CopyAttributes(kpExternalBoundary->GetOcctWire(), face->GetOcctFace());
+		AttributeManager::GetInstance().DeepCopyAttributes(kpExternalBoundary->GetOcctWire(), face->GetOcctFace());
 
 		return face;
 	}
@@ -174,10 +174,10 @@ namespace TopologicCore
 
 		Face::Ptr pFace = std::make_shared<Face>(occtMakeFace);
 		Face::Ptr pCopyFace = std::dynamic_pointer_cast<Face>(pFace->DeepCopy());
-		AttributeManager::GetInstance().CopyAttributes(pkExternalBoundary->GetOcctWire(), pCopyFace->GetOcctFace());
+		AttributeManager::GetInstance().DeepCopyAttributes(pkExternalBoundary->GetOcctWire(), pCopyFace->GetOcctFace());
 		for (const Wire::Ptr& kpInternalBoundary : rkInternalBoundaries)
 		{
-			AttributeManager::GetInstance().CopyAttributes(kpInternalBoundary->GetOcctWire(), pCopyFace->GetOcctFace());
+			AttributeManager::GetInstance().DeepCopyAttributes(kpInternalBoundary->GetOcctWire(), pCopyFace->GetOcctFace());
 		}
 
 		GlobalCluster::GetInstance().AddTopology(pCopyFace->GetOcctFace());
@@ -195,7 +195,7 @@ namespace TopologicCore
 		Face::Ptr pFace = ByExternalBoundary(pWire);
 		for (const Edge::Ptr& kpEdge : rkEdges)
 		{
-			AttributeManager::GetInstance().CopyAttributes(kpEdge->GetOcctEdge(), pFace->GetOcctFace());
+			AttributeManager::GetInstance().DeepCopyAttributes(kpEdge->GetOcctEdge(), pFace->GetOcctFace());
 		}
 
 		return pFace;

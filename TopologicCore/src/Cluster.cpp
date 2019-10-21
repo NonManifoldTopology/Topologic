@@ -35,8 +35,10 @@
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepBuilderAPI_MakeSolid.hxx>
+#include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepPrimAPI_MakeBox.hxx>
+#include <Geom_CartesianPoint.hxx>
 #include <StdFail_NotDone.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
@@ -69,7 +71,7 @@ namespace TopologicCore
 		Cluster::Ptr pCopyCluster = std::dynamic_pointer_cast<Cluster>(pCluster->DeepCopy());
 		for (const Topology::Ptr& kpTopology : rkTopologies)
 		{
-			AttributeManager::GetInstance().CopyAttributes(kpTopology->GetOcctShape(), pCopyCluster->GetOcctCompound());
+			AttributeManager::GetInstance().DeepCopyAttributes(kpTopology->GetOcctShape(), pCopyCluster->GetOcctCompound());
 		}
 
 		GlobalCluster::GetInstance().AddTopology(pCopyCluster->GetOcctCompound());
@@ -248,12 +250,41 @@ namespace TopologicCore
 
 	Vertex::Ptr Cluster::CenterOfMass() const
 	{
-		throw std::exception("Not implemented yet");
+		TopoDS_Vertex occtCenterOfMass = CenterOfMass(GetOcctCompound());
+		return std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtCenterOfMass));
 	}
 
 	TopoDS_Vertex Cluster::CenterOfMass(const TopoDS_Compound & rkOcctCompound)
 	{
-		throw std::exception("Not implemented yet");
+		BOPCol_ListOfShape occtSubtopologies;
+		SubTopologies(rkOcctCompound, occtSubtopologies);
+		if (occtSubtopologies.IsEmpty())
+		{
+			throw std::exception("The input Cluster is empty.");
+		}
+
+		double size = (double)occtSubtopologies.Size();
+		gp_Pnt occtCentroidSum;
+		for (BOPCol_ListIteratorOfListOfShape occtIterator(occtSubtopologies);
+			occtIterator.More();
+			occtIterator.Next())
+		{
+			Topology::Ptr subtopology = Topology::ByOcctShape(occtIterator.Value(), "");
+			Vertex::Ptr subtopologyCenterOfMass = subtopology->CenterOfMass();
+			gp_Pnt occtSubtopologyCenterOfMass = subtopologyCenterOfMass->Point()->Pnt();
+			occtCentroidSum.SetX(occtCentroidSum.X() + occtSubtopologyCenterOfMass.X());
+			occtCentroidSum.SetY(occtCentroidSum.Y() + occtSubtopologyCenterOfMass.Y());
+			occtCentroidSum.SetZ(occtCentroidSum.Z() + occtSubtopologyCenterOfMass.Z());
+		}
+
+
+		gp_Pnt occtCentroid(
+			occtCentroidSum.X() / size,
+			occtCentroidSum.Y() / size,
+			occtCentroidSum.Z() / size
+		);
+
+		return BRepBuilderAPI_MakeVertex(occtCentroid);
 	}
 
 	bool Cluster::IsManifold() const

@@ -91,10 +91,12 @@ namespace TopologicCore
 		TopoDS_CompSolid occtCompSolid = ByOcctSolids(occtShapes);
 		CellComplex::Ptr pCellComplex = std::make_shared<CellComplex>(occtCompSolid);
 		CellComplex::Ptr pCopyCellComplex = std::dynamic_pointer_cast<CellComplex>(pCellComplex->DeepCopy());
-		for (const Cell::Ptr& kpCell : rkCells)
+
+		// Is this necessary? Dictionaries are already copied in ByOcctSolids and DeepCopy
+		/*for (const Cell::Ptr& kpCell : rkCells)
 		{
-			AttributeManager::GetInstance().CopyAttributes(kpCell->GetOcctSolid(), pCopyCellComplex->GetOcctCompSolid());
-		}
+			AttributeManager::GetInstance().DeepCopyAttributes(kpCell->GetOcctSolid(), pCopyCellComplex->GetOcctCompSolid());
+		}*/
 		GlobalCluster::GetInstance().AddTopology(pCopyCellComplex->GetOcctCompSolid());
 		return pCopyCellComplex;
 	}
@@ -235,7 +237,7 @@ namespace TopologicCore
 		GlobalCluster::GetInstance().AddTopology(copyFixedCellCoplex->GetOcctCompSolid());
 		for (const Face::Ptr& kpFace : rkFaces)
 		{
-			AttributeManager::GetInstance().CopyAttributes(kpFace->GetOcctFace(), copyFixedCellCoplex->GetOcctCompSolid());
+			AttributeManager::GetInstance().DeepCopyAttributes(kpFace->GetOcctFace(), copyFixedCellCoplex->GetOcctCompSolid());
 		}
 		return copyFixedCellCoplex;
 	}

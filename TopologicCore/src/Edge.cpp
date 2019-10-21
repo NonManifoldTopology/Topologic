@@ -190,8 +190,8 @@ namespace TopologicCore
 		Vertex::Ptr startVertex = pEdge->StartVertex();
 		Vertex::Ptr endVertex = pEdge->EndVertex();
 		Edge::Ptr pCopyEdge = std::dynamic_pointer_cast<Edge>(pEdge->DeepCopy());
-		AttributeManager::GetInstance().CopyAttributes(startVertex->GetOcctVertex(), pCopyEdge->GetOcctEdge());
-		AttributeManager::GetInstance().CopyAttributes(endVertex->GetOcctVertex(), pCopyEdge->GetOcctEdge());
+		AttributeManager::GetInstance().DeepCopyAttributes(startVertex->GetOcctVertex(), pCopyEdge->GetOcctEdge());
+		AttributeManager::GetInstance().DeepCopyAttributes(endVertex->GetOcctVertex(), pCopyEdge->GetOcctEdge());
 	
 		GlobalCluster::GetInstance().AddTopology(pCopyEdge->GetOcctEdge());
 		return pCopyEdge;

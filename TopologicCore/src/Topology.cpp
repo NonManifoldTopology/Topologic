@@ -34,6 +34,7 @@
 #include "Bitwise.h"
 #include "Attribute.h"
 #include "AttributeManager.h"
+#include <Utilities/VertexUtility.h>
 
 #include <BRepCheck_Analyzer.hxx>
 #include <BOPAlgo_MakerVolume.hxx>
@@ -140,12 +141,12 @@ namespace TopologicCore
 		return Topology::ByOcctShape(occtClosestSubshape, "");
 	}
 
-	Topology::Ptr Topology::SelectSubtopology(const Topology::Ptr & kpSelectorTopology, const int kTypeFilter) const
+	Topology::Ptr Topology::SelectSubtopology(const Vertex::Ptr & kpSelector, const int kTypeFilter) const
 	{
 		TopoDS_Shape occtClosestSubshape;
 		double minDistance = std::numeric_limits<double>::max();
 		const TopoDS_Shape& kOcctThisShape = GetOcctShape();
-		const TopoDS_Shape& kOcctSelectorShape = kpSelectorTopology->GetOcctShape();
+		const TopoDS_Shape& kOcctSelectorShape = kpSelector->GetOcctShape();
 		TopAbs_ShapeEnum occtShapeTypes[4] = { TopAbs_VERTEX, TopAbs_EDGE, TopAbs_FACE, TopAbs_SOLID };
 		TopologyType shapeTypes[4] = { TOPOLOGY_VERTEX, TOPOLOGY_EDGE, TOPOLOGY_FACE, TOPOLOGY_CELL };
 		for (int i = 0; i < 4; ++i)
@@ -163,26 +164,23 @@ namespace TopologicCore
 			{
 				const TopoDS_Shape rkCurrentChildShape = occtExplorer.Current();
 				TopoDS_Shape checkDistanceShape = rkCurrentChildShape;
-				BRepExtrema_DistShapeShape occtDistanceCalculation(checkDistanceShape, kOcctSelectorShape);
-				bool isDone = occtDistanceCalculation.Perform();
-				if (isDone)
-				{
-					double distance = occtDistanceCalculation.Value();
-					if (distance < minDistance)
-					{
-						minDistance = distance;
-						occtClosestSubshape = rkCurrentChildShape;
-					}
-					else if (minDistance <= distance &&
-						distance <= minDistance + Precision::Confusion() &&
-						rkCurrentChildShape.ShapeType() > occtClosestSubshape.ShapeType()) // larger value = lower dimension
-					{
-						TopAbs_ShapeEnum closestShapeType = occtClosestSubshape.ShapeType();
-						TopAbs_ShapeEnum currentShapeType = rkCurrentChildShape.ShapeType();
+				Topology::Ptr checkDistanceTopology = Topology::ByOcctShape(checkDistanceShape, "");
 
-						minDistance = distance;
-						occtClosestSubshape = rkCurrentChildShape;
-					}
+				double distance = TopologicUtilities::VertexUtility::Distance(kpSelector, checkDistanceTopology);
+				if (distance < minDistance)
+				{
+					minDistance = distance;
+					occtClosestSubshape = rkCurrentChildShape;
+				}
+				else if (minDistance <= distance &&
+					distance <= minDistance + Precision::Confusion() &&
+					rkCurrentChildShape.ShapeType() > occtClosestSubshape.ShapeType()) // larger value = lower dimension
+				{
+					TopAbs_ShapeEnum closestShapeType = occtClosestSubshape.ShapeType();
+					TopAbs_ShapeEnum currentShapeType = rkCurrentChildShape.ShapeType();
+
+					minDistance = distance;
+					occtClosestSubshape = rkCurrentChildShape;
 				}
 			}
 		}
@@ -219,9 +217,9 @@ namespace TopologicCore
 					occtSolidFix.Perform();
 					checkDistanceShape = occtSolidFix.Shape();
 				}*/
-				ShapeFix_Shape occtShapeFix(rkCurrentChildShape);
+				/*ShapeFix_Shape occtShapeFix(rkCurrentChildShape);
 				occtShapeFix.Perform();
-				checkDistanceShape = occtShapeFix.Shape();
+				checkDistanceShape = occtShapeFix.Shape();*/
 				BRepExtrema_DistShapeShape occtDistanceCalculation(checkDistanceShape, rkOcctSelectorShape);
 				bool isDone = occtDistanceCalculation.Perform();
 				if (isDone)
@@ -519,7 +517,7 @@ namespace TopologicCore
 		Topology::Ptr pCopyTopology = std::dynamic_pointer_cast<Topology>(pTopology->DeepCopy());
 		for (const Face::Ptr& kpFace : rkFaces)
 		{
-			AttributeManager::GetInstance().CopyAttributes(kpFace->GetOcctFace(), pCopyTopology->GetOcctShape());
+			AttributeManager::GetInstance().DeepCopyAttributes(kpFace->GetOcctFace(), pCopyTopology->GetOcctShape());
 		}
 		GlobalCluster::GetInstance().AddTopology(pTopology->GetOcctShape());
 		return pTopology;
@@ -1052,7 +1050,7 @@ namespace TopologicCore
 
 		TransferContents(GetOcctShape(), pPostprocessedShape);
 		TransferContents(kpOtherTopology->GetOcctShape(), pPostprocessedShape);
-		AttributeManager::GetInstance().CopyAttributes(GetOcctShape(), occtPostprocessedShape);
+		AttributeManager::GetInstance().DeepCopyAttributes(GetOcctShape(), occtPostprocessedShape);
 		GlobalCluster::GetInstance().AddTopology(occtPostprocessedShape);
 		return pPostprocessedShape;
 	}
@@ -1765,7 +1763,7 @@ namespace TopologicCore
 		Topology::Ptr pCopyPostprocessedShape = pPostprocessedShape->DeepCopy();
 		TransferContents(GetOcctShape(), pCopyPostprocessedShape);
 		TransferContents(kpOtherTopology->GetOcctShape(), pCopyPostprocessedShape);
-		AttributeManager::GetInstance().CopyAttributes(GetOcctShape(), occtPostprocessedShape);
+		AttributeManager::GetInstance().DeepCopyAttributes(GetOcctShape(), occtPostprocessedShape);
 		GlobalCluster::GetInstance().AddTopology(pCopyPostprocessedShape);
 		return pCopyPostprocessedShape;
 	}
@@ -1822,7 +1820,7 @@ namespace TopologicCore
 		Topology::Ptr pCopyPostprocessedShape = pPostprocessedShape->DeepCopy();
 		TransferContents(GetOcctShape(), pCopyPostprocessedShape);
 		TransferContents(kpOtherTopology->GetOcctShape(), pCopyPostprocessedShape);
-		AttributeManager::GetInstance().CopyAttributes(GetOcctShape(), occtPostprocessedShape);
+		AttributeManager::GetInstance().DeepCopyAttributes(GetOcctShape(), occtPostprocessedShape);
 		GlobalCluster::GetInstance().AddTopology(pCopyPostprocessedShape);
 		return pCopyPostprocessedShape;
 	}
@@ -1909,8 +1907,8 @@ namespace TopologicCore
 		
 		TransferContents(GetOcctShape(), pCopyPostprocessedShape);
 		TransferContents(kpOtherTopology->GetOcctShape(), pCopyPostprocessedShape);
-		AttributeManager::GetInstance().CopyAttributes(GetOcctShape(), occtPostprocessedShape);
-		AttributeManager::GetInstance().CopyAttributes(kpOtherTopology->GetOcctShape(), occtPostprocessedShape);
+		AttributeManager::GetInstance().DeepCopyAttributes(GetOcctShape(), occtPostprocessedShape);
+		AttributeManager::GetInstance().DeepCopyAttributes(kpOtherTopology->GetOcctShape(), occtPostprocessedShape);
 		GlobalCluster::GetInstance().AddTopology(pCopyPostprocessedShape);
 		return pCopyPostprocessedShape;
 	}
@@ -1962,8 +1960,8 @@ namespace TopologicCore
 		TransferContents(kpOtherTopology->GetOcctShape(), pCopyPostprocessedShape);
 
 		GlobalCluster::GetInstance().AddTopology(pCopyPostprocessedShape);
-		AttributeManager::GetInstance().CopyAttributes(GetOcctShape(), occtPostprocessedShape);
-		AttributeManager::GetInstance().CopyAttributes(kpOtherTopology->GetOcctShape(), occtPostprocessedShape);
+		AttributeManager::GetInstance().DeepCopyAttributes(GetOcctShape(), occtPostprocessedShape);
+		AttributeManager::GetInstance().DeepCopyAttributes(kpOtherTopology->GetOcctShape(), occtPostprocessedShape);
 		return pCopyPostprocessedShape;
 	}
 
@@ -2212,7 +2210,7 @@ namespace TopologicCore
 		Topology::Ptr finalTopology = Topology::ByOcctShape(fixedFinalShape, "")->DeepCopy();
 
 		// Copy dictionaries
-		AttributeManager::GetInstance().CopyAttributes(GetOcctShape(), finalTopology->GetOcctShape());
+		AttributeManager::GetInstance().DeepCopyAttributes(GetOcctShape(), finalTopology->GetOcctShape());
 
 		// Copy contents
 		TransferContents(GetOcctShape(), finalTopology);
@@ -2254,7 +2252,7 @@ namespace TopologicCore
 		}
 		Topology::Ptr pCopyPostprocessedShape = pPostprocessedShape->DeepCopy();
 		TransferContents(GetOcctShape(), pCopyPostprocessedShape);
-		AttributeManager::GetInstance().CopyAttributes(GetOcctShape(), occtPostprocessedShape);
+		AttributeManager::GetInstance().DeepCopyAttributes(GetOcctShape(), occtPostprocessedShape);
 		GlobalCluster::GetInstance().AddTopology(pCopyPostprocessedShape);
 		return pCopyPostprocessedShape;
 	}
@@ -2287,8 +2285,8 @@ namespace TopologicCore
 		Topology::Ptr pCopyPostprocessedShape = pPostprocessedShape->DeepCopy();
 		TransferContents(GetOcctShape(), pCopyPostprocessedShape);
 		TransferContents(kpOtherTopology->GetOcctShape(), pCopyPostprocessedShape);
-		AttributeManager::GetInstance().CopyAttributes(GetOcctShape(), occtPostprocessedShape);
-		AttributeManager::GetInstance().CopyAttributes(kpOtherTopology->GetOcctShape(), occtPostprocessedShape);
+		AttributeManager::GetInstance().DeepCopyAttributes(GetOcctShape(), occtPostprocessedShape);
+		AttributeManager::GetInstance().DeepCopyAttributes(kpOtherTopology->GetOcctShape(), occtPostprocessedShape);
 		GlobalCluster::GetInstance().AddTopology(pCopyPostprocessedShape);
 		return pCopyPostprocessedShape;
 	}
@@ -2976,7 +2974,7 @@ namespace TopologicCore
 		BRepBuilderAPI_Copy occtShapeCopier(rkOcctShape);
 		TopoDS_Shape occtShapeCopy = occtShapeCopier.Shape();
 
-		AttributeManager::GetInstance().CopyAttributes(rkOcctShape, occtShapeCopy);
+		AttributeManager::GetInstance().DeepCopyAttributes(rkOcctShape, occtShapeCopy);
 
 		DeepCopyExplodeShape(rkOcctShape, occtShapeCopier, rOcctShapeCopyShapeMap);
 
@@ -3041,7 +3039,7 @@ namespace TopologicCore
 	Topology::Ptr Topology::ShallowCopy()
 	{
 		BRepBuilderAPI_Copy occtShapeCopier(GetOcctShape());
-		AttributeManager::GetInstance().CopyAttributes(GetOcctShape(), occtShapeCopier.Shape());
+		AttributeManager::GetInstance().DeepCopyAttributes(GetOcctShape(), occtShapeCopier.Shape());
 		return Topology::ByOcctShape(occtShapeCopier.Shape(), GetInstanceGUID());
 	}
 

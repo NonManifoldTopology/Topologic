@@ -1166,7 +1166,11 @@ namespace TopologicCore
 			{
 				if (kpContent->GetType() == TOPOLOGY_APERTURE)
 				{
-					Vertex::Ptr graphVertex = CalculateGraphVertexFromAperture(TopologicalQuery::Downcast<Aperture>(kpContent), kUseFaceInternalVertex, kTolerance);
+					Vertex::Ptr graphVertex = CalculateGraphVertexFromAperture(
+						TopologicalQuery::Downcast<Aperture>(kpContent), 
+						kUseFaceInternalVertex, 
+						kTolerance);
+					AttributeManager::GetInstance().CopyAttributes(kpContent->GetOcctShape(), graphVertex->GetOcctShape());
 					apertureCentresOfMass.push_back(graphVertex);
 				}
 			}
@@ -1216,6 +1220,7 @@ namespace TopologicCore
 						TopologicalQuery::Downcast<Aperture>(kpContent),
 						kUseFaceInternalVertex,
 						kTolerance);
+					AttributeManager::GetInstance().CopyAttributes(kpContent->GetOcctShape(), contentCenterOfMass->GetOcctShape());
 					vertices.push_back(contentCenterOfMass);
 					std::list<Vertex::Ptr> edgeVertices;
 					kpEdge->Vertices(edgeVertices);
@@ -1264,6 +1269,7 @@ namespace TopologicCore
 					{
 						Vertex::Ptr contentCenterOfMass = CalculateGraphVertexFromAperture(
 							TopologicalQuery::Downcast<Aperture>(kpContent), kUseFaceInternalVertex, kTolerance);
+						AttributeManager::GetInstance().CopyAttributes(kpContent->GetOcctShape(), contentCenterOfMass->GetOcctShape());
 						vertices.push_back(contentCenterOfMass);
 						for (const Vertex::Ptr& edgeVertex :edgeVertices)
 						{
@@ -1296,7 +1302,9 @@ namespace TopologicCore
 		{
 			internalVertex = kpFace->CenterOfMass();
 		}
+		AttributeManager::GetInstance().CopyAttributes(kpFace->GetOcctShape(), internalVertex->GetOcctShape());
 		vertices.push_back(internalVertex);
+
 		if (kToExteriorTopologies || kToExteriorApertures)
 		{
 			std::list<Edge::Ptr> faceEdges;
@@ -1306,7 +1314,9 @@ namespace TopologicCore
 			{
 				if (kToExteriorTopologies)
 				{
-					Edge::Ptr edge = Edge::ByStartVertexEndVertex(internalVertex, kpFaceEdge->CenterOfMass());
+					Vertex::Ptr theOtherVertex = kpFaceEdge->CenterOfMass();
+					AttributeManager::GetInstance().CopyAttributes(kpFaceEdge->GetOcctShape(), theOtherVertex->GetOcctShape());
+					Edge::Ptr edge = Edge::ByStartVertexEndVertex(internalVertex, theOtherVertex);
 					edges.push_back(edge);
 				}
 
@@ -1350,7 +1360,8 @@ namespace TopologicCore
 
 		// 1. Get the vertices mapped to their original topologies
 		//    - Face --> centroid
-		//   Occt shapes must be used as the keys. Topologic shapes cannot be used because there can be many shapes representing the same OCCT shapes.
+		//    Occt shapes must be used as the keys. Topologic shapes cannot be used because 
+		//    there can be many shapes representing the same OCCT shapes.
 		std::map<TopoDS_Face, TopologicCore::Vertex::Ptr, TopologicCore::OcctShapeComparator> faceCentroids;
 
 		std::list<TopologicCore::Face::Ptr> faces;
@@ -1366,11 +1377,12 @@ namespace TopologicCore
 			{
 				internalVertex = kpFace->CenterOfMass();
 			}
+			AttributeManager::GetInstance().CopyAttributes(kpFace->GetOcctShape(), internalVertex->GetOcctShape());
 			faceCentroids.insert(std::make_pair(kpFace->GetOcctFace(), internalVertex));
 		}
 
 		// 2. Check the configurations. Add the edges to a cluster.
-		std::list<TopologicCore::Topology::Ptr> graphEdges;
+		std::list<TopologicCore::Edge::Ptr> graphEdges;
 		if (kDirect)
 		{
 			// Iterate through all faces and check for adjacency.
@@ -1400,6 +1412,8 @@ namespace TopologicCore
 		{
 			TopologicCore::Vertex::Ptr pCentroid = kpEdge->CenterOfMass();
 			bool isManifold = kpEdge->IsManifold();
+			AttributeManager::GetInstance().CopyAttributes(kpEdge->GetOcctShape(), pCentroid->GetOcctShape());
+
 			std::list<TopologicCore::Face::Ptr> adjacentFaces;
 			kpEdge->Faces(adjacentFaces);
 
@@ -1407,7 +1421,6 @@ namespace TopologicCore
 			kpEdge->Contents(contents);
 
 			// Get the apertures and calculate their centroids
-			//std::map<TopoDS_Shape, TopologicCore::Vertex::Ptr, TopologicCore::OcctShapeComparator> apertureCentroids;
 			std::list<TopologicCore::Vertex::Ptr> apertureCentroids;
 			for (const Topology::Ptr& kpContent : contents)
 			{
@@ -1419,6 +1432,7 @@ namespace TopologicCore
 				TopologicCore::Aperture::Ptr pAperture = TopologicalQuery::Downcast<TopologicCore::Aperture>(kpContent);
 				TopologicCore::Vertex::Ptr pApertureCentroid = CalculateGraphVertexFromAperture(pAperture, kUseFaceInternalVertex, kTolerance);
 
+				AttributeManager::GetInstance().CopyAttributes(pAperture->GetOcctShape(), pApertureCentroid->GetOcctShape());
 				apertureCentroids.push_back(pApertureCentroid);
 			}
 
@@ -1447,26 +1461,29 @@ namespace TopologicCore
 		}
 
 		// Merge the edges
-		TopologicCore::Cluster::Ptr pTopologiesAsCluster = TopologicCore::Cluster::ByTopologies(graphEdges);
-		if (pTopologiesAsCluster == nullptr)
+		//TopologicCore::Cluster::Ptr pTopologiesAsCluster = TopologicCore::Cluster::ByTopologies(graphEdges);
+		/*if (pTopologiesAsCluster == nullptr)
 		{
 			return nullptr;
-		}
-		TopologicCore::Topology::Ptr pSelfMergedTopologies = pTopologiesAsCluster->SelfMerge();
+		}*/
+		//TopologicCore::Topology::Ptr pSelfMergedTopologies = pTopologiesAsCluster->SelfMerge();
 
 		// If this is a cluster, use it to create a dual graph. Otherwise, add it to a cluster to be used to create a dual graph.
-		TopologicCore::Cluster::Ptr pSelfMergedTopologiesAsCluster = std::dynamic_pointer_cast<Cluster>(pSelfMergedTopologies);
-		std::list<Vertex::Ptr> vertices;
-		if (pSelfMergedTopologiesAsCluster != nullptr)
-		{
-			std::list<Edge::Ptr> mergedGraphEdges;
-			pSelfMergedTopologies->Vertices(vertices);
-			pSelfMergedTopologies->Edges(mergedGraphEdges);
-			return std::make_shared<Graph>(vertices, mergedGraphEdges);
-		}
+		//TopologicCore::Cluster::Ptr pSelfMergedTopologiesAsCluster = std::dynamic_pointer_cast<Cluster>(pSelfMergedTopologies);
+		//std::list<Vertex::Ptr> vertices;
+		////if (pSelfMergedTopologiesAsCluster != nullptr)
+		//if (pTopologiesAsCluster != nullptr)
+		//{
+		//	std::list<Edge::Ptr> mergedGraphEdges;
+		//	pSelfMergedTopologies->Vertices(vertices);
+		//	pSelfMergedTopologies->Edges(mergedGraphEdges);
+		//	return std::make_shared<Graph>(vertices, mergedGraphEdges);
+		//}
 
 		// else 
-		std::list<Edge::Ptr> finalGraphEdges; // converted to Edge::Ptr
+		
+		std::list<Vertex::Ptr> vertices;
+		//std::list<Edge::Ptr> finalGraphEdges; // converted to Edge::Ptr
 		for (const Topology::Ptr& kpEdgeTopology : graphEdges)
 		{
 			std::list<Vertex::Ptr> edgeVertices;
@@ -1475,10 +1492,11 @@ namespace TopologicCore
 			{
 				vertices.push_back(kpVertex);
 			}
-			Edge::Ptr edge = std::dynamic_pointer_cast<Edge>(kpEdgeTopology);
-			finalGraphEdges.push_back(edge);
+			//Edge::Ptr edge = std::dynamic_pointer_cast<Edge>(kpEdgeTopology);
+			//finalGraphEdges.push_back(edge);
 		}
-		return std::make_shared<Graph>(vertices, finalGraphEdges);
+		//return std::make_shared<Graph>(vertices, finalGraphEdges);
+		return std::make_shared<Graph>(vertices, graphEdges);
 	}
 
 	Graph::Ptr Graph::ByCell(const Cell::Ptr kpCell,
@@ -1491,6 +1509,7 @@ namespace TopologicCore
 		std::list<Edge::Ptr> edges;
 
 		Vertex::Ptr internalVertex = TopologicUtilities::CellUtility::InternalVertex(kpCell, kTolerance);
+		AttributeManager::GetInstance().CopyAttributes(kpCell->GetOcctShape(), internalVertex->GetOcctShape());
 		vertices.push_back(internalVertex);
 		if (kToExteriorTopologies || kToExteriorApertures)
 		{
@@ -1501,8 +1520,9 @@ namespace TopologicCore
 			{
 				if (kToExteriorTopologies)
 				{
-					Vertex::Ptr pCellFaceCenterOfMass = TopologicUtilities::CellUtility::InternalVertex(kpCell, kTolerance);
+					Vertex::Ptr pCellFaceCenterOfMass = TopologicUtilities::FaceUtility::InternalVertex(kpCellFace, kTolerance);
 					vertices.push_back(pCellFaceCenterOfMass);
+					AttributeManager::GetInstance().CopyAttributes(kpCellFace->GetOcctShape(), pCellFaceCenterOfMass->GetOcctShape());
 					Edge::Ptr edge = Edge::ByStartVertexEndVertex(pCellFaceCenterOfMass, internalVertex);
 					edges.push_back(edge);
 				}
@@ -1520,6 +1540,7 @@ namespace TopologicCore
 								TopologicalQuery::Downcast<TopologicCore::Aperture>(kpContent),
 								kUseFaceInternalVertex,
 								kTolerance);
+
 							vertices.push_back(pApertureCenterOfMass);
 							Edge::Ptr edge = Edge::ByStartVertexEndVertex(pApertureCenterOfMass, internalVertex);
 							edges.push_back(edge);
@@ -1556,11 +1577,12 @@ namespace TopologicCore
 		for (const TopologicCore::Cell::Ptr& kpCell : cells)
 		{
 			TopologicCore::Vertex::Ptr pCentroid = TopologicUtilities::CellUtility::InternalVertex(kpCell, kTolerance);
+			AttributeManager::GetInstance().CopyAttributes(kpCell->GetOcctShape(), pCentroid->GetOcctShape());
 			cellCentroids.insert(std::make_pair(kpCell->GetOcctSolid(), pCentroid));
 		}
 
 		// 2. If direct = true, check cellAdjacency.
-		std::list<TopologicCore::Topology::Ptr> edges;
+		std::list<TopologicCore::Edge::Ptr> edges;
 		if (kDirect)
 		{
 			TopTools_DataMapOfShapeListOfShape occtCellAdjacency;
@@ -1673,6 +1695,7 @@ namespace TopologicCore
 			{
 				internalVertex = kpFace->CenterOfMass();
 			}
+			AttributeManager::GetInstance().CopyAttributes(kpFace->GetOcctShape(), internalVertex->GetOcctShape());
 			//TopologicCore::Vertex::Ptr pCentroid = TopologicUtilities::FaceUtility::InternalVertex(kpFace, kTolerance);
 			bool isManifold = kpFace->IsManifold();
 			std::list<TopologicCore::Cell::Ptr> adjacentCells;
@@ -1693,6 +1716,7 @@ namespace TopologicCore
 				TopologicCore::Aperture::Ptr pAperture = TopologicalQuery::Downcast<TopologicCore::Aperture>(kpContent);
 				TopologicCore::Vertex::Ptr pApertureCentroid = CalculateGraphVertexFromAperture(pAperture, kUseFaceInternalVertex, kTolerance);
 
+				AttributeManager::GetInstance().CopyAttributes(pAperture->GetOcctShape(), pApertureCentroid->GetOcctShape());
 				apertureCentroids.push_back(pApertureCentroid);
 			}
 
@@ -1742,28 +1766,29 @@ namespace TopologicCore
 
 		// 3. Self-merge the cluster
 
-		// Merge the edges
-		TopologicCore::Cluster::Ptr pTopologiesAsCluster = TopologicCore::Cluster::ByTopologies(edges);
-		if (pTopologiesAsCluster == nullptr)
-		{
-			return nullptr;
-		}
-		TopologicCore::Topology::Ptr pSelfMergedTopologies = pTopologiesAsCluster->SelfMerge();
+		//// Merge the edges
+		//TopologicCore::Cluster::Ptr pTopologiesAsCluster = TopologicCore::Cluster::ByTopologies(edges);
+		//if (pTopologiesAsCluster == nullptr)
+		//{
+		//	return nullptr;
+		//}
+		//TopologicCore::Topology::Ptr pSelfMergedTopologies = pTopologiesAsCluster->SelfMerge();
 
-		// If this is a cluster, use it to create a dual graph. Otherwise, add it to a cluster to be used to create a dual graph.
-		TopologicCore::Cluster::Ptr pSelfMergedTopologiesAsCluster = std::dynamic_pointer_cast<Cluster>(pSelfMergedTopologies);
-		std::list<Vertex::Ptr> vertices;
-		if (pSelfMergedTopologiesAsCluster != nullptr)
-		{
-			std::list<Edge::Ptr> mergedGraphEdges;
-			pSelfMergedTopologies->Vertices(vertices);
-			pSelfMergedTopologies->Edges(mergedGraphEdges);
-			return std::make_shared<Graph>(vertices, mergedGraphEdges);
-		}
+		//// If this is a cluster, use it to create a dual graph. Otherwise, add it to a cluster to be used to create a dual graph.
+		//TopologicCore::Cluster::Ptr pSelfMergedTopologiesAsCluster = std::dynamic_pointer_cast<Cluster>(pSelfMergedTopologies);
+		//std::list<Vertex::Ptr> vertices;
+		//if (pSelfMergedTopologiesAsCluster != nullptr)
+		//{
+		//	std::list<Edge::Ptr> mergedGraphEdges;
+		//	pSelfMergedTopologies->Vertices(vertices);
+		//	pSelfMergedTopologies->Edges(mergedGraphEdges);
+		//	return std::make_shared<Graph>(vertices, mergedGraphEdges);
+		//}
 
 		// else 
-		std::list<Edge::Ptr> finalGraphEdges; // converted to Edge::Ptr
-		for (const Topology::Ptr& kpEdgeTopology : edges)
+		std::list<Vertex::Ptr> vertices;
+		//std::list<Edge::Ptr> finalGraphEdges; // converted to Edge::Ptr
+		for (const Edge::Ptr& kpEdgeTopology : edges)
 		{
 			std::list<Vertex::Ptr> edgeVertices;
 			kpEdgeTopology->Vertices(edgeVertices);
@@ -1771,9 +1796,10 @@ namespace TopologicCore
 			{
 				vertices.push_back(kpVertex);
 			}
-			finalGraphEdges.push_back(std::dynamic_pointer_cast<Edge>(kpEdgeTopology));
+			//finalGraphEdges.push_back(std::dynamic_pointer_cast<Edge>(kpEdgeTopology));
 		}
-		return std::make_shared<Graph>(vertices, finalGraphEdges);
+		//return std::make_shared<Graph>(vertices, finalGraphEdges);
+		return std::make_shared<Graph>(vertices, edges);
 	}
 
 	Graph::Ptr Graph::ByCluster(const Cluster::Ptr cluster,

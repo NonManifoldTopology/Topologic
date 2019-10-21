@@ -150,7 +150,7 @@ namespace TopologicCore
 
 			for (const Face::Ptr& kpFace : rkFaces)
 			{
-				AttributeManager::GetInstance().CopyAttributes(kpFace->GetOcctFace(), pCell->GetOcctSolid());
+				AttributeManager::GetInstance().DeepCopyAttributes(kpFace->GetOcctFace(), pCell->GetOcctSolid());
 			}
 
 			for (const Face::Ptr& kpFace : rkFaces)
