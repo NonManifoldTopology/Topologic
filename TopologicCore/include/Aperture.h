@@ -146,11 +146,19 @@ namespace TopologicCore
 		/// <returns name="bool">True if the underlying Topology is a container type (Wire, Shell, CellComplex, Cluster), otherwise False</returns>
 		virtual bool IsContainerType();
 
+
 	protected:
 		/// <summary>
 		/// The primary Context passed in the constructor
 		/// </summary>
 		std::shared_ptr<Context> m_pMainContext; 
+
+		/// <summary>
+		/// Fixes the input OCCT shape.
+		/// </summary>
+		/// <param name="rkOcctInputShape">An input OCCT shape</param>
+		/// <returns name="TopoDS_Shape">The fixed OCCT shape</returns>
+		virtual TopoDS_Shape OcctShapeFix(const TopoDS_Shape& rkOcctInputShape);
 
 		/// <summary>
 		/// The underlying Topology

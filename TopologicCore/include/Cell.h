@@ -56,8 +56,8 @@ namespace TopologicCore
 		/// <summary>
 		/// Returns the Cells adjacent to the Cell.
 		/// </summary>
-		/// <param name="rCells">>A list of Cells adjacent to the Cell</param>
-		TOPOLOGIC_API void AdjacentCells(std::list<std::shared_ptr<Cell>>& rCells) const;
+		/// <param name="rAdjacentCells">>A list of Cells adjacent to the Cell</param>
+		TOPOLOGIC_API void AdjacentCells(std::list<std::shared_ptr<Cell>>& rAdjacentCells) const;
 
 		/// <summary>
 		/// Returns the CellComplexes which contain the Cell.
@@ -96,10 +96,16 @@ namespace TopologicCore
 		TOPOLOGIC_API void Wires(std::list<std::shared_ptr<Wire>>& rWires) const;
 
 		/// <summary>
-		/// 
+		/// Returns the center of mass of this Cell.
 		/// </summary>
+		/// <returns name="Vertex">The center of mass of this Cell</returns>
 		virtual std::shared_ptr<Vertex> CenterOfMass() const;
 
+		/// <summary>
+		/// Returns the center of mass of an OCCT Solid.
+		/// </summary>
+		/// <param name="rkOcctSolid">An OCCT Solid</param>
+		/// <returns name="TopoDS_Vertex">The OCCT center of mass of this Solid</returns>
 		static TopoDS_Vertex CenterOfMass(const TopoDS_Solid & rkOcctSolid);
 
 		/// <summary>
@@ -151,50 +157,49 @@ namespace TopologicCore
 		TOPOLOGIC_API void InternalBoundaries(std::list<std::shared_ptr<Shell>>& rShells) const;
 
 		/// <summary>
-		/// 
+		/// Returns True if this Cell is a manifold, otherwise a False.
 		/// </summary>
-		/// <param name="kpkParentTopology"></param>
-		/// <returns></returns>
+		/// <returns name="bool">True if this Cell is a manifold, otherwise a False.</returns>
 		virtual bool IsManifold() const;
 
 		/// <summary>
-		/// 
+		/// Returns the underlying OCCT shape.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="TopoDS_Shape">The underlying OCCT shape</returns>
 		virtual TopoDS_Shape& GetOcctShape();
 
 		/// <summary>
-		/// 
+		/// Returns the underlying OCCT shape.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="TopoDS_Shape">The underlying OCCT shape</returns>
 		virtual const TopoDS_Shape& GetOcctShape() const;
 
 		/// <summary>
-		/// 
+		/// Returns the underlying OCCT Solid.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="TopoDS_Solid">The underlying OCCT Solid</returns>
 		virtual TopoDS_Solid& GetOcctSolid();
 
 		/// <summary>
-		/// 
+		/// Returns the underlying OCCT solid.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="TopoDS_Solid">The underlying OCCT Solid</returns>
 		virtual const TopoDS_Solid& GetOcctSolid() const;
 
 		/// <summary>
-		/// 
+		/// Sets the underlying OCCT shape.
 		/// </summary>
-		/// <param name="rkOcctShape"></param>
+		/// <param name="rkOcctShape">A new OCCT shape</param>
 		virtual void SetOcctShape(const TopoDS_Shape& rkOcctShape);
 
 		/// <summary>
-		/// 
+		/// Sets the underlying OCCT Solid.
 		/// </summary>
-		/// <param name="rkOcctSolid"></param>
+		/// <param name="rkOcctSolid">A new OCCT Solid</param>
 		void SetOcctSolid(const TopoDS_Solid& rkOcctSolid);
 
 		/// <summary>
-		/// Creates a geometry from Cell.
+		/// Creates a geometry from this Cell.
 		/// </summary>
 		/// <param name="rOcctGeometries">The created geometry</param>
 		virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const;
@@ -202,7 +207,7 @@ namespace TopologicCore
 		/// <summary>
 		/// Returns the type associated to Cell.
 		/// </summary>
-		/// <returns>The type associated to Cell</returns>
+		/// <returns name="TopologyType">The type associated to Cell</returns>
 		virtual TopologyType GetType() const { return TOPOLOGY_CELL; }
 
 		/// <summary>
@@ -230,6 +235,13 @@ namespace TopologicCore
 		/// </summary>
 		/// <returns name="bool">True if the underlying Topology is a container type (Wire, Shell, CellComplex, Cluster), otherwise False</returns>
 		virtual bool IsContainerType() { return false; }
+
+		/// <summary>
+		/// Fixes the input OCCT Solid.
+		/// </summary>
+		/// <param name="rkOcctInputSolid">An input OCCT Solid</param>
+		/// <returns name="TopoDS_Solid">The fixed OCCT Solid</returns>
+		static TopoDS_Solid OcctShapeFix(const TopoDS_Solid& rkOcctInputSolid);
 
 	protected:
 		/// <summary>

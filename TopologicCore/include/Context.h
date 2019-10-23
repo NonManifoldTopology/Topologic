@@ -38,17 +38,17 @@ namespace TopologicCore
 		virtual ~Context();
 
 		/// <summary>
-		/// Creates a context by a topology and three parameters
+		/// Creates a context by a Topology and three parameters
 		/// </summary>
-		/// <param name="kpTopology"></param>
+		/// <param name="kpTopology">A Topology</param>
 		/// <param name="kU">The u parameter</param>
 		/// <param name="kV">The v parameter</param>
 		/// <param name="kW">The w parameter</param>
-		/// <returns>A context</returns>
+		/// <returns name="Context">A context</returns>
 		static TOPOLOGIC_API std::shared_ptr<Context> ByTopologyParameters(const std::shared_ptr<TopologicCore::Topology>& kpTopology, const double kU, const double kV, const double kW);
 
 		/// <summary>
-		/// 
+		/// Returns the associated Topology.
 		/// </summary>
 		/// <returns>The associated topology</returns>
 		TOPOLOGIC_API std::shared_ptr<Topology> Topology() const;
@@ -72,9 +72,24 @@ namespace TopologicCore
 		TOPOLOGIC_API double W() const { return m_w; }
 
 	protected:
+		/// <summary>
+		/// The associated OCCT shape
+		/// </summary>
 		TopoDS_Shape m_occtShape;
+
+		/// <summary>
+		/// The U parameter
+		/// </summary>
 		double m_u;
+
+		/// <summary>
+		/// The V parametr
+		/// </summary>
 		double m_v;
+		
+		/// <summary>
+		/// The W parameter
+		/// </summary>
 		double m_w;
 	};
 }

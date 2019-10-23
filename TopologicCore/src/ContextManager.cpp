@@ -58,7 +58,6 @@ namespace TopologicCore
 	{
 		if (m_occtShapeToContextsMap.find(rkOcctShape) != m_occtShapeToContextsMap.end())
 		{
-			// Remove from all contents.
 			m_occtShapeToContextsMap[rkOcctShape].clear();
 			m_occtShapeToContextsMap.erase(rkOcctShape);
 		}

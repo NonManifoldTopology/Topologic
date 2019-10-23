@@ -111,95 +111,122 @@ namespace TopologicCore
 		TOPOLOGIC_API static std::shared_ptr<CellComplex> ByFaces(const std::list<std::shared_ptr<Face>>& rkFaces, const double kTolerance);
 
 		/// <summary>
-		/// 
+		/// Returns the external boundary (Cell) of the CellComplex.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="Cell">The external boundary (Cell) of the CellComplex</returns>
 		TOPOLOGIC_API std::shared_ptr<Cell> ExternalBoundary() const;
 
 		/// <summary>
-		/// 
+		/// Returns the internal boundaries (Faces) of the CellComplex.
 		/// </summary>
-		/// <param name="rkInternalFaces"></param>
-		/// <returns></returns>
+		/// <param name="rkInternalFaces">The internal boundaries (Faces) of the CellComplex</param>
 		TOPOLOGIC_API void InternalBoundaries(std::list<std::shared_ptr<Face>>& rInternalFaces) const;
 
 		/// <summary>
-		/// 
+		/// Returns True if this CellComplex is a manifold, otherwise a False.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="bool">True if this CellComplex is a manifold, otherwise a False</returns>
 		virtual bool IsManifold() const;
 
 		/// <summary>
-		/// 
+		/// Returns the non-manifold Faces of this CellComplex.
 		/// </summary>
-		/// <param name="rNonManifoldFaces"></param>
-		/// <returns></returns>
+		/// <param name="rNonManifoldFaces">The non-manifold Faces of this CellComplex</param>
 		TOPOLOGIC_API void NonManifoldFaces(std::list<std::shared_ptr<Face>>& rNonManifoldFaces) const;
 
 		/// <summary>
-		/// 
+		/// Returns the underlying OCCT shape.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="TopoDS_Shape">The underlying OCCT shape</returns>
 		virtual TopoDS_Shape& GetOcctShape();
 
 		/// <summary>
-		/// 
+		/// Returns the underlying OCCT shape.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="TopoDS_Shape">The underlying OCCT shape</returns>
 		virtual const TopoDS_Shape& GetOcctShape() const;
 
 		/// <summary>
-		/// 
+		/// Returns the underlying OCCT CompSolid.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="TopoDS_CompSolid">The underlying OCCT CompSolid</returns>
 		virtual TopoDS_CompSolid& GetOcctCompSolid();
 
 		/// <summary>
-		/// 
+		/// Returns the underlying OCCT CompSolid.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="TopoDS_CompSolid">The underlying OCCT CompSolid</returns>
 		virtual const TopoDS_CompSolid& GetOcctCompSolid() const;
 
 		/// <summary>
-		/// 
+		/// Sets the underlying OCCT shape.
 		/// </summary>
-		/// <param name="rkOcctShape"></param>
+		/// <param name="rkOcctShape">A new OCCT shape</param>
 		virtual void SetOcctShape(const TopoDS_Shape& rkOcctShape);
 
 		/// <summary>
-		/// 
+		/// Sets the underlying OCCT CompSolid.
 		/// </summary>
-		/// <param name="rkOcctCompSolid"></param>
+		/// <param name="rkOcctCompSolid">A new OCCT CompSolid</param>
 		void SetOcctCompSolid(const TopoDS_CompSolid& rkOcctCompSolid);
 
 		/// <summary>
-		/// 
+		/// Returns the center of mass of this CellComplex.
 		/// </summary>
+		/// <returns name="Vertex">The center of mass of this CellComplex</returns>
 		virtual std::shared_ptr<Vertex> CenterOfMass() const;
 
+		/// <summary>
+		/// Returns the center of mass of an OCCT CompSolid.
+		/// </summary>
+		/// <param name="rkOcctCompSolid">An OCCT CompSolid</param>
+		/// <returns name="TopoDS_Vertex">The OCCT center of mass of this CompSolid</returns>
 		static TopoDS_Vertex CenterOfMass(const TopoDS_CompSolid& rkOcctCompSolid);
 
 		/// <summary>
-		/// 
+		/// Creates a geometry from this CellComplex.
 		/// </summary>
-		/// <param name="rOcctGeometries"></param>
+		/// <param name="rOcctGeometries">The created geometry</param>
 		virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const;
 
+		/// <summary>
+		/// Returns the type associated to CellComplex.
+		/// </summary>
+		/// <returns name="TopologyType">The type associated to CellComplex</returns>
 		virtual TopologyType GetType() const { return TOPOLOGY_CELLCOMPLEX; }
 
 		/// <summary>
-		/// 
+		/// Returns the type of the CellComplex as a String.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="String">The type of the CellComplex as a String</returns>
 		virtual std::string GetTypeAsString() const;
 
+		/// <summary>
+		/// Returns the class GUID.
+		/// </summary>
+		/// <returns name="String">The class GUID</returns>
 		virtual std::string GetClassGUID() const {
 			return CellComplexGUID::Get();
 		}
 
+		/// <summary>
+		/// Returns the type of the CellComplex
+		/// </summary>
+		/// <returns name="int">The type of the CellComplex</returns>
 		static TOPOLOGIC_API int Type() { return TopologicCore::TOPOLOGY_CELLCOMPLEX; }
 
+		/// <summary>
+		/// Checks if the underlying Topology is a container type (Wire, Shell, CellComplex, Cluster).
+		/// </summary>
+		/// <returns name="bool">True if the underlying Topology is a container type (Wire, Shell, CellComplex, Cluster), otherwise False</returns>
 		virtual bool IsContainerType() { return true; }
+
+		/// <summary>
+		/// Fixes the input OCCT CompSolid.
+		/// </summary>
+		/// <param name="rkOcctInputSolid">An input OCCT CompSolid</param>
+		/// <returns name="TopoDS_Solid">The fixed OCCT CompSolid</returns>
+		static TopoDS_CompSolid OcctShapeFix(const TopoDS_CompSolid& rkOcctInputCompSolid);
 
 	protected:
 		/// <summary>

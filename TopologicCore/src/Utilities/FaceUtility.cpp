@@ -53,8 +53,13 @@ namespace TopologicUtilities
 {
 	double FaceUtility::Area(const TopologicCore::Face::Ptr& kpFace)
 	{
+		return Area(kpFace->GetOcctFace());
+	}
+
+	double FaceUtility::Area(const TopoDS_Face & rkOcctFace)
+	{
 		GProp_GProps occtShapeProperties;
-		ShapeFix_Face occtShapeFix(kpFace->GetOcctFace());
+		ShapeFix_Face occtShapeFix(rkOcctFace);
 		occtShapeFix.Perform();
 		BRepGProp::SurfaceProperties(occtShapeFix.Face(), occtShapeProperties);
 		return occtShapeProperties.Mass();

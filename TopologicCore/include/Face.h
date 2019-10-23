@@ -323,6 +323,14 @@ namespace TopologicCore
 
 		void Triangulate(const double kLinearDeflection, const double kAngularDeflection, std::list<TopologicCore::Face::Ptr>& rTriangles) const;
 
+
+		/// <summary>
+		/// Fixes the input OCCT Face.
+		/// </summary>
+		/// <param name="rkOcctInputFace">An input OCCT Face</param>
+		/// <returns name="TopoDS_Face">The fixed OCCT Face</returns>
+		static TopoDS_Face OcctShapeFix(const TopoDS_Face& rkOcctInputFace);
+
 	protected:
 		/// <summary>
 		/// The underlying OCCT face.

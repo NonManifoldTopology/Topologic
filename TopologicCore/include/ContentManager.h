@@ -43,19 +43,51 @@ namespace TopologicCore
 			return instance;
 		}
 
+		/// <summary>
+		/// Add a content Topology to a destination OCCT shape
+		/// </summary>
+		/// <param name="rkOcctShape">A destination OCCT shape</param>
+		/// <param name="kpContentTopology">A content Topology</param>
 		void Add(const TopoDS_Shape& rkOcctShape, const std::shared_ptr<Topology>& kpContentTopology);
 
+		/// <summary>
+		/// Remove a content Topology from a source OCCT shape
+		/// </summary>
+		/// <param name="rkOcctShape">A source OCCT shape</param>
+		/// <param name="rkOcctContentTopology">A content Topology</param>
 		void Remove(const TopoDS_Shape& rkOcctShape, const TopoDS_Shape& rkOcctContentTopology);
 
+		/// <summary>
+		/// Returns the contents of a OCCT shape.
+		/// </summary>
+		/// <param name="rkOcctShape">An OCCT shape</param>
+		/// <param name="rContents">The contents</param>
+		/// <returns name="bool">Returns True if the Topology has contents, otherwise False</returns>
 		bool Find(const TopoDS_Shape& rkOcctShape, std::list<std::shared_ptr<Topology>>& rContents);
 
+		/// <summary>
+		/// Returns True if the OCCT shape contains the content Topology, otherwise False
+		/// </summary>
+		/// <param name="rkOcctShape">An OCCT shape</param>
+		/// <param name="rkOcctContentTopology">A content Topology</param>
+		/// <returns name="bool">True if the Topology contains the content Topology, otherwise False</returns>
 		bool HasContent(const TopoDS_Shape& rkOcctShape, const TopoDS_Shape& rkOcctContentTopology);
 
+		/// <summary>
+		/// Clear the contents of an OCCT shape.
+		/// </summary>
+		/// <param name="rkOcctShape">An OCCT shape</param>
 		void ClearOne(const TopoDS_Shape& rkOcctShape);
 
+		/// <summary>
+		/// Clear all contents.
+		/// </summary>
 		void ClearAll();
 
 	protected:
+		/// <summary>
+		/// The map which pairs an OCCT shape with a list of contents
+		/// </summary>
 		std::map<TopoDS_Shape, std::list<std::shared_ptr<Topology>>, OcctShapeComparator> m_occtShapeToContentsMap;
 	};
 }

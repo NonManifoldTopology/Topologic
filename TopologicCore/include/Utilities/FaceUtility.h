@@ -49,6 +49,8 @@ namespace TopologicUtilities
 		/// <returns></returns>
 		static TOPOLOGIC_API double Area(const TopologicCore::Face::Ptr& kpFace);
 
+		static double Area(const TopoDS_Face& rkOcctFace);
+
 		/// <summary>
 		/// 
 		/// </summary>

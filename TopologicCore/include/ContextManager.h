@@ -40,18 +40,42 @@ namespace TopologicCore
 			return instance;
 		}
 
+		/// <summary>
+		/// Add a Context to a destination Topology
+		/// </summary>
+		/// <param name="rkOcctShape">An OCCT shape</param>
+		/// <param name="kpContext">A Context</param>
 		void Add(const TopoDS_Shape& rkOcctShape, const std::shared_ptr<Context>& kpContext);
 
-		//void Remove(const TopoDS_Shape& rkOcctShape, const std::shared_ptr<Context>& kpContext);
+		/// <summary>
+		/// Remove a Context from a Topology
+		/// </summary>
+		/// <param name="rkOcctShape">An OCCT shape</param>
+		/// <param name="rkOcctContextShape">An OCCT context shape</param>
 		void Remove(const TopoDS_Shape& rkOcctShape, const TopoDS_Shape& rkOcctContextShape);
 
+		/// <summary>
+		/// Remove Contexts from a Topology
+		/// </summary>
+		/// <param name="rkOcctShape">An OCCT shape</param>
+		/// <param name="rContexts">Contexts</param>
 		bool Find(const TopoDS_Shape& rkOcctShape, std::list<std::shared_ptr<Context>>& rContexts);
 
+		/// <summary>
+		/// Clear the contexts of an OCCT shape.
+		/// </summary>
+		/// <param name="rkOcctShape"></param>
 		void ClearOne(const TopoDS_Shape& rkOcctShape);
 
+		/// <summary>
+		/// Clear all contexts.
+		/// </summary>
 		void ClearAll();
 
 	protected:
+		/// <summary>
+		/// The map which pairs an OCCT shape with a list of Contexts
+		/// </summary>
 		std::map<TopoDS_Shape, std::list<std::shared_ptr<Context>>, OcctShapeComparator> m_occtShapeToContextsMap;
 	};
 }

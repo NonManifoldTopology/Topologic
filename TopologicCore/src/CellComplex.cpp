@@ -26,25 +26,19 @@
 #include "GlobalCluster.h"
 #include "AttributeManager.h"
 
+#include <BOPAlgo_MakerVolume.hxx>
+#include <BOPTools_AlgoTools.hxx>
 #include <BRep_Builder.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepGProp.hxx>
-#include <Geom_Surface.hxx>
 #include <GProp_GProps.hxx>
+#include <IntTools_Context.hxx>
 #include <ShapeAnalysis_ShapeContents.hxx>
-#include <TopExp_Explorer.hxx>
+#include <ShapeFix_Shape.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_FrozenShape.hxx>
 #include <TopoDS_UnCompatibleShapes.hxx>
 #include <TopTools_MapOfShape.hxx>
-
-#include <BOPTools_AlgoTools.hxx>
-#include <IntTools_Context.hxx>
-
-#include <BOPAlgo_MakerVolume.hxx>
-#include <ShapeFix_Face.hxx>
-#include <ShapeFix_Shape.hxx>
-#include <algorithm>
 
 #include <assert.h>
 
@@ -82,6 +76,8 @@ namespace TopologicCore
 
 	CellComplex::Ptr CellComplex::ByCells(const std::list<Cell::Ptr>& rkCells)
 	{
+		// ByOcctSolids does the actual construction. This method extracts the OCCT structures from the input
+		// and wrap the output in a Topologic class.
 		TopTools_ListOfShape occtShapes;
 		for (const Cell::Ptr& kpCell : rkCells)
 		{
@@ -92,12 +88,12 @@ namespace TopologicCore
 		CellComplex::Ptr pCellComplex = std::make_shared<CellComplex>(occtCompSolid);
 		CellComplex::Ptr pCopyCellComplex = std::dynamic_pointer_cast<CellComplex>(pCellComplex->DeepCopy());
 
-		// Is this necessary? Dictionaries are already copied in ByOcctSolids and DeepCopy
 		for (const Cell::Ptr& kpCell : rkCells)
 		{
 			AttributeManager::GetInstance().DeepCopyAttributes(kpCell->GetOcctSolid(), pCopyCellComplex->GetOcctCompSolid());
 		}
 		GlobalCluster::GetInstance().AddTopology(pCopyCellComplex->GetOcctCompSolid());
+
 		return pCopyCellComplex;
 	}
 
@@ -113,9 +109,11 @@ namespace TopologicCore
 		occtBuilder.MakeCompSolid(occtCompSolid);
 
 		TopTools_ListOfShape::iterator occtSolidIterator = rkOcctSolids.begin();
+		CellComplex::Ptr pCellComplex = nullptr;
+		
+		// If there is only one solid, create a CellComplex with only that cells
 		if (rkOcctSolids.Size() == 1)
 		{
-			// Return a cell complex with only that cells
 			try {
 				occtBuilder.Add(occtCompSolid, *occtSolidIterator);
 			}
@@ -127,14 +125,15 @@ namespace TopologicCore
 			{
 				throw std::exception("The Cell and Face are not compatible.");
 			}
+			
+			pCellComplex = std::make_shared<CellComplex>(occtCompSolid);
 		}
 		else
 		{
 			// Merge the first cell with the rest.
 			Topology::Ptr firstTopology = Topology::ByOcctShape(*occtSolidIterator, "");
-			//Topology::Ptr copyFirstTopology = firstTopology->DeepCopy();
 			std::list<std::shared_ptr<Topology>> topologies;
-			// Start from the second.
+			
 			occtSolidIterator++;
 			for (; occtSolidIterator != rkOcctSolids.end(); occtSolidIterator++)
 			{
@@ -147,28 +146,11 @@ namespace TopologicCore
 			{
 				throw std::exception("The input Cells do not form a CellComplex.");
 			}
-			//std::shared_ptr<Topology> pMergeTopology = copyFirstTopology->Merge(otherCellsAsCluster);
-
-			std::list<Cell::Ptr> cells;
-			pMergeTopology->DownwardNavigation(cells);
-			for (const Cell::Ptr& kpCell : cells)
-			{
-				try {
-					occtBuilder.Add(occtCompSolid, kpCell->GetOcctShape());
-				}
-				catch (TopoDS_FrozenShape&)
-				{
-					throw std::exception("The Cell is not free and cannot be modified.");
-				}
-				catch (TopoDS_UnCompatibleShapes&)
-				{
-					throw std::exception("The Cell and Face are not compatible.");
-				}
-			}
+			
+			pCellComplex = TopologicalQuery::Downcast<CellComplex>(pMergeTopology);
 		}
 
 		// Should get us a CellComplex, otherwise an exception.
-		CellComplex::Ptr pCellComplex = std::make_shared<CellComplex>(occtCompSolid);
 		CellComplex::Ptr pCopyCellComplex = std::dynamic_pointer_cast<CellComplex>(pCellComplex->DeepCopy());
 		return pCopyCellComplex->GetOcctCompSolid();
 	}
@@ -181,26 +163,25 @@ namespace TopologicCore
 		{
 			occtShapes.Append(kpFace->GetOcctShape());
 		}
-		bool isParallel = false; /* parallel or single mode (the default value is FALSE)*/
-		bool doesIntersection = true; /* intersect or not the arguments (the default value is TRUE)*/
-								  //
+		bool isParallel = false; 
+		bool doesIntersection = true; 
+
 		occtMakerVolume.SetArguments(occtShapes);
 		occtMakerVolume.SetRunParallel(isParallel);
 		occtMakerVolume.SetIntersect(doesIntersection);
 		occtMakerVolume.SetFuzzyValue(kTolerance);
-		//occtMakerVolume.SetGlue(BOPAlgo_GlueFull);
-		//occtMakerVolume.SetAvoidInternalShapes(false);
-		//occtMakerVolume.SetNonDestructive(false);
-		//
-		occtMakerVolume.Perform(); //perform the operation
-		if (occtMakerVolume.HasErrors()) { //check error status
+		occtMakerVolume.Perform();
+		if (occtMakerVolume.HasWarnings()) {
+			throw std::exception("Warnings.");
+		}
+		if (occtMakerVolume.HasErrors()) {
 			throw std::exception("The input Faces do not form a CellComplex.");
 		}
 
-		//
 		const TopoDS_Shape& rkOcctResult = occtMakerVolume.Shape();
 
 		std::list<Cell::Ptr> cells;
+
 		// The result is either:
 		// - A solid
 		if (rkOcctResult.ShapeType() == TopAbs_SOLID)
@@ -211,6 +192,7 @@ namespace TopologicCore
 		// - A compound, collect the solids
 		else if (rkOcctResult.ShapeType() == TopAbs_COMPOUND)
 		{
+			std::string txt = Topology::Analyze(rkOcctResult);
 			TopTools_MapOfShape occtShapes;
 			for (TopExp_Explorer occtExplorer(rkOcctResult, TopAbs_SOLID); occtExplorer.More(); occtExplorer.Next())
 			{
@@ -226,24 +208,22 @@ namespace TopologicCore
 
 		CellComplex::Ptr cellComplex = ByCells(cells);
 
-		// Should get us a CellComplex, otherwise an exception.
-		ShapeFix_Shape occtShapeFix(cellComplex->GetOcctCompSolid());
-		occtShapeFix.SetMaxTolerance(kTolerance);
-		occtShapeFix.Perform();
+		TopoDS_CompSolid occtFixedCompSolid = OcctShapeFix(cellComplex->GetOcctCompSolid());
 
-		CellComplex::Ptr fixedCellComplex = std::make_shared<CellComplex>(TopoDS::CompSolid(occtShapeFix.Shape()));
-		CellComplex::Ptr copyFixedCellCoplex = TopologicalQuery::Downcast<CellComplex>(fixedCellComplex->DeepCopy());
+		CellComplex::Ptr fixedCellComplex = std::make_shared<CellComplex>(occtFixedCompSolid);
+		CellComplex::Ptr copyFixedCellComplex = TopologicalQuery::Downcast<CellComplex>(fixedCellComplex->DeepCopy());
 
-		GlobalCluster::GetInstance().AddTopology(copyFixedCellCoplex->GetOcctCompSolid());
+		GlobalCluster::GetInstance().AddTopology(copyFixedCellComplex->GetOcctCompSolid());
 		for (const Face::Ptr& kpFace : rkFaces)
 		{
-			AttributeManager::GetInstance().DeepCopyAttributes(kpFace->GetOcctFace(), copyFixedCellCoplex->GetOcctCompSolid());
+			AttributeManager::GetInstance().DeepCopyAttributes(kpFace->GetOcctFace(), copyFixedCellComplex->GetOcctCompSolid());
 		}
-		return copyFixedCellCoplex;
+		return copyFixedCellComplex;
 	}
 
 	Cell::Ptr CellComplex::ExternalBoundary() const
 	{
+		// Get the Cells
 		BOPCol_ListOfShape occtCellsBuildersArguments;
 		std::list<Cell::Ptr> cells;
 		Cells(cells);
@@ -252,9 +232,10 @@ namespace TopologicCore
 			occtCellsBuildersArguments.Append(kpCell->GetOcctShape());
 		}
 
+
+		// Do a Union
 		BOPAlgo_CellsBuilder occtCellsBuilder;
 		occtCellsBuilder.SetArguments(occtCellsBuildersArguments);
-
 		occtCellsBuilder.Perform();
 
 		if (occtCellsBuilder.HasErrors())
@@ -284,6 +265,7 @@ namespace TopologicCore
 		ssErrorMessage << "There can be only 0 or 1 envelope cell, but this cell complex has " << numberOfSolids << " cells.";
 		assert(numberOfSolids < 2 && ssErrorMessage.str().c_str());
 
+		// Return the first Cell
 		for (TopExp_Explorer occtExplorer(occtEnvelopeShape, TopAbs_SOLID); occtExplorer.More(); occtExplorer.Next())
 		{
 			 Cell::Ptr pCell = std::make_shared<Cell>(TopoDS::Solid(occtExplorer.Current()));
@@ -296,14 +278,18 @@ namespace TopologicCore
 
 	void CellComplex::InternalBoundaries(std::list<Face::Ptr>& rInternalFaces) const
 	{
+		// Compute the envelope Cell
 		Cell::Ptr pEnvelopeCell = ExternalBoundary();
 
+		// Get the envelope Faces
 		std::list<Face::Ptr> envelopeFaces;
 		pEnvelopeCell->Faces(envelopeFaces);
 
+		// Get the original Faces
 		std::list<Face::Ptr> faces;
 		Faces(faces);
 
+		// An internal Face can be found in the original Face list, but not in the envelope Face list.
 		Handle(IntTools_Context) pOcctIntToolsContext = new IntTools_Context();
 		for (const Face::Ptr& kpFace : faces)
 		{
@@ -395,6 +381,13 @@ namespace TopologicCore
 		return std::string("CellComplex");
 	}
 
+	TopoDS_CompSolid CellComplex::OcctShapeFix(const TopoDS_CompSolid & rkOcctInputCompSolid)
+	{
+		ShapeFix_Shape occtCompSolidFix(rkOcctInputCompSolid);
+		occtCompSolidFix.Perform();
+		return TopoDS::CompSolid(occtCompSolidFix.Shape());
+	}
+
 	void CellComplex::SetOcctCompSolid(const TopoDS_CompSolid & rkOcctCompSolid)
 	{
 		m_occtCompSolid = rkOcctCompSolid;
@@ -404,9 +397,6 @@ namespace TopologicCore
 	{
 		TopoDS_Vertex occtCenterOfMass = CenterOfMass(GetOcctCompSolid());
 		return std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtCenterOfMass));
-		/*GProp_GProps occtShapeProperties;
-		BRepGProp::VolumeProperties(GetOcctShape(), occtShapeProperties);
-		return Vertex::ByPoint(new Geom_CartesianPoint(occtShapeProperties.CentreOfMass()));*/
 	}
 
 	TopoDS_Vertex CellComplex::CenterOfMass(const TopoDS_CompSolid & rkOcctCompSolid)

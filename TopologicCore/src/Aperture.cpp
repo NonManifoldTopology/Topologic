@@ -91,6 +91,12 @@ namespace TopologicCore
 		return Topology()->IsContainerType();
 	}
 
+	TopoDS_Shape Aperture::OcctShapeFix(const TopoDS_Shape & rkOcctInputShape)
+	{
+		// No shape fix method attached to Aperture
+		return rkOcctInputShape;
+	}
+
 	Topology::Ptr Aperture::Topology() const
 	{
 		assert(m_pTopology != nullptr && "The underlying topology is null.");

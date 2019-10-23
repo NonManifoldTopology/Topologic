@@ -361,9 +361,9 @@ namespace TopologicCore
 		static bool Contexts(const TopoDS_Shape& rkOcctShape, std::list<std::shared_ptr<Context>>& rContexts);
 
 		/// <summary>
-		/// 
+		/// Returns True if this Topology is manifold, otherwise a False.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="bool">True if this Topology is manifold, otherwise a False.</returns>
 		TOPOLOGIC_API virtual bool IsManifold() const = 0;
 
 		/// <summary>

@@ -48,166 +48,171 @@ namespace TopologicCore
 		typedef std::shared_ptr<Cluster> Ptr;
 
 	public:
-		/// <summary>
-		/// 
-		/// </summary>
-		//Cluster(const std::string& rkGuid = "");
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="rkOcctCompound"></param>x
 		TOPOLOGIC_API Cluster(const TopoDS_Compound& rkOcctCompound, const std::string& rkGuid = "");
 
 		TOPOLOGIC_API virtual ~Cluster();
 
 		/// <summary>
-		/// 
+		/// Creates a Cluster by a set of Topologies.
 		/// </summary>
-		/// <param name="rkTopologies"></param>
-		/// <returns></returns>
-		static TOPOLOGIC_API std::shared_ptr<Cluster> ByTopologies(const std::list<std::shared_ptr<Topology>>& rkTopologies);
+		/// <param name="rkTopologies">A set of Topologies</param>
+		/// <returns name="Cluster">The created Cluster</returns>
+		TOPOLOGIC_API static std::shared_ptr<Cluster> ByTopologies(const std::list<std::shared_ptr<Topology>>& rkTopologies);
 
 		/// <summary>
-		/// 
+		/// Adds Topology to a Cluster and returns the resulting Topology.
 		/// </summary>
-		/// <param name="kpTopology"></param>
-		/// <param name="kCheckIfInside"></param>
-		/// <returns></returns>
-		TOPOLOGIC_API bool AddTopology(Topology const * const kpkTopology, const bool kCheckIfInside = false);
+		/// <param name="kpkTopology">A Topology</param>
+		/// <returns>The created Topology</returns>
+		TOPOLOGIC_API bool AddTopology(Topology const * const kpkTopology);
 
 		/// <summary>
-		/// 
+		/// Removes Topology from a Cluster and returns the resulting Topology.
 		/// </summary>
-		/// <param name="kpkTopology"></param>
-		/// <returns></returns>
-		TOPOLOGIC_API bool RemoveTopology(Topology const * const kpkTopologyy);
+		/// <param name="kpkTopology">A Topology</param>
+		/// <returns>The created Topology</returns>
+		TOPOLOGIC_API bool RemoveTopology(Topology const * const kpkTopology);
 
 		/// <summary>
-		/// 
+		/// Returns the underlying OCCT shape.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="TopoDS_Shape">The underlying OCCT shape</returns>
 		TOPOLOGIC_API virtual TopoDS_Shape& GetOcctShape();
 
 		/// <summary>
-		/// 
+		/// Returns the underlying OCCT shape.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="TopoDS_Shape">The underlying OCCT shape</returns>
 		TOPOLOGIC_API virtual const TopoDS_Shape& GetOcctShape() const;
 
 		/// <summary>
-		/// 
+		/// Returns the underlying OCCT Cluster.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="TopoDS_Compound">The underlying OCCT Cluster</returns>
 		TOPOLOGIC_API virtual TopoDS_Compound& GetOcctCompound();
 
 		/// <summary>
-		/// 
+		/// Returns the underlying OCCT Cluster.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="TopoDS_Compound">The underlying OCCT Cluster</returns>
 		TOPOLOGIC_API virtual const TopoDS_Compound& GetOcctCompound() const;
 
 		/// <summary>
-		/// 
+		/// Sets the underlying OCCT shape.
 		/// </summary>
-		/// <param name="rkOcctShape"></param>
+		/// <param name="rkOcctShape">A new OCCT shape</param>
 		TOPOLOGIC_API virtual void SetOcctShape(const TopoDS_Shape& rkOcctShape);
 
 		/// <summary>
-		/// 
+		/// Sets the underlying OCCT Compound.
 		/// </summary>
-		/// <param name="rkOcctCompound"></param>
+		/// <param name="rkOcctCompound">A new OCCT Compound</param>
 		void SetOcctCompound(const TopoDS_Compound& rkOcctCompound);
 
 		/// <summary>
-		/// 
+		/// Creates a geometry from this Cluster.
 		/// </summary>
-		/// <param name="rOcctGeometries"></param>
+		/// <param name="rOcctGeometries">The created geometry</param>
 		TOPOLOGIC_API virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const;
 
 		/// <summary>
-		/// 
+		/// Returns the Shells constituent to the Cluster.
 		/// </summary>
-		/// <param name="rShells"></param>
+		/// <returns name="rShells">A list of Shells constituent to the Cluster</returns>
 		TOPOLOGIC_API void Shells(std::list<std::shared_ptr<Shell>>& rShells) const;
 
 		/// <summary>
-		/// 
+		/// Returns the Edges constituent to the Cluster.
 		/// </summary>
-		/// <param name="rEdges"></param>
+		/// <returns name="rShells">A list of Edges constituent to the Cluster</returns>
 		TOPOLOGIC_API void Edges(std::list<std::shared_ptr<Edge>>& rEdges) const;
 
 		/// <summary>
-		/// 
+		/// Returns the Faces constituent to the Cluster.
 		/// </summary>
-		/// <param name="rFaces"></param>
+		/// <returns name="rShells">A list of Faces constituent to the Cluster</returns>
 		TOPOLOGIC_API void Faces(std::list<std::shared_ptr<Face>>& rFaces) const;
 
 		/// <summary>
-		/// 
+		/// Returns the Vertices constituent to the Cluster.
 		/// </summary>
-		/// <param name="rVertices"></param>
+		/// <returns name="rShells">A list of Vertices constituent to the Cluster</returns>
 		TOPOLOGIC_API void Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const;
 
 		/// <summary>
-		/// 
+		/// Returns the Wires constituent to the Cluster.
 		/// </summary>
-		/// <param name="rWires"></param>
+		/// <returns name="rShells">A list of Wires constituent to the Cluster</returns>
 		TOPOLOGIC_API void Wires(std::list<std::shared_ptr<Wire>>& rWires) const;
 
 		/// <summary>
-		/// 
+		/// Returns the Cells constituent to the Cluster.
 		/// </summary>
-		/// <param name="rCells"></param>
+		/// <returns name="rShells">A list of Cells constituent to the Cluster</returns>
 		TOPOLOGIC_API void Cells(std::list<std::shared_ptr<Cell>>& rCells) const;
 
 		/// <summary>
-		/// 
+		/// Returns the CellComplexes constituent to the Cluster.
 		/// </summary>
-		/// <param name="rCellComplexes"></param>
+		/// <returns name="rShells">A list of CellComplexes constituent to the Cluster</returns>
 		TOPOLOGIC_API void CellComplexes(std::list<std::shared_ptr<CellComplex>>& rCellComplexes) const;
 
 		/// <summary>
-		/// 
+		/// Returns the center of mass of this Cluster.
 		/// </summary>
-		/// <returns></returns>
-		//TOPOLOGIC_API Cluster::Ptr Flatten();
-
-		/// <summary>
-		/// 
-		/// </summary>
+		/// <returns name="Vertex">The center of mass of this Cluster</returns>
 		TOPOLOGIC_API virtual std::shared_ptr<Vertex> CenterOfMass() const;
 
+		/// <summary>
+		/// Returns the center of mass of this Cluster.
+		/// </summary>
+		/// <returns name="Vertex">The center of mass of this Cluster</returns>
 		static TopoDS_Vertex CenterOfMass(const TopoDS_Compound& rkOcctCompound);
 
 		/// <summary>
-		/// 
+		/// Returns True if this Cluster is a manifold, otherwise a False.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="bool">True if this Cluster is a manifold, otherwise a False</returns>
 		TOPOLOGIC_API virtual bool IsManifold() const;
 
+		/// <summary>
+		/// Returns the type associated to Cluster.
+		/// </summary>
+		/// <returns name="TopologyType">The type associated to Cluster</returns>
 		virtual TopologyType GetType() const { return TOPOLOGY_CLUSTER; }
 
 		/// <summary>
-		/// 
+		/// Returns the type of the Cluster as a String.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="String">The type of the Cluster as a String</returns>
 		virtual std::string GetTypeAsString() const;
 
+		/// <summary>
+		/// Returns the class GUID.
+		/// </summary>
+		/// <returns name="String">The class GUID</returns>
 		virtual std::string GetClassGUID() const {
 			return ClusterGUID::Get();
 		}
 
+		/// <summary>
+		/// Returns the type of the Cluster
+		/// </summary>
+		/// <returns name="int">The type of the Cluster</returns>
 		static TOPOLOGIC_API int Type() { return TopologicCore::TOPOLOGY_CLUSTER; }
 
+		/// <summary>
+		/// Checks if the underlying Topology is a container type (Wire, Shell, CellComplex, Cluster).
+		/// </summary>
+		/// <returns name="bool">True if the underlying Topology is a container type (Wire, Shell, CellComplex, Cluster), otherwise False</returns>
 		virtual bool IsContainerType() { return true; }
 
 	protected:
 		/// <summary>
-		/// 
+		/// Returns True if the Topology is inside this Cluster, otherwise False.
 		/// </summary>
-		/// <param name="kpkTopology"></param>
-		/// <returns></returns>
+		/// <param name="kpkTopology">A Topology</param>
+		/// <returns name="bool">True if the Topology is inside this Cluster, otherwise False</returns>
 		bool IsInside(Topology const * const kpkTopology) const;
 
 		/// <summary>
@@ -215,6 +220,9 @@ namespace TopologicCore
 		/// </summary>
 		TopoDS_Compound m_occtCompound;
 
+		/// <summary>
+		/// The OCCT builder to create the Cluster.
+		/// </summary>
 		TopoDS_Builder m_occtBuilder;
 	};
 }

@@ -39,7 +39,7 @@
 
 namespace TopologicCore
 {
-	void Edge::AdjacentEdges(std::list<Edge::Ptr>& rEdges) const
+	void Edge::AdjacentEdges(std::list<Edge::Ptr>& rAdjacentEdges) const
 	{
 		std::list<Vertex::Ptr> vertices;
 		Vertices(vertices);
@@ -54,6 +54,7 @@ namespace TopologicCore
 
 			for (const Edge::Ptr& kpEdge : edges)
 			{
+				// If not the same as this Edge, add to the list
 				if (!IsSame(kpEdge))
 				{
 					occtAdjacentEdges.Add(kpEdge->GetOcctShape());
@@ -65,7 +66,7 @@ namespace TopologicCore
 			occtAdjacentEdgeIterator.More();
 			occtAdjacentEdgeIterator.Next())
 		{
-			rEdges.push_back(std::make_shared<Edge>(TopoDS::Edge(occtAdjacentEdgeIterator.Value())));
+			rAdjacentEdges.push_back(std::make_shared<Edge>(TopoDS::Edge(occtAdjacentEdgeIterator.Value())));
 		}
 	}
 

@@ -50,20 +50,15 @@ namespace TopologicCore
 		typedef std::shared_ptr<Edge> Ptr;
 
 	public:
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="rkOcctEdge"></param>
 		TOPOLOGIC_API Edge(const TopoDS_Edge& rkOcctEdge, const std::string& rkGuid = "");
 
 		virtual ~Edge();
 
 		/// <summary>
-		/// 
+		/// Returns the Edges adjacent to the Edge.
 		/// </summary>
-		/// <param name="rEdges"></param>
-		/// <returns></returns>
-		TOPOLOGIC_API void AdjacentEdges(std::list<std::shared_ptr<Edge>>& rEdges) const;
+		/// <param name="rAdjacentEdges">>A list of Edges adjacent to the Edge</param>
+		TOPOLOGIC_API void AdjacentEdges(std::list<std::shared_ptr<Edge>>& rAdjacentEdges) const;
 
 		/// <summary>
 		/// 

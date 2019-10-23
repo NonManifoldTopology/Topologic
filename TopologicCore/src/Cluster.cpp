@@ -26,24 +26,9 @@
 #include "GlobalCluster.h"
 #include "AttributeManager.h"
 
-#include <TopoDS_Builder.hxx>
-#include <TopoDS_UnCompatibleShapes.hxx>
-#include <TopoDS_FrozenShape.hxx>
-#include <BRep_Builder.hxx>
-#include <BRepAlgoAPI_Common.hxx>
-#include <BRepAlgoAPI_Section.hxx>
-#include <BRepBuilderAPI_MakeEdge.hxx>
-#include <BRepBuilderAPI_MakeFace.hxx>
-#include <BRepBuilderAPI_MakeSolid.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
-#include <BRepBuilderAPI_MakeWire.hxx>
-#include <BRepPrimAPI_MakeBox.hxx>
 #include <Geom_CartesianPoint.hxx>
-#include <StdFail_NotDone.hxx>
-#include <TopExp.hxx>
-#include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
-#include <TopoDS_CompSolid.hxx>
 #include <TopoDS_FrozenShape.hxx>
 #include <TopoDS_UnCompatibleShapes.hxx>
 
@@ -64,31 +49,26 @@ namespace TopologicCore
 		Cluster::Ptr pCluster = std::make_shared<Cluster>(occtCompound);
 		for(const Topology::Ptr& kpTopology : rkTopologies)
 		{
-			//Topology::Ptr pCopyTopology = kpTopology->DeepCopy();
 			pCluster->AddTopology(kpTopology.get());
 		}
 
+		// Deep copy
 		Cluster::Ptr pCopyCluster = std::dynamic_pointer_cast<Cluster>(pCluster->DeepCopy());
+
+		// Transfer the attributes
 		for (const Topology::Ptr& kpTopology : rkTopologies)
 		{
 			AttributeManager::GetInstance().DeepCopyAttributes(kpTopology->GetOcctShape(), pCopyCluster->GetOcctCompound());
 		}
 
+		// Add to the Global Cluster
 		GlobalCluster::GetInstance().AddTopology(pCopyCluster->GetOcctCompound());
 		return pCopyCluster;
 	}
 
-	// Use raw pointer because 1) called from the individual instance, 2) does not need a smart pointer
-	bool Cluster::AddTopology(Topology const * const kpkTopology, const bool kCheckIfInside)
+	// Use raw pointer because 1) called from the individual object, 2) does not need a smart pointer
+	bool Cluster::AddTopology(Topology const * const kpkTopology)
 	{
-		if (kCheckIfInside)
-		{
-			if (IsInside(kpkTopology))
-			{
-				return false;
-			}
-		}
-
 		// Do the addition
 		bool returnValue = true;
 		try {
@@ -218,20 +198,6 @@ namespace TopologicCore
 		DownwardNavigation(rCellComplexes);
 	}
 
-	//Cluster::Ptr Cluster::Flatten()
-	//{
-	//	std::list<Topology::Ptr> allMembers;
-	//	std::list<Topology::Ptr> thisClusterMembers;
-	//	BOPCol_ListOfShape occtClusters;
-	//	occtClusters.Append(GetOcctCompound());
-	//	
-	//	// Non-recursive breadth first search
-	//	// Iterate through the members
-	//	ImmediateMembers(thisClusterMembers);
-
-	//	return Cluster::ByTopology(topologies);
-	//}
-
 	bool Cluster::IsInside(Topology const * const kpkTopology) const
 	{
 		const TopoDS_Shape& rkOcctAddedShape = kpkTopology->GetOcctShape();
@@ -256,6 +222,7 @@ namespace TopologicCore
 
 	TopoDS_Vertex Cluster::CenterOfMass(const TopoDS_Compound & rkOcctCompound)
 	{
+		// Compute the average of the centers of mass.
 		BOPCol_ListOfShape occtSubtopologies;
 		SubTopologies(rkOcctCompound, occtSubtopologies);
 		if (occtSubtopologies.IsEmpty())
@@ -277,7 +244,6 @@ namespace TopologicCore
 			occtCentroidSum.SetZ(occtCentroidSum.Z() + occtSubtopologyCenterOfMass.Z());
 		}
 
-
 		gp_Pnt occtCentroid(
 			occtCentroidSum.X() / size,
 			occtCentroidSum.Y() / size,
@@ -296,5 +262,4 @@ namespace TopologicCore
 	{
 		return std::string("Cluster");
 	}
-
 }

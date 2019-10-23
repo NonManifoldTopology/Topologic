@@ -25,8 +25,11 @@
 #include "GlobalCluster.h"
 #include "AttributeManager.h"
 
+#include <Utilities/FaceUtility.h>
+
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
+#include <BRepBuilderAPI_Copy.hxx>
 #include <BRepClass_FaceClassifier.hxx>
 #include <BRepMesh_IncrementalMesh.hxx>
 #include <BRepAlgoAPI_Section.hxx>
@@ -159,20 +162,60 @@ namespace TopologicCore
 		const std::list<Wire::Ptr>& rkInternalBoundaries)
 	{
 		//Wire::Ptr copyExternalBoundary = std::dynamic_pointer_cast<Wire>(pkExternalBoundary->DeepCopy());
-		BRepBuilderAPI_MakeFace occtMakeFace(pkExternalBoundary->GetOcctWire());
+		TopoDS_Wire occtExternalBoundary = pkExternalBoundary->GetOcctWire();
+		BRepBuilderAPI_MakeFace occtMakeFace(occtExternalBoundary);
 		if (occtMakeFace.Error() != BRepBuilderAPI_FaceDone)
 		{
 			Throw(occtMakeFace);
 		}
 
-		
-		for (const Wire::Ptr& kpInternalBoundary : rkInternalBoundaries)
+		TopoDS_Face occtFace = occtMakeFace;
+
+		double area = TopologicUtilities::FaceUtility::Area(occtFace);
+		if (area <= 0.0)
 		{
-			//Wire::Ptr pCopyInternalBoundary = std::dynamic_pointer_cast<Wire>(kpInternalBoundary->DeepCopy());
-			occtMakeFace.Add(kpInternalBoundary->GetOcctWire());
+			occtExternalBoundary.Reverse();
+			BRepBuilderAPI_MakeFace occtReverseMakeFace(occtExternalBoundary);
+			if (occtReverseMakeFace.Error() != BRepBuilderAPI_FaceDone)
+			{
+				Throw(occtMakeFace);
+			}
+
+			occtFace = occtReverseMakeFace;
 		}
 
-		Face::Ptr pFace = std::make_shared<Face>(occtMakeFace);
+		// At this point, occtMakeFace and occtFace are valid Faces with positive area.
+		for (const Wire::Ptr& kpInternalBoundary : rkInternalBoundaries)
+		{
+			// Copy the Face
+			BRepBuilderAPI_Copy occtCopier(occtFace);
+			TopoDS_Face occtCopyFace = TopoDS::Face(occtCopier.Shape());
+
+			// Add to a new MakeFace
+			BRepBuilderAPI_MakeFace occtCopyMakeFace(occtCopyFace);
+
+			// Add the internal Wire to occtCopyMakeFace
+			TopoDS_Wire occtInternalWire = kpInternalBoundary->GetOcctWire();
+			occtCopyMakeFace.Add(occtInternalWire);
+			TopoDS_Face newCopyFace = occtCopyMakeFace.Face();
+
+			// If the new area is larger than the original area, reverse and redo
+			double newArea = TopologicUtilities::FaceUtility::Area(newCopyFace);
+			if (newArea > area)
+			{
+				occtInternalWire.Reverse();
+			}
+
+			// Add the internal Wire (original or reversed orientation, as above) to the old MakeFace
+			occtMakeFace.Add(occtInternalWire);
+
+			// Updating the area
+			area = TopologicUtilities::FaceUtility::Area(occtMakeFace);
+		}
+
+		TopoDS_Face occtFixedFace = OcctShapeFix(occtMakeFace);
+
+		Face::Ptr pFace = std::make_shared<Face>(occtFixedFace);
 		Face::Ptr pCopyFace = std::dynamic_pointer_cast<Face>(pFace->DeepCopy());
 		AttributeManager::GetInstance().DeepCopyAttributes(pkExternalBoundary->GetOcctWire(), pCopyFace->GetOcctFace());
 		for (const Wire::Ptr& kpInternalBoundary : rkInternalBoundaries)
@@ -234,6 +277,8 @@ namespace TopologicCore
 		const std::list<Wire::Ptr>& rkInnerWires)
 	{
 		BRepBuilderAPI_MakeFace occtMakeFace;
+		TopoDS_Face occtFace;
+		double area = 0.0;
 		try {
 			Handle(Geom_BSplineSurface) pOcctBSplineSurface = new Geom_BSplineSurface(
 				rkOcctPoles,
@@ -247,10 +292,21 @@ namespace TopologicCore
 			if (kpOuterWire != nullptr)
 			{
 				occtMakeFace = BRepBuilderAPI_MakeFace(pOcctBSplineSurface, TopoDS::Wire(kpOuterWire->GetOcctShape()), true);
+
+				occtFace = occtMakeFace;
+				area = TopologicUtilities::FaceUtility::Area(occtFace);
+				if (area <= 0.0)
+				{
+					occtMakeFace = BRepBuilderAPI_MakeFace(pOcctBSplineSurface, TopoDS::Wire(kpOuterWire->GetOcctShape().Reversed()), true);
+					occtFace = occtMakeFace;
+					area = TopologicUtilities::FaceUtility::Area(occtFace);
+				}
+
 			}
 			else
 			{
 				occtMakeFace = BRepBuilderAPI_MakeFace(pOcctBSplineSurface, Precision::Confusion());
+				occtFace = occtMakeFace;
 			}
 		}
 		catch (const Standard_ConstructionError&) // from Geom_BSplineCurve's constructor
@@ -331,9 +387,33 @@ namespace TopologicCore
 			Throw(occtMakeFace);
 		}
 
+		// At this point, occtMakeFace and occtFace are valid Faces with positive area.
 		for (const Wire::Ptr& kInnerWire : rkInnerWires)
 		{
-			occtMakeFace.Add(kInnerWire->GetOcctWire());
+			// Copy the Face
+			BRepBuilderAPI_Copy occtCopier(occtFace);
+			TopoDS_Face occtCopyFace = TopoDS::Face(occtCopier.Shape());
+
+			// Add to a new MakeFace
+			BRepBuilderAPI_MakeFace occtCopyMakeFace(occtCopyFace);
+
+			// Add the internal Wire to occtCopyMakeFace
+			TopoDS_Wire occtInternalWire = kInnerWire->GetOcctWire();
+			occtCopyMakeFace.Add(occtInternalWire);
+			TopoDS_Face newCopyFace = occtCopyMakeFace.Face();
+
+			// If the new area is larger than the original area, reverse and redo
+			double newArea = TopologicUtilities::FaceUtility::Area(newCopyFace);
+			if (newArea > area)
+			{
+				occtInternalWire.Reverse();
+			}
+
+			// Add the internal Wire (original or reversed orientation, as above) to the old MakeFace
+			occtMakeFace.Add(occtInternalWire);
+
+			// Updating the area
+			area = TopologicUtilities::FaceUtility::Area(occtMakeFace);
 		}
 
 		ShapeFix_Face occtShapeFix(occtMakeFace);
@@ -505,6 +585,13 @@ namespace TopologicCore
 			TopologicCore::Face::Ptr face = TopologicCore::Face::ByEdges(edges);
 			rTriangles.push_back(face);
 		}
+	}
+
+	TopoDS_Face Face::OcctShapeFix(const TopoDS_Face & rkOcctInputFace)
+	{
+		ShapeFix_Face occtShapeFix(rkOcctInputFace);
+		occtShapeFix.Perform();
+		return TopoDS::Face(rkOcctInputFace);
 	}
 
 	bool Face::IsManifold() const

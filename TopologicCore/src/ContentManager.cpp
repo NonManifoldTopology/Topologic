@@ -16,7 +16,6 @@
 
 #include <ContentManager.h>
 #include <Context.h>
-
 #include <Topology.h>
 
 #include <algorithm>
@@ -25,6 +24,7 @@ namespace TopologicCore
 {
 	void ContentManager::Add(const TopoDS_Shape& rkOcctShape, const std::shared_ptr<Topology>& kpContentTopology)
 	{
+		// If the OCCT shape does not have a content, initialise it in the map
 		if (m_occtShapeToContentsMap.find(rkOcctShape) == m_occtShapeToContentsMap.end())
 		{
 			std::list<Topology::Ptr> contents;
@@ -62,7 +62,9 @@ namespace TopologicCore
 		std::list<Topology::Ptr> contents;
 		bool hasContents = Find(rkOcctShape, contents);
 		if (!hasContents)
+		{
 			return false;
+		}
 
 		std::list<Topology::Ptr>::iterator contentIterator = std::find_if(contents.begin(), contents.end(), 
 			[&](const Topology::Ptr& kpContent) { 
@@ -76,8 +78,6 @@ namespace TopologicCore
 	{
 		if (m_occtShapeToContentsMap.find(rkOcctShape) != m_occtShapeToContentsMap.end())
 		{
-			// Remove from all contexts.
-			// Removal is find: it will not do anything if the item is no longer there.
 			m_occtShapeToContentsMap[rkOcctShape].clear();
 			m_occtShapeToContentsMap.erase(rkOcctShape);
 		}
