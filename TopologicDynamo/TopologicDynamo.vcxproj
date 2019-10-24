@@ -100,13 +100,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>TOPOLOGIC_DYNAMO;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)TopologicNET/include/;$(SolutionDir);$(SolutionDir)references\opencascade-7.2.0\inc;$(SolutionDir)references\license++\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)TopologicNET/include/;$(SolutionDir);$(SolutionDir)references\opencascade-7.2.0\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>licensepp.lib;cryptopp-static.lib;TKCAF.lib;TKLCAF.lib;TKIGES.lib;TKPrim.lib;TKMesh.lib;TKXSBase.lib;TKStep.lib;TKBool.lib;TKBO.lib;TKShHealing.lib;TKG3d.lib;TKG2d.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKTopAlgo.lib;TKernel.lib;TKBrep.lib;TKMath.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)references\license++\lib\x64\$(Configuration);$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\libd</AdditionalLibraryDirectories>
+      <AdditionalDependencies>TKCAF.lib;TKLCAF.lib;TKIGES.lib;TKPrim.lib;TKMesh.lib;TKXSBase.lib;TKStep.lib;TKBool.lib;TKBO.lib;TKShHealing.lib;TKG3d.lib;TKG2d.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKTopAlgo.lib;TKernel.lib;TKBrep.lib;TKMath.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\libd</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"</Command>
@@ -137,13 +137,13 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>TOPOLOGIC_DYNAMO;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)TopologicNET/include/;$(SolutionDir);$(SolutionDir)references\opencascade-7.2.0\inc;$(SolutionDir)references\license++\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)TopologicNET/include/;$(SolutionDir);$(SolutionDir)references\opencascade-7.2.0\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>licensepp.lib;cryptopp-static.lib;TKCAF.lib;TKLCAF.lib;TKIGES.lib;TKPrim.lib;TKMesh.lib;TKXSBase.lib;TKStep.lib;TKBool.lib;TKBO.lib;TKShHealing.lib;TKG3d.lib;TKG2d.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKTopAlgo.lib;TKernel.lib;TKBrep.lib;TKMath.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)references\license++\lib\x64\$(Configuration);$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>TKCAF.lib;TKLCAF.lib;TKIGES.lib;TKPrim.lib;TKMesh.lib;TKXSBase.lib;TKStep.lib;TKBool.lib;TKBO.lib;TKShHealing.lib;TKG3d.lib;TKG2d.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKTopAlgo.lib;TKernel.lib;TKBrep.lib;TKMath.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)references\opencascade-7.2.0\build-x64\win64\vc14\lib</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"</Command>
@@ -206,7 +206,6 @@
     <ClInclude Include="..\TopologicNET\include\GlobalCluster.h" />
     <ClInclude Include="..\TopologicNET\include\Graph.h" />
     <ClInclude Include="..\TopologicNET\include\IntAttributeFactory.h" />
-    <ClInclude Include="..\TopologicNET\include\LicenseManager.h" />
     <ClInclude Include="..\TopologicNET\include\Shell.h" />
     <ClInclude Include="..\TopologicNET\include\ShellFactory.h" />
     <ClInclude Include="..\TopologicNET\include\ShellUtility.h" />

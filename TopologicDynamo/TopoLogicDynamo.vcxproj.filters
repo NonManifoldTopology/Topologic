@@ -32,7 +32,6 @@
     <ClInclude Include="..\TopologicNET\include\Edge.h" />
     <ClInclude Include="..\TopologicNET\include\Face.h" />
     <ClInclude Include="..\TopologicNET\include\GlobalCluster.h" />
-    <ClInclude Include="..\TopologicNET\include\LicenseManager.h" />
     <ClInclude Include="..\TopologicNET\include\Shell.h" />
     <ClInclude Include="..\TopologicNET\include\TopologicalQuery.h" />
     <ClInclude Include="..\TopologicNET\include\Topology.h" />

@@ -10,7 +10,6 @@
     <ClInclude Include="include\Edge.h" />
     <ClInclude Include="include\Face.h" />
     <ClInclude Include="include\GlobalCluster.h" />
-    <ClInclude Include="include\LicenseManager.h" />
     <ClInclude Include="include\Shell.h" />
     <ClInclude Include="include\TopologicalQuery.h" />
     <ClInclude Include="include\Topology.h" />

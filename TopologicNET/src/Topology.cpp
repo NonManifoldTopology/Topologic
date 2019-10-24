@@ -44,7 +44,6 @@
 #include <ApertureFactory.h>
 #include <AttributeFactoryManager.h>
 #include <AttributeFactory.h>
-#include <LicenseManager.h>
 #include <TopologyUtility.h>
 
 #include <TopologicCore/include/AttributeManager.h>
@@ -65,41 +64,10 @@ namespace Topologic
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		return pCoreTopology->Dimensionality();
 	}
-	void CheckLicence()
-	{
-		License license;
-		try {
-			String^ dllPath = System::IO::Path::GetDirectoryName(Assembly::GetExecutingAssembly()->Location);
-			String^ licenseFile = dllPath + "\\license.file";
-			std::string cppLicenseFile = msclr::interop::marshal_as<std::string>(licenseFile);
-			std::string signature = "representation";
-
-			LicenseManager licenseManager;
-			if (license.loadFromFile(cppLicenseFile)) {
-				if (!licenseManager.validate(&license, true, signature)) {
-					throw gcnew Exception("License is not valid");
-				}
-				/*else {
-					std::cout << "Licensed to " << license.licensee() << std::endl;
-					std::cout << "Subscription is active until " << license.formattedExpiry() << std::endl << std::endl;
-				}*/
-			}
-			else
-			{
-				throw gcnew Exception("No active license is found.");
-			}
-		}
-		catch (LicenseException& e) {
-			throw gcnew Exception(gcnew String(e.what()));
-		}
-	}
 
 #ifdef TOPOLOGIC_DYNAMO
 	Topology^ Topology::ByGeometry(Autodesk::DesignScript::Geometry::Geometry^ geometry, double tolerance)
 	{
-		// Check licence
-		CheckLicence();
-
 		if (geometry == nullptr)
 		{
 			throw gcnew Exception("A null input is given.");

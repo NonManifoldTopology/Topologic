@@ -169,7 +169,6 @@
     <ClInclude Include="include\GlobalCluster.h" />
     <ClInclude Include="include\Graph.h" />
     <ClInclude Include="include\IntAttributeFactory.h" />
-    <ClInclude Include="include\LicenseManager.h" />
     <ClInclude Include="include\Line.h" />
     <ClInclude Include="include\NurbsCurve.h" />
     <ClInclude Include="include\NurbsSurface.h" />
