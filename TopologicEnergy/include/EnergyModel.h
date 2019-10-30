@@ -71,16 +71,6 @@ namespace TopologicEnergy
 			[Autodesk::DesignScript::Runtime::DefaultArgument(".\\TopologicEnergy-files\\MinimalTemplate120.osm")] String^ openStudioTemplatePath
 			);
 
-		/*/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="energyModel"></param>
-		/// <param name="openStudioExePath"></param>
-		/// <param name="openStudioOutputDirectory"></param>
-		/// <param name="run"></param>
-		/// <returns name="EnergySimulation"></returns>
-		static EnergySimulation^ Simulate(EnergyModel^ energyModel, String^ openStudioExePath, String ^ openStudioOutputDirectory, bool run);*/
-		
 		static bool Export(EnergyModel^ energyModel, String^ openStudioOutputDirectory);
 		
 		static EnergyModel^ Import(String^ osmFile, [Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")] double tolerance);
@@ -91,7 +81,6 @@ namespace TopologicEnergy
 		}
 
 	public protected:
-		//static DSCore::Color^ GetColor(double ratio, int alpha);
 		static List<int>^ GetColor(double ratio);
 
 		static double DoubleValueFromQuery(OpenStudio::SqlFile^ sqlFile, String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPRowName, String^ EPUnits);
@@ -105,10 +94,6 @@ namespace TopologicEnergy
 		property OpenStudio::Model^ OsModel {
 			OpenStudio::Model^ get() { return m_osModel; }
 		}
-
-		/*property List<Topologic::Cell^>^ BuildingCells {
-			List<Topologic::Cell^>^ get() { return m_buildingCells; }
-		}*/
 
 		property OpenStudio::SpaceVector^ OsSpaces {
 			OpenStudio::SpaceVector^ get() { return m_osSpaceVector; }
@@ -173,7 +158,6 @@ namespace TopologicEnergy
 
 		static List<Vertex^>^ ScaleVertices(List<Vertex^>^ vertices, double scaleFactor);
 
-		//static Vertex^ GetFaceCentre(Face^ buildingFace);
 		static Vertex^ GetCentreVertex(List<Vertex^>^ vertices);
 
 		static OpenStudio::Point3dVector^ GetFacePoints(Face^ buildingFace);
@@ -215,9 +199,6 @@ namespace TopologicEnergy
 		static OpenStudio::SqlFile^ CreateSqlFile(OpenStudio::Model^ osModel, String^ sqlFilePath);
 
 		static Topologic::Face^ FaceByOsSurface(OpenStudio::PlanarSurface^ osPlanarSurface);
-
-		/*static List<Modifiers::GeometryColor^>^ AnalyzeSqlFile(OpenStudio::SqlFile^ osSqlFile, OpenStudio::Model^ osModel, List<OpenStudio::Space^>^ spaces, List<Cell^>^ buildingCells,
-			String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPUnits);*/
 
 		static List<OpenStudio::BuildingStory^>^ buildingStories;
 		static OpenStudio::DefaultConstructionSet^ defaultConstructionSet;

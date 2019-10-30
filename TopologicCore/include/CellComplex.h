@@ -210,10 +210,10 @@ namespace TopologicCore
 		}
 
 		/// <summary>
-		/// Returns the type of the CellComplex
+		/// Returns the type of the CellComplex.
 		/// </summary>
 		/// <returns name="int">The type of the CellComplex</returns>
-		static TOPOLOGIC_API int Type() { return TopologicCore::TOPOLOGY_CELLCOMPLEX; }
+		TOPOLOGIC_API static int Type() { return TopologicCore::TOPOLOGY_CELLCOMPLEX; }
 
 		/// <summary>
 		/// Checks if the underlying Topology is a container type (Wire, Shell, CellComplex, Cluster).

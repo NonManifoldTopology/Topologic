@@ -100,13 +100,13 @@ namespace Topologic
 		return gcnew Graph(pCoreCopyGraph);
 	}
 
-	Graph ^ Graph::AddEdges(List<Edge^>^ edges, double tolerance)
+	Graph ^ Graph::AddEdges(List<Topologic::Edge^>^ edges, double tolerance)
 	{
 		TopologicCore::Graph::Ptr pCoreGraph = *m_pCoreGraph;
 		TopologicCore::Graph::Ptr pCoreCopyGraph = std::make_shared<TopologicCore::Graph>(pCoreGraph.get());
 
 		std::list<TopologicCore::Edge::Ptr> coreEdges;
-		for each(Edge^ edge in edges)
+		for each(Topologic::Edge^ edge in edges)
 		{
 			TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(edge->GetCoreTopologicalQuery());
 			TopologicCore::Edge::Ptr pCoreCopyEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(pCoreEdge->DeepCopy());
@@ -210,12 +210,12 @@ namespace Topologic
 		}
 	}
 
-	int Graph::Distance(Vertex ^ startVertex, Vertex ^ endVertex)
+	int Graph::TopologicalDistance(Vertex ^ startVertex, Vertex ^ endVertex)
 	{
 		TopologicCore::Vertex::Ptr pCoreStartVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(startVertex->GetCoreTopologicalQuery());
 		TopologicCore::Vertex::Ptr pCoreEndVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(endVertex->GetCoreTopologicalQuery());
 
-		return (*m_pCoreGraph)->Distance(pCoreStartVertex, pCoreEndVertex);
+		return (*m_pCoreGraph)->TopologicalDistance(pCoreStartVertex, pCoreEndVertex);
 	}
 
 	bool Graph::IsErdoesGallai(List<int>^ sequence)
@@ -250,13 +250,13 @@ namespace Topologic
 		return gcnew Graph(pCoreCopyGraph);
 	}
 
-	Graph^ Graph::RemoveEdges(List<Edge^>^ edges)
+	Graph^ Graph::RemoveEdges(List<Topologic::Edge^>^ edges)
 	{
 		TopologicCore::Graph::Ptr pCoreGraph = *m_pCoreGraph;
 		TopologicCore::Graph::Ptr pCoreCopyGraph = std::make_shared<TopologicCore::Graph>(pCoreGraph.get());
 
 		std::list<TopologicCore::Edge::Ptr> coreEdges;
-		for each(Edge^ edge in edges)
+		for each(Topologic::Edge^ edge in edges)
 		{
 			TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(edge->GetCoreTopologicalQuery());
 			TopologicCore::Edge::Ptr pCoreCopyEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(pCoreEdge->DeepCopy());
@@ -268,21 +268,21 @@ namespace Topologic
 		return gcnew Graph(pCoreCopyGraph);
 	}
 
-	Edge ^ Graph::EdgeAtVertices(Vertex ^ vertex1, Vertex ^ vertex2, double tolerance)
+	Edge ^ Graph::Edge(Vertex ^ vertex1, Vertex ^ vertex2, double tolerance)
 	{
 		TopologicCore::Vertex::Ptr pCoreVertex1 = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex1->GetCoreTopologicalQuery());
 		TopologicCore::Vertex::Ptr pCoreVertex2 = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex2->GetCoreTopologicalQuery());
 
 		TopologicCore::Graph::Ptr pCoreGraph = *m_pCoreGraph;
 		TopologicCore::Edge::Ptr pCoreEdge = nullptr;
-		pCoreEdge = pCoreGraph->EdgeAtVertices(pCoreVertex1, pCoreVertex2, tolerance);
+		pCoreEdge = pCoreGraph->Edge(pCoreVertex1, pCoreVertex2, tolerance);
 
 		if (pCoreEdge == nullptr)
 		{
 			return nullptr;
 		}
 
-		return gcnew Edge(pCoreEdge);
+		return gcnew Topologic::Edge(pCoreEdge);
 	}
 
 	List<Edge^>^ Graph::IncidentEdges(Vertex ^ vertex, double tolerance)
@@ -293,10 +293,10 @@ namespace Topologic
 		std::list<TopologicCore::Edge::Ptr> coreEdges;
 		(*m_pCoreGraph)->IncidentEdges(pCoreVertex, tolerance, coreEdges);
 
-		List<Edge^>^ edges = gcnew List<Edge^>();
+		List<Topologic::Edge^>^ edges = gcnew List<Topologic::Edge^>();
 		for (const TopologicCore::Edge::Ptr& kpCoreEdge : coreEdges)
 		{
-			Edge^ edge = gcnew Edge(kpCoreEdge);
+			Topologic::Edge^ edge = gcnew Topologic::Edge(kpCoreEdge);
 			edges->Add(edge);
 		}
 		return edges;
@@ -368,10 +368,10 @@ namespace Topologic
 		std::list<TopologicCore::Edge::Ptr> coreEdges;
 		(*m_pCoreGraph)->Edges(coreEdges);
 
-		List<Edge^>^ edges = gcnew List<Edge^>();
+		List<Topologic::Edge^>^ edges = gcnew List<Topologic::Edge^>();
 		for (const TopologicCore::Edge::Ptr& kpCoreEdge : coreEdges)
 		{
-			Edge^ edge = gcnew Edge(kpCoreEdge);
+			Topologic::Edge^ edge = gcnew Topologic::Edge(kpCoreEdge);
 			edges->Add(edge);
 		}
 		return edges;
@@ -405,11 +405,8 @@ namespace Topologic
 		TopologicCore::Vertex::Ptr pCoreVertex2 = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex2->GetCoreTopologicalQuery());
 		TopologicCore::Graph::Ptr pCoreGraph = *m_pCoreGraph;
 
-		/*TopologicCore::Vertex::Ptr pCoreCopyVertex1 = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(pCoreVertex1->DeepCopy());
-		TopologicCore::Vertex::Ptr pCoreCopyVertex2 = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(pCoreVertex2->DeepCopy());*/
 		TopologicCore::Graph::Ptr pCoreCopyGraph = std::make_shared<TopologicCore::Graph>(pCoreGraph.get());
 
-		//pCoreCopyGraph->Connect(pCoreCopyVertex1, pCoreCopyVertex2);
 		pCoreCopyGraph->Connect(pCoreVertex1, pCoreVertex2, tolerance);
 
 		return gcnew Graph(pCoreCopyGraph);
@@ -422,7 +419,7 @@ namespace Topologic
 		return (*m_pCoreGraph)->ContainsVertex(pCoreVertex, tolerance);
 	}
 
-	bool Graph::ContainsEdge(Edge ^ edge, double tolerance)
+	bool Graph::ContainsEdge(Topologic::Edge ^ edge, double tolerance)
 	{
 		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(edge->GetCoreTopologicalQuery());
 

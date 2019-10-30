@@ -25,8 +25,6 @@ namespace Topologic {
 	/// Utilities provide extended functionality including further topologic and geometric methods and properties. These include the Bitwise, CellUtility, EdgeUtility, FaceUtility, ShellUtility and TopologyUtility classes.
 	/// </summary>
 	namespace Utilities {
-	
-		
 		/// <summary>
 		/// Bitwise operators such as AND, OR, XOR and NOT are included in this class.
 		/// </summary>
@@ -34,10 +32,10 @@ namespace Topologic {
 		{
 		public:
 			/// <summary>
-			/// Performs a bitwise AND operation between the arguments (in their binary form).
+			/// 
 			/// </summary>
-			/// <param name="arguments">A list of arguments</param>
-			/// <returns>The bitwise result</returns>
+			/// <param name="arguments"></param>
+			/// <returns></returns>
 			static int AND(List<int>^ arguments);
 
 			/// <summary>

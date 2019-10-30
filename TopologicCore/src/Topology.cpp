@@ -89,7 +89,6 @@ namespace TopologicCore
 
 	Topology::Ptr Topology::ClosestSimplestSubshape(const Topology::Ptr& kpTopology) const
 	{
-		//TopTools_DataMapOfShapeInteger occtShapeToDistanceMap;
 		TopoDS_Shape occtClosestSubshape;
 		double minDistance = std::numeric_limits<double>::max();
 		const TopoDS_Shape& kOcctThisShape = GetOcctShape();
@@ -211,15 +210,6 @@ namespace TopologicCore
 			{
 				const TopoDS_Shape rkCurrentChildShape = occtExplorer.Current();
 				TopoDS_Shape checkDistanceShape = rkCurrentChildShape;
-				/*if (i == 3)
-				{
-					ShapeFix_Solid occtSolidFix(TopoDS::Solid(rkCurrentChildShape));
-					occtSolidFix.Perform();
-					checkDistanceShape = occtSolidFix.Shape();
-				}*/
-				/*ShapeFix_Shape occtShapeFix(rkCurrentChildShape);
-				occtShapeFix.Perform();
-				checkDistanceShape = occtShapeFix.Shape();*/
 				BRepExtrema_DistShapeShape occtDistanceCalculation(checkDistanceShape, rkOcctSelectorShape);
 				bool isDone = occtDistanceCalculation.Perform();
 				if (isDone)
@@ -400,11 +390,6 @@ namespace TopologicCore
 		return nullptr;
 	}
 
-	/*Topology::Ptr Topology::ByVertexIndex(const std::list<std::array<double, 3>>& rkVertexCoordinates, const std::list<std::list<int>>& rkVertexIndices)
-	{
-		return nullptr;
-	}*/
-
 	void Topology::ByVertexIndex(const std::vector<Vertex::Ptr>& rkVertices, const std::list<std::list<int>>& rkVertexIndices, std::list<Topology::Ptr>& rTopologies)
 	{
 		if (rkVertices.empty() || rkVertexIndices.empty())
@@ -420,15 +405,11 @@ namespace TopologicCore
 			std::list<TopoDS_Vertex> occtVertices;
 			for (int vertexIndex : rkVertex1DIndices)
 			{
-				//occtVertices.push_back(copyVertices[vertexIndex]->GetOcctVertex());
 				occtVertices.push_back(rkVertices[vertexIndex]->GetOcctVertex());
 			}
 
 			if (occtVertices.size() > 2)
 			{
-				//// Always assume it tries to build a face, so add the first index again.
-				//occtVertices.push_back(rkVertices[*rkVertex1DIndices.begin()]->GetOcctVertex());
-
 				// Create edges
 				TopTools_ListOfShape occtEdges;
 				std::list<TopoDS_Vertex>::const_iterator kEndVertexIterator = occtVertices.end();
@@ -508,7 +489,6 @@ namespace TopologicCore
 		TopTools_ListOfShape occtShapes;
 		for (const Face::Ptr& kpFace : rkFaces)
 		{
-			//Face::Ptr pCopyFace = std::dynamic_pointer_cast<Face>(kpFace->DeepCopy());
 			occtShapes.Append(kpFace->GetOcctShape());
 		}
 
@@ -628,11 +608,7 @@ namespace TopologicCore
 					selectedSubtopology = pCopyTopology->SelectSubtopology(pCenterOfMass, kTypeFilter);
 				}
 
-				if (selectedSubtopology == nullptr)
-				{
-					//throw std::exception("No suitable constituent members with the desired type to attach the content to.");
-				}
-				else
+				if (selectedSubtopology != nullptr)
 				{
 					occtCopyContextShape = selectedSubtopology->GetOcctShape();
 					contextInstanceGUID = selectedSubtopology->GetInstanceGUID();
@@ -932,33 +908,6 @@ namespace TopologicCore
 		return pCopyTopology;
 	}
 
-	void Topology::PathsTo(const Topology::Ptr& kpTopology, const Topology::Ptr& kpParentTopology, const int kMaxLevels, const int kMaxPaths, std::list<std::list<std::shared_ptr<TopologicalQuery>>>& rkPaths) const
-	{
-		// Use BFS.
-		// https://en.wikipedia.org/wiki/Breadth-first_search
-		//std::queue<Topology const *> openSetTopology;
-		//std::set<Topology const *> closedSetTopology;
-		//topologyToVisit.push_back(this);
-		//std::list<Topology const *> visitedTopologies;
-		//while (!topologyToVisit.empty())
-		//{
-		//	Topology const * kpCurrentTopology = topologyToVisit.front();
-		//	topologyToVisit.pop_front();
-		//	visitedTopologies.push_back(kpCurrentTopology);
-
-		//	// Get neighbours
-		//	std::list<Topology const *> neighbours; // up and down
-
-		//	DownwardNavigation(neighbours);
-		//	UpwardNavigation(kpParentTopology, neighbours);
-
-		//	for(Topology const * kpNeighbour : neighbours)
-		//	{
-		//		if()
-		//	}
-		//}
-	}
-
 	TopoDS_Shape Topology::OcctSewFaces(const TopTools_ListOfShape & rkOcctFaces, const double kTolerance)
 	{
 		BRepBuilderAPI_Sewing occtSewing(kTolerance, true, true, true, true);
@@ -986,7 +935,6 @@ namespace TopologicCore
 			// Map the aperture to the modifed shell faces.
 			std::list<Topology::Ptr> contents;
 			ContentManager::GetInstance().Find(occtEdgeIterator.Value(), contents);
-			//kShellFace->Contents(false, contents);
 			for (const Topology::Ptr& rkContent : contents)
 			{
 				if (rkContent->GetType() != TOPOLOGY_APERTURE)
@@ -1643,17 +1591,6 @@ namespace TopologicCore
 		rOcctBooleanOperation.Build();
 	}
 
-	/*Topology::Ptr Topology::GetBooleanResult(
-		const Topology::Ptr& kpOtherTopology,
-		BOPAlgo_CellsBuilder& rOcctCellsBuilder,
-		BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceA,
-		BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceB)
-	{
-		rOcctCellsBuilder.MakeContainers();
-
-		return TransferBooleanContents(kpOtherTopology, rOcctCellsBuilder, rOcctMapFaceToFixedFaceA, rOcctMapFaceToFixedFaceB);
-	}*/
-
 	TopoDS_Shape Topology::PostprocessBooleanResult(TopoDS_Shape & rOcctBooleanResult)
 	{
 		TopoDS_Shape occtPostprocessedShape = Simplify(rOcctBooleanResult);
@@ -1665,7 +1602,7 @@ namespace TopologicCore
 		{
 			occtPostprocessedShape = Simplify(occtPostprocessedShape);
 		}
-		//occtPostprocessedShape = MakeBooleanContainers(occtPostprocessedShape);
+	
 		return occtPostprocessedShape;
 	}
 
@@ -1763,7 +1700,7 @@ namespace TopologicCore
 		Topology::Ptr pCopyPostprocessedShape = pPostprocessedShape->DeepCopy();
 		TransferContents(GetOcctShape(), pCopyPostprocessedShape);
 		TransferContents(kpOtherTopology->GetOcctShape(), pCopyPostprocessedShape);
-		AttributeManager::GetInstance().DeepCopyAttributes(GetOcctShape(), occtPostprocessedShape);
+		AttributeManager::GetInstance().DeepCopyAttributes(GetOcctShape(), pCopyPostprocessedShape->GetOcctShape());
 		GlobalCluster::GetInstance().AddTopology(pCopyPostprocessedShape);
 		return pCopyPostprocessedShape;
 	}
@@ -1820,7 +1757,7 @@ namespace TopologicCore
 		Topology::Ptr pCopyPostprocessedShape = pPostprocessedShape->DeepCopy();
 		TransferContents(GetOcctShape(), pCopyPostprocessedShape);
 		TransferContents(kpOtherTopology->GetOcctShape(), pCopyPostprocessedShape);
-		AttributeManager::GetInstance().DeepCopyAttributes(GetOcctShape(), occtPostprocessedShape);
+		AttributeManager::GetInstance().DeepCopyAttributes(GetOcctShape(), pCopyPostprocessedShape->GetOcctShape());
 		GlobalCluster::GetInstance().AddTopology(pCopyPostprocessedShape);
 		return pCopyPostprocessedShape;
 	}
@@ -1907,8 +1844,8 @@ namespace TopologicCore
 		
 		TransferContents(GetOcctShape(), pCopyPostprocessedShape);
 		TransferContents(kpOtherTopology->GetOcctShape(), pCopyPostprocessedShape);
-		AttributeManager::GetInstance().DeepCopyAttributes(GetOcctShape(), occtPostprocessedShape);
-		AttributeManager::GetInstance().DeepCopyAttributes(kpOtherTopology->GetOcctShape(), occtPostprocessedShape);
+		AttributeManager::GetInstance().DeepCopyAttributes(GetOcctShape(), pCopyPostprocessedShape->GetOcctShape());
+		AttributeManager::GetInstance().DeepCopyAttributes(kpOtherTopology->GetOcctShape(), pCopyPostprocessedShape->GetOcctShape());
 		GlobalCluster::GetInstance().AddTopology(pCopyPostprocessedShape);
 		return pCopyPostprocessedShape;
 	}
@@ -1960,8 +1897,8 @@ namespace TopologicCore
 		TransferContents(kpOtherTopology->GetOcctShape(), pCopyPostprocessedShape);
 
 		GlobalCluster::GetInstance().AddTopology(pCopyPostprocessedShape);
-		AttributeManager::GetInstance().DeepCopyAttributes(GetOcctShape(), occtPostprocessedShape);
-		AttributeManager::GetInstance().DeepCopyAttributes(kpOtherTopology->GetOcctShape(), occtPostprocessedShape);
+		AttributeManager::GetInstance().DeepCopyAttributes(GetOcctShape(), pCopyPostprocessedShape->GetOcctShape());
+		AttributeManager::GetInstance().DeepCopyAttributes(kpOtherTopology->GetOcctShape(), pCopyPostprocessedShape->GetOcctShape());
 		return pCopyPostprocessedShape;
 	}
 
@@ -1974,7 +1911,7 @@ namespace TopologicCore
 		// 2
 		BOPAlgo_CellsBuilder occtCellsBuilder;
 		occtCellsBuilder.SetArguments(occtShapes);
-		//occtCellsBuilder.SetFuzzyValue(kTolerance);
+
 		try {
 			occtCellsBuilder.Perform();
 		}
@@ -2009,8 +1946,6 @@ namespace TopologicCore
 			return Topology::ByOcctShape(occtCompound, "");
 		}
 		occtCellsBuilder.AddAllToResult();
-		// DEBUG
-		//return Topology::ByOcctShape(occtCellsBuilder.Shape());
 
 		// 2b. Get discarded faces from Cells Builder
 		BOPCol_ListOfShape occtDiscardedFaces;
@@ -2028,8 +1963,6 @@ namespace TopologicCore
 				occtDiscardedFaces.Append(rCurrent);
 			}
 		}
-		//return Topology::ByOcctShape(occtCompound);
-
 
 		// 3. Get Face[] from Topology[]
 		BOPCol_ListOfShape occtFaces;
@@ -2045,7 +1978,6 @@ namespace TopologicCore
 				occtBuilder3.Add(occtCompound3, rkOcctCurrent);
 			}
 		}
-		//return Topology::ByOcctShape(occtCompound3);
 
 		// 5. Topology = VolumeMaker(Face[])--> first result
 		BOPAlgo_MakerVolume occtVolumeMaker;
@@ -2061,28 +1993,9 @@ namespace TopologicCore
 		occtVolumeMaker.Perform(); //perform the operation
 
 		if (occtVolumeMaker.HasErrors() || occtVolumeMaker.HasWarnings()) { //check error status
-			// BUG: Should not quit, but instead 
-			//std::ostringstream errorStream;
-			//occtVolumeMaker.DumpErrors(errorStream);
-			///*throw std::exception(errorStream.str().c_str());*/
-			//std::ostringstream warningStream;
-			//occtVolumeMaker.DumpWarnings(warningStream);
-			//TopoDS_Compound occtCompound;
-			//BRep_Builder occtBuilder;
-			//occtBuilder.MakeCompound(occtCompound);
-			//for (TopTools_ListIteratorOfListOfShape iterator(occtShapes);
-			//	iterator.More();
-			//	iterator.Next())
-			//{
-			//	occtBuilder.Add(occtCompound, iterator.Value());
-			//}
-			//return Topology::ByOcctShape(occtCompound, "");
-			////throw std::exception();
+			
 		}else
 		{
-			//DEBUG
-			//return Topology::ByOcctShape(occtVolumeMaker.Shape());
-
 			// 6. Get discarded faces from VolumeMaker--> second result
 			TopoDS_Compound occtCompound2;
 			BRep_Builder occtBuilder2;
@@ -2098,7 +2011,6 @@ namespace TopologicCore
 					occtBuilder2.Add(occtCompound2, rCurrent);
 				}
 			}
-			//return Topology::ByOcctShape(occtCompound2);
 		}
 
 		// 7. Get the rest from Topology[] --> third result
@@ -2113,18 +2025,6 @@ namespace TopologicCore
 			}
 		}
 
-		//DEBUG: Draw discarded faces
-		TopoDS_Compound occtCompound4;
-		BRep_Builder occtBuilder4;
-		occtBuilder4.MakeCompound(occtCompound4);
-		for (BOPCol_ListIteratorOfListOfShape occtFaceIterator(occtDiscardedFaces);
-			occtFaceIterator.More();
-			occtFaceIterator.Next())
-		{
-			TopoDS_Shape& rCurrent = occtFaceIterator.Value();
-			occtBuilder4.Add(occtCompound4, rCurrent);
-		}
-		//return Topology::ByOcctShape(occtCompound4);
 		// 8. Merge results #1 #2 #3
 		BOPCol_ListOfShape occtFinalArguments;
 		if (!occtVolumeMaker.HasErrors() && !occtVolumeMaker.HasWarnings()) { //check error status
@@ -2192,7 +2092,6 @@ namespace TopologicCore
 				occtFinalBuilder.Add(occtFinalCompound, clusterCandidateIterator.Value());
 			}
 
-			//return Topology::ByOcctShape(occtFinalCompound, "");
 			occtFinalResult = occtFinalCompound;
 		}
 		else
@@ -2264,15 +2163,6 @@ namespace TopologicCore
 		AddBooleanOperands(kpOtherTopology, occtArgumentsA, occtArgumentsB);
 
 		BRepAlgoAPI_Fuse occtFuse;
-		/*TopTools_ListOfShape occtArguments;
-		occtArguments.Append(GetOcctShape());
-		TopTools_ListOfShape occtTools;
-		occtTools.Append(kpOtherTopology->GetOcctShape());
-		fuse.SetArguments(occtArguments);
-		fuse.SetTools(occtTools);
-		fuse.SetNonDestructive(true);
-		fuse.Build();*/
-
 		RegularBooleanOperation(occtArgumentsA, occtArgumentsB, occtFuse);
 
 		TopoDS_Shape occtResultShape = occtFuse.Shape();
@@ -2285,8 +2175,8 @@ namespace TopologicCore
 		Topology::Ptr pCopyPostprocessedShape = pPostprocessedShape->DeepCopy();
 		TransferContents(GetOcctShape(), pCopyPostprocessedShape);
 		TransferContents(kpOtherTopology->GetOcctShape(), pCopyPostprocessedShape);
-		AttributeManager::GetInstance().DeepCopyAttributes(GetOcctShape(), occtPostprocessedShape);
-		AttributeManager::GetInstance().DeepCopyAttributes(kpOtherTopology->GetOcctShape(), occtPostprocessedShape);
+		AttributeManager::GetInstance().DeepCopyAttributes(GetOcctShape(), pCopyPostprocessedShape->GetOcctShape());
+		AttributeManager::GetInstance().DeepCopyAttributes(kpOtherTopology->GetOcctShape(), pCopyPostprocessedShape->GetOcctShape());
 		GlobalCluster::GetInstance().AddTopology(pCopyPostprocessedShape);
 		return pCopyPostprocessedShape;
 	}
@@ -2723,13 +2613,11 @@ namespace TopologicCore
 		}
 		TransferContents(GetOcctShape(), pPostprocessedShape);
 		TransferContents(kpOtherTopology->GetOcctShape(), pPostprocessedShape);
+
+		AttributeManager::GetInstance().DeepCopyAttributes(GetOcctShape(), occtPostprocessedShape);
+
 		GlobalCluster::GetInstance().AddTopology(occtPostprocessedShape);
 		return pPostprocessedShape;
-	}
-
-	Topology::Ptr Topology::Trim(const Topology::Ptr & kpOtherTopology)
-	{
-		throw std::exception("Not implemented yet");
 	}
 
 	Topology::Ptr Topology::Divide(const Topology::Ptr & kpTool)
@@ -2741,8 +2629,6 @@ namespace TopologicCore
 		{
 			return nullptr;
 		}
-
-		//Topology::Ptr farthestContextTopology = TrackContextAncestor();
 
 		Topology::Ptr pSlicedTopology = Slice(kpTool);
 
@@ -2774,7 +2660,11 @@ namespace TopologicCore
 
 		Topology::Ptr farthestTopology = TrackContextAncestor();
 
-		return farthestTopology->DeepCopy();
+		Topology::Ptr finalTopology = farthestTopology->DeepCopy();
+
+		AttributeManager::GetInstance().DeepCopyAttributes(GetOcctShape(), finalTopology->GetOcctShape());
+
+		return finalTopology;
 	}
 
 	void Topology::SubTopologies(const TopoDS_Shape& rkShape, BOPCol_ListOfShape& rSubTopologies)
@@ -2858,19 +2748,6 @@ namespace TopologicCore
 		}
 	}
 #endif
-
-	/*void Topology::UpwardNavigation(const TopoDS_Shape & rkOcctShape, const TopoDS_Shape & rkOcctParentShape, const TopAbs_ShapeEnum kShapeEnum, TopTools_ListOfShape & rOcctMembers)
-	{
-		TopTools_ListOfShape occtAncestors;
-		TopTools_IndexedDataMapOfShapeListOfShape occtShapeMap;
-		TopExp::MapShapesAndUniqueAncestors(
-			rkOcctShape,
-			rkOcctShape.ShapeType(),
-			kShapeEnum,
-			occtShapeMap);
-
-		occtShapeMap.FindFromKey(rkOcctShape, occtAncestors);
-	}*/
 
 	void Topology::UpwardNavigation(const TopoDS_Shape & rkOcctHostTopology, const int kTopologyType, std::list<std::shared_ptr<Topology>>& rAncestors) const
 	{

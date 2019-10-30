@@ -116,13 +116,6 @@ namespace Topologic
 		return pShells;
 	}
 
-	/*Vertex^ Face::CenterOfMass()
-	{
-		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
-		TopologicCore::Vertex::Ptr pCoreCenterOfMass = pCoreFace->CenterOfMass();
-		return gcnew Vertex(pCoreCenterOfMass);
-	}*/
-
 	Face^ Face::ByWire(Wire^ wire)
 	{
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Face::ByExternalBoundary(
@@ -155,8 +148,6 @@ namespace Topologic
 		}
 		// 1. NURBS parameters
 		// Transfer the poles/control points
-		//array<array<Autodesk::DesignScript::Geometry::Point^>^>^ pDynamoControlPoints = pDynamoNurbsSurface->ControlPoints();
-
 		TColgp_Array2OfPnt occtPoles(0, controlPoints->Count - 1, 0, controlPoints[0]->Count - 1);
 		for (int i = occtPoles.LowerRow(); i <= occtPoles.UpperRow(); i++)
 		{
@@ -353,7 +344,6 @@ namespace Topologic
 			}
 
 			// Transfer the control points' weights
-			//const TColStd_Array2OfReal* pkOcctWeights = pOcctBSplineSurface->Weights();
 			TColStd_Array2OfReal* pkOcctWeights = new TColStd_Array2OfReal(rkOcctControlPoints.LowerRow(), rkOcctControlPoints.UpperRow(), rkOcctControlPoints.LowerCol(), pOcctBSplineSurface->NbVPoles());
 			pOcctBSplineSurface->Weights(*pkOcctWeights);
 			array<array<double>^>^ pWeights = gcnew array<array<double>^>(pkOcctWeights->ColLength());
@@ -444,8 +434,6 @@ namespace Topologic
 					pOcctBSplineSurface->UDegree(),
 					pOcctBSplineSurface->VDegree()
 				);
-
-			//return pDynamoUntrimmedSurface;
 
 			// The newly created surface corresponds to the whole surface in OCCT. 
 			// It needs to be trimmed by the outer wire and inner wires.
@@ -1057,28 +1045,6 @@ namespace Topologic
 
 			}
 
-			// Get the outer polycurve and discard it from the pDynamoCurveGroups
-			/*for each(List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoCurveGroup in pDynamoCurveGroups)
-			{
-				try {
-					Autodesk::DesignScript::Geometry::PolyCurve^ pDynamoPolyCurve = Autodesk::DesignScript::Geometry::PolyCurve::ByJoinedCurves(pDynamoCurveGroup);
-					Autodesk::DesignScript::Geometry::Surface^ pDynamoSurface = Autodesk::DesignScript::Geometry::Surface::ByPatch(pDynamoPolyCurve);
-					surfaceAreas.push_back(pDynamoSurface->Area);
-				}
-				catch (std::exception& e)
-				{
-					String^ str = gcnew String(e.what());
-					checkWire = false;
-					break;
-				}
-				catch (Exception^ e)
-				{
-					String^ str(e->Message);
-					checkWire = false;
-					break;
-				}
-			}*/
-
 			// 3. Bounding wires
 			std::list<TopologicCore::Wire::Ptr> coreInnerWires;
 
@@ -1244,15 +1210,6 @@ namespace Topologic
 		}
 
 		throw gcnew NotImplementedException("The input Face creates an unrecognised Surface type.");
-		//try {
-		//	pOcctBSplineSurface = GeomConvert::SurfaceToBSplineSurface(pOcctSurface);
-		//	return Surface(pOcctBSplineSurface);
-		//}
-		//catch (Standard_DomainError)
-		//{
-		//	// https://www.opencascade.com/doc/occt-7.2.0/refman/html/class_geom_convert.html#aec7d0c9e937cc0bcbe97fba8b3c360bf
-		//	throw gcnew Exception("An infinite surface was created.");
-		//}
 	}
 #endif
 
@@ -1514,13 +1471,9 @@ namespace Topologic
 			// Connect the mapped edges to a wire
 			Wire^ pMappedApertureWire = Wire::ByEdges(pMappedApertureEdges);
 
-			//// Use the wire to make a face on the same supporting surface as the input face's
+			// Use the wire to make a face on the same supporting surface as the input face's
 			Face^ pMappedApertureFace = Topologic::Utilities::FaceUtility::TrimByWire(this, pMappedApertureWire, false);
 			pFaces->Add(pMappedApertureFace);
-
-			// and attach it as an aperture to the face.
-			/*Context^ pFaceContext = Context::ByTopologyParameters(face, 0.0, 0.0, 0.0);
-			Aperture^ pMappedAperture = Aperture::ByTopologyContext(pMappedApertureFace, pFaceContext);*/
 		}
 		Face^ pCopyFace = safe_cast<Face^>(AddApertures(pFaces));
 

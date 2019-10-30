@@ -25,11 +25,11 @@ using Rhino.Geometry;
 
 namespace TopologicGH
 {
-    public class GraphEdgeAtVertices : GH_Component
+    public class GraphEdge : GH_Component
     {
 
-        public GraphEdgeAtVertices()
-          : base("Graph.EdgeAtVertices", "Graph.EdgeAtVertices", "Returns the Edge, if one exists, that connects the two input Vertices.", "Topologic", "Graph")
+        public GraphEdge()
+          : base("Graph.Edge", "Graph.Edge", "Returns the Edge, if one exists, that connects the two input Vertices.", "Topologic", "Graph")
         {
         }
 
@@ -82,7 +82,7 @@ namespace TopologicGH
             //char[] chars = data.ToCharArray();
 
             
-            Topologic.Edge edge = graph.EdgeAtVertices(vertex1, vertex2, tolerance);
+            Topologic.Edge edge = graph.Edge(vertex1, vertex2, tolerance);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetData(0, edge);

@@ -140,20 +140,9 @@ namespace Topologic {
 			/// <param name="typeFilter">The type of the context Topology</param>
 			/// <returns>A list of Topologies adjacent to the input Topology</returns>
 			static List<Topology^>^ AdjacentTopologies(Topology^ topology, Topology^ parentTopology, int typeFilter);
-/*
-			///
-			static List<Edge^>^ AdjacentEdges(Topology^ topology, Topology^ parentTopology);
-
-			static List<Face^>^ AdjacentFaces(Topology^ topology, Topology^ parentTopology);
-
-			static List<Cell^>^ AdjacentCells(Topology^ topology, Topology^ parentTopology);*/
-
 		public protected:
 			TopologyUtility() {}
 
-			/*static Topology^ Transform(Topology^ topology, 
-				double zAxisX, double zAxisY, double zAxisZ,
-				double xAxisX, double xAxisY, double xAxisZ);*/
 
 		};
 	}

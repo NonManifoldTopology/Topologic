@@ -247,18 +247,6 @@ namespace Topologic
 			int typeFilter);
 
 		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="topology"></param>
-		/// <param name="maxLevel"></param>
-		/// <param name="maxPaths"></param>
-		/// <returns name="Topology[][]"></returns>
-#ifdef TOPOLOGIC_DYNAMO
-		[IsVisibleInDynamoLibrary(false)]
-#endif
-		List<List<Topology^>^>^ PathsTo(Topology^ topology, Topology^ parentTopology, int maxLevel, int maxPaths);
-
-		/// <summary>
 		/// Performs the Difference operation between the input Topology and another Topology.
 		/// </summary>
 		/// <param name="topology">Another Topology</param>
@@ -326,14 +314,6 @@ namespace Topologic
 		/// <param name="topology">Another Topology</param>
 		/// <returns name="Topology">The result of the XOR operation</returns>
 		Topology^ XOR(Topology^ topology);
-
-		/*/// <summary>
-		/// Trims the input Topology with another Topology.
-		/// </summary>
-		/// <param name="topology">Another Topology</param>
-		/// <returns name="Topology">The result of the Trim operation</returns>
-		Topology^ Trim(Topology^ topology);*/
-
 
 		/// <summary>
 		/// Returns the center of mass of any Topology.
@@ -503,7 +483,6 @@ namespace Topologic
 		/// <returns>The copied Topology</returns>
 		Topology^ ShallowCopy();
 
-
 		/// <summary>
 		/// Returns the instance type as a string.
 		/// </summary>
@@ -539,36 +518,6 @@ namespace Topologic
 		[IsVisibleInDynamoLibrary(false)]
 #endif
 		void RegisterFactory(String^ rkGUID, Factories::TopologyFactory^ topologyFactory);
-
-		/*/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="name"></param>
-		/// <returns name="Value"></returns>
-		Object^ AttributeValue(String^ name);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		property List<List<Object^>^>^ KeysValues
-		{
-			List<List<Object^>^>^ get();
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="keys"></param>
-		/// <returns></returns>
-		Topology^ RemoveKeys(List<String^>^ keys);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="keys"></param>
-		/// <param name="values"></param>
-		/// <returns name="Topology"></returns>
-		Topology^ SetKeysValues(List<String^>^ keys, List<Object^>^ values);*/
 
 		/// <summary>
 		/// Sets a dictionary for a Topology.

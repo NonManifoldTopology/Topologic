@@ -28,7 +28,7 @@ namespace TopologicEnergy
 		OpenStudio::EnergyPlusForwardTranslator^ osForwardTranslator = gcnew OpenStudio::EnergyPlusForwardTranslator();
 		OpenStudio::Workspace^ osWorkspace = osForwardTranslator->translateModel(osModel);
 		OpenStudio::IdfFile^ osIdfFile = osWorkspace->toIdfFile();
-		OpenStudio::Path^ osIdfPath = OpenStudio::OpenStudioUtilitiesCore::toPath(idfPathName); //gcnew OpenStudio::Path(idfPathName);
+		OpenStudio::Path^ osIdfPath = OpenStudio::OpenStudioUtilitiesCore::toPath(idfPathName);
 		bool idfSaveCondition = osIdfFile->save(osIdfPath);
 		return idfSaveCondition;
 	}
@@ -112,34 +112,6 @@ namespace TopologicEnergy
 
 		return gcnew EnergyModel(osModel, osBuilding, pBuildingCells, shadingSurfaces, osSpaceVector);
 	}
-
-	//EnergySimulation^ EnergyModel::Simulate(EnergyModel ^ energyModel, String ^ openStudioExePath, String ^ openStudioOutputDirectory, bool run)
-	//{
-	//	String^ oswPath = nullptr;
-	//	Export(energyModel, openStudioOutputDirectory, oswPath);
-
-	//	// https://stackoverflow.com/questions/5168612/launch-program-with-parameters
-	//	String^ args = "run -w \"" + oswPath + "\"";
-	//	System::Diagnostics::ProcessStartInfo^ startInfo = gcnew ProcessStartInfo(openStudioExePath, args);
-	//	startInfo->WorkingDirectory = Path::GetDirectoryName(oswPath);
-
-	//	Process^ process = Process::Start(startInfo);
-	//	process->WaitForExit();
-
-	//	// Rename run and reports directory, add timestamp
-	//	String^ timestamp = DateTime::Now.ToString("yyyy-MM-dd_HH-mm-ss-fff");
-	//	Directory::Move(startInfo->WorkingDirectory + "\\run", startInfo->WorkingDirectory + "\\run_" + timestamp);
-	//	Directory::Move(startInfo->WorkingDirectory + "\\reports", startInfo->WorkingDirectory + "\\reports_" + timestamp);
-
-	//	EnergySimulation^ simulation = gcnew EnergySimulation(
-	//		energyModel->BuildingCells,
-	//		oswPath,
-	//		energyModel->OsModel,
-	//		energyModel->OsSpaces,
-	//		timestamp);
-
-	//	return simulation;
-	//}
 
 	bool EnergyModel::Export(EnergyModel ^ energyModel, String ^ openStudioOutputDirectory)
 	{
@@ -228,13 +200,6 @@ namespace TopologicEnergy
 						OpenStudio::SubSurface^ osSubSurface = osSubSurfaceEnumerator->Current;
 						Face^ subFace = FaceByOsSurface(osSubSurface);
 
-						/*Topologic::Topology^ transformedSubTopology = Topologic::Utilities::TopologyUtility::Transform(subFace,
-							osTranslation->x(), osTranslation->y(), osTranslation->z(),
-							rotation11, rotation12, rotation13,
-							rotation21, rotation22, rotation23,
-							rotation31, rotation32, rotation33);
-						Face^ transformedSubface = safe_cast<Topologic::Face^>(transformedSubTopology);*/
-
 						faceApertureList->Add(subFace);
 					}
 					Topologic::Topology^ topologyWithApertures = face->AddApertures(faceApertureList);
@@ -276,10 +241,8 @@ namespace TopologicEnergy
 			buildingCells = cellComplex->Cells;
 		}
 
-		//OpenStudio::Space^ osSpace = osSpaces[0];
 		EnergyModel^ energyModel = gcnew EnergyModel(osModel, osBuilding, buildingCells, shadingFaces, osSpaceVector);
 
-		//OpenStudio::Space^ osSpace2 = energyModel->m_osSpaces[0];
 		return energyModel;
 	}
 
@@ -289,7 +252,7 @@ namespace TopologicEnergy
 		osModel->purgeUnusedResourceObjects();
 
 		// Create a path string
-		OpenStudio::Path^ osPath = OpenStudio::OpenStudioUtilitiesCore::toPath(osmPathName);// gcnew OpenStudio::Path(osmPathName);
+		OpenStudio::Path^ osPath = OpenStudio::OpenStudioUtilitiesCore::toPath(osmPathName);
 		bool osCondition = osModel->save(osPath, true);
 		return osCondition;
 	}
@@ -405,7 +368,6 @@ namespace TopologicEnergy
 		String^ spaceType)
 	{
 		OpenStudio::Building^ osBuilding = osModel->getBuilding();
-		//building.setNumberOfStories(stories);
 		osBuilding->setStandardsNumberOfStories(numFloors);
 		osBuilding->setDefaultConstructionSet(getDefaultConstructionSet(osModel));
 		osBuilding->setDefaultScheduleSet(getDefaultScheduleSet(osModel));
@@ -540,7 +502,6 @@ namespace TopologicEnergy
 		if (!saveCondition)
 		{
 			return false;
-			//throw gcnew Exception("Failed to save the OSM file.");
 		}
 
 		OpenStudio::WorkflowJSON^ workflow = gcnew OpenStudio::WorkflowJSON();
@@ -557,7 +518,6 @@ namespace TopologicEnergy
 		catch (...)
 		{
 			return false;
-			// throw gcnew Exception("Failed to create the OSM and OSW files.");
 		}
 	}
 
@@ -1033,7 +993,6 @@ namespace TopologicEnergy
 
 	Vertex^ EnergyModel::GetCentreVertex(List<Vertex^>^ vertices)
 	{
-		//List<Vertex^>^ vertices = buildingFace->Vertices;
 		Autodesk::DesignScript::Geometry::Point^ sumPoint = Autodesk::DesignScript::Geometry::Point::ByCoordinates(0, 0, 0);
 
 		// assume vertices.count > 0
@@ -1056,7 +1015,6 @@ namespace TopologicEnergy
 		Autodesk::DesignScript::Geometry::Point^ dynamoPoint = safe_cast<Autodesk::DesignScript::Geometry::Point^>(scaledPoint);
 		Vertex^ vertex = safe_cast<Vertex^>(Topologic::Topology::ByGeometry(dynamoPoint, 0.001)); // tolerance does not matter as it's just a vertex
 		delete dynamoPoint;
-		//delete scaledPoint;
 		delete sumPoint;
 		return vertex;
 	}

@@ -42,15 +42,6 @@ namespace TopologicEnergy
 		/// <returns name="SimulationResult"></returns>
 		static SimulationResult^ ByEnergySimulation(EnergySimulation^ energySimulation, String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPUnits);
 
-		/*/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="energyModel"></param>
-		/// <param name="data"></param>
-		/// <param name="alpha"></param>
-		/// <returns name="GeometryColor[]"></returns>
-		static List<Modifiers::GeometryColor^>^ Display(EnergyModel^ energyModel, Dictionary<String^, Dictionary<String^, Object^>^>^ data, int alpha);*/
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -92,7 +83,6 @@ namespace TopologicEnergy
 			List<double>^ get();
 		}
 
-		//List<DSCore::Color^>^ ARGB(
 		List<List<int>^>^ RGB(
 			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Nullable<double> minDomain, 
 			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Nullable<double> maxDomain);

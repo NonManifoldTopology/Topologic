@@ -25,11 +25,11 @@ using Rhino.Geometry;
 
 namespace TopologicGH
 {
-    public class GraphDistance : GH_Component
+    public class GraphTopologicalDistance : GH_Component
     {
 
-        public GraphDistance()
-          : base("Graph.Distance", "Graph.Distance", "Returns the number of Edges of the shortest path connecting the two input Vertices.", "Topologic", "Graph")
+        public GraphTopologicalDistance()
+          : base("Graph.TopologicalDistance", "Graph.TopologicalDistance", "Returns the number of Edges of the shortest path connecting the two input Vertices.", "Topologic", "Graph")
         {
         }
 
@@ -79,7 +79,7 @@ namespace TopologicGH
             //char[] chars = data.ToCharArray();
 
             
-            int distance = graph.Distance(startVertex, endVertex);
+            int distance = graph.TopologicalDistance(startVertex, endVertex);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetData(0, distance);

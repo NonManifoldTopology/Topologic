@@ -61,7 +61,7 @@ namespace TopologicCore
 		switch (topology->GetType())
 		{
 		case TOPOLOGY_VERTEX: return Graph::ByVertex(std::dynamic_pointer_cast<Vertex>(topology), kToExteriorApertures, kUseFaceInternalVertex, kTolerance);
-		case TOPOLOGY_EDGE: return Graph::ByEdge(std::dynamic_pointer_cast<Edge>(topology), kDirect, kToExteriorApertures, kUseFaceInternalVertex, kTolerance);
+		case TOPOLOGY_EDGE: return Graph::ByEdge(std::dynamic_pointer_cast<TopologicCore::Edge>(topology), kDirect, kToExteriorApertures, kUseFaceInternalVertex, kTolerance);
 		case TOPOLOGY_WIRE: return Graph::ByWire(std::dynamic_pointer_cast<Wire>(topology), kDirect, kToExteriorApertures, kUseFaceInternalVertex, kTolerance);
 		case TOPOLOGY_FACE: return Graph::ByFace(std::dynamic_pointer_cast<Face>(topology), kToExteriorTopologies, kToExteriorApertures, kUseFaceInternalVertex, kTolerance);
 		case TOPOLOGY_SHELL: return Graph::ByShell(
@@ -183,7 +183,7 @@ namespace TopologicCore
 						continue;
 					}
 					//Edge::Ptr edge = Edge::ByStartVertexEndVertex(vertex1, vertex2);
-					Edge::Ptr edge = std::dynamic_pointer_cast<Edge>(Topology::ByOcctShape(occtEdge));
+					Edge::Ptr edge = std::dynamic_pointer_cast<TopologicCore::Edge>(Topology::ByOcctShape(occtEdge));
 					topologies.push_back(edge);
 
 					processedAdjacency[vertex1->GetOcctVertex()].Add(vertex2->GetOcctVertex());
@@ -205,7 +205,7 @@ namespace TopologicCore
 		}
 	}
 
-	void Graph::Edges(std::list<std::shared_ptr<Edge>>& edges) const
+	void Graph::Edges(std::list<std::shared_ptr<TopologicCore::Edge>>& edges) const
 	{
 		GraphMap processedAdjacency;
 		for (const std::pair<TopoDS_Vertex, TopTools_MapOfShape>& rkDictionaryPair : m_graphDictionary)
@@ -244,7 +244,7 @@ namespace TopologicCore
 					continue;
 				}
 				//Edge::Ptr edge = Edge::ByStartVertexEndVertex(vertex1, vertex2);
-				Edge::Ptr edge = std::dynamic_pointer_cast<Edge>(Topology::ByOcctShape(occtEdge));
+				Edge::Ptr edge = std::dynamic_pointer_cast<TopologicCore::Edge>(Topology::ByOcctShape(occtEdge));
 				edges.push_back(edge);
 
 				processedAdjacency[vertex1->GetOcctVertex()].Add(vertex2->GetOcctVertex());
@@ -255,6 +255,11 @@ namespace TopologicCore
 
 	void Graph::AddVertices(const std::list<Vertex::Ptr>& rkVertices, const double kTolerance)
 	{
+		if (kTolerance <= 0.0)
+		{
+			throw std::exception("The tolerance must have a positive value.");
+		}
+
 		for (const Vertex::Ptr& kpVertex : rkVertices)
 		{
 			if (!ContainsVertex(kpVertex, kTolerance))
@@ -266,6 +271,11 @@ namespace TopologicCore
 
 	void Graph::AddEdges(const std::list<Edge::Ptr>& rkEdges, const double kTolerance)
 	{
+		if (kTolerance <= 0.0)
+		{
+			throw std::exception("The tolerance must have a positive value.");
+		}
+
 		for (const Edge::Ptr& kpEdge : rkEdges)
 		{
 			if (!ContainsEdge(kpEdge, kTolerance))
@@ -336,6 +346,11 @@ namespace TopologicCore
 
 	void Graph::Connect(const std::shared_ptr<Vertex>& kpVertex1, const std::shared_ptr<Vertex>& kpVertex2, const double kTolerance)
 	{
+		if (kTolerance <= 0.0)
+		{
+			throw std::exception("The tolerance must have a positive value.");
+		}
+
 		TopoDS_Vertex occtQueryVertex1 = GetCoincidentVertex(kpVertex1->GetOcctVertex(), kTolerance);
 		if (occtQueryVertex1.IsNull())
 		{
@@ -379,7 +394,7 @@ namespace TopologicCore
 		return !occtCoincidentVertex.IsNull();
 	}
 
-	bool Graph::ContainsEdge(const std::shared_ptr<Edge>& kpEdge, const double kTolerance) const
+	bool Graph::ContainsEdge(const std::shared_ptr<TopologicCore::Edge>& kpEdge, const double kTolerance) const
 	{
 		Vertex::Ptr startVertex = kpEdge->StartVertex();
 		Vertex::Ptr endVertex = kpEdge->EndVertex();
@@ -388,6 +403,11 @@ namespace TopologicCore
 
 	bool Graph::ContainsEdge(const TopoDS_Vertex & rkVertex1, const TopoDS_Vertex & rkVertex2, const double kTolerance) const
 	{
+		if (kTolerance <= 0.0)
+		{
+			throw std::exception("The tolerance must have a positive value.");
+		}
+
 		TopoDS_Vertex occtStartCoincidentVertex = GetCoincidentVertex(rkVertex1, kTolerance);
 		if (occtStartCoincidentVertex.IsNull())
 		{
@@ -591,7 +611,6 @@ namespace TopologicCore
 		}
 
 		if (kpStartVertex->IsSame(kpEndVertex))
-			//if (kpStartVertex == kpEndVertex)
 		{
 			Wire::Ptr pathWire = ConstructPath(rPath);
 			return pathWire;
@@ -712,10 +731,10 @@ namespace TopologicCore
 		const std::string& rkVertexKey,
 		const std::string& rkEdgeKey,
 		const bool kUseTimeLimit,
-		const int kTimeLimitInSeconds,
+		const int kTimeLimit,
 		std::list<std::shared_ptr<Wire>>& rPaths) const
 	{
-		return ShortestPaths(kpStartVertex->GetOcctVertex(), kpEndVertex->GetOcctVertex(), rkVertexKey, rkEdgeKey, kUseTimeLimit, kTimeLimitInSeconds, rPaths);
+		return ShortestPaths(kpStartVertex->GetOcctVertex(), kpEndVertex->GetOcctVertex(), rkVertexKey, rkEdgeKey, kUseTimeLimit, kUseTimeLimit, rPaths);
 	}
 
 	void Graph::ShortestPaths(
@@ -724,9 +743,14 @@ namespace TopologicCore
 		const std::string& rkVertexKey,
 		const std::string& rkEdgeKey,
 		const bool kUseTimeLimit,
-		const int kTimeLimitInSeconds,
+		const int kTimeLimit,
 		std::list<std::shared_ptr<Wire>>& rPaths) const
 	{
+		if (kTimeLimit <= 0.0)
+		{
+			throw std::exception("The time limit must have a positive value.");
+		}
+
 		auto startingTime = std::chrono::system_clock::now();
 
 		struct Node
@@ -762,7 +786,7 @@ namespace TopologicCore
 			{
 				auto currentTime = std::chrono::system_clock::now();
 				auto timeDifferenceInSeconds = std::chrono::duration_cast<std::chrono::seconds>(currentTime - startingTime);
-				if (timeDifferenceInSeconds.count() > kTimeLimitInSeconds)
+				if (timeDifferenceInSeconds.count() > kTimeLimit)
 				{
 					break;
 				}
@@ -859,7 +883,7 @@ namespace TopologicCore
 		int maxShortestPathDistance = 0;
 		for (const std::pair<Vertex::Ptr, Vertex::Ptr>& rkVertexPair : vertexPairs)
 		{
-			int distance = Distance(rkVertexPair.first, rkVertexPair.second);
+			int distance = TopologicalDistance(rkVertexPair.first, rkVertexPair.second);
 			if (distance > maxShortestPathDistance)
 			{
 				maxShortestPathDistance = distance;
@@ -869,12 +893,12 @@ namespace TopologicCore
 		return maxShortestPathDistance;
 	}
 
-	int Graph::Distance(const std::shared_ptr<Vertex>& kpStartVertex, const std::shared_ptr<Vertex>& kpEndVertex) const
+	int Graph::TopologicalDistance(const std::shared_ptr<Vertex>& kpStartVertex, const std::shared_ptr<Vertex>& kpEndVertex) const
 	{
-		return Distance(kpStartVertex->GetOcctVertex(), kpEndVertex->GetOcctVertex());
+		return TopologicalDistance(kpStartVertex->GetOcctVertex(), kpEndVertex->GetOcctVertex());
 	}
 
-	int Graph::Distance(const TopoDS_Vertex & rkOcctStartVertex, const TopoDS_Vertex & rkOcctVertex) const
+	int Graph::TopologicalDistance(const TopoDS_Vertex & rkOcctStartVertex, const TopoDS_Vertex & rkOcctVertex) const
 	{
 		Wire::Ptr shortestPath = ShortestPath(rkOcctStartVertex, rkOcctVertex, "", "");
 		if (shortestPath == nullptr)
@@ -901,7 +925,7 @@ namespace TopologicCore
 			mapIterator.More();
 			mapIterator.Next())
 		{
-			int distance = Distance(occtAdjacentVerticesPair->first, TopoDS::Vertex(mapIterator.Value()));
+			int distance = TopologicalDistance(occtAdjacentVerticesPair->first, TopoDS::Vertex(mapIterator.Value()));
 			if (distance > eccentricity)
 			{
 				eccentricity = distance;
@@ -923,12 +947,6 @@ namespace TopologicCore
 		{
 			std::vector<int> sequenceVector{ std::begin(rkSequence), std::end(rkSequence) };
 			int sizeOfSequence = (int)rkSequence.size();
-
-			/*for k in range(1, len(dsequence) + 1) :
-				left = sum(dsequence[:k])
-				right = k * (k - 1) + sum([min(x, k) for x in dsequence[k:]])
-				if left > right:
-					return False*/
 
 			std::list<int> range(rkSequence.size());
 			std::iota(range.begin(), range.end(), 1);
@@ -1038,6 +1056,11 @@ namespace TopologicCore
 
 	void Graph::VerticesAtCoordinates(const double kX, const double kY, const double kZ, const double kTolerance, std::list<std::shared_ptr<Vertex>>& rVertices) const
 	{
+		if (kTolerance <= 0.0)
+		{
+			throw std::exception("The tolerance must have a positive value.");
+		}
+
 		TopoDS_Vertex occtQueryVertex = BRepBuilderAPI_MakeVertex(gp_Pnt(kX, kY, kZ));
 		double absDistanceThreshold = std::abs(kTolerance);
 		for (GraphMap::const_iterator graphIterator = m_graphDictionary.begin();
@@ -1059,8 +1082,13 @@ namespace TopologicCore
 		}
 	}
 
-	std::shared_ptr<Edge> Graph::EdgeAtVertices(const std::shared_ptr<Vertex>& kpVertex1, const std::shared_ptr<Vertex>& kpVertex2, const double kTolerance) const
+	std::shared_ptr<Edge> Graph::Edge(const std::shared_ptr<Vertex>& kpVertex1, const std::shared_ptr<Vertex>& kpVertex2, const double kTolerance) const
 	{
+		if (kTolerance <= 0.0)
+		{
+			throw std::exception("The tolerance must have a positive value.");
+		}
+
 		TopoDS_Vertex occtQueryVertex1 = GetCoincidentVertex(kpVertex1->GetOcctVertex(), kTolerance);
 		if (occtQueryVertex1.IsNull())
 		{
@@ -1089,14 +1117,10 @@ namespace TopologicCore
 		{
 			return nullptr;
 		}
-		return std::dynamic_pointer_cast<Edge>(Topology::ByOcctShape(occtEdge));
-		/*Vertex::Ptr vertex1 = std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtQueryVertex1));
-		Vertex::Ptr vertex2 = std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtQueryVertex2));
-		Edge::Ptr edge = Edge::ByStartVertexEndVertex(vertex1, vertex2);
-		return edge;*/
+		return std::dynamic_pointer_cast<TopologicCore::Edge>(Topology::ByOcctShape(occtEdge));
 	}
 
-	void Graph::IncidentEdges(const std::shared_ptr<Vertex>& kpVertex, const double kTolerance, std::list<std::shared_ptr<Edge>>& rEdges) const
+	void Graph::IncidentEdges(const std::shared_ptr<Vertex>& kpVertex, const double kTolerance, std::list<std::shared_ptr<TopologicCore::Edge>>& rEdges) const
 	{
 		TopoDS_Vertex occtQueryVertex = GetCoincidentVertex(kpVertex->GetOcctVertex(), kTolerance);
 		if (occtQueryVertex.IsNull())
@@ -1115,7 +1139,7 @@ namespace TopologicCore
 			{
 				continue;
 			}
-			Edge::Ptr edge = std::dynamic_pointer_cast<Edge>(Topology::ByOcctShape(occtEdge));
+			Edge::Ptr edge = std::dynamic_pointer_cast<TopologicCore::Edge>(Topology::ByOcctShape(occtEdge));
 
 			rEdges.push_back(edge);
 		}
@@ -1459,31 +1483,7 @@ namespace TopologicCore
 				}
 			}
 		}
-
-		// Merge the edges
-		//TopologicCore::Cluster::Ptr pTopologiesAsCluster = TopologicCore::Cluster::ByTopologies(graphEdges);
-		/*if (pTopologiesAsCluster == nullptr)
-		{
-			return nullptr;
-		}*/
-		//TopologicCore::Topology::Ptr pSelfMergedTopologies = pTopologiesAsCluster->SelfMerge();
-
-		// If this is a cluster, use it to create a dual graph. Otherwise, add it to a cluster to be used to create a dual graph.
-		//TopologicCore::Cluster::Ptr pSelfMergedTopologiesAsCluster = std::dynamic_pointer_cast<Cluster>(pSelfMergedTopologies);
-		//std::list<Vertex::Ptr> vertices;
-		////if (pSelfMergedTopologiesAsCluster != nullptr)
-		//if (pTopologiesAsCluster != nullptr)
-		//{
-		//	std::list<Edge::Ptr> mergedGraphEdges;
-		//	pSelfMergedTopologies->Vertices(vertices);
-		//	pSelfMergedTopologies->Edges(mergedGraphEdges);
-		//	return std::make_shared<Graph>(vertices, mergedGraphEdges);
-		//}
-
-		// else 
-		
 		std::list<Vertex::Ptr> vertices;
-		//std::list<Edge::Ptr> finalGraphEdges; // converted to Edge::Ptr
 		for (const Topology::Ptr& kpEdgeTopology : graphEdges)
 		{
 			std::list<Vertex::Ptr> edgeVertices;
@@ -1492,10 +1492,7 @@ namespace TopologicCore
 			{
 				vertices.push_back(kpVertex);
 			}
-			//Edge::Ptr edge = std::dynamic_pointer_cast<Edge>(kpEdgeTopology);
-			//finalGraphEdges.push_back(edge);
 		}
-		//return std::make_shared<Graph>(vertices, finalGraphEdges);
 		return std::make_shared<Graph>(vertices, graphEdges);
 	}
 
@@ -1696,7 +1693,7 @@ namespace TopologicCore
 				internalVertex = kpFace->CenterOfMass();
 			}
 			AttributeManager::GetInstance().CopyAttributes(kpFace->GetOcctShape(), internalVertex->GetOcctShape());
-			//TopologicCore::Vertex::Ptr pCentroid = TopologicUtilities::FaceUtility::InternalVertex(kpFace, kTolerance);
+			
 			bool isManifold = kpFace->IsManifold();
 			std::list<TopologicCore::Cell::Ptr> adjacentCells;
 			kpFace->Cells(adjacentCells);
@@ -1763,31 +1760,7 @@ namespace TopologicCore
 				}
 			}
 		}
-
-		// 3. Self-merge the cluster
-
-		//// Merge the edges
-		//TopologicCore::Cluster::Ptr pTopologiesAsCluster = TopologicCore::Cluster::ByTopologies(edges);
-		//if (pTopologiesAsCluster == nullptr)
-		//{
-		//	return nullptr;
-		//}
-		//TopologicCore::Topology::Ptr pSelfMergedTopologies = pTopologiesAsCluster->SelfMerge();
-
-		//// If this is a cluster, use it to create a dual graph. Otherwise, add it to a cluster to be used to create a dual graph.
-		//TopologicCore::Cluster::Ptr pSelfMergedTopologiesAsCluster = std::dynamic_pointer_cast<Cluster>(pSelfMergedTopologies);
-		//std::list<Vertex::Ptr> vertices;
-		//if (pSelfMergedTopologiesAsCluster != nullptr)
-		//{
-		//	std::list<Edge::Ptr> mergedGraphEdges;
-		//	pSelfMergedTopologies->Vertices(vertices);
-		//	pSelfMergedTopologies->Edges(mergedGraphEdges);
-		//	return std::make_shared<Graph>(vertices, mergedGraphEdges);
-		//}
-
-		// else 
 		std::list<Vertex::Ptr> vertices;
-		//std::list<Edge::Ptr> finalGraphEdges; // converted to Edge::Ptr
 		for (const Edge::Ptr& kpEdgeTopology : edges)
 		{
 			std::list<Vertex::Ptr> edgeVertices;
@@ -1796,9 +1769,7 @@ namespace TopologicCore
 			{
 				vertices.push_back(kpVertex);
 			}
-			//finalGraphEdges.push_back(std::dynamic_pointer_cast<Edge>(kpEdgeTopology));
 		}
-		//return std::make_shared<Graph>(vertices, finalGraphEdges);
 		return std::make_shared<Graph>(vertices, edges);
 	}
 
@@ -1865,7 +1836,7 @@ namespace TopologicCore
 			Edge::Ptr edge = nullptr;
 			if (!occtEdge.IsNull())
 			{
-				edge = std::dynamic_pointer_cast<Edge>(Topology::ByOcctShape(occtEdge));
+				edge = std::dynamic_pointer_cast<TopologicCore::Edge>(Topology::ByOcctShape(occtEdge));
 			}else
 			{
 				edge = Edge::ByStartVertexEndVertex(*vertexIterator, *nextVertexIterator);
@@ -1967,8 +1938,6 @@ namespace TopologicCore
 			return (double)intAttribute->IntValue();
 		}
 
-		/*std::string strException = std::string("No attribute with the key " + rkVertexKey + " is found.");
-		throw std::exception(strException.c_str());*/
 		return 0.0;
 	}
 
@@ -2044,7 +2013,6 @@ namespace TopologicCore
 			TopoDS_Vertex occtFirstVertex = occtShapeAnalysisEdge.FirstVertex(occtEdge);
 			TopoDS_Vertex occtLastVertex = occtShapeAnalysisEdge.LastVertex(occtEdge);
 
-			// TODO: change this with coincidence check
 			if ((IsCoincident(occtFirstVertex, rkVertex1, kTolerance) && IsCoincident(occtLastVertex, rkVertex2, kTolerance)) ||
 				(IsCoincident(occtFirstVertex, rkVertex2, kTolerance) && IsCoincident(occtLastVertex, rkVertex1, kTolerance)))
 			{

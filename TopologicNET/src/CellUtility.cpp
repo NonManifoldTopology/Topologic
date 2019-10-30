@@ -22,29 +22,6 @@
 
 namespace Topologic {
 	namespace Utilities {
-		/*Cell^ CellUtility::ByVerticesFaceIndices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<int>^>^ faceIndices)
-		{
-			std::vector<TopologicCore::Vertex::Ptr> coreVertices;
-			for each(Vertex^ pVertex in vertices)
-			{
-				coreVertices.push_back(TopologicCore::Topology::Downcast<TopologicCore::Vertex>(pVertex->GetCoreTopologicalQuery()));
-			}
-
-			std::list<std::list<int>> coreFaceIndices;
-			for each(System::Collections::Generic::IEnumerable<int>^ pFaceIndex in faceIndices)
-			{
-				std::list<int> coreFaceIndex;
-				for each(int vertexIndex in pFaceIndex)
-				{
-					coreFaceIndex.push_back(vertexIndex);
-				}
-				coreFaceIndices.push_back(coreFaceIndex);
-			}
-
-			Cell^ pCell = gcnew Cell(TopologicUtilities::CellUtility::ByVerticesFaceIndices(coreVertices, coreFaceIndices));
-			return pCell;
-		}*/
-
 		Cell^ CellUtility::ByLoft(System::Collections::Generic::IEnumerable<Wire^>^ wires)
 		{
 

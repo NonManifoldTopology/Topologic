@@ -39,9 +39,14 @@ namespace Topologic
 				coreTopologies.push_back(pCoreTopology);
 			}
 		}
-		
-		TopologicCore::Cluster::Ptr pCoreCluster = TopologicCore::Cluster::ByTopologies(coreTopologies);
-		return gcnew Cluster(pCoreCluster);
+		try {
+			TopologicCore::Cluster::Ptr pCoreCluster = TopologicCore::Cluster::ByTopologies(coreTopologies);
+			return gcnew Cluster(pCoreCluster);
+		}
+		catch (const std::exception& rkException)
+		{
+			throw gcnew Exception(gcnew String(rkException.what()));
+		}
 	}
 
 	Cluster^ Cluster::AddTopology(Topology^ topology)

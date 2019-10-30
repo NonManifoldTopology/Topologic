@@ -324,8 +324,8 @@ namespace Topologic {
 		/// </summary>
 		/// <param name="startVertex">The start Vertex</param>
 		/// <param name="endVertex">The end Vertex</param>
-		/// <returns name="double">The number of Edges connecting the two input Vertices</returns>
-		int Distance(Vertex^ startVertex, Vertex^ endVertex);
+		/// <returns name="int">The resulting topological distance</returns>
+		int TopologicalDistance(Vertex^ startVertex, Vertex^ endVertex);
 
 		/// <summary>
 		/// Returns True if the input sequence satisfies the Erdoes Gallai theorem. It returns False otherwise.
@@ -355,7 +355,7 @@ namespace Topologic {
 		/// <param name="vertex2">The second Vertex</param>
 		/// <param name="tolerance">A positive tolerance value</param>
 		/// <returns name="Edge">The Edge connecting the two Vertices</returns>
-		Edge^ EdgeAtVertices(Vertex^ vertex1, Vertex^ vertex2,
+		Edge^ Edge(Vertex^ vertex1, Vertex^ vertex2,
 #ifdef TOPOLOGIC_DYNAMO
 			[Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")]
 #endif
@@ -367,7 +367,7 @@ namespace Topologic {
 		/// <param name="vertex">A Vertex</param>
 		/// <param name="tolerance">A positive tolerance value</param>
 		/// <returns name="Edge[]">The Edges connected to the input Vertex</returns>
-		List<Edge^>^ IncidentEdges(Vertex^ vertex, 
+		List<Topologic::Edge^>^ IncidentEdges(Vertex^ vertex,
 #ifdef TOPOLOGIC_DYNAMO
 			[Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")]
 #endif

@@ -132,11 +132,6 @@ namespace TopologicCore
 	{
 		TopoDS_Vertex occtCenterOfMass = CenterOfMass(GetOcctFace());
 		return std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtCenterOfMass));
-		/*GProp_GProps occtShapeProperties;
-		ShapeFix_Face occtShapeFix(GetOcctFace());
-		occtShapeFix.Perform();
-		BRepGProp::SurfaceProperties(occtShapeFix.Face(), occtShapeProperties);
-		return Vertex::ByPoint(new Geom_CartesianPoint(occtShapeProperties.CentreOfMass()));*/
 	}
 
 	TopoDS_Vertex Face::CenterOfMass(const TopoDS_Face & rkOcctFace)

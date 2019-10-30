@@ -42,8 +42,6 @@ namespace TopologicCore
 
 		TOPOLOGIC_API int VDegree() const;
 
-		TOPOLOGIC_API void ControlVertices(std::vector<std::shared_ptr<Vertex>>& rControlVertices, int& rUCount, int& rVCount) const;
-
 		TOPOLOGIC_API bool IsURational() const;
 
 		TOPOLOGIC_API bool IsVRational() const;
@@ -57,8 +55,6 @@ namespace TopologicCore
 		TOPOLOGIC_API void UKnots(std::list<double>& rUKnots) const;
 
 		TOPOLOGIC_API void VKnots(std::list<double>& rVKnots) const;
-
-		/*TOPOLOGIC_API bool IsPeriodic() const;*/
 
 	protected:
 		Handle(Geom_BSplineSurface) m_pOcctBSplineSurface;

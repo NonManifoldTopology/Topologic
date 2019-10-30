@@ -60,22 +60,6 @@ namespace TopologicCore
 		return m_pOcctBSplineSurface->NbVPoles();
 	}
 
-	/*bool NurbsSurface::IsPeriodic() const
-	{
-		return m_pOcctBSplineSurface->IsPeriodic();
-	}*/
-
-	void NurbsSurface::ControlVertices(std::vector<std::shared_ptr<Vertex>>& rControlVertices, int& rUCount, int& rVCount) const
-	{
-		/*TColgp_Array2OfPnt occtControlPoints = m_pOcctBSplineSurface->Poles();
-		for (int i = occtControlPoints.Lower(); i <= occtControlPoints.Upper(); i++)
-		{
-			const gp_Pnt& rkControlPoint = occtControlPoints.Value(i);
-			Vertex::Ptr pControlVertex = Vertex::ByCoordinates(rkControlPoint.X(), rkControlPoint.Y(), rkControlPoint.Z());
-			rControlVertices.push_back(pControlVertex);
-		}*/
-	}
-
 	Vertex::Ptr NurbsSurface::ControlVertex(const int u, const int v) const
 	{
 		const gp_Pnt& rkControlPoint = m_pOcctBSplineSurface->Poles().Value(

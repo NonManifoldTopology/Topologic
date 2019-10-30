@@ -40,50 +40,6 @@
 
 namespace TopologicUtilities
 {
-	/*TopologicCore::Cell::Ptr CellUtility::ByVerticesFaceIndices(const std::vector<TopologicCore::Vertex::Ptr>& rkVertices, const std::list<std::list<int>>& rkFaceIndices)
-	{
-		if (rkVertices.empty())
-		{
-			throw std::exception("No vertex is passed.");
-		}
-
-		std::list<TopologicCore::Face::Ptr> faces;
-		for (const std::list<int>& rkVertexIndices : rkFaceIndices)
-		{
-			BRepBuilderAPI_MakeWire occtMakeWire;
-
-			std::list<int>::const_iterator kSecondFromLastVertexIterator = --rkVertexIndices.end();
-			for (std::list<int>::const_iterator kVertexIterator = rkVertexIndices.begin();
-				kVertexIterator != kSecondFromLastVertexIterator;
-				kVertexIterator++)
-			{
-				int vertexIndex = *kVertexIterator;
-
-				std::list<int>::const_iterator kNextVertexIterator = kVertexIterator;
-				kNextVertexIterator++;
-				int nextVertexIndex = *kNextVertexIterator;
-
-				occtMakeWire.Add(BRepBuilderAPI_MakeEdge(
-					rkVertices[vertexIndex]->GetOcctVertex(),
-					rkVertices[nextVertexIndex]->GetOcctVertex())
-				);
-			}
-			occtMakeWire.Add(BRepBuilderAPI_MakeEdge(
-				rkVertices[*--rkVertexIndices.end()]->GetOcctVertex(),
-				rkVertices[*rkVertexIndices.begin()]->GetOcctVertex())
-			);
-
-			const TopoDS_Wire& rkOcctWire = occtMakeWire.Wire();
-			BRepBuilderAPI_MakeFace occtMakeFace(rkOcctWire);
-			faces.push_back(std::make_shared<TopologicCore::Face>(occtMakeFace));
-		}
-		TopologicCore::Cell::Ptr pCell = TopologicCore::Cell::ByFaces(faces);
-		TopologicCore::Cell::Ptr pCopyCell = std::dynamic_pointer_cast<TopologicCore::Cell>(pCell->DeepCopy());
-		TopologicCore::GlobalCluster::GetInstance().AddTopology(pCopyCell->GetOcctShape());
-		return pCopyCell;
-	}*/
-
-
 	TopologicCore::Cell::Ptr CellUtility::ByLoft(const std::list<TopologicCore::Wire::Ptr>& rkWires)
 	{
 		BRepOffsetAPI_ThruSections occtLoft(true);

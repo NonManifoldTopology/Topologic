@@ -20,14 +20,6 @@
 
 namespace Topologic
 {
-	/*Context^ Context::ByTopologyParameters__(Topologic::Topology^ topology, double U, double V, double W)
-	{
-		std::shared_ptr<TopologicCore::Context> pCoreContext = TopologicCore::Context::ByTopologyParameters(
-			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery()),
-			U, V, W);
-		return gcnew Context(pCoreContext);
-	}*/
-
 	Topology^ Context::Topology::get()
 	{
 		std::shared_ptr<TopologicCore::Context> pCoreContext = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Context>(GetCoreTopologicalQuery());

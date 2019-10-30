@@ -90,14 +90,6 @@ namespace TopologicCore
 		/// <returns></returns>
 		static Topology::Ptr ByContext(const std::shared_ptr<Context>& kpContext);
 
-		/*/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="rkVertexCoordinates"></param>
-		/// <param name="rkVertexIndices"></param>
-		/// <returns></returns>
-		static Topology::Ptr ByVertexIndex(const std::list<std::array<double, 3>>& rkVertexCoordinates, const std::list<std::list<int>>& rkVertexIndices);*/
-
 		/// <summary>
 		/// 
 		/// </summary>
@@ -203,16 +195,6 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpTopology"></param>
-		/// <param name="kpParentTopology"></param>
-		/// <param name="kMaxLevels"></param>
-		/// <param name="kMaxPaths"></param>
-		/// <param name="rkPaths"></param>
-		TOPOLOGIC_API void PathsTo(const Topology::Ptr& kpTopology, const Topology::Ptr& kpParentTopology, const int kMaxLevels, const int kMaxPaths, std::list<std::list<std::shared_ptr<TopologicalQuery>>>& rkPaths) const;
-
-		/// <summary>
-		/// 
-		/// </summary>
 		/// <param name="rkOcctFaces"></param>
 		/// <param name="kTolerance"></param>
 		/// <returns></returns>
@@ -283,30 +265,9 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="kpOtherTopology"></param>
-		/// <returns></returns>
-		TOPOLOGIC_API Topology::Ptr Trim(const Topology::Ptr& kpOtherTopology);
-
-		/// <summary>
-		/// 
-		/// </summary>
 		/// <param name="kpTool"></param>
 		/// <returns></returns>
 		TOPOLOGIC_API Topology::Ptr Divide(const Topology::Ptr& kpTool);
-
-		/*/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="kpAnotherTopology"></param>
-		/// <param name="rOcctCellsBuilder"></param>
-		/// <param name="rOcctMapFaceToFixedFaceA"></param>
-		/// <param name="rOcctMapFaceToFixedFaceB"></param>
-		/// <returns></returns>
-		std::shared_ptr<Topology> TransferBooleanContents(
-			const std::shared_ptr<Topology>& kpAnotherTopology,
-			BOPAlgo_CellsBuilder& rOcctCellsBuilder,
-			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceA,
-			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceB);*/
 
 		/// <summary>
 		/// 
@@ -510,15 +471,6 @@ namespace TopologicCore
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <param name="rkOcctShape"></param>
-		/// <param name="rkOcctParentShape"></param>
-		/// <param name="kShapeEnum"></param>
-		/// <param name="rOcctMembers"></param>
-		//static void UpwardNavigation(const TopoDS_Shape& rkOcctShape, const TopoDS_Shape& rkOcctParentShape, const TopAbs_ShapeEnum kShapeEnum, TopTools_ListOfShape& rOcctMembers);
-
-		/// <summary>
-		/// 
-		/// </summary>
 		/// <param name="rMembers"></param>
 		template <class Subclass>
 		void DownwardNavigation(std::list<std::shared_ptr<Subclass>>& rMembers) const;
@@ -674,13 +626,6 @@ namespace TopologicCore
 		/// <param name="kLevel"></param>
 		/// <returns></returns>
 		static std::string Analyze(const TopoDS_Shape& rkShape, const int kLevel = 0);
-/*
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="rkOcctShape"></param>
-		/// <param name="rUnionArguments"></param>
-		static void AddUnionInternalStructure(const TopoDS_Shape& rkOcctShape, BOPCol_ListOfShape& rUnionArguments);*/
 
 		template <class Subclass>
 		static TopAbs_ShapeEnum CheckOcctShapeType();
@@ -751,17 +696,6 @@ namespace TopologicCore
 			const BOPCol_ListOfShape& rkOcctArgumentsA,
 			const BOPCol_ListOfShape& rkOcctArgumentsB,
 			BRepAlgoAPI_BooleanOperation& rOcctBooleanOperation);
-
-		/*/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="rOcctCellsBuilder"></param>
-		/// <returns></returns>
-		Topology::Ptr GetBooleanResult(
-			const Topology::Ptr& kpOtherTopology,
-			BOPAlgo_CellsBuilder& rOcctCellsBuilder,
-			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceA,
-			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceB);*/
 
 		/// <summary>
 		/// 

@@ -27,12 +27,9 @@
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRep_Tool.hxx>
 #include <Geom_BSplineCurve.hxx>
-#include <Geom_CartesianPoint.hxx>
 #include <GProp_GProps.hxx>
-#include <gp_Lin.hxx>
 #include <ShapeAnalysis_Edge.hxx>
 #include <ShapeFix_Shape.hxx>
-#include <TopExp.hxx>
 #include <TopoDS.hxx>
 
 #include <assert.h>
@@ -70,19 +67,19 @@ namespace TopologicCore
 		}
 	}
 
-	std::shared_ptr<Vertex> Edge::StartVertex() const
+	Vertex::Ptr Edge::StartVertex() const
 	{
 		return std::make_shared<Vertex>(StartVertex(GetOcctEdge()));
 	}
 
-	TopoDS_Vertex Edge::StartVertex(const TopoDS_Edge & rkOcctEdge)
+	TopoDS_Vertex Edge::StartVertex(const TopoDS_Edge& rkOcctEdge)
 	{
 		ShapeAnalysis_Edge occtShapeAnalysisEdge;
 		TopoDS_Vertex occtFirstVertex = occtShapeAnalysisEdge.FirstVertex(rkOcctEdge);
 		return occtFirstVertex;
 	}
 
-	TopoDS_Vertex Edge::EndVertex(const TopoDS_Edge & rkOcctEdge)
+	TopoDS_Vertex Edge::EndVertex(const TopoDS_Edge& rkOcctEdge)
 	{
 		ShapeAnalysis_Edge occtShapeAnalysisEdge;
 		TopoDS_Vertex occtLastVertex = occtShapeAnalysisEdge.LastVertex(rkOcctEdge);
@@ -151,15 +148,15 @@ namespace TopologicCore
 		return ByCurve(pOcctBSplineCurve);
 	}
 
-	Edge::Ptr Edge::ByCurve(Handle(Geom_Curve) pOcctCurve, const double rkParameter1, const double rkParameter2)
+	Edge::Ptr Edge::ByCurve(Handle(Geom_Curve) pOcctCurve, const double rkFirstParameter, const double rkLastParameter)
 	{
 		const double kOcctFirstParameter = pOcctCurve->FirstParameter();
 		const double kOcctLastParameter = pOcctCurve->LastParameter();
 		const double kOcctDeltaParameter = kOcctLastParameter - kOcctFirstParameter;
 
 		// Compute the non-normalised parameters.
-		const double kOcctParameter1 = kOcctFirstParameter + rkParameter1 * kOcctDeltaParameter;
-		const double kOcctParameter2 = kOcctFirstParameter + rkParameter2 * kOcctDeltaParameter;
+		const double kOcctParameter1 = kOcctFirstParameter + rkFirstParameter * kOcctDeltaParameter;
+		const double kOcctParameter2 = kOcctFirstParameter + rkLastParameter * kOcctDeltaParameter;
 
 		BRepBuilderAPI_MakeEdge occtMakeEdge(pOcctCurve, kOcctParameter1, kOcctParameter2);
 		if (occtMakeEdge.Error() != BRepBuilderAPI_EdgeDone)
@@ -167,8 +164,8 @@ namespace TopologicCore
 			Throw(occtMakeEdge.Error());
 		}
 
-		ShapeFix_Shape occtEdgeFix(occtMakeEdge.Edge());
-		Edge::Ptr pEdge = std::make_shared<Edge>(TopoDS::Edge(occtEdgeFix.Shape()));
+		TopoDS_Edge occtFixedEdge = OcctShapeFix(occtMakeEdge);
+		Edge::Ptr pEdge = std::make_shared<Edge>(occtFixedEdge);
 		GlobalCluster::GetInstance().AddTopology(pEdge->GetOcctEdge());
 		return pEdge;
 	}
@@ -187,7 +184,10 @@ namespace TopologicCore
 		{
 			Throw(occtMakeEdge.Error());
 		}
-		Edge::Ptr pEdge = std::make_shared<Edge>(occtMakeEdge.Edge());
+
+		TopoDS_Edge occtFixedEdge = OcctShapeFix(occtMakeEdge);
+
+		Edge::Ptr pEdge = std::make_shared<Edge>(occtFixedEdge);
 		Vertex::Ptr startVertex = pEdge->StartVertex();
 		Vertex::Ptr endVertex = pEdge->EndVertex();
 		Edge::Ptr pCopyEdge = std::dynamic_pointer_cast<Edge>(pEdge->DeepCopy());
@@ -254,7 +254,7 @@ namespace TopologicCore
 		return GetOcctEdge();
 	}
 
-	TopoDS_Edge & Edge::GetOcctEdge()
+	TopoDS_Edge& Edge::GetOcctEdge()
 	{
 		assert(!m_occtEdge.IsNull() && "Edge::m_occtEdge is null.");
 		if (m_occtEdge.IsNull())
@@ -265,7 +265,7 @@ namespace TopologicCore
 		return m_occtEdge;
 	}
 
-	const TopoDS_Edge & Edge::GetOcctEdge() const
+	const TopoDS_Edge& Edge::GetOcctEdge() const
 	{
 		assert(!m_occtEdge.IsNull() && "Edge::m_occtEdge is null.");
 		if (m_occtEdge.IsNull())
@@ -276,7 +276,7 @@ namespace TopologicCore
 		return m_occtEdge;
 	}
 
-	void Edge::SetOcctShape(const TopoDS_Shape & rkOcctShape)
+	void Edge::SetOcctShape(const TopoDS_Shape& rkOcctShape)
 	{
 		try {
 			SetOcctEdge(TopoDS::Edge(rkOcctShape));
@@ -287,49 +287,53 @@ namespace TopologicCore
 		}
 	}
 
-	void Edge::SetOcctEdge(const TopoDS_Edge & rkOcctEdge)
+	void Edge::SetOcctEdge(const TopoDS_Edge& rkOcctEdge)
 	{
 		m_occtEdge = rkOcctEdge;
 	}
 
 	Handle(Geom_Curve) Edge::Curve() const
 	{
-		double u0 = 0.0, u1 = 0.0;
-		return Curve(u0, u1);
+		double firstParameter = 0.0, lastParameter = 0.0;
+		return Curve(firstParameter, lastParameter);
 	}
 
-	Handle(Geom_Curve) Edge::Curve(double& rU0, double& rU1) const
+	Handle(Geom_Curve) Edge::Curve(double& rFirstParameter, double& rLastParameter) const
 	{
-		return BRep_Tool::Curve(GetOcctEdge(), rU0, rU1);
+		return BRep_Tool::Curve(GetOcctEdge(), rFirstParameter, rLastParameter);
 	}
 
-	double Edge::NormalizeParameter(const double kOcctMinParameter, const double kOcctMaxParameter, const double kNonNormalizedParameter)
+	double Edge::NormalizeParameter(const double kOcctFirstParameter, const double kOcctLastParameter, const double kNonNormalizedParameter)
 	{
-		double occtDParameter = kOcctMaxParameter - kOcctMinParameter;
+		double occtDParameter = kOcctLastParameter - kOcctFirstParameter;
 		if (occtDParameter <= 0.0)
 		{
 			throw std::exception("Negative range");
 		}
 
-		return (kNonNormalizedParameter - kOcctMinParameter) / occtDParameter;
+		return (kNonNormalizedParameter - kOcctFirstParameter) / occtDParameter;
 	}
 
-	double Edge::NonNormalizeParameter(const double kOcctMinParameter, const double kOcctMaxParameter, const double kNormalizedParameter)
+	double Edge::NonNormalizeParameter(const double kOcctFirstParameter, const double kOcctLastParameter, const double kNormalizedParameter)
 	{
-		double occtDParameter = kOcctMaxParameter - kOcctMinParameter;
-		return kOcctMinParameter + kNormalizedParameter * occtDParameter;
+		double occtDParameter = kOcctLastParameter - kOcctFirstParameter;
+		return kOcctFirstParameter + kNormalizedParameter * occtDParameter;
+	}
+
+	TopoDS_Edge Edge::OcctShapeFix(const TopoDS_Edge& rkOcctInputEdge)
+	{
+		ShapeFix_Shape occtEdgeFix(rkOcctInputEdge);
+		occtEdgeFix.Perform();
+		return TopoDS::Edge(occtEdgeFix.Shape());
 	}
 
 	std::shared_ptr<Vertex> Edge::CenterOfMass() const
 	{
 		TopoDS_Vertex occtCenterOfMass = CenterOfMass(GetOcctEdge());
 		return std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtCenterOfMass));
-		/*GProp_GProps occtShapeProperties;
-		BRepGProp::LinearProperties(GetOcctShape(), occtShapeProperties);
-		return Vertex::ByPoint(new Geom_CartesianPoint(occtShapeProperties.CentreOfMass()));*/
 	}
 
-	TopoDS_Vertex Edge::CenterOfMass(const TopoDS_Edge & rkOcctEdge)
+	TopoDS_Vertex Edge::CenterOfMass(const TopoDS_Edge& rkOcctEdge)
 	{
 		GProp_GProps occtShapeProperties;
 		BRepGProp::LinearProperties(rkOcctEdge, occtShapeProperties);

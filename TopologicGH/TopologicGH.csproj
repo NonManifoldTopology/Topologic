@@ -83,7 +83,7 @@
     <Compile Include="GraphDegreeSequence.cs" />
     <Compile Include="GraphDensity.cs" />
     <Compile Include="GraphDiameter.cs" />
-    <Compile Include="GraphDistance.cs" />
+    <Compile Include="GraphTopologicalDistance.cs" />
     <Compile Include="GraphEdgeAtVertices.cs" />
     <Compile Include="GraphEdges.cs" />
     <Compile Include="GraphIncidentEdges.cs" />

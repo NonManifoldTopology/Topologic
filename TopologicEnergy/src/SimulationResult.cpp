@@ -279,7 +279,6 @@ namespace TopologicEnergy
 			throw gcnew Exception("The domain is too small. Please increase it.");
 		}
 
-		//List<DSCore::Color^>^ colorList = gcnew List<DSCore::Color^>();
 		List<List<int>^>^ colorList = gcnew List<List<int>^>();
 		List<double>^ values = Values;
 		for each(double value in values)
@@ -287,7 +286,6 @@ namespace TopologicEnergy
 			double ratio = (value - finalMinDomain) / deltaFinalDomain;
 			List<int>^ rgb = gcnew List<int>();
 			rgb = EnergyModel::GetColor(ratio);
-			//DSCore::Color^ color = EnergyModel::GetColor(ratio, alpha);
 			colorList->Add(rgb);
 		}
 

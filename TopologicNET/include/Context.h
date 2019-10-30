@@ -34,17 +34,6 @@ namespace Topologic
 	public ref class Context : public TopologicalQuery
 	{
 	public:
-		/*/// <summary>
-		/// Creates a context by a Topology and three parameters.
-		/// </summary>
-		/// <param name="topology">A Topology</param>
-		/// <param name="U">The U parameter</param>
-		/// <param name="V">The V parameter</param>
-		/// <param name="W">The W parameter</param>
-		/// <returns>A context</returns>
-		[IsVisibleInDynamoLibrary(false)]
-		static Context^ ByTopologyParameters__(Topology^ topology, double U, double V, double W);*/
-
 		/// <summary>
 		/// Returns the associated Topology to the Context.
 		/// </summary>

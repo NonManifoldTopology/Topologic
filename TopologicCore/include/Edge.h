@@ -61,53 +61,61 @@ namespace TopologicCore
 		TOPOLOGIC_API void AdjacentEdges(std::list<std::shared_ptr<Edge>>& rAdjacentEdges) const;
 
 		/// <summary>
-		/// 
+		/// Returns the start Vertex of the Edge.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="Vertex">The start Vertex of the Edge</returns>
 		TOPOLOGIC_API std::shared_ptr<Vertex> StartVertex() const;
 
+		/// <summary>
+		/// Returns the start OCCT Vertex of the OCCT Edge.
+		/// </summary>
+		/// <param name="rkOcctEdge">An OCCT Edge</param>
+		/// <returns name="TopoDS_Vertex">The start OCCT Vertex of the OCCT Edge</returns>
 		static TopoDS_Vertex StartVertex(const TopoDS_Edge& rkOcctEdge);
 		
+		/// <summary>
+		/// Returns the end OCCT Vertex of the OCCT Edge.
+		/// </summary>
+		/// <param name="rkOcctEdge">An OCCT Edge</param>
+		/// <returns>The end OCCT Vertex of the OCCT Edge</returns>
 		static TopoDS_Vertex EndVertex(const TopoDS_Edge& rkOcctEdge);
 
 		/// <summary>
-		/// 
+		/// Returns the end Vertex of the Edge.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="Vertex">The end Vertex of the Edge</returns>
 		TOPOLOGIC_API std::shared_ptr<Vertex> EndVertex() const;
 
 		/// <summary>
-		/// 
+		/// Returns the Vertices at the ends of the Edge.
 		/// </summary>
-		/// <param name="rVertices"></param>
+		/// <param name="rVertices">A list of Vertices at the ends of the Edge</param>
 		TOPOLOGIC_API void Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const;
 
 		/// <summary>
-		/// 
+		/// Returns the Wires incident to the Edge.
 		/// </summary>
-		/// <param name="rWires"></param>
-		/// <returns></returns>
+		/// <param name="rWires">A list of Wires incident to the Edge</param>
 		TOPOLOGIC_API void Wires(std::list<std::shared_ptr<Wire>>& rWires) const;
 
 		/// <summary>
-		/// 
+		/// Returns the Faces incident to the Edge.
 		/// </summary>
-		/// <param name="rFaces"></param>
-		/// <returns></returns>
+		/// <param name="rFaces">A list of Faces incident to the Edge</param>
 		TOPOLOGIC_API void Faces(std::list<std::shared_ptr<Face>>& rFaces) const;
 
 		/// <summary>
-		/// 
+		/// Creates an Edge by NURBS curve parameters
 		/// </summary>
-		/// <param name="rkOcctPoles"></param>
-		/// <param name="rkOcctWeights"></param>
-		/// <param name="rkOcctKnots"></param>
-		/// <param name="rkOcctMultiplicities"></param>
-		/// <param name="kDegree"></param>
-		/// <param name="kIsPeriodic"></param>
-		/// <param name="kIsRational"></param>
-		/// <returns></returns>
-		static TOPOLOGIC_API Edge::Ptr ByCurve(
+		/// <param name="rkOcctPoles">The OCCT poles</param>
+		/// <param name="rkOcctWeights">The weights</param>
+		/// <param name="rkOcctKnots">The knots</param>
+		/// <param name="rkOcctMultiplicities">The knots' multiplicities</param>
+		/// <param name="kDegree">The degree</param>
+		/// <param name="kIsPeriodic">The curve's periodic status</param>
+		/// <param name="kIsRational">The curve's rational status</param>
+		/// <returns name="Edge">An Edge</returns>
+		TOPOLOGIC_API static Edge::Ptr ByCurve(
 			const TColgp_Array1OfPnt& rkOcctPoles, 
 			const TColStd_Array1OfReal& rkOcctWeights, 
 			const TColStd_Array1OfReal& rkOcctKnots, 
@@ -117,76 +125,75 @@ namespace TopologicCore
 			const bool kIsRational = true);
 
 		/// <summary>
-		/// 
+		/// Creates an Edge by an OCCT Curve and the minimum and maximum parameters.
 		/// </summary>
-		/// <param name="pOcctCurve"></param>
-		/// <param name="rkParameter1">The first parameter, ranging between 0 and 1.</param>
-		/// <param name="rkParameter2">The second parameter, ranging between 0 and 1. Must be larger than rkParameter1, otherwise they will be swapped.</param>
-		/// <returns></returns>
-		static TOPOLOGIC_API Edge::Ptr ByCurve(Handle(Geom_Curve) pOcctCurve, const double rkParameter1 = 0.0, const double rkParameter2 = 1.0);
+		/// <param name="pOcctCurve">The underlying Curve</param>
+		/// <param name="rkFirstParameter">The first parameter, ranging between 0 and 1.</param>
+		/// <param name="rkLastParameter">The second parameter, ranging between 0 and 1. Must be larger than rkFirstParameter, otherwise they will be swapped.</param>
+		/// <returns name="Edge">An Edge</returns>
+		static TOPOLOGIC_API Edge::Ptr ByCurve(Handle(Geom_Curve) pOcctCurve, const double rkFirstParameter = 0.0, const double rkLastParameter = 1.0);
 
 		/// <summary>
-		/// 
+		/// Creates a straight Edge by the startVertex and endVertex.
 		/// </summary>
-		/// <param name="kpStartVertex"></param>
-		/// <param name="kpEndVertex"></param>
-		/// <returns></returns>
-		static TOPOLOGIC_API Edge::Ptr ByStartVertexEndVertex(const std::shared_ptr<Vertex>& kpStartVertex, const std::shared_ptr<Vertex>& kpEndVertex);
+		/// <param name="kpStartVertex">The start Vertex</param>
+		/// <param name="kpEndVertex">The end Vertex</param>
+		/// <returns name="Edge">The created Edge</returns>
+		TOPOLOGIC_API static Edge::Ptr ByStartVertexEndVertex(const std::shared_ptr<Vertex>& kpStartVertex, const std::shared_ptr<Vertex>& kpEndVertex);
 
 		/// <summary>
-		/// 
+		/// Returns the shared Vertices between two Edges.
 		/// </summary>
-		/// <param name="kpAnotherEdge"></param>
-		/// <param name="rSharedVertices"></param>
-		/// <returns></returns>
+		/// <param name="kpAnotherEdge">Another Edge</param>
+		/// <param name="rSharedVertices">A list of shared Vertices between the two Edges</param>
 		TOPOLOGIC_API void SharedVertices(const Edge::Ptr& kpAnotherEdge, std::list<std::shared_ptr<Vertex>>& rSharedVertices) const;
 
 		/// <summary>
-		/// 
+		/// Returns True if this Edge is a manifold, otherwise a False.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="bool">True if this Edge is a manifold, otherwise a False</returns>
 		virtual bool IsManifold() const;
 
 		/// <summary>
-		/// 
+		/// Creates a geometry from Edge.
 		/// </summary>
-		/// <param name="rOcctGeometries"></param>
+		/// <param name="rOcctGeometries">The created geometry</param>
 		virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const;
 
 		/// <summary>
-		/// 
+		/// Returns the underlying OCCT shape.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="TopoDS_Shape">The underlying OCCT shape</returns>
 		virtual TopoDS_Shape& GetOcctShape();
 
 		/// <summary>
-		/// 
+		/// Returns the underlying OCCT shape.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="TopoDS_Shape">The underlying OCCT shape</returns>
 		virtual const TopoDS_Shape& GetOcctShape() const;
 
 		/// <summary>
-		/// 
+		/// Returns the underlying OCCT Edge.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="TopoDS_Edge">The underlying OCCT Edge</returns>
 		virtual TopoDS_Edge& GetOcctEdge();
 
 		/// <summary>
-		/// 
+		/// Returns the underlying OCCT Edge.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="TopoDS_Edge">The underlying OCCT Edge</returns>
 		virtual const TopoDS_Edge& GetOcctEdge() const;
 
 		/// <summary>
-		/// 
+		/// Sets the underlying OCCT shape.
 		/// </summary>
-		/// <param name="rkOcctShape"></param>
+		/// <param name="rkOcctShape">A new OCCT shape</param>
 		virtual void SetOcctShape(const TopoDS_Shape& rkOcctShape);
 
 		/// <summary>
-		/// 
+		/// Sets the underlying OCCT Edge.
 		/// </summary>
-		/// <param name="rkOcctEdge"></param>
+		/// <param name="rkOcctEdge">A new OCCT Edge</param>
 		void SetOcctEdge(const TopoDS_Edge& rkOcctEdge);
 
 		/// <summary>
@@ -196,56 +203,87 @@ namespace TopologicCore
 		TOPOLOGIC_API Handle(Geom_Curve) Curve() const;
 
 		/// <summary>
-		/// 
+		/// Returns the underlying OCCT Curve
 		/// </summary>
-		/// <param name="rU0"></param>
-		/// <param name="rU1"></param>
-		/// <returns></returns>
-		TOPOLOGIC_API Handle(Geom_Curve) Curve(double& rU0, double& rU1) const;
+		/// <param name="rFirstParameter">The first parameter</param>
+		/// <param name="rSecondParameter">The second parameter</param>
+		/// <returns name="Geom_Curve">The underlying OCCT Curve</returns>
+		TOPOLOGIC_API Handle(Geom_Curve) Curve(double& rFirstParameter, double& rSecondParameter) const;
 
+		/// <summary>
+		/// Returns the center of mass of this Edge.
+		/// </summary>
+		/// <returns name="Vertex">The center of mass of this Edge</returns>
 		virtual std::shared_ptr<Vertex> CenterOfMass() const;
 
+		/// <summary>
+		/// Returns the center of mass of this an OCCT Edge.
+		/// </summary>
+		/// <returns name="Vertex">The center of mass of this an OCCT Edge</returns>
 		static TopoDS_Vertex CenterOfMass(const TopoDS_Edge& rkOcctEdge);
 
+		/// <summary>
+		/// Returns the type associated to Edge.
+		/// </summary>
+		/// <returns name="TopologyType">The type associated to Edge</returns>
 		virtual TopologyType GetType() const { return TOPOLOGY_EDGE; }
 
 		/// <summary>
-		/// 
+		/// Returns the type of the Edge as a String.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns name="String">The type of the Edge as a String</returns>
 		virtual std::string GetTypeAsString() const;
 
+		/// <summary>
+		/// Returns the class GUID.
+		/// </summary>
+		/// <returns name="String">The class GUID</returns>
 		virtual std::string GetClassGUID() const {
 			return EdgeGUID::Get();
 		}
 
 		/// <summary>
-		/// 
+		/// Throw an exception associated to an OCCT error.
 		/// </summary>
-		/// <param name="occtEdgeError"></param>
-		static TOPOLOGIC_API void Throw(const BRepBuilderAPI_EdgeError occtEdgeError);
+		/// <param name="occtEdgeError">An OCCT error</param>
+		TOPOLOGIC_API static void Throw(const BRepBuilderAPI_EdgeError occtEdgeError);
 
 		/// <summary>
-		/// 
+		/// Normalize the parameters. (OCCT uses non-normalized parameters, while Topologic uses normalized parameters)
 		/// </summary>
-		/// <param name="kOcctMinParameter"></param>
-		/// <param name="kOcctMaxParameter"></param>
-		/// <param name="kNonNormalizedParameter"></param>
-		/// <returns></returns>
-		static TOPOLOGIC_API double NormalizeParameter(const double kOcctMinParameter, const double kOcctMaxParameter, const double kNonNormalizedParameter);
+		/// <param name="kOcctFirstParameter">The first OCCT parameter</param>
+		/// <param name="kOcctLastParameter">The last OCCT parameter</param>
+		/// <param name="kNonNormalizedParameter">A non-normalized parameter</param>
+		/// <returns name="double">A normalized parameter</returns>
+		TOPOLOGIC_API static double NormalizeParameter(const double kOcctFirstParameter, const double kOcctLastParameter, const double kNonNormalizedParameter);
 
 		/// <summary>
-		/// 
+		/// Non-normalize the parameters. (OCCT uses non-normalized parameters, while Topologic uses normalized parameters)
 		/// </summary>
-		/// <param name="kOcctMinParameter"></param>
-		/// <param name="kOcctMaxParameter"></param>
-		/// <param name="kNormalizedParameter"></param>
-		/// <returns></returns>
-		static TOPOLOGIC_API double NonNormalizeParameter(const double kOcctMinParameter, const double kOcctMaxParameter, const double kNormalizedParameter);
+		/// <param name="kOcctFirstParameter">The first OCCT parameter</param>
+		/// <param name="kOcctLastParameter">The last OCCT parameter</param>
+		/// <param name="kNormalizedParameter">A normalized parameter</param>
+		/// <returns name="double">A non-normalized parameter</returns>
+		static TOPOLOGIC_API double NonNormalizeParameter(const double kOcctFirstParameter, const double kOcctLastParameter, const double kNormalizedParameter);
 
+		/// <summary>
+		/// Returns the type of the Edge.
+		/// </summary>
+		/// <returns name="int">The type of the Edge</returns>
 		static TOPOLOGIC_API int Type() { return TopologicCore::TOPOLOGY_EDGE; }
 
+		/// <summary>
+		/// Checks if the underlying Topology is a container type (Wire, Shell, CellComplex, Cluster).
+		/// </summary>
+		/// <returns name="bool">True if the underlying Topology is a container type (Wire, Shell, CellComplex, Cluster), otherwise False</returns>
 		virtual bool IsContainerType() { return false; }
+
+		/// <summary>
+		/// Fixes the input OCCT Edge.
+		/// </summary>
+		/// <param name="rkOcctInputEdge">An input OCCT Edge</param>
+		/// <returns name="TopoDS_Edge">The fixed OCCT Edge</returns>
+		static TopoDS_Edge OcctShapeFix(const TopoDS_Edge& rkOcctInputEdge);
 
 	protected:
 		/// <summary>

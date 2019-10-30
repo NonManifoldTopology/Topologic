@@ -284,13 +284,6 @@ namespace Topologic
 		return pInnerShells;
 	}
 
-	/*Vertex^ Cell::CenterOfMass()
-	{
-		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
-		TopologicCore::Vertex::Ptr pCoreCenterOfMass = pCoreCell->CenterOfMass();
-		return gcnew Vertex(pCoreCenterOfMass);
-	}*/
-
 	Object^ Cell::BasicGeometry::get()
 	{
 #ifdef TOPOLOGIC_DYNAMO
@@ -424,19 +417,26 @@ namespace Topologic
 		gp_Vec occtRotatedUprightXAxis = occtQuaternion * occtUprightXAxis;
 
 		// Create the cone
-		TopologicCore::Cell::Ptr pCoreCone = TopologicUtilities::CellUtility::ByCone(
-			cone->ContextCoordinateSystem->Origin->X,
-			cone->ContextCoordinateSystem->Origin->Y,
-			cone->ContextCoordinateSystem->Origin->Z,
-			occtRotatedUprightNormal.X(),
-			occtRotatedUprightNormal.Y(),
-			occtRotatedUprightNormal.Z(),
-			occtRotatedUprightXAxis.X(),
-			occtRotatedUprightXAxis.Y(),
-			occtRotatedUprightXAxis.Z(), 
-			cone->StartRadius,
-			cone->EndRadius,
-			cone->StartPoint->DistanceTo(cone->EndPoint));
+		TopologicCore::Cell::Ptr pCoreCone = nullptr;
+		try {
+			pCoreCone = TopologicUtilities::CellUtility::ByCone(
+				cone->ContextCoordinateSystem->Origin->X,
+				cone->ContextCoordinateSystem->Origin->Y,
+				cone->ContextCoordinateSystem->Origin->Z,
+				occtRotatedUprightNormal.X(),
+				occtRotatedUprightNormal.Y(),
+				occtRotatedUprightNormal.Z(),
+				occtRotatedUprightXAxis.X(),
+				occtRotatedUprightXAxis.Y(),
+				occtRotatedUprightXAxis.Z(),
+				cone->StartRadius,
+				cone->EndRadius,
+				cone->StartPoint->DistanceTo(cone->EndPoint));
+		}
+		catch (const std::exception& rkException)
+		{
+			throw gcnew Exception(gcnew String(rkException.what()));
+		}
 
 
 		// Translate to new start point
@@ -464,8 +464,8 @@ namespace Topologic
 		double xScale = pDynamoCoordinateSystem->XScaleFactor;
 		double yScale = pDynamoCoordinateSystem->YScaleFactor;
 		double zScale = pDynamoCoordinateSystem->ZScaleFactor;
-		double oneMinusPrecision = 1.0 - 0.0001;//Precision::Confusion();
-		double onePlusPrecision = 1.0 + 0.0001; //Precision::Confusion();
+		double oneMinusPrecision = 1.0 - 0.0001;
+		double onePlusPrecision = 1.0 + 0.0001; 
 		
 		TopologicCore::Cell::Ptr pCoreCell = nullptr;
 		pCoreCell = TopologicUtilities::CellUtility::ByCuboid(
@@ -487,17 +487,6 @@ namespace Topologic
 		);
 
 		TopologicCore::Vertex::Ptr coreCentroid = pCoreCell->CenterOfMass();
-
-		/*pCoreCell = 
-			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Cell>(
-				TopologicUtilities::TopologyUtility::Scale(pCoreCell, coreCentroid, xScale, yScale, zScale));*/
-
-		/*pCoreCell =
-			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Cell>(
-				TopologicUtilities::TopologyUtility::Transform(
-					pCoreCell, coreCentroid, 
-					pDynamoCoordinateSystem->ZAxis->X, pDynamoCoordinateSystem->ZAxis->Y, pDynamoCoordinateSystem->ZAxis->Z,
-					-pDynamoCoordinateSystem->XAxis->X, -pDynamoCoordinateSystem->XAxis->Y, -pDynamoCoordinateSystem->XAxis->Z));*/
 
 		delete pDynamoCentroid;
 		delete pDynamoCoordinateSystem;

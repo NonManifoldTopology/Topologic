@@ -115,25 +115,6 @@ namespace TopologicUtilities
 		return pCoreTransformedTopology;
 	}
 
-	/*TopologicCore::Topology::Ptr TopologyUtility::Transform(const TopologicCore::Topology::Ptr & kpTopology, const TopologicCore::Vertex::Ptr & kpOrigin, const double kNormalX, const double kNormalY, const double kNormalZ, const double kXAxisX, const double kXAxisY, const double kXAxisZ)
-	{
-		gp_Trsf transformation;
-		Handle(Geom_Point) pOcctOrigin = kpOrigin->Point();
-		transformation.SetTransformation(
-			gp_Ax3(
-				gp_Pnt(pOcctOrigin->X(), pOcctOrigin->Y(), pOcctOrigin->Z()), 
-				gp_Dir(kNormalX, kNormalY, kNormalZ),
-				gp_Dir(kXAxisX, kXAxisY, kXAxisZ)));
-		BRepBuilderAPI_Transform transform(kpTopology->GetOcctShape(), transformation, true);
-		TopologicCore::Topology::Ptr pCoreTransformedTopology = TopologicCore::Topology::ByOcctShape(transform.Shape());
-
-		TopologicCore::AttributeManager::GetInstance().DeepCopyAttributes(kpTopology->GetOcctShape(), pCoreTransformedTopology->GetOcctShape());
-		TopologicCore::Topology::TransferContents(kpTopology->GetOcctShape(), pCoreTransformedTopology);
-
-		TopologicCore::GlobalCluster::GetInstance().AddTopology(pCoreTransformedTopology);
-		return pCoreTransformedTopology;
-	}*/
-
 	TopologicCore::Topology::Ptr TopologyUtility::Transform(const TopologicCore::Topology::Ptr & kpTopology, const double kTranslationX, const double kTranslationY, const double kTranslationZ, const double kRotation11, const double kRotation12, const double kRotation13, const double kRotation21, const double kRotation22, const double kRotation23, const double kRotation31, const double kRotation32, const double kRotation33)
 	{
 		gp_GTrsf gTransformation(
@@ -201,22 +182,6 @@ namespace TopologicUtilities
 		BRepBuilderAPI_Transform transform2(occtTransform.Shape(), transformation2, true);
 		TopoDS_Shape occtTransformedShape = transform2.Shape();
 		TopologicCore::Topology::Ptr pCoreTransformedTopology = TopologicCore::Topology::ByOcctShape(transform2.Shape(), kpTopology->GetClassGUID());
-
-		/*TopologicCore::Vertex::Ptr centreOfMass = kpTopology->CenterOfMass();
-		Handle(Geom_Point) pOcctCentreOfMass = centreOfMass->Point();
-		gp_GTrsf occtGTransformation(
-			gp_Mat(
-				kXFactor, 0.0, 0.0,
-				0.0, kYFactor, 0.0,
-				0.0, 0.0, kZFactor),
-			gp_XYZ(pOcctCentreOfMass->X() - pOcctScaleOrigin->X(), 
-				pOcctCentreOfMass->Y() - pOcctScaleOrigin->Y(), 
-				pOcctCentreOfMass->Z() - pOcctScaleOrigin->Z())
-		);
-		BRepBuilderAPI_GTransform occtTransform(kpTopology->DeepCopy()->GetOcctShape(), occtGTransformation, true);
-		TopoDS_Shape occtTransformedShape = occtTransform.Shape();
-		TopologicCore::Topology::Ptr pCoreTransformedTopology = TopologicCore::Topology::ByOcctShape(occtTransformedShape, kpTopology->GetClassGUID());*/
-
 		TopologicCore::AttributeManager::GetInstance().DeepCopyAttributes(kpTopology->GetOcctShape(), pCoreTransformedTopology->GetOcctShape());
 
 		std::list<TopologicCore::Topology::Ptr> subContents;

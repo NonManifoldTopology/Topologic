@@ -21,6 +21,7 @@
 #include <Edge.h>
 #include <Vertex.h>
 #include <GlobalCluster.h>
+#include <Cluster.h>
 
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepMesh_IncrementalMesh.hxx>
@@ -59,9 +60,7 @@ namespace TopologicUtilities
 	double FaceUtility::Area(const TopoDS_Face & rkOcctFace)
 	{
 		GProp_GProps occtShapeProperties;
-		ShapeFix_Face occtShapeFix(rkOcctFace);
-		occtShapeFix.Perform();
-		BRepGProp::SurfaceProperties(occtShapeFix.Face(), occtShapeProperties);
+		BRepGProp::SurfaceProperties(rkOcctFace, occtShapeProperties);
 		return occtShapeProperties.Mass();
 	}
 
@@ -134,17 +133,9 @@ namespace TopologicUtilities
 		const Handle(Geom_Surface)& rSurface = occtSurfaceAnalysis.Surface();
 		Handle(Geom_RectangularTrimmedSurface) pTrimmedSurface = new Geom_RectangularTrimmedSurface(rSurface, occtMinU + 0.0001, occtMaxU - 0.0001, occtMinV + 0.0001, occtMaxV - 0.0001);
 		Handle(Geom_BSplineSurface) pBSplineSurface = GeomConvert::SurfaceToBSplineSurface(pTrimmedSurface);
-		//gp_Pnt occtPoint = occtSurfaceAnalysis.Value(occtU, occtV);
+
 		gp_Pnt occtPoint = pBSplineSurface->Value(occtU, occtV);
 		TopologicCore::Vertex::Ptr vertex = TopologicCore::Vertex::ByPoint(new Geom_CartesianPoint(occtPoint));
-
-		// Check distance: if more than a small aount, it is not part of the face.
-		// Hack: project to surface
-		/*double distance = TopologyUtility::Distance(kpFace, vertex);
-		if (distance > Precision::Confusion())
-		{
-			throw std::exception("Point not on the face.");
-		}*/
 
 		return TopologicCore::Vertex::ByPoint(new Geom_CartesianPoint(occtPoint));
 	}
@@ -179,9 +170,6 @@ namespace TopologicUtilities
 		int& rNumVPanels,
 		bool& rIsUClosed,
 		bool& rIsVClosed)
-		/*,
-		std::list<double>& rOcctUValues,
-		std::list<double>& rOcctVValues)*/
 	{
 		// Subdivide the face in the UV space and find the points
 		double occtUMin = 0.0, occtUMax = 0.0, occtVMin = 0.0, occtVMax = 0.0;
@@ -210,7 +198,7 @@ namespace TopologicUtilities
 		// Compute OCCT's non-normalized UV values
 		// At the same time, get the isolines
 		BOPCol_ListOfShape occtIsolines;
-		//std::list<double> occtUValues;
+		
 		for (double u : rkUValues)
 		{
 			double occtU = occtUMin + occtURange * u;
@@ -223,7 +211,7 @@ namespace TopologicUtilities
 			}
 			rOcctUValues.push_back(occtU);
 		};
-		//std::list<double> occtVValues;
+		
 		for (double v : rkVValues)
 		{
 			double occtV = occtVMin + occtVRange * v;
@@ -464,7 +452,12 @@ namespace TopologicUtilities
 		TopologicCore::Edge::Ptr edge = TopologicCore::Edge::ByStartVertexEndVertex(vertexA, vertexB);
 
 		TopologicCore::Topology::Ptr sliceResult = edge->Slice(kpFace);
-
+		
+		// Why?
+		if (sliceResult == nullptr)
+		{
+			return false;
+		}
 		std::list<TopologicCore::Vertex::Ptr> vertices;
 		sliceResult->Vertices(vertices);
 
@@ -514,24 +507,6 @@ namespace TopologicUtilities
 		}
 
 		return true;
-
-
-		/*double u = 0.0, v = 0.0;
-		ParametersAtVertex(kpFace, kpVertex, u, v);
-
-		double area = Area(kpFace);
-		double area2 = Area(std::make_shared<TopologicCore::Face>(TopoDS::Face(kpFace->GetOcctFace().Reversed()), ""));
-
-		double occtU = 0.0, occtV = 0.0;
-		NonNormalizeUV(kpFace, u, v, occtU, occtV);
-		BRepClass_FaceClassifier occtFaceClassifier(kpFace->GetOcctFace(), gp_Pnt2d(occtU, occtV), kTolerance);
-		
-		TopAbs_State occtState = occtFaceClassifier.State();
-		if (occtState == TopAbs_IN)
-		{
-			return true;
-		}
-		return false;*/
 	}
 
 	TopologicCore::Vertex::Ptr FaceUtility::InternalVertex(const TopologicCore::Face::Ptr kpFace, const double kTolerance)
@@ -579,60 +554,6 @@ namespace TopologicUtilities
 		} while (level <= maxLevel);
 
 		return nullptr;
-
-		// METHOD 2
-		//// https://github.com/DLR-SC/tigl/wiki/OpenCASCADE-Cheats
-		//// create 2 u and v iso curves
-		//DBRep_IsoBuilder isoBuilder(GetOcctFace(), DBL_MAX, 5);
-		//// Get first u iso curve
-		//Geom2dAdaptor_Curve curve = isoBuilder.HatchingCurve(2);
-		//double p0 = curve.FirstParameter();
-		//double p1 = curve.LastParameter();
-		//double dp = p1 - p0;
-		//double pMid = p0 + dp / 2.0;
-		//gp_Pnt2d point2D = curve.Value(pMid);
-		//ShapeAnalysis_Surface occtSurfaceAnalysis(Surface());
-		//gp_Pnt point = occtSurfaceAnalysis.Value(point2D);
-
-		//return Vertex::ByPoint(new Geom_CartesianPoint(point));
-
-		// METHOD 2: 
-		// 1. Try center of mass if it is on the Face
-		//Vertex::Ptr centerOfMass = CenterOfMass();
-		//if (IsInside(centerOfMass, kTolerance, kAllowOnBoundary))
-		//{
-		//	return centerOfMass;
-		//}
-
-		//// compute the bounding box for the shape (face)
-		//Bnd_Box bounds;
-		//BRepBndLib::Add(GetOcctShape(), bounds);
-		//bounds.SetGap(0.0);
-		//// compute the diagonal length of the bounding box
-		//Standard_Real fXMin, fYMin, fZMin, fXMax, fYMax, fZMax;
-		//bounds.Get(fXMin, fYMin, fZMin, fXMax, fYMax, fZMax);
-		//Standard_Real fDiag = sqrt(((fXMax - fXMin)*(fXMax - fXMin)) + ((fYMax - fYMin)*(fYMax - fYMin)) + ((fZMax - fZMin)*(fZMax - fZMin)));
-		//// set the deflection to 1/1000 of the diagonal length
-		//Standard_Real fDeflection = fDiag / 1000.0;
-
-		//// 2. Otherwise, use:
-		//// - Triangulate the face
-		//// - Get a centre of mass of a face
-		//// - Project to Face
-		//std::list<Face::Ptr> triangulatedFaces;
-		////Triangulate(kDeflection, kAngularDeflection, triangulatedFaces);
-		//Triangulate(fDeflection, kAngularDeflection, triangulatedFaces);
-		//for (const Face::Ptr& kpTriangulatedFace : triangulatedFaces)
-		//{
-		//	Vertex::Ptr triangulationCenterOfMass = kpTriangulatedFace->CenterOfMass(); // may not be on the original surface
-		//	Vertex::Ptr projectPointToFace = ProjectToSurface(triangulationCenterOfMass);
-		//	if (IsInside(projectPointToFace, kTolerance, kAllowOnBoundary))
-		//	{
-		//		return projectPointToFace;
-		//	}
-		//}
-
-		//throw std::exception("Cannot create an internal Vertex from an input Face.");
 	}
 
 	TopologicCore::Vertex::Ptr FaceUtility::ProjectToSurface(const TopologicCore::Face::Ptr kpFace, const TopologicCore::Vertex::Ptr& kpVertex)

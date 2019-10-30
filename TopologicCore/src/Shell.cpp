@@ -94,7 +94,6 @@ namespace TopologicCore
 		TopTools_ListOfShape occtShapes;
 		for(const Face::Ptr& kpFace : rkFaces)
 		{
-			//Face::Ptr pCopyFace = std::dynamic_pointer_cast<Face>(kpFace->DeepCopy());
 			occtShapes.Append(kpFace->GetOcctShape());
 		}
 
@@ -183,9 +182,6 @@ namespace TopologicCore
 	{
 		TopoDS_Vertex occtCenterOfMass = CenterOfMass(GetOcctShell());
 		return std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtCenterOfMass));
-		/*GProp_GProps occtShapeProperties;
-		BRepGProp::SurfaceProperties(GetOcctShape(), occtShapeProperties);
-		return Vertex::ByPoint(new Geom_CartesianPoint(occtShapeProperties.CentreOfMass()));*/
 	}
 
 	TopoDS_Vertex Shell::CenterOfMass(const TopoDS_Shell & rkOcctShell)

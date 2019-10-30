@@ -102,7 +102,7 @@ namespace TopologicCore
 			const Vertex::Ptr& kpStartVertex,
 			const Vertex::Ptr& kpEndVertex,
 			const bool kUseTimeLimit,
-			const int kTimeLimitInSeconds,
+			const int kTimeLimit,
 			std::list<std::shared_ptr<Wire>>& rPaths) const;
 
 		void AllPaths(
@@ -141,7 +141,7 @@ namespace TopologicCore
 			const std::string& rkVertexKey,
 			const std::string& rkEdgeKey,
 			const bool kUseTimeLimit,
-			const int kTimeLimitInSeconds,
+			const int kTimeLimit,
 			std::list<std::shared_ptr<Wire>>& rPaths) const;
 
 		void ShortestPaths(
@@ -155,9 +155,9 @@ namespace TopologicCore
 
 		TOPOLOGIC_API int Diameter() const;
 
-		TOPOLOGIC_API int Distance(const std::shared_ptr<Vertex>& kpStartVertex, const std::shared_ptr<Vertex>& kpEndVertex) const;
+		TOPOLOGIC_API int TopologicalDistance(const std::shared_ptr<Vertex>& kpStartVertex, const std::shared_ptr<Vertex>& kpEndVertex) const;
 
-		int Distance(const TopoDS_Vertex& rkOcctStartVertex, const TopoDS_Vertex& rkOcctVertex) const;
+		int TopologicalDistance(const TopoDS_Vertex& rkOcctStartVertex, const TopoDS_Vertex& rkOcctVertex) const;
 
 		TOPOLOGIC_API int Eccentricity(const std::shared_ptr<Vertex>& kpVertex) const;
 
@@ -169,9 +169,9 @@ namespace TopologicCore
 
 		TOPOLOGIC_API void VerticesAtCoordinates(const double kX, const double kY, const double kZ, const double kTolerance, std::list<std::shared_ptr<Vertex>>& rVertices) const;
 
-		TOPOLOGIC_API std::shared_ptr<Edge> EdgeAtVertices(const std::shared_ptr<Vertex>& kpVertex1, const std::shared_ptr<Vertex>& kpVertex2, const double kTolerance) const;
+		TOPOLOGIC_API std::shared_ptr<Edge> Edge(const std::shared_ptr<Vertex>& kpVertex1, const std::shared_ptr<Vertex>& kpVertex2, const double kTolerance) const;
 
-		TOPOLOGIC_API void IncidentEdges(const std::shared_ptr<Vertex>& kpVertex, const double kTolerance, std::list<std::shared_ptr<Edge>>& rEdges) const;
+		TOPOLOGIC_API void IncidentEdges(const std::shared_ptr<Vertex>& kpVertex, const double kTolerance, std::list<std::shared_ptr<TopologicCore::Edge>>& rEdges) const;
 
 	protected:
 
@@ -184,7 +184,7 @@ namespace TopologicCore
 			const double kTolerance);
 
 		static Graph::Ptr ByEdge(
-			const std::shared_ptr<Edge> kpEdge,
+			const std::shared_ptr<TopologicCore::Edge> kpEdge,
 			const bool kDirect,
 			const bool kToExteriorApertures,
 			const bool kUseFaceInternalVertex,

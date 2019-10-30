@@ -54,9 +54,7 @@ namespace Topologic
 		{
 			coreFaces.push_back(TopologicCore::Topology::Downcast<TopologicCore::Face>(pFace->GetCoreTopologicalQuery()));
 		}
-		/*TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::CellComplex::ByFaces(coreFaces, tolerance);
-		CellComplex^ pCellComplex = gcnew CellComplex(pCoreCellComplex);
-		return pCellComplex;*/
+
 		try {
 			TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::CellComplex::ByFaces(coreFaces, tolerance);
 			CellComplex^ pCellComplex = gcnew CellComplex(pCoreCellComplex);

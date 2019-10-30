@@ -65,7 +65,6 @@ Section "TopologicGrasshopper" SectionTopologicGrasshopper
 	SetOutPath "$INSTDIR"
 	File ..\output\x64\Release\TopologicCore.dll
     File ..\output\x64\Release\TopologicNET.dll
-    File ..\output\x64\Release\license.file
     File ..\output\x64\Release\TK*.dll
 	File ..\output\x64\Release\TopologicGH.gha
 
