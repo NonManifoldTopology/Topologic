@@ -32,10 +32,10 @@ namespace Topologic {
 		{
 		public:
 			/// <summary>
-			/// 
+			/// Performs a bitwise AND operation between the arguments (in their binary form).
 			/// </summary>
-			/// <param name="arguments"></param>
-			/// <returns></returns>
+			/// <param name="arguments">A list of arguments</param>
+			/// <returns>The bitwise result</returns>
 			static int AND(List<int>^ arguments);
 
 			/// <summary>
@@ -55,7 +55,7 @@ namespace Topologic {
 			/// <summary>
 			/// Performs a bitwise NOT operation between the arguments (in their binary form).
 			/// </summary>
-			/// <param name="arguments">A list of arguments</param>
+			/// <param name="argument">An argument</param>
 			/// <returns>The bitwise result</returns>
 			static int NOT(int argument);
 

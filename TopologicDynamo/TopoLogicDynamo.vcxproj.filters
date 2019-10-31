@@ -37,9 +37,6 @@
     <ClInclude Include="..\TopologicNET\include\Topology.h" />
     <ClInclude Include="..\TopologicNET\include\Vertex.h" />
     <ClInclude Include="..\TopologicNET\include\Wire.h" />
-    <ClInclude Include="..\TopologicNET\include\Bitwise.h">
-      <Filter>Utilities</Filter>
-    </ClInclude>
     <ClInclude Include="..\TopologicNET\include\CellUtility.h">
       <Filter>Utilities</Filter>
     </ClInclude>
@@ -113,6 +110,9 @@
     <ClInclude Include="..\TopologicNET\include\VertexUtility.h">
       <Filter>Utilities</Filter>
     </ClInclude>
+    <ClInclude Include="..\TopologicNET\include\Bitwise.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\TopologicNET\src\About.cpp" />
@@ -128,9 +128,6 @@
     <ClCompile Include="..\TopologicNET\src\Topology.cpp" />
     <ClCompile Include="..\TopologicNET\src\Vertex.cpp" />
     <ClCompile Include="..\TopologicNET\src\Wire.cpp" />
-    <ClCompile Include="..\TopologicNET\src\Bitwise.cpp">
-      <Filter>Utilities</Filter>
-    </ClCompile>
     <ClCompile Include="..\TopologicNET\src\CellUtility.cpp">
       <Filter>Utilities</Filter>
     </ClCompile>
@@ -196,6 +193,9 @@
       <Filter>Utilities</Filter>
     </ClCompile>
     <ClCompile Include="..\TopologicNET\src\WireUtility.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TopologicNET\src\Bitwise.cpp">
       <Filter>Utilities</Filter>
     </ClCompile>
   </ItemGroup>
