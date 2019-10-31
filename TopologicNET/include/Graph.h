@@ -90,13 +90,21 @@ namespace Topologic {
 		}
 
 		/// <summary>
-		/// Returns a list of all the Edges in a Graph.
+		/// Returns all the Edges in the input Graph. If an optional list of Vertices is specified, this method will return only the Edges of which the input Vertices are constituents.
 		/// </summary>
-		/// <returns name="Edge[]">A list of the Edges in this Graph</returns>
-		property List<Edge^>^ Edges
-		{
-			List<Edge^>^ get();
-		}
+		/// <param name="vertices">An optional list of Vertices that the returned Edgs should as constituents</param>
+		/// <param name="tolerance">A positive tolerance value</param>
+		/// <returns>The resulting Edges</returns>
+		List<Edge^>^ Edges(
+#ifdef TOPOLOGIC_DYNAMO
+			[Autodesk::DesignScript::Runtime::DefaultArgument("null")]
+#endif
+			List<Vertex^>^ vertices,
+#ifdef TOPOLOGIC_DYNAMO
+			[Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")]
+#endif
+			double tolerance
+			);
 
 		/// <summary>
 		/// Returns the Topology of the Graph.
@@ -356,18 +364,6 @@ namespace Topologic {
 		/// <param name="tolerance">A positive tolerance value</param>
 		/// <returns name="Edge">The Edge connecting the two Vertices</returns>
 		Edge^ Edge(Vertex^ vertex1, Vertex^ vertex2,
-#ifdef TOPOLOGIC_DYNAMO
-			[Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")]
-#endif
-			double tolerance);
-
-		/// <summary>
-		/// Returns a list of all Edges connected to the input Vertex.
-		/// </summary>
-		/// <param name="vertex">A Vertex</param>
-		/// <param name="tolerance">A positive tolerance value</param>
-		/// <returns name="Edge[]">The Edges connected to the input Vertex</returns>
-		List<Topologic::Edge^>^ IncidentEdges(Vertex^ vertex,
 #ifdef TOPOLOGIC_DYNAMO
 			[Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")]
 #endif

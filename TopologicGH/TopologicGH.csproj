@@ -86,7 +86,6 @@
     <Compile Include="GraphTopologicalDistance.cs" />
     <Compile Include="GraphEdgeAtVertices.cs" />
     <Compile Include="GraphEdges.cs" />
-    <Compile Include="GraphIncidentEdges.cs" />
     <Compile Include="GraphIsComplete.cs" />
     <Compile Include="GraphIsErdoesGallai.cs" />
     <Compile Include="GraphIsolatedVertices.cs" />

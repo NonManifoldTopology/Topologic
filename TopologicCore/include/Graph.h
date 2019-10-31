@@ -60,9 +60,14 @@ namespace TopologicCore
 
 		TOPOLOGIC_API Topology::Ptr Topology() const;
 
-		TOPOLOGIC_API void Vertices(std::list<std::shared_ptr<Vertex>>& vertices) const;
+		TOPOLOGIC_API void Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const;
 
-		TOPOLOGIC_API void Edges(std::list<std::shared_ptr<Edge>>& edges) const;
+		void Edges(std::list<std::shared_ptr<Edge>>& rEdges, const double kTolerance = 0.0001) const;
+
+		TOPOLOGIC_API void Edges(
+			const std::list<std::shared_ptr<Vertex>>& rkVertices, 
+			const double kTolerance,
+			std::list<std::shared_ptr<Edge>>& rEdges) const;
 
 		TOPOLOGIC_API void AddVertices(const std::list<std::shared_ptr<Vertex>>& rkVertices, const double kTolerance);
 
@@ -171,7 +176,7 @@ namespace TopologicCore
 
 		TOPOLOGIC_API std::shared_ptr<Edge> Edge(const std::shared_ptr<Vertex>& kpVertex1, const std::shared_ptr<Vertex>& kpVertex2, const double kTolerance) const;
 
-		TOPOLOGIC_API void IncidentEdges(const std::shared_ptr<Vertex>& kpVertex, const double kTolerance, std::list<std::shared_ptr<TopologicCore::Edge>>& rEdges) const;
+		void IncidentEdges(const std::shared_ptr<Vertex>& kpVertex, const double kTolerance, std::list<std::shared_ptr<TopologicCore::Edge>>& rEdges) const;
 
 	protected:
 

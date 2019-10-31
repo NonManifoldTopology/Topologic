@@ -39,6 +39,9 @@ namespace TopologicGH
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Graph", "Graph", "Graph", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Vertices", "Vertices", "Vertices", GH_ParamAccess.list);
+            pManager[1].Optional = true;
+            pManager.AddNumberParameter("Tolerance", "Tolerance", "Tolerance", GH_ParamAccess.item, 0.0001);
         }
 
         /// <summary>
@@ -57,21 +60,21 @@ namespace TopologicGH
         {
             // Declare a variable for the input String
             Topologic.Graph graph = null;
+            List<Topologic.Vertex> vertices = new List<Topologic.Vertex>();
+            double tolerance = 0.0001;
 
             // Use the DA object to retrieve the data inside the first input parameter.
             // If the retieval fails (for example if there is no data) we need to abort.
             if (!DA.GetData(0, ref graph)) { return; }
+            if (!DA.GetDataList(1, vertices)) { return; }
+            if (!DA.GetData(2, ref tolerance)) { return; }
 
             // If the retrieved data is Nothing, we need to abort.
             // We're also going to abort on a zero-length String.
             if (graph == null) { return; }
-            //if (data.Length == 0) { return; }
-
-            // Convert the String to a character array.
-            //char[] chars = data.ToCharArray();
 
             
-            List<Topologic.Edge> edges = graph.Edges;
+            List<Topologic.Edge> edges = graph.Edges(vertices, tolerance);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, edges);
