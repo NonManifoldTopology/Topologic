@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{21993835-4EC5-4CC3-BCDA-47F6209CD349}</ProjectGuid>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <Keyword>ManagedCProj</Keyword>
     <RootNamespace>TopologicDynamo</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
@@ -156,22 +156,28 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="DSCoreNodes">
-      <HintPath>..\references\Dynamo-2.0.1\DSCoreNodes.dll</HintPath>
+      <HintPath>..\references\Dynamo-2.3.0\DSCoreNodes.dll</HintPath>
+    </Reference>
+    <Reference Include="DSCoreNodes.customization">
+      <HintPath>..\references\Dynamo-2.3.0\DSCoreNodes.customization.dll</HintPath>
     </Reference>
     <Reference Include="DynamoCore">
-      <HintPath>..\references\Dynamo-2.0.1\DynamoCore.dll</HintPath>
-      <Private>false</Private>
+      <HintPath>..\references\Dynamo-2.3.0\DynamoCore.dll</HintPath>
     </Reference>
     <Reference Include="DynamoServices">
-      <HintPath>..\references\Dynamo-2.0.1\DynamoServices.dll</HintPath>
-      <Private>false</Private>
+      <HintPath>..\references\Dynamo-2.3.0\DynamoServices.dll</HintPath>
     </Reference>
     <Reference Include="GeometryColor">
-      <HintPath>..\references\Dynamo-2.0.1\GeometryColor.dll</HintPath>
+      <HintPath>..\references\Dynamo-2.3.0\GeometryColor.dll</HintPath>
+    </Reference>
+    <Reference Include="GeometryColor.customization">
+      <HintPath>..\references\Dynamo-2.3.0\GeometryColor.customization.dll</HintPath>
     </Reference>
     <Reference Include="ProtoGeometry">
-      <HintPath>..\references\Dynamo-2.0.1\ProtoGeometry.dll</HintPath>
-      <Private>false</Private>
+      <HintPath>..\references\Dynamo-2.3.0\ProtoGeometry.dll</HintPath>
+    </Reference>
+    <Reference Include="ProtoGeometry.customization">
+      <HintPath>..\references\Dynamo-2.3.0\ProtoGeometry.customization.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
