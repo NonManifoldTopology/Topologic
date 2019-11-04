@@ -204,36 +204,41 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <param name="kpOtherTopology"></param>
+		/// <param name="kTransferDictionary"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology::Ptr Difference(const Topology::Ptr& kpOtherTopology = nullptr);
+		TOPOLOGIC_API Topology::Ptr Difference(const Topology::Ptr& kpOtherTopology = nullptr, const bool kTransferDictionary = false);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpTool"></param>
+		/// <param name="kTransferDictionary"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology::Ptr Impose(const Topology::Ptr& kpTool = nullptr);
+		TOPOLOGIC_API Topology::Ptr Impose(const Topology::Ptr& kpTool = nullptr, const bool kTransferDictionary = false);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpTool"></param>
+		/// <param name="kTransferDictionary"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology::Ptr Imprint(const Topology::Ptr& kpTool = nullptr);
+		TOPOLOGIC_API Topology::Ptr Imprint(const Topology::Ptr& kpTool = nullptr, const bool kTransferDictionary = false);
+		
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="kpOtherTopology"></param>
+		/// <param name="kTransferDictionary"></param>
+		/// <returns></returns>
+		TOPOLOGIC_API Topology::Ptr Intersect(const Topology::Ptr& kpOtherTopology = nullptr, const bool kTransferDictionary = false);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpOtherTopology"></param>
+		/// <param name="kTransferDictionary"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology::Ptr Intersect(const Topology::Ptr& kpOtherTopology = nullptr);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="kpOtherTopology"></param>
-		/// <returns></returns>
-		TOPOLOGIC_API Topology::Ptr Merge(const Topology::Ptr& kpOtherTopology = nullptr);
+		TOPOLOGIC_API Topology::Ptr Merge(const Topology::Ptr& kpOtherTopology = nullptr, const bool kTransferDictionary = false);
 
 		/// <summary>
 		/// 
@@ -245,29 +250,33 @@ namespace TopologicCore
 		/// 
 		/// </summary>
 		/// <param name="kpTool"></param>
+		/// <param name="kTransferDictionary"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology::Ptr Slice(const Topology::Ptr& kpTool = nullptr);
+		TOPOLOGIC_API Topology::Ptr Slice(const Topology::Ptr& kpTool = nullptr, const bool kTransferDictionary = false);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpOtherTopology"></param>
+		/// <param name="kTransferDictionary"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology::Ptr Union(const Topology::Ptr& kpOtherTopology = nullptr);
+		TOPOLOGIC_API Topology::Ptr Union(const Topology::Ptr& kpOtherTopology = nullptr, const bool kTransferDictionary = false);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpOtherTopology"></param>
+		/// <param name="kTransferDictionary"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology::Ptr XOR(const Topology::Ptr& kpOtherTopology = nullptr);
+		TOPOLOGIC_API Topology::Ptr XOR(const Topology::Ptr& kpOtherTopology = nullptr, const bool kTransferDictionary = false);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="kpTool"></param>
+		/// <param name="kTransferDictionary"></param>
 		/// <returns></returns>
-		TOPOLOGIC_API Topology::Ptr Divide(const Topology::Ptr& kpTool = nullptr);
+		TOPOLOGIC_API Topology::Ptr Divide(const Topology::Ptr& kpTool = nullptr, const bool kTransferDictionary = false);
 
 		/// <summary>
 		/// 

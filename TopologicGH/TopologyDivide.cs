@@ -40,6 +40,8 @@ namespace TopologicGH
         {
             pManager.AddGenericParameter("Topology", "Topology", "Topology", GH_ParamAccess.item);
             pManager.AddGenericParameter("Tool", "Tool", "Tool", GH_ParamAccess.item);
+            pManager[1].Optional = true;
+            pManager.AddBooleanParameter("Transfer Dictionary", "Transfer Dictionary", "Transfer Dictionary", GH_ParamAccess.item, false);
         }
 
         /// <summary>
@@ -56,28 +58,18 @@ namespace TopologicGH
         /// <param name="DA">The DA object is used to retrieve from inputs and store in outputs.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            // Declare a variable for the input String
             Topologic.Topology topology = null;
             Topologic.Topology tool = null;
+            bool transferDictionary = false;
 
-            // Use the DA object to retrieve the data inside the first input parameter.
-            // If the retieval fails (for example if there is no data) we need to abort.
             if (!DA.GetData(0, ref topology)) { return; }
             if (!DA.GetData(1, ref tool)) { return; }
+            if (!DA.GetData(2, ref transferDictionary)) { return; }
 
-            // If the retrieved data is Nothing, we need to abort.
-            // We're also going to abort on a zero-length String.
             if (topology == null) { return; }
-            if (tool == null) { return; }
-            //if (data.Length == 0) { return; }
-
-            // Convert the String to a character array.
-            //char[] chars = data.ToCharArray();
-
             
-            Topologic.Topology newTopology = topology.Divide(tool);
+            Topologic.Topology newTopology = topology.Divide(tool, transferDictionary);
 
-            // Use the DA object to assign a new String to the first output parameter.
             DA.SetData(0, newTopology);
         }
 
@@ -88,8 +80,6 @@ namespace TopologicGH
         {
             get
             {
-                //You can add image files to your project resources and access them like this:
-                // return Resources.IconForThisComponent;
                 return Resources.NMT_borderless_logo_small;
             }
         }

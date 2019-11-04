@@ -41,6 +41,7 @@ namespace TopologicGH
             pManager.AddGenericParameter("Topology", "Topology", "Topology", GH_ParamAccess.item);
             pManager.AddGenericParameter("Tool", "Tool", "Tool", GH_ParamAccess.item);
             pManager[1].Optional = false;
+            pManager.AddBooleanParameter("Transfer Dictionary", "Transfer Dictionary", "Transfer Dictionary", GH_ParamAccess.item, false);
         }
 
         /// <summary>
@@ -59,13 +60,15 @@ namespace TopologicGH
         {
             Topologic.Topology topology = null;
             Topologic.Topology tool = null;
+            bool transferDictionary = false;
 
             if (!DA.GetData(0, ref topology)) { return; }
             if (!DA.GetData(1, ref tool)) { return; }
+            if (!DA.GetData(2, ref transferDictionary)) { return; }
 
             if (topology == null) { return; }
 
-            Topologic.Topology newTopology = topology.Slice(tool);
+            Topologic.Topology newTopology = topology.Slice(tool, transferDictionary);
 
             DA.SetData(0, newTopology);
         }

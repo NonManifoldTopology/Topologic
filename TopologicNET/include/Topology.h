@@ -168,13 +168,6 @@ namespace Topologic
 			List<Context^>^ get();
 		}
 
-		/*/// <summary>
-		/// Adds this Topology as a content (non-constituent member) to another Topology.
-		/// </summary>
-		/// <param name="topology">The Topology of the content</param>
-		/// <returns>The new Topology</returns>
-		Topology^ AddContent(Topology^ topology);*/
-		
 		/// <summary>
 		/// Adds a list of Topologies as contents (non-constituent members) to another Topology of a specific type. If the type filter is 0, the contents will be added to the parent topology. Otherwise, the contents will be added to the closest sub-topology which matches the filter.
 		/// </summary>
@@ -204,36 +197,12 @@ namespace Topologic
 		/// <returns name="Topology">The new Topology</returns>
 		Topology^ RemoveContents(List<Topology^>^ contentTopologies);
 
-		/*/// <summary>
-		/// Removes contexts from a Topology.
-		/// </summary>
-		/// <param name="contexts">The Contexts</param>
-		/// <returns name="Topology">The new Topology</returns>
-		Topology^ RemoveContexts(List<Context^>^ contexts);*/
-
 		/// <summary>
 		/// Adds Apertures to a Topology.
 		/// </summary>
 		/// <param name="apertureTopologies">A list of Topologies associated to the apertures</param>
 		/// <returns name="Topology">The new Topology</returns>
 		Topology^ AddApertures(System::Collections::Generic::IEnumerable<Topology^>^ apertureTopologies);
-
-		/*/// <summary>
-		/// Adds a list of contexts to a Topology.
-		/// </summary>
-		/// <param name="contexts">A context</param>
-		/// <returns name="Topology">The new Topology</returns>
-		Topology^ AddContexts(List<Context^>^ contexts);*/
-
-		/*/// <summary>
-		/// Removes a context from a Topology.
-		/// </summary>
-		/// <param name="context">A context</param>
-		/// <returns name="Topology">The new Topology</returns>
-#ifdef TOPOLOGIC_DYNAMO
-		[IsVisibleInDynamoLibrary(false)]
-#endif
-		Topology^ RemoveContext(Context^ context);*/
 
 		/// <summary>
 		/// Returns the shared Topologies between the input Topology and another Topology.
@@ -252,12 +221,15 @@ namespace Topologic
 		/// Performs the Difference operation between the input Topology and another Topology.
 		/// </summary>
 		/// <param name="topology">Another Topology</param>
+		/// <param name="transferDictionary">If True, transfer Dictionaries from every original constituent member to the resulting members generated from the original member</param>
 		/// <returns name="Topology">The result of the Difference operation</returns>
 		Topology^ Difference(
 #ifdef TOPOLOGIC_DYNAMO
-			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ topology
+			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ topology,
+			[Autodesk::DesignScript::Runtime::DefaultArgument("false")] bool transferDictionary
 #else
-			Topology^ topology
+			Topology^ topology,
+			bool transferDictionary
 #endif
 		);
 
@@ -265,12 +237,15 @@ namespace Topologic
 		/// Imposes another Topology on the input Topology.
 		/// </summary>
 		/// <param name="tool">Another Topology</param>
+		/// <param name="transferDictionary">If True, transfer Dictionaries from every original constituent member to the resulting members generated from the original member</param>
 		/// <returns name="Topology">The result of the Impose operation</returns>
 		Topology^ Impose(
 #ifdef TOPOLOGIC_DYNAMO
-			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ tool
+			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ tool,
+			[Autodesk::DesignScript::Runtime::DefaultArgument("false")] bool transferDictionary
 #else
-			Topology^ tool
+			Topology^ tool,
+			bool transferDictionary
 #endif
 		);
 
@@ -278,12 +253,15 @@ namespace Topologic
 		/// Imprints another Topology on the input Topology.
 		/// </summary>
 		/// <param name="tool">Another Topology</param>
+		/// <param name="transferDictionary">If True, transfer Dictionaries from every original constituent member to the resulting members generated from the original member</param>
 		/// <returns name="Topology">The result of the Imprint operation</returns>
 		Topology^ Imprint(
 #ifdef TOPOLOGIC_DYNAMO
-			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ tool
+			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ tool,
+			[Autodesk::DesignScript::Runtime::DefaultArgument("false")] bool transferDictionary
 #else
-			Topology^ tool
+			Topology^ tool,
+			bool transferDictionary
 #endif
 		);
 
@@ -291,12 +269,15 @@ namespace Topologic
 		/// Performs the Intersection operation between the input Topology and another Topology.
 		/// </summary>
 		/// <param name="topology">Another Topology</param>
+		/// <param name="transferDictionary">If True, transfer Dictionaries from every original constituent member to the resulting members generated from the original member</param>
 		/// <returns name="Topology">The result of the Intersection operation</returns>
 		Topology^ Intersect(
 #ifdef TOPOLOGIC_DYNAMO
-			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ topology
+			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ topology,
+			[Autodesk::DesignScript::Runtime::DefaultArgument("false")] bool transferDictionary
 #else
-			Topology^ topology
+			Topology^ topology,
+			bool transferDictionary
 #endif
 		);
 
@@ -304,12 +285,15 @@ namespace Topologic
 		/// Merges the input Topology and another Topology.
 		/// </summary>
 		/// <param name="topology">Another Topology</param>
+		/// <param name="transferDictionary">If True, transfer Dictionaries from every original constituent member to the resulting members generated from the original member</param>
 		/// <returns name="Topology">The result of the Merge operation</returns>
 		Topology^ Merge(
 #ifdef TOPOLOGIC_DYNAMO
-			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ topology
+			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ topology,
+			[Autodesk::DesignScript::Runtime::DefaultArgument("false")] bool transferDictionary
 #else
-			Topology^ topology
+			Topology^ topology,
+			bool transferDictionary
 #endif
 		);
 
@@ -323,12 +307,15 @@ namespace Topologic
 		/// Slices the input Topology with another Topology.
 		/// </summary>
 		/// <param name="tool">Another Topology</param>
+		/// <param name="transferDictionary">If True, transfer Dictionaries from every original constituent member to the resulting members generated from the original member</param>
 		/// <returns name="Topology">The result of the Slice operation</returns>
 		Topology^ Slice(
 #ifdef TOPOLOGIC_DYNAMO
-			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ tool
+			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ tool,
+			[Autodesk::DesignScript::Runtime::DefaultArgument("false")] bool transferDictionary
 #else
-			Topology^ tool
+			Topology^ tool,
+			bool transferDictionary
 #endif
 		);
 
@@ -336,12 +323,15 @@ namespace Topologic
 		/// Divides the input Topology with another Topology.
 		/// </summary>
 		/// <param name="tool">Another Topology</param>
+		/// <param name="transferDictionary">If True, transfer Dictionaries from every original constituent member to the resulting members generated from the original member</param>
 		/// <returns name="Topology">The result of the Divide operation</returns>
 		Topology^ Divide(
 #ifdef TOPOLOGIC_DYNAMO
-			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ tool
+			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ tool,
+			[Autodesk::DesignScript::Runtime::DefaultArgument("false")] bool transferDictionary
 #else
-			Topology^ tool
+			Topology^ tool,
+			bool transferDictionary
 #endif
 		);
 
@@ -349,12 +339,15 @@ namespace Topologic
 		/// Unions the input Topology and another Topology.
 		/// </summary>
 		/// <param name="topology">Another Topology</param>
+		/// <param name="transferDictionary">If True, transfer Dictionaries from every original constituent member to the resulting members generated from the original member</param>
 		/// <returns name="Topology">The result of the Union operation</returns>
 		Topology^ Union(
 #ifdef TOPOLOGIC_DYNAMO
-			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ topology
+			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ topology,
+			[Autodesk::DesignScript::Runtime::DefaultArgument("false")] bool transferDictionary
 #else
-			Topology^ topology
+			Topology^ topology,
+			bool transferDictionary
 #endif
 		);
 
@@ -362,12 +355,15 @@ namespace Topologic
 		/// Performs an XOR operation between the input Topology and another Topology.
 		/// </summary>
 		/// <param name="topology">Another Topology</param>
+		/// <param name="transferDictionary">If True, transfer Dictionaries from every original constituent member to the resulting members generated from the original member</param>
 		/// <returns name="Topology">The result of the XOR operation</returns>
 		Topology^ XOR(
 #ifdef TOPOLOGIC_DYNAMO
-			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ topology
+			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ topology,
+			[Autodesk::DesignScript::Runtime::DefaultArgument("false")] bool transferDictionary
 #else
-			Topology^ topology
+			Topology^ topology,
+			bool transferDictionary
 #endif
 		);
 

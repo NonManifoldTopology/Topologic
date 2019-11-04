@@ -41,6 +41,7 @@ namespace TopologicGH
             pManager.AddGenericParameter("Topology", "Topology", "Topology", GH_ParamAccess.item);
             pManager.AddGenericParameter("Topology", "Topology", "Topology", GH_ParamAccess.item);
             pManager[1].Optional = true;
+            pManager.AddBooleanParameter("Transfer Dictionary", "Transfer Dictionary", "Transfer Dictionary", GH_ParamAccess.item, false);
         }
 
         /// <summary>
@@ -59,13 +60,15 @@ namespace TopologicGH
         {
             Topologic.Topology topology = null;
             Topologic.Topology otherTopology = null;
+            bool transferDictionary = false;
 
             if (!DA.GetData(0, ref topology)) { return; }
             if (!DA.GetData(1, ref otherTopology)) { return; }
+            if (!DA.GetData(2, ref transferDictionary)) { return; }
 
             if (topology == null) { return; }
 
-            Topologic.Topology newTopology = topology.Intersect(otherTopology);
+            Topologic.Topology newTopology = topology.Intersect(otherTopology, transferDictionary);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetData(0, newTopology);

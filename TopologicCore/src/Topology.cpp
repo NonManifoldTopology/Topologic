@@ -957,7 +957,7 @@ namespace TopologicCore
 		return occtSewing.SewedShape();
 	}
 
-	Topology::Ptr Topology::Difference(const Topology::Ptr & kpOtherTopology)
+	Topology::Ptr Topology::Difference(const Topology::Ptr & kpOtherTopology, const bool kTransferDictionary)
 	{
 		if (kpOtherTopology == nullptr)
 		{
@@ -1650,7 +1650,7 @@ namespace TopologicCore
 		}
 	}
 
-	Topology::Ptr Topology::Impose(const Topology::Ptr & kpTool)
+	Topology::Ptr Topology::Impose(const Topology::Ptr & kpTool, const bool kTransferDictionary)
 	{
 		if (kpTool == nullptr)
 		{
@@ -1716,7 +1716,7 @@ namespace TopologicCore
 		return pCopyPostprocessedShape;
 	}
 
-	Topology::Ptr Topology::Imprint(const Topology::Ptr & kpTool)
+	Topology::Ptr Topology::Imprint(const Topology::Ptr & kpTool, const bool kTransferDictionary)
 	{
 		if (kpTool == nullptr)
 		{
@@ -1779,7 +1779,7 @@ namespace TopologicCore
 		return pCopyPostprocessedShape;
 	}
 
-	Topology::Ptr Topology::Intersect(const Topology::Ptr & kpOtherTopology)
+	Topology::Ptr Topology::Intersect(const Topology::Ptr & kpOtherTopology, const bool kTransferDictionary)
 	{
 		if (kpOtherTopology == nullptr)
 		{
@@ -1872,7 +1872,7 @@ namespace TopologicCore
 		return pCopyPostprocessedShape;
 	}
 
-	Topology::Ptr Topology::Merge(const Topology::Ptr & kpOtherTopology)
+	Topology::Ptr Topology::Merge(const Topology::Ptr & kpOtherTopology, const bool kTransferDictionary)
 	{
 		if (kpOtherTopology == nullptr)
 		{
@@ -2144,7 +2144,7 @@ namespace TopologicCore
 		return finalTopology;
 	}
 
-	Topology::Ptr Topology::Slice(const Topology::Ptr & kpTool)
+	Topology::Ptr Topology::Slice(const Topology::Ptr & kpTool, const bool kTransferDictionary)
 	{
 		if (kpTool == nullptr)
 		{
@@ -2188,7 +2188,7 @@ namespace TopologicCore
 		return pCopyPostprocessedShape;
 	}
 
-	Topology::Ptr Topology::Union(const Topology::Ptr & kpOtherTopology)
+	Topology::Ptr Topology::Union(const Topology::Ptr & kpOtherTopology, const bool kTransferDictionary)
 	{
 		if (kpOtherTopology == nullptr)
 		{
@@ -2593,7 +2593,7 @@ namespace TopologicCore
 		}
 	}
 
-	Topology::Ptr Topology::XOR(const Topology::Ptr & kpOtherTopology)
+	Topology::Ptr Topology::XOR(const Topology::Ptr & kpOtherTopology, const bool kTransferDictionary)
 	{
 		if (kpOtherTopology == nullptr)
 		{
@@ -2662,7 +2662,7 @@ namespace TopologicCore
 		return pPostprocessedShape;
 	}
 
-	Topology::Ptr Topology::Divide(const Topology::Ptr & kpTool)
+	Topology::Ptr Topology::Divide(const Topology::Ptr & kpTool, const bool kTransferDictionary)
 	{
 		if (kpTool == nullptr)
 		{

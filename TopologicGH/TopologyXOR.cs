@@ -40,6 +40,8 @@ namespace TopologicGH
         {
             pManager.AddGenericParameter("Topology", "Topology", "Topology", GH_ParamAccess.item);
             pManager.AddGenericParameter("Topology", "Topology", "Topology", GH_ParamAccess.item);
+            pManager[1].Optional = true;
+            pManager.AddBooleanParameter("Transfer Dictionary", "Transfer Dictionary", "Transfer Dictionary", GH_ParamAccess.item, false);
         }
 
         /// <summary>
@@ -58,13 +60,15 @@ namespace TopologicGH
         {
             Topologic.Topology topology = null;
             Topologic.Topology otherTopology = null;
+            bool transferDictionary = false;
 
             if (!DA.GetData(0, ref topology)) { return; }
             if (!DA.GetData(1, ref otherTopology)) { return; }
+            if (!DA.GetData(2, ref transferDictionary)) { return; }
 
             if (topology == null) { return; }
 
-            Topologic.Topology newTopology = topology.XOR(otherTopology);
+            Topologic.Topology newTopology = topology.XOR(otherTopology, transferDictionary);
 
             DA.SetData(0, newTopology);
         }
@@ -76,8 +80,6 @@ namespace TopologicGH
         {
             get
             {
-                //You can add image files to your project resources and access them like this:
-                // return Resources.IconForThisComponent;
                 return Resources.NMT_borderless_logo_small;
             }
         }
