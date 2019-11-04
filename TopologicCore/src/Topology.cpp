@@ -959,6 +959,11 @@ namespace TopologicCore
 
 	Topology::Ptr Topology::Difference(const Topology::Ptr & kpOtherTopology)
 	{
+		if (kpOtherTopology == nullptr)
+		{
+			return Topology::ByOcctShape(GetOcctShape(), GetInstanceGUID());
+		}
+
 		BOPCol_ListOfShape occtArgumentsA;
 		BOPCol_ListOfShape occtArgumentsB;
 		AddBooleanOperands(kpOtherTopology, occtArgumentsA, occtArgumentsB);
@@ -1645,11 +1650,16 @@ namespace TopologicCore
 		}
 	}
 
-	Topology::Ptr Topology::Impose(const Topology::Ptr & kpOtherTopology)
+	Topology::Ptr Topology::Impose(const Topology::Ptr & kpTool)
 	{
+		if (kpTool == nullptr)
+		{
+			return Topology::ByOcctShape(GetOcctShape(), GetInstanceGUID());
+		}
+
 		BOPCol_ListOfShape occtArgumentsA;
 		BOPCol_ListOfShape occtArgumentsB;
-		AddBooleanOperands(kpOtherTopology, occtArgumentsA, occtArgumentsB);
+		AddBooleanOperands(kpTool, occtArgumentsA, occtArgumentsB);
 
 		BOPAlgo_CellsBuilder occtCellsBuilder;
 		NonRegularBooleanOperation(occtArgumentsA, occtArgumentsB, occtCellsBuilder);
@@ -1699,18 +1709,23 @@ namespace TopologicCore
 
 		Topology::Ptr pCopyPostprocessedShape = pPostprocessedShape->DeepCopy();
 		TransferContents(GetOcctShape(), pCopyPostprocessedShape);
-		TransferContents(kpOtherTopology->GetOcctShape(), pCopyPostprocessedShape);
+		TransferContents(kpTool->GetOcctShape(), pCopyPostprocessedShape);
 		AttributeManager::GetInstance().DeepCopyAttributes(GetOcctShape(), pCopyPostprocessedShape->GetOcctShape());
-		AttributeManager::GetInstance().DeepCopyAttributes(kpOtherTopology->GetOcctShape(), pCopyPostprocessedShape->GetOcctShape());
+		AttributeManager::GetInstance().DeepCopyAttributes(kpTool->GetOcctShape(), pCopyPostprocessedShape->GetOcctShape());
 		GlobalCluster::GetInstance().AddTopology(pCopyPostprocessedShape);
 		return pCopyPostprocessedShape;
 	}
 
-	Topology::Ptr Topology::Imprint(const Topology::Ptr & kpOtherTopology)
+	Topology::Ptr Topology::Imprint(const Topology::Ptr & kpTool)
 	{
+		if (kpTool == nullptr)
+		{
+			return Topology::ByOcctShape(GetOcctShape(), GetInstanceGUID());
+		}
+
 		BOPCol_ListOfShape occtArgumentsA;
 		BOPCol_ListOfShape occtArgumentsB;
-		AddBooleanOperands(kpOtherTopology, occtArgumentsA, occtArgumentsB);
+		AddBooleanOperands(kpTool, occtArgumentsA, occtArgumentsB);
 
 		BOPAlgo_CellsBuilder occtCellsBuilder;
 		NonRegularBooleanOperation(occtArgumentsA, occtArgumentsB, occtCellsBuilder);
@@ -1757,15 +1772,20 @@ namespace TopologicCore
 		}
 		Topology::Ptr pCopyPostprocessedShape = pPostprocessedShape->DeepCopy();
 		TransferContents(GetOcctShape(), pCopyPostprocessedShape);
-		TransferContents(kpOtherTopology->GetOcctShape(), pCopyPostprocessedShape);
+		TransferContents(kpTool->GetOcctShape(), pCopyPostprocessedShape);
 		AttributeManager::GetInstance().DeepCopyAttributes(GetOcctShape(), pCopyPostprocessedShape->GetOcctShape());
-		AttributeManager::GetInstance().DeepCopyAttributes(kpOtherTopology->GetOcctShape(), pCopyPostprocessedShape->GetOcctShape());
+		AttributeManager::GetInstance().DeepCopyAttributes(kpTool->GetOcctShape(), pCopyPostprocessedShape->GetOcctShape());
 		GlobalCluster::GetInstance().AddTopology(pCopyPostprocessedShape);
 		return pCopyPostprocessedShape;
 	}
 
 	Topology::Ptr Topology::Intersect(const Topology::Ptr & kpOtherTopology)
 	{
+		if (kpOtherTopology == nullptr)
+		{
+			return Topology::ByOcctShape(GetOcctShape(), GetInstanceGUID());
+		}
+
 		BOPCol_ListOfShape occtArgumentsA;
 		BOPCol_ListOfShape occtArgumentsB;
 		AddBooleanOperands(kpOtherTopology, occtArgumentsA, occtArgumentsB);
@@ -1854,6 +1874,11 @@ namespace TopologicCore
 
 	Topology::Ptr Topology::Merge(const Topology::Ptr & kpOtherTopology)
 	{
+		if (kpOtherTopology == nullptr)
+		{
+			return Topology::ByOcctShape(GetOcctShape(), GetInstanceGUID());
+		}
+
 		BOPCol_ListOfShape occtArgumentsA;
 		BOPCol_ListOfShape occtArgumentsB;
 		AddBooleanOperands(kpOtherTopology, occtArgumentsA, occtArgumentsB);
@@ -2119,11 +2144,16 @@ namespace TopologicCore
 		return finalTopology;
 	}
 
-	Topology::Ptr Topology::Slice(const Topology::Ptr & kpOtherTopology)
+	Topology::Ptr Topology::Slice(const Topology::Ptr & kpTool)
 	{
+		if (kpTool == nullptr)
+		{
+			return Topology::ByOcctShape(GetOcctShape(), GetInstanceGUID());
+		}
+
 		BOPCol_ListOfShape occtArgumentsA;
 		BOPCol_ListOfShape occtArgumentsB;
-		AddBooleanOperands(kpOtherTopology, occtArgumentsA, occtArgumentsB);
+		AddBooleanOperands(kpTool, occtArgumentsA, occtArgumentsB);
 
 		BOPAlgo_CellsBuilder occtCellsBuilder;
 		NonRegularBooleanOperation(occtArgumentsA, occtArgumentsB, occtCellsBuilder);
@@ -2160,6 +2190,11 @@ namespace TopologicCore
 
 	Topology::Ptr Topology::Union(const Topology::Ptr & kpOtherTopology)
 	{
+		if (kpOtherTopology == nullptr)
+		{
+			return Topology::ByOcctShape(GetOcctShape(), GetInstanceGUID());
+		}
+
 		BOPCol_ListOfShape occtArgumentsA;
 		BOPCol_ListOfShape occtArgumentsB;
 		AddBooleanOperands(kpOtherTopology, occtArgumentsA, occtArgumentsB);
@@ -2560,6 +2595,11 @@ namespace TopologicCore
 
 	Topology::Ptr Topology::XOR(const Topology::Ptr & kpOtherTopology)
 	{
+		if (kpOtherTopology == nullptr)
+		{
+			return Topology::ByOcctShape(GetOcctShape(), GetInstanceGUID());
+		}
+
 		BOPCol_ListOfShape occtArgumentsA;
 		BOPCol_ListOfShape occtArgumentsB;
 		AddBooleanOperands(kpOtherTopology, occtArgumentsA, occtArgumentsB);
@@ -2624,6 +2664,11 @@ namespace TopologicCore
 
 	Topology::Ptr Topology::Divide(const Topology::Ptr & kpTool)
 	{
+		if (kpTool == nullptr)
+		{
+			return Topology::ByOcctShape(GetOcctShape(), GetInstanceGUID());
+		}
+
 		// For now, only works if this topology is a cell
 		TopologyType topologyType = GetType();
 

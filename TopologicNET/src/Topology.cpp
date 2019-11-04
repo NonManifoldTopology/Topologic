@@ -670,7 +670,10 @@ namespace Topologic
 	Topology^ Topology::Difference(Topology^ topology)
 	{
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
+		TopologicCore::Topology::Ptr pCoreTopologyB =
+			topology == nullptr ?
+			nullptr :
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 
 		try{
 			std::shared_ptr<TopologicCore::Topology> pDifferenceCoreTopology = pCoreTopologyA->Difference(pCoreTopologyB);
@@ -685,7 +688,10 @@ namespace Topologic
 	Topology^ Topology::Impose(Topology^ tool)
 	{
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(tool->GetCoreTopologicalQuery());
+		TopologicCore::Topology::Ptr pCoreTopologyB =
+			tool == nullptr ?
+			nullptr :
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(tool->GetCoreTopologicalQuery());
 
 		try{
 			std::shared_ptr<TopologicCore::Topology> pImposeCoreTopology = pCoreTopologyA->Impose(pCoreTopologyB);
@@ -700,7 +706,10 @@ namespace Topologic
 	Topology^ Topology::Imprint(Topology^ tool)
 	{
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(tool->GetCoreTopologicalQuery());
+		TopologicCore::Topology::Ptr pCoreTopologyB =
+			tool == nullptr ?
+			nullptr :
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(tool->GetCoreTopologicalQuery());
 
 		try{
 			std::shared_ptr<TopologicCore::Topology> pImprintCoreTopology = pCoreTopologyA->Imprint(pCoreTopologyB);
@@ -715,7 +724,10 @@ namespace Topologic
 	Topology^ Topology::Intersect(Topology^ topology)
 	{
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
+		TopologicCore::Topology::Ptr pCoreTopologyB =
+			topology == nullptr ?
+			nullptr :
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 
 		try {
 			std::shared_ptr<TopologicCore::Topology> pIntersectionCoreTopology = pCoreTopologyA->Intersect(pCoreTopologyB);
@@ -730,7 +742,10 @@ namespace Topologic
 	Topology^ Topology::Union(Topology^ topology)
 	{
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
+		TopologicCore::Topology::Ptr pCoreTopologyB =
+			topology == nullptr ?
+			nullptr :
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 
 		try{
 			std::shared_ptr<TopologicCore::Topology> pUnionCoreTopology = pCoreTopologyA->Union(pCoreTopologyB);
@@ -759,7 +774,10 @@ namespace Topologic
 	Topology^ Topology::Merge(Topology^ topology)
 	{
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
+		TopologicCore::Topology::Ptr pCoreTopologyB =
+			topology == nullptr ?
+			nullptr :
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 
 		try{
 			std::shared_ptr<TopologicCore::Topology> pMergeCoreTopology = pCoreTopologyA->Merge(pCoreTopologyB);
@@ -774,7 +792,10 @@ namespace Topologic
 	Topology^ Topology::Slice(Topology^ tool)
 	{
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(tool->GetCoreTopologicalQuery());
+		TopologicCore::Topology::Ptr pCoreTopologyB =
+			tool == nullptr ?
+			nullptr :
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(tool->GetCoreTopologicalQuery());
 
 		try{
 			std::shared_ptr<TopologicCore::Topology> pSliceCoreTopology = pCoreTopologyA->Slice(pCoreTopologyB);
@@ -789,7 +810,10 @@ namespace Topologic
 	Topology ^ Topology::Divide(Topology ^ tool)
 	{
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(tool->GetCoreTopologicalQuery());
+		TopologicCore::Topology::Ptr pCoreTopologyB =
+			tool == nullptr ?
+			nullptr :
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(tool->GetCoreTopologicalQuery());
 
 		try {
 			std::shared_ptr<TopologicCore::Topology> pSliceCoreTopology = pCoreTopologyA->Divide(pCoreTopologyB);
@@ -804,7 +828,10 @@ namespace Topologic
 	Topology^ Topology::XOR(Topology^ topology)
 	{
 		TopologicCore::Topology::Ptr pCoreTopologyA = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		TopologicCore::Topology::Ptr pCoreTopologyB = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
+		TopologicCore::Topology::Ptr pCoreTopologyB =
+			topology == nullptr ?
+			nullptr :
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 
 		try{
 			std::shared_ptr<TopologicCore::Topology> pSliceCoreTopology = pCoreTopologyA->XOR(pCoreTopologyB);

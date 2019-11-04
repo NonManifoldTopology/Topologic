@@ -40,6 +40,7 @@ namespace TopologicGH
         {
             pManager.AddGenericParameter("Topology", "Topology", "Topology", GH_ParamAccess.item);
             pManager.AddGenericParameter("Topology", "Topology", "Topology", GH_ParamAccess.item);
+            pManager[1].Optional = true;
         }
 
         /// <summary>

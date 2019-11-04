@@ -28,6 +28,8 @@ using namespace System::Collections::Generic;
 
 #ifdef TOPOLOGIC_DYNAMO
 using namespace Autodesk::DesignScript::Runtime;
+#else
+using namespace System::Runtime::InteropServices;
 #endif
 
 namespace Topologic
@@ -251,35 +253,65 @@ namespace Topologic
 		/// </summary>
 		/// <param name="topology">Another Topology</param>
 		/// <returns name="Topology">The result of the Difference operation</returns>
-		Topology^ Difference(Topology^ topology);
+		Topology^ Difference(
+#ifdef TOPOLOGIC_DYNAMO
+			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ topology
+#else
+			Topology^ topology
+#endif
+		);
 
 		/// <summary>
 		/// Imposes another Topology on the input Topology.
 		/// </summary>
 		/// <param name="tool">Another Topology</param>
 		/// <returns name="Topology">The result of the Impose operation</returns>
-		Topology^ Impose(Topologic::Topology^ tool);
+		Topology^ Impose(
+#ifdef TOPOLOGIC_DYNAMO
+			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ tool
+#else
+			Topology^ tool
+#endif
+		);
 
 		/// <summary>
 		/// Imprints another Topology on the input Topology.
 		/// </summary>
 		/// <param name="tool">Another Topology</param>
 		/// <returns name="Topology">The result of the Imprint operation</returns>
-		Topology^ Imprint(Topology^ tool);
+		Topology^ Imprint(
+#ifdef TOPOLOGIC_DYNAMO
+			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ tool
+#else
+			Topology^ tool
+#endif
+		);
 
 		/// <summary>
 		/// Performs the Intersection operation between the input Topology and another Topology.
 		/// </summary>
 		/// <param name="topology">Another Topology</param>
 		/// <returns name="Topology">The result of the Intersection operation</returns>
-		Topology^ Intersect(Topology^ topology);
+		Topology^ Intersect(
+#ifdef TOPOLOGIC_DYNAMO
+			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ topology
+#else
+			Topology^ topology
+#endif
+		);
 
 		/// <summary>
 		/// Merges the input Topology and another Topology.
 		/// </summary>
 		/// <param name="topology">Another Topology</param>
 		/// <returns name="Topology">The result of the Merge operation</returns>
-		Topology^ Merge(Topology^ topology);
+		Topology^ Merge(
+#ifdef TOPOLOGIC_DYNAMO
+			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ topology
+#else
+			Topology^ topology
+#endif
+		);
 
 		/// <summary>
 		/// Merges the sub-topologies of the input Topology.
@@ -292,28 +324,52 @@ namespace Topologic
 		/// </summary>
 		/// <param name="tool">Another Topology</param>
 		/// <returns name="Topology">The result of the Slice operation</returns>
-		Topology^ Slice(Topology^ tool);
+		Topology^ Slice(
+#ifdef TOPOLOGIC_DYNAMO
+			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ tool
+#else
+			Topology^ tool
+#endif
+		);
 
 		/// <summary>
 		/// Divides the input Topology with another Topology.
 		/// </summary>
 		/// <param name="tool">Another Topology</param>
 		/// <returns name="Topology">The result of the Divide operation</returns>
-		Topology^ Divide(Topology^ tool);
+		Topology^ Divide(
+#ifdef TOPOLOGIC_DYNAMO
+			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ tool
+#else
+			Topology^ tool
+#endif
+		);
 
 		/// <summary>
 		/// Unions the input Topology and another Topology.
 		/// </summary>
 		/// <param name="topology">Another Topology</param>
 		/// <returns name="Topology">The result of the Union operation</returns>
-		Topology^ Union(Topology^ topology);
+		Topology^ Union(
+#ifdef TOPOLOGIC_DYNAMO
+			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ topology
+#else
+			Topology^ topology
+#endif
+		);
 
 		/// <summary>
 		/// Performs an XOR operation between the input Topology and another Topology.
 		/// </summary>
 		/// <param name="topology">Another Topology</param>
 		/// <returns name="Topology">The result of the XOR operation</returns>
-		Topology^ XOR(Topology^ topology);
+		Topology^ XOR(
+#ifdef TOPOLOGIC_DYNAMO
+			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ topology
+#else
+			Topology^ topology
+#endif
+		);
 
 		/// <summary>
 		/// Returns the center of mass of any Topology.
