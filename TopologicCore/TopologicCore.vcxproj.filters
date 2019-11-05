@@ -119,6 +119,9 @@
     </ClInclude>
     <ClInclude Include="include\Context.h" />
     <ClInclude Include="include\ContextManager.h" />
+    <ClInclude Include="include\ListAttribute.h">
+      <Filter>Attributes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Topology.cpp" />
@@ -232,6 +235,9 @@
     </ClCompile>
     <ClCompile Include="src\Context.cpp" />
     <ClCompile Include="src\ContextManager.cpp" />
+    <ClCompile Include="src\ListAttribute.cpp">
+      <Filter>Attributes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Attributes">

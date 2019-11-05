@@ -188,6 +188,7 @@ copy "$(SolutionDir)references\opencascade-7.2.0\build\win64\vc14\bind\*.pdb" "$
     <ClInclude Include="include\InstanceGUIDManager.h" />
     <ClInclude Include="include\IntAttribute.h" />
     <ClInclude Include="include\Line.h" />
+    <ClInclude Include="include\ListAttribute.h" />
     <ClInclude Include="include\NurbsCurve.h" />
     <ClInclude Include="include\NurbsSurface.h" />
     <ClInclude Include="include\PlanarSurface.h" />
@@ -241,6 +242,7 @@ copy "$(SolutionDir)references\opencascade-7.2.0\build\win64\vc14\bind\*.pdb" "$
     <ClCompile Include="src\InstanceGUIDManager.cpp" />
     <ClCompile Include="src\IntAttribute.cpp" />
     <ClCompile Include="src\Line.cpp" />
+    <ClCompile Include="src\ListAttribute.cpp" />
     <ClCompile Include="src\NurbsCurve.cpp" />
     <ClCompile Include="src\NurbsSurface.cpp" />
     <ClCompile Include="src\PlanarSurface.cpp" />

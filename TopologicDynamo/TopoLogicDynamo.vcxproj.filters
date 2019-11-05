@@ -113,6 +113,9 @@
     <ClInclude Include="..\TopologicNET\include\Bitwise.h">
       <Filter>Utilities</Filter>
     </ClInclude>
+    <ClInclude Include="..\TopologicNET\include\ListAttributeFactory.h">
+      <Filter>Attributes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\TopologicNET\src\About.cpp" />
@@ -197,6 +200,9 @@
     </ClCompile>
     <ClCompile Include="..\TopologicNET\src\Bitwise.cpp">
       <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\TopologicNET\src\ListAttributeFactory.cpp">
+      <Filter>Attributes</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

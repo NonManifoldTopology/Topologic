@@ -25,7 +25,7 @@ namespace Topologic
 {
 	namespace Attributes
 	{
-		Attribute^ DoubleAttributeFactory::Create(String ^ key, Object ^ value)
+		Attribute^ DoubleAttributeFactory::Create(Object ^ value)
 		{
 			double doubleValue = safe_cast<double>(value);
 			return gcnew Attribute(std::dynamic_pointer_cast<TopologicCore::Attribute>(std::make_shared<TopologicCore::DoubleAttribute>(doubleValue)));

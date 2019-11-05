@@ -1004,6 +1004,8 @@ namespace TopologicCore
 		TransferContents(GetOcctShape(), pPostprocessedShape);
 		TransferContents(kpOtherTopology->GetOcctShape(), pPostprocessedShape);
 		AttributeManager::GetInstance().DeepCopyAttributes(GetOcctShape(), occtPostprocessedShape);
+
+		//BooleanTransferDictionary();
 		GlobalCluster::GetInstance().AddTopology(occtPostprocessedShape);
 		return pPostprocessedShape;
 	}

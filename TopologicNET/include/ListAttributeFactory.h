@@ -16,26 +16,16 @@
 
 #pragma once
 
-using namespace System;
-#ifdef TOPOLOGIC_DYNAMO
-using namespace Autodesk::DesignScript::Runtime;
-#endif
-
-#include <Attribute.h>
-
-namespace TopologicUtilities
-{
-	class Attribute;
-}
+#include "AttributeFactory.h"
 
 namespace Topologic
 {
 	namespace Attributes
 	{
 		/// <summary>
-		/// A public abstract factory class to create an Attribute. This class should be inherited when new Attribute classes are implemented.
+		/// (private) A factory class to create a list Attribute.
 		/// </summary>
-		public ref class AttributeFactory abstract
+		ref class ListAttributeFactory : AttributeFactory
 		{
 		public:
 			/// <summary>
@@ -46,7 +36,7 @@ namespace Topologic
 #ifdef TOPOLOGIC_DYNAMO
 			[IsVisibleInDynamoLibrary(false)]
 #endif
-			virtual Attribute^ Create(Object^ value) abstract;
+			virtual Attribute^ Create(Object^ value) override;
 
 			/// <summary>
 			/// Checks the type of the value.
@@ -56,15 +46,14 @@ namespace Topologic
 #ifdef TOPOLOGIC_DYNAMO
 			[IsVisibleInDynamoLibrary(false)]
 #endif
-			virtual bool CheckType(Type^ type) abstract;
+			virtual bool CheckType(Type^ type) override;
 
 		public protected:
-			virtual bool CheckType(const std::shared_ptr<TopologicCore::Attribute>& kpUtilitiesAttribute) abstract;
+			virtual bool CheckType(const std::shared_ptr<TopologicCore::Attribute>& kpUtilitiesAttribute) override;
 
-			virtual Object^ CreateValue(const std::shared_ptr<TopologicCore::Attribute>& kpUtilitiesAttribute) abstract;
+			virtual Object^ CreateValue(const std::shared_ptr<TopologicCore::Attribute>& kpUtilitiesAttribute) override;
 
 		protected:
-			AttributeFactory() {}
 		};
 	}
 }

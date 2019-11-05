@@ -22,7 +22,7 @@ namespace Topologic
 {
 	namespace Attributes
 	{
-		Attribute^ IntAttributeFactory::Create(String ^ key, Object ^ value)
+		Attribute^ IntAttributeFactory::Create(Object ^ value)
 		{
 			long long int intValue = safe_cast<long long int>(value);
 			return gcnew Attribute(std::dynamic_pointer_cast<TopologicCore::Attribute>(std::make_shared<TopologicCore::IntAttribute>(intValue)));

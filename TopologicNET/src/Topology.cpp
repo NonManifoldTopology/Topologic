@@ -354,7 +354,7 @@ namespace Topologic
 			{
 				Attributes::AttributeFactory^ attributeFactory = 
 					Attributes::AttributeFactoryManager::Instance->GetFactory(entry->Value);
-				Attributes::Attribute^ attribute = attributeFactory->Create(entry->Key, entry->Value);
+				Attributes::Attribute^ attribute = attributeFactory->Create(entry->Value);
 				std::string cppKey = msclr::interop::marshal_as<std::string>(entry->Key);
 				TopologicCore::Attribute::Ptr coreAttribute = attribute->UtilitiesAttribute;
 				coreDictionary[cppKey] = coreAttribute;

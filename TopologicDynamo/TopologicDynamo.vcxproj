@@ -212,6 +212,7 @@
     <ClInclude Include="..\TopologicNET\include\GlobalCluster.h" />
     <ClInclude Include="..\TopologicNET\include\Graph.h" />
     <ClInclude Include="..\TopologicNET\include\IntAttributeFactory.h" />
+    <ClInclude Include="..\TopologicNET\include\ListAttributeFactory.h" />
     <ClInclude Include="..\TopologicNET\include\Shell.h" />
     <ClInclude Include="..\TopologicNET\include\ShellFactory.h" />
     <ClInclude Include="..\TopologicNET\include\ShellUtility.h" />
@@ -253,6 +254,7 @@
     <ClCompile Include="..\TopologicNET\src\GlobalCluster.cpp" />
     <ClCompile Include="..\TopologicNET\src\Graph.cpp" />
     <ClCompile Include="..\TopologicNET\src\IntAttributeFactory.cpp" />
+    <ClCompile Include="..\TopologicNET\src\ListAttributeFactory.cpp" />
     <ClCompile Include="..\TopologicNET\src\Shell.cpp" />
     <ClCompile Include="..\TopologicNET\src\ShellFactory.cpp" />
     <ClCompile Include="..\TopologicNET\src\ShellUtility.cpp" />

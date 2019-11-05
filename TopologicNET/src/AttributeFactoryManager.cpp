@@ -21,11 +21,13 @@
 #include "IntAttributeFactory.h"
 #include "DoubleAttributeFactory.h"
 #include "StringAttributeFactory.h"
+#include "ListAttributeFactory.h"
 #include "Topology.h"
 
 #include <TopologicCore/include/IntAttribute.h>
 #include <TopologicCore/include/DoubleAttribute.h>
 #include <TopologicCore/include/StringAttribute.h>
+#include <TopologicCore/include/ListAttribute.h>
 #include <TopologicCore/include/AttributeManager.h>
 
 namespace Topologic
@@ -38,12 +40,13 @@ namespace Topologic
 			m_attributeFactoryDict->Add(gcnew String(TopologicCore::IntAttributeGUID::Get().c_str()), gcnew IntAttributeFactory());
 			m_attributeFactoryDict->Add(gcnew String(TopologicCore::DoubleAttributeGUID::Get().c_str()), gcnew DoubleAttributeFactory());
 			m_attributeFactoryDict->Add(gcnew String(TopologicCore::StringAttributeGUID::Get().c_str()), gcnew StringAttributeFactory());
+			m_attributeFactoryDict->Add(gcnew String(TopologicCore::ListAttributeGUID::Get().c_str()), gcnew ListAttributeFactory());
 		}
 
 		void AttributeFactoryManager::SetAttribute(Topology ^ topology, String ^ key, Object ^ value)
 		{
 			AttributeFactory^ attributeFactory = GetFactory(value);
-			Attribute^ attribute = attributeFactory->Create(key, value);
+			Attribute^ attribute = attributeFactory->Create(value);
 			std::string cppKey = msclr::interop::marshal_as<std::string>(key);
 			std::shared_ptr<TopologicCore::Topology> pCoreTopology =
 				TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());

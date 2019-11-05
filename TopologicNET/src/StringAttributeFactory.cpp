@@ -23,7 +23,7 @@ namespace Topologic
 {
 	namespace Attributes
 	{
-		Attribute^ StringAttributeFactory::Create(String ^ key, Object ^ value)
+		Attribute^ StringAttributeFactory::Create(Object ^ value)
 		{
 			String^ strValue = safe_cast<String^>(value);
 			std::string cppStrValue = msclr::interop::marshal_as<std::string>(strValue);

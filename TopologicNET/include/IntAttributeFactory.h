@@ -31,13 +31,12 @@ namespace Topologic
 			/// <summary>
 			/// Creates an Attribute from a key and a value.
 			/// </summary>
-			/// <param name="key">A key</param>
 			/// <param name="value">A value</param>
 			/// <returns name="Attribute">The created Attribute</returns>
 #ifdef TOPOLOGIC_DYNAMO
 			[IsVisibleInDynamoLibrary(false)]
 #endif
-			virtual Attribute^ Create(String^ key, Object^ value) override;
+			virtual Attribute^ Create(Object^ value) override;
 
 			/// <summary>
 			/// Checks the type of the value.

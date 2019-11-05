@@ -110,6 +110,9 @@
       <Filter>Geometries</Filter>
     </ClInclude>
     <ClInclude Include="include\Dictionary.h" />
+    <ClInclude Include="include\ListAttributeFactory.h">
+      <Filter>Attributes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\About.cpp" />
@@ -214,6 +217,9 @@
       <Filter>Geometries</Filter>
     </ClCompile>
     <ClCompile Include="src\Dictionary.cpp" />
+    <ClCompile Include="src\ListAttributeFactory.cpp">
+      <Filter>Attributes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Attributes">
