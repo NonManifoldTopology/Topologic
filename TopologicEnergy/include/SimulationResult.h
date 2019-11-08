@@ -30,59 +30,79 @@ namespace TopologicEnergy
 	public:
 
 		/// <summary>
-		/// 
+		/// Retrieves the simulation result from an energy simulation object.
 		/// </summary>
-		/// <param name="energySimulation"></param>
-		/// <param name="EPReportName"></param>
-		/// <param name="EPReportForString"></param>
-		/// <param name="EPTableName"></param>
-		/// <param name="EPColumnName"></param>
-		/// <param name="EPColumnName"></param>
-		/// <param name="EPUnits"></param>
-		/// <returns name="SimulationResult"></returns>
+		/// <param name="energySimulation">An energy simulation object</param>
+		/// <param name="EPReportName">An EPReportName label</param>
+		/// <param name="EPReportForString">An EPReportForString label</param>
+		/// <param name="EPTableName">An EPTableName label</param>
+		/// <param name="EPColumnName">An EPColumnName label</param>
+		/// <param name="EPUnits">An EPUnits label</param>
+		/// <returns name="SimulationResult">A simulation result object</returns>
 		static SimulationResult^ ByEnergySimulation(EnergySimulation^ energySimulation, String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPUnits);
 
 		/// <summary>
-		/// 
+		/// Draws a TopologicEnergy model using a list of colors
 		/// </summary>
-		/// <param name="energyModel"></param>
-		/// <param name="colors"></param>
-		/// <returns name="GeometryColor[]"></returns>
+		/// <param name="energyModel">A TopologicEnergy model</param>
+		/// <param name="colors">A list of colors</param>
+		/// <returns name="GeometryColor[]">A list of colored geometries</returns>
 		static List<Modifiers::GeometryColor^>^ Display(EnergyModel^ energyModel, List<DSCore::Color^>^ colors);
 
 		/// <summary>
-		/// This outputs the color range of the data. The first element is the colors, the second element is the normalised position within the spectrum. The colors are sorted by the values.
+		/// Outputs the color range of the data. The first element is the colors, the second element is the normalised position within the spectrum. The colors are sorted by the values.
 		/// </summary>
-		/// <param name="minDomain"></param>
-		/// <param name="maxDomain"></param>
-		/// <param name="count"></param>
-		/// <returns name="ColorRangeData"></returns>
+		/// <param name="minDomain">An optional minimum domain</param>
+		/// <param name="maxDomain">An optional maximum domain</param>
+		/// <param name="count">The number of sampled colors</param>
+		/// <returns name="int[][]">The color range</returns>
 		List<List<int>^>^ LegendRGB(
 			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Nullable<double> minDomain,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Nullable<double> maxDomain,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("10")] int count);
 
-
+		/// <summary>
+		/// Outputs the value range of the data.
+		/// </summary>
+		/// <param name="minDomain">An optional minimum domain</param>
+		/// <param name="maxDomain">An optional maximum domain</param>
+		/// <param name="count">The number of sampled values</param>
+		/// <returns name="double[]">The sampled values</returns>
 		List<double>^ LegendValues(
 			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Nullable<double> minDomain,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Nullable<double> maxDomain,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("10")] int count);
 
+		/// <summary>
+		/// Returns the names of the data.
+		/// </summary>
 		property List<String^>^ Names
 		{
 			List<String^>^ get();
 		}
 
+		/// <summary>
+		/// Returns the values of the data.
+		/// </summary>
 		property List<double>^ Values
 		{
 			List<double>^ get();
 		}
 
+		/// <summary>
+		/// Returns the domain of the data, represented by the minimum and maximum values.
+		/// </summary>
 		property List<double>^ Domain
 		{
 			List<double>^ get();
 		}
 
+		/// <summary>
+		/// Returns the colors associated to the values, with an optional input domain.
+		/// </summary>
+		/// <param name="minDomain">The</param>
+		/// <param name="maxDomain"></param>
+		/// <returns name="int[][]"></returns>
 		List<List<int>^>^ RGB(
 			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Nullable<double> minDomain, 
 			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Nullable<double> maxDomain);

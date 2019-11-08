@@ -16,6 +16,7 @@
 
 #include "AttributeManager.h"
 #include "Attribute.h"
+#include "ListAttribute.h"
 #include "Topology.h"
 
 #include <TopExp_Explorer.hxx>
@@ -98,25 +99,65 @@ namespace TopologicCore
 		m_occtShapeToAttributesMap.clear();
 	}
 
-	void AttributeManager::CopyAttributes(const TopoDS_Shape & rkOcctShape1, const TopoDS_Shape & rkOcctShape2)
+	void AttributeManager::CopyAttributes(const TopoDS_Shape& rkOcctOriginShape, const TopoDS_Shape& rkOcctDestinationShape, const bool addDuplicateEntries)
 	{
-		std::map<std::string, Attribute::Ptr> attributes;
-		bool isFound1 = FindAll(rkOcctShape1, attributes);
-		if (isFound1)
+		std::map<std::string, Attribute::Ptr> originAttributes;
+		bool doesOriginHaveDictionary = FindAll(rkOcctOriginShape, originAttributes);
+		if (!doesOriginHaveDictionary)
 		{
-			std::map<std::string, Attribute::Ptr> attributes2;
-			bool isFound2 = FindAll(rkOcctShape2, attributes2);
-			if (isFound2)
+			return;
+		}
+		
+		std::map<std::string, Attribute::Ptr> destinationAttributes;
+		bool doesDestinationHaveDictionary = FindAll(rkOcctDestinationShape, destinationAttributes);
+		if (doesDestinationHaveDictionary)
+		{
+			for(auto originAttribute : originAttributes)
 			{
-				for(auto keyValuePair : attributes)
+				// This mode will add values of the same keys into a list
+				if (addDuplicateEntries)
 				{
-					attributes2[keyValuePair.first] = keyValuePair.second;
+					// Does the key already exist in the destination's Dictionary?
+					auto destinationAttributeIterator = destinationAttributes.find(originAttribute.first);
+
+					// If yes (there is already an attribe), create a list
+					if (destinationAttributeIterator != destinationAttributes.end())
+					{
+						Attribute::Ptr oldDestinationAttribute = destinationAttributeIterator->second;
+							
+						// If a list, get the old list
+						ListAttribute::Ptr oldListAttribute = std::dynamic_pointer_cast<ListAttribute>(oldDestinationAttribute);
+						std::list<Attribute::Ptr> attributes;
+						if (oldListAttribute != nullptr)
+						{
+							attributes = oldListAttribute->ListValue();
+						}
+						else // get the old single value
+						{
+							attributes.push_back(oldDestinationAttribute);
+						}
+
+						attributes.push_back(originAttribute.second);
+						destinationAttributes[originAttribute.first] = std::make_shared<ListAttribute>(attributes);
+					}
+
+					// If not, assign the value from the origin
+					else
+					{
+						destinationAttributes[originAttribute.first] = originAttribute.second;
+					}
 				}
-				m_occtShapeToAttributesMap[rkOcctShape2] = attributes2;
-			}else
-			{
-				m_occtShapeToAttributesMap[rkOcctShape2] = std::map<std::string, Attribute::Ptr>(attributes);
+
+				// This mode will overwrite an old value with the same key
+				else
+				{
+					destinationAttributes[originAttribute.first] = originAttribute.second;
+				}
 			}
+			m_occtShapeToAttributesMap[rkOcctDestinationShape] = destinationAttributes;
+		}else
+		{
+			m_occtShapeToAttributesMap[rkOcctDestinationShape] = std::map<std::string, Attribute::Ptr>(originAttributes);
 		}
 	}
 

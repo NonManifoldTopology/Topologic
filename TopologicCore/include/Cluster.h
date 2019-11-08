@@ -59,6 +59,8 @@ namespace TopologicCore
 		/// <returns name="Cluster">The created Cluster</returns>
 		TOPOLOGIC_API static std::shared_ptr<Cluster> ByTopologies(const std::list<std::shared_ptr<Topology>>& rkTopologies);
 
+		static TopoDS_Compound ByOcctTopologies(const TopTools_MapOfShape& rkOcctShapes);
+
 		/// <summary>
 		/// Adds Topology to a Cluster and returns the resulting Topology.
 		/// </summary>

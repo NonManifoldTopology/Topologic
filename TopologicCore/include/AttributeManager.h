@@ -54,7 +54,7 @@ namespace TopologicCore
 
 		TOPOLOGIC_API void ClearAll();
 
-		TOPOLOGIC_API void CopyAttributes(const TopoDS_Shape& rkOcctShape1, const TopoDS_Shape& rkOcctShape2);
+		TOPOLOGIC_API void CopyAttributes(const TopoDS_Shape& rkOcctOriginShape, const TopoDS_Shape& rkOcctDestinationShape, const bool addDuplicateEntries = false);
 
 		TOPOLOGIC_API void DeepCopyAttributes(const TopoDS_Shape& rkOcctShape1, const TopoDS_Shape& rkOcctShape2);
 

@@ -58,6 +58,11 @@ namespace TopologicEnergy
 		: m_osModel(osModel)
 		, m_osSpaces(osSpaces)
 	{
+		if (oswPath == nullptr)
+		{
+			throw gcnew Exception("The input oswPath must not be null.");
+		}
+
 		OpenStudio::Space^ osSpace = osSpaces[0];
 		System::String^ directory = System::IO::Path::GetDirectoryName(oswPath);
 		System::String^ sqlPath = directory + "\\run\\eplusout.sql";

@@ -15,6 +15,9 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 #include <msclr/marshal_cppstd.h>
+#ifdef max
+#undef max
+#endif
 
 #include "AttributeFactoryManager.h"
 #include "AttributeFactory.h"

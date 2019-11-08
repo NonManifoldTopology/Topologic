@@ -29,13 +29,13 @@ namespace TopologicEnergy
 	public:
 
 		/// <summary>
-		/// 
+		/// Runs an energy simulation using an input TopologicEnergy model.
 		/// </summary>
-		/// <param name="energyModel"></param>
-		/// <param name="openStudioExePath"></param>
-		/// <param name="openStudioOutputDirectory"></param>
-		/// <param name="run"></param>
-		/// <returns name="EnergySimulation"></returns>
+		/// <param name="energyModel">A TopologicEnergy model</param>
+		/// <param name="openStudioExePath">The path to the OpenStudio executable file</param>
+		/// <param name="openStudioOutputDirectory">The output OpenStudio path</param>
+		/// <param name="run">Set to True to perform the analysis, otherwise the analysis is not run</param>
+		/// <returns name="EnergySimulation">An energy simulation object</returns>
 		static EnergySimulation^ ByEnergyModel(EnergyModel^ energyModel, String^ openStudioExePath, String ^ openStudioOutputDirectory, bool run);
 
 	public protected:

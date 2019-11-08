@@ -25,6 +25,11 @@ namespace TopologicEnergy
 {
 	bool EnergyModel::CreateIdfFile(OpenStudio::Model^ osModel, String^ idfPathName)
 	{
+		if (idfPathName == nullptr)
+		{
+			throw gcnew Exception("The input idfPathName must not be null.");
+		}
+
 		OpenStudio::EnergyPlusForwardTranslator^ osForwardTranslator = gcnew OpenStudio::EnergyPlusForwardTranslator();
 		OpenStudio::Workspace^ osWorkspace = osForwardTranslator->translateModel(osModel);
 		OpenStudio::IdfFile^ osIdfFile = osWorkspace->toIdfFile();
@@ -46,7 +51,7 @@ namespace TopologicEnergy
 		double heatingTemp,
 		String^ weatherFilePath,
 		String^ designDayFilePath,
-		String^ openStudioTemplatePath//,
+		String^ openStudioTemplatePath
 	)
 	{
 		numOfApertures = 0;
@@ -121,7 +126,17 @@ namespace TopologicEnergy
 
 	EnergyModel ^ EnergyModel::Import(String ^ osmFile, double tolerance)
 	{
-		OpenStudio::Path^ osOsmFile = OpenStudio::OpenStudioUtilitiesCore::toPath(osmFile);// gcnew OpenStudio::Path(osmFile);
+		if (osmFile == nullptr)
+		{
+			throw gcnew Exception("The input osmFile must not be null.");
+		}
+
+		if (tolerance <= 0.0)
+		{
+			throw gcnew Exception("The tolerance must have a positive value.");
+		}
+
+		OpenStudio::Path^ osOsmFile = OpenStudio::OpenStudioUtilitiesCore::toPath(osmFile);
 
 		// Create an abstract model
 		OpenStudio::OptionalModel^ osOptionalModel = OpenStudio::Model::load(osOsmFile);
@@ -248,6 +263,11 @@ namespace TopologicEnergy
 
 	bool EnergyModel::SaveModel(OpenStudio::Model^ osModel, String^ osmPathName)
 	{
+		if (osmPathName == nullptr)
+		{
+			throw gcnew Exception("The input osmPathName must not be null.");
+		}
+
 		// Purge unused resources
 		osModel->purgeUnusedResourceObjects();
 
@@ -259,6 +279,26 @@ namespace TopologicEnergy
 
 	OpenStudio::Model^ EnergyModel::GetModelFromTemplate(String^ osmTemplatePath, String^ epwWeatherPath, String^ ddyPath)
 	{
+		if (osmTemplatePath == nullptr)
+		{
+			throw gcnew Exception("The input osmTemplatePath must not be null.");
+		}
+
+		if (epwWeatherPath == nullptr)
+		{
+			throw gcnew Exception("The input epwWeatherPath must not be null.");
+		}
+
+		if (ddyPath == nullptr)
+		{
+			throw gcnew Exception("The input ddyPath must not be null.");
+		}
+
+		if (osmTemplatePath == nullptr)
+		{
+			throw gcnew Exception("The input osmTemplatePath must not be null.");
+		}
+
 		if (!File::Exists(osmTemplatePath))
 		{
 			throw gcnew FileNotFoundException("OSM file not found.");
@@ -271,14 +311,14 @@ namespace TopologicEnergy
 		{
 			throw gcnew FileNotFoundException("DDY file not found.");
 		}
-		OpenStudio::Path^ osTemplatePath = OpenStudio::OpenStudioUtilitiesCore::toPath(osmTemplatePath);// gcnew OpenStudio::Path(osmTemplatePath);
+		OpenStudio::Path^ osTemplatePath = OpenStudio::OpenStudioUtilitiesCore::toPath(osmTemplatePath);
 
 		// Create an abstract model
 		OpenStudio::OptionalModel^ osOptionalModel = OpenStudio::Model::load(osTemplatePath);
 		OpenStudio::Model^ osModel = osOptionalModel->__ref__();
 
 		// Read an EPW weather file
-		OpenStudio::Path^ osEPWPath = OpenStudio::OpenStudioUtilitiesCore::toPath(epwWeatherPath);// gcnew OpenStudio::Path(epwWeatherPath);
+		OpenStudio::Path^ osEPWPath = OpenStudio::OpenStudioUtilitiesCore::toPath(epwWeatherPath);
 		OpenStudio::EpwFile^ osEPWFile = gcnew OpenStudio::EpwFile(osEPWPath);
 		OpenStudio::WeatherFile^ osWeatherFile = osModel->getWeatherFile();
 		OpenStudio::WeatherFile::setWeatherFile(osModel, osEPWFile);
@@ -404,6 +444,11 @@ namespace TopologicEnergy
 
 	OpenStudio::SqlFile^ EnergyModel::CreateSqlFile(OpenStudio::Model ^ osModel, String^ sqlFilePath)
 	{
+		if (sqlFilePath == nullptr)
+		{
+			throw gcnew Exception("The input sqlFilePath must not be null.");
+		}
+
 		OpenStudio::Path^ osSqlFilePath = OpenStudio::OpenStudioUtilitiesCore::toPath(sqlFilePath);
 		OpenStudio::SqlFile^ osSqlFile = gcnew OpenStudio::SqlFile(osSqlFilePath);
 		if (osSqlFile == nullptr)
@@ -1146,6 +1191,41 @@ namespace TopologicEnergy
 		}
 
 		return 0;
+	}
+
+	void EnergyModel::ExportTogbXML(EnergyModel^ energyModel, String ^ gbXMLPath)
+	{
+		if (gbXMLPath == nullptr)
+		{
+			throw gcnew Exception("The input gbXMLPath must not be null.");
+		}
+
+		if (energyModel == nullptr)
+		{
+			throw gcnew Exception("The input energy model is null.");
+		}
+
+		OpenStudio::Model^ osModel = energyModel->OsModel;
+		OpenStudio::GbXMLForwardTranslator^ osForwardTranslator = gcnew OpenStudio::GbXMLForwardTranslator();
+		OpenStudio::Path^ osPath = OpenStudio::OpenStudioUtilitiesCore::toPath(gbXMLPath);
+		bool success = osForwardTranslator->modelToGbXML(osModel, osPath);
+		OpenStudio::LogMessageVector^ osErrors = osForwardTranslator->errors();
+		if (osErrors->Count > 0)
+		{
+			String^ errorMsg = gcnew String("Fails exporting OpenStudio model to GbXML with the following errors:\n");
+			int i = 0;
+			for each(auto osError in osErrors)
+			{
+				errorMsg += osError->logMessage();
+
+				if (i < osErrors->Count - 1)
+				{
+					errorMsg += "\n";
+				}
+				++i;
+			}
+			throw gcnew Exception(errorMsg);
+		}
 	}
 
 	List<int>^ EnergyModel::GetColor(double ratio)

@@ -66,6 +66,30 @@ namespace TopologicCore
 		return pCopyCluster;
 	}
 
+	TopoDS_Compound Cluster::ByOcctTopologies(const TopTools_MapOfShape & rkOcctShapes)
+	{
+		TopoDS_Compound occtCompound;
+		TopoDS_Builder occtBuilder;
+		occtBuilder.MakeCompound(occtCompound);
+		for (TopTools_MapIteratorOfMapOfShape occtShapeIterator(rkOcctShapes);
+			occtShapeIterator.More();
+			occtShapeIterator.Next())
+		{
+			try {
+				occtBuilder.Add(occtCompound, occtShapeIterator.Value());
+			}
+			catch (TopoDS_UnCompatibleShapes &)
+			{
+				throw std::exception("Error making a OCCT compound.");
+			}
+			catch (TopoDS_FrozenShape &)
+			{
+				throw std::exception("Error making a OCCT compound.");
+			}
+		}
+		return occtCompound;
+	}
+
 	// Use raw pointer because 1) called from the individual object, 2) does not need a smart pointer
 	bool Cluster::AddTopology(Topology const * const kpkTopology)
 	{

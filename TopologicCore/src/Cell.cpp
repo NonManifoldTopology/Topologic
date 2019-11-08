@@ -144,7 +144,6 @@ namespace TopologicCore
 			throw std::exception("The input Face list is empty.");
 		}
 
-
 		BOPAlgo_MakerVolume occtMakerVolume;
 		BOPCol_ListOfShape occtShapes;
 		for (const Face::Ptr& kpFace : rkFaces)

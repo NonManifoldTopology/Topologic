@@ -85,6 +85,10 @@ namespace TopologicEnergy
 		int i = 0;
 		for each(OpenStudio::Space^ space in energySimulation->OsSpaces)
 		{
+			if (space == nullptr)
+			{
+				throw gcnew Exception("The energy simulation result contains a null space.");
+			}
 			++i;
 			OpenStudio::OptionalString^ osSpaceName = space->name();
 			String^ spaceName = osSpaceName->get();

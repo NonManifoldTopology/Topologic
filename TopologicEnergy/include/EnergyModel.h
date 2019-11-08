@@ -40,21 +40,20 @@ namespace TopologicEnergy
 		/// <summary>
 		/// Create a TopologicEnergy model from a Topologic shape.
 		/// </summary>
-		/// <param name="building"></param>
-		/// <param name="shadingSurfaces"></param>
-		/// <param name="floorLevels"></param>
-		/// <param name="buildingName"></param>
-		/// <param name="buildingType"></param>
-		/// <param name="defaultSpaceType"></param>
-		/// <param name="northAxis">Specify the angle at the north axis in degrees, with 0 signifying positive Y-axis. Positve values indivate a counter-clockwise rotation.</param>
-		/// <param name="glazingRatio"></param>
-		/// <param name="coolingTemp"></param>
-		/// <param name="heatingTemp"></param>
+		/// <param name="building">The building as a CellComplex</param>
+		/// <param name="shadingSurfaces">The shading surfaces as a Cluster of Faces</param>
+		/// <param name="floorLevels">The number of floor levels</param>
+		/// <param name="buildingName">The building's name</param>
+		/// <param name="buildingType">The building's type</param>
+		/// <param name="defaultSpaceType">The default space type</param>
+		/// <param name="northAxis">Specify the angle at the north axis in degrees, with 0 signifying positive Y-axis. Positive values indivate a counter-clockwise rotation.</param>
+		/// <param name="glazingRatio">The optional glazing ratio. If not provided, the Apertures on the Faces will be used.</param>
+		/// <param name="coolingTemp">The cooling temperature</param>
+		/// <param name="heatingTemp">The heating temperature</param>
 		/// <param name="weatherFilePath">Path to a .epw file</param>
 		/// <param name="designDayFilePath">Path to a .ddy file</param>
 		/// <param name="openStudioTemplatePath">Path to a template .osm file</param>
-		////// <param name="openStudioOutputPath">Path to an output .osm file. Timestamp will be added to the path.</param>
-		/// <returns name="energyModel"></returns>
+		/// <returns name="energyModel">A TopologicEnergy model</returns>
 		static EnergyModel^ ByCellComplex(
 			CellComplex^ building,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Cluster^ shadingSurfaces,
@@ -71,14 +70,36 @@ namespace TopologicEnergy
 			[Autodesk::DesignScript::Runtime::DefaultArgument(".\\TopologicEnergy-files\\MinimalTemplate120.osm")] String^ openStudioTemplatePath
 			);
 
+		/// <summary>
+		/// Exports a TopologicEnergy model to a .osm file using the model's name.
+		/// </summary>
+		/// <param name="energyModel">A TopologicEnergy model</param>
+		/// <param name="openStudioOutputDirectory">The output path</param>
+		/// <returns name="bool">True if a .osm file can be created, otherwise False</returns>
 		static bool Export(EnergyModel^ energyModel, String^ openStudioOutputDirectory);
 		
+		/// <summary>
+		/// Imports an .osm file into a TopologicEnergy model
+		/// </summary>
+		/// <param name="osmFile">The .osm file</param>
+		/// <param name="tolerance">A positive tolerance value</param>
+		/// <returns name="EnergyModel">A TopologicEnergy model</returns>
 		static EnergyModel^ Import(String^ osmFile, [Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")] double tolerance);
 
+		/// <summary>
+		/// Returns the Topology of this TopologicEnergy model.
+		/// </summary>
 		property List<Topologic::Cell^>^ Topology
 		{
 			List<Topologic::Cell^>^ get();
 		}
+
+		/// <summary>
+		/// Exports a TopologicEnergy model to a gbXML file.
+		/// </summary>
+		/// <param name="energyModel">A TopologicEnergy model</param>
+		/// <param name="gbXMLPath">The output gbXML file path</param>
+		static void ExportTogbXML(EnergyModel^ energyModel, String^ gbXMLPath);
 
 	public protected:
 		static List<int>^ GetColor(double ratio);

@@ -122,7 +122,7 @@ namespace TopologicUtilities
 				return occtDistance.Value();
 			}
 		}
-		catch (...)
+		catch (const std::exception&)
 		{
 			return std::numeric_limits<double>::max();
 		}

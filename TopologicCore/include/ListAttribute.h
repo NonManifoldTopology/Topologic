@@ -38,7 +38,7 @@ namespace TopologicCore
 
 		TOPOLOGIC_API ListAttribute(const std::list<Attribute::Ptr>& rkAttributes);
 		virtual void* Value();
-		std::list<Attribute::Ptr>& ListValue() { return m_value; }
+		//std::list<Attribute::Ptr>& ListValue() { return m_value; }
 		const std::list<Attribute::Ptr>& ListValue() const { return m_value; }
 
 	protected:

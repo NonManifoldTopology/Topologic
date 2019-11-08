@@ -35,6 +35,7 @@
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 #include <TopTools_MapOfShape.hxx>
 
+#include <limits>
 #include <list>
 #include <vector>
 #include <map>
@@ -562,7 +563,18 @@ namespace TopologicCore
 		/// <returns></returns>
 		TOPOLOGIC_API Topology::Ptr SelectSubtopology(const std::shared_ptr<Vertex>& kpSelector, const int kTypeFilter = TOPOLOGY_ALL) const;
 
-		static TopoDS_Shape SelectSubtopology(const TopoDS_Shape& rkOcctShape, const TopoDS_Shape& rkOcctSelectorShape, const int kTypeFilter = TOPOLOGY_ALL);
+		static TopoDS_Shape SelectSubtopology(
+			const TopoDS_Shape& rkOcctShape, 
+			const TopoDS_Shape& rkOcctSelectorShape, 
+			const int kTypeFilter = TOPOLOGY_ALL, 
+			const double kDistanceThreshold = std::numeric_limits<double>::max());
+
+		static TopoDS_Shape SelectSubtopology(
+			const TopoDS_Shape& rkOcctShape,
+			const TopoDS_Shape& rkOcctSelectorShape,
+			double& rMinDistance,
+			const int kTypeFilter = TOPOLOGY_ALL,
+			const double kDistanceThreshold = std::numeric_limits<double>::max());
 
 		/// <summary>
 		/// 

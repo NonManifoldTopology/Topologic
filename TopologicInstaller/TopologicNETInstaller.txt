@@ -58,7 +58,6 @@ SectionGroup "TopologicCore" SectionGroupTopologicCore
   Section "Library" SectionTopologicCore
     SetOutPath "$INSTDIR"
     File ..\output\x64\Release\TopologicCore.dll
-    File ..\output\x64\Release\license.file
   SectionEnd 
 
   Section "Open CASCADE Technology 7.2.0" SectionOCCT

@@ -67,7 +67,8 @@ namespace TopologicCore
 				for (const Vertex::Ptr& kpVertex : vertices)
 				{
 					std::list<Edge::Ptr> adjacentEdges;
-					kpVertex->Edges(adjacentEdges);
+					//kpVertex->Edges(adjacentEdges);
+					TopologicUtilities::VertexUtility::AdjacentEdges(kpVertex, this, adjacentEdges);
 
 					if (adjacentEdges.size() == 1)
 					{
