@@ -42,9 +42,9 @@ namespace TopologicEnergy
 		static SimulationResult^ ByEnergySimulation(EnergySimulation^ energySimulation, String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPUnits);
 
 		/// <summary>
-		/// Draws a TopologicEnergy model using a list of colors
+		/// Draws an EnergyModel using a list of colors
 		/// </summary>
-		/// <param name="energyModel">A TopologicEnergy model</param>
+		/// <param name="energyModel">An EnergyModel</param>
 		/// <param name="colors">A list of colors</param>
 		/// <returns name="GeometryColor[]">A list of colored geometries</returns>
 		static List<Modifiers::GeometryColor^>^ Display(EnergyModel^ energyModel, List<DSCore::Color^>^ colors);

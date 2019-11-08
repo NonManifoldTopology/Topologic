@@ -390,16 +390,16 @@ namespace Topologic
 		/// <summary>
 		/// Exports a Topology to a BRep file (.brep).
 		/// </summary>
-		/// <param name="path">The path to the BRep file</param>
+		/// <param name="filePath">The file to export the Topology to</param>
 		/// <returns name="bool">True if the BRep file is succesffully created, otherwise false</returns>
-		bool ExportToBRep(String^ path);
+		bool ExportToBRep(String^ filePath);
 
 		/// <summary>
 		/// Imports a Topology from a BRep file (.brep).
 		/// </summary>
-		/// <param name="path">The path to the BRep file</param>
+		/// <param name="filePath">The file to export the Topology to</param>
 		/// <returns name="Topology">The loaded Topology</returns>
-		static Topology^ ByImportedBRep(String^ path);
+		static Topology^ ByImportedBRep(String^ filePath);
 
 		/// <summary>
 		/// Prints the topological information of a Topology.

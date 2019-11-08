@@ -1161,16 +1161,16 @@ namespace TopologicCore
 		return ContextManager::GetInstance().Find(rkOcctShape, rContexts);
 	}
 
-	bool Topology::ExportToBRep(const std::string & rkPath) const
+	bool Topology::ExportToBRep(const std::string & rkFilePath) const
 	{
-		return BRepTools::Write(GetOcctShape(), rkPath.c_str());;
+		return BRepTools::Write(GetOcctShape(), rkFilePath.c_str());;
 	}
 
-	Topology::Ptr Topology::ByImportedBRep(const std::string & rkPath)
+	Topology::Ptr Topology::ByImportedBRep(const std::string & rkFilePath)
 	{
 		TopoDS_Shape occtShape;
 		BRep_Builder occtBRepBuilder;
-		bool returnValue = BRepTools::Read(occtShape, rkPath.c_str(), occtBRepBuilder);
+		bool returnValue = BRepTools::Read(occtShape, rkFilePath.c_str(), occtBRepBuilder);
 		Topology::Ptr pTopology = Topology::ByOcctShape(occtShape, "");
 
 		GlobalCluster::GetInstance().AddTopology(pTopology);

@@ -252,9 +252,9 @@ namespace Topologic
 		return pCoreTopology->ExportToBRep(cppPath);
 	}
 
-	Topology^ Topology::ByImportedBRep(String^ path)
+	Topology^ Topology::ByImportedBRep(String^ filePath)
 	{
-		std::string cppPath = msclr::interop::marshal_as<std::string>(path);
+		std::string cppPath = msclr::interop::marshal_as<std::string>(filePath);
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::Topology::ByImportedBRep(cppPath);
 		Topology^ pTopology = Topology::ByCoreTopology(pCoreTopology);
 		return pTopology;

@@ -38,7 +38,7 @@ namespace TopologicEnergy
 	public:
 
 		/// <summary>
-		/// Create a TopologicEnergy model from a Topologic shape.
+		/// Create an EnergyModel from a Topologic shape.
 		/// </summary>
 		/// <param name="building">The building as a CellComplex</param>
 		/// <param name="shadingSurfaces">The shading surfaces as a Cluster of Faces</param>
@@ -53,7 +53,7 @@ namespace TopologicEnergy
 		/// <param name="weatherFilePath">Path to a .epw file</param>
 		/// <param name="designDayFilePath">Path to a .ddy file</param>
 		/// <param name="openStudioTemplatePath">Path to a template .osm file</param>
-		/// <returns name="energyModel">A TopologicEnergy model</returns>
+		/// <returns name="energyModel">An EnergyModel</returns>
 		static EnergyModel^ ByCellComplex(
 			CellComplex^ building,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Cluster^ shadingSurfaces,
@@ -71,23 +71,23 @@ namespace TopologicEnergy
 			);
 
 		/// <summary>
-		/// Exports a TopologicEnergy model to a .osm file using the model's name.
+		/// Exports an EnergyModel to a .osm file.
 		/// </summary>
-		/// <param name="energyModel">A TopologicEnergy model</param>
-		/// <param name="openStudioOutputDirectory">The output path</param>
+		/// <param name="energyModel">An EnergyModel</param>
+		/// <param name="filePath">The file to export the EnergyModel to</param>
 		/// <returns name="bool">True if a .osm file can be created, otherwise False</returns>
-		static bool Export(EnergyModel^ energyModel, String^ openStudioOutputDirectory);
+		static bool ExportToOSM(EnergyModel^ energyModel, String^ filePath);
 		
 		/// <summary>
-		/// Imports an .osm file into a TopologicEnergy model
+		/// Imports an .osm file into an EnergyModel
 		/// </summary>
-		/// <param name="osmFile">The .osm file</param>
+		/// <param name="osmFile">The file to import the EnergyModel from</param>
 		/// <param name="tolerance">A positive tolerance value</param>
-		/// <returns name="EnergyModel">A TopologicEnergy model</returns>
-		static EnergyModel^ Import(String^ osmFile, [Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")] double tolerance);
+		/// <returns name="EnergyModel">An EnergyModel</returns>
+		static EnergyModel^ ByImportedOSM(String^ osmFile, [Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")] double tolerance);
 
 		/// <summary>
-		/// Returns the Topology of this TopologicEnergy model.
+		/// Returns the Topology of this EnergyModel.
 		/// </summary>
 		property List<Topologic::Cell^>^ Topology
 		{
@@ -95,11 +95,11 @@ namespace TopologicEnergy
 		}
 
 		/// <summary>
-		/// Exports a TopologicEnergy model to a gbXML file.
+		/// Exports an EnergyModel to a gbXML file.
 		/// </summary>
-		/// <param name="energyModel">A TopologicEnergy model</param>
-		/// <param name="gbXMLPath">The output gbXML file path</param>
-		static void ExportTogbXML(EnergyModel^ energyModel, String^ gbXMLPath);
+		/// <param name="energyModel">An EnergyModel</param>
+		/// <param name="filePath">The file to export the EnergyModel to</param>
+		static bool ExportTogbXML(EnergyModel^ energyModel, String^ filePath);
 
 	public protected:
 		static List<int>^ GetColor(double ratio);

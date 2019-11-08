@@ -118,13 +118,17 @@ namespace TopologicEnergy
 		return gcnew EnergyModel(osModel, osBuilding, pBuildingCells, shadingSurfaces, osSpaceVector);
 	}
 
-	bool EnergyModel::Export(EnergyModel ^ energyModel, String ^ openStudioOutputDirectory)
+	bool EnergyModel::ExportToOSM(EnergyModel ^ energyModel, String^ filePath)
 	{
-		String^ oswPath = nullptr;
-		return Export(energyModel, openStudioOutputDirectory, oswPath);
+		if (filePath == nullptr)
+		{
+			throw gcnew Exception("The input filePath must not be null.");
+		}
+
+		return SaveModel(energyModel->m_osModel, filePath);
 	}
 
-	EnergyModel ^ EnergyModel::Import(String ^ osmFile, double tolerance)
+	EnergyModel ^ EnergyModel::ByImportedOSM(String ^ osmFile, double tolerance)
 	{
 		if (osmFile == nullptr)
 		{
@@ -1193,9 +1197,9 @@ namespace TopologicEnergy
 		return 0;
 	}
 
-	void EnergyModel::ExportTogbXML(EnergyModel^ energyModel, String ^ gbXMLPath)
+	bool EnergyModel::ExportTogbXML(EnergyModel^ energyModel, String ^ filePath)
 	{
-		if (gbXMLPath == nullptr)
+		if (filePath == nullptr)
 		{
 			throw gcnew Exception("The input gbXMLPath must not be null.");
 		}
@@ -1207,7 +1211,7 @@ namespace TopologicEnergy
 
 		OpenStudio::Model^ osModel = energyModel->OsModel;
 		OpenStudio::GbXMLForwardTranslator^ osForwardTranslator = gcnew OpenStudio::GbXMLForwardTranslator();
-		OpenStudio::Path^ osPath = OpenStudio::OpenStudioUtilitiesCore::toPath(gbXMLPath);
+		OpenStudio::Path^ osPath = OpenStudio::OpenStudioUtilitiesCore::toPath(filePath);
 		bool success = osForwardTranslator->modelToGbXML(osModel, osPath);
 		OpenStudio::LogMessageVector^ osErrors = osForwardTranslator->errors();
 		if (osErrors->Count > 0)
@@ -1226,6 +1230,8 @@ namespace TopologicEnergy
 			}
 			throw gcnew Exception(errorMsg);
 		}
+
+		return true;
 	}
 
 	List<int>^ EnergyModel::GetColor(double ratio)

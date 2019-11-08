@@ -117,7 +117,6 @@ namespace TopologicUtilities
 			}
 			else
 			{
-
 				BRepExtrema_DistShapeShape occtDistance(kpVertex->GetOcctShape(), kpFace->GetOcctShape(), Extrema_ExtFlag_MINMAX);
 				return occtDistance.Value();
 			}
