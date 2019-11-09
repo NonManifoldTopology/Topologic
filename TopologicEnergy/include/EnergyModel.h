@@ -81,10 +81,10 @@ namespace TopologicEnergy
 		/// <summary>
 		/// Imports an .osm file into an EnergyModel
 		/// </summary>
-		/// <param name="osmFile">The file to import the EnergyModel from</param>
+		/// <param name="filePath">The file to import the EnergyModel from</param>
 		/// <param name="tolerance">A positive tolerance value</param>
 		/// <returns name="EnergyModel">An EnergyModel</returns>
-		static EnergyModel^ ByImportedOSM(String^ osmFile, [Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")] double tolerance);
+		static EnergyModel^ ByImportedOSM(String^ filePath, [Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")] double tolerance);
 
 		/// <summary>
 		/// Returns the Topology of this EnergyModel.
@@ -99,7 +99,16 @@ namespace TopologicEnergy
 		/// </summary>
 		/// <param name="energyModel">An EnergyModel</param>
 		/// <param name="filePath">The file to export the EnergyModel to</param>
+		/// <returns name="bool">True if a .gbXML file can be created, otherwise False</returns>
 		static bool ExportTogbXML(EnergyModel^ energyModel, String^ filePath);
+
+		/// <summary>
+		/// Imports a .gbXML file into an EnergyModel
+		/// </summary>
+		/// <param name="filePath">The file to import the EnergyModel from</param>
+		/// <param name="tolerance">A positive tolerance value</param>
+		/// <returns name="EnergyModel">An EnergyModel</returns>
+		static EnergyModel^ ByImportedgbXML(String^ filePath, [Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")] double tolerance);
 
 	public protected:
 		static List<int>^ GetColor(double ratio);
@@ -220,6 +229,14 @@ namespace TopologicEnergy
 		static OpenStudio::SqlFile^ CreateSqlFile(OpenStudio::Model^ osModel, String^ sqlFilePath);
 
 		static Topologic::Face^ FaceByOsSurface(OpenStudio::PlanarSurface^ osPlanarSurface);
+
+		static void EnergyModel::ProcessOsModel(
+			OpenStudio::Model^ osModel, 
+			[Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")] double tolerance,
+			OpenStudio::Building^% osBuilding,
+			List<Cell^>^% buildingCells,
+			Topologic::Cluster^% shadingFaces,
+			OpenStudio::SpaceVector^% osSpaceVector);
 
 		static List<OpenStudio::BuildingStory^>^ buildingStories;
 		static OpenStudio::DefaultConstructionSet^ defaultConstructionSet;

@@ -128,35 +128,16 @@ namespace TopologicEnergy
 		return SaveModel(energyModel->m_osModel, filePath);
 	}
 
-	EnergyModel ^ EnergyModel::ByImportedOSM(String ^ osmFile, double tolerance)
+	void EnergyModel::ProcessOsModel(
+		OpenStudio::Model^ osModel, 
+		double tolerance, 
+		OpenStudio::Building^% osBuilding,
+		List<Cell^>^% buildingCells,
+		Topologic::Cluster^% shadingFaces,
+		OpenStudio::SpaceVector^% osSpaceVector)
 	{
-		if (osmFile == nullptr)
-		{
-			throw gcnew Exception("The input osmFile must not be null.");
-		}
-
-		if (tolerance <= 0.0)
-		{
-			throw gcnew Exception("The tolerance must have a positive value.");
-		}
-
-		OpenStudio::Path^ osOsmFile = OpenStudio::OpenStudioUtilitiesCore::toPath(osmFile);
-
-		// Create an abstract model
-		OpenStudio::OptionalModel^ osOptionalModel = OpenStudio::Model::load(osOsmFile);
-		if (osOptionalModel->isNull())
-		{
-			return nullptr;
-		}
-
-		OpenStudio::Model^ osModel = osOptionalModel->get(); //1
-		if (osModel == nullptr)
-		{
-			return nullptr;
-		}
-
-		OpenStudio::Building^ osBuilding = osModel->getBuilding(); // 2
-		OpenStudio::SpaceVector^ osSpaceVector = osModel->getSpaces(); // 3
+		osBuilding = osModel->getBuilding(); // 2
+		osSpaceVector = osModel->getSpaces(); // 3
 		OpenStudio::SpaceVector::SpaceVectorEnumerator^ spaceEnumerator = osSpaceVector->GetEnumerator();
 		List<OpenStudio::Space^>^ osSpaces = gcnew List<OpenStudio::Space^>();
 		while (spaceEnumerator->MoveNext())
@@ -175,7 +156,7 @@ namespace TopologicEnergy
 			Face^ shadingFace = FaceByOsSurface(osShadingSurface);
 			shadingFaceList->Add(shadingFace);
 		}
-		Topologic::Cluster^ shadingFaces = nullptr;
+		
 		if (shadingFaceList->Count > 0)
 		{
 			shadingFaces = Topologic::Cluster::ByTopologies(shadingFaceList);
@@ -207,7 +188,7 @@ namespace TopologicEnergy
 			{
 				OpenStudio::Surface^ osSurface = osSurfaceEnumerator->Current;
 				Face^ face = FaceByOsSurface(osSurface);
-				
+
 				// Subsurfaces
 				OpenStudio::SubSurfaceVector^ osSubSurfaces = osSurface->subSurfaces();
 				if (osSubSurfaces->Count > 0)
@@ -242,14 +223,14 @@ namespace TopologicEnergy
 
 			Topologic::Topology^ transformedTopology = Topologic::Utilities::TopologyUtility::Transform(cell,
 				osTranslation->x(), osTranslation->y(), osTranslation->z(),
-				rotation11, rotation12, rotation13, 
-				rotation21, rotation22, rotation23, 
+				rotation11, rotation12, rotation13,
+				rotation21, rotation22, rotation23,
 				rotation31, rotation32, rotation33);
 			Cell^ transformedCell = safe_cast<Topologic::Cell^>(transformedTopology);
 			cellList->Add(transformedCell);
 		}
 
-		List<Topologic::Cell^>^ buildingCells = gcnew List<Topologic::Cell^>();
+		buildingCells = gcnew List<Topologic::Cell^>();
 		if (cellList->Count == 1)
 		{
 			buildingCells->Add(cellList[0]);
@@ -259,6 +240,40 @@ namespace TopologicEnergy
 			CellComplex^ cellComplex = CellComplex::ByCells(cellList);
 			buildingCells = cellComplex->Cells;
 		}
+	}
+
+	EnergyModel ^ EnergyModel::ByImportedOSM(String ^ filePath, double tolerance)
+	{
+		if (filePath == nullptr)
+		{
+			throw gcnew Exception("The input filePath must not be null.");
+		}
+
+		if (tolerance <= 0.0)
+		{
+			throw gcnew Exception("The tolerance must have a positive value.");
+		}
+
+		OpenStudio::Path^ osOsmFile = OpenStudio::OpenStudioUtilitiesCore::toPath(filePath);
+
+		// Create an abstract model
+		OpenStudio::OptionalModel^ osOptionalModel = OpenStudio::Model::load(osOsmFile);
+		if (osOptionalModel->isNull())
+		{
+			return nullptr;
+		}
+
+		OpenStudio::Model^ osModel = osOptionalModel->get(); //1
+		if (osModel == nullptr)
+		{
+			return nullptr;
+		}
+
+		OpenStudio::Building^ osBuilding = nullptr;
+		List<Cell^>^ buildingCells = nullptr;
+		Cluster^ shadingFaces = nullptr;
+		OpenStudio::SpaceVector^ osSpaceVector = nullptr;
+		ProcessOsModel(osModel, tolerance, osBuilding, buildingCells, shadingFaces, osSpaceVector);
 
 		EnergyModel^ energyModel = gcnew EnergyModel(osModel, osBuilding, buildingCells, shadingFaces, osSpaceVector);
 
@@ -1201,7 +1216,7 @@ namespace TopologicEnergy
 	{
 		if (filePath == nullptr)
 		{
-			throw gcnew Exception("The input gbXMLPath must not be null.");
+			throw gcnew Exception("The input filePath must not be null.");
 		}
 
 		if (energyModel == nullptr)
@@ -1216,7 +1231,7 @@ namespace TopologicEnergy
 		OpenStudio::LogMessageVector^ osErrors = osForwardTranslator->errors();
 		if (osErrors->Count > 0)
 		{
-			String^ errorMsg = gcnew String("Fails exporting OpenStudio model to GbXML with the following errors:\n");
+			String^ errorMsg = gcnew String("Fails exporting an EnergyModel to GbXML with the following errors:\n");
 			int i = 0;
 			for each(auto osError in osErrors)
 			{
@@ -1232,6 +1247,57 @@ namespace TopologicEnergy
 		}
 
 		return true;
+	}
+
+	EnergyModel^ EnergyModel::ByImportedgbXML(String ^ filePath, double tolerance)
+	{
+		if (filePath == nullptr)
+		{
+			throw gcnew Exception("The input filePath must not be null.");
+		}
+
+		if (tolerance <= 0.0)
+		{
+			throw gcnew Exception("The tolerance must have a positive value.");
+		}
+
+		OpenStudio::GbXMLReverseTranslator^ osReverseTranslator = gcnew OpenStudio::GbXMLReverseTranslator();
+		OpenStudio::Path^ osPath = OpenStudio::OpenStudioUtilitiesCore::toPath(filePath);
+		OpenStudio::OptionalModel^ osOptionalModel = osReverseTranslator->loadModel(osPath);
+		if (osOptionalModel->isNull())
+		{
+			throw gcnew Exception("The imported gbXML yields a null OpenStudio Model.");
+		}
+		OpenStudio::Model^ osModel = osOptionalModel->get();
+
+		OpenStudio::LogMessageVector^ osErrors = osReverseTranslator->errors();
+		if (osErrors->Count > 0)
+		{
+			String^ errorMsg = gcnew String("Fails importing an OpenStudio model from GbXML with the following errors:\n");
+			int i = 0;
+			for each(auto osError in osErrors)
+			{
+				errorMsg += osError->logMessage();
+
+				if (i < osErrors->Count - 1)
+				{
+					errorMsg += "\n";
+				}
+				++i;
+			}
+			throw gcnew Exception(errorMsg);
+		}
+
+
+		OpenStudio::Building^ osBuilding = nullptr;
+		List<Cell^>^ buildingCells = nullptr;
+		Cluster^ shadingFaces = nullptr;
+		OpenStudio::SpaceVector^ osSpaceVector = nullptr;
+		ProcessOsModel(osModel, tolerance, osBuilding, buildingCells, shadingFaces, osSpaceVector);
+
+		EnergyModel^ energyModel = gcnew EnergyModel(osModel, osBuilding, buildingCells, shadingFaces, osSpaceVector);
+
+		return energyModel;
 	}
 
 	List<int>^ EnergyModel::GetColor(double ratio)

@@ -1021,9 +1021,11 @@ namespace TopologicCore
 				// Find the member in originTopology
 				TopoDS_Shape occtDestinationMemberCenterOfMass = Topology::CenterOfMass(occtDestinationMember);
 				double minDistance1 = 0.0;
-				TopoDS_Shape occtOriginMember1 = Topology::SelectSubtopology(occtOriginShape1, occtDestinationMemberCenterOfMass, minDistance1, topologyTypes[i], 0.0001);
+				TopoDS_Shape occtOriginMember1 = Topology::SelectSubtopology(
+					occtOriginShape1, occtDestinationMemberCenterOfMass, minDistance1, topologyTypes[i], 0.0001);
 				double minDistance2 = 0.0;
-				TopoDS_Shape occtOriginMember2 = Topology::SelectSubtopology(occtOriginShape2, occtDestinationMemberCenterOfMass, minDistance2, topologyTypes[i], 0.0001);
+				TopoDS_Shape occtOriginMember2 = Topology::SelectSubtopology(
+					occtOriginShape2, occtDestinationMemberCenterOfMass, minDistance2, topologyTypes[i], 0.0001);
 
 				if (!occtDestinationMemberCenterOfMass.IsNull() && !occtOriginMember1.IsNull())
 				{

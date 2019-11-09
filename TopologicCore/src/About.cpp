@@ -16,10 +16,10 @@
 
 #include "About.h"
 
-#define MAJOR_VERSION 0
-#define MINOR_VERSION 8
-#define EXTERNAL_BUILD_VERSION 8
-#define INTERNAL_BUILD_VERSION 4
+#define MAJOR_VERSION 1
+#define MINOR_VERSION 0
+#define EXTERNAL_BUILD_VERSION 0
+#define INTERNAL_BUILD_VERSION 0
 
 namespace TopologicCore
 {
