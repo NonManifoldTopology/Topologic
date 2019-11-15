@@ -35,6 +35,7 @@
 #include "Attribute.h"
 #include "AttributeManager.h"
 #include <Utilities/VertexUtility.h>
+#include <Utilities/FaceUtility.h>
 
 #include <BRepCheck_Analyzer.hxx>
 #include <BOPAlgo_MakerVolume.hxx>
@@ -509,10 +510,13 @@ namespace TopologicCore
 		TopoDS_Shape occtShape = OcctSewFaces(occtShapes, kTolerance);
 		Topology::Ptr pTopology = Topology::ByOcctShape(occtShape, "");
 		Topology::Ptr pCopyTopology = std::dynamic_pointer_cast<Topology>(pTopology->DeepCopy());
+		std::list<Topology::Ptr> facesAsTopologies;
 		for (const Face::Ptr& kpFace : rkFaces)
 		{
-			AttributeManager::GetInstance().DeepCopyAttributes(kpFace->GetOcctFace(), pCopyTopology->GetOcctShape());
+			facesAsTopologies.push_back(kpFace);
+			//AttributeManager::GetInstance().DeepCopyAttributes(kpFace->GetOcctFace(), pCopyTopology->GetOcctShape());
 		}
+		pCopyTopology->DeepCopyAttributesFrom(facesAsTopologies);
 		GlobalCluster::GetInstance().AddTopology(pTopology->GetOcctShape());
 		return pTopology;
 	}
@@ -869,7 +873,8 @@ namespace TopologicCore
 					pCopyTopology->SelectSubtopology(kpSelector, Face::Type()));
 
 				std::list<Cell::Ptr> adjacentCells;
-				face->Cells(adjacentCells);
+				//face->Cells(adjacentCells);
+				TopologicUtilities::FaceUtility::AdjacentCells(face, pCopyTopology, adjacentCells);
 
 				for (const Cell::Ptr& kpCell : adjacentCells)
 				{
@@ -2670,10 +2675,10 @@ namespace TopologicCore
 				occtOperandAIterator.More();
 				occtOperandAIterator.Next())
 			{
-				TopoDS_Shape occtNewShape = FixBooleanOperandFace(occtOperandAIterator.Value());
-				occtNewShape = FixBooleanOperandShell(occtNewShape);
-				occtNewShape = FixBooleanOperandCell(occtNewShape);
-				rOcctCellsBuildersOperandsA.Append(occtNewShape);
+				//TopoDS_Shape occtNewShape = FixBooleanOperandFace(occtOperandAIterator.Value());
+				//occtNewShape = FixBooleanOperandShell(occtNewShape);
+				//occtNewShape = FixBooleanOperandCell(occtNewShape);
+				rOcctCellsBuildersOperandsA.Append(occtOperandAIterator.Value());
 			}
 		}
 
@@ -2697,10 +2702,10 @@ namespace TopologicCore
 				occtOperandBIterator.More();
 				occtOperandBIterator.Next())
 			{
-				TopoDS_Shape occtNewShape = FixBooleanOperandFace(occtOperandBIterator.Value());
-				occtNewShape = FixBooleanOperandShell(occtNewShape);
-				occtNewShape = FixBooleanOperandCell(occtNewShape);
-				rOcctCellsBuildersOperandsB.Append(occtNewShape);
+				//TopoDS_Shape occtNewShape = FixBooleanOperandFace(occtOperandBIterator.Value());
+				//occtNewShape = FixBooleanOperandShell(occtNewShape);
+				//occtNewShape = FixBooleanOperandCell(occtNewShape);
+				rOcctCellsBuildersOperandsB.Append(occtOperandBIterator.Value());
 			}
 		}
 	}
@@ -3020,7 +3025,7 @@ namespace TopologicCore
 		BRepBuilderAPI_Copy occtShapeCopier(rkOcctShape);
 		TopoDS_Shape occtShapeCopy = occtShapeCopier.Shape();
 
-		AttributeManager::GetInstance().DeepCopyAttributes(rkOcctShape, occtShapeCopy);
+		//AttributeManager::GetInstance().DeepCopyAttributes(rkOcctShape, occtShapeCopy);
 
 		DeepCopyExplodeShape(rkOcctShape, occtShapeCopier, rOcctShapeCopyShapeMap);
 
@@ -3120,6 +3125,33 @@ namespace TopologicCore
 	{
 		TopAbs_Orientation occtOrientation = GetOcctShape().Orientation();
 		return occtOrientation == TopAbs_REVERSED;
+	}
+
+	Topology::Ptr Topology::DeepCopyAttributesFrom(const std::list<Topology::Ptr>& kpOriginTopologies)
+	{
+		// 1. Get all dictionaries stored in rkOcctOriginShape
+		// NOTE: this map will map the subshapes to the attributes
+		AttributeManager::ShapeToAttributesMap originAttributeMap;
+
+		for (const Topology::Ptr& kpOriginTopology : kpOriginTopologies)
+		{
+			AttributeManager::GetInstance().GetAttributesInSubshapes(kpOriginTopology->GetOcctShape(), originAttributeMap);
+		}
+
+		std::list<Vertex::Ptr> selectors;
+		std::list<AttributeManager::AttributeMap> dictionaries;
+		for (auto shapeToAttributes : originAttributeMap)
+		{
+			TopoDS_Shape occtSubshape = shapeToAttributes.first;
+			Vertex::Ptr centerOfMass = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(Topology::CenterOfMass(occtSubshape)));
+			selectors.push_back(centerOfMass);
+
+			AttributeManager::AttributeMap dictionary = shapeToAttributes.second;
+			dictionaries.push_back(dictionary);
+		}
+
+		Topology::Ptr pCopyTopology = SetDictionaries(selectors, dictionaries);
+		return pCopyTopology;
 	}
 
 	void Topology::Members(TopTools_ListOfShape& rOcctMembers) const

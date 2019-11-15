@@ -628,6 +628,8 @@ namespace TopologicCore
 
 		TOPOLOGIC_API bool IsReversed();
 
+		Topology::Ptr DeepCopyAttributesFrom(const std::list<Topology::Ptr>& kpOriginTopologies);
+
 	protected:
 		Topology(const int kDimensionality, const TopoDS_Shape& rkOcctShape, const std::string& rkGuid = "");
 

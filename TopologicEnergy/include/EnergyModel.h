@@ -133,7 +133,6 @@ namespace TopologicEnergy
 			String^ get();
 		}
 
-
 	private:
 		EnergyModel(OpenStudio::Model^ osModel, OpenStudio::Building^ osBuilding, List<Topologic::Cell^>^ pBuildingCells, Cluster^ shadingSurfaces, OpenStudio::SpaceVector^ osSpaceVector);
 		~EnergyModel() {}

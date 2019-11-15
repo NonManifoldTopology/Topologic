@@ -107,7 +107,21 @@
     </Link>
     <PostBuildEvent>
       <Command>copy "$(SolutionDir)references\OpenStudio-2.8.0\*.dll" "$(SolutionDir)output\$(Platform)\$(Configuration)"
-copy "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"</Command>
+copy "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"
+
+set DYNAMO_PACKAGES_DIR=$(APPDATA)\Dynamo\Dynamo Core\2.3\packages\Topologic\
+if not exist "%DYNAMO_PACKAGES_DIR%bin\" mkdir "%DYNAMO_PACKAGES_DIR%bin\"
+if not exist "%DYNAMO_PACKAGES_DIR%dyf\" mkdir "%DYNAMO_PACKAGES_DIR%dyf\"
+if not exist "%DYNAMO_PACKAGES_DIR%extra\" mkdir "%DYNAMO_PACKAGES_DIR%extra\"
+
+copy "$(SolutionDir)output\$(Platform)\$(Configuration)\TK*.dll" "%DYNAMO_PACKAGES_DIR%bin\"
+copy "$(SolutionDir)output\$(Platform)\$(Configuration)\TopologicCore.dll" "%DYNAMO_PACKAGES_DIR%bin\"
+copy "$(SolutionDir)output\$(Platform)\$(Configuration)\TopologicDynamo*.dll" "%DYNAMO_PACKAGES_DIR%bin\"
+copy "$(SolutionDir)output\$(Platform)\$(Configuration)\TopologicDynamo*.xml" "%DYNAMO_PACKAGES_DIR%bin\"
+copy "$(SolutionDir)output\$(Platform)\$(Configuration)\TopologicEnergy*.dll" "%DYNAMO_PACKAGES_DIR%bin\"
+copy "$(SolutionDir)output\$(Platform)\$(Configuration)\TopologicEnergy*.xml" "%DYNAMO_PACKAGES_DIR%bin\"
+copy "$(SolutionDir)references\OpenStudio-2.8.0\*.dll" "%DYNAMO_PACKAGES_DIR%bin\"
+copy "$(SolutionDir)TopologicInstaller\pkg.json" "%DYNAMO_PACKAGES_DIR%"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -144,7 +158,21 @@ copy "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"
     </Link>
     <PostBuildEvent>
       <Command>copy "$(SolutionDir)references\OpenStudio-2.8.0\*.dll" "$(SolutionDir)output\$(Platform)\$(Configuration)"
-copy "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"</Command>
+copy "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"
+
+set DYNAMO_PACKAGES_DIR=$(APPDATA)\Dynamo\Dynamo Core\2.3\packages\Topologic\
+if not exist "%DYNAMO_PACKAGES_DIR%bin\" mkdir "%DYNAMO_PACKAGES_DIR%bin\"
+if not exist "%DYNAMO_PACKAGES_DIR%dyf\" mkdir "%DYNAMO_PACKAGES_DIR%dyf\"
+if not exist "%DYNAMO_PACKAGES_DIR%extra\" mkdir "%DYNAMO_PACKAGES_DIR%extra\"
+
+copy "$(SolutionDir)output\$(Platform)\$(Configuration)\TK*.dll" "%DYNAMO_PACKAGES_DIR%bin\"
+copy "$(SolutionDir)output\$(Platform)\$(Configuration)\TopologicCore.dll" "%DYNAMO_PACKAGES_DIR%bin\"
+copy "$(SolutionDir)output\$(Platform)\$(Configuration)\TopologicDynamo*.dll" "%DYNAMO_PACKAGES_DIR%bin\"
+copy "$(SolutionDir)output\$(Platform)\$(Configuration)\TopologicDynamo*.xml" "%DYNAMO_PACKAGES_DIR%bin\"
+copy "$(SolutionDir)output\$(Platform)\$(Configuration)\TopologicEnergy*.dll" "%DYNAMO_PACKAGES_DIR%bin\"
+copy "$(SolutionDir)output\$(Platform)\$(Configuration)\TopologicEnergy*.xml" "%DYNAMO_PACKAGES_DIR%bin\"
+copy "$(SolutionDir)references\OpenStudio-2.8.0\*.dll" "%DYNAMO_PACKAGES_DIR%bin\"
+copy "$(SolutionDir)TopologicInstaller\pkg.json" "%DYNAMO_PACKAGES_DIR%"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

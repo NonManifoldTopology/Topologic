@@ -381,9 +381,10 @@ namespace TopologicUtilities
 	void FaceUtility::NormalizeUV(const TopologicCore::Face::Ptr& kpFace, const double kNonNormalizedU, const double kNonNormalizedV, double& rNormalizedU, double& rNormalizedV)
 	{
 		double occtUMin = 0.0, occtUMax = 0.0, occtVMin = 0.0, occtVMax = 0.0;
-		ShapeFix_Face occtShapeFix(kpFace->GetOcctFace());
-		occtShapeFix.Perform();
-		ShapeAnalysis::GetFaceUVBounds(occtShapeFix.Face(), occtUMin, occtUMax, occtVMin, occtVMax);
+		//ShapeFix_Face occtShapeFix(kpFace->GetOcctFace());
+		//occtShapeFix.Perform();
+		//ShapeAnalysis::GetFaceUVBounds(occtShapeFix.Face(), occtUMin, occtUMax, occtVMin, occtVMax);
+		ShapeAnalysis::GetFaceUVBounds(kpFace->GetOcctFace(), occtUMin, occtUMax, occtVMin, occtVMax);
 		double occtDU = occtUMax - occtUMin;
 		double occtDV = occtVMax - occtVMin;
 		if (occtDU <= 0.0 || occtDV <= 0.0)
@@ -398,9 +399,10 @@ namespace TopologicUtilities
 	void FaceUtility::NonNormalizeUV(const TopologicCore::Face::Ptr& kpFace, const double kNormalizedU, const double kNormalizedV, double& rNonNormalizedU, double& rNonNormalizedV)
 	{
 		double occtUMin = 0.0, occtUMax = 0.0, occtVMin = 0.0, occtVMax = 0.0;
-		ShapeFix_Face occtShapeFix(kpFace->GetOcctFace());
-		occtShapeFix.Perform();
-		ShapeAnalysis::GetFaceUVBounds(occtShapeFix.Face(), occtUMin, occtUMax, occtVMin, occtVMax);
+		//ShapeFix_Face occtShapeFix(kpFace->GetOcctFace());
+		//occtShapeFix.Perform();
+		//ShapeAnalysis::GetFaceUVBounds(occtShapeFix.Face(), occtUMin, occtUMax, occtVMin, occtVMax);
+		ShapeAnalysis::GetFaceUVBounds(kpFace->GetOcctFace(), occtUMin, occtUMax, occtVMin, occtVMax);
 		double occtDU = occtUMax - occtUMin;
 		double occtDV = occtVMax - occtVMin;
 
@@ -449,7 +451,7 @@ namespace TopologicUtilities
 		TopologicCore::Vertex::Ptr vertexA = TopologicCore::Vertex::ByPoint(new Geom_CartesianPoint(pointA));
 		TopologicCore::Vertex::Ptr vertexB = TopologicCore::Vertex::ByPoint(new Geom_CartesianPoint(pointB));
 
-		TopologicCore::Edge::Ptr edge = TopologicCore::Edge::ByStartVertexEndVertex(vertexA, vertexB);
+		TopologicCore::Edge::Ptr edge = TopologicCore::Edge::ByStartVertexEndVertex(vertexA, vertexB, false);
 
 		TopologicCore::Topology::Ptr sliceResult = edge->Slice(kpFace);
 		

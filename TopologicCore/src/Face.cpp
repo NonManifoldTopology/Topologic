@@ -212,11 +212,15 @@ namespace TopologicCore
 
 		Face::Ptr pFace = std::make_shared<Face>(occtFixedFace);
 		Face::Ptr pCopyFace = std::dynamic_pointer_cast<Face>(pFace->DeepCopy());
-		AttributeManager::GetInstance().DeepCopyAttributes(pkExternalBoundary->GetOcctWire(), pCopyFace->GetOcctFace());
+		std::list<Topology::Ptr> wiresAsTopologies;
+		//AttributeManager::GetInstance().DeepCopyAttributes(pkExternalBoundary->GetOcctWire(), pCopyFace->GetOcctFace());
+		wiresAsTopologies.push_back(pkExternalBoundary);
 		for (const Wire::Ptr& kpInternalBoundary : rkInternalBoundaries)
 		{
-			AttributeManager::GetInstance().DeepCopyAttributes(kpInternalBoundary->GetOcctWire(), pCopyFace->GetOcctFace());
+			wiresAsTopologies.push_back(kpInternalBoundary);
+			//AttributeManager::GetInstance().DeepCopyAttributes(kpInternalBoundary->GetOcctWire(), pCopyFace->GetOcctFace());
 		}
+		pCopyFace->DeepCopyAttributesFrom(wiresAsTopologies);
 
 		GlobalCluster::GetInstance().AddTopology(pCopyFace->GetOcctFace());
 		return pCopyFace;
@@ -231,10 +235,13 @@ namespace TopologicCore
 
 		Wire::Ptr pWire = Wire::ByEdges(rkEdges);
 		Face::Ptr pFace = ByExternalBoundary(pWire);
+		std::list<Topology::Ptr> edgesAsTopologies;
 		for (const Edge::Ptr& kpEdge : rkEdges)
 		{
+			edgesAsTopologies.push_back(kpEdge);
 			AttributeManager::GetInstance().DeepCopyAttributes(kpEdge->GetOcctEdge(), pFace->GetOcctFace());
 		}
+		pFace->DeepCopyAttributesFrom(edgesAsTopologies);
 
 		return pFace;
 	}
@@ -287,13 +294,18 @@ namespace TopologicCore
 			if (kpOuterWire != nullptr)
 			{
 				occtMakeFace = BRepBuilderAPI_MakeFace(pOcctBSplineSurface, TopoDS::Wire(kpOuterWire->GetOcctShape()), true);
+				ShapeFix_Face occtShapeFix(occtMakeFace);
+				occtShapeFix.Perform();
 
-				occtFace = occtMakeFace;
+				occtFace = occtShapeFix.Face();
 				area = TopologicUtilities::FaceUtility::Area(occtFace);
 				if (area <= 0.0)
 				{
 					occtMakeFace = BRepBuilderAPI_MakeFace(pOcctBSplineSurface, TopoDS::Wire(kpOuterWire->GetOcctShape().Reversed()), true);
-					occtFace = occtMakeFace;
+					ShapeFix_Face occtShapeFix(occtMakeFace);
+					occtShapeFix.Perform();
+
+					occtFace = occtShapeFix.Face();
 					area = TopologicUtilities::FaceUtility::Area(occtFace);
 				}
 
