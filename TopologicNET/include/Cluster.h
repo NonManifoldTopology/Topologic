@@ -33,10 +33,8 @@ namespace Topologic
 	/// <summary>
 	/// A Cluster is a collection of any topologic entities. It may be contiguous or not and may be manifold or non-manifold. Clusters can be nested within other Clusters.
 	/// </summary>
-
 	public ref class Cluster : Topology
 	{
-
 	public:
 		/// <summary>
 		/// Creates a Cluster by a set of Topologies. 

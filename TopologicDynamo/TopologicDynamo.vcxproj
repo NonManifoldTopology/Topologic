@@ -109,7 +109,18 @@
       <AdditionalLibraryDirectories>$(SolutionDir)references\opencascade-7.2.0\build\win64\vc14\libd</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"</Command>
+      <Command>copy "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"
+
+set DYNAMO_PACKAGES_DIR=$(APPDATA)\Dynamo\Dynamo Core\2.4\packages\Topologic\
+if not exist "%DYNAMO_PACKAGES_DIR%bin\" mkdir "%DYNAMO_PACKAGES_DIR%bin\"
+if not exist "%DYNAMO_PACKAGES_DIR%dyf\" mkdir "%DYNAMO_PACKAGES_DIR%dyf\"
+if not exist "%DYNAMO_PACKAGES_DIR%extra\" mkdir "%DYNAMO_PACKAGES_DIR%extra\"
+
+copy "$(SolutionDir)output\$(Platform)\$(Configuration)\TK*.dll" "%DYNAMO_PACKAGES_DIR%bin\"
+copy "$(SolutionDir)output\$(Platform)\$(Configuration)\TopologicCore.dll" "%DYNAMO_PACKAGES_DIR%bin\"
+copy "$(SolutionDir)output\$(Platform)\$(Configuration)\TopologicDynamo*.dll" "%DYNAMO_PACKAGES_DIR%bin\"
+copy "$(SolutionDir)output\$(Platform)\$(Configuration)\TopologicDynamo*.xml" "%DYNAMO_PACKAGES_DIR%bin\"
+copy "$(SolutionDir)TopologicInstaller\pkg.json" "%DYNAMO_PACKAGES_DIR%"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -146,7 +157,18 @@
       <AdditionalLibraryDirectories>$(SolutionDir)references\opencascade-7.2.0\build\win64\vc14\lib</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"</Command>
+      <Command>copy "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"
+
+set DYNAMO_PACKAGES_DIR=$(APPDATA)\Dynamo\Dynamo Core\2.4\packages\Topologic\
+if not exist "%DYNAMO_PACKAGES_DIR%bin\" mkdir "%DYNAMO_PACKAGES_DIR%bin\"
+if not exist "%DYNAMO_PACKAGES_DIR%dyf\" mkdir "%DYNAMO_PACKAGES_DIR%dyf\"
+if not exist "%DYNAMO_PACKAGES_DIR%extra\" mkdir "%DYNAMO_PACKAGES_DIR%extra\"
+
+copy "$(SolutionDir)output\$(Platform)\$(Configuration)\TK*.dll" "%DYNAMO_PACKAGES_DIR%bin\"
+copy "$(SolutionDir)output\$(Platform)\$(Configuration)\TopologicCore.dll" "%DYNAMO_PACKAGES_DIR%bin\"
+copy "$(SolutionDir)output\$(Platform)\$(Configuration)\TopologicDynamo*.dll" "%DYNAMO_PACKAGES_DIR%bin\"
+copy "$(SolutionDir)output\$(Platform)\$(Configuration)\TopologicDynamo*.xml" "%DYNAMO_PACKAGES_DIR%bin\"
+copy "$(SolutionDir)TopologicInstaller\pkg.json" "%DYNAMO_PACKAGES_DIR%"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

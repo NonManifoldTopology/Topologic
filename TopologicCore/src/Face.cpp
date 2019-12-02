@@ -287,13 +287,18 @@ namespace TopologicCore
 			if (kpOuterWire != nullptr)
 			{
 				occtMakeFace = BRepBuilderAPI_MakeFace(pOcctBSplineSurface, TopoDS::Wire(kpOuterWire->GetOcctShape()), true);
+				ShapeFix_Face occtShapeFix(occtMakeFace);
+				occtShapeFix.Perform();
 
-				occtFace = occtMakeFace;
+				occtFace = occtShapeFix.Face();
 				area = TopologicUtilities::FaceUtility::Area(occtFace);
 				if (area <= 0.0)
 				{
 					occtMakeFace = BRepBuilderAPI_MakeFace(pOcctBSplineSurface, TopoDS::Wire(kpOuterWire->GetOcctShape().Reversed()), true);
-					occtFace = occtMakeFace;
+					ShapeFix_Face occtShapeFix(occtMakeFace);
+					occtShapeFix.Perform();
+
+					occtFace = occtShapeFix.Face();
 					area = TopologicUtilities::FaceUtility::Area(occtFace);
 				}
 

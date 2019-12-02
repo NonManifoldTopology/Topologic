@@ -287,6 +287,14 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>Copy "$(TargetDir)\TopologicGH.dll" "$(TargetDir)\TopologicGH.gha"
-Erase "$(TargetDir)\TopologicGH.dll"</PostBuildEvent>
+Erase "$(TargetDir)\TopologicGH.dll"
+
+set GH_PACKAGES_DIR=$(APPDATA)\Grasshopper\Libraries\Topologic\
+if not exist "%25GH_PACKAGES_DIR%25" mkdir "%25GH_PACKAGES_DIR%25"
+
+copy "$(TargetDir)TK*.dll" "%25GH_PACKAGES_DIR%25"
+copy "$(TargetDir)TopologicCore.dll" "%25GH_PACKAGES_DIR%25"
+copy "$(TargetDir)TopologicNET.dll" "%25GH_PACKAGES_DIR%25"
+copy "$(TargetDir)TopologicGH.gha" "%25GH_PACKAGES_DIR%25"</PostBuildEvent>
   </PropertyGroup>
 </Project>

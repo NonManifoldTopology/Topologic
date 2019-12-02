@@ -122,6 +122,16 @@ namespace TopologicUtilities
 			const TopologicCore::Cell::Ptr kpCell, 
 			const double kTolerance);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="rkOcctSolid"></param>
+        /// <param name="kTolerance"></param>
+        /// <returns></returns>
+        static std::shared_ptr<TopologicCore::Vertex> InternalVertex(
+            const TopoDS_Solid& rkOcctSolid,
+            const double kTolerance);
+
 		/// <summary>
 		/// 
 		/// </summary>

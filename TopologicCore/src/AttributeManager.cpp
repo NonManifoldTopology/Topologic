@@ -18,8 +18,10 @@
 #include "Attribute.h"
 #include "ListAttribute.h"
 #include "Topology.h"
+#include "Utilities/CellUtility.h"
 
 #include <TopExp_Explorer.hxx>
+#include <TopoDS.hxx>
 #include <TopoDS_Vertex.hxx>
 
 namespace TopologicCore
@@ -166,7 +168,11 @@ namespace TopologicCore
 	{
 		// For parent topology
 		TopoDS_Shape occtSelectedSubtopology = Topology::SelectSubtopology(
-			rkOcctShape2, Topology::CenterOfMass(rkOcctShape1), Topology::GetTopologyType(rkOcctShape1.ShapeType()));
+			rkOcctShape2, 
+            rkOcctShape1.ShapeType() == TopAbs_SOLID? 
+                TopologicUtilities::CellUtility::InternalVertex(TopoDS::Solid(rkOcctShape1), 0.0001)->GetOcctVertex() : 
+                Topology::CenterOfMass(rkOcctShape1),
+            Topology::GetTopologyType(rkOcctShape1.ShapeType()));
 		if (!occtSelectedSubtopology.IsNull())
 		{
 			CopyAttributes(rkOcctShape1, occtSelectedSubtopology);
@@ -187,8 +193,12 @@ namespace TopologicCore
 				}
 
 				// WARNING: very costly. Only do this if necessary.
-				TopoDS_Shape occtSelectedSubtopology = Topology::SelectSubtopology(
-					rkOcctShape2, Topology::CenterOfMass(occtSubshape1), Topology::GetTopologyType(occtSubshape1.ShapeType()));
+                TopoDS_Shape occtSelectedSubtopology = Topology::SelectSubtopology(
+                    rkOcctShape2,
+                    rkOcctShape1.ShapeType() == TopAbs_SOLID ?
+                        TopologicUtilities::CellUtility::InternalVertex(TopoDS::Solid(occtSubshape1), 0.0001)->GetOcctVertex() :
+                        Topology::CenterOfMass(occtSubshape1),
+                    Topology::GetTopologyType(occtSubshape1.ShapeType()));
 				if (!occtSelectedSubtopology.IsNull())
 				{
 					CopyAttributes(occtSubshape1, occtSelectedSubtopology);

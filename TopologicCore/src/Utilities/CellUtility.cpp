@@ -214,7 +214,12 @@ namespace TopologicUtilities
 		return nullptr;
 	}
 
-	double CellUtility::Volume(const TopologicCore::Cell::Ptr & kpCell)
+    TopologicCore::Vertex::Ptr CellUtility::InternalVertex(const TopoDS_Solid & rkOcctSolid, const double kTolerance)
+    {
+        return InternalVertex(std::make_shared<TopologicCore::Cell>(rkOcctSolid), kTolerance);
+    }
+
+    double CellUtility::Volume(const TopologicCore::Cell::Ptr & kpCell)
 	{
 		GProp_GProps occtShapeProperties;
 		BRepGProp::VolumeProperties(kpCell->GetOcctSolid(), occtShapeProperties);

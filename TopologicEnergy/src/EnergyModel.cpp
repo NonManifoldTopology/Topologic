@@ -288,7 +288,7 @@ namespace TopologicEnergy
 		}
 
 		// Purge unused resources
-		osModel->purgeUnusedResourceObjects();
+		//osModel->purgeUnusedResourceObjects();
 
 		// Create a path string
 		OpenStudio::Path^ osPath = OpenStudio::OpenStudioUtilitiesCore::toPath(osmPathName);

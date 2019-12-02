@@ -55,7 +55,7 @@ namespace TopologicEnergy
 	}
 
 	EnergySimulation::EnergySimulation(List<Topologic::Cell^>^ cells, System::String^ oswPath, OpenStudio::Model^ osModel, OpenStudio::SpaceVector^ osSpaces)
-		: m_osModel(osModel)
+		: m_osModel(gcnew OpenStudio::Model(osModel))
 		, m_osSpaces(osSpaces)
 	{
 		if (oswPath == nullptr)
@@ -68,7 +68,6 @@ namespace TopologicEnergy
 		System::String^ sqlPath = directory + "\\run\\eplusout.sql";
 		m_osSqlFile = gcnew OpenStudio::SqlFile(OpenStudio::OpenStudioUtilitiesCore::toPath(sqlPath));
 		m_osModel->setSqlFile(m_osSqlFile);
-		OpenStudio::Space^ osSpace2 = OsSpaces[0];
 	}
 
 	EnergySimulation::~EnergySimulation()
