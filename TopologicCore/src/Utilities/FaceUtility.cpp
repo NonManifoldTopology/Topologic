@@ -173,9 +173,9 @@ namespace TopologicUtilities
 	{
 		// Subdivide the face in the UV space and find the points
 		double occtUMin = 0.0, occtUMax = 0.0, occtVMin = 0.0, occtVMax = 0.0;
-		ShapeFix_Face occtShapeFix(kpFace->GetOcctFace());
-		occtShapeFix.Perform();
-		ShapeAnalysis::GetFaceUVBounds(occtShapeFix.Face(), occtUMin, occtUMax, occtVMin, occtVMax);
+		//ShapeFix_Face occtShapeFix(kpFace->GetOcctFace());
+		//occtShapeFix.Perform();
+		ShapeAnalysis::GetFaceUVBounds(kpFace->GetOcctFace(), occtUMin, occtUMax, occtVMin, occtVMax);
 		double occtURange = occtUMax - occtUMin;
 		double occtVRange = occtVMax - occtVMin;
 		rNumUPanels = (int)rkUValues.size() - 1;
@@ -381,9 +381,9 @@ namespace TopologicUtilities
 	void FaceUtility::NormalizeUV(const TopologicCore::Face::Ptr& kpFace, const double kNonNormalizedU, const double kNonNormalizedV, double& rNormalizedU, double& rNormalizedV)
 	{
 		double occtUMin = 0.0, occtUMax = 0.0, occtVMin = 0.0, occtVMax = 0.0;
-		ShapeFix_Face occtShapeFix(kpFace->GetOcctFace());
-		occtShapeFix.Perform();
-		ShapeAnalysis::GetFaceUVBounds(occtShapeFix.Face(), occtUMin, occtUMax, occtVMin, occtVMax);
+		//ShapeFix_Face occtShapeFix(kpFace->GetOcctFace());
+		//occtShapeFix.Perform();
+		ShapeAnalysis::GetFaceUVBounds(kpFace->GetOcctFace(), occtUMin, occtUMax, occtVMin, occtVMax);
 		double occtDU = occtUMax - occtUMin;
 		double occtDV = occtVMax - occtVMin;
 		if (occtDU <= 0.0 || occtDV <= 0.0)
@@ -398,9 +398,9 @@ namespace TopologicUtilities
 	void FaceUtility::NonNormalizeUV(const TopologicCore::Face::Ptr& kpFace, const double kNormalizedU, const double kNormalizedV, double& rNonNormalizedU, double& rNonNormalizedV)
 	{
 		double occtUMin = 0.0, occtUMax = 0.0, occtVMin = 0.0, occtVMax = 0.0;
-		ShapeFix_Face occtShapeFix(kpFace->GetOcctFace());
-		occtShapeFix.Perform();
-		ShapeAnalysis::GetFaceUVBounds(occtShapeFix.Face(), occtUMin, occtUMax, occtVMin, occtVMax);
+		//ShapeFix_Face occtShapeFix(kpFace->GetOcctFace());
+		//occtShapeFix.Perform();
+		ShapeAnalysis::GetFaceUVBounds(kpFace->GetOcctFace(), occtUMin, occtUMax, occtVMin, occtVMax);
 		double occtDU = occtUMax - occtUMin;
 		double occtDV = occtVMax - occtVMin;
 
@@ -422,15 +422,20 @@ namespace TopologicUtilities
 	
 	void FaceUtility::AdjacentCells(const TopologicCore::Face::Ptr & kpFace, const TopologicCore::Topology::Ptr & kpParentTopology, std::list<TopologicCore::Cell::Ptr>& rCoreAdjacentCells)
 	{
-		std::list<TopologicCore::Topology::Ptr> coreAdjacentTopologies;
-		kpFace->UpwardNavigation(kpParentTopology->GetOcctShape(), TopologicCore::Cell::Type(), coreAdjacentTopologies);
-		for (const TopologicCore::Topology::Ptr& kpAdjacentTopology : coreAdjacentTopologies)
-		{
-			rCoreAdjacentCells.push_back(
-				TopologicCore::TopologicalQuery::Downcast<TopologicCore::Cell>(kpAdjacentTopology)
-			);
-		}
+        AdjacentCells(kpFace.get(), kpParentTopology, rCoreAdjacentCells);
 	}
+
+    void FaceUtility::AdjacentCells(TopologicCore::Face const * const pkpFace, const TopologicCore::Topology::Ptr & kpParentTopology, std::list<TopologicCore::Cell::Ptr>& rCoreAdjacentCells)
+    {
+        std::list<TopologicCore::Topology::Ptr> coreAdjacentTopologies;
+        pkpFace->UpwardNavigation(kpParentTopology->GetOcctShape(), TopologicCore::Cell::Type(), coreAdjacentTopologies);
+        for (const TopologicCore::Topology::Ptr& kpAdjacentTopology : coreAdjacentTopologies)
+        {
+            rCoreAdjacentCells.push_back(
+                TopologicCore::TopologicalQuery::Downcast<TopologicCore::Cell>(kpAdjacentTopology)
+            );
+        }
+    }
 
 	// https://www.opencascade.com/content/how-find-if-point-belongs-face
 	// https://www.opencascade.com/doc/occt-7.2.0/refman/html/class_b_rep_class___face_classifier.html

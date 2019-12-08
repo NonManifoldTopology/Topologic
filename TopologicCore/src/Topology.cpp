@@ -35,6 +35,7 @@
 #include "Attribute.h"
 #include "AttributeManager.h"
 #include <Utilities/VertexUtility.h>
+#include <Utilities/FaceUtility.h>
 
 #include <BRepCheck_Analyzer.hxx>
 #include <BOPAlgo_MakerVolume.hxx>
@@ -102,12 +103,12 @@ namespace TopologicCore
 			{
 				const TopoDS_Shape rkCurrentChildShape = occtExplorer.Current();
 				TopoDS_Shape checkDistanceShape = rkCurrentChildShape;
-				if (i == 3)
+				/*if (i == 3)
 				{
 					ShapeFix_Solid occtSolidFix(TopoDS::Solid(rkCurrentChildShape));
 					occtSolidFix.Perform();
 					checkDistanceShape = occtSolidFix.Shape();
-				}
+				}*/
 				BRepExtrema_DistShapeShape occtDistanceCalculation(checkDistanceShape, kOcctQueryShape);
 				bool isDone = occtDistanceCalculation.Perform();
 				if (isDone)
@@ -601,13 +602,14 @@ namespace TopologicCore
 						pCopyTopology->SelectSubtopology(pCenterOfMass, Face::Type()));
 
 					std::list<Cell::Ptr> adjacentCells;
-					face->Cells(adjacentCells);
+					//face->Cells(adjacentCells);
+                    TopologicUtilities::FaceUtility::AdjacentCells(face, pCopyTopology, adjacentCells);
 
 					for (const Cell::Ptr& kpCell : adjacentCells)
 					{
-						ShapeFix_Solid occtShapeFixSolid(kpCell->GetOcctSolid());
-						occtShapeFixSolid.Perform();
-						BRepClass3d_SolidClassifier occtSolidClassifier(occtShapeFixSolid.Solid(), pCenterOfMass->Point()->Pnt(), 0.1);
+						//ShapeFix_Solid occtShapeFixSolid(kpCell->GetOcctSolid());
+						//occtShapeFixSolid.Perform();
+						BRepClass3d_SolidClassifier occtSolidClassifier(kpCell->GetOcctSolid(), pCenterOfMass->Point()->Pnt(), 0.1);
 						TopAbs_State occtState = occtSolidClassifier.State();
 
 						if (occtState == TopAbs_IN)
@@ -869,7 +871,7 @@ namespace TopologicCore
 					pCopyTopology->SelectSubtopology(kpSelector, Face::Type()));
 
 				std::list<Cell::Ptr> adjacentCells;
-				face->Cells(adjacentCells);
+                TopologicUtilities::FaceUtility::AdjacentCells(face, pCopyTopology, adjacentCells);
 
 				for (const Cell::Ptr& kpCell : adjacentCells)
 				{
@@ -2605,21 +2607,21 @@ namespace TopologicCore
 			SubTopologies(members);
 			for (const Topology::Ptr& kpMember : members)
 			{
-				TopoDS_Shape occtNewShape = FixBooleanOperandFace(kpMember->GetOcctShape(), rOcctMapFaceToFixedFaceA);
+				/*TopoDS_Shape occtNewShape = FixBooleanOperandFace(kpMember->GetOcctShape(), rOcctMapFaceToFixedFaceA);
 				occtNewShape = FixBooleanOperandShell(kpMember->GetOcctShape());
-				occtNewShape = FixBooleanOperandCell(kpMember->GetOcctShape());
+				occtNewShape = FixBooleanOperandCell(kpMember->GetOcctShape());*/
 				rOcctCellsBuildersOperandsA.Append(kpMember->GetOcctShape());
 				occtCellsBuildersArguments.Append(kpMember->GetOcctShape());
 			}
 		}
 		else
 		{
-			BOPCol_DataMapOfShapeShape occtMapFaceToFixedFace;
+			/*BOPCol_DataMapOfShapeShape occtMapFaceToFixedFace;
 			TopoDS_Shape occtNewShape = FixBooleanOperandFace(GetOcctShape(), rOcctMapFaceToFixedFaceA);
 			occtNewShape = FixBooleanOperandShell(occtNewShape);
-			occtNewShape = FixBooleanOperandCell(occtNewShape);
-			rOcctCellsBuildersOperandsA.Append(occtNewShape);
-			occtCellsBuildersArguments.Append(occtNewShape);
+			occtNewShape = FixBooleanOperandCell(occtNewShape);*/
+			rOcctCellsBuildersOperandsA.Append(GetOcctShape());
+			occtCellsBuildersArguments.Append(GetOcctShape());
 		}
 
 		TopologyType typeB = kpOtherTopology->GetType();
@@ -2629,20 +2631,20 @@ namespace TopologicCore
 			kpOtherTopology->SubTopologies(members);
 			for (const Topology::Ptr& kpMember : members)
 			{
-				TopoDS_Shape occtNewShape = FixBooleanOperandFace(kpMember->GetOcctShape(), rOcctMapFaceToFixedFaceA);
+				/*TopoDS_Shape occtNewShape = FixBooleanOperandFace(kpMember->GetOcctShape(), rOcctMapFaceToFixedFaceA);
 				occtNewShape = FixBooleanOperandShell(kpMember->GetOcctShape());
-				occtNewShape = FixBooleanOperandCell(kpMember->GetOcctShape());
+				occtNewShape = FixBooleanOperandCell(kpMember->GetOcctShape());*/
 				rOcctCellsBuildersOperandsB.Append(kpMember->GetOcctShape());
 				occtCellsBuildersArguments.Append(kpMember->GetOcctShape());
 			}
 		}
 		else
 		{
-			TopoDS_Shape occtNewShape = FixBooleanOperandFace(kpOtherTopology->GetOcctShape(), rOcctMapFaceToFixedFaceB);
+			/*TopoDS_Shape occtNewShape = FixBooleanOperandFace(kpOtherTopology->GetOcctShape(), rOcctMapFaceToFixedFaceB);
 			occtNewShape = FixBooleanOperandShell(kpOtherTopology->GetOcctShape());
-			occtNewShape = FixBooleanOperandCell(kpOtherTopology->GetOcctShape());
-			rOcctCellsBuildersOperandsB.Append(occtNewShape);
-			occtCellsBuildersArguments.Append(occtNewShape);
+			occtNewShape = FixBooleanOperandCell(kpOtherTopology->GetOcctShape());*/
+			rOcctCellsBuildersOperandsB.Append(kpOtherTopology->GetOcctShape());
+			occtCellsBuildersArguments.Append(kpOtherTopology->GetOcctShape());
 		}
 
 		rOcctCellsBuilder.SetArguments(occtCellsBuildersArguments);
@@ -2651,57 +2653,59 @@ namespace TopologicCore
 	void Topology::AddBooleanOperands(const Topology::Ptr & kpOtherTopology, BOPCol_ListOfShape & rOcctCellsBuildersOperandsA, BOPCol_ListOfShape & rOcctCellsBuildersOperandsB)
 	{
 		{
-			BOPCol_ListOfShape occtOperandsA;
+			//BOPCol_ListOfShape occtOperandsA;
 			if (IsContainerType())
 			{
 				std::list<Topology::Ptr> subTopologies;
 				SubTopologies(subTopologies);
 				for (const Topology::Ptr kpTopology: subTopologies)
 				{
-					occtOperandsA.Append(kpTopology->GetOcctShape());
+                    rOcctCellsBuildersOperandsA.Append(kpTopology->GetOcctShape());
 				}
 			}
 			else
 			{
-				occtOperandsA.Append(GetOcctShape());
+                rOcctCellsBuildersOperandsA.Append(GetOcctShape());
 			}
 
-			for (BOPCol_ListIteratorOfListOfShape occtOperandAIterator(occtOperandsA);
-				occtOperandAIterator.More();
-				occtOperandAIterator.Next())
-			{
-				TopoDS_Shape occtNewShape = FixBooleanOperandFace(occtOperandAIterator.Value());
-				occtNewShape = FixBooleanOperandShell(occtNewShape);
-				occtNewShape = FixBooleanOperandCell(occtNewShape);
-				rOcctCellsBuildersOperandsA.Append(occtNewShape);
-			}
+			//for (BOPCol_ListIteratorOfListOfShape occtOperandAIterator(occtOperandsA);
+			//	occtOperandAIterator.More();
+			//	occtOperandAIterator.Next())
+			//{
+			//	/*TopoDS_Shape occtNewShape = FixBooleanOperandFace(occtOperandAIterator.Value());
+			//	occtNewShape = FixBooleanOperandShell(occtNewShape);
+			//	occtNewShape = FixBooleanOperandCell(occtNewShape);
+			//	rOcctCellsBuildersOperandsA.Append(occtNewShape);*/
+   //             rOcctCellsBuildersOperandsA.Append(occtOperandAIterator.Value());
+			//}
 		}
 
 		{
-			BOPCol_ListOfShape occtOperandsB;
+			//BOPCol_ListOfShape occtOperandsB;
 			if (kpOtherTopology->IsContainerType())
 			{
 				std::list<Topology::Ptr> subTopologies;
 				kpOtherTopology->SubTopologies(subTopologies);
 				for (const Topology::Ptr kpTopology : subTopologies)
 				{
-					occtOperandsB.Append(kpTopology->GetOcctShape());
+                    rOcctCellsBuildersOperandsB.Append(kpTopology->GetOcctShape());
 				}
 			}
 			else
 			{
-				occtOperandsB.Append(kpOtherTopology->GetOcctShape());
+                rOcctCellsBuildersOperandsB.Append(kpOtherTopology->GetOcctShape());
 			}
 
-			for (BOPCol_ListIteratorOfListOfShape occtOperandBIterator(occtOperandsB);
-				occtOperandBIterator.More();
-				occtOperandBIterator.Next())
-			{
-				TopoDS_Shape occtNewShape = FixBooleanOperandFace(occtOperandBIterator.Value());
-				occtNewShape = FixBooleanOperandShell(occtNewShape);
-				occtNewShape = FixBooleanOperandCell(occtNewShape);
-				rOcctCellsBuildersOperandsB.Append(occtNewShape);
-			}
+			//for (BOPCol_ListIteratorOfListOfShape occtOperandBIterator(occtOperandsB);
+			//	occtOperandBIterator.More();
+			//	occtOperandBIterator.Next())
+			//{
+			//	/*TopoDS_Shape occtNewShape = FixBooleanOperandFace(occtOperandBIterator.Value());
+			//	occtNewShape = FixBooleanOperandShell(occtNewShape);
+			//	occtNewShape = FixBooleanOperandCell(occtNewShape);
+			//	rOcctCellsBuildersOperandsB.Append(occtNewShape);*/
+   //             rOcctCellsBuildersOperandsB.Append(occtOperandBIterator.Value());
+			//}
 		}
 	}
 

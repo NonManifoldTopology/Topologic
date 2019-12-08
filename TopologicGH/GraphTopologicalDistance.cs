@@ -41,6 +41,7 @@ namespace TopologicGH
             pManager.AddGenericParameter("Graph", "Graph", "Graph", GH_ParamAccess.item);
             pManager.AddGenericParameter("Start Vertex", "Start Vertex", "Start Vertex", GH_ParamAccess.item);
             pManager.AddGenericParameter("End Vertex", "End Vertex", "End Vertex", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Tolerance", "Tolerance", "Tolerance", GH_ParamAccess.item, 0.0001);
         }
 
         /// <summary>
@@ -61,12 +62,14 @@ namespace TopologicGH
             Topologic.Graph graph = null;
             Topologic.Vertex startVertex = null;
             Topologic.Vertex endVertex = null;
+            double tolerance = 0.0;
 
             // Use the DA object to retrieve the data inside the first input parameter.
             // If the retieval fails (for example if there is no data) we need to abort.
             if (!DA.GetData(0, ref graph)) { return; }
             if (!DA.GetData(1, ref startVertex)) { return; }
             if (!DA.GetData(2, ref endVertex)) { return; }
+            DA.GetData(3, ref tolerance);
 
             // If the retrieved data is Nothing, we need to abort.
             // We're also going to abort on a zero-length String.
@@ -79,7 +82,7 @@ namespace TopologicGH
             //char[] chars = data.ToCharArray();
 
             
-            int distance = graph.TopologicalDistance(startVertex, endVertex);
+            int distance = graph.TopologicalDistance(startVertex, endVertex, tolerance);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetData(0, distance);

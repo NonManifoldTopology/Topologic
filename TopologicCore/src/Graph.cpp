@@ -367,13 +367,14 @@ namespace TopologicCore
 
 	int Graph::VertexDegree(const TopoDS_Vertex & rkOcctVertex) const
 	{
-		if (m_graphDictionary.find(rkOcctVertex) == m_graphDictionary.end())
+        auto vertexAdjacency = m_graphDictionary.find(rkOcctVertex);
+		if (vertexAdjacency == m_graphDictionary.end())
 		{
 			return 0;
 		}
 
-		int numberOfEdges = m_graphDictionary.find(rkOcctVertex)->second.Size();
-		int numberOfLoops = m_graphDictionary.find(rkOcctVertex)->second.Contains(rkOcctVertex) ? 1 : 0;
+		int numberOfEdges = vertexAdjacency->second.Size();
+		int numberOfLoops = vertexAdjacency->second.Contains(rkOcctVertex) ? 1 : 0;
 		int degree = numberOfEdges + numberOfLoops;
 
 		return degree;
@@ -952,21 +953,76 @@ namespace TopologicCore
 		return maxShortestPathDistance;
 	}
 
-	int Graph::TopologicalDistance(const std::shared_ptr<Vertex>& kpStartVertex, const std::shared_ptr<Vertex>& kpEndVertex) const
+	int Graph::TopologicalDistance(const std::shared_ptr<Vertex>& kpStartVertex, const std::shared_ptr<Vertex>& kpEndVertex, const double kTolerance) const
 	{
-		return TopologicalDistance(kpStartVertex->GetOcctVertex(), kpEndVertex->GetOcctVertex());
+		return TopologicalDistance(kpStartVertex->GetOcctVertex(), kpEndVertex->GetOcctVertex(), kTolerance);
 	}
 
-	int Graph::TopologicalDistance(const TopoDS_Vertex & rkOcctStartVertex, const TopoDS_Vertex & rkOcctVertex) const
+	int Graph::TopologicalDistance(const TopoDS_Vertex & rkOcctStartVertex, const TopoDS_Vertex & rkOcctEndVertex, const double kTolerance) const
 	{
-		Wire::Ptr shortestPath = ShortestPath(rkOcctStartVertex, rkOcctVertex, "", "");
-		if (shortestPath == nullptr)
-		{
-			return std::numeric_limits<int>::max();
-		}
-		std::list<Vertex::Ptr> vertices;
-		shortestPath->Vertices(vertices);
-		return (int)vertices.size() - 1;
+        if (kTolerance <= 0.0)
+        {
+            throw std::exception("The tolerance must have a positive value.");
+        }
+
+        // Use Breadth-First Search
+        TopoDS_Vertex occtCoincidentStartVertex = GetCoincidentVertex(rkOcctStartVertex, kTolerance);
+        TopoDS_Vertex occtCoincidentEndVertex = GetCoincidentVertex(rkOcctEndVertex, kTolerance);
+
+        std::queue<TopoDS_Vertex> occtVertexQueue;
+        BOPCol_DataMapOfShapeInteger occtVertexDistanceMap; // also to check if the vertex is processed
+        
+        occtVertexQueue.push(occtCoincidentStartVertex);
+        
+        while (!occtVertexQueue.empty())
+        {
+            TopoDS_Vertex occtCurrentVertex = occtVertexQueue.front();
+            occtVertexQueue.pop();
+            
+            TopTools_MapOfShape occtConnectedEdges;
+            GraphMap::const_iterator vertexAdjacencyIter = m_graphDictionary.find(occtCurrentVertex);
+            if (vertexAdjacencyIter == m_graphDictionary.end())
+            {
+                continue;
+            }
+
+            for (TopTools_MapIteratorOfMapOfShape occtVertexAdjacency(vertexAdjacencyIter->second);
+                occtVertexAdjacency.More();
+                occtVertexAdjacency.Next())
+            {
+                const TopoDS_Vertex& rkOcctAdjacentVertex = TopoDS::Vertex(occtVertexAdjacency.Value());
+                try {
+                    const int& rDistance = occtVertexDistanceMap.Find(rkOcctAdjacentVertex);
+
+                    // vertex is already processed, so continue.
+                    continue; 
+                }
+                catch (Standard_NoSuchObject&)
+                {
+                    // not found
+                    int parentDistance = 0;
+                    try{
+                        parentDistance = occtVertexDistanceMap.Find(occtCurrentVertex);
+                    }
+                    catch (Standard_NoSuchObject&)
+                    {
+                    }
+                    int currentDistance = parentDistance + 1;
+                    if (rkOcctAdjacentVertex.IsSame(rkOcctEndVertex))
+                    {
+                        return currentDistance;
+                    }
+                    else
+                    {
+                        occtVertexQueue.push(rkOcctAdjacentVertex);
+                        occtVertexDistanceMap.Bind(rkOcctAdjacentVertex, currentDistance);
+                    }
+                }
+            }
+        }
+
+        // The start and end Vertices are in different components of a disjoint Graph. Return infinite.
+        return std::numeric_limits<int>::max();
 	}
 
 	int Graph::Eccentricity(const std::shared_ptr<Vertex>& kpVertex) const
@@ -1752,9 +1808,9 @@ namespace TopologicCore
 			}
 			AttributeManager::GetInstance().CopyAttributes(kpFace->GetOcctShape(), internalVertex->GetOcctShape());
 			
-			bool isManifold = kpFace->IsManifold();
+			bool isManifold = kpFace->IsManifoldToTopology(kpCellComplex);
 			std::list<TopologicCore::Cell::Ptr> adjacentCells;
-			kpFace->Cells(adjacentCells);
+            TopologicUtilities::FaceUtility::AdjacentCells(kpFace, kpCellComplex, adjacentCells);
 
 			std::list<Topology::Ptr> contents;
 			kpFace->Contents(contents);

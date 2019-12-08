@@ -163,20 +163,24 @@ namespace TopologicCore
 		}
 	}
 
-
 	void AttributeManager::DeepCopyAttributes(const TopoDS_Shape& rkOcctShape1, const TopoDS_Shape& rkOcctShape2)
 	{
 		// For parent topology
-		TopoDS_Shape occtSelectedSubtopology = Topology::SelectSubtopology(
-			rkOcctShape2, 
-            rkOcctShape1.ShapeType() == TopAbs_SOLID? 
-                TopologicUtilities::CellUtility::InternalVertex(TopoDS::Solid(rkOcctShape1), 0.0001)->GetOcctVertex() : 
+        std::map<std::string, Attribute::Ptr> attributes;
+        bool isFound1 = FindAll(rkOcctShape1, attributes);
+        if (isFound1)
+        {
+            TopoDS_Shape occtSelectedSubtopology = Topology::SelectSubtopology(
+                rkOcctShape2,
+                rkOcctShape1.ShapeType() == TopAbs_SOLID ?
+                TopologicUtilities::CellUtility::InternalVertex(TopoDS::Solid(rkOcctShape1), 0.0001)->GetOcctVertex() :
                 Topology::CenterOfMass(rkOcctShape1),
-            Topology::GetTopologyType(rkOcctShape1.ShapeType()));
-		if (!occtSelectedSubtopology.IsNull())
-		{
-			CopyAttributes(rkOcctShape1, occtSelectedSubtopology);
-		}
+                Topology::GetTopologyType(rkOcctShape1.ShapeType()));
+            if (!occtSelectedSubtopology.IsNull())
+            {
+                CopyAttributes(rkOcctShape1, occtSelectedSubtopology);
+            }
+        }
 
 		// Get all subtopologies
 		for (int occtShapeTypeInt = (int)rkOcctShape1.ShapeType() + 1; occtShapeTypeInt < (int)TopAbs_SHAPE; ++occtShapeTypeInt)
@@ -186,8 +190,8 @@ namespace TopologicCore
 			{
 				TopoDS_Shape occtSubshape1 = occtExplorer.Current();
 				std::map<std::string, Attribute::Ptr> attributes;
-				bool isFound1 = FindAll(occtSubshape1, attributes);
-				if (!isFound1)
+				bool isFound2 = FindAll(occtSubshape1, attributes);
+				if (!isFound2)
 				{
 					continue;
 				}

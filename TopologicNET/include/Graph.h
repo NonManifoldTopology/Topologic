@@ -332,8 +332,13 @@ namespace Topologic {
 		/// </summary>
 		/// <param name="startVertex">The start Vertex</param>
 		/// <param name="endVertex">The end Vertex</param>
+		/// <param name="tolerance">A positive tolerance value</param>
 		/// <returns name="int">The resulting topological distance</returns>
-		int TopologicalDistance(Vertex^ startVertex, Vertex^ endVertex);
+		int TopologicalDistance(Vertex^ startVertex, Vertex^ endVertex,
+#ifdef TOPOLOGIC_DYNAMO
+            [Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")]
+#endif
+        double tolerance);
 
 		/// <summary>
 		/// Returns True if the input sequence satisfies the Erdoes Gallai theorem. It returns False otherwise.

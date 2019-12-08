@@ -219,6 +219,12 @@ namespace TopologicCore
 		/// <returns></returns>
 		virtual bool IsManifold() const;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        bool IsManifoldToTopology(const Topology::Ptr& kpTopology = nullptr) const;
+
 		/// <summary>
 		/// 
 		/// </summary>

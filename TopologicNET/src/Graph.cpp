@@ -213,12 +213,18 @@ namespace Topologic
 		}
 	}
 
-	int Graph::TopologicalDistance(Vertex ^ startVertex, Vertex ^ endVertex)
+	int Graph::TopologicalDistance(Vertex ^ startVertex, Vertex ^ endVertex, double tolerance)
 	{
 		TopologicCore::Vertex::Ptr pCoreStartVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(startVertex->GetCoreTopologicalQuery());
 		TopologicCore::Vertex::Ptr pCoreEndVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(endVertex->GetCoreTopologicalQuery());
 
-		return (*m_pCoreGraph)->TopologicalDistance(pCoreStartVertex, pCoreEndVertex);
+        try{
+		    return (*m_pCoreGraph)->TopologicalDistance(pCoreStartVertex, pCoreEndVertex);
+        }
+        catch (std::exception& e)
+        {
+            throw gcnew Exception(gcnew String(e.what()));
+        }
 	}
 
 	bool Graph::IsErdoesGallai(List<int>^ sequence)

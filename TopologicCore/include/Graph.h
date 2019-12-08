@@ -160,9 +160,9 @@ namespace TopologicCore
 
 		TOPOLOGIC_API int Diameter() const;
 
-		TOPOLOGIC_API int TopologicalDistance(const std::shared_ptr<Vertex>& kpStartVertex, const std::shared_ptr<Vertex>& kpEndVertex) const;
+		TOPOLOGIC_API int TopologicalDistance(const std::shared_ptr<Vertex>& kpStartVertex, const std::shared_ptr<Vertex>& kpEndVertex, const double kTolerance = 0.0001) const;
 
-		int TopologicalDistance(const TopoDS_Vertex& rkOcctStartVertex, const TopoDS_Vertex& rkOcctVertex) const;
+		int TopologicalDistance(const TopoDS_Vertex& rkOcctStartVertex, const TopoDS_Vertex& rkOcctEndVertex, const double kTolerance = 0.0001) const;
 
 		TOPOLOGIC_API int Eccentricity(const std::shared_ptr<Vertex>& kpVertex) const;
 

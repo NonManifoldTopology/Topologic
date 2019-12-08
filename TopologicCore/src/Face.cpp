@@ -137,9 +137,9 @@ namespace TopologicCore
 	TopoDS_Vertex Face::CenterOfMass(const TopoDS_Face & rkOcctFace)
 	{
 		GProp_GProps occtShapeProperties;
-		ShapeFix_Face occtShapeFix(rkOcctFace);
-		occtShapeFix.Perform();
-		BRepGProp::SurfaceProperties(occtShapeFix.Face(), occtShapeProperties);
+		//ShapeFix_Face occtShapeFix(rkOcctFace);
+		//occtShapeFix.Perform();
+		BRepGProp::SurfaceProperties(rkOcctFace, occtShapeProperties);
 		return BRepBuilderAPI_MakeVertex(occtShapeProperties.CentreOfMass());
 	}
 
@@ -596,17 +596,29 @@ namespace TopologicCore
 
 	bool Face::IsManifold() const
 	{
-		std::list<Cell::Ptr> cells;
-		Cells(cells);
-
-		// A manifold face has 0 or 1 cell.
-		if (cells.size() < 2)
-		{
-			return true;
-		}
-
-		return false;
+        return IsManifoldToTopology();
 	}
+
+    bool Face::IsManifoldToTopology(const Topology::Ptr & kpTopology) const
+    {
+        std::list<Cell::Ptr> cells;
+        if (kpTopology == nullptr)
+        {
+            Cells(cells);
+        }
+        else
+        {
+            TopologicUtilities::FaceUtility::AdjacentCells(this, kpTopology, cells);
+        }
+
+        // A manifold face has 0 or 1 cell.
+        if (cells.size() < 2)
+        {
+            return true;
+        }
+
+        return false;
+    }
 
 	void Face::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
 	{
