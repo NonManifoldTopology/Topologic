@@ -92,7 +92,7 @@ namespace TopologicGH
             //char[] chars = data.ToCharArray();
 
 
-            Dictionary<String, Object> newDictionary = Topologic.Dictionary.SetValueAtKey(dictionary, key, value);
+            Dictionary<String, Object> newDictionary = Topologic.Dictionary.SetValueAtKey(dictionary, key, GhToNetConverter.ConvertObject(value));
 
             IGH_Goo newDictionaryGoo = new GH_ObjectWrapper(newDictionary);
 

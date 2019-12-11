@@ -59,8 +59,8 @@ namespace TopologicGH
         {
             // Declare a variable for the input String
             Topologic.Topology topology = null;
-            List<Topologic.Vertex> selectors = null;
-            List<Dictionary<String, Object>> dictionaries = null;
+            List<Topologic.Vertex> selectors = new List<Topologic.Vertex>();
+            List<Dictionary<String, Object>> dictionaries = new List<Dictionary<String, Object>>();
             int typeFilter = 255;
 
             // Use the DA object to retrieve the data inside the first input parameter.

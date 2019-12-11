@@ -1132,20 +1132,36 @@ namespace TopologicCore
 		}
 	}
 
-	void Graph::RemoveEdges(const std::list<Edge::Ptr>& rkEdges)
+	void Graph::RemoveEdges(const std::list<Edge::Ptr>& rkEdges, const double kTolerance)
 	{
+        if (kTolerance <= 0.0)
+        {
+            throw std::exception("The tolerance must have a positive value.");
+        }
+
 		for (const Edge::Ptr& kpEdge : rkEdges)
 		{
 			Vertex::Ptr startVertex = kpEdge->StartVertex();
-			Vertex::Ptr endVertex = kpEdge->EndVertex();
+            TopoDS_Vertex occtQueryVertex1 = GetCoincidentVertex(startVertex->GetOcctVertex(), kTolerance);
+            if (occtQueryVertex1.IsNull())
+            {
+                continue;
+            }
+
+            Vertex::Ptr endVertex = kpEdge->EndVertex();
+            TopoDS_Vertex occtQueryVertex2 = GetCoincidentVertex(endVertex->GetOcctVertex(), kTolerance);
+            if (occtQueryVertex2.IsNull())
+            {
+                continue;
+            }
 
 			{
-				GraphMap::iterator startVertexIterator = m_graphDictionary.find(startVertex->GetOcctVertex());
+				GraphMap::iterator startVertexIterator = m_graphDictionary.find(occtQueryVertex1);
 				if (startVertexIterator != m_graphDictionary.end())
 				{
 					TopTools_MapOfShape& adjacentVertices = startVertexIterator->second;
 					adjacentVertices.Remove(endVertex->GetOcctVertex());
-					TopoDS_Edge occtEdge = FindEdge(startVertex->GetOcctVertex(), endVertex->GetOcctVertex());
+					TopoDS_Edge occtEdge = FindEdge(occtQueryVertex1, endVertex->GetOcctVertex());
 					if (!occtEdge.IsNull())
 					{
 						m_occtEdges.Remove(occtEdge);
@@ -1158,8 +1174,8 @@ namespace TopologicCore
 				if (endVertexIterator != m_graphDictionary.end())
 				{
 					TopTools_MapOfShape& adjacentVertices = endVertexIterator->second;
-					adjacentVertices.Remove(startVertex->GetOcctVertex());
-					TopoDS_Edge occtEdge = FindEdge(endVertex->GetOcctVertex(), startVertex->GetOcctVertex());
+					adjacentVertices.Remove(occtQueryVertex1);
+					TopoDS_Edge occtEdge = FindEdge(endVertex->GetOcctVertex(), occtQueryVertex1);
 					if (!occtEdge.IsNull())
 					{
 						m_occtEdges.Remove(occtEdge);

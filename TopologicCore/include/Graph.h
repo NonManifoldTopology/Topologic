@@ -170,7 +170,7 @@ namespace TopologicCore
 
 		TOPOLOGIC_API void RemoveVertices(const std::list<Vertex::Ptr>& rkVertices);
 
-		TOPOLOGIC_API void RemoveEdges(const std::list<Edge::Ptr>& rkEdges);
+		TOPOLOGIC_API void RemoveEdges(const std::list<Edge::Ptr>& rkEdges, const double kTolerance = 0.0001);
 
 		TOPOLOGIC_API void VerticesAtCoordinates(const double kX, const double kY, const double kZ, const double kTolerance, std::list<std::shared_ptr<Vertex>>& rVertices) const;
 

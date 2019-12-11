@@ -219,7 +219,7 @@ namespace Topologic
 		TopologicCore::Vertex::Ptr pCoreEndVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(endVertex->GetCoreTopologicalQuery());
 
         try{
-		    return (*m_pCoreGraph)->TopologicalDistance(pCoreStartVertex, pCoreEndVertex);
+		    return (*m_pCoreGraph)->TopologicalDistance(pCoreStartVertex, pCoreEndVertex, tolerance);
         }
         catch (std::exception& e)
         {
@@ -259,7 +259,7 @@ namespace Topologic
 		return gcnew Graph(pCoreCopyGraph);
 	}
 
-	Graph^ Graph::RemoveEdges(List<Topologic::Edge^>^ edges)
+	Graph^ Graph::RemoveEdges(List<Topologic::Edge^>^ edges, double tolerance)
 	{
 		TopologicCore::Graph::Ptr pCoreGraph = *m_pCoreGraph;
 		TopologicCore::Graph::Ptr pCoreCopyGraph = std::make_shared<TopologicCore::Graph>(pCoreGraph.get());
@@ -272,7 +272,7 @@ namespace Topologic
 			coreEdges.push_back(pCoreCopyEdge);
 		}
 
-		pCoreCopyGraph->RemoveEdges(coreEdges);
+		pCoreCopyGraph->RemoveEdges(coreEdges, tolerance);
 
 		return gcnew Graph(pCoreCopyGraph);
 	}

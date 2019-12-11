@@ -18,14 +18,13 @@
 
 #define MAJOR_VERSION 1
 #define MINOR_VERSION 2
-#define EXTERNAL_BUILD_VERSION 0
-#define INTERNAL_BUILD_VERSION 0
+#define INTERNAL_BUILD_VERSION 2
 
 namespace TopologicCore
 {
 	std::string About::Version()
 	{
-		std::string version = std::to_string(MAJOR_VERSION) + "." + std::to_string(MINOR_VERSION) + "." + std::to_string(EXTERNAL_BUILD_VERSION);
+		std::string version = std::to_string(MAJOR_VERSION) + "." + std::to_string(MINOR_VERSION) + "." + std::to_string(INTERNAL_BUILD_VERSION);
 		if (INTERNAL_BUILD_VERSION > 0)
 		{
 			version = version + "." + std::to_string(INTERNAL_BUILD_VERSION);

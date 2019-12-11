@@ -358,8 +358,13 @@ namespace Topologic {
 		/// Removes the input Edges from the Graph.
 		/// </summary>
 		/// <param name="edges">The Edges to be removed</param>
+		/// <param name="tolerance">A positive tolerance value</param>
 		/// <returns name="Graph">The Graph after the Edges are removed</returns>
-		Graph^ RemoveEdges(List<Edge^>^ edges);
+		Graph^ RemoveEdges(List<Edge^>^ edges,
+#ifdef TOPOLOGIC_DYNAMO
+            [Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")]
+#endif
+            double tolerance);
 
 		/// <summary>
 		/// Returns the Edge, if one exists, that connects the two input Vertices.

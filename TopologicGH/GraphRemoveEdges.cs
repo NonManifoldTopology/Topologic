@@ -59,11 +59,13 @@ namespace TopologicGH
             // Declare a variable for the input String
             Topologic.Graph graph = null;
             List<Topologic.Edge> edges = new List<Topologic.Edge>();
+            double tolerance = 0.0;
 
             // Use the DA object to retrieve the data inside the first input parameter.
             // If the retieval fails (for example if there is no data) we need to abort.
             if (!DA.GetData(0, ref graph)) { return; }
             if (!DA.GetDataList(1, edges)) { return; }
+            DA.GetData(2, ref tolerance);
 
             // If the retrieved data is Nothing, we need to abort.
             // We're also going to abort on a zero-length String.
@@ -75,7 +77,7 @@ namespace TopologicGH
             //char[] chars = data.ToCharArray();
 
             
-            Topologic.Graph newGraph = graph.RemoveEdges(edges);
+            Topologic.Graph newGraph = graph.RemoveEdges(edges, tolerance);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetData(0, newGraph);
