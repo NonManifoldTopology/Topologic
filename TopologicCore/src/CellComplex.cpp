@@ -86,12 +86,16 @@ namespace TopologicCore
 
 		TopoDS_CompSolid occtCompSolid = ByOcctSolids(occtShapes);
 		CellComplex::Ptr pCellComplex = std::make_shared<CellComplex>(occtCompSolid);
-		CellComplex::Ptr pCopyCellComplex = std::dynamic_pointer_cast<CellComplex>(pCellComplex->DeepCopy());
+		//CellComplex::Ptr pCopyCellComplex = std::dynamic_pointer_cast<CellComplex>(pCellComplex->DeepCopy());
 
+		std::list<Topology::Ptr> cellsAsTopologies;
 		for (const Cell::Ptr& kpCell : rkCells)
 		{
-			AttributeManager::GetInstance().DeepCopyAttributes(kpCell->GetOcctSolid(), pCopyCellComplex->GetOcctCompSolid());
+			cellsAsTopologies.push_back(kpCell);
+			//AttributeManager::GetInstance().DeepCopyAttributes(kpCell->GetOcctSolid(), pCopyCellComplex->GetOcctCompSolid());
 		}
+		CellComplex::Ptr pCopyCellComplex = TopologicalQuery::Downcast<CellComplex>(pCellComplex->DeepCopyAttributesFrom(cellsAsTopologies));
+
 		GlobalCluster::GetInstance().AddTopology(pCopyCellComplex->GetOcctCompSolid());
 
 		return pCopyCellComplex;
@@ -214,10 +218,13 @@ namespace TopologicCore
 		CellComplex::Ptr copyFixedCellComplex = TopologicalQuery::Downcast<CellComplex>(fixedCellComplex->DeepCopy());
 
 		GlobalCluster::GetInstance().AddTopology(copyFixedCellComplex->GetOcctCompSolid());
+		std::list<Topology::Ptr> facesAsTopologies;
 		for (const Face::Ptr& kpFace : rkFaces)
 		{
-			AttributeManager::GetInstance().DeepCopyAttributes(kpFace->GetOcctFace(), copyFixedCellComplex->GetOcctCompSolid());
+			facesAsTopologies.push_back(kpFace);
+			//AttributeManager::GetInstance().DeepCopyAttributes(kpFace->GetOcctFace(), copyFixedCellComplex->GetOcctCompSolid());
 		}
+		copyFixedCellComplex->DeepCopyAttributesFrom(facesAsTopologies);
 		return copyFixedCellComplex;
 	}
 

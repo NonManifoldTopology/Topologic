@@ -138,8 +138,9 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="kpStartVertex">The start Vertex</param>
 		/// <param name="kpEndVertex">The end Vertex</param>
+		/// <param name="kCopyAttributes">If True, copy the dictionaries</param>
 		/// <returns name="Edge">The created Edge</returns>
-		TOPOLOGIC_API static Edge::Ptr ByStartVertexEndVertex(const std::shared_ptr<Vertex>& kpStartVertex, const std::shared_ptr<Vertex>& kpEndVertex);
+		TOPOLOGIC_API static Edge::Ptr ByStartVertexEndVertex(const std::shared_ptr<Vertex>& kpStartVertex, const std::shared_ptr<Vertex>& kpEndVertex, const bool kCopyAttributes = true);
 
 		/// <summary>
 		/// Returns the shared Vertices between two Edges.

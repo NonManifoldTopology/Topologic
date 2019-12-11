@@ -19,6 +19,7 @@
 #include "Utilities.h"
 
 #include <TopoDS_Shape.hxx>
+#include <TopTools_MapOfShape.hxx>
 
 #include <list>
 #include <map>
@@ -34,6 +35,7 @@ namespace TopologicCore
 	public:
 		typedef std::shared_ptr<AttributeManager> Ptr;
 		typedef std::map<std::string, std::shared_ptr<Attribute>> AttributeMap;
+		typedef std::map<TopoDS_Shape, AttributeMap, TopologicCore::OcctShapeComparator> ShapeToAttributesMap;
 
 	public:
 		TOPOLOGIC_API static AttributeManager& GetInstance();
@@ -58,7 +60,9 @@ namespace TopologicCore
 
 		TOPOLOGIC_API void DeepCopyAttributes(const TopoDS_Shape& rkOcctShape1, const TopoDS_Shape& rkOcctShape2);
 
+		void GetAttributesInSubshapes(const TopoDS_Shape& rkOcctShape, ShapeToAttributesMap& rShapesToAttributesMap);
+
 	protected:
-		std::map<TopoDS_Shape, std::map<std::string, std::shared_ptr<Attribute>>, TopologicCore::OcctShapeComparator> m_occtShapeToAttributesMap;
+		ShapeToAttributesMap  m_occtShapeToAttributesMap;
 	};
 }

@@ -400,6 +400,7 @@ namespace TopologicUtilities
 		double occtUMin = 0.0, occtUMax = 0.0, occtVMin = 0.0, occtVMax = 0.0;
 		//ShapeFix_Face occtShapeFix(kpFace->GetOcctFace());
 		//occtShapeFix.Perform();
+		//ShapeAnalysis::GetFaceUVBounds(occtShapeFix.Face(), occtUMin, occtUMax, occtVMin, occtVMax);
 		ShapeAnalysis::GetFaceUVBounds(kpFace->GetOcctFace(), occtUMin, occtUMax, occtVMin, occtVMax);
 		double occtDU = occtUMax - occtUMin;
 		double occtDV = occtVMax - occtVMin;
@@ -454,7 +455,7 @@ namespace TopologicUtilities
 		TopologicCore::Vertex::Ptr vertexA = TopologicCore::Vertex::ByPoint(new Geom_CartesianPoint(pointA));
 		TopologicCore::Vertex::Ptr vertexB = TopologicCore::Vertex::ByPoint(new Geom_CartesianPoint(pointB));
 
-		TopologicCore::Edge::Ptr edge = TopologicCore::Edge::ByStartVertexEndVertex(vertexA, vertexB);
+		TopologicCore::Edge::Ptr edge = TopologicCore::Edge::ByStartVertexEndVertex(vertexA, vertexB, false);
 
 		TopologicCore::Topology::Ptr sliceResult = edge->Slice(kpFace);
 		

@@ -111,7 +111,7 @@
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"
 
-set DYNAMO_PACKAGES_DIR=$(APPDATA)\Dynamo\Dynamo Core\2.4\packages\Topologic\
+set DYNAMO_PACKAGES_DIR=$(APPDATA)\Dynamo\Dynamo Core\2.3\packages\Topologic\
 if not exist "%DYNAMO_PACKAGES_DIR%bin\" mkdir "%DYNAMO_PACKAGES_DIR%bin\"
 if not exist "%DYNAMO_PACKAGES_DIR%dyf\" mkdir "%DYNAMO_PACKAGES_DIR%dyf\"
 if not exist "%DYNAMO_PACKAGES_DIR%extra\" mkdir "%DYNAMO_PACKAGES_DIR%extra\"
@@ -159,7 +159,7 @@ copy "$(SolutionDir)TopologicInstaller\pkg.json" "%DYNAMO_PACKAGES_DIR%"</Comman
     <PostBuildEvent>
       <Command>copy "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"
 
-set DYNAMO_PACKAGES_DIR=$(APPDATA)\Dynamo\Dynamo Core\2.4\packages\Topologic\
+set DYNAMO_PACKAGES_DIR=$(APPDATA)\Dynamo\Dynamo Core\2.3\packages\Topologic\
 if not exist "%DYNAMO_PACKAGES_DIR%bin\" mkdir "%DYNAMO_PACKAGES_DIR%bin\"
 if not exist "%DYNAMO_PACKAGES_DIR%dyf\" mkdir "%DYNAMO_PACKAGES_DIR%dyf\"
 if not exist "%DYNAMO_PACKAGES_DIR%extra\" mkdir "%DYNAMO_PACKAGES_DIR%extra\"

@@ -56,10 +56,11 @@ namespace TopologicCore
 		Cluster::Ptr pCopyCluster = std::dynamic_pointer_cast<Cluster>(pCluster->DeepCopy());
 
 		// Transfer the attributes
-		for (const Topology::Ptr& kpTopology : rkTopologies)
+		/*for (const Topology::Ptr& kpTopology : rkTopologies)
 		{
 			AttributeManager::GetInstance().DeepCopyAttributes(kpTopology->GetOcctShape(), pCopyCluster->GetOcctCompound());
-		}
+		}*/
+		pCopyCluster->DeepCopyAttributesFrom(rkTopologies);
 
 		// Add to the Global Cluster
 		GlobalCluster::GetInstance().AddTopology(pCopyCluster->GetOcctCompound());

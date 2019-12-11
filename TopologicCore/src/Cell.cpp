@@ -214,10 +214,13 @@ namespace TopologicCore
 		GlobalCluster::GetInstance().AddTopology(fixedCell->GetOcctSolid());
 
 		// Copy the Dictionaries
+		std::list<Topology::Ptr> facesAsTopologies;
 		for (const Face::Ptr& kpFace : rkFaces)
 		{
-			AttributeManager::GetInstance().DeepCopyAttributes(kpFace->GetOcctFace(), copyFixedCell->GetOcctSolid());
+			facesAsTopologies.push_back(kpFace);
+			//AttributeManager::GetInstance().DeepCopyAttributes(kpFace->GetOcctFace(), copyFixedCell->GetOcctSolid());
 		}
+		copyFixedCell->DeepCopyAttributesFrom(facesAsTopologies);
 
 		return copyFixedCell;
 	}

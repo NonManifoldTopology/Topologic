@@ -42,7 +42,7 @@ namespace TopologicCore
 		if (m_occtShapeToAttributesMap.find(rkOcctShape) == m_occtShapeToAttributesMap.end())
 		{
 			std::map<std::string, Attribute::Ptr> attributeMap;
-			m_occtShapeToAttributesMap.insert(std::pair<TopoDS_Shape, std::map<std::string, std::shared_ptr<Attribute>>>(rkOcctShape, attributeMap));
+			m_occtShapeToAttributesMap.insert(std::pair<TopoDS_Shape, AttributeMap>(rkOcctShape, attributeMap));
 		}
 
 		m_occtShapeToAttributesMap[rkOcctShape][kAttributeName] = kpAttribute;
@@ -206,6 +206,33 @@ namespace TopologicCore
 				if (!occtSelectedSubtopology.IsNull())
 				{
 					CopyAttributes(occtSubshape1, occtSelectedSubtopology);
+				}
+			}
+		}
+	}
+
+	void AttributeManager::GetAttributesInSubshapes(const TopoDS_Shape & rkOcctShape, ShapeToAttributesMap & rShapesToAttributesMap)
+	{
+		// For parent topology
+		AttributeMap parentAttributeMap;
+		bool isFound = FindAll(rkOcctShape, parentAttributeMap);
+		if (!parentAttributeMap.empty())
+		{
+			rShapesToAttributesMap.insert(std::pair<TopoDS_Shape, AttributeMap>(rkOcctShape, parentAttributeMap));
+		}
+
+		// Get all subtopologies
+		for (int occtShapeTypeInt = (int)rkOcctShape.ShapeType() + 1; occtShapeTypeInt < (int)TopAbs_SHAPE; ++occtShapeTypeInt)
+		{
+			TopAbs_ShapeEnum occtShapeType = (TopAbs_ShapeEnum)occtShapeTypeInt;
+			for (TopExp_Explorer occtExplorer(rkOcctShape, occtShapeType); occtExplorer.More(); occtExplorer.Next())
+			{
+				TopoDS_Shape occtSubshape = occtExplorer.Current();
+				AttributeMap childAttributeMap;
+				bool isFound = FindAll(occtSubshape, childAttributeMap);
+				if (!childAttributeMap.empty())
+				{
+					rShapesToAttributesMap.insert(std::pair<TopoDS_Shape, AttributeMap>(occtSubshape, childAttributeMap));
 				}
 			}
 		}
