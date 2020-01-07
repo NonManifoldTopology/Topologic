@@ -40,8 +40,8 @@ namespace TopologicGH
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Graph", "Graph", "Graph", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Vertex", "Vertex", "Vertex", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Vertex", "Vertex", "Vertex", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Vertices", "Vertices", "Vertices", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Vertices", "Vertices", "Vertices", GH_ParamAccess.list);
             pManager.AddNumberParameter("Tolerance", "Tolerance", "Tolerance", GH_ParamAccess.item, 0.0001);
         }
 
@@ -61,29 +61,25 @@ namespace TopologicGH
         {
             // Declare a variable for the input String
             Topologic.Graph graph = null;
-            Topologic.Vertex vertex1 = null;
-            Topologic.Vertex vertex2 = null;
+            List<Topologic.Vertex> vertices1 = new List<Topologic.Vertex>();
+            List<Topologic.Vertex> vertices2 = new List<Topologic.Vertex>();
             double tolerance = 0.0;
 
             // Use the DA object to retrieve the data inside the first input parameter.
             // If the retieval fails (for example if there is no data) we need to abort.
             if (!DA.GetData(0, ref graph)) { return; }
-            if (!DA.GetData(1, ref vertex1)) { return; }
-            if (!DA.GetData(2, ref vertex2)) { return; }
+            if (!DA.GetDataList(1, vertices1)) { return; }
+            if (!DA.GetDataList(2, vertices2)) { return; }
             if (!DA.GetData(3, ref tolerance)) { return; }
 
             // If the retrieved data is Nothing, we need to abort.
             // We're also going to abort on a zero-length String.
             if (graph == null) { return; }
-            if (vertex1 == null) { return; }
-            if (vertex2 == null) { return; }
             //if (data.Length == 0) { return; }
 
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
-
-            
-            Topologic.Graph newGraph = graph.Connect(vertex1, vertex2, tolerance);
+            Topologic.Graph newGraph = graph.Connect(vertices1, vertices2, tolerance);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetData(0, newGraph);

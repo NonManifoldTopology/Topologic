@@ -401,15 +401,28 @@ namespace Topologic
 		return adjacentVertices;
 	}
 
-	Graph ^ Graph::Connect(Vertex ^ vertex1, Vertex ^ vertex2, double tolerance)
-	{
-		TopologicCore::Vertex::Ptr pCoreVertex1 = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex1->GetCoreTopologicalQuery());
-		TopologicCore::Vertex::Ptr pCoreVertex2 = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex2->GetCoreTopologicalQuery());
+    Graph ^ Graph::Connect(
+        List<Vertex^>^ vertices1,
+        List<Vertex^>^ vertices2,
+        double tolerance)
+    {
+        std::list<TopologicCore::Vertex::Ptr> coreVertices1;
+        for each(Vertex^ vertex1 in vertices1)
+        {
+            TopologicCore::Vertex::Ptr pCoreVertex1 = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex1->GetCoreTopologicalQuery());
+            coreVertices1.push_back(pCoreVertex1);
+        }
+        std::list<TopologicCore::Vertex::Ptr> coreVertices2;
+        for each(Vertex^ vertex2 in vertices2)
+        {
+            TopologicCore::Vertex::Ptr pCoreVertex2 = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex2->GetCoreTopologicalQuery());
+            coreVertices2.push_back(pCoreVertex2);
+        }
 		TopologicCore::Graph::Ptr pCoreGraph = *m_pCoreGraph;
 
 		TopologicCore::Graph::Ptr pCoreCopyGraph = std::make_shared<TopologicCore::Graph>(pCoreGraph.get());
 
-		pCoreCopyGraph->Connect(pCoreVertex1, pCoreVertex2, tolerance);
+		pCoreCopyGraph->Connect(coreVertices1, coreVertices2, tolerance);
 
 		return gcnew Graph(pCoreCopyGraph);
 	}

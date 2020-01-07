@@ -192,6 +192,12 @@ namespace TopologicCore
 		/// <returns></returns>
 		TOPOLOGIC_API std::shared_ptr<Wire> ExternalBoundary() const;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        static TopoDS_Wire ExternalBoundary(const TopoDS_Face& rkOcctFace);
+
 		/// <summary>
 		/// 
 		/// </summary>

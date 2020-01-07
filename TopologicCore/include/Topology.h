@@ -193,6 +193,12 @@ namespace TopologicCore
 			const std::list<std::map<std::string, std::shared_ptr<Attribute>>>& rkDictionaries,
 			const int kTypeFilter = TOPOLOGY_ALL);
 
+        Topology::Ptr SetDictionaries(
+            const std::list<std::shared_ptr<Vertex>>& rkSelectors,
+            const std::list<std::map<std::string, std::shared_ptr<Attribute>>>& rkDictionaries,
+            const std::list<int>& rkTypeFilters,
+            const bool expectDuplicateTopologies = false);
+
 		/// <summary>
 		/// 
 		/// </summary>
@@ -632,6 +638,7 @@ namespace TopologicCore
 
 	protected:
 		Topology(const int kDimensionality, const TopoDS_Shape& rkOcctShape, const std::string& rkGuid = "");
+        void AddUnionInternalStructure(const TopoDS_Shape& rkOcctShape, BOPCol_ListOfShape& rUnionArguments);
 
 		static TopoDS_Shape FixShape(const TopoDS_Shape& rkOcctShape);
 

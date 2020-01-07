@@ -38,6 +38,7 @@
 #include <BSplCLib.hxx>
 #include <BRepGProp.hxx>
 #include <BRepBndLib.hxx>
+#include <BRepTools.hxx>
 //#include <DBRep_IsoBuilder.hxx>
 //#include <DBRep_Face.hxx>
 #include <Geom2dAdaptor_Curve.hxx>
@@ -409,8 +410,11 @@ namespace TopologicCore
 			occtCopyMakeFace.Add(occtInternalWire);
 			TopoDS_Face newCopyFace = occtCopyMakeFace.Face();
 
+            ShapeFix_Face occtShapeFix(newCopyFace);
+            occtShapeFix.Perform();
+
 			// If the new area is larger than the original area, reverse and redo
-			double newArea = TopologicUtilities::FaceUtility::Area(newCopyFace);
+            double newArea = TopologicUtilities::FaceUtility::Area(occtShapeFix.Face());
 			if (newArea > area)
 			{
 				occtInternalWire.Reverse();
@@ -419,8 +423,11 @@ namespace TopologicCore
 			// Add the internal Wire (original or reversed orientation, as above) to the old MakeFace
 			occtMakeFace.Add(occtInternalWire);
 
+            ShapeFix_Face occtShapeFix2(occtMakeFace);
+            occtShapeFix2.Perform();
+
 			// Updating the area
-			area = TopologicUtilities::FaceUtility::Area(occtMakeFace);
+			area = TopologicUtilities::FaceUtility::Area(occtShapeFix2.Face());
 		}
 
 		ShapeFix_Face occtShapeFix(occtMakeFace);
@@ -501,19 +508,28 @@ namespace TopologicCore
 
 	Wire::Ptr Face::ExternalBoundary() const
 	{
-		TopoDS_Wire occtOuterWire = ShapeAnalysis::OuterWire(GetOcctFace());
-		if (GetOcctFace().Orientation() == TopAbs_REVERSED)
-		{
-			TopoDS_Wire occtReversedOuterWire = TopoDS::Wire(occtOuterWire.Reversed());
-			return std::make_shared<Wire>(occtReversedOuterWire);
-		}
-		return std::make_shared<Wire>(occtOuterWire);
+		return std::make_shared<Wire>(ExternalBoundary(GetOcctFace()));
 	}
+
+    TopoDS_Wire Face::ExternalBoundary(const TopoDS_Face & rkOcctFace)
+    {
+        TopoDS_Wire occtOuterWire = BRepTools::OuterWire(rkOcctFace);
+        if (occtOuterWire.IsNull())
+        {
+            occtOuterWire = ShapeAnalysis::OuterWire(rkOcctFace);
+        }
+        if (rkOcctFace.Orientation() == TopAbs_REVERSED)
+        {
+            TopoDS_Wire occtReversedOuterWire = TopoDS::Wire(occtOuterWire.Reversed());
+            return occtReversedOuterWire;
+        }
+        return occtOuterWire;
+    }
 
 	void Face::InternalBoundaries(std::list<Wire::Ptr>& rInternalBoundaries) const
 	{
 		const TopoDS_Face& rkFace = GetOcctFace();
-		TopoDS_Wire occtOuterWire = ShapeAnalysis::OuterWire(rkFace);
+        TopoDS_Wire occtOuterWire = ExternalBoundary(rkFace);
 		TopoDS_Iterator occtExplorer(rkFace, Standard_False);
 		while (occtExplorer.More())
 		{

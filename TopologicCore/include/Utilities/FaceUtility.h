@@ -150,7 +150,6 @@ namespace TopologicUtilities
 		static std::shared_ptr<TopologicCore::Vertex> ProjectToSurface(const TopologicCore::Face::Ptr kpFace, const std::shared_ptr<TopologicCore::Vertex>& kpVertex);
 
 		static TOPOLOGIC_API std::shared_ptr<TopologicCore::Vertex> InternalVertex(
-			const TopologicCore::Face::Ptr kpFace, const double kTolerance);
-
+			const TopologicCore::Face::Ptr kpFace, const double kTolerance = 0.0001);
 	};
 }

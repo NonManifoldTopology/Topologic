@@ -404,43 +404,51 @@ namespace TopologicCore
 		rOcctAdjacentVertices = m_graphDictionary.find(rkOcctVertex)->second;
 	}
 
-	void Graph::Connect(const std::shared_ptr<Vertex>& kpVertex1, const std::shared_ptr<Vertex>& kpVertex2, const double kTolerance)
+	void Graph::Connect(const std::list<std::shared_ptr<Vertex>>& rkVertices1, const std::list<std::shared_ptr<Vertex>>& rkVertices2, const double kTolerance)
 	{
 		if (kTolerance <= 0.0)
 		{
 			throw std::exception("The tolerance must have a positive value.");
 		}
 
-		TopoDS_Vertex occtQueryVertex1 = GetCoincidentVertex(kpVertex1->GetOcctVertex(), kTolerance);
-		if (occtQueryVertex1.IsNull())
-		{
-			occtQueryVertex1 = kpVertex1->GetOcctVertex();
-		}
-		TopoDS_Vertex occtQueryVertex2 = GetCoincidentVertex(kpVertex2->GetOcctVertex(), kTolerance);
-		if (occtQueryVertex2.IsNull())
-		{
-			occtQueryVertex2 = kpVertex2->GetOcctVertex();
-		}
+        std::list<Vertex::Ptr>::const_iterator vertex1Iterator = rkVertices1.begin();
+        std::list<Vertex::Ptr>::const_iterator vertex2Iterator = rkVertices2.begin();
+        for (; vertex1Iterator != rkVertices1.end() && vertex2Iterator != rkVertices2.end(); ++vertex1Iterator, ++vertex2Iterator)
+        {
+            const Vertex::Ptr& kpVertex1 = *vertex1Iterator;
+            const Vertex::Ptr& kpVertex2 = *vertex2Iterator;
 
-		bool addingEdge = false;
-		if (!m_graphDictionary[occtQueryVertex1].Contains(occtQueryVertex2))
-		{
-			m_graphDictionary[occtQueryVertex1].Add(occtQueryVertex2);
-			addingEdge = true;
-		}
-		if (!m_graphDictionary[occtQueryVertex2].Contains(occtQueryVertex1))
-		{
-			m_graphDictionary[occtQueryVertex2].Add(occtQueryVertex1);
-			addingEdge = true;
-		}
+            TopoDS_Vertex occtQueryVertex1 = GetCoincidentVertex(kpVertex1->GetOcctVertex(), kTolerance);
+            if (occtQueryVertex1.IsNull())
+            {
+                occtQueryVertex1 = kpVertex1->GetOcctVertex();
+            }
+            TopoDS_Vertex occtQueryVertex2 = GetCoincidentVertex(kpVertex2->GetOcctVertex(), kTolerance);
+            if (occtQueryVertex2.IsNull())
+            {
+                occtQueryVertex2 = kpVertex2->GetOcctVertex();
+            }
 
-		if (addingEdge)
-		{
-			Vertex::Ptr queryVertex1 = std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtQueryVertex1));
-			Vertex::Ptr queryVertex2 = std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtQueryVertex2));
-			Edge::Ptr edge = Edge::ByStartVertexEndVertex(queryVertex1, queryVertex2);
-			m_occtEdges.Add(edge->GetOcctEdge());
-		}
+            bool addingEdge = false;
+            if (!m_graphDictionary[occtQueryVertex1].Contains(occtQueryVertex2))
+            {
+                m_graphDictionary[occtQueryVertex1].Add(occtQueryVertex2);
+                addingEdge = true;
+            }
+            if (!m_graphDictionary[occtQueryVertex2].Contains(occtQueryVertex1))
+            {
+                m_graphDictionary[occtQueryVertex2].Add(occtQueryVertex1);
+                addingEdge = true;
+            }
+
+            if (addingEdge)
+            {
+                Vertex::Ptr queryVertex1 = std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtQueryVertex1));
+                Vertex::Ptr queryVertex2 = std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(occtQueryVertex2));
+                Edge::Ptr edge = Edge::ByStartVertexEndVertex(queryVertex1, queryVertex2);
+                m_occtEdges.Add(edge->GetOcctEdge());
+            }
+        }
 	}
 
 	bool Graph::ContainsVertex(const std::shared_ptr<Vertex>& kpVertex, const double kTolerance) const

@@ -120,7 +120,7 @@ namespace TopologicUtilities
 		/// <returns></returns>
 		static TOPOLOGIC_API std::shared_ptr<TopologicCore::Vertex> InternalVertex(
 			const TopologicCore::Cell::Ptr kpCell, 
-			const double kTolerance);
+			const double kTolerance = 0.0001);
 
         /// <summary>
         /// 
@@ -130,7 +130,7 @@ namespace TopologicUtilities
         /// <returns></returns>
         static std::shared_ptr<TopologicCore::Vertex> InternalVertex(
             const TopoDS_Solid& rkOcctSolid,
-            const double kTolerance);
+            const double kTolerance = 0.0001);
 
 		/// <summary>
 		/// 

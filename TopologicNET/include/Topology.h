@@ -224,11 +224,10 @@ namespace Topologic
 		/// <param name="transferDictionary">If True, transfer Dictionaries from every original constituent member to the resulting members generated from the original member</param>
 		/// <returns name="Topology">The result of the Difference operation</returns>
 		Topology^ Difference(
+            Topology^ topology,
 #ifdef TOPOLOGIC_DYNAMO
-			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ topology,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("false")] bool transferDictionary
 #else
-			Topology^ topology,
 			bool transferDictionary
 #endif
 		);
@@ -240,11 +239,10 @@ namespace Topologic
 		/// <param name="transferDictionary">If True, transfer Dictionaries from every original constituent member to the resulting members generated from the original member</param>
 		/// <returns name="Topology">The result of the Impose operation</returns>
 		Topology^ Impose(
+            Topology^ tool,
 #ifdef TOPOLOGIC_DYNAMO
-			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ tool,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("false")] bool transferDictionary
 #else
-			Topology^ tool,
 			bool transferDictionary
 #endif
 		);
@@ -256,11 +254,10 @@ namespace Topologic
 		/// <param name="transferDictionary">If True, transfer Dictionaries from every original constituent member to the resulting members generated from the original member</param>
 		/// <returns name="Topology">The result of the Imprint operation</returns>
 		Topology^ Imprint(
+            Topology^ tool,
 #ifdef TOPOLOGIC_DYNAMO
-			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ tool,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("false")] bool transferDictionary
 #else
-			Topology^ tool,
 			bool transferDictionary
 #endif
 		);
@@ -272,11 +269,10 @@ namespace Topologic
 		/// <param name="transferDictionary">If True, transfer Dictionaries from every original constituent member to the resulting members generated from the original member</param>
 		/// <returns name="Topology">The result of the Intersection operation</returns>
 		Topology^ Intersect(
+            Topology^ topology,
 #ifdef TOPOLOGIC_DYNAMO
-			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ topology,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("false")] bool transferDictionary
 #else
-			Topology^ topology,
 			bool transferDictionary
 #endif
 		);
@@ -288,11 +284,10 @@ namespace Topologic
 		/// <param name="transferDictionary">If True, transfer Dictionaries from every original constituent member to the resulting members generated from the original member</param>
 		/// <returns name="Topology">The result of the Merge operation</returns>
 		Topology^ Merge(
+            Topology^ topology,
 #ifdef TOPOLOGIC_DYNAMO
-			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ topology,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("false")] bool transferDictionary
 #else
-			Topology^ topology,
 			bool transferDictionary
 #endif
 		);
@@ -310,11 +305,10 @@ namespace Topologic
 		/// <param name="transferDictionary">If True, transfer Dictionaries from every original constituent member to the resulting members generated from the original member</param>
 		/// <returns name="Topology">The result of the Slice operation</returns>
 		Topology^ Slice(
+            Topology^ tool,
 #ifdef TOPOLOGIC_DYNAMO
-			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ tool,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("false")] bool transferDictionary
 #else
-			Topology^ tool,
 			bool transferDictionary
 #endif
 		);
@@ -326,11 +320,10 @@ namespace Topologic
 		/// <param name="transferDictionary">If True, transfer Dictionaries from every original constituent member to the resulting members generated from the original member</param>
 		/// <returns name="Topology">The result of the Divide operation</returns>
 		Topology^ Divide(
+            Topology^ tool,
 #ifdef TOPOLOGIC_DYNAMO
-			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ tool,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("false")] bool transferDictionary
 #else
-			Topology^ tool,
 			bool transferDictionary
 #endif
 		);
@@ -342,11 +335,10 @@ namespace Topologic
 		/// <param name="transferDictionary">If True, transfer Dictionaries from every original constituent member to the resulting members generated from the original member</param>
 		/// <returns name="Topology">The result of the Union operation</returns>
 		Topology^ Union(
+            Topology^ topology,
 #ifdef TOPOLOGIC_DYNAMO
-			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ topology,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("false")] bool transferDictionary
 #else
-			Topology^ topology,
 			bool transferDictionary
 #endif
 		);
@@ -358,11 +350,10 @@ namespace Topologic
 		/// <param name="transferDictionary">If True, transfer Dictionaries from every original constituent member to the resulting members generated from the original member</param>
 		/// <returns name="Topology">The result of the XOR operation</returns>
 		Topology^ XOR(
+            Topology^ topology,
 #ifdef TOPOLOGIC_DYNAMO
-			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] Topology^ topology,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("false")] bool transferDictionary
 #else
-			Topology^ topology,
 			bool transferDictionary
 #endif
 		);
@@ -511,7 +502,9 @@ namespace Topologic
 		/// <param name="typeFilter">The type of the filtered Topologies</param>
 		/// <returns>The closest sub-topology to the selector of the specified type</returns>
 #ifdef TOPOLOGIC_DYNAMO
-		[IsVisibleInDynamoLibrary(false)]
+//#ifndef _DEBUG
+//		[IsVisibleInDynamoLibrary(false)]
+//#endif
 		Topology^ SelectSubtopology(Vertex^ selector,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] int typeFilter);
 #else

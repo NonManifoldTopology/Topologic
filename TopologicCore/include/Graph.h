@@ -81,7 +81,7 @@ namespace TopologicCore
 
 		void AdjacentVertices(const TopoDS_Vertex& rkOcctVertex, TopTools_MapOfShape& rOcctAdjacentVertices) const;
 
-		TOPOLOGIC_API void Connect(const std::shared_ptr<Vertex>& kpVertex1, const std::shared_ptr<Vertex>& kpVertex2, const double kTolerance);
+		TOPOLOGIC_API void Connect(const std::list<std::shared_ptr<Vertex>>& rkVertices1, const std::list<std::shared_ptr<Vertex>>& rkVertices2, const double kTolerance);
 
 		TOPOLOGIC_API bool ContainsVertex(const std::shared_ptr<Vertex>& kpVertex, const double kTolerance) const;
 

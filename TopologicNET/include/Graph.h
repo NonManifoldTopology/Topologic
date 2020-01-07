@@ -157,15 +157,15 @@ namespace Topologic {
 			double tolerance);
 
 		/// <summary>
-		/// Connects the two input Vertices with an Edge.
+		/// Connects the two sets of input Vertices pairwise with an Edge.
 		/// </summary>
-		/// <param name="vertex1">The first Vertex</param>
-		/// <param name="vertex2">The second Vertex</param>
+		/// <param name="vertices1">The first set of Vertices</param>
+		/// <param name="vertices2">The second set of Vertices</param>
 		/// <param name="tolerance">A positive tolerance value</param>
 		/// <returns name="Graph">The Graph after the Vertices are connected</returns>
 		Graph^ Connect(
-			Vertex^ vertex1, 
-			Vertex^ vertex2, 
+			List<Vertex^>^ vertices1, 
+            List<Vertex^>^ vertices2,
 #ifdef TOPOLOGIC_DYNAMO
 			[Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")]
 #endif
