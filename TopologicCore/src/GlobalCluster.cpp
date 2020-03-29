@@ -15,6 +15,7 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 #include "GlobalCluster.h"
+#include "Cluster.h"
 #include "Topology.h"
 
 namespace TopologicCore
@@ -31,6 +32,11 @@ namespace TopologicCore
 	{
 		m_occtBuilder.Add(m_occtCompound, rkOcctShape);
 	}
+
+    Cluster::Ptr GlobalCluster::GetCluster()
+    {
+        return std::make_shared<TopologicCore::Cluster>(m_occtCompound);
+    }
 
 	void GlobalCluster::RemoveTopology(const std::shared_ptr<Topology>& rkTopology)
 	{

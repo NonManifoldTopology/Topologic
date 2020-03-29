@@ -157,7 +157,10 @@ namespace TopologicCore
 		const Wire::Ptr& pkExternalBoundary,
 		const std::list<Wire::Ptr>& rkInternalBoundaries)
 	{
-		//Wire::Ptr copyExternalBoundary = std::dynamic_pointer_cast<Wire>(pkExternalBoundary->DeepCopy());
+        if (!pkExternalBoundary->IsClosed())
+        {
+            throw std::exception("The input Wire is open.");
+        }
 		TopoDS_Wire occtExternalBoundary = pkExternalBoundary->GetOcctWire();
 		BRepBuilderAPI_MakeFace occtMakeFace(occtExternalBoundary);
 		if (occtMakeFace.Error() != BRepBuilderAPI_FaceDone)

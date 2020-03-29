@@ -27,6 +27,7 @@
 #include "IntAttribute.h"
 #include "AttributeManager.h"
 
+#include <Utilities/EdgeUtility.h>
 #include <Utilities/FaceUtility.h>
 #include <Utilities/CellUtility.h>
 
@@ -35,6 +36,8 @@
 #include <ShapeAnalysis_Edge.hxx>
 #include <TopoDS.hxx>
 #include <TopTools_DataMapOfShapeListOfShape.hxx>
+#include <Geom_CartesianPoint.hxx>
+#include <BRep_Tool.hxx>
 
 #include <algorithm>
 #include <assert.h>
@@ -1200,15 +1203,37 @@ namespace TopologicCore
 			throw std::exception("The tolerance must have a positive value.");
 		}
 
-		TopoDS_Vertex occtQueryVertex = BRepBuilderAPI_MakeVertex(gp_Pnt(kX, kY, kZ));
+        gp_Pnt occtQueryPoint(kX, kY, kZ);
+		//TopoDS_Vertex occtQueryVertex = BRepBuilderAPI_MakeVertex(gp_Pnt(kX, kY, kZ));
 		double absDistanceThreshold = std::abs(kTolerance);
 		for (GraphMap::const_iterator graphIterator = m_graphDictionary.begin();
 			graphIterator != m_graphDictionary.end();
 			graphIterator++)
 		{
 			TopoDS_Vertex currentVertex = graphIterator->first;
-			BRepExtrema_DistShapeShape occtDistanceCalculation(occtQueryVertex, currentVertex);
-			bool isDone = occtDistanceCalculation.Perform();
+            Handle(Geom_CartesianPoint) currentPoint = new Geom_CartesianPoint(BRep_Tool::Pnt(currentVertex));
+            /*BRepExtrema_DistShapeShape occtDistanceCalculation(rkVertex, currentVertex);
+            bool isDone = occtDistanceCalculation.Perform();
+            if (isDone)
+            {
+                double distance = occtDistanceCalculation.Value();
+                if (distance < absDistanceThreshold)
+                {
+                    return currentVertex;
+                }
+            }*/
+
+            double dx = (currentPoint->X() - occtQueryPoint.X());
+            double dy = (currentPoint->Y() - occtQueryPoint.Y());
+            double dz = (currentPoint->Z() - occtQueryPoint.Z());
+            double sqDistance = sqrt(dx * dx + dy * dy + dz * dz);
+            if (sqDistance < absDistanceThreshold)
+            {
+                Vertex::Ptr closestVertex = std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(currentVertex));
+                rVertices.push_back(closestVertex);
+            }
+			//BRepExtrema_DistShapeShape occtDistanceCalculation(occtQueryVertex, currentVertex);
+			/*bool isDone = occtDistanceCalculation.Perform();
 			if (isDone)
 			{
 				double distance = occtDistanceCalculation.Value();
@@ -1217,7 +1242,7 @@ namespace TopologicCore
 					Vertex::Ptr closestVertex = std::dynamic_pointer_cast<Vertex>(Topology::ByOcctShape(currentVertex));
 					rVertices.push_back(closestVertex);
 				}
-			}
+			}*/
 		}
 	}
 
@@ -1552,7 +1577,8 @@ namespace TopologicCore
 			for (const TopologicCore::Face::Ptr& kpFace : faces)
 			{
 				std::list<TopologicCore::Face::Ptr> adjacentFaces;
-				kpFace->AdjacentFaces(adjacentFaces);
+				//kpFace->AdjacentFaces(adjacentFaces); // here
+                TopologicUtilities::FaceUtility::AdjacentFaces(kpFace.get(), kpShell, adjacentFaces);
 
 				for (const TopologicCore::Face::Ptr& kpAdjacentFace : adjacentFaces)
 				{
@@ -1573,11 +1599,12 @@ namespace TopologicCore
 		for (const TopologicCore::Edge::Ptr& kpEdge : edges)
 		{
 			TopologicCore::Vertex::Ptr pCentroid = kpEdge->CenterOfMass();
-			bool isManifold = kpEdge->IsManifold();
+			bool isManifold = kpEdge->IsManifold(kpShell); // here
 			AttributeManager::GetInstance().CopyAttributes(kpEdge->GetOcctShape(), pCentroid->GetOcctShape());
 
 			std::list<TopologicCore::Face::Ptr> adjacentFaces;
-			kpEdge->Faces(adjacentFaces);
+            TopologicUtilities::EdgeUtility::AdjacentFaces(kpEdge, kpShell, adjacentFaces);
+			//kpEdge->Faces(adjacentFaces); // here
 
 			std::list<Topology::Ptr> contents;
 			kpEdge->Contents(contents);
@@ -2012,14 +2039,16 @@ namespace TopologicCore
 	}
 
 	TopoDS_Vertex Graph::GetCoincidentVertex(const TopoDS_Vertex & rkVertex, const double kTolerance) const
-	{
+    {
+        Handle(Geom_CartesianPoint) point = new Geom_CartesianPoint(BRep_Tool::Pnt(rkVertex));
 		double absDistanceThreshold = std::abs(kTolerance);
 		for (GraphMap::const_iterator graphIterator = m_graphDictionary.begin();
 			graphIterator != m_graphDictionary.end();
 			graphIterator++)
 		{
 			TopoDS_Vertex currentVertex = graphIterator->first;
-			BRepExtrema_DistShapeShape occtDistanceCalculation(rkVertex, currentVertex);
+            Handle(Geom_CartesianPoint) currentPoint = new Geom_CartesianPoint(BRep_Tool::Pnt(currentVertex));
+            /*BRepExtrema_DistShapeShape occtDistanceCalculation(rkVertex, currentVertex);
 			bool isDone = occtDistanceCalculation.Perform();
 			if (isDone)
 			{
@@ -2028,7 +2057,16 @@ namespace TopologicCore
 				{
 					return currentVertex;
 				}
-			}
+			}*/
+
+            double dx = (currentPoint->X() - point->X());
+            double dy = (currentPoint->Y() - point->Y());
+            double dz = (currentPoint->Z() - point->Z());
+            double sqDistance = dx*dx + dy*dy + dz*dz;
+            if (sqDistance < absDistanceThreshold)
+            {
+                return currentVertex;
+            }
 		}
 
 		return TopoDS_Vertex(); // null vertex
@@ -2163,15 +2201,25 @@ namespace TopologicCore
 
 	bool Graph::IsCoincident(const TopoDS_Vertex & rkVertex1, const TopoDS_Vertex & rkVertex2, const double kTolerance)
 	{
-		BRepExtrema_DistShapeShape occtDistanceCalculation(rkVertex1, rkVertex2);
-		bool isDone = occtDistanceCalculation.Perform();
-		if (isDone)
+		//BRepExtrema_DistShapeShape occtDistanceCalculation(rkVertex1, rkVertex2);
+		//bool isDone = occtDistanceCalculation.Perform();
+		//if (isDone)
+
+
+        Handle(Geom_CartesianPoint) point1 = new Geom_CartesianPoint(BRep_Tool::Pnt(rkVertex1));
+        Handle(Geom_CartesianPoint) point2 = new Geom_CartesianPoint(BRep_Tool::Pnt(rkVertex2));
+
+        double dx = (point2->X() - point1->X());
+        double dy = (point2->Y() - point1->Y());
+        double dz = (point2->Z() - point1->Z());
+        double sqDistance = dx * dx + dy * dy + dz * dz;
+        if (sqDistance < kTolerance)
 		{
-			double distance = occtDistanceCalculation.Value();
+			/*double distance = occtDistanceCalculation.Value();
 			if (distance < kTolerance)
-			{
+			{*/
 				return true;
-			}
+			//}
 		}
 
 		return false;

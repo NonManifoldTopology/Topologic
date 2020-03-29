@@ -19,8 +19,11 @@
 #include "Wire.h"
 #include "Face.h"
 #include "EdgeFactory.h"
+#include "Cluster.h"
 #include "GlobalCluster.h"
 #include "AttributeManager.h"
+
+#include <Utilities/EdgeUtility.h>
 
 #include <BRepGProp.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
@@ -230,17 +233,22 @@ namespace TopologicCore
 
 	bool Edge::IsManifold() const
 	{
-		std::list<Wire::Ptr> wires;
-		Wires(wires);
-
-		// A manifold edge has <= 2 wires.
-		if (wires.size() <= 2)
-		{
-			return true;
-		}
-
-		return false;
+        return IsManifold(std::dynamic_pointer_cast<Topology>(GlobalCluster::GetInstance().GetCluster()));
 	}
+
+    bool Edge::IsManifold(const TopologicCore::Topology::Ptr & rkParentTopology) const
+    {
+        std::list<Wire::Ptr> wires;
+        TopologicUtilities::EdgeUtility::AdjacentWires(this, rkParentTopology, wires);
+
+        // A manifold edge has <= 2 wires.
+        if (wires.size() <= 2)
+        {
+            return true;
+        }
+
+        return false;
+    }
 
 	void Edge::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
 	{

@@ -438,6 +438,52 @@ namespace TopologicUtilities
         }
     }
 
+    void FaceUtility::AdjacentFaces(TopologicCore::Face const * const pkpFace, const TopologicCore::Topology::Ptr & kpParentTopology, std::list<TopologicCore::Face::Ptr>& rCoreAdjacentFaces)
+    {
+        // Iterate through the edges and find the incident faces which are not this face.
+        TopTools_IndexedDataMapOfShapeListOfShape occtEdgeFaceMap;
+        TopExp::MapShapesAndUniqueAncestors(kpParentTopology->GetOcctShape(), TopAbs_EDGE, TopAbs_FACE, occtEdgeFaceMap);
+
+        // Find the constituent faces
+        TopTools_MapOfShape occtEdges;
+        for (TopExp_Explorer occtExplorer(pkpFace->GetOcctShape(), TopAbs_EDGE); occtExplorer.More(); occtExplorer.Next())
+        {
+            const TopoDS_Shape& occtCurrent = occtExplorer.Current();
+            if (!occtEdges.Contains(occtCurrent))
+            {
+                occtEdges.Add(occtCurrent);
+            }
+        }
+
+        const TopoDS_Face& rkOcctFace = pkpFace->GetOcctFace();
+        TopTools_MapOfShape occtAdjacentFaces;
+        for (TopTools_MapOfShape::const_iterator kOcctEdgeIterator = occtEdges.cbegin();
+            kOcctEdgeIterator != occtEdges.cend();
+            kOcctEdgeIterator++)
+        {
+            const TopoDS_Shape& rkOcctEdge = *kOcctEdgeIterator;
+            const TopTools_ListOfShape& rkIncidentFaces = occtEdgeFaceMap.FindFromKey(rkOcctEdge);
+
+            for (TopTools_ListOfShape::const_iterator kOcctFaceIterator = rkIncidentFaces.cbegin();
+                kOcctFaceIterator != rkIncidentFaces.cend();
+                kOcctFaceIterator++)
+            {
+                const TopoDS_Shape& rkIncidentFace = *kOcctFaceIterator;
+                if (!rkOcctFace.IsSame(rkIncidentFace))
+                {
+                    occtAdjacentFaces.Add(rkIncidentFace);
+                }
+            }
+        }
+
+        for (TopTools_MapIteratorOfMapOfShape occtAdjacentFaceIterator(occtAdjacentFaces);
+            occtAdjacentFaceIterator.More();
+            occtAdjacentFaceIterator.Next())
+        {
+            rCoreAdjacentFaces.push_back(std::make_shared<TopologicCore::Face>(TopoDS::Face(occtAdjacentFaceIterator.Value())));
+        }
+    }
+
 	// https://www.opencascade.com/content/how-find-if-point-belongs-face
 	// https://www.opencascade.com/doc/occt-7.2.0/refman/html/class_b_rep_class___face_classifier.html
 	bool FaceUtility::IsInside(const TopologicCore::Face::Ptr kpFace, const TopologicCore::Vertex::Ptr & kpVertex, const double kTolerance)

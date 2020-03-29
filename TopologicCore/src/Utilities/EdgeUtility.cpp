@@ -16,6 +16,8 @@
 
 #include <Utilities/EdgeUtility.h>
 
+#include <Face.h>
+
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepGProp.hxx>
 #include <Geom_CartesianPoint.hxx>
@@ -242,15 +244,32 @@ namespace TopologicUtilities
 		const TopologicCore::Topology::Ptr & kpParentTopology, 
 		std::list<TopologicCore::Wire::Ptr>& rCoreAdjacentWires)
 	{
-		 std::list<TopologicCore::Topology::Ptr> coreAdjacentTopologies;
-		 kpEdge->UpwardNavigation(kpParentTopology->GetOcctShape(), TopologicCore::Wire::Type(), coreAdjacentTopologies);
-		 for (const TopologicCore::Topology::Ptr& kpAdjacentTopology : coreAdjacentTopologies)
-		 {
-			 rCoreAdjacentWires.push_back(
-				 TopologicCore::TopologicalQuery::Downcast<TopologicCore::Wire>(kpAdjacentTopology)
-			 );
-		 }
+        AdjacentWires(kpEdge.get(), kpParentTopology, rCoreAdjacentWires);
 	}
+
+    void EdgeUtility::AdjacentWires(TopologicCore::Edge const * const kpkEdge, const TopologicCore::Topology::Ptr & kpParentTopology, std::list<TopologicCore::Wire::Ptr>& rCoreAdjacentWires)
+    {
+        std::list<TopologicCore::Topology::Ptr> coreAdjacentTopologies;
+        kpkEdge->UpwardNavigation(kpParentTopology->GetOcctShape(), TopologicCore::Wire::Type(), coreAdjacentTopologies);
+        for (const TopologicCore::Topology::Ptr& kpAdjacentTopology : coreAdjacentTopologies)
+        {
+            rCoreAdjacentWires.push_back(
+                TopologicCore::TopologicalQuery::Downcast<TopologicCore::Wire>(kpAdjacentTopology)
+            );
+        }
+    }
+
+    void EdgeUtility::AdjacentFaces(const TopologicCore::Edge::Ptr & kpEdge, const TopologicCore::Topology::Ptr & kpParentTopology, std::list<TopologicCore::Face::Ptr>& rCoreAdjacentFaces)
+    {
+        std::list<TopologicCore::Topology::Ptr> coreAdjacentTopologies;
+        kpEdge->UpwardNavigation(kpParentTopology->GetOcctShape(), TopologicCore::Face::Type(), coreAdjacentTopologies);
+        for (const TopologicCore::Topology::Ptr& kpAdjacentTopology : coreAdjacentTopologies)
+        {
+            rCoreAdjacentFaces.push_back(
+                TopologicCore::TopologicalQuery::Downcast<TopologicCore::Face>(kpAdjacentTopology)
+            );
+        }
+    }
 
 	double EdgeUtility::AngleBetween(const TopologicCore::Edge::Ptr & kpEdge1, const TopologicCore::Edge::Ptr & kpEdge2)
 	{
@@ -273,4 +292,5 @@ namespace TopologicUtilities
 
 		return radAngle;
 	}
+
 }

@@ -46,10 +46,12 @@ namespace TopologicCore
 	{
 		if (!IsManifold())
 		{
+            // Gives in any order
 			DownwardNavigation(rEdges);
 		}
 		else
 		{
+            // This only works for manifold wire with a flow
 			std::list<Vertex::Ptr> vertices;
 			DownwardNavigation<Vertex>(vertices);
 			if (vertices.empty())

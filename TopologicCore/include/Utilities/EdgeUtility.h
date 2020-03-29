@@ -19,6 +19,7 @@
 #include <Edge.h>
 #include <Vertex.h>
 #include <Wire.h>
+#include <Face.h>
 
 #include <memory>
 
@@ -95,6 +96,16 @@ namespace TopologicUtilities
 			const TopologicCore::Edge::Ptr & kpEdge,
 			const TopologicCore::Topology::Ptr & kpParentTopology,
 			std::list<TopologicCore::Wire::Ptr>& rCoreAdjacentWires);
+
+        static void AdjacentWires(
+            TopologicCore::Edge const * const kpkEdge,
+            const TopologicCore::Topology::Ptr & kpParentTopology,
+            std::list<TopologicCore::Wire::Ptr>& rCoreAdjacentWires);
+
+        static TOPOLOGIC_API void AdjacentFaces(
+            const TopologicCore::Edge::Ptr & kpEdge,
+            const TopologicCore::Topology::Ptr & kpParentTopology,
+            std::list<TopologicCore::Face::Ptr>& rCoreAdjacentFaces);
 
 		static double AngleBetween(
 			const TopologicCore::Edge::Ptr & kpEdge1,

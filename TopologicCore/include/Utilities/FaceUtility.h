@@ -137,6 +137,11 @@ namespace TopologicUtilities
             const TopologicCore::Topology::Ptr & kpParentTopology,
             std::list<TopologicCore::Cell::Ptr>& rCoreAdjacentCells);
 
+        static void AdjacentFaces(
+            TopologicCore::Face const * const pkpFace,
+            const TopologicCore::Topology::Ptr & kpParentTopology,
+            std::list<TopologicCore::Face::Ptr>& rCoreAdjacentFaces);
+
 
 		/// <summary>
 		/// 

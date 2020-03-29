@@ -109,7 +109,7 @@
       <Command>copy /y "$(SolutionDir)references\OpenStudio-2.8.0\*.dll" "$(SolutionDir)output\$(Platform)\$(Configuration)"
 copy /y "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"
 
-set DYNAMO_PACKAGES_DIR=$(APPDATA)\Dynamo\Dynamo Core\2.4\packages\Topologic\
+set DYNAMO_PACKAGES_DIR=$(APPDATA)\Dynamo\Dynamo Core\2.6\packages\Topologic\
 if not exist "%DYNAMO_PACKAGES_DIR%bin\" mkdir "%DYNAMO_PACKAGES_DIR%bin\"
 if not exist "%DYNAMO_PACKAGES_DIR%dyf\" mkdir "%DYNAMO_PACKAGES_DIR%dyf\"
 if not exist "%DYNAMO_PACKAGES_DIR%extra\" mkdir "%DYNAMO_PACKAGES_DIR%extra\"
@@ -122,7 +122,7 @@ copy /y "$(SolutionDir)output\$(Platform)\$(Configuration)\TopologicEnergy*.dll"
 copy /y "$(SolutionDir)output\$(Platform)\$(Configuration)\TopologicEnergy*.xml" "%DYNAMO_PACKAGES_DIR%bin\"
 copy /y "$(SolutionDir)references\OpenStudio-2.8.0\*.dll" "%DYNAMO_PACKAGES_DIR%bin\"
 copy /y "$(SolutionDir)TopologicInstaller\pkg.json" "%DYNAMO_PACKAGES_DIR%"
-echo Copied DLLs to Dynamo 2.4.0</Command>
+echo Copied DLLs to Dynamo 2.6.0</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -161,7 +161,7 @@ echo Copied DLLs to Dynamo 2.4.0</Command>
       <Command>copy /y "$(SolutionDir)references\OpenStudio-2.8.0\*.dll" "$(SolutionDir)output\$(Platform)\$(Configuration)"
 copy /y "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"
 
-set DYNAMO_PACKAGES_DIR=$(APPDATA)\Dynamo\Dynamo Core\2.4\packages\Topologic\
+set DYNAMO_PACKAGES_DIR=$(APPDATA)\Dynamo\Dynamo Core\2.6\packages\Topologic\
 if not exist "%DYNAMO_PACKAGES_DIR%bin\" mkdir "%DYNAMO_PACKAGES_DIR%bin\"
 if not exist "%DYNAMO_PACKAGES_DIR%dyf\" mkdir "%DYNAMO_PACKAGES_DIR%dyf\"
 if not exist "%DYNAMO_PACKAGES_DIR%extra\" mkdir "%DYNAMO_PACKAGES_DIR%extra\"
@@ -174,7 +174,7 @@ copy /y "$(SolutionDir)output\$(Platform)\$(Configuration)\TopologicEnergy*.dll"
 copy /y "$(SolutionDir)output\$(Platform)\$(Configuration)\TopologicEnergy*.xml" "%DYNAMO_PACKAGES_DIR%bin\"
 copy /y "$(SolutionDir)references\OpenStudio-2.8.0\*.dll" "%DYNAMO_PACKAGES_DIR%bin\"
 copy /y "$(SolutionDir)TopologicInstaller\pkg.json" "%DYNAMO_PACKAGES_DIR%"
-echo Copied DLLs to Dynamo 2.4.0</Command>
+echo Copied DLLs to Dynamo 2.6.0</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

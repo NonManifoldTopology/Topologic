@@ -25,6 +25,7 @@
 
 namespace TopologicCore
 {
+    class Cluster;
 	class Topology;
 
 	class GlobalCluster
@@ -45,6 +46,8 @@ namespace TopologicCore
 		TOPOLOGIC_API void AddTopology(const std::shared_ptr<Topology>& rkTopology);
 
 		TOPOLOGIC_API void AddTopology(const TopoDS_Shape& rkOcctShape);
+
+        std::shared_ptr<Cluster> GetCluster();
 
 		void RemoveTopology(const std::shared_ptr<Topology>& rkTopology);
 

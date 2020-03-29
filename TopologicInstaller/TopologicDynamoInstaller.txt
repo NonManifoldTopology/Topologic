@@ -158,6 +158,7 @@ Var HiddenPathListBoxHWND ;stores the path, hidden
 Var path
 
 Function FunctionInstallVersionEnter
+  IfSilent DoNothingEnter 0
   !insertmacro MUI_HEADER_TEXT $(PAGE_TITLE) $(PAGE_SUBTITLE)
   nsDialogs::Create 1018
   Pop $Dialog
@@ -224,25 +225,31 @@ Function FunctionInstallVersionEnter
 		System::Call user32::SendMessage(i$ListBoxHWND,i${LB_SETCURSEL},0,0)
 		System::Call user32::SendMessage(i$HiddenPathListBoxHWND,i${LB_SETCURSEL},0,0)
 	${Else}
+		IfSilent +2 0
 		MessageBox MB_OK "No Dynamo packages folder is found. Aborting."
 		Abort
 	${EndIf}
 
   ${Else}
-    MessageBox MB_OK "Error showing Dynamo version options."  
+    IfSilent +2 0
+	MessageBox MB_OK "Error showing Dynamo version options."  
   ${EndIf}
   
   nsDialogs::Show
+  
+  DoNothingEnter:
 FunctionEnd
 
 Var LB_output
 Function FunctionInstallVersionLeave
+  IfSilent DoNothingLeave 0
   ${NSD_LB_GetSelectionIndex} $ListBoxHWND $LB_output
   System::Call user32::SendMessage(i$HiddenPathListBoxHWND,i${LB_GETTEXT},i$LB_output,t.r0)
   StrCpy $path $0 ;this stores the path
   StrCpy $OUTDIR $path
   StrCpy $path $OUTDIR
   
+  DoNothingLeave:
 FunctionEnd
 
 
@@ -310,12 +317,13 @@ Function CheckVCRedistributable
 FunctionEnd
 
 Function InstallVCRedistributable
-  MessageBox MB_YESNO "No Visual Studio 2017 Redistributable (x64) installation is found. Press Yes to install it, otherwise press No to skip this process (you will need to download and install it separately)." IDYES InstallVCRedistributableYes IDNO InstallVCRedistributableFinish
+  MessageBox MB_YESNO "No Visual Studio 2017 Redistributable (x64) installation is found. Press Yes to install it, otherwise press No to skip this process (you will need to download and install it separately). (The default is No.)" /SD IDNO IDYES InstallVCRedistributableYes IDNO InstallVCRedistributableFinish
   InstallVCRedistributableYes:
 	File vc_redist.x64.exe
     !insertmacro ShellExecWait "" '"$path\packages\Topologic\bin\vc_redist.x64.exe"' '""' "" ${SW_SHOW} $9
 	${If} $9 <> 0
-      MessageBox MB_OK "Visual Studio 2017 Redistributable (x64) was not installed."
+      IfSilent +2 0
+	  MessageBox MB_OK "Visual Studio 2017 Redistributable (x64) was not installed."
     ${EndIf}
   InstallVCRedistributableFinish:
   Delete "$path\packages\Topologic\bin\vc_redist.x64.exe"

@@ -48,7 +48,7 @@ namespace TopologicGH
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Value", "Value", "Value", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Value", "Value", "Value", GH_ParamAccess.list);
         }
 
         /// <summary>
@@ -96,7 +96,18 @@ namespace TopologicGH
 
             Object value = Topologic.Dictionary.ValueAtKey(dictionary, key);
 
-            DA.SetData(0, value);
+            var valueEnum = value as System.Collections.IEnumerable;
+            if(valueEnum == null)
+            {
+                List<Object> values = new List<Object>();
+                values.Add(value);
+                DA.SetDataList(0, values);
+            }
+            else
+            {
+                DA.SetDataList(0, valueEnum);
+            }
+
         }
 
         /// <summary>

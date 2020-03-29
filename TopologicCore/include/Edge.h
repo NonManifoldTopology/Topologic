@@ -155,6 +155,8 @@ namespace TopologicCore
 		/// <returns name="bool">True if this Edge is a manifold, otherwise a False</returns>
 		virtual bool IsManifold() const;
 
+        virtual bool IsManifold(const TopologicCore::Topology::Ptr& rkParentTopology) const;
+
 		/// <summary>
 		/// Creates a geometry from Edge.
 		/// </summary>

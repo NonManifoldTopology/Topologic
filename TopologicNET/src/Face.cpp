@@ -118,10 +118,16 @@ namespace Topologic
 
 	Face^ Face::ByWire(Wire^ wire)
 	{
-		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Face::ByExternalBoundary(
-			TopologicCore::Topology::Downcast<TopologicCore::Wire>(wire->GetCoreTopologicalQuery())
-		);
-		return gcnew Face(pCoreFace);
+        try {
+            TopologicCore::Face::Ptr pCoreFace = TopologicCore::Face::ByExternalBoundary(
+                TopologicCore::Topology::Downcast<TopologicCore::Wire>(wire->GetCoreTopologicalQuery())
+            );
+            return gcnew Face(pCoreFace);
+        }
+        catch (std::exception& e)
+        {
+            throw gcnew Exception(gcnew String(e.what()));
+        }
 	}
 
 	Face ^ Face::ByExternalInternalBoundaries(Wire ^ externalBoundary, System::Collections::Generic::IEnumerable<Wire^>^ internalBoundaries)
