@@ -21,37 +21,37 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{75D59A5B-5514-47F8-BCE6-737BC0C3809D}</ProjectGuid>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <Keyword>ManagedCProj</Keyword>
     <RootNamespace>TopologicEnergy</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CLRSupport>true</CLRSupport>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CLRSupport>true</CLRSupport>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CLRSupport>true</CLRSupport>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CLRSupport>true</CLRSupport>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -106,10 +106,10 @@
       <AdditionalDependencies />
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "$(SolutionDir)references\OpenStudio-2.8.0\*.dll" "$(SolutionDir)output\$(Platform)\$(Configuration)"
+      <Command>copy /y ""$(SolutionDir)references\openstudio-2.9.1\*.dll" "$(SolutionDir)output\$(Platform)\$(Configuration)"
 copy /y "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"
 
-set DYNAMO_PACKAGES_DIR=$(APPDATA)\Dynamo\Dynamo Core\2.6\packages\Topologic\
+set DYNAMO_PACKAGES_DIR=$(APPDATA)\Dynamo\Dynamo Core\2.7\packages\Topologic\
 if not exist "%DYNAMO_PACKAGES_DIR%bin\" mkdir "%DYNAMO_PACKAGES_DIR%bin\"
 if not exist "%DYNAMO_PACKAGES_DIR%dyf\" mkdir "%DYNAMO_PACKAGES_DIR%dyf\"
 if not exist "%DYNAMO_PACKAGES_DIR%extra\" mkdir "%DYNAMO_PACKAGES_DIR%extra\"
@@ -120,9 +120,10 @@ copy /y "$(SolutionDir)output\$(Platform)\$(Configuration)\TopologicDynamo*.dll"
 copy /y "$(SolutionDir)output\$(Platform)\$(Configuration)\TopologicDynamo*.xml" "%DYNAMO_PACKAGES_DIR%bin\"
 copy /y "$(SolutionDir)output\$(Platform)\$(Configuration)\TopologicEnergy*.dll" "%DYNAMO_PACKAGES_DIR%bin\"
 copy /y "$(SolutionDir)output\$(Platform)\$(Configuration)\TopologicEnergy*.xml" "%DYNAMO_PACKAGES_DIR%bin\"
-copy /y "$(SolutionDir)references\OpenStudio-2.8.0\*.dll" "%DYNAMO_PACKAGES_DIR%bin\"
+copy /y "$(SolutionDir)references\openstudio-2.9.1\*.dll" "%DYNAMO_PACKAGES_DIR%bin\"
 copy /y "$(SolutionDir)TopologicInstaller\pkg.json" "%DYNAMO_PACKAGES_DIR%"
-echo Copied DLLs to Dynamo 2.6.0</Command>
+
+echo Copied DLLs to Dynamo 2.7.0</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -158,10 +159,10 @@ echo Copied DLLs to Dynamo 2.6.0</Command>
       <AdditionalDependencies />
     </Link>
     <PostBuildEvent>
-      <Command>copy /y "$(SolutionDir)references\OpenStudio-2.8.0\*.dll" "$(SolutionDir)output\$(Platform)\$(Configuration)"
+      <Command>copy /y ""$(SolutionDir)references\openstudio-2.9.1\*.dll" "$(SolutionDir)output\$(Platform)\$(Configuration)"
 copy /y "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"
 
-set DYNAMO_PACKAGES_DIR=$(APPDATA)\Dynamo\Dynamo Core\2.6\packages\Topologic\
+set DYNAMO_PACKAGES_DIR=$(APPDATA)\Dynamo\Dynamo Core\2.7\packages\Topologic\
 if not exist "%DYNAMO_PACKAGES_DIR%bin\" mkdir "%DYNAMO_PACKAGES_DIR%bin\"
 if not exist "%DYNAMO_PACKAGES_DIR%dyf\" mkdir "%DYNAMO_PACKAGES_DIR%dyf\"
 if not exist "%DYNAMO_PACKAGES_DIR%extra\" mkdir "%DYNAMO_PACKAGES_DIR%extra\"
@@ -172,9 +173,10 @@ copy /y "$(SolutionDir)output\$(Platform)\$(Configuration)\TopologicDynamo*.dll"
 copy /y "$(SolutionDir)output\$(Platform)\$(Configuration)\TopologicDynamo*.xml" "%DYNAMO_PACKAGES_DIR%bin\"
 copy /y "$(SolutionDir)output\$(Platform)\$(Configuration)\TopologicEnergy*.dll" "%DYNAMO_PACKAGES_DIR%bin\"
 copy /y "$(SolutionDir)output\$(Platform)\$(Configuration)\TopologicEnergy*.xml" "%DYNAMO_PACKAGES_DIR%bin\"
-copy /y "$(SolutionDir)references\OpenStudio-2.8.0\*.dll" "%DYNAMO_PACKAGES_DIR%bin\"
+copy /y "$(SolutionDir)references\openstudio-2.9.1\*.dll" "%DYNAMO_PACKAGES_DIR%bin\"
 copy /y "$(SolutionDir)TopologicInstaller\pkg.json" "%DYNAMO_PACKAGES_DIR%"
-echo Copied DLLs to Dynamo 2.6.0</Command>
+
+echo Copied DLLs to Dynamo 2.7.0</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -189,25 +191,22 @@ echo Copied DLLs to Dynamo 2.6.0</Command>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="DSCoreNodes">
-      <HintPath>..\references\Dynamo-2.0.1\DSCoreNodes.dll</HintPath>
+      <HintPath>..\references\dynamo-2.7.0\DSCoreNodes.dll</HintPath>
     </Reference>
     <Reference Include="DynamoCore">
-      <HintPath>..\references\Dynamo-2.0.1\DynamoCore.dll</HintPath>
-      <Private>false</Private>
+      <HintPath>..\references\dynamo-2.7.0\DynamoCore.dll</HintPath>
     </Reference>
     <Reference Include="DynamoServices">
-      <HintPath>..\references\Dynamo-2.0.1\DynamoServices.dll</HintPath>
-      <Private>false</Private>
+      <HintPath>..\references\dynamo-2.7.0\DynamoServices.dll</HintPath>
     </Reference>
     <Reference Include="GeometryColor">
-      <HintPath>..\references\Dynamo-2.0.1\GeometryColor.dll</HintPath>
+      <HintPath>..\references\dynamo-2.7.0\GeometryColor.dll</HintPath>
     </Reference>
     <Reference Include="OpenStudio">
-      <HintPath>..\references\OpenStudio-2.8.0\OpenStudio.dll</HintPath>
+      <HintPath>..\references\openstudio-2.9.1\OpenStudio.dll</HintPath>
     </Reference>
     <Reference Include="ProtoGeometry">
-      <HintPath>..\references\Dynamo-2.0.1\ProtoGeometry.dll</HintPath>
-      <Private>false</Private>
+      <HintPath>..\references\dynamo-2.7.0\ProtoGeometry.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

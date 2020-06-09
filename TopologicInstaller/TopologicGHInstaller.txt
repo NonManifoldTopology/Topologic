@@ -63,6 +63,8 @@ LangString PAGE_TITLE ${LANG_ENGLISH} "Choose Install Location"
 
 Section "TopologicGrasshopper" SectionTopologicGrasshopper
 	SetOutPath "$INSTDIR"
+	File ..\output\x64\Release\tbb.dll
+	File ..\output\x64\Release\tbbmalloc.dll
 	File ..\output\x64\Release\TopologicCore.dll
     File ..\output\x64\Release\TopologicNET.dll
     File ..\output\x64\Release\TK*.dll

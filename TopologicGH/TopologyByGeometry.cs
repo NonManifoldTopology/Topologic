@@ -274,7 +274,7 @@ namespace TopologicGH
         //    throw new NotImplementedException();
         //}
 
-        private Topologic.Vertex ByPoint(Point3d ghPoint)
+        public Topologic.Vertex ByPoint(Point3d ghPoint)
         {
             return Topologic.Vertex.ByCoordinates(ghPoint.X, ghPoint.Y, ghPoint.Z);
         }

@@ -23,6 +23,7 @@
 #include <GlobalCluster.h>
 #include <Cluster.h>
 
+#include <BRep_Tool.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepMesh_IncrementalMesh.hxx>
 #include <BRepClass_FaceClassifier.hxx>
@@ -35,6 +36,7 @@
 #include <GeomConvert.hxx>
 #include <GeomLProp_SLProps.hxx>
 #include <GProp_GProps.hxx>
+#include <Poly_Triangulation.hxx>
 #include <ShapeAnalysis.hxx>
 #include <ShapeAnalysis_Surface.hxx>
 #include <ShapeFix_Edge.hxx>
@@ -197,7 +199,7 @@ namespace TopologicUtilities
 
 		// Compute OCCT's non-normalized UV values
 		// At the same time, get the isolines
-		BOPCol_ListOfShape occtIsolines;
+		TopTools_ListOfShape occtIsolines;
 		
 		for (double u : rkUValues)
 		{

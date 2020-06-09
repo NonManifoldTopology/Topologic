@@ -1037,7 +1037,7 @@ namespace TopologicEnergy
 				safe_cast<Autodesk::DesignScript::Geometry::Point^>(aVertex->BasicGeometry);
 			Autodesk::DesignScript::Geometry::Vector^ originalPointAsVector = faceCenterPoint->AsVector();
 			Autodesk::DesignScript::Geometry::Point^ translatedPoint = originalPoint->Subtract(originalPointAsVector);
-			Autodesk::DesignScript::Geometry::Point^ scaledPoint = safe_cast<Autodesk::DesignScript::Geometry::Point^>(translatedPoint->Scale(sqrtScaleFactor));
+			Autodesk::DesignScript::Geometry::Point^ scaledPoint = safe_cast<Autodesk::DesignScript::Geometry::Point^>(translatedPoint->Scale(sqrtScaleFactor, sqrtScaleFactor, sqrtScaleFactor));
 			Autodesk::DesignScript::Geometry::Vector^ scaledPointAsVector = faceCenterPoint->AsVector();
 			Autodesk::DesignScript::Geometry::Point^ reTranslatedPoint = scaledPoint->Add(scaledPointAsVector);
 			scaledVertices->Add(safe_cast<Vertex^>(Topologic::Topology::ByGeometry(reTranslatedPoint, 0.001))); // tolerance does not matter as it's just a vertex
@@ -1075,7 +1075,8 @@ namespace TopologicEnergy
 			delete p;
 		}
 		
-		Autodesk::DesignScript::Geometry::Geometry^ scaledPoint = sumPoint->Scale(1.0 / (double)vertices->Count);
+		double scalingFactor = 1.0 / (double)vertices->Count;
+		Autodesk::DesignScript::Geometry::Geometry^ scaledPoint = sumPoint->Scale(scalingFactor, scalingFactor, scalingFactor);
 		Autodesk::DesignScript::Geometry::Point^ dynamoPoint = safe_cast<Autodesk::DesignScript::Geometry::Point^>(scaledPoint);
 		Vertex^ vertex = safe_cast<Vertex^>(Topologic::Topology::ByGeometry(dynamoPoint, 0.001)); // tolerance does not matter as it's just a vertex
 		delete dynamoPoint;
@@ -1147,7 +1148,7 @@ namespace TopologicEnergy
 		Autodesk::DesignScript::Geometry::Vector^ dir = p2SubtractAsVector->Cross(p3SubtractAsVector);
 		Autodesk::DesignScript::Geometry::Vector^ faceNormal = dir->Normalized();
 		double faceAngle = faceNormal->AngleWithVector(upVector);
-		Autodesk::DesignScript::Geometry::Vector^ scaledFaceNormal = faceNormal->Scale(0.001);
+		Autodesk::DesignScript::Geometry::Vector^ scaledFaceNormal = faceNormal->Scale(0.001, 0.001, 0.001);
 		Autodesk::DesignScript::Geometry::Point^ pDynamoOffsetPoint =
 			dynamic_cast<Autodesk::DesignScript::Geometry::Point^>(dynamoCenterPoint->Translate(scaledFaceNormal));
 

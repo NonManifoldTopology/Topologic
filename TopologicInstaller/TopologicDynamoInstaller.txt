@@ -260,6 +260,8 @@ Section "TopologicDynamo" SectionTopologicDynamo
 	CreateDirectory "$path\packages\Topologic\dyf"
 	CreateDirectory "$path\packages\Topologic\extra"
 	SetOutPath "$path\packages\Topologic\bin"
+	File ..\output\x64\Release\tbb.dll
+	File ..\output\x64\Release\tbbmalloc.dll
 	File ..\output\x64\Release\TopologicCore.dll
     File ..\output\x64\Release\TK*.dll
 	File ..\output\x64\Release\TopologicDynamo.dll

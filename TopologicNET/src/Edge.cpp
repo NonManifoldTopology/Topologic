@@ -292,7 +292,7 @@ namespace Topologic
 		{
 			const gp_Ax2& rkOcctPosition = pOcctCircle->Position();
 			Autodesk::DesignScript::Geometry::Point^ pDynamoCenterPoint = Autodesk::DesignScript::Geometry::Point::ByCoordinates(rkOcctPosition.Location().X(), rkOcctPosition.Location().Y(), rkOcctPosition.Location().Z());
-			Autodesk::DesignScript::Geometry::Vector^ pDynamoNormal = Autodesk::DesignScript::Geometry::Vector::ByCoordinates(rkOcctPosition.Direction().X(), rkOcctPosition.Direction().Y(), rkOcctPosition.Direction().Z());
+			Autodesk::DesignScript::Geometry::Vector^ pDynamoNormal = Autodesk::DesignScript::Geometry::Vector::ByCoordinates(rkOcctPosition.Direction().X(), rkOcctPosition.Direction().Y(), rkOcctPosition.Direction().Z(), false);
 
 			Autodesk::DesignScript::Geometry::Circle^ pDynamoCircle = Autodesk::DesignScript::Geometry::Circle::ByCenterPointRadiusNormal(
 				pDynamoCenterPoint,

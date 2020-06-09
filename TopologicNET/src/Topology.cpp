@@ -132,11 +132,13 @@ namespace Topologic
 				surfaces->Add(dynamoSurface);
 				try {
 					Autodesk::DesignScript::Geometry::PolySurface^ dynamoNewPolySurface = Autodesk::DesignScript::Geometry::PolySurface::ByJoinedSurfaces(surfaces);
-					int numOfSurfaces = dynamoPolySurface->SurfaceCount();
+					int numOfSurfaces = dynamoNewPolySurface->SurfaceCount();
 					if (numOfSurfaces > 1)
 					{
 						// This can be a shell or a cluster, so call Topology::ByPolySurface.
-						topology = Topology::ByPolySurface(dynamoPolySurface);
+						topology = Topology::ByPolySurface(dynamoNewPolySurface);
+					}else if(numOfSurfaces == 1){
+						topology = Face::BySurface(dynamoSurface);
 					}
 
 					delete dynamoNewPolySurface;
@@ -147,7 +149,6 @@ namespace Topologic
 				}
 				catch (...)
 				{
-					topology = Face::BySurface(dynamoSurface);
 				}
 			}
 		}

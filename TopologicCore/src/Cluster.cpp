@@ -248,7 +248,7 @@ namespace TopologicCore
 	TopoDS_Vertex Cluster::CenterOfMass(const TopoDS_Compound & rkOcctCompound)
 	{
 		// Compute the average of the centers of mass.
-		BOPCol_ListOfShape occtSubtopologies;
+		TopTools_ListOfShape occtSubtopologies;
 		SubTopologies(rkOcctCompound, occtSubtopologies);
 		if (occtSubtopologies.IsEmpty())
 		{
@@ -257,7 +257,7 @@ namespace TopologicCore
 
 		double size = (double)occtSubtopologies.Size();
 		gp_Pnt occtCentroidSum;
-		for (BOPCol_ListIteratorOfListOfShape occtIterator(occtSubtopologies);
+		for (TopTools_ListIteratorOfListOfShape occtIterator(occtSubtopologies);
 			occtIterator.More();
 			occtIterator.Next())
 		{

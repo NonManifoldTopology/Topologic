@@ -2,7 +2,7 @@
 	"license": "AGPL v3",
 	"file_hash": null,
 	"name": "Topologic",
-	"version": "1.3.4",
+	"version": "1.3.5.1",
 	"description": "Build. Connect. Analyse",
 	"group": "",
 	"keywords": ["topology"],
@@ -14,5 +14,5 @@
 	"site_url": "https://topologic.app",
 	"repository_url": "https://topologic.app/software",
 	"contains_binaries": true,
-	"node_libraries": ["TopologicDynamo.customization, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", "TopologicDynamo, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", "TopologicEnergy.customization, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", "TopologicEnergy, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"]
+	"node_libraries": ["TopologicDynamo, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", "TopologicEnergy, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"]
 }

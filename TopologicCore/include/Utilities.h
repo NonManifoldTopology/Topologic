@@ -18,7 +18,7 @@
 
 #include <TopoDS_Shape.hxx>
 
-#ifdef TOPOLOGIC_EXPORTS
+#ifdef TOPOLOGICCORE_EXPORTS
 #define TOPOLOGIC_API __declspec(dllexport)
 #else
 #define TOPOLOGIC_API __declspec(dllimport)

@@ -65,9 +65,9 @@ namespace TopologicCore
 
 	void GlobalCluster::SubTopologies(std::list<Topology::Ptr>& rSubTopologies) const
 	{
-		BOPCol_ListOfShape occtListMembers;
+		TopTools_ListOfShape occtListMembers;
 		Topology::SubTopologies(GetOcctCompound(), occtListMembers);
-		for (BOPCol_ListIteratorOfListOfShape occtIterator(occtListMembers);
+		for (TopTools_ListIteratorOfListOfShape occtIterator(occtListMembers);
 			occtIterator.More();
 			occtIterator.Next())
 		{

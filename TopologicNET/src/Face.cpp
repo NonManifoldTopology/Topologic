@@ -31,6 +31,7 @@
 
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepMesh_IncrementalMesh.hxx>
+#include <BRep_Tool.hxx>
 #include <GeomAdaptor_Surface.hxx>
 #include <Geom_BezierSurface.hxx>
 #include <Geom_BSplineSurface.hxx>
@@ -45,6 +46,7 @@
 #include <Geom_SurfaceOfRevolution.hxx>
 #include <GeomConvert.hxx>
 #include <GeomPlate_Surface.hxx>
+#include <Poly_Triangulation.hxx>
 #include <ShapeAnalysis.hxx>
 #include <ShapeFix_Edge.hxx>
 #include <TColgp_Array2OfPnt.hxx>

@@ -17,10 +17,11 @@
 #pragma once
 
 #include "Utilities.h"
+#include "GlobalCluster.h"
 #include "TopologicalQuery.h"
 
-#include <BOPCol_ListOfShape.hxx>
-#include <BOPCol_DataMapOfShapeShape.hxx>
+#include <TopTools_ListOfShape.hxx>
+#include <TopTools_DataMapOfShapeShape.hxx>
 #include <BOPAlgo_CellsBuilder.hxx>
 #include <BRepAlgoAPI_BooleanOperation.hxx>
 #include <BRepBuilderAPI_MakeShape.hxx>
@@ -292,7 +293,7 @@ namespace TopologicCore
 		/// <param name="kpTopology2"></param>
 		TOPOLOGIC_API static void TransferContents(const TopoDS_Shape& rkOcctShape1, const Topology::Ptr& kpTopology2);
 
-		static void TransferContents(const TopoDS_Shape& rkOcctShape1, const Topology::Ptr& kpTopology2, const BOPCol_ListOfShape& rkOcctDeletedSubshapes);
+		static void TransferContents(const TopoDS_Shape& rkOcctShape1, const Topology::Ptr& kpTopology2, const TopTools_ListOfShape& rkOcctDeletedSubshapes);
 
 		/// <summary>
 		/// 
@@ -409,6 +410,8 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="rSubTopologies">The sub-topologies</param>
 		TOPOLOGIC_API void SubTopologies(std::list<Topology::Ptr>& rSubTopologies) const;
+
+		int NumOfSubTopologies() const;
 
 		/// <summary>
 		/// Gets the type of this Topology as a String.
@@ -620,7 +623,7 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="rkShape"></param>
 		/// <param name="rSubTopologies"></param>
-		static void SubTopologies(const TopoDS_Shape& rkShape, BOPCol_ListOfShape& rSubTopologies);
+		static void SubTopologies(const TopoDS_Shape& rkShape, TopTools_ListOfShape& rSubTopologies);
 
 		virtual bool IsContainerType() = 0;
 
@@ -638,7 +641,7 @@ namespace TopologicCore
 
 	protected:
 		Topology(const int kDimensionality, const TopoDS_Shape& rkOcctShape, const std::string& rkGuid = "");
-        void AddUnionInternalStructure(const TopoDS_Shape& rkOcctShape, BOPCol_ListOfShape& rUnionArguments);
+        void AddUnionInternalStructure(const TopoDS_Shape& rkOcctShape, TopTools_ListOfShape& rUnionArguments);
 
 		static TopoDS_Shape FixShape(const TopoDS_Shape& rkOcctShape);
 
@@ -672,10 +675,10 @@ namespace TopologicCore
 		void AddBooleanOperands(
 			const Topology::Ptr& kpOtherTopology,
 			BOPAlgo_CellsBuilder& rOcctCellsBuilder,
-			BOPCol_ListOfShape& rOcctCellsBuildersOperandsA,
-			BOPCol_ListOfShape& rOcctCellsBuildersOperandsB,
-			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceA,
-			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceB);
+			TopTools_ListOfShape& rOcctCellsBuildersOperandsA,
+			TopTools_ListOfShape& rOcctCellsBuildersOperandsB,
+			TopTools_DataMapOfShapeShape& rOcctMapFaceToFixedFaceA,
+			TopTools_DataMapOfShapeShape& rOcctMapFaceToFixedFaceB);
 
 		/// <summary>
 		/// 
@@ -685,8 +688,8 @@ namespace TopologicCore
 		/// <param name="rOcctCellsBuildersOperandsB"></param>
 		void AddBooleanOperands(
 			const Topology::Ptr& kpOtherTopology,
-			BOPCol_ListOfShape& rOcctCellsBuildersOperandsA,
-			BOPCol_ListOfShape& rOcctCellsBuildersOperandsB);
+			TopTools_ListOfShape& rOcctCellsBuildersOperandsA,
+			TopTools_ListOfShape& rOcctCellsBuildersOperandsB);
 
 		/// <summary>
 		/// 
@@ -700,10 +703,10 @@ namespace TopologicCore
 		void NonRegularBooleanOperation(
 			const Topology::Ptr& kpOtherTopology,
 			BOPAlgo_CellsBuilder& rOcctCellsBuilder,
-			BOPCol_ListOfShape& rOcctCellsBuildersOperandsA,
-			BOPCol_ListOfShape& rOcctCellsBuildersOperandsB,
-			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceA,
-			BOPCol_DataMapOfShapeShape& rOcctMapFaceToFixedFaceB);
+			TopTools_ListOfShape& rOcctCellsBuildersOperandsA,
+			TopTools_ListOfShape& rOcctCellsBuildersOperandsB,
+			TopTools_DataMapOfShapeShape& rOcctMapFaceToFixedFaceA,
+			TopTools_DataMapOfShapeShape& rOcctMapFaceToFixedFaceB);
 
 		/// <summary>
 		/// 
@@ -712,8 +715,8 @@ namespace TopologicCore
 		/// <param name="rkOcctArgumentsB"></param>
 		/// <param name="rOcctCellsBuilder"></param>
 		static void NonRegularBooleanOperation(
-			const BOPCol_ListOfShape& rkOcctArgumentsA,
-			const BOPCol_ListOfShape& rkOcctArgumentsB,
+			const TopTools_ListOfShape& rkOcctArgumentsA,
+			const TopTools_ListOfShape& rkOcctArgumentsB,
 			BOPAlgo_CellsBuilder& rOcctCellsBuilder);
 
 		/// <summary>
@@ -723,8 +726,8 @@ namespace TopologicCore
 		/// <param name="rkOcctArgumentsB"></param>
 		/// <param name="rOcctBooleanOperation"></param>
 		static void RegularBooleanOperation(
-			const BOPCol_ListOfShape& rkOcctArgumentsA,
-			const BOPCol_ListOfShape& rkOcctArgumentsB,
+			const TopTools_ListOfShape& rkOcctArgumentsA,
+			const TopTools_ListOfShape& rkOcctArgumentsB,
 			BRepAlgoAPI_BooleanOperation& rOcctBooleanOperation);
 
 		/// <summary>
@@ -748,7 +751,7 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="rkOcctMakeShape"></param>
 		/// <param name="rkOcctShapes"></param>
-		static void TransferMakeShapeContents(BRepBuilderAPI_MakeShape& rkOcctMakeShape, const BOPCol_ListOfShape& rkOcctShapes);
+		static void TransferMakeShapeContents(BRepBuilderAPI_MakeShape& rkOcctMakeShape, const TopTools_ListOfShape& rkOcctShapes);
 
 		/// <summary>
 		/// 
@@ -770,17 +773,19 @@ namespace TopologicCore
 		/// <param name="rkOcctShape"></param>
 		/// <param name="rMapFaceToFixedFace"></param>
 		/// <returns></returns>
-		TopoDS_Shape FixBooleanOperandFace(const TopoDS_Shape& rkOcctShape, BOPCol_DataMapOfShapeShape& rMapFaceToFixedFace);
+		TopoDS_Shape FixBooleanOperandFace(const TopoDS_Shape& rkOcctShape, TopTools_DataMapOfShapeShape& rMapFaceToFixedFace);
 
 		TopoDS_Shape FixBooleanOperandFace(const TopoDS_Shape& rkOcctShape);
 
-		void GetDeletedBooleanSubtopologies(const TopoDS_Shape& rkOcctShape, BOPAlgo_CellsBuilder& rOcctCellsBuilder, BOPCol_ListOfShape& rOcctDeletedShapes);
+		void GetDeletedBooleanSubtopologies(const TopoDS_Shape& rkOcctShape, BOPAlgo_CellsBuilder& rOcctCellsBuilder, TopTools_ListOfShape& rOcctDeletedShapes);
 
-		void GetDeletedBooleanSubtopologies(const TopoDS_Shape& rkOcctShape, BRepAlgoAPI_BooleanOperation& rOcctBooleanOperation, BOPCol_ListOfShape& rOcctDeletedShapes);
+		void GetDeletedBooleanSubtopologies(const TopoDS_Shape& rkOcctShape, BRepAlgoAPI_BooleanOperation& rOcctBooleanOperation, TopTools_ListOfShape& rOcctDeletedShapes);
 
 		Topology::Ptr TrackContextAncestor();
 
 		static Topology::Ptr IntersectEdgeFace(const Topology::Ptr kpMergeTopology, Edge const * const kpkEdge, Face const * const kpkFace);
+
+		static Topology::Ptr IntersectFaceFace(const Topology::Ptr kpMergeTopology, Face const* const kpkFace, Face const* const kpkOtherFace);
 
 		static Topology::Ptr IntersectEdgeShell(Edge * const kpkEdge, Shell const * const kpkShell);
 
@@ -920,7 +925,7 @@ namespace TopologicCore
 		const std::shared_ptr<Topology>& topologyPtr;
 	};
 
-	struct TopologyCompare : public std::unary_function<std::shared_ptr<Topology>, bool>
+	struct TopologyCompare
 	{
 		explicit TopologyCompare(const std::shared_ptr<Topology> &baseline) : baseline(baseline) {}
 		bool operator() (const std::shared_ptr<Topology> &arg)

@@ -145,7 +145,7 @@ namespace TopologicCore
 		}
 
 		BOPAlgo_MakerVolume occtMakerVolume;
-		BOPCol_ListOfShape occtShapes;
+		TopTools_ListOfShape occtShapes;
 		for (const Face::Ptr& kpFace : rkFaces)
 		{
 			occtShapes.Append(kpFace->GetOcctShape());

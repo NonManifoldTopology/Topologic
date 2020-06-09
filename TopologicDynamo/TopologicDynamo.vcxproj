@@ -21,37 +21,37 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{21993835-4EC5-4CC3-BCDA-47F6209CD349}</ProjectGuid>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <Keyword>ManagedCProj</Keyword>
     <RootNamespace>TopologicDynamo</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CLRSupport>true</CLRSupport>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CLRSupport>true</CLRSupport>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CLRSupport>true</CLRSupport>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CLRSupport>true</CLRSupport>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -100,18 +100,18 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>TOPOLOGIC_DYNAMO;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)TopologicNET/include/;$(SolutionDir);$(SolutionDir)references\opencascade-7.2.0\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)TopologicNET/include/;$(SolutionDir);$(SolutionDir)references\opencascade-7.4.0\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <AdditionalDependencies>TKCAF.lib;TKLCAF.lib;TKIGES.lib;TKPrim.lib;TKMesh.lib;TKXSBase.lib;TKStep.lib;TKBool.lib;TKBO.lib;TKShHealing.lib;TKG3d.lib;TKG2d.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKTopAlgo.lib;TKernel.lib;TKBrep.lib;TKMath.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)references\opencascade-7.2.0\build\win64\vc14\libd</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\OpenCASCADE-7.4.0-vc14-64\opencascade-7.4.0\win64\vc14\lib</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>copy /y "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"
 
-set DYNAMO_PACKAGES_DIR=$(APPDATA)\Dynamo\Dynamo Core\2.6\packages\Topologic\
+set DYNAMO_PACKAGES_DIR=$(APPDATA)\Dynamo\Dynamo Core\2.7\packages\Topologic\
 if not exist "%DYNAMO_PACKAGES_DIR%bin\" mkdir "%DYNAMO_PACKAGES_DIR%bin\"
 if not exist "%DYNAMO_PACKAGES_DIR%dyf\" mkdir "%DYNAMO_PACKAGES_DIR%dyf\"
 if not exist "%DYNAMO_PACKAGES_DIR%extra\" mkdir "%DYNAMO_PACKAGES_DIR%extra\"
@@ -148,18 +148,18 @@ copy /y "$(SolutionDir)TopologicInstaller\pkg.json" "%DYNAMO_PACKAGES_DIR%"</Com
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>TOPOLOGIC_DYNAMO;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)TopologicNET/include/;$(SolutionDir);$(SolutionDir)references\opencascade-7.2.0\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)TopologicNET/include/;$(SolutionDir);$(SolutionDir)references\opencascade-7.4.0\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <AdditionalDependencies>TKCAF.lib;TKLCAF.lib;TKIGES.lib;TKPrim.lib;TKMesh.lib;TKXSBase.lib;TKStep.lib;TKBool.lib;TKBO.lib;TKShHealing.lib;TKG3d.lib;TKG2d.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKTopAlgo.lib;TKernel.lib;TKBrep.lib;TKMath.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)references\opencascade-7.2.0\build\win64\vc14\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\OpenCASCADE-7.4.0-vc14-64\opencascade-7.4.0\win64\vc14\lib</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>copy /y "$(ProjectDir)config\*" "$(SolutionDir)output\$(Platform)\$(Configuration)"
 
-set DYNAMO_PACKAGES_DIR=$(APPDATA)\Dynamo\Dynamo Core\2.4\packages\Topologic\
+set DYNAMO_PACKAGES_DIR=$(APPDATA)\Dynamo\Dynamo Core\2.7\packages\Topologic\
 if not exist "%DYNAMO_PACKAGES_DIR%bin\" mkdir "%DYNAMO_PACKAGES_DIR%bin\"
 if not exist "%DYNAMO_PACKAGES_DIR%dyf\" mkdir "%DYNAMO_PACKAGES_DIR%dyf\"
 if not exist "%DYNAMO_PACKAGES_DIR%extra\" mkdir "%DYNAMO_PACKAGES_DIR%extra\"
@@ -178,28 +178,28 @@ copy /y "$(SolutionDir)TopologicInstaller\pkg.json" "%DYNAMO_PACKAGES_DIR%"</Com
   </ItemGroup>
   <ItemGroup>
     <Reference Include="DSCoreNodes">
-      <HintPath>..\references\Dynamo-2.3.0\DSCoreNodes.dll</HintPath>
+      <HintPath>..\references\dynamo-2.7.0\DSCoreNodes.dll</HintPath>
     </Reference>
     <Reference Include="DSCoreNodes.customization">
-      <HintPath>..\references\Dynamo-2.3.0\DSCoreNodes.customization.dll</HintPath>
+      <HintPath>..\references\dynamo-2.7.0\DSCoreNodes.customization.dll</HintPath>
     </Reference>
     <Reference Include="DynamoCore">
-      <HintPath>..\references\Dynamo-2.3.0\DynamoCore.dll</HintPath>
+      <HintPath>..\references\dynamo-2.7.0\DynamoCore.dll</HintPath>
     </Reference>
     <Reference Include="DynamoServices">
-      <HintPath>..\references\Dynamo-2.3.0\DynamoServices.dll</HintPath>
+      <HintPath>..\references\dynamo-2.7.0\DynamoServices.dll</HintPath>
     </Reference>
     <Reference Include="GeometryColor">
-      <HintPath>..\references\Dynamo-2.3.0\GeometryColor.dll</HintPath>
+      <HintPath>..\references\dynamo-2.7.0\GeometryColor.dll</HintPath>
     </Reference>
     <Reference Include="GeometryColor.customization">
-      <HintPath>..\references\Dynamo-2.3.0\GeometryColor.customization.dll</HintPath>
+      <HintPath>..\references\dynamo-2.7.0\GeometryColor.customization.dll</HintPath>
     </Reference>
     <Reference Include="ProtoGeometry">
-      <HintPath>..\references\Dynamo-2.3.0\ProtoGeometry.dll</HintPath>
+      <HintPath>..\references\dynamo-2.7.0\ProtoGeometry.dll</HintPath>
     </Reference>
     <Reference Include="ProtoGeometry.customization">
-      <HintPath>..\references\Dynamo-2.3.0\ProtoGeometry.customization.dll</HintPath>
+      <HintPath>..\references\dynamo-2.7.0\ProtoGeometry.customization.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />

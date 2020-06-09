@@ -162,7 +162,7 @@ namespace TopologicCore
 	CellComplex::Ptr CellComplex::ByFaces(const std::list<Face::Ptr>& rkFaces, const double kTolerance)
 	{
 		BOPAlgo_MakerVolume occtMakerVolume;
-		BOPCol_ListOfShape occtShapes;
+		TopTools_ListOfShape occtShapes;
 		for (const Face::Ptr& kpFace: rkFaces)
 		{
 			occtShapes.Append(kpFace->GetOcctShape());
@@ -231,7 +231,7 @@ namespace TopologicCore
 	Cell::Ptr CellComplex::ExternalBoundary() const
 	{
 		// Get the Cells
-		BOPCol_ListOfShape occtCellsBuildersArguments;
+		TopTools_ListOfShape occtCellsBuildersArguments;
 		std::list<Cell::Ptr> cells;
 		Cells(cells);
 		for (const Cell::Ptr& kpCell : cells)
@@ -252,9 +252,9 @@ namespace TopologicCore
 			throw std::exception(errorStream.str().c_str());
 		}
 
-		BOPCol_ListOfShape occtListToTake;
-		BOPCol_ListOfShape occtListToAvoid;
-		for (BOPCol_ListIteratorOfListOfShape occtShapeIterator(occtCellsBuildersArguments);
+		TopTools_ListOfShape occtListToTake;
+		TopTools_ListOfShape occtListToAvoid;
+		for (TopTools_ListIteratorOfListOfShape occtShapeIterator(occtCellsBuildersArguments);
 			occtShapeIterator.More();
 			occtShapeIterator.Next())
 		{
@@ -303,7 +303,7 @@ namespace TopologicCore
 			bool isEnvelopeFace = false;
 			for (const Face::Ptr& kpEnvelopeFace : envelopeFaces)
 			{
-				if(BOPTools_AlgoTools::CheckSameGeom(kpFace->GetOcctFace(), kpEnvelopeFace->GetOcctFace(), pOcctIntToolsContext))
+				if(BOPTools_AlgoTools::AreFacesSameDomain(kpFace->GetOcctFace(), kpEnvelopeFace->GetOcctFace(), pOcctIntToolsContext))
 				{
 					isEnvelopeFace = true;
 					break;

@@ -20,6 +20,8 @@
 x64/
 x86/
 bld/
+build/
+CMakeFiles/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
@@ -329,3 +331,4 @@ doc/
 developer_doc/
 user_doc/
 /TopologicInstaller/TopologicGHInstaller-Debug.txt
+GPUCache/

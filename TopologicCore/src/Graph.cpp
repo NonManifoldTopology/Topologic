@@ -981,7 +981,7 @@ namespace TopologicCore
         TopoDS_Vertex occtCoincidentEndVertex = GetCoincidentVertex(rkOcctEndVertex, kTolerance);
 
         std::queue<TopoDS_Vertex> occtVertexQueue;
-        BOPCol_DataMapOfShapeInteger occtVertexDistanceMap; // also to check if the vertex is processed
+        TopTools_DataMapOfShapeInteger occtVertexDistanceMap; // also to check if the vertex is processed
         
         occtVertexQueue.push(occtCoincidentStartVertex);
         
@@ -1756,7 +1756,7 @@ namespace TopologicCore
 
 				// Get adjacent cells. Only add here if the cell is not already added here, and 
 				// the reverse is not in occtCellAdjacency.
-				BOPCol_ListOfShape occtCellUncheckedAdjacentCells;
+				TopTools_ListOfShape occtCellUncheckedAdjacentCells;
 				for (const Face::Ptr& kpFace : faces)
 				{
 					std::list<TopologicCore::Cell::Ptr> currentFaceAdjacentCells;
@@ -1778,7 +1778,7 @@ namespace TopologicCore
 
 						// Is the reverse already added in occtCellAdjacency? Continue.
 						try {
-							const BOPCol_ListOfShape& reverseAdjacency = occtCellAdjacency.Find(kpCurrentFaceAdjacentCell->GetOcctShape());
+							const TopTools_ListOfShape& reverseAdjacency = occtCellAdjacency.Find(kpCurrentFaceAdjacentCell->GetOcctShape());
 							if (reverseAdjacency.Contains(kpCell->GetOcctShape()))
 							{
 								continue;
@@ -1818,9 +1818,9 @@ namespace TopologicCore
 					assert(false);
 					throw std::exception("No Cell internal vertex pre-computed.");
 				}
-				const BOPCol_ListOfShape& rkOcctAdjacentCells = occtCellAdjacencyIterator.Value();
+				const TopTools_ListOfShape& rkOcctAdjacentCells = occtCellAdjacencyIterator.Value();
 
-				for (BOPCol_ListIteratorOfListOfShape occtAdjacentCellIterator(rkOcctAdjacentCells);
+				for (TopTools_ListIteratorOfListOfShape occtAdjacentCellIterator(rkOcctAdjacentCells);
 					occtAdjacentCellIterator.More();
 					occtAdjacentCellIterator.Next())
 				{
