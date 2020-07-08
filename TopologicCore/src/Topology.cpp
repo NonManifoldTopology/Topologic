@@ -546,67 +546,72 @@ namespace TopologicCore
 		);
 	}
 
-	void Topology::AddContent(const Topology::Ptr& rkTopology, const int kTypeFilter)
+	Topology::Ptr Topology::AddContent(const Topology::Ptr& rkTopology, const int kTypeFilter)
 	{
-		// 1. Get the center of mass of the content
-		Vertex::Ptr pCenterOfMass = rkTopology->CenterOfMass();
+		std::list<Topology::Ptr> contents;
+		contents.push_back(rkTopology);
 
-		// 2. Find the closest simplest topology of the copy topology
-		Topology::Ptr selectedSubtopology = SelectSubtopology(pCenterOfMass, kTypeFilter);
-		if (selectedSubtopology == nullptr)
-		{
-			return;
-		}
-		bool hasContent = ContentManager::GetInstance().HasContent(selectedSubtopology->GetOcctShape(), rkTopology->GetOcctShape());
-		if (hasContent)
-		{
-			return;
-		}
-
-		// 3. Register to ContentManager
-		ContentManager::GetInstance().Add(selectedSubtopology->GetOcctShape(), rkTopology);
-
-		// 4. Add closestSimplestSubshape as the context of pCoreCopyContentTopology
-		const double kDefaultParameter = 0.0; // TODO: calculate the parameters
-		ContextManager::GetInstance().Add(
-			rkTopology->GetOcctShape(),
-			TopologicCore::Context::ByTopologyParameters(
-			selectedSubtopology,
-			kDefaultParameter, kDefaultParameter, kDefaultParameter
-		));
+		return AddContents(contents, kTypeFilter);
 	}
 
 	Topology::Ptr Topology::AddContents(const std::list<Topology::Ptr>& rkContentTopologies, const int kTypeFilter)
 	{
+		// Deep copy this topology
 		Topology::Ptr pCopyTopology = std::dynamic_pointer_cast<Topology>(DeepCopy());
-		std::string contextInstanceGUID;
 
+		// For all contents:
 		for (const Topology::Ptr& kpContentTopology : rkContentTopologies)
 		{
-			bool hasContent = ContentManager::GetInstance().HasContent(GetOcctShape(), kpContentTopology->GetOcctShape());
-			if (hasContent)
-			{
-				continue;
-			}
-
-			TopoDS_Shape occtCopyContextShape;
+			Topology::Ptr selectedSubtopology;
 			if (kTypeFilter == 0)
 			{
-				occtCopyContextShape = pCopyTopology->GetOcctShape();
-				contextInstanceGUID = pCopyTopology->GetInstanceGUID();
+				bool hasContent = ContentManager::GetInstance().HasContent(GetOcctShape(), kpContentTopology->GetOcctShape());
+				if (hasContent)
+				{
+					continue;
+				}
+				selectedSubtopology = pCopyTopology;
 			}
 			else
 			{
 				Vertex::Ptr pCenterOfMass = kpContentTopology->CenterOfMass();
-				Topology::Ptr selectedSubtopology = nullptr;
                 if ((kTypeFilter & Cell::Type()) != 0)
                 {
-                    // Select the closest Face
+					// Iterate over all Cells of the original Topology. If any Cell contains this content,
+					// continue
+					bool hasContent = false;
+					std::list<Cell::Ptr> cells;
+					Cells(cells);
+					for (auto cell : cells)
+					{
+						std::list<Topology::Ptr> cellContents;
+						cell->Contents(cellContents);
+
+						for (auto cellContent : cellContents)
+						{
+							if (cellContent->IsSame(kpContentTopology))
+							{
+								hasContent = true;
+								break;
+							}
+						}
+
+						if(hasContent)
+						{
+							break;
+						}
+					}
+
+					if (hasContent)
+					{
+						continue;
+					}
+
+                    // Select the closest Face from the copy Topology
                     Face::Ptr face = TopologicalQuery::Downcast<Face>(
                         pCopyTopology->SelectSubtopology(pCenterOfMass, Face::Type()));
 
                     std::list<Cell::Ptr> adjacentCells;
-                    //face->Cells(adjacentCells);
                     TopologicUtilities::FaceUtility::AdjacentCells(face, pCopyTopology, adjacentCells);
 
                     for (const Cell::Ptr& kpCell : adjacentCells)
@@ -616,7 +621,7 @@ namespace TopologicCore
                         BRepClass3d_SolidClassifier occtSolidClassifier(kpCell->GetOcctSolid(), pCenterOfMass->Point()->Pnt(), 0.1);
                         TopAbs_State occtState = occtSolidClassifier.State();
 
-                        if (occtState == TopAbs_IN)
+                        if (occtState == TopAbs_IN || occtState == TopAbs_ON)
                         {
                             selectedSubtopology = kpCell;
                             break;
@@ -628,7 +633,7 @@ namespace TopologicCore
                     {
                         std::list<Cell::Ptr> cells;
                         //face->Cells(adjacentCells);
-                        Cells(cells);
+						pCopyTopology->Cells(cells);
 
                         for (const Cell::Ptr& kpCell : cells)
                         {
@@ -649,26 +654,23 @@ namespace TopologicCore
 				{
 					selectedSubtopology = pCopyTopology->SelectSubtopology(pCenterOfMass, kTypeFilter);
 				}
-
-				if (selectedSubtopology != nullptr)
-				{
-					occtCopyContextShape = selectedSubtopology->GetOcctShape();
-					contextInstanceGUID = selectedSubtopology->GetInstanceGUID();
-				}
 			}
 
-			if (!occtCopyContextShape.IsNull())
+			std::list<Topology::Ptr> contents;
+			selectedSubtopology->Contents(contents);
+
+			if (selectedSubtopology != nullptr)
 			{
 				Topology::Ptr pCopyContentTopology = std::dynamic_pointer_cast<Topology>(kpContentTopology->DeepCopy());
 				GlobalCluster::GetInstance().AddTopology(pCopyContentTopology->GetOcctShape());
 
-				ContentManager::GetInstance().Add(occtCopyContextShape, pCopyContentTopology);
+				ContentManager::GetInstance().Add(selectedSubtopology->GetOcctShape(), pCopyContentTopology);
 
 				const double kDefaultParameter = 0.0; // TODO: calculate the parameters
 				ContextManager::GetInstance().Add(
 					pCopyContentTopology->GetOcctShape(),
 					TopologicCore::Context::ByTopologyParameters(
-						Topology::ByOcctShape(occtCopyContextShape, contextInstanceGUID),
+						selectedSubtopology,
 						kDefaultParameter, kDefaultParameter, kDefaultParameter
 					));
 			}

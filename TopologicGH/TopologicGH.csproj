@@ -67,6 +67,7 @@
     <Compile Include="FaceWires.cs" />
     <Compile Include="GhToNetConverter.cs" />
     <Compile Include="GraphShortestPaths.cs" />
+    <Compile Include="TopologyAddContent.cs" />
     <Compile Include="TopologyRemoveContents.cs" />
     <Compile Include="TopologySetDictionaries.cs" />
     <Compile Include="Utilities\CellUtilityInternalVertex.cs" />

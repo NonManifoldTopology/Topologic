@@ -580,6 +580,24 @@ namespace Topologic
 		return pContexts;
 	}
 
+	Topology ^ Topology::AddContent(Topology^ contentTopology, int typeFilter)
+	{
+		TopologicCore::Topology::Ptr pCoreParentTopology =
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+
+		TopologicCore::Topology::Ptr pCoreContentTopology =
+			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(contentTopology->GetCoreTopologicalQuery());
+
+		try {
+			TopologicCore::Topology::Ptr pCoreCopyParentTopology = pCoreParentTopology->AddContent(pCoreContentTopology, typeFilter);
+			return Topology::ByCoreTopology(pCoreCopyParentTopology);
+		}
+		catch (std::exception& e)
+		{
+			throw gcnew Exception(gcnew String(e.what()));
+		}
+	}
+
 	Topology ^ Topology::AddContents(List<Topology^>^ contentTopologies, int typeFilter)
 	{
 		TopologicCore::Topology::Ptr pCoreParentTopology =
