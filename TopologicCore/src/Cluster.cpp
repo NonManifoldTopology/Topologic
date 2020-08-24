@@ -81,11 +81,11 @@ namespace TopologicCore
 			}
 			catch (TopoDS_UnCompatibleShapes &)
 			{
-				throw std::exception("Error making a OCCT compound.");
+				throw std::runtime_error("Error making a OCCT compound.");
 			}
 			catch (TopoDS_FrozenShape &)
 			{
-				throw std::exception("Error making a OCCT compound.");
+				throw std::runtime_error("Error making a OCCT compound.");
 			}
 		}
 		return occtCompound;
@@ -143,7 +143,7 @@ namespace TopologicCore
 		assert(!m_occtCompound.IsNull() && "Cluster::m_occtCompound is null.");
 		if (m_occtCompound.IsNull())
 		{
-			throw std::exception("A null Cluster is encountered.");
+			throw std::runtime_error("A null Cluster is encountered.");
 		}
 
 		return m_occtCompound;
@@ -154,7 +154,7 @@ namespace TopologicCore
 		assert(!m_occtCompound.IsNull() && "Cluster::m_occtCompound is null.");
 		if (m_occtCompound.IsNull())
 		{
-			throw std::exception("A null Cluster is encountered.");
+			throw std::runtime_error("A null Cluster is encountered.");
 		}
 
 		return m_occtCompound;
@@ -172,7 +172,7 @@ namespace TopologicCore
 
 	void Cluster::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
 	{
-		throw std::exception("No implementation for Cluster entity");
+		throw std::runtime_error("No implementation for Cluster entity");
 	}
 
 	Cluster::Cluster(const TopoDS_Compound& rkOcctCompound, const std::string& rkGuid)
@@ -252,7 +252,7 @@ namespace TopologicCore
 		SubTopologies(rkOcctCompound, occtSubtopologies);
 		if (occtSubtopologies.IsEmpty())
 		{
-			throw std::exception("The input Cluster is empty.");
+			throw std::runtime_error("The input Cluster is empty.");
 		}
 
 		double size = (double)occtSubtopologies.Size();
@@ -280,7 +280,7 @@ namespace TopologicCore
 
 	bool Cluster::IsManifold() const
 	{
-		throw std::exception("Not implemented yet");
+		throw std::runtime_error("Not implemented yet");
 	}
 
 	std::string Cluster::GetTypeAsString() const

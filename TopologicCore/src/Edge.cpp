@@ -133,7 +133,7 @@ namespace TopologicCore
 		}
 		catch (Standard_Failure e)
 		{
-			throw std::exception(e.GetMessageString());
+			throw std::runtime_error(e.GetMessageString());
 		}
 
 		// Done separately, because SetPeriod() does additional steps to adjust the poles, weights, etc.
@@ -144,7 +144,7 @@ namespace TopologicCore
 			}
 			catch (Standard_Failure e)
 			{
-				throw std::exception(e.GetMessageString());
+				throw std::runtime_error(e.GetMessageString());
 			}
 		}
 
@@ -270,7 +270,7 @@ namespace TopologicCore
 		assert(!m_occtEdge.IsNull() && "Edge::m_occtEdge is null.");
 		if (m_occtEdge.IsNull())
 		{
-			throw std::exception("A null Edge is encountered.");
+			throw std::runtime_error("A null Edge is encountered.");
 		}
 
 		return m_occtEdge;
@@ -281,7 +281,7 @@ namespace TopologicCore
 		assert(!m_occtEdge.IsNull() && "Edge::m_occtEdge is null.");
 		if (m_occtEdge.IsNull())
 		{
-			throw std::exception("A null Edge is encountered.");
+			throw std::runtime_error("A null Edge is encountered.");
 		}
 
 		return m_occtEdge;
@@ -294,7 +294,7 @@ namespace TopologicCore
 		}
 		catch (Standard_Failure e)
 		{
-			throw std::exception(e.GetMessageString());
+			throw std::runtime_error(e.GetMessageString());
 		}
 	}
 
@@ -319,7 +319,7 @@ namespace TopologicCore
 		double occtDParameter = kOcctLastParameter - kOcctFirstParameter;
 		if (occtDParameter <= 0.0)
 		{
-			throw std::exception("Negative range");
+			throw std::runtime_error("Negative range");
 		}
 
 		return (kNonNormalizedParameter - kOcctFirstParameter) / occtDParameter;
@@ -361,22 +361,22 @@ namespace TopologicCore
 		switch (occtEdgeError)
 		{
 		case BRepBuilderAPI_PointProjectionFailed:
-			throw std::exception("No parameters were given but the projection of the 3D points on the curve failed. This happens when the point distance to the curve is greater than the precision value.");
+			throw std::runtime_error("No parameters were given but the projection of the 3D points on the curve failed. This happens when the point distance to the curve is greater than the precision value.");
 			
 		case BRepBuilderAPI_ParameterOutOfRange:
-			throw std::exception("The given parameters are not in the parametric range.");
+			throw std::runtime_error("The given parameters are not in the parametric range.");
 
 		case BRepBuilderAPI_DifferentPointsOnClosedCurve:
-			throw std::exception("The two vertices or points are the extremities of a closed curve but have different locations.");
+			throw std::runtime_error("The two vertices or points are the extremities of a closed curve but have different locations.");
 
 		case BRepBuilderAPI_PointWithInfiniteParameter:
-			throw std::exception("A finite coordinate point was associated with an infinite parameter.");
+			throw std::runtime_error("A finite coordinate point was associated with an infinite parameter.");
 
 		case BRepBuilderAPI_DifferentsPointAndParameter:
-			throw std::exception("The distance between the 3D point and the point evaluated on the curve with the parameter is greater than the precision.");
+			throw std::runtime_error("The distance between the 3D point and the point evaluated on the curve with the parameter is greater than the precision.");
 
 		default: //case BRepBuilderAPI_LineThroughIdenticPoints:
-			throw std::exception("Two identical points were given to define a line (construction of an edge without curve).");
+			throw std::runtime_error("Two identical points were given to define a line (construction of an edge without curve).");
 		}
 	}
 

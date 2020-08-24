@@ -159,7 +159,7 @@ namespace TopologicCore
 	{
         if (!pkExternalBoundary->IsClosed())
         {
-            throw std::exception("The input Wire is open.");
+            throw std::runtime_error("The input Wire is open.");
         }
 		TopoDS_Wire occtExternalBoundary = pkExternalBoundary->GetOcctWire();
 		BRepBuilderAPI_MakeFace occtMakeFace(occtExternalBoundary);
@@ -234,7 +234,7 @@ namespace TopologicCore
 	{
 		if (rkEdges.size() < 3)
 		{
-			throw std::exception("Fewer than 3 edges are passed.");
+			throw std::runtime_error("Fewer than 3 edges are passed.");
 		}
 
 		Wire::Ptr pWire = Wire::ByEdges(rkEdges);
@@ -324,25 +324,25 @@ namespace TopologicCore
 		{
 			int occtMaxDegree = Geom_BSplineSurface::MaxDegree();
 			if (kUDegree < 1 || kUDegree > occtMaxDegree) {
-				throw std::exception(std::string("The curve's u degree must be between 1 and " + std::to_string(occtMaxDegree) + " (OCCT's max degree).").c_str());
+				throw std::runtime_error(std::string("The curve's u degree must be between 1 and " + std::to_string(occtMaxDegree) + " (OCCT's max degree).").c_str());
 			}
 			if (kVDegree < 1 || kVDegree > occtMaxDegree) {
-				throw std::exception(std::string("The curve's v degree must be between 1 and " + std::to_string(occtMaxDegree) + " (OCCT's max degree).").c_str());
+				throw std::runtime_error(std::string("The curve's v degree must be between 1 and " + std::to_string(occtMaxDegree) + " (OCCT's max degree).").c_str());
 			}
 
 			if (rkOcctPoles.ColLength() < 2 || rkOcctPoles.RowLength() < 2)
 			{
-				throw std::exception("There must be more than one control points along each axis.");
+				throw std::runtime_error("There must be more than one control points along each axis.");
 			}
 
 			if (rkOcctPoles.ColLength() != rkOcctWeights.ColLength() || rkOcctPoles.RowLength() != rkOcctWeights.RowLength())
 			{
-				throw std::exception("The lists of control points and weights must have the same numbers of rows and columns.");
+				throw std::runtime_error("The lists of control points and weights must have the same numbers of rows and columns.");
 			}
 
 			if (rkOcctUKnots.Length() != rkOcctUMultiplicities.Length() || rkOcctVKnots.Length() != rkOcctVMultiplicities.Length())
 			{
-				throw std::exception("The lists of U and V knots and multiplicities must have the same length.");
+				throw std::runtime_error("The lists of U and V knots and multiplicities must have the same length.");
 			}
 
 			for (int i = rkOcctWeights.LowerRow(); i <= rkOcctWeights.UpperRow(); i++)
@@ -351,7 +351,7 @@ namespace TopologicCore
 				{
 					if (rkOcctWeights(i, j) <= gp::Resolution())
 					{
-						throw std::exception(std::string("The (" + std::to_string(i) + ", " + std::to_string(j) + ")'s weight is smaller than OCCT's resolution (i.e. practically zero).").c_str());
+						throw std::runtime_error(std::string("The (" + std::to_string(i) + ", " + std::to_string(j) + ")'s weight is smaller than OCCT's resolution (i.e. practically zero).").c_str());
 					}
 				}
 			}
@@ -359,13 +359,13 @@ namespace TopologicCore
 			for (int i = rkOcctUKnots.Lower(); i < rkOcctUKnots.Upper(); i++)
 			{
 				if (rkOcctUKnots(i + 1) - rkOcctUKnots(i) <= Epsilon(Abs(rkOcctUKnots(i)))) {
-					throw std::exception(std::string("The " + std::to_string(i + 1) + "'s U knot must be larger than the " + std::to_string(i) + "'s U knot.").c_str());
+					throw std::runtime_error(std::string("The " + std::to_string(i + 1) + "'s U knot must be larger than the " + std::to_string(i) + "'s U knot.").c_str());
 				}
 			}
 			for (int i = rkOcctVKnots.Lower(); i < rkOcctVKnots.Upper(); i++)
 			{
 				if (rkOcctVKnots(i + 1) - rkOcctVKnots(i) <= Epsilon(Abs(rkOcctVKnots(i)))) {
-					throw std::exception(std::string("The " + std::to_string(i + 1) + "'s V knot must be larger than the " + std::to_string(i) + "'s V knot.").c_str());
+					throw std::runtime_error(std::string("The " + std::to_string(i + 1) + "'s V knot must be larger than the " + std::to_string(i) + "'s V knot.").c_str());
 				}
 			}
 
@@ -374,22 +374,22 @@ namespace TopologicCore
 			{
 				if (kIsUPeriodic)
 				{
-					throw std::exception("The curve is U periodic, so the number of poles must be equal to the sum of the U multiplicities.");
+					throw std::runtime_error("The curve is U periodic, so the number of poles must be equal to the sum of the U multiplicities.");
 				}
 				else
 				{
-					throw std::exception("The curve is not U periodic, so the number of poles must be equal to the sum of the U multiplicities - U degree - 1, which must be larger than 1.");
+					throw std::runtime_error("The curve is not U periodic, so the number of poles must be equal to the sum of the U multiplicities - U degree - 1, which must be larger than 1.");
 				}
 			}
 			if (rkOcctPoles.Length() != BSplCLib::NbPoles(kVDegree, kIsVPeriodic, rkOcctUMultiplicities))
 			{
 				if (kIsVPeriodic)
 				{
-					throw std::exception("The curve is V periodic, so the number of poles must be equal to the sum of the V multiplicities.");
+					throw std::runtime_error("The curve is V periodic, so the number of poles must be equal to the sum of the V multiplicities.");
 				}
 				else
 				{
-					throw std::exception("The curve is not V periodic, so the number of poles must be equal to the sum of the V multiplicities - V degree - 1, which must be larger than 1.");
+					throw std::runtime_error("The curve is not V periodic, so the number of poles must be equal to the sum of the V multiplicities - V degree - 1, which must be larger than 1.");
 				}
 			}
 		}
@@ -585,7 +585,7 @@ namespace TopologicCore
 		Handle(Poly_Triangulation) pOcctTriangulation = BRep_Tool::Triangulation(TopoDS::Face(occtFixFace.Result()), occtLocation);
 		if (pOcctTriangulation.IsNull())
 		{
-			throw std::exception("No triangulation was produced.");
+			throw std::runtime_error("No triangulation was produced.");
 		}
 		int numOfTriangles = pOcctTriangulation->NbTriangles();
 		for (int i = 1; i <= numOfTriangles; ++i)
@@ -666,7 +666,7 @@ namespace TopologicCore
 		assert(!m_occtFace.IsNull() && "Face::m_occtFace is null.");
 		if (m_occtFace.IsNull())
 		{
-			throw std::exception("A null Face is encountered.");
+			throw std::runtime_error("A null Face is encountered.");
 		}
 
 		return m_occtFace;
@@ -677,7 +677,7 @@ namespace TopologicCore
 		assert(!m_occtFace.IsNull() && "Face::m_occtFace is null.");
 		if (m_occtFace.IsNull())
 		{
-			throw std::exception("A null Face is encountered.");
+			throw std::runtime_error("A null Face is encountered.");
 		}
 
 		return m_occtFace;
@@ -724,16 +724,16 @@ namespace TopologicCore
 		switch (rkOcctMakeFace.Error())
 		{
 		case BRepBuilderAPI_NoFace:
-			throw std::exception("No initialization of the algorithm; only an empty constructor was used.");
+			throw std::runtime_error("No initialization of the algorithm; only an empty constructor was used.");
 
 		case BRepBuilderAPI_NotPlanar:
-			throw std::exception("No surface was given and the wire was not planar.");
+			throw std::runtime_error("No surface was given and the wire was not planar.");
 
 		case BRepBuilderAPI_CurveProjectionFailed:
-			throw std::exception("Curve projection failed.");
+			throw std::runtime_error("Curve projection failed.");
 
 		case BRepBuilderAPI_ParametersOutOfRange:
-			throw std::exception("The parameters given to limit the surface are out of its bounds.");
+			throw std::runtime_error("The parameters given to limit the surface are out of its bounds.");
 
 		//default: // i.e. BRepBuilderAPI_FaceDone, do nothing
 		}

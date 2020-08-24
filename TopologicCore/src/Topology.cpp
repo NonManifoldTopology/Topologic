@@ -266,7 +266,7 @@ namespace TopologicCore
 		case TopAbs_COMPSOLID: return CellComplex::CenterOfMass(TopoDS::CompSolid(rkOcctShape));
 		case TopAbs_COMPOUND: return Cluster::CenterOfMass(TopoDS::Compound(rkOcctShape));
 		default:
-			throw std::exception("Unrecognised topology");
+			throw std::runtime_error("Unrecognised topology");
 		}
 	}
 
@@ -283,7 +283,7 @@ namespace TopologicCore
 		case TopAbs_COMPSOLID: return TOPOLOGY_CELLCOMPLEX;
 		case TopAbs_COMPOUND: return TOPOLOGY_CLUSTER;
 		default:
-			throw std::exception("Unrecognised topology");
+			throw std::runtime_error("Unrecognised topology");
 		}
 	}
 
@@ -300,7 +300,7 @@ namespace TopologicCore
 		case TOPOLOGY_CELLCOMPLEX: return TopAbs_COMPSOLID;
 		case TOPOLOGY_CLUSTER: return TopAbs_COMPOUND;
 		default:
-			throw std::exception("Unrecognised topology");
+			throw std::runtime_error("Unrecognised topology");
 		}
 	}
 
@@ -371,11 +371,11 @@ namespace TopologicCore
 				}
 				catch (TopoDS_FrozenShape&)
 				{
-					throw std::exception("The Cell is not free and cannot be modified.");
+					throw std::runtime_error("The Cell is not free and cannot be modified.");
 				}
 				catch (TopoDS_UnCompatibleShapes&)
 				{
-					throw std::exception("The Cell and Face are not compatible.");
+					throw std::runtime_error("The Cell and Face are not compatible.");
 				}
 			}
 		}
@@ -884,12 +884,12 @@ namespace TopologicCore
     {
         if (rkSelectors.size() != rkDictionaries.size())
         {
-            throw std::exception("The lists of selectors and dictionaries do not have the same length.");
+            throw std::runtime_error("The lists of selectors and dictionaries do not have the same length.");
         }
 
         if (rkSelectors.size() != rkTypeFilters.size())
         {
-            throw std::exception("The lists of selectors and type filters do not have the same length.");
+            throw std::runtime_error("The lists of selectors and type filters do not have the same length.");
         }
 
         Topology::Ptr pCopyTopology = std::dynamic_pointer_cast<Topology>(DeepCopy());
@@ -905,7 +905,7 @@ namespace TopologicCore
             const int kTypeFilter = *kTypeFilterIterator;
             if (kTypeFilter == 0)
             {
-                throw std::exception("No type filter specified.");
+                throw std::runtime_error("No type filter specified.");
             }
 
             Topology::Ptr selectedSubtopology = nullptr;
@@ -917,7 +917,7 @@ namespace TopologicCore
                 try {
                     closestFace = TopologicalQuery::Downcast<Face>(closestFaceAsTopology);
                 }
-                catch (const std::exception&)
+                catch (const std::runtime_error&)
                 {
 
                 }
@@ -971,7 +971,7 @@ namespace TopologicCore
                 {
                     if (kpSelectedSubtopology != nullptr && kpSelectedSubtopology->IsSame(selectedSubtopology))
                     {
-                        throw std::exception("Another selector has selected the same member of the input Topology.");
+                        throw std::runtime_error("Another selector has selected the same member of the input Topology.");
                     }
                 }
             }
@@ -1012,7 +1012,7 @@ namespace TopologicCore
 		occtSewing.Perform();
 		if (occtSewing.SewedShape().IsNull())
 		{
-			throw std::exception("A null shape is created.");
+			throw std::runtime_error("A null shape is created.");
 		}
 		TopAbs_ShapeEnum type = occtSewing.SewedShape().ShapeType();
 
@@ -1058,7 +1058,7 @@ namespace TopologicCore
 		TopoDS_Shape occtOriginShape;
 		if (kpkOriginTopology1 == nullptr && kpkOriginTopology2 == nullptr)
 		{
-			throw std::exception("Fails to transfer dictionari in a Boolean operation because the original Topologies are null.");
+			throw std::runtime_error("Fails to transfer dictionari in a Boolean operation because the original Topologies are null.");
 		}
 		else if (kpkOriginTopology1 == nullptr && kpkOriginTopology2 != nullptr)
 		{
@@ -1511,7 +1511,7 @@ namespace TopologicCore
 				}
 				catch (TopoDS_FrozenShape)
 				{
-					throw std::exception("Topology is locked, cannot remove subtopology. Please contact the developer.");
+					throw std::runtime_error("Topology is locked, cannot remove subtopology. Please contact the developer.");
 				}
 			}
 
@@ -1525,11 +1525,11 @@ namespace TopologicCore
 				}
 				catch (TopoDS_FrozenShape)
 				{
-					throw std::exception("Topology is locked, cannot remove subtopology. Please contact the developer.");
+					throw std::runtime_error("Topology is locked, cannot remove subtopology. Please contact the developer.");
 				}
 				catch (TopoDS_UnCompatibleShapes)
 				{
-					throw std::exception("Cannot add incompatible subtopology.");
+					throw std::runtime_error("Cannot add incompatible subtopology.");
 				}
 			}
 
@@ -1597,7 +1597,7 @@ namespace TopologicCore
 			}
 			catch (TopoDS_FrozenShape)
 			{
-				throw std::exception("Topology is locked, cannot remove subtopology. Please contact the developer.");
+				throw std::runtime_error("Topology is locked, cannot remove subtopology. Please contact the developer.");
 			}
 		}
 
@@ -1628,7 +1628,7 @@ namespace TopologicCore
 			const char* str = e.GetMessageString();
 			std::string stlStr(str);
 		}
-		catch (std::exception& e)
+		catch (std::runtime_error& e)
 		{
 			const char* str = e.what();
 			std::string stlStr(str);
@@ -1639,7 +1639,7 @@ namespace TopologicCore
 		{
 			std::ostringstream errorStream;
 			rOcctCellsBuilder.DumpErrors(errorStream);
-			throw std::exception(errorStream.str().c_str());
+			throw std::runtime_error(errorStream.str().c_str());
 		}
 	}
 
@@ -1671,7 +1671,7 @@ namespace TopologicCore
 		catch (Standard_Failure&)
 		{
 		}
-		catch (std::exception&)
+		catch (std::runtime_error&)
 		{
 		}
 
@@ -1679,7 +1679,7 @@ namespace TopologicCore
 		{
 			std::ostringstream errorStream;
 			rOcctCellsBuilder.DumpErrors(errorStream);
-			throw std::exception(errorStream.str().c_str());
+			throw std::runtime_error(errorStream.str().c_str());
 		}
 	}
 
@@ -2228,7 +2228,7 @@ namespace TopologicCore
 			const char* str = e.GetMessageString();
 			std::string stlStr(str);
 		}
-		catch (std::exception& e)
+		catch (std::runtime_error& e)
 		{
 			const char* str = e.what();
 			std::string stlStr(str);
@@ -2355,7 +2355,7 @@ namespace TopologicCore
 			const char* str = e.GetMessageString();
 			std::string stlStr(str);
 		}
-		catch (std::exception& e)
+		catch (std::runtime_error& e)
 		{
 			const char* str = e.what();
 			std::string stlStr(str);
@@ -2365,7 +2365,7 @@ namespace TopologicCore
 		{
 			std::ostringstream errorStream;
 			occtCellsBuilder2.DumpErrors(errorStream);
-			throw std::exception(errorStream.str().c_str());
+			throw std::runtime_error(errorStream.str().c_str());
 		}
 
 		occtCellsBuilder2.AddAllToResult();
@@ -2839,7 +2839,7 @@ namespace TopologicCore
 	Topology::Ptr Topology::IntersectFaceFace(const Topology::Ptr kpMergeTopology, Face const* const kpkFace, Face const* const kpkOtherFace)
 	{
 		// OCCT does not seem to have a robust Face-Face 
-		throw std::exception("Not yet implemented");
+		throw std::runtime_error("Not yet implemented");
 	}
 
 	void Topology::AddBooleanOperands(

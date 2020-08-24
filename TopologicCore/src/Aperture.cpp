@@ -102,7 +102,7 @@ namespace TopologicCore
 		assert(m_pTopology != nullptr && "The underlying topology is null.");
 		if (m_pTopology == nullptr)
 		{
-			throw std::exception("The underlying topology is null.");
+			throw std::runtime_error("The underlying topology is null.");
 		}
 		return m_pTopology;
 	}
@@ -115,7 +115,7 @@ namespace TopologicCore
 		RegisterFactory(GetClassGUID(), std::make_shared<ApertureFactory>());
 		if (kpTopology == nullptr)
 		{
-			throw std::exception("A null topology is passed.");
+			throw std::runtime_error("A null topology is passed.");
 		}
 		
 		if (kpContext != nullptr)

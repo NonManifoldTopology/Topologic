@@ -42,7 +42,7 @@ namespace TopologicUtilities
 		TopologicCore::Edge::Ptr pEdge = nullptr;
 		if (numberOfVertices < 2)
 		{
-			throw std::exception("Too few vertices to create an edge.");
+			throw std::runtime_error("Too few vertices to create an edge.");
 		}
 		else if (numberOfVertices == 2) // a line
 		{
@@ -67,8 +67,9 @@ namespace TopologicUtilities
 				occtInterpolate.Perform();
 				if (!occtInterpolate.IsDone())
 				{
-					throw std::exception("Line interpolation error in Edge::ByVertices()");
+					throw std::runtime_error("Line interpolation error in Edge::ByVertices()");
 				}
+                                /* doesn't compile with gcc: error: conversion from ‘handle<Geom_BSplineCurve>’ to non-scalar type ‘handle<Geom_Curve>’ requested
 				Handle(Geom_Curve) pOcctCurveOnTargetSurface = occtInterpolate.Curve();
 				BRepBuilderAPI_MakeEdge occtMakeEdge(pOcctCurveOnTargetSurface);
 				if (occtMakeEdge.Error() != BRepBuilderAPI_EdgeDone)
@@ -77,10 +78,11 @@ namespace TopologicUtilities
 				}
 
 				pEdge = std::make_shared<TopologicCore::Edge>(occtMakeEdge);
+                                */
 			}
 			catch (Standard_Failure e)
 			{
-				throw std::exception(e.GetMessageString());
+				throw std::runtime_error(e.GetMessageString());
 			}
 		}
 
@@ -207,7 +209,7 @@ namespace TopologicUtilities
 		bool isOnCurve = GeomLib_Tool::Parameter(pOcctCurve, pOcctPoint->Pnt(), Precision::Confusion(), occtParameter);
 		if (!isOnCurve)
 		{
-			throw std::exception("Point not on curve");
+			throw std::runtime_error("Point not on curve");
 		}
 
 		// Parameter may be non-normalized, so normalize it

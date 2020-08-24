@@ -80,7 +80,7 @@ namespace TopologicCore
 		}
 		catch (Standard_DomainError e)
 		{
-			throw std::exception(e.GetMessageString());
+			throw std::runtime_error(e.GetMessageString());
 		}
 	}
 }

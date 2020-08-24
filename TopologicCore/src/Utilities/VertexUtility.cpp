@@ -121,7 +121,7 @@ namespace TopologicUtilities
 				return occtDistance.Value();
 			}
 		}
-		catch (const std::exception&)
+		catch (const std::runtime_error&)
 		{
 			return std::numeric_limits<double>::max();
 		}
@@ -267,7 +267,7 @@ namespace TopologicUtilities
 			);
 
 		default:
-			throw std::exception("An unknown Topology is detected.");
+			throw std::runtime_error("An unknown Topology is detected.");
 		}
 	}
 }

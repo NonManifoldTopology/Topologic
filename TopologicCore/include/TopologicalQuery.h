@@ -32,7 +32,7 @@ namespace TopologicCore
 			T* pSubclassTopology = dynamic_cast<T*>(kpTopologicalQuery);
 			if (pSubclassTopology == nullptr)
 			{
-				throw std::exception("Failed downcasting a topological query");
+				throw std::runtime_error("Failed downcasting a topological query");
 			}
 			return pSubclassTopology;
 		}
@@ -43,7 +43,7 @@ namespace TopologicCore
 			T const * kpSubclassTopology = dynamic_cast<T const *>(kpkTopologicalQuery);
 			if (kpSubclassTopology == nullptr)
 			{
-				throw std::exception("Failed downcasting topology");
+				throw std::runtime_error("Failed downcasting topology");
 			}
 			return kpSubclassTopology;
 		}
@@ -54,7 +54,7 @@ namespace TopologicCore
 			std::shared_ptr<T> pSubclassTopology = std::dynamic_pointer_cast<T>(rTopologicalQuery);
 			if (pSubclassTopology == nullptr)
 			{
-				throw std::exception("Failed downcasting a topological query");
+				throw std::runtime_error("Failed downcasting a topological query");
 			}
 			return pSubclassTopology;
 		}
@@ -65,7 +65,7 @@ namespace TopologicCore
 			const std::shared_ptr<T> kSubclassTopology = std::dynamic_pointer_cast<T>(rkTopologicalQuery);
 			if (kSubclassTopology == nullptr)
 			{
-				throw std::exception("Failed downcasting a topological query");
+				throw std::runtime_error("Failed downcasting a topological query");
 			}
 			return kSubclassTopology;
 		}
@@ -76,7 +76,7 @@ namespace TopologicCore
 			std::shared_ptr<T> pSuperClassTopology = std::dynamic_pointer_cast<T>(rTopologicalQuery);
 			if (pSuperClassTopology == nullptr)
 			{
-				throw std::exception("Failed upcasting a topological query");
+				throw std::runtime_error("Failed upcasting a topological query");
 			}
 			return pSuperClassTopology;
 		}
@@ -87,7 +87,7 @@ namespace TopologicCore
 			const std::shared_ptr<T> pSuperClassTopology = std::dynamic_pointer_cast<T>(rkTopologicalQuery);
 			if (pSuperClassTopology == nullptr)
 			{
-				throw std::exception("Failed upcasting a topological query");
+				throw std::runtime_error("Failed upcasting a topological query");
 			}
 			return pSuperClassTopology;
 		}

@@ -76,7 +76,7 @@ namespace TopologicCore
 			catch (Standard_NoSuchObject)
 			{
 				assert("Cannot find a Face in the global Cluster.");
-				throw std::exception("Cannot find a Face in the global Cluster.");
+				throw std::runtime_error("Cannot find a Face in the global Cluster.");
 			}
 		}
 
@@ -136,12 +136,12 @@ namespace TopologicCore
 	{
 		if (kTolerance <= 0.0)
 		{
-			throw std::exception("The tolerance must have a positive value.");
+			throw std::runtime_error("The tolerance must have a positive value.");
 		}
 
 		if (rkFaces.empty())
 		{
-			throw std::exception("The input Face list is empty.");
+			throw std::runtime_error("The input Face list is empty.");
 		}
 
 		BOPAlgo_MakerVolume occtMakerVolume;
@@ -160,7 +160,7 @@ namespace TopologicCore
 
 		occtMakerVolume.Perform();
 		if (occtMakerVolume.HasErrors()) {
-			throw std::exception("The input Faces do not form a Cell.");
+			throw std::runtime_error("The input Faces do not form a Cell.");
 		}
 
 		const TopoDS_Shape& rkOcctResult = occtMakerVolume.Shape();
@@ -189,13 +189,13 @@ namespace TopologicCore
 				}
 				else
 				{
-					throw std::exception("The input Faces do not form a Cell.");
+					throw std::runtime_error("The input Faces do not form a Cell.");
 				}
 			}
 
 			if (occtShape.IsNull())
 			{
-				throw std::exception("The input Faces do not form a Cell.");
+				throw std::runtime_error("The input Faces do not form a Cell.");
 			}
 			else
 			{
@@ -229,7 +229,7 @@ namespace TopologicCore
 	{
 		if (!kpShell->IsClosed())
 		{
-			throw std::exception("The input Shell is open.");
+			throw std::runtime_error("The input Shell is open.");
 		}
 
 		BRepBuilderAPI_MakeSolid occtMakeSolid;
@@ -238,7 +238,7 @@ namespace TopologicCore
 		}
 		catch (StdFail_NotDone&)
 		{
-			throw std::exception("The input Shell does not form a valid Cell.");
+			throw std::runtime_error("The input Shell does not form a valid Cell.");
 		}
 
 		// Create a cell from the shell. The faces are the same and the contents
@@ -374,7 +374,7 @@ namespace TopologicCore
 	{
 		// TODO: check for internal Faces
 		// NOTE: it is not enough to check Edges bordering > 3 Faces
-		throw std::exception("Not implemented yet");
+		throw std::runtime_error("Not implemented yet");
 	}
 
 	TopoDS_Shape& Cell::GetOcctShape()
@@ -392,7 +392,7 @@ namespace TopologicCore
 		assert(!m_occtSolid.IsNull() && "Cell::m_occtSolid is null.");
 		if (m_occtSolid.IsNull())
 		{
-			throw std::exception("A null Cell is encountered.");
+			throw std::runtime_error("A null Cell is encountered.");
 		}
 
 		return m_occtSolid;
@@ -403,7 +403,7 @@ namespace TopologicCore
 		assert(!m_occtSolid.IsNull() && "Cell::m_occtSolid is null.");
 		if (m_occtSolid.IsNull())
 		{
-			throw std::exception("A null Cell is encountered.");
+			throw std::runtime_error("A null Cell is encountered.");
 		}
 
 		return m_occtSolid;

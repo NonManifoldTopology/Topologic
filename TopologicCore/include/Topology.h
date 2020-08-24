@@ -41,6 +41,7 @@
 #include <vector>
 #include <map>
 #include <memory>
+#include <algorithm>
 
 class TopoDS_Shape;
 
@@ -874,7 +875,8 @@ namespace TopologicCore
 	}
 
 	template <class Subclass>
-	static TopAbs_ShapeEnum Topology::CheckOcctShapeType()
+	//static TopAbs_ShapeEnum Topology::CheckOcctShapeType()
+	TopAbs_ShapeEnum Topology::CheckOcctShapeType()
 	{
 		if (std::is_same<Subclass, Vertex>::value)
 		{
@@ -909,7 +911,7 @@ namespace TopologicCore
 			return TopAbs_COMPOUND;
 		}
 		
-		throw std::exception("Other subclasses are invalid.");
+		throw std::runtime_error("Other subclasses are invalid.");
 	}
 
 	/// <summary>

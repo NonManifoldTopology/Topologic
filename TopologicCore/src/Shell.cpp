@@ -88,7 +88,7 @@ namespace TopologicCore
 	{
 		if (rkFaces.empty())
 		{
-			throw std::exception("No face is passed.");
+			throw std::runtime_error("No face is passed.");
 		}
 
 		TopTools_ListOfShape occtShapes;
@@ -130,13 +130,13 @@ namespace TopologicCore
 		}
 		catch (Standard_TypeMismatch)
 		{
-			throw std::exception("The set of faces does not create a valid shell.");
+			throw std::runtime_error("The set of faces does not create a valid shell.");
 		}
 	}
 
 	bool Shell::IsManifold() const
 	{
-		throw std::exception("Not implemented yet");
+		throw std::runtime_error("Not implemented yet");
 	}
 
 	TopoDS_Shape& Shell::GetOcctShape()
@@ -154,7 +154,7 @@ namespace TopologicCore
 		assert(!m_occtShell.IsNull() && "Shell::m_occtShell is null.");
 		if (m_occtShell.IsNull())
 		{
-			throw std::exception("A null Shell is encountered.");
+			throw std::runtime_error("A null Shell is encountered.");
 		}
 
 		return m_occtShell;
@@ -165,7 +165,7 @@ namespace TopologicCore
 		assert(!m_occtShell.IsNull() && "Shell::m_occtShell is null.");
 		if (m_occtShell.IsNull())
 		{
-			throw std::exception("A null Shell is encountered.");
+			throw std::runtime_error("A null Shell is encountered.");
 		}
 
 		return m_occtShell;

@@ -232,7 +232,7 @@ namespace TopologicUtilities
 			kpCoreTopology->GetType() == TopologicCore::Cluster::Type())
 		{
 			std::string errorMessage = "Does not accept an input Topology of type " + kpCoreTopology->GetTypeAsString();
-			throw std::exception(errorMessage.c_str());
+			throw std::runtime_error(errorMessage.c_str());
 		}
 
 		kpCoreTopology->UpwardNavigation(kpCoreTopology->GetOcctShape(), kTypeFilter, rCoreAdjacentTopologies);

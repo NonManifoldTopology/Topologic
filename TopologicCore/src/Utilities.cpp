@@ -29,7 +29,7 @@ namespace TopologicCore {
 		case TOPOLOGY_CELL: return TopAbs_SOLID;
 		case TOPOLOGY_CELLCOMPLEX: return TopAbs_COMPSOLID;
 		case TOPOLOGY_CLUSTER: return TopAbs_COMPOUND;
-		default: throw std::exception("No OCCT counterpart is found from this topology.");
+		default: throw std::runtime_error("No OCCT counterpart is found from this topology.");
 		}
 	}
 }

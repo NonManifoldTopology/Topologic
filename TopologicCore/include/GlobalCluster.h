@@ -20,6 +20,8 @@
 
 #include <TopoDS_Builder.hxx>
 #include <TopoDS_Compound.hxx>
+#include <iostream>
+#include <memory>
 
 #include <list>
 

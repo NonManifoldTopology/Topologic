@@ -58,7 +58,8 @@ namespace TopologicCore
 
 		virtual ~Graph();
 
-		TOPOLOGIC_API Topology::Ptr Topology() const;
+		//TOPOLOGIC_API Topology::Ptr Topology() const;
+		TOPOLOGIC_API TopologicCore::Topology::Ptr Topology() const;
 
 		TOPOLOGIC_API void Vertices(std::list<std::shared_ptr<Vertex>>& rVertices) const;
 
@@ -174,7 +175,8 @@ namespace TopologicCore
 
 		TOPOLOGIC_API void VerticesAtCoordinates(const double kX, const double kY, const double kZ, const double kTolerance, std::list<std::shared_ptr<Vertex>>& rVertices) const;
 
-		TOPOLOGIC_API std::shared_ptr<Edge> Edge(const std::shared_ptr<Vertex>& kpVertex1, const std::shared_ptr<Vertex>& kpVertex2, const double kTolerance) const;
+		//TOPOLOGIC_API std::shared_ptr<Edge> Edge(const std::shared_ptr<Vertex>& kpVertex1, const std::shared_ptr<Vertex>& kpVertex2, const double kTolerance) const;
+		TOPOLOGIC_API std::shared_ptr<TopologicCore::Edge> Edge(const std::shared_ptr<Vertex>& kpVertex1, const std::shared_ptr<Vertex>& kpVertex2, const double kTolerance) const;
 
 		void IncidentEdges(const std::shared_ptr<Vertex>& kpVertex, const double kTolerance, std::list<std::shared_ptr<TopologicCore::Edge>>& rEdges) const;
 

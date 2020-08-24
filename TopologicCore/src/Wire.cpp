@@ -87,7 +87,7 @@ namespace TopologicCore
 
 				if (startingVertex == nullptr)
 				{
-					throw std::exception("This Wire is closed, but is identified as an open Wire.");
+					throw std::runtime_error("This Wire is closed, but is identified as an open Wire.");
 				}
 			}
 
@@ -300,7 +300,7 @@ namespace TopologicCore
 		}
 		catch (Standard_Failure e)
 		{
-			throw std::exception(e.GetMessageString());
+			throw std::runtime_error(e.GetMessageString());
 		}
 	}
 
@@ -314,7 +314,7 @@ namespace TopologicCore
 		assert(!m_occtWire.IsNull() && "Wire::m_occtWire is null.");
 		if (m_occtWire.IsNull())
 		{
-			throw std::exception("A null Wire is encountered.");
+			throw std::runtime_error("A null Wire is encountered.");
 		}
 
 		return m_occtWire;
@@ -325,7 +325,7 @@ namespace TopologicCore
 		assert(!m_occtWire.IsNull()  && "Wire::m_occtWire is null.");
 		if (m_occtWire.IsNull())
 		{
-			throw std::exception("A null Wire is encountered.");
+			throw std::runtime_error("A null Wire is encountered.");
 		}
 
 		return m_occtWire;
@@ -339,13 +339,13 @@ namespace TopologicCore
 		switch (rkOcctMakeWire.Error())
 		{
 		case BRepBuilderAPI_EmptyWire:
-			throw std::exception("No initialization of the algorithm. Only an empty constructor was used.");
+			throw std::runtime_error("No initialization of the algorithm. Only an empty constructor was used.");
 
 		case BRepBuilderAPI_DisconnectedWire:
-			throw std::exception("The last edge which you attempted to add was not connected to the wire.");
+			throw std::runtime_error("The last edge which you attempted to add was not connected to the wire.");
 
 		case BRepBuilderAPI_NonManifoldWire:
-			throw std::exception("The wire has some singularity.");
+			throw std::runtime_error("The wire has some singularity.");
 
 		//default: // i.e. BRepBuilderAPI_WireDone, do nothing
 		}

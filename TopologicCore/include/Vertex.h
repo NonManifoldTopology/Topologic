@@ -111,7 +111,7 @@ namespace TopologicCore
 		/// <summary>
 		/// Return the corresponding point of this vertex. The output list only contains one vertex.
 		/// </summary>
-		/// <exception cref="std::exception">Null OCCT vertex</exception>
+		/// <exception cref="std::runtime_error">Null OCCT vertex</exception>
 		/// <param name="rOcctGeometries">The output parameter, containing only one point corresponding to this vertex.</param>
 		virtual void Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const;
 

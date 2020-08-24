@@ -105,7 +105,7 @@ namespace TopologicCore
 	{
 		if (rkOcctSolids.IsEmpty())
 		{
-			throw std::exception("No cell is passed.");
+			throw std::runtime_error("No cell is passed.");
 		}
 
 		TopoDS_CompSolid occtCompSolid;
@@ -123,11 +123,11 @@ namespace TopologicCore
 			}
 			catch (TopoDS_FrozenShape&)
 			{
-				throw std::exception("The Cell is not free and cannot be modified.");
+				throw std::runtime_error("The Cell is not free and cannot be modified.");
 			}
 			catch (TopoDS_UnCompatibleShapes&)
 			{
-				throw std::exception("The Cell and Face are not compatible.");
+				throw std::runtime_error("The Cell and Face are not compatible.");
 			}
 			
 			pCellComplex = std::make_shared<CellComplex>(occtCompSolid);
@@ -148,7 +148,7 @@ namespace TopologicCore
 
 			if (pMergeTopology->GetType() != TOPOLOGY_CELLCOMPLEX)
 			{
-				throw std::exception("The input Cells do not form a CellComplex.");
+				throw std::runtime_error("The input Cells do not form a CellComplex.");
 			}
 			
 			pCellComplex = TopologicalQuery::Downcast<CellComplex>(pMergeTopology);
@@ -176,10 +176,10 @@ namespace TopologicCore
 		occtMakerVolume.SetFuzzyValue(kTolerance);
 		occtMakerVolume.Perform();
 		if (occtMakerVolume.HasWarnings()) {
-			throw std::exception("Warnings.");
+			throw std::runtime_error("Warnings.");
 		}
 		if (occtMakerVolume.HasErrors()) {
-			throw std::exception("The input Faces do not form a CellComplex.");
+			throw std::runtime_error("The input Faces do not form a CellComplex.");
 		}
 
 		const TopoDS_Shape& rkOcctResult = occtMakerVolume.Shape();
@@ -249,7 +249,7 @@ namespace TopologicCore
 		{
 			std::ostringstream errorStream;
 			occtCellsBuilder.DumpErrors(errorStream);
-			throw std::exception(errorStream.str().c_str());
+			throw std::runtime_error(errorStream.str().c_str());
 		}
 
 		TopTools_ListOfShape occtListToTake;
@@ -319,7 +319,7 @@ namespace TopologicCore
 
 	bool CellComplex::IsManifold() const
 	{
-		throw std::exception("Not implemented yet");
+		throw std::runtime_error("Not implemented yet");
 	}
 
 	void CellComplex::NonManifoldFaces(std::list<Face::Ptr>& rNonManifoldFaces) const
@@ -351,7 +351,7 @@ namespace TopologicCore
 		assert(!m_occtCompSolid.IsNull() && "CellComplex::m_occtCompSolid is null.");
 		if (m_occtCompSolid.IsNull())
 		{
-			throw std::exception("A null CellComplex is encountered.");
+			throw std::runtime_error("A null CellComplex is encountered.");
 		}
 
 		return m_occtCompSolid;
@@ -362,7 +362,7 @@ namespace TopologicCore
 		assert(!m_occtCompSolid.IsNull() && "CellComplex::m_occtCompSolid is null.");
 		if (m_occtCompSolid.IsNull())
 		{
-			throw std::exception("A null CellComplex is encountered.");
+			throw std::runtime_error("A null CellComplex is encountered.");
 		}
 
 		return m_occtCompSolid;

@@ -18,6 +18,8 @@
 
 #include "Utilities.h"
 
+#include <memory>
+
 namespace TopologicCore
 {
 	class Geometry

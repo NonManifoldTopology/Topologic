@@ -66,7 +66,7 @@ namespace TopologicCore
 
 	bool Vertex::IsManifold() const
 	{
-		throw std::exception("Not implemented yet");
+		throw std::runtime_error("Not implemented yet");
 	}
 
 	void Vertex::Geometry(std::list<Handle(Geom_Geometry)>& rOcctGeometries) const
@@ -86,7 +86,7 @@ namespace TopologicCore
 		}
 		catch (Standard_Failure e)
 		{
-			throw std::exception(e.GetMessageString());
+			throw std::runtime_error(e.GetMessageString());
 		}
 	}
 
@@ -100,7 +100,7 @@ namespace TopologicCore
 		assert(!m_occtVertex.IsNull() && "Vertex::m_occtVertex is null.");
 		if (m_occtVertex.IsNull())
 		{
-			throw std::exception("A null Vertex is encountered.");
+			throw std::runtime_error("A null Vertex is encountered.");
 		}
 
 		return m_occtVertex;
@@ -116,7 +116,7 @@ namespace TopologicCore
 		assert(!m_occtVertex.IsNull() && "Vertex::m_occtVertex is null.");
 		if (m_occtVertex.IsNull())
 		{
-			throw std::exception("A null Vertex is encountered.");
+			throw std::runtime_error("A null Vertex is encountered.");
 		}
 
 		return m_occtVertex;

@@ -52,7 +52,7 @@ namespace TopologicUtilities
 		}
 		catch (...)
 		{
-			throw std::exception("Loft error");
+			throw std::runtime_error("Loft error");
 		}
 		TopologicCore::Cell::Ptr pCell = std::make_shared<TopologicCore::Cell>(TopoDS::Solid(occtLoft.Shape()));
 		TopologicCore::GlobalCluster::GetInstance().AddTopology(pCell->GetOcctShape());
@@ -201,7 +201,7 @@ namespace TopologicUtilities
 
 			if (closestVertex == nullptr)
 			{
-				throw std::exception("Ray casting fails to identify the closest vertex from a random point.");
+				throw std::runtime_error("Ray casting fails to identify the closest vertex from a random point.");
 			}
 
 			// Create a line between the closest vertex and vertex in Face, then get the midpoint (center of mass)

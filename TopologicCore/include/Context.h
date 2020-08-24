@@ -51,7 +51,8 @@ namespace TopologicCore
 		/// Returns the associated Topology.
 		/// </summary>
 		/// <returns>The associated topology</returns>
-		TOPOLOGIC_API std::shared_ptr<Topology> Topology() const;
+		//TOPOLOGIC_API std::shared_ptr<Topology> Topology() const;
+		TOPOLOGIC_API std::shared_ptr<TopologicCore::Topology> Topology() const;
 
 		/// <summary>
 		/// Returns the U parameter.

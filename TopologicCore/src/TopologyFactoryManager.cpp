@@ -59,7 +59,7 @@ namespace TopologicCore
 		case TopAbs_EDGE: return std::make_shared<EdgeFactory>();
 		case TopAbs_VERTEX: return std::make_shared<VertexFactory>();
 		default:
-			throw std::exception("Topology::ByOcctShape: unknown topology.");
+			throw std::runtime_error("Topology::ByOcctShape: unknown topology.");
 		}
 	}
 }

@@ -82,7 +82,7 @@ namespace TopologicUtilities
 			{
 				if (rowLength != rkVerticesRow.size())
 				{
-					throw std::exception("Rows have inequal lengths");
+					throw std::runtime_error("Rows have inequal lengths");
 				}
 			}
 		}
@@ -101,12 +101,14 @@ namespace TopologicUtilities
 			i++;
 		}
 		try {
+                        /* doesn't compile with gcc: error: conversion from ‘handle<Geom_BSplineSurface>’ to non-scalar type ‘handle<Geom_Surface>’ requested
 			Handle(Geom_Surface) pSurface = GeomAPI_PointsToBSplineSurface(occtPoints).Surface();
 			return TopologicCore::Face::BySurface(pSurface);
+                        */
 		}
 		catch (...)
 		{
-			throw std::exception("Fails to create a face by vertices");
+			throw std::runtime_error("Fails to create a face by vertices");
 		}
 	}
 
@@ -352,7 +354,7 @@ namespace TopologicUtilities
 		Handle(Poly_Triangulation) pOcctTriangulation = BRep_Tool::Triangulation(occtFace, occtLocation);
 		if (pOcctTriangulation.IsNull())
 		{
-			throw std::exception("No triangulation was produced.");
+			throw std::runtime_error("No triangulation was produced.");
 		}
 		int numOfTriangles = pOcctTriangulation->NbTriangles();
 		for (int i = 1; i <= numOfTriangles; ++i)
@@ -390,7 +392,7 @@ namespace TopologicUtilities
 		double occtDV = occtVMax - occtVMin;
 		if (occtDU <= 0.0 || occtDV <= 0.0)
 		{
-			throw std::exception("Negative range");
+			throw std::runtime_error("Negative range");
 		}
 
 		rNormalizedU = (kNonNormalizedU - occtUMin) / occtDU;
@@ -601,7 +603,7 @@ namespace TopologicUtilities
 					}
 					catch (const Standard_ConstructionError& occtError)
 					{
-						throw std::exception(occtError.GetMessageString());
+						throw std::runtime_error(occtError.GetMessageString());
 					}
 				}
 			}
@@ -615,7 +617,7 @@ namespace TopologicUtilities
 		GeomAPI_ProjectPointOnSurf occtProjectToSurface(kpVertex->Point()->Pnt(), kpFace->Surface());
 		if (!occtProjectToSurface.IsDone())
 		{
-			throw std::exception("Fails to project a Vertex to a Face.");
+			throw std::runtime_error("Fails to project a Vertex to a Face.");
 		}
 		gp_Pnt occtProjectedPoint = occtProjectToSurface.NearestPoint();
 		return TopologicCore::Vertex::ByPoint(new Geom_CartesianPoint(occtProjectedPoint));
