@@ -980,6 +980,11 @@ namespace TopologicCore
         TopoDS_Vertex occtCoincidentStartVertex = GetCoincidentVertex(rkOcctStartVertex, kTolerance);
         TopoDS_Vertex occtCoincidentEndVertex = GetCoincidentVertex(rkOcctEndVertex, kTolerance);
 
+		if(occtCoincidentStartVertex.IsSame(occtCoincidentEndVertex))
+		{
+			return 0;
+		}
+
         std::queue<TopoDS_Vertex> occtVertexQueue;
         TopTools_DataMapOfShapeInteger occtVertexDistanceMap; // also to check if the vertex is processed
         

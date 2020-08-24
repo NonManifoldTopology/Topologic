@@ -563,7 +563,7 @@ namespace TopologicCore
 		for (const Topology::Ptr& kpContentTopology : rkContentTopologies)
 		{
 			Topology::Ptr selectedSubtopology;
-			if (kTypeFilter == 0)
+			if (kTypeFilter == 0 || ((kTypeFilter & GetType()) != 0))
 			{
 				bool hasContent = ContentManager::GetInstance().HasContent(GetOcctShape(), kpContentTopology->GetOcctShape());
 				if (hasContent)
@@ -655,9 +655,6 @@ namespace TopologicCore
 					selectedSubtopology = pCopyTopology->SelectSubtopology(pCenterOfMass, kTypeFilter);
 				}
 			}
-
-			std::list<Topology::Ptr> contents;
-			selectedSubtopology->Contents(contents);
 
 			if (selectedSubtopology != nullptr)
 			{
