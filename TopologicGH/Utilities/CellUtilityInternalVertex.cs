@@ -23,7 +23,7 @@ using System.Threading.Tasks;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
 
-namespace TopologicGH
+namespace TopologicGH.Utilities
 {
     public class CellUtilityInternalVertex : GH_Component
     {
