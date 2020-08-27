@@ -111,19 +111,21 @@ namespace TopologicEnergy
 		return gcnew SimulationResult(data);
 	}
 
-	List<Modifiers::GeometryColor^>^ SimulationResult::Display(EnergyModel^ energyModel, List<DSCore::Color^>^ colors)
+	IEnumerable<Modifiers::GeometryColor^>^ SimulationResult::Display(EnergyModel^ energyModel, IEnumerable<DSCore::Color^>^ colors)
 	{
-		if (energyModel->Topology->Count != colors->Count)
+		IList<DSCore::Color^>^ colorList = (IList<DSCore::Color^>^) colors;
+		if (((IList<Topology^>^)energyModel->Topology)->Count != colorList->Count)
 		{
 			throw gcnew Exception("The number of colors does not match the number of cells.");
 		}
 
 		List<Modifiers::GeometryColor^>^ dynamoGeometryColors = gcnew List<Modifiers::GeometryColor^>();
 		List<Modifiers::GeometryColor^>^ dynamoApertures = gcnew List<Modifiers::GeometryColor^>();
-		for(int i = 0; i < colors->Count; ++i)
+		for(int i = 0; i < colorList->Count; ++i)
 		{
-			Cell^ cell = energyModel->Topology[i];
-			DSCore::Color^ color = colors[i];
+			IList<Cell^>^ energyModelTopology = (IList<Cell^>^)(energyModel->Topology);
+			Cell^ cell = energyModelTopology[i];
+			DSCore::Color^ color = colorList[i];
 
 			{
 				System::Object^ cellGeometry = cell->BasicGeometry;
@@ -153,7 +155,7 @@ namespace TopologicEnergy
 			}
 
 			DSCore::Color^ contentColor = DSCore::Color::ByARGB(255, 128, 128, 128);
-			List<Topologic::Topology^>^ subcontents = cell->SubContents;
+			IEnumerable<Topologic::Topology^>^ subcontents = cell->SubContents;
 			for each(Topologic::Topology^ subcontent in subcontents)
 			{
 				System::Object^ contentGeometry = subcontent->BasicGeometry;
@@ -187,27 +189,27 @@ namespace TopologicEnergy
 		return dynamoGeometryColors;
 	}
 
-	List<List<int>^>^ SimulationResult::LegendRGB(Nullable<double> minDomain, Nullable<double> maxDomain, int count)
+	IEnumerable<IEnumerable<int>^>^ SimulationResult::LegendRGB(Nullable<double> minDomain, Nullable<double> maxDomain, int count)
 	{
-		List<List<int>^>^ colors = gcnew List<List<int>^>();
+		IEnumerable<IEnumerable<int>^>^ colors = gcnew List<IEnumerable<int>^>();
 		double finalMinDomain = 0.0;
 		double finalMaxDomain = 0.0;
-		List<double>^ ratios = LegendRatios(minDomain, maxDomain, count, finalMinDomain, finalMaxDomain);
+		IEnumerable<double>^ ratios = LegendRatios(minDomain, maxDomain, count, finalMinDomain, finalMaxDomain);
 		for each(double ratio in ratios)
 		{
-			List<int>^ color = EnergyModel::GetColor(ratio);
-			colors->Add(color);
+			IEnumerable<int>^ color = EnergyModel::GetColor(ratio);
+			((List<IEnumerable<int>^>^)colors)->Add(color);
 		}
 
 		return colors;
 	}
 
-	List<double>^ SimulationResult::LegendValues(Nullable<double> minDomain, Nullable<double> maxDomain, int count)
+	IEnumerable<double>^ SimulationResult::LegendValues(Nullable<double> minDomain, Nullable<double> maxDomain, int count)
 	{
 		List<double>^ values = gcnew List<double>();
 		double finalMinDomain = 0.0;
 		double finalMaxDomain = 0.0;
-		List<double>^ ratios = LegendRatios(minDomain, maxDomain, count, finalMinDomain, finalMaxDomain);
+		IEnumerable<double>^ ratios = LegendRatios(minDomain, maxDomain, count, finalMinDomain, finalMaxDomain);
 		double deltaFinalDomain = finalMaxDomain - finalMinDomain; // Any problem with this should have been caught in LegendRatios
 		for each(double ratio in ratios)
 		{
@@ -218,12 +220,12 @@ namespace TopologicEnergy
 		return values;
 	}
 
-	List<String^>^ SimulationResult::Names::get()
+	IEnumerable<String^>^ SimulationResult::Names::get()
 	{
 		return gcnew List<String^>(m_data->Keys);
 	}
 
-	List<double>^ SimulationResult::Values::get()
+	IEnumerable<double>^ SimulationResult::Values::get()
 	{
 		List<double>^ values = gcnew List<double>();
 		for each(KeyValuePair<String^, Dictionary<String^, Object^>^> pair in m_data)
@@ -247,9 +249,9 @@ namespace TopologicEnergy
 		return values;
 	}
 
-	List<double>^ SimulationResult::Domain::get()
+	IEnumerable<double>^ SimulationResult::Domain::get()
 	{
-		List<double>^ values = Values;
+		ICollection<double>^ values = (ICollection<double>^)Values;
 
 		if (values->Count == 0)
 		{
@@ -262,9 +264,9 @@ namespace TopologicEnergy
 		return domain;
 	}
 
-	List<List<int>^>^ SimulationResult::RGB(Nullable<double> minDomain, Nullable<double> maxDomain)
+	IEnumerable<IEnumerable<int>^>^ SimulationResult::RGB(Nullable<double> minDomain, Nullable<double> maxDomain)
 	{
-		List<double>^ domain = Domain;
+		IEnumerable<double>^ domain = Domain;
 		double finalMinDomain = Enumerable::Min(domain);
 		double finalMaxDomain = Enumerable::Max(domain);
 
@@ -283,13 +285,12 @@ namespace TopologicEnergy
 			throw gcnew Exception("The domain is too small. Please increase it.");
 		}
 
-		List<List<int>^>^ colorList = gcnew List<List<int>^>();
-		List<double>^ values = Values;
+		IList<IEnumerable<int>^>^ colorList = gcnew List<IEnumerable<int>^>();
+		IEnumerable<double>^ values = Values;
 		for each(double value in values)
 		{
 			double ratio = (value - finalMinDomain) / deltaFinalDomain;
-			List<int>^ rgb = gcnew List<int>();
-			rgb = EnergyModel::GetColor(ratio);
+			IEnumerable<int>^ rgb = EnergyModel::GetColor(ratio);
 			colorList->Add(rgb);
 		}
 
@@ -307,14 +308,14 @@ namespace TopologicEnergy
 
 	}
 
-	List<double>^ SimulationResult::LegendRatios(Nullable<double> minDomain, Nullable<double> maxDomain, int count, double% finalMinDomain, double& finalMaxDomain)
+	IEnumerable<double>^ SimulationResult::LegendRatios(Nullable<double> minDomain, Nullable<double> maxDomain, int count, double% finalMinDomain, double& finalMaxDomain)
 	{
 		if (count < 2)
 		{
 			throw gcnew Exception("The number of steps must be more than 2.");
 		}
 
-		List<double>^ domain = Domain;
+		IEnumerable<double>^ domain = Domain;
 		finalMinDomain = Enumerable::Min(domain);
 		finalMaxDomain = Enumerable::Max(domain);
 

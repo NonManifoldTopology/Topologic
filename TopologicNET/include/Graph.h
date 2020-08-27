@@ -75,18 +75,18 @@ namespace Topologic {
 		/// Returns a list of all the Vertices in a Graph.
 		/// </summary>
 		/// <returns name="Vertex[]">A list of Vertices in this Graph</returns>
-		property List<Vertex^>^ Vertices
+		property IEnumerable<Vertex^>^ Vertices
 		{
-			List<Vertex^>^ get();
+			IEnumerable<Vertex^>^ get();
 		}
 
 		/// <summary>
 		/// Returns a list of Vertices that are not connected by Edges.
 		/// </summary>
 		/// <returns name="Vertex[]">A list of the isolated Vertices in this Graph</returns>
-		property List<Vertex^>^ IsolatedVertices
+		property IEnumerable<Vertex^>^ IsolatedVertices
 		{
-			List<Vertex^>^ get();
+			IEnumerable<Vertex^>^ get();
 		}
 
 		/// <summary>
@@ -95,11 +95,11 @@ namespace Topologic {
 		/// <param name="vertices">An optional list of Vertices that the returned Edgs should as constituents</param>
 		/// <param name="tolerance">A positive tolerance value</param>
 		/// <returns>The resulting Edges</returns>
-		List<Edge^>^ Edges(
+		IEnumerable<Edge^>^ Edges(
 #ifdef TOPOLOGIC_DYNAMO
 			[Autodesk::DesignScript::Runtime::DefaultArgument("null")]
 #endif
-			List<Vertex^>^ vertices,
+			IEnumerable<Vertex^>^ vertices,
 #ifdef TOPOLOGIC_DYNAMO
 			[Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")]
 #endif
@@ -123,7 +123,7 @@ namespace Topologic {
 		/// <param name="z">The Z coordinate</param>
 		/// <param name="tolerance">A positive tolerance value</param>
 		/// <returns name="Vertex[]">A list of the Vertices at the given coordinates</returns>
-		List<Vertex^>^ VerticesAtCoordinates(
+		IEnumerable<Vertex^>^ VerticesAtCoordinates(
 			double x, double y, double z, 
 #ifdef TOPOLOGIC_DYNAMO
 			[Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")]
@@ -137,7 +137,7 @@ namespace Topologic {
 		/// <param name="tolerance">A positive tolerance value</param>
 		/// <returns name="Graph">The Graph after the Vertices are added</returns>
 		Graph^ AddVertices(
-			List<Vertex^>^ vertices,
+			IEnumerable<Vertex^>^ vertices,
 #ifdef TOPOLOGIC_DYNAMO
 			[Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")]
 #endif
@@ -150,7 +150,7 @@ namespace Topologic {
 		/// <param name="tolerance">A positive tolerance value</param>
 		/// <returns name="Graph">The Graph after the Edges are added</returns>
 		Graph^ AddEdges(
-			List<Edge^>^ edges,
+			IEnumerable<Edge^>^ edges,
 #ifdef TOPOLOGIC_DYNAMO
 			[Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")]
 #endif
@@ -164,8 +164,8 @@ namespace Topologic {
 		/// <param name="tolerance">A positive tolerance value</param>
 		/// <returns name="Graph">The Graph after the Vertices are connected</returns>
 		Graph^ Connect(
-			List<Vertex^>^ vertices1, 
-            List<Vertex^>^ vertices2,
+			IEnumerable<Vertex^>^ vertices1, 
+            IEnumerable<Vertex^>^ vertices2,
 #ifdef TOPOLOGIC_DYNAMO
 			[Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")]
 #endif
@@ -183,7 +183,7 @@ namespace Topologic {
 		/// </summary>
 		/// <param name="vertex">The input Vertex</param>
 		/// <returns name="Vertex[]">A list of the Vertices adjacent to a Vertex</returns>
-		List<Vertex^>^ AdjacentVertices(Vertex^ vertex);
+		IEnumerable<Vertex^>^ AdjacentVertices(Vertex^ vertex);
 
 		/// <summary>
 		/// Returns True if the input Graph contains the input Vertex. Returns False otherwise.
@@ -213,9 +213,9 @@ namespace Topologic {
 		/// Returns a list of Vertex degrees in a non-increasing order.
 		/// </summary>
 		/// <returns name="int[]">A list of Vertex degrees in a non-increasing order</returns>
-		property List<int>^ DegreeSequence
+		property IEnumerable<int>^ DegreeSequence
 		{
-			List<int>^ get();
+			IEnumerable<int>^ get();
 		}
 
 		/// <summary>
@@ -270,7 +270,7 @@ namespace Topologic {
 		/// <param name="endVertex">The end Vertex</param>
 		/// <param name="timeLimitInSeconds">Time limit in seconds</param>
 		/// <returns name="Wire[]">A list of paths</returns>
-		List<Wire^>^ AllPaths(
+		IEnumerable<Wire^>^ AllPaths(
 			Vertex^ startVertex, 
 			Vertex^ endVertex, 
 #ifdef TOPOLOGIC_DYNAMO
@@ -313,7 +313,7 @@ namespace Topologic {
 		/// <param name="vertexKey">The key for the Vertex cost</param>
 		/// <param name="edgeKey">The key for the Edge cost</param>
 		/// <returns name="Wire[]">The shortest paths</returns>
-		List<Wire^>^ ShortestPaths(Vertex^ startVertex, Vertex^ endVertex,
+		IEnumerable<Wire^>^ ShortestPaths(Vertex^ startVertex, Vertex^ endVertex,
 #ifdef TOPOLOGIC_DYNAMO
 			[Autodesk::DesignScript::Runtime::DefaultArgument("null")]
 #endif
@@ -345,14 +345,14 @@ namespace Topologic {
 		/// </summary>
 		/// <param name="sequence">The input sequence</param>
 		/// <returns name="bool">True if the input sequence satisfies the Erdoes Gallai theorem, otherwise false</returns>
-		bool IsErdoesGallai(List<int>^ sequence);
+		bool IsErdoesGallai(IEnumerable<int>^ sequence);
 
 		/// <summary>
 		/// Removes the input Vertices from the Graph.
 		/// </summary>
 		/// <param name="vertices">The Vertices to be removed</param>
 		/// <returns name="Graph">The Graph after the Vertices are removed</returns>
-		Graph^ RemoveVertices(List<Vertex^>^ vertices);
+		Graph^ RemoveVertices(IEnumerable<Vertex^>^ vertices);
 
 		/// <summary>
 		/// Removes the input Edges from the Graph.
@@ -360,7 +360,7 @@ namespace Topologic {
 		/// <param name="edges">The Edges to be removed</param>
 		/// <param name="tolerance">A positive tolerance value</param>
 		/// <returns name="Graph">The Graph after the Edges are removed</returns>
-		Graph^ RemoveEdges(List<Edge^>^ edges,
+		Graph^ RemoveEdges(IEnumerable<Edge^>^ edges,
 #ifdef TOPOLOGIC_DYNAMO
             [Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")]
 #endif

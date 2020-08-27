@@ -58,54 +58,54 @@ namespace Topologic
 		/// Returns the CellComplexes which contain the Cell.
 		/// </summary>
 		/// <returns name="CellComplex[]">A list of CellComplexes containing the Cell</returns>
-		property List<CellComplex^>^ CellComplexes
+		property IEnumerable<CellComplex^>^ CellComplexes
 		{
-			List<CellComplex^>^ get();
+			IEnumerable<CellComplex^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Shells constituent to the Cell.
 		/// </summary>
 		/// <returns name="Shell[]">A list of Shells constituent to the Cell</returns>
-		property List<Shell^>^ Shells
+		property IEnumerable<Shell^>^ Shells
 		{
-			List<Shell^>^ get();
+			IEnumerable<Shell^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Faces constituent to the Cell.
 		/// </summary>
 		/// <returns name="Face[]">A list of Faces constituent to the Cell</returns>
-		property List<Face^>^ Faces
+		property IEnumerable<Face^>^ Faces
 		{
-			List<Face^>^ get();
+			IEnumerable<Face^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Wires constituent to the Cell.
 		/// </summary>
 		/// <returns name="Wire[]">A list of Wires constituent to the Cell</returns>
-		property List<Wire^>^ Wires
+		property IEnumerable<Wire^>^ Wires
 		{
-			List<Wire^>^ get();
+			IEnumerable<Wire^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Edges constituent to the Cell.
 		/// </summary>
 		/// <returns name="Edge[]">A list of Edges constituent to the Cell</returns>
-		property List<Edge^>^ Edges
+		property IEnumerable<Edge^>^ Edges
 		{
-			List<Edge^>^ get();
+			IEnumerable<Edge^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Vertices constituent to the Cell.
 		/// </summary>
 		/// <returns name="Vertex[]">A list of Vertices constituent to the Cell</returns>
-		property List<Vertex^>^ Vertices
+		property IEnumerable<Vertex^>^ Vertices
 		{
-			List<Vertex^>^ get();
+			IEnumerable<Vertex^>^ get();
 		}
 
 		/// <summary>
@@ -113,9 +113,9 @@ namespace Topologic
 		/// </summary>
 		/// <returns name="Cell[]">A list of Cells adjacent to the Cell</returns>
 		/// 
-		property List<Cell^>^ AdjacentCells
+		property IEnumerable<Cell^>^ AdjacentCells
 		{
-			List<Cell^>^ get();
+			IEnumerable<Cell^>^ get();
 		}
 
 		/// <summary>
@@ -123,21 +123,21 @@ namespace Topologic
 		/// </summary>
 		/// <param name="cell">Another Cell</param>
 		/// <returns name="Face[]">A list of shared Faces between two Cells</returns>
-		List<Face^>^ SharedFaces(Cell^ cell);
+		IEnumerable<Face^>^ SharedFaces(Cell^ cell);
 
 		/// <summary>
 		/// Returns the shared Edges between two Cells. 
 		/// </summary>
 		/// <param name="cell">Another Cell</param>
 		/// <returns name="Edge[]">A list of shared Edges between two Cells</returns>
-		List<Edge^>^ SharedEdges(Cell^ cell);
+		IEnumerable<Edge^>^ SharedEdges(Cell^ cell);
 
 		/// <summary>
 		/// Returns the shared Vertices between two Cells. 
 		/// </summary>
 		/// <param name="cell">Another Cell</param>
 		/// <returns name="Vertex[]">A list of shared Vertices between two Cells</returns>
-		List<Vertex^>^ SharedVertices(Cell^ cell);
+		IEnumerable<Vertex^>^ SharedVertices(Cell^ cell);
 
 		/// <summary>
 		/// Returns the external boundary (Shell) of the Cell.
@@ -152,9 +152,9 @@ namespace Topologic
 		/// Returns the internal boundaries (Shells) of the Cell.
 		/// </summary>
 		/// <returns name="Shell[]">A list of the internal boundaries (Shells) of the Cell</returns>
-		property List<Shell^>^ InternalBoundaries
+		property IEnumerable<Shell^>^ InternalBoundaries
 		{
-			List<Shell^>^ get();
+			IEnumerable<Shell^>^ get();
 		}
 
 		/// <summary>

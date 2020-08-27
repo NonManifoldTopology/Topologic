@@ -70,8 +70,8 @@ namespace TopologicGH
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
 
-            
-            List<Topologic.Vertex> vertices = cluster.Vertices;
+
+            IEnumerable<Topologic.Vertex> vertices = cluster.Vertices;
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, vertices);

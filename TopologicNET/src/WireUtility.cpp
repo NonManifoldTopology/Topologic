@@ -23,7 +23,7 @@
 
 namespace Topologic {
 	namespace Utilities {
-		List<Shell^>^ WireUtility::AdjacentShells(Wire ^ wire, Topology ^ parentTopology)
+		IEnumerable<Shell^>^ WireUtility::AdjacentShells(Wire ^ wire, Topology ^ parentTopology)
 		{
 			TopologicCore::Wire::Ptr pCoreWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>(wire->GetCoreTopologicalQuery());
 			TopologicCore::Topology::Ptr pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
@@ -49,7 +49,7 @@ namespace Topologic {
 			return adjacentShells;
 		}
 
-		List<Cell^>^ WireUtility::AdjacentCells(Wire ^ wire, Topology ^ parentTopology)
+		IEnumerable<Cell^>^ WireUtility::AdjacentCells(Wire ^ wire, Topology ^ parentTopology)
 		{
 			TopologicCore::Wire::Ptr pCoreWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>(wire->GetCoreTopologicalQuery());
 			TopologicCore::Topology::Ptr pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());

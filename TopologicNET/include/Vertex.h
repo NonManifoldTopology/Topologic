@@ -51,9 +51,9 @@ namespace Topologic
 		/// Returns the Edges incident to the Vertex.
 		/// </summary>
 		/// <returns name="Edge[]">A list of the Edges incident to the Vertex</returns>
-		property List<Edge^>^ Edges
+		property IEnumerable<Edge^>^ Edges
 		{
-			List<Edge^>^ get();
+			IEnumerable<Edge^>^ get();
 		}
 
 		/// <summary>
@@ -87,9 +87,9 @@ namespace Topologic
 		/// Returns the coordinates of the Vertex.
 		/// </summary>
 		/// <returns name="double[]">The coordinates of the Vertex</returns>
-		property List<double>^ Coordinates
+		property IEnumerable<double>^ Coordinates
 		{
-			virtual List<double>^ get();
+			virtual IEnumerable<double>^ get();
 		}
 
 		/// <summary>

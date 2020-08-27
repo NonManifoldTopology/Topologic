@@ -44,7 +44,7 @@ namespace TopologicEnergy
 		/// </summary>
 		/// <param name="cells"></param>
 		/// <param name="oswPath">Used to deduce the SQL path</param>
-		EnergySimulation(List<Topologic::Cell^>^ cells, System::String^ oswPath, OpenStudio::Model^ osModel, OpenStudio::SpaceVector^ osSpaces);
+		EnergySimulation(IEnumerable<Topologic::Cell^>^ cells, System::String^ oswPath, OpenStudio::Model^ osModel, OpenStudio::SpaceVector^ osSpaces);
 		~EnergySimulation();
 
 		property OpenStudio::SqlFile^ OsSqlFile

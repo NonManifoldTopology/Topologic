@@ -207,12 +207,12 @@ namespace TopologicGH
                     Wire partialTrimmingWire = topology as Wire;
                     if (partialTrimmingWire != null)
                     {
-                        List<Edge> partialTrimmingEdges = partialTrimmingWire.Edges;
+                        IEnumerable<Edge> partialTrimmingEdges = partialTrimmingWire.Edges;
                         trimmingEdges.AddRange(partialTrimmingEdges);
                     }
                 }
                 Wire trimmingWire = Wire.ByEdges(trimmingEdges);
-                List<Vertex> trimmingVertices = trimmingWire.Vertices;
+                IEnumerable<Vertex> trimmingVertices = trimmingWire.Vertices;
 
                 if (ghLoop == ghOuterLoop)
                 {
@@ -262,7 +262,7 @@ namespace TopologicGH
                 indices2D.Add(indices1D);
             }
 
-            List<Topology> topologies = Topology.ByVerticesIndices(vertices, indices2D);
+            IEnumerable<Topology> topologies = Topology.ByVerticesIndices(vertices, indices2D);
 
             Cluster cluster = Cluster.ByTopologies(topologies);
             Topology topology = cluster.SelfMerge();
@@ -420,13 +420,16 @@ namespace TopologicGH
                 //indices.Add(0);
                 List<List<int>> listOfIndices = new List<List<int>>();
                 listOfIndices.Add(indices);
-                return Topologic.Topology.ByVerticesIndices(vertices, listOfIndices)[0].Wires[0];
+                IList<Topology> topologyList = (IList<Topology>)Topologic.Topology.ByVerticesIndices(vertices, listOfIndices);
+                IList<Wire> wireList = (IList<Wire>)topologyList[0].Wires;
+                return wireList[0];
             }
             else
             {
                 List<List<int>> listOfIndices = new List<List<int>>();
                 listOfIndices.Add(indices);
-                return Topologic.Topology.ByVerticesIndices(vertices, listOfIndices)[0] as Topologic.Wire;
+                IList<Topology> topologyList = (IList<Topology>)Topologic.Topology.ByVerticesIndices(vertices, listOfIndices);
+                return topologyList[0] as Topologic.Wire;
             }
         }
 

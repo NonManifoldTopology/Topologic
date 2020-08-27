@@ -126,7 +126,7 @@ namespace Topologic {
 			}
 		}
 
-		List<double>^ CellUtility::GetMinMax(Cell ^ cell)
+		IEnumerable<double>^ CellUtility::GetMinMax(Cell ^ cell)
 		{
 			TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(cell->GetCoreTopologicalQuery());
 			double minX = 0.0, maxX = 0.0, minY = 0.0, maxY = 0.0, minZ = 0.0, maxZ = 0.0;

@@ -70,7 +70,7 @@ namespace TopologicGH
             if (cell1 == null) { return; }
             if (cell2 == null) { return; }
 
-            List<Topologic.Vertex> vertices = cell1.SharedVertices(cell2);
+            IEnumerable<Topologic.Vertex> vertices = cell1.SharedVertices(cell2);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, vertices);

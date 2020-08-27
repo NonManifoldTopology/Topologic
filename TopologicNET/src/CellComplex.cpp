@@ -66,7 +66,7 @@ namespace Topologic
 		}
 	}
 
-	List<Cell^>^ CellComplex::Cells::get()
+	IEnumerable<Cell^>^ CellComplex::Cells::get()
 	{
 		TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(GetCoreTopologicalQuery());
 
@@ -85,7 +85,7 @@ namespace Topologic
 		return pCells;
 	}
 
-	List<Face^>^ CellComplex::Faces::get()
+	IEnumerable<Face^>^ CellComplex::Faces::get()
 	{
 		TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(GetCoreTopologicalQuery());
 
@@ -104,7 +104,7 @@ namespace Topologic
 		return pFaces;
 	}
 
-	List<Shell^>^ CellComplex::Shells::get()
+	IEnumerable<Shell^>^ CellComplex::Shells::get()
 	{
 		TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(GetCoreTopologicalQuery());
 
@@ -123,7 +123,7 @@ namespace Topologic
 		return pShells;
 	}
 
-	List<Wire^>^ CellComplex::Wires::get()
+	IEnumerable<Wire^>^ CellComplex::Wires::get()
 	{
 		TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(GetCoreTopologicalQuery());
 
@@ -142,7 +142,7 @@ namespace Topologic
 		return pWires;
 	}
 
-	List<Edge^>^ CellComplex::Edges::get()
+	IEnumerable<Edge^>^ CellComplex::Edges::get()
 	{
 		TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(GetCoreTopologicalQuery());
 
@@ -161,7 +161,7 @@ namespace Topologic
 		return pEdges;
 	}
 
-	List<Vertex^>^ CellComplex::Vertices::get()
+	IEnumerable<Vertex^>^ CellComplex::Vertices::get()
 	{
 		TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(GetCoreTopologicalQuery());
 
@@ -187,7 +187,7 @@ namespace Topologic
 		return gcnew Cell(pCoreEnvelope);
 	}
 
-	List<Face^>^ CellComplex::InternalBoundaries::get()
+	IEnumerable<Face^>^ CellComplex::InternalBoundaries::get()
 	{
 		TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(GetCoreTopologicalQuery());
 
@@ -206,7 +206,7 @@ namespace Topologic
 		return pInternalFaces;
 	}
 
-	List<Face^>^ CellComplex::NonManifoldFaces::get()
+	IEnumerable<Face^>^ CellComplex::NonManifoldFaces::get()
 	{
 		TopologicCore::CellComplex::Ptr pCoreCellComplex = TopologicCore::Topology::Downcast<TopologicCore::CellComplex>(GetCoreTopologicalQuery());
 
@@ -227,7 +227,7 @@ namespace Topologic
 
 	Object^ CellComplex::BasicGeometry::get()
 	{
-		List<Cell^>^ pCells = Cells;
+		IEnumerable<Cell^>^ pCells = Cells;
 		List<Object^>^ pObjects = gcnew List<Object^>();
 		for each(Cell^ pCell in pCells)
 		{

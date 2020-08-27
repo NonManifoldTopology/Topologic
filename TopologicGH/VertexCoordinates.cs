@@ -72,7 +72,7 @@ namespace TopologicGH
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
 
-            List<double> coordinates = vertex.Coordinates;
+            IList<double> coordinates = (IList<double>)vertex.Coordinates;
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetData(0, coordinates[0]);

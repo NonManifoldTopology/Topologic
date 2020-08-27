@@ -70,8 +70,8 @@ namespace TopologicGH
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
 
-            
-            List<Topologic.Wire> internalBoundaries = face.InternalBoundaries;
+
+            IEnumerable<Topologic.Wire> internalBoundaries = face.InternalBoundaries;
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, internalBoundaries);

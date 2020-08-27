@@ -70,8 +70,8 @@ namespace TopologicGH
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
 
-            
-            List<Topologic.Cell> cells = cluster.Cells;
+
+            IEnumerable<Topologic.Cell> cells = cluster.Cells;
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, cells);

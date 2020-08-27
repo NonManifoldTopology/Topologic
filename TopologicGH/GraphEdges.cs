@@ -73,8 +73,8 @@ namespace TopologicGH
             // We're also going to abort on a zero-length String.
             if (graph == null) { return; }
 
-            
-            List<Topologic.Edge> edges = graph.Edges(vertices, tolerance);
+
+            IEnumerable<Topologic.Edge> edges = graph.Edges(vertices, tolerance);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, edges);

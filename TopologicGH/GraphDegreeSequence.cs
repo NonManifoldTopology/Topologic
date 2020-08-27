@@ -70,8 +70,8 @@ namespace TopologicGH
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
 
-            
-            List<int> degreeSequence = graph.DegreeSequence;
+
+            IEnumerable<int> degreeSequence = graph.DegreeSequence;
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, degreeSequence);

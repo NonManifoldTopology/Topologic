@@ -41,7 +41,7 @@ namespace TopologicEnergy
 	EnergyModel^ EnergyModel::ByCellComplex(
 		CellComplex^ building,
 		Cluster^ shadingSurfaces,
-		List<double>^ floorLevels,
+		IEnumerable<double>^ floorLevels,
 		String^ buildingName,
 		String^ buildingType,
 		String^ defaultSpaceType,
@@ -54,6 +54,7 @@ namespace TopologicEnergy
 		String^ openStudioTemplatePath
 	)
 	{
+		IList<double>^ floorLevelList = (IList<double>^) floorLevels;
 		numOfApertures = 0;
 		numOfAppliedApertures = 0;
 		CellComplex^ buildingCopy = building->Copy<CellComplex^>();
@@ -62,9 +63,10 @@ namespace TopologicEnergy
 		OpenStudio::Model^ osModel = GetModelFromTemplate(openStudioTemplatePath, weatherFilePath, designDayFilePath);
 
 		double buildingHeight = Enumerable::Max(floorLevels);
-		int numFloors = floorLevels->Count - 1;
+
+		int numFloors = floorLevelList->Count - 1;
 		OpenStudio::Building^ osBuilding = ComputeBuilding(osModel, buildingName, buildingType, buildingHeight, numFloors, northAxis, defaultSpaceType);
-		List<Cell^>^ pBuildingCells = buildingCopy->Cells;
+		IEnumerable<Cell^>^ pBuildingCells = buildingCopy->Cells;
 
 		// Create OpenStudio spaces
 		OpenStudio::SpaceVector^ osSpaceVector = gcnew OpenStudio::SpaceVector();
@@ -105,7 +107,7 @@ namespace TopologicEnergy
 		if (shadingSurfaces != nullptr)
 		{
 			OpenStudio::ShadingSurfaceGroup^ osShadingGroup = gcnew OpenStudio::ShadingSurfaceGroup(osModel);
-			List<Face^>^ contextFaces = shadingSurfaces->Faces;
+			IEnumerable<Face^>^ contextFaces = shadingSurfaces->Faces;
 			int faceIndex = 1;
 			for each(Face^ contextFace in contextFaces)
 			{
@@ -132,7 +134,7 @@ namespace TopologicEnergy
 		OpenStudio::Model^ osModel, 
 		double tolerance, 
 		OpenStudio::Building^% osBuilding,
-		List<Cell^>^% buildingCells,
+		IEnumerable<Cell^>^% buildingCells,
 		Topologic::Cluster^% shadingFaces,
 		OpenStudio::SpaceVector^% osSpaceVector)
 	{
@@ -233,7 +235,7 @@ namespace TopologicEnergy
 		buildingCells = gcnew List<Topologic::Cell^>();
 		if (cellList->Count == 1)
 		{
-			buildingCells->Add(cellList[0]);
+			((List<Topologic::Cell^>^)buildingCells)->Add(cellList[0]);
 		}
 		else
 		{
@@ -401,7 +403,7 @@ namespace TopologicEnergy
 		return osBuildingStory;
 	}
 
-	OpenStudio::SubSurface ^ EnergyModel::CreateSubSurface(List<Topologic::Vertex^>^ vertices, OpenStudio::Model^ osModel)
+	OpenStudio::SubSurface ^ EnergyModel::CreateSubSurface(IEnumerable<Topologic::Vertex^>^ vertices, OpenStudio::Model^ osModel)
 	{
 		OpenStudio::Point3dVector^ osWindowFacePoints = gcnew OpenStudio::Point3dVector();
 		for each(Vertex^ vertex in vertices)
@@ -451,7 +453,7 @@ namespace TopologicEnergy
 		return osBuilding;
 	}
 
-	List<OpenStudio::BuildingStory^>^ EnergyModel::CreateBuildingStories(OpenStudio::Model^ osModel, int numFloors)
+	IEnumerable<OpenStudio::BuildingStory^>^ EnergyModel::CreateBuildingStories(OpenStudio::Model^ osModel, int numFloors)
 	{
 		List<OpenStudio::BuildingStory^>^ osBuildingStories = gcnew List<OpenStudio::BuildingStory^>();
 		for (int i = 0; i < numFloors; i++)
@@ -504,10 +506,10 @@ namespace TopologicEnergy
 
 		indices->Add(0); // close the wire
 
-		List<List<int>^>^ vertexIndices = gcnew List<List<int>^>();
-		vertexIndices->Add(indices);
+		IEnumerable<IEnumerable<int>^>^ vertexIndices = gcnew List<IEnumerable<int>^>();
+		((IList<IList<int>^>^)vertexIndices)->Add(indices);
 
-		List<Topologic::Topology^>^ topologies = Topologic::Topology::ByVerticesIndices(vertices, vertexIndices);
+		IList<Topologic::Topology^>^ topologies = (IList<Topologic::Topology^>^)Topologic::Topology::ByVerticesIndices(vertices, vertexIndices);
 
 		if (topologies == nullptr || topologies->Count == 0)
 		{
@@ -614,7 +616,7 @@ namespace TopologicEnergy
 		OpenStudio::Model^ osModel,
 		Autodesk::DesignScript::Geometry::Vector^ upVector,
 		double buildingHeight,
-		List<double>^ floorLevels,
+		IEnumerable<double>^ floorLevels,
 		Nullable<double> glazingRatio,
 		double heatingTemp,
 		double coolingTemp)
@@ -622,13 +624,13 @@ namespace TopologicEnergy
 		OpenStudio::Space^ osSpace = gcnew OpenStudio::Space(osModel);
 
 		int storyNumber = StoryNumber(cell, buildingHeight, floorLevels);
-		OpenStudio::BuildingStory^ buildingStory = buildingStories[storyNumber];
+		OpenStudio::BuildingStory^ buildingStory = ((IList< OpenStudio::BuildingStory^>^)buildingStories)[storyNumber];
 		osSpace->setName(buildingStory->name()->get() + "_SPACE_" + spaceNumber.ToString());
 		osSpace->setBuildingStory(buildingStory);
 		osSpace->setDefaultConstructionSet(getDefaultConstructionSet(osModel));
 		osSpace->setDefaultScheduleSet(getDefaultScheduleSet(osModel));
 
-		List<Face^>^ faces = cell->Faces;
+		IList<Face^>^ faces = (IList<Face^>^)cell->Faces;
 		List<OpenStudio::Point3dVector^>^ facePointsList = gcnew List<OpenStudio::Point3dVector^>();
 		for each(Face^ face in faces)
 		{
@@ -656,7 +658,7 @@ namespace TopologicEnergy
 			}
 		}
 
-		List<double>^ minMax = Topologic::Utilities::CellUtility::GetMinMax(cell);
+		IList<double>^ minMax = (IList<double>^)Topologic::Utilities::CellUtility::GetMinMax(cell);
 		double minZ = minMax[4];
 		double maxZ = minMax[5];
 		double ceilingHeight = Math::Abs(maxZ - minZ);
@@ -670,11 +672,11 @@ namespace TopologicEnergy
 	void EnergyModel::AddShadingSurfaces(Cell^ buildingCell, OpenStudio::Model^ osModel)
 	{
 		OpenStudio::ShadingSurfaceGroup^ osShadingGroup = gcnew OpenStudio::ShadingSurfaceGroup(osModel);
-		List<Face^>^ faceList = buildingCell->Faces;
+		IEnumerable<Face^>^ faceList = buildingCell->Faces;
 		int faceIndex = 1;
 		for each(Face^ face in faceList)
 		{
-			List<Vertex^>^ vertices = face->Vertices;
+			IEnumerable<Vertex^>^ vertices = face->Vertices;
 			OpenStudio::Point3dVector^ facePoints = gcnew OpenStudio::Point3dVector();
 
 			for each(Vertex^ aVertex in vertices)
@@ -695,7 +697,7 @@ namespace TopologicEnergy
 
 	void EnergyModel::AddShadingSurfaces(Face ^ buildingFace, OpenStudio::Model ^ osModel, OpenStudio::ShadingSurfaceGroup^ osShadingGroup, int faceIndex)
 	{
-		List<Vertex^>^ vertices = buildingFace->Vertices;
+		IEnumerable<Vertex^>^ vertices = buildingFace->Vertices;
 		OpenStudio::Point3dVector^ facePoints = gcnew OpenStudio::Point3dVector();
 
 		for each(Vertex^ aVertex in vertices)
@@ -906,7 +908,7 @@ namespace TopologicEnergy
 				else if (glazingRatio.Value > 0.0 && glazingRatio.Value <= 1.0)
 				{
 					// Triangulate the Windows
-					List<Vertex^>^ scaledVertices = ScaleFaceVertices(buildingFace, glazingRatio.Value);
+					IList<Vertex^>^ scaledVertices = (IList<Vertex^>^)ScaleFaceVertices(buildingFace, glazingRatio.Value);
 
 					for (int i = 0; i < scaledVertices->Count - 2; ++i)
 					{
@@ -915,7 +917,7 @@ namespace TopologicEnergy
 						triangleVertices->Add(scaledVertices[i + 1]);
 						triangleVertices->Add(scaledVertices[i + 2]);
 
-						List<Vertex^>^ scaledTriangleVertices = ScaleVertices(triangleVertices, 0.999);
+						IEnumerable<Vertex^>^ scaledTriangleVertices = ScaleVertices(triangleVertices, 0.999);
 
 						OpenStudio::Point3dVector^ osWindowFacePoints = gcnew OpenStudio::Point3dVector();
 
@@ -951,7 +953,7 @@ namespace TopologicEnergy
 			else // glazingRatio is null
 			{
 				// Use the surface apertures
-				List<Topologic::Topology^>^ pContents = buildingFace->Contents;
+				IEnumerable<Topologic::Topology^>^ pContents = buildingFace->Contents;
 				for each(Topologic::Topology^ pContent in pContents)
 				{
 					Aperture^ pAperture = dynamic_cast<Aperture^>(pContent);
@@ -972,7 +974,7 @@ namespace TopologicEnergy
 						continue;
 					}
 					Wire^ pApertureWire = pFaceAperture->ExternalBoundary;
-					List<Vertex^>^ pApertureVertices = pApertureWire->Vertices;
+					List<Vertex^>^ pApertureVertices = (List<Vertex^>^)pApertureWire->Vertices;
 					//OpenStudio::SubSurface^ osWindowSubSurface = gcnew OpenStudio::SubSurface(osWindowFacePoints, osModel);
 					OpenStudio::SubSurface^ osWindowSubSurface = CreateSubSurface(pApertureVertices, osModel);
 					double dotProduct = osWindowSubSurface->outwardNormal()->dot(osSurface->outwardNormal());
@@ -1015,16 +1017,16 @@ namespace TopologicEnergy
 		return osSurface;
 	}
 
-	List<Vertex^>^ EnergyModel::ScaleFaceVertices(Face^ buildingFace, double scaleFactor)
+	IEnumerable<Vertex^>^ EnergyModel::ScaleFaceVertices(Face^ buildingFace, double scaleFactor)
 	{
 		Wire^ pApertureWire = buildingFace->ExternalBoundary;
-		List<Vertex^>^ vertices = pApertureWire->Vertices;
+		List<Vertex^>^ vertices = (List<Vertex^>^)pApertureWire->Vertices;
 		vertices->Reverse();
 
 		return ScaleVertices(vertices, scaleFactor);
 	}
 
-	List<Vertex^>^ EnergyModel::ScaleVertices(List<Vertex^>^ vertices, double scaleFactor)
+	IEnumerable<Vertex^>^ EnergyModel::ScaleVertices(IEnumerable<Vertex^>^ vertices, double scaleFactor)
 	{
 		List<Vertex^>^ scaledVertices = gcnew List<Vertex^>();
 		double sqrtScaleFactor = Math::Sqrt(scaleFactor);
@@ -1055,17 +1057,18 @@ namespace TopologicEnergy
 		return scaledVertices;
 	}
 
-	Vertex^ EnergyModel::GetCentreVertex(List<Vertex^>^ vertices)
+	Vertex^ EnergyModel::GetCentreVertex(IEnumerable<Vertex^>^ vertices)
 	{
+		ICollection<Vertex^>^ vertexList = (ICollection<Vertex^>^) vertices;
 		Autodesk::DesignScript::Geometry::Point^ sumPoint = Autodesk::DesignScript::Geometry::Point::ByCoordinates(0, 0, 0);
 
 		// assume vertices.count > 0
-		if (vertices->Count < 3)
+		if (vertexList->Count < 3)
 		{
 			throw gcnew Exception("Invalid face");
 		}
 
-		for each(Vertex^ v in vertices)
+		for each(Vertex^ v in vertexList)
 		{
 			Autodesk::DesignScript::Geometry::Point^ p =
 				safe_cast<Autodesk::DesignScript::Geometry::Point^>(v->BasicGeometry);
@@ -1075,7 +1078,7 @@ namespace TopologicEnergy
 			delete p;
 		}
 		
-		double scalingFactor = 1.0 / (double)vertices->Count;
+		double scalingFactor = 1.0 / (double)vertexList->Count;
 		Autodesk::DesignScript::Geometry::Geometry^ scaledPoint = sumPoint->Scale(scalingFactor, scalingFactor, scalingFactor);
 		Autodesk::DesignScript::Geometry::Point^ dynamoPoint = safe_cast<Autodesk::DesignScript::Geometry::Point^>(scaledPoint);
 		Vertex^ vertex = safe_cast<Vertex^>(Topologic::Topology::ByGeometry(dynamoPoint, 0.001)); // tolerance does not matter as it's just a vertex
@@ -1087,7 +1090,7 @@ namespace TopologicEnergy
 	OpenStudio::Point3dVector^ EnergyModel::GetFacePoints(Face^ buildingFace)
 	{
 		Wire^ buildingOuterWire = buildingFace->ExternalBoundary;
-		List<Vertex^>^ vertices = buildingOuterWire->Vertices;
+		IEnumerable<Vertex^>^ vertices = buildingOuterWire->Vertices;
 
 		OpenStudio::Point3dVector^ osFacePoints = gcnew OpenStudio::Point3dVector();
 
@@ -1106,7 +1109,7 @@ namespace TopologicEnergy
 
 	bool EnergyModel::IsUnderground(Face^ buildingFace)
 	{
-		List<Vertex^>^ vertices = buildingFace->Vertices;
+		IEnumerable<Vertex^>^ vertices = buildingFace->Vertices;
 
 		for each(Vertex^ aVertex in vertices)
 		{
@@ -1122,7 +1125,7 @@ namespace TopologicEnergy
 	FaceType EnergyModel::CalculateFaceType(Face^ buildingFace, OpenStudio::Point3dVector^% facePoints, Cell^ buildingSpace, Autodesk::DesignScript::Geometry::Vector^ upVector)
 	{
 		FaceType faceType = FACE_WALL;
-		List<Face^>^ faces = Topologic::Utilities::FaceUtility::Triangulate(buildingFace, 0.01);
+		IList<Face^>^ faces = (IList<Face^>^) Topologic::Utilities::FaceUtility::Triangulate(buildingFace, 0.01);
 		if (faces->Count == 0)
 		{
 			throw gcnew Exception("Failed to triangulate a face.");
@@ -1133,7 +1136,7 @@ namespace TopologicEnergy
 		Autodesk::DesignScript::Geometry::Point^ dynamoCenterPoint =
 			safe_cast<Autodesk::DesignScript::Geometry::Point^>(centerPoint->BasicGeometry);
 
-		List<Vertex^>^ vertices = buildingFace->Vertices;
+		IList<Vertex^>^ vertices = (IList<Vertex^>^)buildingFace->Vertices;
 		Autodesk::DesignScript::Geometry::Point^ p1 =
 			safe_cast<Autodesk::DesignScript::Geometry::Point^>(vertices[0]->BasicGeometry);
 		Autodesk::DesignScript::Geometry::Vector^ p1AsVector = p1->AsVector();
@@ -1195,16 +1198,17 @@ namespace TopologicEnergy
 
 	int EnergyModel::AdjacentCellCount(Face^ buildingFace)
 	{
-		return buildingFace->Cells->Count;
+		return ((ICollection<Cell^>^)buildingFace->Cells)->Count;
 	}
 
-	int EnergyModel::StoryNumber(Cell^ buildingCell, double buildingHeight, List<double>^ floorLevels)
+	int EnergyModel::StoryNumber(Cell^ buildingCell, double buildingHeight, IEnumerable<double>^ floorLevels)
 	{
+		IList<double>^ floorLevelList = (IList<double>^) floorLevels;
 		double volume = Utilities::CellUtility::Volume(buildingCell);
 		Vertex^ centreOfMass = buildingCell->CenterOfMass;
-		for (int i = 0; i < floorLevels->Count - 1; ++i)
+		for (int i = 0; i < floorLevelList->Count - 1; ++i)
 		{
-			if (centreOfMass->Z > floorLevels[i] && centreOfMass->Z < floorLevels[i + 1])
+			if (centreOfMass->Z > floorLevelList[i] && centreOfMass->Z < floorLevelList[i + 1])
 			{
 				return i;
 			}
@@ -1301,7 +1305,7 @@ namespace TopologicEnergy
 		return energyModel;
 	}
 
-	List<int>^ EnergyModel::GetColor(double ratio)
+	IEnumerable<int>^ EnergyModel::GetColor(double ratio)
 	{
 		double r = 0.0;
 		double g = 0.0;
@@ -1363,12 +1367,13 @@ namespace TopologicEnergy
 		return osName->get();
 	}
 
-	List<Topologic::Cell^>^ EnergyModel::Topology::get()
+	IEnumerable<Topologic::Cell^>^ EnergyModel::Topology::get()
 	{
 		return m_buildingCells;
 	}
 
-	EnergyModel::EnergyModel(OpenStudio::Model^ osModel, OpenStudio::Building^ osBuilding, List<Topologic::Cell^>^ pBuildingCells, Cluster^ shadingSurfaces, OpenStudio::SpaceVector^ osSpaces)
+	EnergyModel::EnergyModel(OpenStudio::Model^ osModel, OpenStudio::Building^ osBuilding, IEnumerable<Topologic::Cell^>^ pBuildingCells, 
+		Cluster^ shadingSurfaces, OpenStudio::SpaceVector^ osSpaces)
 		: m_osModel(osModel)
 		, m_osBuilding(osBuilding)
 		, m_buildingCells(pBuildingCells)

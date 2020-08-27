@@ -92,9 +92,9 @@ namespace Topologic {
 			[IsVisibleInDynamoLibrary(false)]
 #endif	
 			static Edge^ ByNurbsCurve(
-				List<Vertex^>^ controlPoints, 
-				List<double>^ knots,
-				List<double>^ weights,
+				IEnumerable<Vertex^>^ controlPoints, 
+				IEnumerable<double>^ knots,
+				IEnumerable<double>^ weights,
 				int degree,
 				bool isPeriodic,
 				bool isRational);
@@ -121,7 +121,7 @@ namespace Topologic {
 			/// <param name="edge">An Edge</param>
 			/// <param name="parentTopology">A parent Topology</param>
 			/// <returns name="Wire[]">A list of Wires adjacent to the input edge</returns>
-			static List<Wire^>^ AdjacentWires(Edge^ edge, Topology^ parentTopology);
+			static IEnumerable<Wire^>^ AdjacentWires(Edge^ edge, Topology^ parentTopology);
 
 		public protected:
 			EdgeUtility() {}

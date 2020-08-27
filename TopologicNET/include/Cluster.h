@@ -76,63 +76,63 @@ namespace Topologic
 		/// Returns the Shells constituent to the Cluster.
 		/// </summary>
 		/// <returns name="Shell[]">A list of Shells constituent to the Cluster</returns>
-		property List<Shell^>^ Shells
+		property IEnumerable<Shell^>^ Shells
 		{
-			List<Shell^>^ get();
+			IEnumerable<Shell^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Faces constituent to the Cluster.
 		/// </summary>
 		/// <returns name="Face[]">A list of Faces constituent to the Cluster</returns>
-		property List<Face^>^ Faces
+		property IEnumerable<Face^>^ Faces
 		{
-			List<Face^>^ get();
+			IEnumerable<Face^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Wires constituent to the Cluster.
 		/// </summary>
 		/// <returns name="Wire[]">A list of Wires constituent to the Cluster</returns>
-		property List<Wire^>^ Wires
+		property IEnumerable<Wire^>^ Wires
 		{
-			List<Wire^>^ get();
+			IEnumerable<Wire^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Edges constituent to the Cluster.
 		/// </summary>
 		/// <returns name="Edge[]">A list of Edges constituent to the Cluster</returns>
-		property List<Edge^>^ Edges
+		property IEnumerable<Edge^>^ Edges
 		{
-			List<Edge^>^ get();
+			IEnumerable<Edge^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Vertices constituent to the Cluster.
 		/// </summary>
 		/// <returns name="Vertex[]">A list of Vertices constituent to the Cluster</returns>
-		property List<Vertex^>^ Vertices
+		property IEnumerable<Vertex^>^ Vertices
 		{
-			List<Vertex^>^ get();
+			IEnumerable<Vertex^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Cells constituent to the Cluster.
 		/// </summary>
 		/// <returns name="Cell[]">A list of Cells constituent to the Cluster</returns>
-		property List<Cell^>^ Cells
+		property IEnumerable<Cell^>^ Cells
 		{
-			List<Cell^>^ get();
+			IEnumerable<Cell^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the CellComplexes constituent to the Cluster.
 		/// </summary>
 		/// <returns name="CellComplex[]">A list of CellComplexes constituent to the Cluster</returns>
-		property List<CellComplex^>^ CellComplexes
+		property IEnumerable<CellComplex^>^ CellComplexes
 		{
-			List<CellComplex^>^ get();
+			IEnumerable<CellComplex^>^ get();
 		}
 
 		/// <summary>

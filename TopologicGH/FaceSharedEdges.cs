@@ -74,8 +74,8 @@ namespace TopologicGH
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
 
-            
-            List<Topologic.Edge> sharedEdges = face1.SharedEdges(face2);
+
+            IEnumerable<Topologic.Edge> sharedEdges = face1.SharedEdges(face2);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, sharedEdges);

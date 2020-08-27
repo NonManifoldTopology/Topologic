@@ -70,8 +70,8 @@ namespace TopologicGH
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
 
-            
-            List<Topologic.Topology> contents = topology.Contents;
+
+            IEnumerable<Topologic.Topology> contents = topology.Contents;
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, contents);

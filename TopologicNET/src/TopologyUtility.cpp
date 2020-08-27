@@ -86,7 +86,7 @@ namespace Topologic
 			return Topology::ByCoreTopology(pCoreTransformedTopology);
 		}
 
-		List<Topology^>^ TopologyUtility::AdjacentTopologies(Topology ^ topology, Topology ^ parentTopology, int typeFilter)
+		IEnumerable<Topology^>^ TopologyUtility::AdjacentTopologies(Topology ^ topology, Topology ^ parentTopology, int typeFilter)
 		{
 			TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(topology->GetCoreTopologicalQuery());
 			TopologicCore::Topology::Ptr pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());

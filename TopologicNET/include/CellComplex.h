@@ -57,54 +57,54 @@ namespace Topologic
 		/// Returns the Cells constituent to the CellComplex.
 		/// </summary>
 		/// <returns name="Cell[]">A list of Cells constituent to the CellComplex</returns>
-		property List<Cell^>^ Cells
+		property IEnumerable<Cell^>^ Cells
 		{
-			List<Cell^>^ get();
+			IEnumerable<Cell^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Faces constituent to the CellComplex.
 		/// </summary>
 		/// <returns name="Face[]">A list of Faces constituent to the CellComplex</returns>
-		property List<Face^>^ Faces
+		property IEnumerable<Face^>^ Faces
 		{
-			List<Face^>^ get();
+			IEnumerable<Face^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Shells constituent to the CellComplex.
 		/// </summary>
 		/// <returns name="Shell[]">A list of Shells constituent to the CellComplex</returns>
-		property List<Shell^>^ Shells
+		property IEnumerable<Shell^>^ Shells
 		{
-			List<Shell^>^ get();
+			IEnumerable<Shell^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Wires constituent to the CellComplex.
 		/// </summary>
 		/// <returns name="Wire[]">A list of Wires constituent to the CellComplex</returns>
-		property List<Wire^>^ Wires
+		property IEnumerable<Wire^>^ Wires
 		{
-			List<Wire^>^ get();
+			IEnumerable<Wire^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Edges constituent to the CellComplex.
 		/// </summary>
 		/// <returns name="Edge[]">A list of Edges constituent to the CellComplex</returns>
-		property List<Edge^>^ Edges
+		property IEnumerable<Edge^>^ Edges
 		{
-			List<Edge^>^ get();
+			IEnumerable<Edge^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Vertices constituent to the CellComplex.
 		/// </summary>
 		/// <returns name="Vertex[]">A list of Vertices constituent to the CellComplex</returns>
-		property List<Vertex^>^ Vertices
+		property IEnumerable<Vertex^>^ Vertices
 		{
-			List<Vertex^>^ get();
+			IEnumerable<Vertex^>^ get();
 		}
 
 
@@ -121,18 +121,18 @@ namespace Topologic
 		/// Returns the internal boundaries (Faces) of the CellComplex.
 		/// </summary>
 		/// <returns name="Face[]">A list of the internal boundaries (Faces) of the CellComplex</returns>
-		property List<Face^>^ InternalBoundaries
+		property IEnumerable<Face^>^ InternalBoundaries
 		{
-			List<Face^>^ get();
+			IEnumerable<Face^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the non-manifold Faces of the CellComplex.
 		/// </summary>
 		/// <returns name="Face[]">A list of the non-manifold Faces of the CellComplex.</returns>
-		property List<Face^>^ NonManifoldFaces
+		property IEnumerable<Face^>^ NonManifoldFaces
 		{
-			List<Face^>^ get();
+			IEnumerable<Face^>^ get();
 		}
 
 		/// <summary>

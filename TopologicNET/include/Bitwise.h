@@ -36,21 +36,21 @@ namespace Topologic {
 			/// </summary>
 			/// <param name="arguments">A list of arguments</param>
 			/// <returns>The bitwise result</returns>
-			static int AND(List<int>^ arguments);
+			static int AND(IEnumerable<int>^ arguments);
 
 			/// <summary>
 			/// Performs a bitwise OR operation between the arguments (in their binary form).
 			/// </summary>
 			/// <param name="arguments">A list of arguments</param>
 			/// <returns>The bitwise result</returns>
-			static int OR(List<int>^ arguments);
+			static int OR(IEnumerable<int>^ arguments);
 
 			/// <summary>
 			/// Performs a bitwise XOR operation between the arguments (in their binary form).
 			/// </summary>
 			/// <param name="arguments">A list of arguments</param>
 			/// <returns>The bitwise result</returns>
-			static int XOR(List<int>^ arguments);
+			static int XOR(IEnumerable<int>^ arguments);
 
 			/// <summary>
 			/// Performs a bitwise NOT operation between the arguments (in their binary form).

@@ -25,7 +25,7 @@
 
 namespace Topologic
 {
-	List<Cell^>^ Shell::Cells::get()
+	IEnumerable<Cell^>^ Shell::Cells::get()
 	{
 		TopologicCore::Shell::Ptr pCoreShell = TopologicCore::Topology::Downcast<TopologicCore::Shell>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Cell::Ptr> coreCells;
@@ -43,7 +43,7 @@ namespace Topologic
 		return pCells;
 	}
 
-	List<Face^>^ Shell::Faces::get()
+	IEnumerable<Face^>^ Shell::Faces::get()
 	{
 		TopologicCore::Shell::Ptr pCoreShell = TopologicCore::Topology::Downcast<TopologicCore::Shell>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Face::Ptr> coreFaces;
@@ -61,7 +61,7 @@ namespace Topologic
 		return pFaces;
 	}
 
-	List<Wire^>^ Shell::Wires::get()
+	IEnumerable<Wire^>^ Shell::Wires::get()
 	{
 		TopologicCore::Shell::Ptr pCoreShell = TopologicCore::Topology::Downcast<TopologicCore::Shell>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Wire::Ptr> coreWires;
@@ -79,7 +79,7 @@ namespace Topologic
 		return pWires;
 	}
 
-	List<Edge^>^ Shell::Edges::get()
+	IEnumerable<Edge^>^ Shell::Edges::get()
 	{
 		TopologicCore::Shell::Ptr pCoreShell = TopologicCore::Topology::Downcast<TopologicCore::Shell>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Edge::Ptr> coreEdges;
@@ -97,7 +97,7 @@ namespace Topologic
 		return pEdges;
 	}
 
-	List<Vertex^>^ Shell::Vertices::get()
+	IEnumerable<Vertex^>^ Shell::Vertices::get()
 	{
 		TopologicCore::Shell::Ptr pCoreShell = TopologicCore::Topology::Downcast<TopologicCore::Shell>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Vertex::Ptr> coreVertices;
@@ -145,7 +145,7 @@ namespace Topologic
 	{
 #ifdef TOPOLOGIC_DYNAMO
 		List<Autodesk::DesignScript::Geometry::Surface^>^ pDynamoSurfaces = gcnew List<Autodesk::DesignScript::Geometry::Surface^>();
-		List<Face^>^ pFaces = Faces;
+		IEnumerable<Face^>^ pFaces = Faces;
 		for each(Face^ pFace in pFaces)
 		{
 			pDynamoSurfaces->Add(pFace->Surface());

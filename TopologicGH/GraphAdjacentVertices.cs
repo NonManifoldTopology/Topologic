@@ -72,8 +72,8 @@ namespace TopologicGH
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
 
-            
-            List<Topologic.Vertex> adjacentVertices = graph.AdjacentVertices(vertex);
+
+            IEnumerable<Topologic.Vertex> adjacentVertices = graph.AdjacentVertices(vertex);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, adjacentVertices);

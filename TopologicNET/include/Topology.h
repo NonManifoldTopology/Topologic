@@ -87,7 +87,7 @@ namespace Topologic
 		/// <param name="vertices">A list of Vertices</param>
 		/// <param name="vertexIndices">A 2D list of the indices of the Vertices</param>
 		/// <returns name="Topology[]">A Topology</returns>
-		static List<Topology^>^ ByVerticesIndices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::List<int>^>^ vertexIndices);
+		static IEnumerable<Topology^>^ ByVerticesIndices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<int>^>^ vertexIndices);
 
 		/// <summary>
 		/// Returns the dimensionality of the Topology.
@@ -133,18 +133,18 @@ namespace Topologic
 		/// Returns the contents (non-constituent members) of the input Topology.
 		/// </summary>
 		/// <returns name="Topology[]">A list of Topologies contained in the input Topology as non-constituent members</returns>
-		property List<Topology^>^ Contents
+		property IEnumerable<Topology^>^ Contents
 		{
-			List<Topology^>^ get();
+			IEnumerable<Topology^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Apertures of the input Topology.
 		/// </summary>
 		/// <returns name="Aperture[]">A list of Topologies contained in the input Topology as Apertures</returns>
-		property List<Aperture^>^ Apertures
+		property IEnumerable<Aperture^>^ Apertures
 		{
-			List<Aperture^>^ get();
+			IEnumerable<Aperture^>^ get();
 		}
 
 		/// <summary>
@@ -154,18 +154,18 @@ namespace Topologic
 #ifdef TOPOLOGIC_DYNAMO
 		[IsVisibleInDynamoLibrary(false)]
 #endif
-		property List<Topology^>^ SubContents
+		property IEnumerable<Topology^>^ SubContents
 		{
-			List<Topology^>^ get();
+			IEnumerable<Topology^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Topologies containing the input Topology as a content.
 		/// </summary>
 		/// <returns name="Context[]">A list of the non-constituent members containing the input Topology</returns>
-		property List<Context^>^ Contexts
+		property IEnumerable<Context^>^ Contexts
 		{
-			List<Context^>^ get();
+			IEnumerable<Context^>^ get();
 		}
 
 		/// <summary>
@@ -187,9 +187,9 @@ namespace Topologic
 		/// <param name="typeFilter">The type of the context Topology</param>
 		/// <returns>The new Topology</returns>
 #ifdef TOPOLOGIC_DYNAMO
-		Topology^ AddContents(List<Topology^>^ contentTopologies, [DefaultArgument("0")] int typeFilter);
+		Topology^ AddContents(IEnumerable<Topology^>^ contentTopologies, [DefaultArgument("0")] int typeFilter);
 #else
-		Topology^ AddContents(List<Topology^>^ contentTopologies, int typeFilter);
+		Topology^ AddContents(IEnumerable<Topology^>^ contentTopologies, int typeFilter);
 #endif
 
 		/// <summary>
@@ -207,7 +207,7 @@ namespace Topologic
 		/// </summary>
 		/// <param name="contentTopologies">The Topologies of the contents</param>
 		/// <returns name="Topology">The new Topology</returns>
-		Topology^ RemoveContents(List<Topology^>^ contentTopologies);
+		Topology^ RemoveContents(IEnumerable<Topology^>^ contentTopologies);
 
 		/// <summary>
 		/// Adds Apertures to a Topology.
@@ -222,7 +222,7 @@ namespace Topologic
 		/// <param name="topology">Another Topology</param>
 		/// <param name="typeFilter">The type of the filtered Topologies</param>
 		/// <returns name="Topology[]">A list of shared Topologies between the input Topology and another Topology</returns>
-		List<Topology^>^ SharedTopologies(
+		IEnumerable<Topology^>^ SharedTopologies(
 			Topology^ topology, 
 #ifdef TOPOLOGIC_DYNAMO
 			[Autodesk::DesignScript::Runtime::DefaultArgument("255")] 
@@ -425,72 +425,72 @@ namespace Topologic
 #ifdef TOPOLOGIC_DYNAMO
 		[IsVisibleInDynamoLibrary(false)]
 #endif
-		property List<Topology^>^ SubTopologies
+		property IEnumerable<Topology^>^ SubTopologies
 		{
-			List<Topology^>^ get();
+			IEnumerable<Topology^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Shells constituent to the Topology.
 		/// </summary>
 		/// <returns name="Shell[]">A list of Shells constituent to the Topology</returns>
-		property List<Shell^>^ Shells
+		property IEnumerable<Shell^>^ Shells
 		{
-			List<Shell^>^ get();
+			IEnumerable<Shell^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Faces constituent to the Topology.
 		/// </summary>
 		/// <returns name="Face[]">A list of Faces constituent to the Topology</returns>
-		property List<Face^>^ Faces
+		property IEnumerable<Face^>^ Faces
 		{
-			List<Face^>^ get();
+			IEnumerable<Face^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Wires constituent to the Topology.
 		/// </summary>
 		/// <returns name="Wire[]">A list of Wires constituent to the Topology</returns>
-		property List<Wire^>^ Wires
+		property IEnumerable<Wire^>^ Wires
 		{
-			List<Wire^>^ get();
+			IEnumerable<Wire^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Edges constituent to the Topology.
 		/// </summary>
 		/// <returns name="Edge[]">A list of Edges constituent to the Topology</returns>
-		property List<Edge^>^ Edges
+		property IEnumerable<Edge^>^ Edges
 		{
-			List<Edge^>^ get();
+			IEnumerable<Edge^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Vertices constituent to the Topology.
 		/// </summary>
 		/// <returns name="Vertex[]">A list of Vertices constituent to the Topology</returns>
-		property List<Vertex^>^ Vertices
+		property IEnumerable<Vertex^>^ Vertices
 		{
-			List<Vertex^>^ get();
+			IEnumerable<Vertex^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Cells constituent to the Topology.
 		/// </summary>
 		/// <returns name="Cell[]">A list of Cells constituent to the Topology</returns>
-		property List<Cell^>^ Cells
+		property IEnumerable<Cell^>^ Cells
 		{
-			List<Cell^>^ get();
+			IEnumerable<Cell^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the CellComplexes constituent to the Topology.
 		/// </summary>
 		/// <returns name="CellComplex[]">A list of CellComplexes constituent to the Topology</returns>
-		property List<CellComplex^>^ CellComplexes
+		property IEnumerable<CellComplex^>^ CellComplexes
 		{
-			List<CellComplex^>^ get();
+			IEnumerable<CellComplex^>^ get();
 		}
 
 		/// <summary>
@@ -564,7 +564,7 @@ namespace Topologic
 		/// <param name="topologies">A list of Topologies</param>
 		/// <param name="typeFilter">The type of the filtered Topologies</param>
 		/// <returns>The filtered opologies</returns>
-		static List<Topology^>^ Filter(List<Topology^>^ topologies, int typeFilter);
+		static IEnumerable<Topology^>^ Filter(IEnumerable<Topology^>^ topologies, int typeFilter);
 
 #ifdef TOPOLOGIC_DYNAMO
 		[IsVisibleInDynamoLibrary(false)]
@@ -589,7 +589,7 @@ namespace Topologic
 		/// <param name="dictionaries">A list of dictionaries</param>
 		/// <param name="typeFilter"></param>
 		/// <returns name="Topology">The Topology with the dictionary</returns>
-		Topology^ SetDictionaries(List<Vertex^>^ selectors, List<Dictionary<String^, Object^>^>^ dictionaries, 
+		Topology^ SetDictionaries(IEnumerable<Vertex^>^ selectors, IEnumerable<Dictionary<String^, Object^>^>^ dictionaries, 
 #ifdef TOPOLOGIC_DYNAMO
 			[Autodesk::DesignScript::Runtime::DefaultArgument("255")]
 #endif
@@ -607,7 +607,7 @@ namespace Topologic
 	public protected:
 		static Topology^ ByCoreTopology(const std::shared_ptr<TopologicCore::Topology>& kpCoreTopology);
 
-		Object^ CleanupGeometryOutput(List<Object^>^ geometry);
+		Object^ CleanupGeometryOutput(IEnumerable<Object^>^ geometry);
 
 	protected:
 		Topology();

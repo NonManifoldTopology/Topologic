@@ -70,8 +70,8 @@ namespace TopologicGH
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
 
-            
-            List<Topologic.Edge> edges = vertex.Edges;
+
+            IEnumerable<Topologic.Edge> edges = vertex.Edges;
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, edges);

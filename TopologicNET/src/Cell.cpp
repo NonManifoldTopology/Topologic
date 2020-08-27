@@ -63,7 +63,7 @@ namespace Topologic
 		}
 	}
 
-	List<CellComplex^>^ Cell::CellComplexes::get()
+	IEnumerable<CellComplex^>^ Cell::CellComplexes::get()
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::CellComplex::Ptr> coreCellComplexes;
@@ -81,7 +81,7 @@ namespace Topologic
 		return pCellComplexes;
 	}
 
-	List<Shell^>^ Cell::Shells::get()
+	IEnumerable<Shell^>^ Cell::Shells::get()
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 
@@ -100,7 +100,7 @@ namespace Topologic
 		return pShells;
 	}
 
-	List<Face^>^ Cell::Faces::get()
+	IEnumerable<Face^>^ Cell::Faces::get()
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 
@@ -119,7 +119,7 @@ namespace Topologic
 		return pFaces;
 	}
 
-	List<Wire^>^ Cell::Wires::get()
+	IEnumerable<Wire^>^ Cell::Wires::get()
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 
@@ -138,7 +138,7 @@ namespace Topologic
 		return pWires;
 	}
 
-	List<Edge^>^ Cell::Edges::get()
+	IEnumerable<Edge^>^ Cell::Edges::get()
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 
@@ -157,7 +157,7 @@ namespace Topologic
 		return pEdges;
 	}
 
-	List<Vertex^>^ Cell::Vertices::get()
+	IEnumerable<Vertex^>^ Cell::Vertices::get()
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 
@@ -176,7 +176,7 @@ namespace Topologic
 		return pVertices;
 	}
 
-	List<Cell^>^ Cell::AdjacentCells::get()
+	IEnumerable<Cell^>^ Cell::AdjacentCells::get()
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Cell::Ptr> coreAdjacentCells;
@@ -200,7 +200,7 @@ namespace Topologic
 		return pAdjacentCells;
 	}
 
-	List<Face^>^ Cell::SharedFaces(Cell^ cell)
+	IEnumerable<Face^>^ Cell::SharedFaces(Cell^ cell)
 	{
 		TopologicCore::Cell::Ptr pCoreCell1 = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 		TopologicCore::Cell::Ptr pCoreCell2 = TopologicCore::Topology::Downcast<TopologicCore::Cell>(cell->GetCoreTopologicalQuery());
@@ -220,7 +220,7 @@ namespace Topologic
 		return pSharedFaces;
 	}
 
-	List<Edge^>^ Cell::SharedEdges(Cell^ cell)
+	IEnumerable<Edge^>^ Cell::SharedEdges(Cell^ cell)
 	{
 		TopologicCore::Cell::Ptr pCoreCell1 = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 		TopologicCore::Cell::Ptr pCoreCell2 = TopologicCore::Topology::Downcast<TopologicCore::Cell>(cell->GetCoreTopologicalQuery());
@@ -240,7 +240,7 @@ namespace Topologic
 		return pSharedEdges;
 	}
 
-	List<Vertex^>^ Cell::SharedVertices(Cell^ cell)
+	IEnumerable<Vertex^>^ Cell::SharedVertices(Cell^ cell)
 	{
 		TopologicCore::Cell::Ptr pCoreCell1 = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 		TopologicCore::Cell::Ptr pCoreCell2 = TopologicCore::Topology::Downcast<TopologicCore::Cell>(cell->GetCoreTopologicalQuery());
@@ -266,7 +266,7 @@ namespace Topologic
 		return gcnew Shell(pCoreCell->ExternalBoundary());
 	}
 
-	List<Shell^>^ Cell::InternalBoundaries::get()
+	IEnumerable<Shell^>^ Cell::InternalBoundaries::get()
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Shell::Ptr> coreInnerShells;
@@ -289,7 +289,7 @@ namespace Topologic
 #ifdef TOPOLOGIC_DYNAMO
 		List<Autodesk::DesignScript::Geometry::Surface^>^ pDynamoSurfaces = gcnew List<Autodesk::DesignScript::Geometry::Surface^>();
 		List<Object^>^ pDynamoGeometries = gcnew List<Object^>();
-		List<Face^>^ pFaces = Faces;
+		IEnumerable<Face^>^ pFaces = Faces;
 		bool hasFallbackVisualization = false;
 		for each(Face^ pFace in pFaces)
 		{

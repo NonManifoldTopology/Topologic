@@ -56,7 +56,7 @@ namespace Topologic
 			return gcnew Edge(pCoreEllipseEdge);
 		}
 
-		Edge ^ EdgeUtility::ByNurbsCurve(List<Vertex^>^ controlPoints, List<double>^ knots, List<double>^ weights, int degree, bool isPeriodic, bool isRational)
+		Edge ^ EdgeUtility::ByNurbsCurve(IEnumerable<Vertex^>^ controlPoints, IEnumerable<double>^ knots, IEnumerable<double>^ weights, int degree, bool isPeriodic, bool isRational)
 		{
 			std::list<TopologicCore::Vertex::Ptr> coreVertices;
 			for each (Vertex^ controlPoint in controlPoints)
@@ -100,7 +100,7 @@ namespace Topologic
 			return gcnew Vertex(pCoreVertex);
 		}
 
-		List<Wire^>^ EdgeUtility::AdjacentWires(Edge ^ edge, Topology ^ parentTopology)
+		IEnumerable<Wire^>^ EdgeUtility::AdjacentWires(Edge ^ edge, Topology ^ parentTopology)
 		{
 			TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(edge->GetCoreTopologicalQuery());
 			TopologicCore::Topology::Ptr pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());

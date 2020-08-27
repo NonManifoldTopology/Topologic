@@ -70,8 +70,8 @@ namespace TopologicGH
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
 
-            
-            List<Topologic.Face> faces = shell.Faces;
+
+            IEnumerable<Topologic.Face> faces = shell.Faces;
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, faces);

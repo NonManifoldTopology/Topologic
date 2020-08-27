@@ -44,7 +44,7 @@
 
 namespace Topologic
 {
-	List<Edge^>^ Edge::AdjacentEdges::get()
+	IEnumerable<Edge^>^ Edge::AdjacentEdges::get()
 	{
 		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Edge::Ptr> pAdjacentCoreEdges;
@@ -78,7 +78,7 @@ namespace Topologic
 		return gcnew Vertex(pCoreStartVertex);
 	}
 
-	List<Vertex^>^ Edge::Vertices::get()
+	IEnumerable<Vertex^>^ Edge::Vertices::get()
 	{
 		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Vertex::Ptr> coreVertices;
@@ -97,7 +97,7 @@ namespace Topologic
 		return pVertices;
 	}
 
-	List<Wire^>^ Edge::Wires::get()
+	IEnumerable<Wire^>^ Edge::Wires::get()
 	{
 		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Wire::Ptr> coreWires;
@@ -334,7 +334,7 @@ namespace Topologic
 		// Handle(Geom_Line) pOcctLine = Handle_Geom_Line::DownCast(pOcctCurve);
 
 		TopologicCore::Edge::Ptr pCoreEdge = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
-		List<Vertex^>^ pVertices = Vertices;
+		IList<Vertex^>^ pVertices = (IList<Vertex^>^)Vertices;
 
 		bool onlyTwoVertices = true;
 		if (pVertices->Count != 2)
@@ -497,33 +497,37 @@ namespace Topologic
 	}
 #endif
 
-	Edge^ Edge::ByNurbsParameters(List<Vertex^>^ controlPoints, List<double>^ weights, List<double>^ knots, bool isRational, bool isPeriodic, int degree)
+	Edge^ Edge::ByNurbsParameters(IEnumerable<Vertex^>^ controlPoints, IEnumerable<double>^ weights, IEnumerable<double>^ knots, bool isRational, bool isPeriodic, int degree)
 	{
+		IList<Vertex^>^ controlPointList = (IList<Vertex^>^) controlPointList;
+		IList<double>^ weightList = (IList<double>^) weights;
+		IList<double>^ knotList = (IList<double>^) knots;
+
 		// Transfer the poles/control points
-		TColgp_Array1OfPnt occtPoles(0, controlPoints->Count - 1);
+		TColgp_Array1OfPnt occtPoles(0, controlPointList->Count - 1);
 		for (int i = occtPoles.Lower(); i <= occtPoles.Upper(); i++)
 		{
-			occtPoles.SetValue(i, gp_Pnt(controlPoints[i]->X, controlPoints[i]->Y, controlPoints[i]->Z));
+			occtPoles.SetValue(i, gp_Pnt(controlPointList[i]->X, controlPointList[i]->Y, controlPointList[i]->Z));
 		}
 
 		// Transfer the weights
-		TColStd_Array1OfReal occtWeights(0, weights->Count - 1);
+		TColStd_Array1OfReal occtWeights(0, weightList->Count - 1);
 		for (int i = occtWeights.Lower(); i <= occtWeights.Upper(); i++)
 		{
-			double weight = weights[i];
+			double weight = weightList[i];
 			occtWeights.SetValue(i, weight);
 		}
 
 		// Transfer the knots and multiplicities. Note the format difference. OCCT has a separate multiplicity list, while Dynamo simply repeats the knots.
 		List<double>^ uniqueKnots = gcnew List<double>();
 		List<int>^ pMultiplicities = gcnew List<int>();
-		double previousKnot = knots[0] - 1.0;
+		double previousKnot = knotList[0] - 1.0;
 		int multiplicity = 0;
 		for each(double knot in knots)
 		{
 			if (knot > previousKnot)
 			{
-				if (previousKnot > knots[0] - 1.0)
+				if (previousKnot > knotList[0] - 1.0)
 					pMultiplicities->Add(multiplicity);
 				uniqueKnots->Add(knot);
 				multiplicity = 1;
@@ -589,7 +593,7 @@ namespace Topologic
 		}
 	}
 
-	List<Vertex^>^ Edge::SharedVertices(Edge^ edge)
+	IEnumerable<Vertex^>^ Edge::SharedVertices(Edge^ edge)
 	{
 		TopologicCore::Edge::Ptr pCoreEdge1 = TopologicCore::Topology::Downcast<TopologicCore::Edge>(GetCoreTopologicalQuery());
 		TopologicCore::Edge::Ptr pCoreEdge2 = TopologicCore::Topology::Downcast<TopologicCore::Edge>(edge->GetCoreTopologicalQuery());

@@ -207,7 +207,7 @@ namespace Topologic
 	//	// TODO: insert return statement here
 	//}
 
-	List<Topology^>^ Topology::ByVerticesIndices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::List<int>^>^ vertexIndices)
+	IEnumerable<Topology^>^ Topology::ByVerticesIndices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices, System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<int>^>^ vertexIndices)
 	{
 		std::vector<TopologicCore::Vertex::Ptr> coreVertices;
 		for each(Vertex^ pVertex in vertices)
@@ -331,8 +331,8 @@ namespace Topologic
 	}
 
 	Topology ^ Topology::SetDictionaries(
-		List<Vertex^>^ selectors, 
-		List<System::Collections::Generic::Dictionary<String^, Object^>^>^ dictionaries,
+		IEnumerable<Vertex^>^ selectors,
+		IEnumerable<System::Collections::Generic::Dictionary<String^, Object^>^>^ dictionaries,
 		int typeFilter)
 	{
 		TopologicCore::Topology::Ptr pCoreTopology =
@@ -418,11 +418,12 @@ namespace Topologic
 		return topologyFactory->Create(TopologicCore::TopologyPtr(kpCoreTopology));
 	}
 
-	Object ^ Topology::CleanupGeometryOutput(List<Object^>^ geometry)
+	Object ^ Topology::CleanupGeometryOutput(IEnumerable<Object^>^ geometry)
 	{
-		if (geometry->Count == 1)
+		IList<Object^>^ geometryList = (IList<Object^>^)geometry;
+		if (geometryList->Count == 1)
 		{
-			return geometry[0];
+			return geometryList[0];
 		}
 
 		return geometry;
@@ -442,7 +443,7 @@ namespace Topologic
 		return safe_cast<T>(topology);
 	}
 
-	List<Topology^>^ Topology::Filter(List<Topology^>^ topologies, int typeFilter)
+	IEnumerable<Topology^>^ Topology::Filter(IEnumerable<Topology^>^ topologies, int typeFilter)
 	{
 		std::list<TopologicCore::Topology::Ptr> coreTopologies;
 		for each(Topology^ topology in topologies)
@@ -513,7 +514,7 @@ namespace Topologic
 		return this;
 	}
 
-	List<Topology^>^ Topology::Contents::get()
+	IEnumerable<Topology^>^ Topology::Contents::get()
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		std::list<std::shared_ptr<TopologicCore::Topology>> coreContents;
@@ -529,7 +530,7 @@ namespace Topologic
 		return pTopologies;
 	}
 
-	List<Aperture^>^ Topology::Apertures::get()
+	IEnumerable<Aperture^>^ Topology::Apertures::get()
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		std::list<std::shared_ptr<TopologicCore::Aperture>> coreApertures;
@@ -546,7 +547,7 @@ namespace Topologic
 		return pApertures;
 	}
 
-	List<Topology^>^ Topology::SubContents::get()
+	IEnumerable<Topology^>^ Topology::SubContents::get()
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		std::list<std::shared_ptr<TopologicCore::Topology>> coreSubContents;
@@ -562,7 +563,7 @@ namespace Topologic
 		return pTopologies;
 	}
 
-	List<Context^>^ Topology::Contexts::get()
+	IEnumerable<Context^>^ Topology::Contexts::get()
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		std::list<std::shared_ptr<TopologicCore::Context>> rkCoreContexts;
@@ -598,7 +599,7 @@ namespace Topologic
 		}
 	}
 
-	Topology ^ Topology::AddContents(List<Topology^>^ contentTopologies, int typeFilter)
+	Topology ^ Topology::AddContents(IEnumerable<Topology^>^ contentTopologies, int typeFilter)
 	{
 		TopologicCore::Topology::Ptr pCoreParentTopology =
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
@@ -626,7 +627,7 @@ namespace Topologic
 		throw gcnew NotImplementedException();
 	}
 
-	Topology^ Topology::RemoveContents(List<Topology^>^ contentTopologies)
+	Topology^ Topology::RemoveContents(IEnumerable<Topology^>^ contentTopologies)
 	{
 		TopologicCore::Topology::Ptr pCoreParentTopology =
 			TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
@@ -664,7 +665,7 @@ namespace Topologic
 		return Topology::ByCoreTopology(pCoreCopyParentTopology);
 	}
 
-	List<Topology^>^ Topology::SharedTopologies(Topology^ topology, int typeFilter)
+	IEnumerable<Topology^>^ Topology::SharedTopologies(Topology^ topology, int typeFilter)
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		std::list<std::shared_ptr<TopologicCore::Topology>> coreSharedTopologies;
@@ -862,7 +863,7 @@ namespace Topologic
 		}
 	}
 
-	List<Topology^>^ Topology::SubTopologies::get()
+	IEnumerable<Topology^>^ Topology::SubTopologies::get()
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 
@@ -880,7 +881,7 @@ namespace Topologic
 		return pTopologies;
 	}
 
-	List<Shell^>^ Topology::Shells::get()
+	IEnumerable<Shell^>^ Topology::Shells::get()
 	{
 		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 
@@ -899,7 +900,7 @@ namespace Topologic
 		return pShells;
 	}
 
-	List<Face^>^ Topology::Faces::get()
+	IEnumerable<Face^>^ Topology::Faces::get()
 	{
 		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 
@@ -918,7 +919,7 @@ namespace Topologic
 		return pFaces;
 	}
 
-	List<Wire^>^ Topology::Wires::get()
+	IEnumerable<Wire^>^ Topology::Wires::get()
 	{
 		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 
@@ -937,7 +938,7 @@ namespace Topologic
 		return pWires;
 	}
 
-	List<Edge^>^ Topology::Edges::get()
+	IEnumerable<Edge^>^ Topology::Edges::get()
 	{
 		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 
@@ -956,7 +957,7 @@ namespace Topologic
 		return pEdges;
 	}
 
-	List<Vertex^>^ Topology::Vertices::get()
+	IEnumerable<Vertex^>^ Topology::Vertices::get()
 	{
 		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 
@@ -975,7 +976,7 @@ namespace Topologic
 		return pVertices;
 	}
 
-	List<Cell^>^ Topology::Cells::get()
+	IEnumerable<Cell^>^ Topology::Cells::get()
 	{
 		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 
@@ -994,7 +995,7 @@ namespace Topologic
 		return pCells;
 	}
 
-	List<CellComplex^>^ Topology::CellComplexes::get()
+	IEnumerable<CellComplex^>^ Topology::CellComplexes::get()
 	{
 		TopologicCore::Topology::Ptr pCoreTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 

@@ -73,7 +73,7 @@ namespace TopologicGH.Utilities
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
 
-            List<global::Topologic.Edge> adjacentEdges = global::Topologic.Utilities.VertexUtility.AdjacentEdges(vertex, parentTopology);
+            IEnumerable<global::Topologic.Edge> adjacentEdges = global::Topologic.Utilities.VertexUtility.AdjacentEdges(vertex, parentTopology);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, adjacentEdges);

@@ -120,7 +120,7 @@ namespace Topologic {
 #ifdef TOPOLOGIC_DYNAMO
 			[IsVisibleInDynamoLibrary(false)]
 #endif
-			static List<double>^ GetMinMax(Cell^ cell);
+			static IEnumerable<double>^ GetMinMax(Cell^ cell);
 
 			/// <summary>
 			/// Returns a Vertex inside the Cell.

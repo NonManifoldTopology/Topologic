@@ -39,45 +39,45 @@ namespace Topologic
 		/// Returns the Cells bounded by the Shell.
 		/// </summary>
 		/// <returns name="Cell[]">A list of Cells bounded by the Shell</returns>
-		property List<Cell^>^ Cells
+		property IEnumerable<Cell^>^ Cells
 		{
-			List<Cell^>^ get();
+			IEnumerable<Cell^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Faces constituent to the Shell. 
 		/// </summary>
 		/// <returns name="Face[]">A list of the constituent Faces</returns>
-		property List<Face^>^ Faces
+		property IEnumerable<Face^>^ Faces
 		{
-			List<Face^>^ get();
+			IEnumerable<Face^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Wires constituent to the Shell.
 		/// </summary>
 		/// <returns name="Wire[]">A list of the constituent Wires</returns>
-		property List<Wire^>^ Wires
+		property IEnumerable<Wire^>^ Wires
 		{
-			List<Wire^>^ get();
+			IEnumerable<Wire^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Edges constituent to the Shell.
 		/// </summary>
 		/// <returns name="Edge[]">A list of the constituent Edges</returns>
-		property List<Edge^>^ Edges
+		property IEnumerable<Edge^>^ Edges
 		{
-			List<Edge^>^ get();
+			IEnumerable<Edge^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Vertices constituent to the Shell.
 		/// </summary>
 		/// <returns name="Vertex[]">A list of the constituent Vertices</returns>
-		property List<Vertex^>^ Vertices
+		property IEnumerable<Vertex^>^ Vertices
 		{
-			List<Vertex^>^ get();
+			IEnumerable<Vertex^>^ get();
 		}
 
 		/// <summary>

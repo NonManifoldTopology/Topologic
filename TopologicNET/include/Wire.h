@@ -44,27 +44,27 @@ namespace Topologic {
 		/// Returns the Edges constituent to the Wire. NOTE: This method will automatically identify its loop order property.
 		/// </summary>
 		/// <returns name="Edge[]">A list of Edges constituent to the Wire</returns>
-		property List<Edge^>^ Edges
+		property IEnumerable<Edge^>^ Edges
 		{
-			List<Edge^>^ get();
+			IEnumerable<Edge^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Faces containing the Wire.
 		/// </summary>
 		/// <returns name="Face[]">A list of Faces containing the Wire</returns>
-		property List<Face^>^ Faces
+		property IEnumerable<Face^>^ Faces
 		{
-			List<Face^>^ get();
+			IEnumerable<Face^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Vertices constituent to the Wire. NOTE: This method will automatically identify its loop order property.
 		/// </summary>
 		/// <returns name="Vertex[]">A list of Vertices constituent to the Wire</returns>
-		property List<Vertex^>^ Vertices
+		property IEnumerable<Vertex^>^ Vertices
 		{
-			List<Vertex^>^ get();
+			IEnumerable<Vertex^>^ get();
 		}
 
 		/// <summary>

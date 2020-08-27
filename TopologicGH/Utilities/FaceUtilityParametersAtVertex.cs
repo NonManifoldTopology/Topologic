@@ -75,8 +75,8 @@ namespace TopologicGH
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
 
-            
-            List<double> UV = Topologic.Utilities.FaceUtility.ParametersAtVertex(face, vertex);
+
+            IList<double> UV = (IList<double>)Topologic.Utilities.FaceUtility.ParametersAtVertex(face, vertex);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetData(0, UV[0]);

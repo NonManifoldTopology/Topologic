@@ -74,8 +74,8 @@ namespace TopologicGH
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
 
-            
-            List<Topologic.Topology> topologies = Topologic.Topology.ByVerticesIndices(vertices, indices);
+
+            IEnumerable<Topologic.Topology> topologies = Topologic.Topology.ByVerticesIndices(vertices, indices);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, topologies);

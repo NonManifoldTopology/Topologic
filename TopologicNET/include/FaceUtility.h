@@ -50,7 +50,7 @@ namespace Topologic {
 			/// <param name="face">A Face</param>
 			/// <param name="vertex">A Vertex on a Face</param>
 			/// <returns name="UV">The UV parameters</returns>
-			static List<double>^ ParametersAtVertex(Face^ face, Vertex^ vertex);
+			static IEnumerable<double>^ ParametersAtVertex(Face^ face, Vertex^ vertex);
 
 			/// <summary>
 			/// Returns the normal (vector) given the UV parameters of a Face.
@@ -59,7 +59,7 @@ namespace Topologic {
 			/// <param name="u">The U parameter of the Face</param>
 			/// <param name="v">The U parameter of the Face</param>
 			/// <returns>The normal (vector) at a parameter of a Face</returns>
-			static List<double>^ NormalAtParameters(Face^ face, double u, double v);
+			static IEnumerable<double>^ NormalAtParameters(Face^ face, double u, double v);
 
 			/// <summary>
 			/// Returns the Vertex at a given parameter of the Face.
@@ -88,7 +88,7 @@ namespace Topologic {
 #ifdef TOPOLOGIC_DYNAMO
 			[IsVisibleInDynamoLibrary(false)]
 #endif
-			static List<Face^>^ Triangulate(Face^ face, double deflection);
+			static IEnumerable<Face^>^ Triangulate(Face^ face, double deflection);
 
 			/// <summary>
 			/// Returns a list of Shells that are the adjacent to the input Face.
@@ -96,7 +96,7 @@ namespace Topologic {
 			/// <param name="face">A Face</param>
 			/// <param name="parentTopology">A parent Topology</param>
 			/// <returns name="Shell[]">A list of Shells adjacent to the input Face</returns>
-			static List<Shell^>^ AdjacentShells(Face^ face, Topology^ parentTopology);
+			static IEnumerable<Shell^>^ AdjacentShells(Face^ face, Topology^ parentTopology);
 
 			/// <summary>
 			/// Returns a list of Cells that are the adjacent to the input Face.
@@ -104,7 +104,7 @@ namespace Topologic {
 			/// <param name="face">A Face</param>
 			/// <param name="parentTopology">A parent Topology</param>
 			/// <returns name="Cell[]">A list of Cells adjacent to the input Face</returns>
-			static List<Cell^>^ AdjacentCells(Face^ face, Topology^ parentTopology);
+			static IEnumerable<Cell^>^ AdjacentCells(Face^ face, Topology^ parentTopology);
 
 			/// <summary>
 			/// Returns a Vertex inside the Face.

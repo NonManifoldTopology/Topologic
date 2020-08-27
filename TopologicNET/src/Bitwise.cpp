@@ -22,7 +22,7 @@ namespace Topologic
 {
 	namespace Utilities
 	{
-		int Bitwise::AND(List<int>^ arguments)
+		int Bitwise::AND(IEnumerable<int>^ arguments)
 		{
 			std::list<int> coreArguments;
 			for each(int argument in arguments)
@@ -32,7 +32,7 @@ namespace Topologic
 			return TopologicUtilities::Bitwise::AND(coreArguments);
 		}
 
-		int Bitwise::OR(List<int>^ arguments)
+		int Bitwise::OR(IEnumerable<int>^ arguments)
 		{
 			std::list<int> coreArguments;
 			for each(int argument in arguments)
@@ -42,7 +42,7 @@ namespace Topologic
 			return TopologicUtilities::Bitwise::OR(coreArguments);
 		}
 
-		int Bitwise::XOR(List<int>^ arguments)
+		int Bitwise::XOR(IEnumerable<int>^ arguments)
 		{
 			std::list<int> coreArguments;
 			for each(int argument in arguments)

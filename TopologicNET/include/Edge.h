@@ -42,15 +42,15 @@ namespace Topologic {
 #ifdef TOPOLOGIC_DYNAMO
 		[IsVisibleInDynamoLibrary(false)]
 #endif
-		static Edge^ ByNurbsParameters(List<Vertex^>^ controlPoints, List<double>^ weights, List<double>^ knots, bool isRational, bool isPeriodic, int degree);
+		static Edge^ ByNurbsParameters(IEnumerable<Vertex^>^ controlPoints, IEnumerable<double>^ weights, IEnumerable<double>^ knots, bool isRational, bool isPeriodic, int degree);
 
 		/// <summary>
 		/// Returns the Edges adjacent to the Edge.
 		/// </summary>
 		/// <returns name="Edge[]">A list of the Edges adjacent to the Edge</returns>
-		property List<Edge^>^ AdjacentEdges
+		property IEnumerable<Edge^>^ AdjacentEdges
 		{
-			List<Edge^>^ get();
+			IEnumerable<Edge^>^ get();
 		}
 
 		/// <summary>
@@ -73,17 +73,17 @@ namespace Topologic {
 		/// Returns the Vertices at the ends of the Edge.
 		/// </summary>
 		/// <returns name="Vertex[]">A list of Vertices at the ends of the Edge</returns>
-		property List<Vertex^>^ Vertices {
-			List<Vertex^>^ get();
+		property IEnumerable<Vertex^>^ Vertices {
+			IEnumerable<Vertex^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Wires incident to the Edge.
 		/// </summary>
 		/// <returns name="Wire[]">A list of Wires incident to the Edge</returns>
-		property List<Wire^>^ Wires
+		property IEnumerable<Wire^>^ Wires
 		{
-			List<Wire^>^ get();
+			IEnumerable<Wire^>^ get();
 		}
 
 		/// <summary>
@@ -91,7 +91,7 @@ namespace Topologic {
 		/// </summary>
 		/// <param name="edge">Another Edge</param>
 		/// <returns name="Vertex[]">A list of shared Vertices between the two Edges</returns>
-		List<Vertex^>^ SharedVertices(Edge^ edge);
+		IEnumerable<Vertex^>^ SharedVertices(Edge^ edge);
 
 		/// <summary>
 		/// Creates a geometry from Edge.

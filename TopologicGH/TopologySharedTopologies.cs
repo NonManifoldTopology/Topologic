@@ -76,7 +76,7 @@ namespace TopologicGH
 
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
-            List<global::Topologic.Topology> topologies = topology.SharedTopologies(anotherTopology, typeFilter);
+            IEnumerable<global::Topologic.Topology> topologies = topology.SharedTopologies(anotherTopology, typeFilter);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, topologies);

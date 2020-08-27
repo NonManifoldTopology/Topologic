@@ -77,7 +77,7 @@ namespace TopologicGH.Utilities
             //char[] chars = data.ToCharArray();
 
 
-            List<global::Topologic.Topology> adjacentTopologies = global::Topologic.Utilities.TopologyUtility.AdjacentTopologies(topology, parentTopology, typeFilter);
+            IEnumerable<global::Topologic.Topology> adjacentTopologies = global::Topologic.Utilities.TopologyUtility.AdjacentTopologies(topology, parentTopology, typeFilter);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, adjacentTopologies);

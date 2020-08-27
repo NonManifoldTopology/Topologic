@@ -70,8 +70,8 @@ namespace TopologicGH
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
 
-            
-            List<Topologic.Face> faces = cellComplex.NonManifoldFaces;
+
+            IEnumerable<Topologic.Face> faces = cellComplex.NonManifoldFaces;
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, faces);

@@ -47,54 +47,54 @@ namespace Topologic {
 		/// Returns the Faces adjacent to the Face.
 		/// </summary>
 		/// <returns name="Face[]">A list of Faces adjacent to the Face</returns>
-		property List<Face^>^ AdjacentFaces
+		property IEnumerable<Face^>^ AdjacentFaces
 		{
-			List<Face^>^ get();
+			IEnumerable<Face^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Cells incident to the Face.
 		/// </summary>
 		/// <returns name="Cell[]">A list of Cells incident to the Face</returns>
-		property List<Cell^>^ Cells
+		property IEnumerable<Cell^>^ Cells
 		{
-			List<Cell^>^ get();
+			IEnumerable<Cell^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Shells incident to the Face.
 		/// </summary>
 		/// <returns name="Shell[]">A list of Shells incident to the Face</returns>
-		property List<Shell^>^ Shells
+		property IEnumerable<Shell^>^ Shells
 		{
-			List<Shell^>^ get();
+			IEnumerable<Shell^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Vertices constituent to the Face. 
 		/// </summary>
 		/// <returns name="Vertex[]">A list of Vertices constituent to the Face</returns>
-		property List<Vertex^>^ Vertices
+		property IEnumerable<Vertex^>^ Vertices
 		{
-			List<Vertex^>^ get();
+			IEnumerable<Vertex^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Edges constituent to the Face.
 		/// </summary>
 		/// <returns name="Edge[]">A list of Edges constituent to the Face</returns>
-		property List<Edge^>^ Edges
+		property IEnumerable<Edge^>^ Edges
 		{
-			List<Edge^>^ get();
+			IEnumerable<Edge^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Wires constituent to the Face.
 		/// </summary>
 		/// <returns name="Wire[]">A list of Wires constituent to the Face</returns>
-		property List<Wire^>^ Wires
+		property IEnumerable<Wire^>^ Wires
 		{
-			List<Wire^>^ get();
+			IEnumerable<Wire^>^ get();
 		}
 
 		/// <summary>
@@ -116,7 +116,7 @@ namespace Topologic {
 #ifdef TOPOLOGIC_DYNAMO
 		[IsVisibleInDynamoLibrary(false)]
 #endif
-		static Face^ ByNurbsParameters(List<List<Vertex^>^>^ controlPoints, List<List<double>^>^ weights, List<double>^ uKnots, List<double>^ vKnots, bool isRational, bool isUPeriodic, bool isVPeriodic, int uDegree, int vDegree);
+		static Face^ ByNurbsParameters(IEnumerable<IEnumerable<Vertex^>^>^ controlPoints, IEnumerable<IEnumerable<double>^>^ weights, IEnumerable<double>^ uKnots, IEnumerable<double>^ vKnots, bool isRational, bool isUPeriodic, bool isVPeriodic, int uDegree, int vDegree);
 
 		/// <summary>
 		/// Creates a Face by a list of Edges.
@@ -131,14 +131,14 @@ namespace Topologic {
 		/// </summary>
 		/// <param name="face">Another Face</param>
 		/// <returns name="Edge[]">A list of shared Edges</returns>
-		List<Edge^>^ SharedEdges(Face^ face);
+		IEnumerable<Edge^>^ SharedEdges(Face^ face);
 
 		/// <summary>
 		/// Returns the shared Vertices between two Faces.
 		/// </summary>
 		/// <param name="face">Another Face</param>
 		/// <returns name="Vertex[]">A list of shared Vertices</returns>
-		List<Vertex^>^ SharedVertices(Face^ face);
+		IEnumerable<Vertex^>^ SharedVertices(Face^ face);
 
 		/// <summary>
 		/// Returns the external boundary (Wire) of the Face.
@@ -153,9 +153,9 @@ namespace Topologic {
 		/// Returns the internal boundaries (Wires) of the Face.
 		/// </summary>
 		/// <returns name="Wire[]">A list of the internal Wires of the Face</returns>
-		property List<Wire^>^ InternalBoundaries
+		property IEnumerable<Wire^>^ InternalBoundaries
 		{
-			List<Wire^>^ get();
+			IEnumerable<Wire^>^ get();
 		}
 
 		/// <summary>
@@ -163,7 +163,7 @@ namespace Topologic {
 		/// </summary>
 		/// <param name="internalBoundaries">A list of internal Wires</param>
 		/// <returns name="Face">The new Face</returns>
-		Face^ AddInternalBoundaries(List<Wire^>^ internalBoundaries);
+		Face^ AddInternalBoundaries(IEnumerable<Wire^>^ internalBoundaries);
 
 		/// <summary>
 		/// Adds an Aperture design to a Face.

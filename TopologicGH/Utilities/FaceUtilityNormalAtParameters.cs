@@ -78,8 +78,8 @@ namespace TopologicGH
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
 
-            
-            List<double> normal = Topologic.Utilities.FaceUtility.NormalAtParameters(face, u, v);
+
+            IList<double> normal = (IList<double>)Topologic.Utilities.FaceUtility.NormalAtParameters(face, u, v);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetData(0, normal[0]);

@@ -52,7 +52,7 @@ namespace Topologic {
 			}
 		}
 
-		List<double>^ FaceUtility::ParametersAtVertex(Face^ face, Vertex^ vertex)
+		IEnumerable<double>^ FaceUtility::ParametersAtVertex(Face^ face, Vertex^ vertex)
 		{
 			TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
 			double u = 0.0, v = 0.0;
@@ -68,7 +68,7 @@ namespace Topologic {
 			return uv;
 		}
 
-		List<double>^ FaceUtility::NormalAtParameters(Face^ face, double u, double v)
+		IEnumerable<double>^ FaceUtility::NormalAtParameters(Face^ face, double u, double v)
 		{
 			TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
 			gp_Dir normal = TopologicUtilities::FaceUtility::NormalAtParameters(pCoreFace, u, v);
@@ -104,7 +104,7 @@ namespace Topologic {
 			return safe_cast<Face^>(Topology::ByCoreTopology(pTrimmedFace));
 		}
 
-		List<Face^>^ FaceUtility::Triangulate(Face ^ face, double deflection)
+		IEnumerable<Face^>^ FaceUtility::Triangulate(Face ^ face, double deflection)
 		{
 			TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
 			std::list<TopologicCore::Face::Ptr> triangulation;
@@ -119,7 +119,7 @@ namespace Topologic {
 			return faces;
 		}
 
-		List<Shell^>^ FaceUtility::AdjacentShells(Face ^ face, Topology ^ parentTopology)
+		IEnumerable<Shell^>^ FaceUtility::AdjacentShells(Face ^ face, Topology ^ parentTopology)
 		{
 			TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
 			TopologicCore::Topology::Ptr pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
@@ -145,7 +145,7 @@ namespace Topologic {
 			return adjacentShells;
 		}
 
-		List<Cell^>^ FaceUtility::AdjacentCells(Face ^ face, Topology ^ parentTopology)
+		IEnumerable<Cell^>^ FaceUtility::AdjacentCells(Face ^ face, Topology ^ parentTopology)
 		{
 			TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
 			TopologicCore::Topology::Ptr pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());

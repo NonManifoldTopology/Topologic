@@ -69,8 +69,8 @@ namespace TopologicGH
             // We're also going to abort on a zero-length String.
             if (edge1 == null) { return; }
             if (edge2 == null) { return; }
-            
-            List<Topologic.Vertex> vertices = edge1.SharedVertices(edge2);
+
+            IEnumerable<Topologic.Vertex> vertices = edge1.SharedVertices(edge2);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, vertices);
