@@ -1059,16 +1059,15 @@ namespace TopologicEnergy
 
 	Vertex^ EnergyModel::GetCentreVertex(IList<Vertex^>^ vertices)
 	{
-		ICollection<Vertex^>^ vertexList = (ICollection<Vertex^>^) vertices;
 		Autodesk::DesignScript::Geometry::Point^ sumPoint = Autodesk::DesignScript::Geometry::Point::ByCoordinates(0, 0, 0);
 
 		// assume vertices.count > 0
-		if (vertexList->Count < 3)
+		if (vertices->Count < 3)
 		{
 			throw gcnew Exception("Invalid face");
 		}
 
-		for each(Vertex^ v in vertexList)
+		for each(Vertex^ v in vertices)
 		{
 			Autodesk::DesignScript::Geometry::Point^ p =
 				safe_cast<Autodesk::DesignScript::Geometry::Point^>(v->BasicGeometry);
@@ -1078,7 +1077,7 @@ namespace TopologicEnergy
 			delete p;
 		}
 		
-		double scalingFactor = 1.0 / (double)vertexList->Count;
+		double scalingFactor = 1.0 / (double)vertices->Count;
 		Autodesk::DesignScript::Geometry::Geometry^ scaledPoint = sumPoint->Scale(scalingFactor, scalingFactor, scalingFactor);
 		Autodesk::DesignScript::Geometry::Point^ dynamoPoint = safe_cast<Autodesk::DesignScript::Geometry::Point^>(scaledPoint);
 		Vertex^ vertex = safe_cast<Vertex^>(Topologic::Topology::ByGeometry(dynamoPoint, 0.001)); // tolerance does not matter as it's just a vertex
@@ -1198,7 +1197,7 @@ namespace TopologicEnergy
 
 	int EnergyModel::AdjacentCellCount(Face^ buildingFace)
 	{
-		return ((ICollection<Cell^>^)buildingFace->Cells)->Count;
+		return buildingFace->Cells->Count;
 	}
 
 	int EnergyModel::StoryNumber(Cell^ buildingCell, double buildingHeight, IList<double>^ floorLevels)

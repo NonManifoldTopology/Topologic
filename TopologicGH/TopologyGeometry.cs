@@ -92,7 +92,7 @@ namespace TopologicGH
 
         void AddObjectToTree(Object o, List<int> path, ref Grasshopper.DataTree<Object> output)
         {
-            ICollection<Object> innerList = o as ICollection<Object>;
+            IList<Object> innerList = o as IList<Object>;
             if (innerList != null)
             {
                 List<int> newPath = new List<int>(path);

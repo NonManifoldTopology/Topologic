@@ -622,7 +622,7 @@ namespace Topologic
 			// In this case, do the following steps.
 
 			// Get the wires and edges.
-			ICollection<Wire^>^ pWires = (ICollection<Wire^>^)Wires;
+			IList<Wire^>^ pWires = Wires;
 			IList<Edge^>^ pEdges = Edges;
 
 			// If there is only one wire, create a surface and return it.

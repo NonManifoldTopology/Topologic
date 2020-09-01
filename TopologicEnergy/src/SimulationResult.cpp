@@ -251,7 +251,7 @@ namespace TopologicEnergy
 
 	IList<double>^ SimulationResult::Domain::get()
 	{
-		ICollection<double>^ values = (ICollection<double>^)Values;
+		IList<double>^ values = Values;
 
 		if (values->Count == 0)
 		{
