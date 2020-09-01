@@ -39,45 +39,45 @@ namespace Topologic
 		/// Returns the Cells bounded by the Shell.
 		/// </summary>
 		/// <returns name="Cell[]">A list of Cells bounded by the Shell</returns>
-		property IEnumerable<Cell^>^ Cells
+		property IList<Cell^>^ Cells
 		{
-			IEnumerable<Cell^>^ get();
+			IList<Cell^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Faces constituent to the Shell. 
 		/// </summary>
 		/// <returns name="Face[]">A list of the constituent Faces</returns>
-		property IEnumerable<Face^>^ Faces
+		property IList<Face^>^ Faces
 		{
-			IEnumerable<Face^>^ get();
+			IList<Face^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Wires constituent to the Shell.
 		/// </summary>
 		/// <returns name="Wire[]">A list of the constituent Wires</returns>
-		property IEnumerable<Wire^>^ Wires
+		property IList<Wire^>^ Wires
 		{
-			IEnumerable<Wire^>^ get();
+			IList<Wire^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Edges constituent to the Shell.
 		/// </summary>
 		/// <returns name="Edge[]">A list of the constituent Edges</returns>
-		property IEnumerable<Edge^>^ Edges
+		property IList<Edge^>^ Edges
 		{
-			IEnumerable<Edge^>^ get();
+			IList<Edge^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Vertices constituent to the Shell.
 		/// </summary>
 		/// <returns name="Vertex[]">A list of the constituent Vertices</returns>
-		property IEnumerable<Vertex^>^ Vertices
+		property IList<Vertex^>^ Vertices
 		{
-			IEnumerable<Vertex^>^ get();
+			IList<Vertex^>^ get();
 		}
 
 		/// <summary>
@@ -95,9 +95,9 @@ namespace Topologic
 		/// <param name="tolerance">A positive tolerance value</param>
 		/// <returns name="Shell">The created Shell</returns>
 #ifdef TOPOLOGIC_DYNAMO
-		static Shell^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces, [DefaultArgument("0.0001")] double tolerance);
+		static Shell^ ByFaces(System::Collections::Generic::IList<Face^>^ faces, [DefaultArgument("0.0001")] double tolerance);
 #else
-		static Shell^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces, double tolerance);
+		static Shell^ ByFaces(System::Collections::Generic::IList<Face^>^ faces, double tolerance);
 #endif
 
 		/// <summary>

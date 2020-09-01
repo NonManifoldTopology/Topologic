@@ -42,9 +42,9 @@ namespace Topologic
 		/// <param name="tolerance">A positive tolerance value</param>
 		/// <returns name="Cell">The created Cell</returns>
 #ifdef TOPOLOGIC_DYNAMO
-		static Cell^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces, [DefaultArgument("0.0001")] double tolerance);
+		static Cell^ ByFaces(System::Collections::Generic::IList<Face^>^ faces, [DefaultArgument("0.0001")] double tolerance);
 #else
-		static Cell^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces, double tolerance);
+		static Cell^ ByFaces(System::Collections::Generic::IList<Face^>^ faces, double tolerance);
 #endif
 
 		/// <summary>
@@ -58,54 +58,54 @@ namespace Topologic
 		/// Returns the CellComplexes which contain the Cell.
 		/// </summary>
 		/// <returns name="CellComplex[]">A list of CellComplexes containing the Cell</returns>
-		property IEnumerable<CellComplex^>^ CellComplexes
+		property IList<CellComplex^>^ CellComplexes
 		{
-			IEnumerable<CellComplex^>^ get();
+			IList<CellComplex^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Shells constituent to the Cell.
 		/// </summary>
 		/// <returns name="Shell[]">A list of Shells constituent to the Cell</returns>
-		property IEnumerable<Shell^>^ Shells
+		property IList<Shell^>^ Shells
 		{
-			IEnumerable<Shell^>^ get();
+			IList<Shell^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Faces constituent to the Cell.
 		/// </summary>
 		/// <returns name="Face[]">A list of Faces constituent to the Cell</returns>
-		property IEnumerable<Face^>^ Faces
+		property IList<Face^>^ Faces
 		{
-			IEnumerable<Face^>^ get();
+			IList<Face^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Wires constituent to the Cell.
 		/// </summary>
 		/// <returns name="Wire[]">A list of Wires constituent to the Cell</returns>
-		property IEnumerable<Wire^>^ Wires
+		property IList<Wire^>^ Wires
 		{
-			IEnumerable<Wire^>^ get();
+			IList<Wire^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Edges constituent to the Cell.
 		/// </summary>
 		/// <returns name="Edge[]">A list of Edges constituent to the Cell</returns>
-		property IEnumerable<Edge^>^ Edges
+		property IList<Edge^>^ Edges
 		{
-			IEnumerable<Edge^>^ get();
+			IList<Edge^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Vertices constituent to the Cell.
 		/// </summary>
 		/// <returns name="Vertex[]">A list of Vertices constituent to the Cell</returns>
-		property IEnumerable<Vertex^>^ Vertices
+		property IList<Vertex^>^ Vertices
 		{
-			IEnumerable<Vertex^>^ get();
+			IList<Vertex^>^ get();
 		}
 
 		/// <summary>
@@ -113,9 +113,9 @@ namespace Topologic
 		/// </summary>
 		/// <returns name="Cell[]">A list of Cells adjacent to the Cell</returns>
 		/// 
-		property IEnumerable<Cell^>^ AdjacentCells
+		property IList<Cell^>^ AdjacentCells
 		{
-			IEnumerable<Cell^>^ get();
+			IList<Cell^>^ get();
 		}
 
 		/// <summary>
@@ -123,21 +123,21 @@ namespace Topologic
 		/// </summary>
 		/// <param name="cell">Another Cell</param>
 		/// <returns name="Face[]">A list of shared Faces between two Cells</returns>
-		IEnumerable<Face^>^ SharedFaces(Cell^ cell);
+		IList<Face^>^ SharedFaces(Cell^ cell);
 
 		/// <summary>
 		/// Returns the shared Edges between two Cells. 
 		/// </summary>
 		/// <param name="cell">Another Cell</param>
 		/// <returns name="Edge[]">A list of shared Edges between two Cells</returns>
-		IEnumerable<Edge^>^ SharedEdges(Cell^ cell);
+		IList<Edge^>^ SharedEdges(Cell^ cell);
 
 		/// <summary>
 		/// Returns the shared Vertices between two Cells. 
 		/// </summary>
 		/// <param name="cell">Another Cell</param>
 		/// <returns name="Vertex[]">A list of shared Vertices between two Cells</returns>
-		IEnumerable<Vertex^>^ SharedVertices(Cell^ cell);
+		IList<Vertex^>^ SharedVertices(Cell^ cell);
 
 		/// <summary>
 		/// Returns the external boundary (Shell) of the Cell.
@@ -152,9 +152,9 @@ namespace Topologic
 		/// Returns the internal boundaries (Shells) of the Cell.
 		/// </summary>
 		/// <returns name="Shell[]">A list of the internal boundaries (Shells) of the Cell</returns>
-		property IEnumerable<Shell^>^ InternalBoundaries
+		property IList<Shell^>^ InternalBoundaries
 		{
-			IEnumerable<Shell^>^ get();
+			IList<Shell^>^ get();
 		}
 
 		/// <summary>

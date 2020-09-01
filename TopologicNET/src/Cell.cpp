@@ -31,7 +31,7 @@
 
 namespace Topologic
 {
-	Cell^ Cell::ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces, double tolerance)
+	Cell^ Cell::ByFaces(System::Collections::Generic::IList<Face^>^ faces, double tolerance)
 	{
 		std::list<TopologicCore::Face::Ptr> coreFaces;
 		for each(Face^ pFace in faces)
@@ -63,7 +63,7 @@ namespace Topologic
 		}
 	}
 
-	IEnumerable<CellComplex^>^ Cell::CellComplexes::get()
+	IList<CellComplex^>^ Cell::CellComplexes::get()
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::CellComplex::Ptr> coreCellComplexes;
@@ -81,7 +81,7 @@ namespace Topologic
 		return pCellComplexes;
 	}
 
-	IEnumerable<Shell^>^ Cell::Shells::get()
+	IList<Shell^>^ Cell::Shells::get()
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 
@@ -100,7 +100,7 @@ namespace Topologic
 		return pShells;
 	}
 
-	IEnumerable<Face^>^ Cell::Faces::get()
+	IList<Face^>^ Cell::Faces::get()
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 
@@ -119,7 +119,7 @@ namespace Topologic
 		return pFaces;
 	}
 
-	IEnumerable<Wire^>^ Cell::Wires::get()
+	IList<Wire^>^ Cell::Wires::get()
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 
@@ -138,7 +138,7 @@ namespace Topologic
 		return pWires;
 	}
 
-	IEnumerable<Edge^>^ Cell::Edges::get()
+	IList<Edge^>^ Cell::Edges::get()
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 
@@ -157,7 +157,7 @@ namespace Topologic
 		return pEdges;
 	}
 
-	IEnumerable<Vertex^>^ Cell::Vertices::get()
+	IList<Vertex^>^ Cell::Vertices::get()
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 
@@ -176,7 +176,7 @@ namespace Topologic
 		return pVertices;
 	}
 
-	IEnumerable<Cell^>^ Cell::AdjacentCells::get()
+	IList<Cell^>^ Cell::AdjacentCells::get()
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Cell::Ptr> coreAdjacentCells;
@@ -200,7 +200,7 @@ namespace Topologic
 		return pAdjacentCells;
 	}
 
-	IEnumerable<Face^>^ Cell::SharedFaces(Cell^ cell)
+	IList<Face^>^ Cell::SharedFaces(Cell^ cell)
 	{
 		TopologicCore::Cell::Ptr pCoreCell1 = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 		TopologicCore::Cell::Ptr pCoreCell2 = TopologicCore::Topology::Downcast<TopologicCore::Cell>(cell->GetCoreTopologicalQuery());
@@ -220,7 +220,7 @@ namespace Topologic
 		return pSharedFaces;
 	}
 
-	IEnumerable<Edge^>^ Cell::SharedEdges(Cell^ cell)
+	IList<Edge^>^ Cell::SharedEdges(Cell^ cell)
 	{
 		TopologicCore::Cell::Ptr pCoreCell1 = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 		TopologicCore::Cell::Ptr pCoreCell2 = TopologicCore::Topology::Downcast<TopologicCore::Cell>(cell->GetCoreTopologicalQuery());
@@ -240,7 +240,7 @@ namespace Topologic
 		return pSharedEdges;
 	}
 
-	IEnumerable<Vertex^>^ Cell::SharedVertices(Cell^ cell)
+	IList<Vertex^>^ Cell::SharedVertices(Cell^ cell)
 	{
 		TopologicCore::Cell::Ptr pCoreCell1 = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 		TopologicCore::Cell::Ptr pCoreCell2 = TopologicCore::Topology::Downcast<TopologicCore::Cell>(cell->GetCoreTopologicalQuery());
@@ -266,7 +266,7 @@ namespace Topologic
 		return gcnew Shell(pCoreCell->ExternalBoundary());
 	}
 
-	IEnumerable<Shell^>^ Cell::InternalBoundaries::get()
+	IList<Shell^>^ Cell::InternalBoundaries::get()
 	{
 		TopologicCore::Cell::Ptr pCoreCell = TopologicCore::Topology::Downcast<TopologicCore::Cell>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Shell::Ptr> coreInnerShells;
@@ -289,7 +289,7 @@ namespace Topologic
 #ifdef TOPOLOGIC_DYNAMO
 		List<Autodesk::DesignScript::Geometry::Surface^>^ pDynamoSurfaces = gcnew List<Autodesk::DesignScript::Geometry::Surface^>();
 		List<Object^>^ pDynamoGeometries = gcnew List<Object^>();
-		IEnumerable<Face^>^ pFaces = Faces;
+		IList<Face^>^ pFaces = Faces;
 		bool hasFallbackVisualization = false;
 		for each(Face^ pFace in pFaces)
 		{

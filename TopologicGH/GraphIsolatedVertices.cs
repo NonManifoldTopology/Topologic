@@ -71,7 +71,7 @@ namespace TopologicGH
             //char[] chars = data.ToCharArray();
 
 
-            IEnumerable<Topologic.Vertex> isolatedVertices = graph.IsolatedVertices;
+            IList<Topologic.Vertex> isolatedVertices = graph.IsolatedVertices;
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, isolatedVertices);

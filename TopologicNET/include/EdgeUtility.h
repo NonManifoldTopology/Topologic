@@ -35,7 +35,7 @@ namespace Topologic {
 			/// </summary>
 			/// <param name="vertices">A set of Vertices</param>
 			/// <returns>The created Edge</returns>
-			static Edge^ ByVertices(System::Collections::Generic::IEnumerable<Vertex^>^ vertices);
+			static Edge^ ByVertices(System::Collections::Generic::IList<Vertex^>^ vertices);
 
 			/// <summary>
 			/// Creates an Edge by a circle.
@@ -92,9 +92,9 @@ namespace Topologic {
 			[IsVisibleInDynamoLibrary(false)]
 #endif	
 			static Edge^ ByNurbsCurve(
-				IEnumerable<Vertex^>^ controlPoints, 
-				IEnumerable<double>^ knots,
-				IEnumerable<double>^ weights,
+				IList<Vertex^>^ controlPoints, 
+				IList<double>^ knots,
+				IList<double>^ weights,
 				int degree,
 				bool isPeriodic,
 				bool isRational);
@@ -121,7 +121,7 @@ namespace Topologic {
 			/// <param name="edge">An Edge</param>
 			/// <param name="parentTopology">A parent Topology</param>
 			/// <returns name="Wire[]">A list of Wires adjacent to the input edge</returns>
-			static IEnumerable<Wire^>^ AdjacentWires(Edge^ edge, Topology^ parentTopology);
+			static IList<Wire^>^ AdjacentWires(Edge^ edge, Topology^ parentTopology);
 
 		public protected:
 			EdgeUtility() {}

@@ -139,7 +139,7 @@ namespace Topologic {
 			/// <param name="parentTopology">A parent Topology</param>
 			/// <param name="typeFilter">The type of the context Topology</param>
 			/// <returns>A list of Topologies adjacent to the input Topology</returns>
-			static IEnumerable<Topology^>^ AdjacentTopologies(Topology^ topology, Topology^ parentTopology, int typeFilter);
+			static IList<Topology^>^ AdjacentTopologies(Topology^ topology, Topology^ parentTopology, int typeFilter);
 		public protected:
 			TopologyUtility() {}
 

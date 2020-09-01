@@ -25,7 +25,7 @@
 
 namespace Topologic
 {
-	IEnumerable<Cell^>^ Shell::Cells::get()
+	IList<Cell^>^ Shell::Cells::get()
 	{
 		TopologicCore::Shell::Ptr pCoreShell = TopologicCore::Topology::Downcast<TopologicCore::Shell>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Cell::Ptr> coreCells;
@@ -43,7 +43,7 @@ namespace Topologic
 		return pCells;
 	}
 
-	IEnumerable<Face^>^ Shell::Faces::get()
+	IList<Face^>^ Shell::Faces::get()
 	{
 		TopologicCore::Shell::Ptr pCoreShell = TopologicCore::Topology::Downcast<TopologicCore::Shell>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Face::Ptr> coreFaces;
@@ -61,7 +61,7 @@ namespace Topologic
 		return pFaces;
 	}
 
-	IEnumerable<Wire^>^ Shell::Wires::get()
+	IList<Wire^>^ Shell::Wires::get()
 	{
 		TopologicCore::Shell::Ptr pCoreShell = TopologicCore::Topology::Downcast<TopologicCore::Shell>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Wire::Ptr> coreWires;
@@ -79,7 +79,7 @@ namespace Topologic
 		return pWires;
 	}
 
-	IEnumerable<Edge^>^ Shell::Edges::get()
+	IList<Edge^>^ Shell::Edges::get()
 	{
 		TopologicCore::Shell::Ptr pCoreShell = TopologicCore::Topology::Downcast<TopologicCore::Shell>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Edge::Ptr> coreEdges;
@@ -97,7 +97,7 @@ namespace Topologic
 		return pEdges;
 	}
 
-	IEnumerable<Vertex^>^ Shell::Vertices::get()
+	IList<Vertex^>^ Shell::Vertices::get()
 	{
 		TopologicCore::Shell::Ptr pCoreShell = TopologicCore::Topology::Downcast<TopologicCore::Shell>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Vertex::Ptr> coreVertices;
@@ -115,7 +115,7 @@ namespace Topologic
 		return pVertices;
 	}
 
-	Shell^ Shell::ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces, double tolerance)
+	Shell^ Shell::ByFaces(System::Collections::Generic::IList<Face^>^ faces, double tolerance)
 	{
 		std::list<TopologicCore::Face::Ptr> coreFaces;
 		for each(Face^ pFace in faces)
@@ -145,7 +145,7 @@ namespace Topologic
 	{
 #ifdef TOPOLOGIC_DYNAMO
 		List<Autodesk::DesignScript::Geometry::Surface^>^ pDynamoSurfaces = gcnew List<Autodesk::DesignScript::Geometry::Surface^>();
-		IEnumerable<Face^>^ pFaces = Faces;
+		IList<Face^>^ pFaces = Faces;
 		for each(Face^ pFace in pFaces)
 		{
 			pDynamoSurfaces->Add(pFace->Surface());

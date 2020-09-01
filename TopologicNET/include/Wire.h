@@ -38,33 +38,33 @@ namespace Topologic {
 		/// <param name="edges">The set of Edges</param>
 		/// <exception cref="ArgumentException">Thrown if any of the arguments is not a Topologic Edge</exception>
 		/// <returns name="Wire">The created Wire</returns>
-		static Wire^ ByEdges(System::Collections::Generic::IEnumerable<Edge^>^ edges);
+		static Wire^ ByEdges(System::Collections::Generic::IList<Edge^>^ edges);
 
 		/// <summary>
 		/// Returns the Edges constituent to the Wire. NOTE: This method will automatically identify its loop order property.
 		/// </summary>
 		/// <returns name="Edge[]">A list of Edges constituent to the Wire</returns>
-		property IEnumerable<Edge^>^ Edges
+		property IList<Edge^>^ Edges
 		{
-			IEnumerable<Edge^>^ get();
+			IList<Edge^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Faces containing the Wire.
 		/// </summary>
 		/// <returns name="Face[]">A list of Faces containing the Wire</returns>
-		property IEnumerable<Face^>^ Faces
+		property IList<Face^>^ Faces
 		{
-			IEnumerable<Face^>^ get();
+			IList<Face^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Vertices constituent to the Wire. NOTE: This method will automatically identify its loop order property.
 		/// </summary>
 		/// <returns name="Vertex[]">A list of Vertices constituent to the Wire</returns>
-		property IEnumerable<Vertex^>^ Vertices
+		property IList<Vertex^>^ Vertices
 		{
-			IEnumerable<Vertex^>^ get();
+			IList<Vertex^>^ get();
 		}
 
 		/// <summary>

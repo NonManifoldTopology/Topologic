@@ -71,7 +71,7 @@ namespace TopologicGH
             //char[] chars = data.ToCharArray();
 
 
-            IEnumerable<Topologic.Face> faces = cluster.Faces;
+            IList<Topologic.Face> faces = cluster.Faces;
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, faces);

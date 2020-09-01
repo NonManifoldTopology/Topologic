@@ -54,7 +54,7 @@ namespace TopologicEnergy
 		return simulation;
 	}
 
-	EnergySimulation::EnergySimulation(IEnumerable<Topologic::Cell^>^ cells, System::String^ oswPath, OpenStudio::Model^ osModel, OpenStudio::SpaceVector^ osSpaces)
+	EnergySimulation::EnergySimulation(IList<Topologic::Cell^>^ cells, System::String^ oswPath, OpenStudio::Model^ osModel, OpenStudio::SpaceVector^ osSpaces)
 		: m_osModel(gcnew OpenStudio::Model(osModel))
 		, m_osSpaces(osSpaces)
 	{

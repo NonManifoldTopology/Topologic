@@ -41,7 +41,7 @@ namespace Topologic
 		/// </summary>
 		/// <param name="topologies">A set of Topologies</param>
 		/// <returns name="Cluster">The created Cluster</returns>
-		static Cluster^ ByTopologies(System::Collections::Generic::IEnumerable<Topology^>^ topologies);
+		static Cluster^ ByTopologies(System::Collections::Generic::IList<Topology^>^ topologies);
 
 		/// <summary>
 		/// Adds Topology to a Cluster and returns the resulting Topology.
@@ -76,63 +76,63 @@ namespace Topologic
 		/// Returns the Shells constituent to the Cluster.
 		/// </summary>
 		/// <returns name="Shell[]">A list of Shells constituent to the Cluster</returns>
-		property IEnumerable<Shell^>^ Shells
+		property IList<Shell^>^ Shells
 		{
-			IEnumerable<Shell^>^ get();
+			IList<Shell^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Faces constituent to the Cluster.
 		/// </summary>
 		/// <returns name="Face[]">A list of Faces constituent to the Cluster</returns>
-		property IEnumerable<Face^>^ Faces
+		property IList<Face^>^ Faces
 		{
-			IEnumerable<Face^>^ get();
+			IList<Face^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Wires constituent to the Cluster.
 		/// </summary>
 		/// <returns name="Wire[]">A list of Wires constituent to the Cluster</returns>
-		property IEnumerable<Wire^>^ Wires
+		property IList<Wire^>^ Wires
 		{
-			IEnumerable<Wire^>^ get();
+			IList<Wire^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Edges constituent to the Cluster.
 		/// </summary>
 		/// <returns name="Edge[]">A list of Edges constituent to the Cluster</returns>
-		property IEnumerable<Edge^>^ Edges
+		property IList<Edge^>^ Edges
 		{
-			IEnumerable<Edge^>^ get();
+			IList<Edge^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Vertices constituent to the Cluster.
 		/// </summary>
 		/// <returns name="Vertex[]">A list of Vertices constituent to the Cluster</returns>
-		property IEnumerable<Vertex^>^ Vertices
+		property IList<Vertex^>^ Vertices
 		{
-			IEnumerable<Vertex^>^ get();
+			IList<Vertex^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Cells constituent to the Cluster.
 		/// </summary>
 		/// <returns name="Cell[]">A list of Cells constituent to the Cluster</returns>
-		property IEnumerable<Cell^>^ Cells
+		property IList<Cell^>^ Cells
 		{
-			IEnumerable<Cell^>^ get();
+			IList<Cell^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the CellComplexes constituent to the Cluster.
 		/// </summary>
 		/// <returns name="CellComplex[]">A list of CellComplexes constituent to the Cluster</returns>
-		property IEnumerable<CellComplex^>^ CellComplexes
+		property IList<CellComplex^>^ CellComplexes
 		{
-			IEnumerable<CellComplex^>^ get();
+			IList<CellComplex^>^ get();
 		}
 
 		/// <summary>

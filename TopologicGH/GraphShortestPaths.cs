@@ -94,7 +94,7 @@ namespace TopologicGH
             {
                 nullableTimeLimitInSeconds = timeLimitInSeconds;
             }
-            IEnumerable<Topologic.Wire> shortestPaths = graph.ShortestPaths(startVertex, endVertex, vertexKey, edgeKey, nullableTimeLimitInSeconds);
+            IList<Topologic.Wire> shortestPaths = graph.ShortestPaths(startVertex, endVertex, vertexKey, edgeKey, nullableTimeLimitInSeconds);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, shortestPaths);

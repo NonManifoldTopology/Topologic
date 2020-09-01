@@ -71,7 +71,7 @@ namespace TopologicGH
             //char[] chars = data.ToCharArray();
 
 
-            IEnumerable<Topologic.CellComplex> cellComplexes = cluster.CellComplexes;
+            IList<Topologic.CellComplex> cellComplexes = cluster.CellComplexes;
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, cellComplexes);

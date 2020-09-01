@@ -40,14 +40,14 @@ namespace Topologic
 		/// </summary>
 		/// <param name="cells">A set of Cells</param>
 		/// <returns name="CellComplex">The created CellComplex</returns>
-		static CellComplex^ ByCells(System::Collections::Generic::IEnumerable<Cell^>^ cells);
+		static CellComplex^ ByCells(System::Collections::Generic::IList<Cell^>^ cells);
 
 		/// <summary>
 		/// Creates a CellComplex from the space enclosed by a set of Faces. Parts of the Faces which do not enclose any space will be discarded.
 		/// </summary>
 		/// <param name="faces">A set of Faces</param>
 		/// <returns name="CellComplex">The created CellComplex</returns> 
-		static CellComplex^ ByFaces(System::Collections::Generic::IEnumerable<Face^>^ faces,
+		static CellComplex^ ByFaces(System::Collections::Generic::IList<Face^>^ faces,
 #ifdef TOPOLOGIC_DYNAMO
 			[Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")]
 #endif
@@ -57,54 +57,54 @@ namespace Topologic
 		/// Returns the Cells constituent to the CellComplex.
 		/// </summary>
 		/// <returns name="Cell[]">A list of Cells constituent to the CellComplex</returns>
-		property IEnumerable<Cell^>^ Cells
+		property IList<Cell^>^ Cells
 		{
-			IEnumerable<Cell^>^ get();
+			IList<Cell^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Faces constituent to the CellComplex.
 		/// </summary>
 		/// <returns name="Face[]">A list of Faces constituent to the CellComplex</returns>
-		property IEnumerable<Face^>^ Faces
+		property IList<Face^>^ Faces
 		{
-			IEnumerable<Face^>^ get();
+			IList<Face^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Shells constituent to the CellComplex.
 		/// </summary>
 		/// <returns name="Shell[]">A list of Shells constituent to the CellComplex</returns>
-		property IEnumerable<Shell^>^ Shells
+		property IList<Shell^>^ Shells
 		{
-			IEnumerable<Shell^>^ get();
+			IList<Shell^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Wires constituent to the CellComplex.
 		/// </summary>
 		/// <returns name="Wire[]">A list of Wires constituent to the CellComplex</returns>
-		property IEnumerable<Wire^>^ Wires
+		property IList<Wire^>^ Wires
 		{
-			IEnumerable<Wire^>^ get();
+			IList<Wire^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Edges constituent to the CellComplex.
 		/// </summary>
 		/// <returns name="Edge[]">A list of Edges constituent to the CellComplex</returns>
-		property IEnumerable<Edge^>^ Edges
+		property IList<Edge^>^ Edges
 		{
-			IEnumerable<Edge^>^ get();
+			IList<Edge^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the Vertices constituent to the CellComplex.
 		/// </summary>
 		/// <returns name="Vertex[]">A list of Vertices constituent to the CellComplex</returns>
-		property IEnumerable<Vertex^>^ Vertices
+		property IList<Vertex^>^ Vertices
 		{
-			IEnumerable<Vertex^>^ get();
+			IList<Vertex^>^ get();
 		}
 
 
@@ -121,18 +121,18 @@ namespace Topologic
 		/// Returns the internal boundaries (Faces) of the CellComplex.
 		/// </summary>
 		/// <returns name="Face[]">A list of the internal boundaries (Faces) of the CellComplex</returns>
-		property IEnumerable<Face^>^ InternalBoundaries
+		property IList<Face^>^ InternalBoundaries
 		{
-			IEnumerable<Face^>^ get();
+			IList<Face^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the non-manifold Faces of the CellComplex.
 		/// </summary>
 		/// <returns name="Face[]">A list of the non-manifold Faces of the CellComplex.</returns>
-		property IEnumerable<Face^>^ NonManifoldFaces
+		property IList<Face^>^ NonManifoldFaces
 		{
-			IEnumerable<Face^>^ get();
+			IList<Face^>^ get();
 		}
 
 		/// <summary>

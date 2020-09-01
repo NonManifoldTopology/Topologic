@@ -74,7 +74,7 @@ namespace TopologicGH
             //char[] chars = data.ToCharArray();
 
 
-            IEnumerable<Topologic.Topology> filteredTopologies = Topologic.Topology.Filter(topologies, typeFilter);
+            IList<Topologic.Topology> filteredTopologies = Topologic.Topology.Filter(topologies, typeFilter);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, filteredTopologies);

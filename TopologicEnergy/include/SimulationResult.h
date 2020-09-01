@@ -47,7 +47,7 @@ namespace TopologicEnergy
 		/// <param name="energyModel">An EnergyModel</param>
 		/// <param name="colors">A list of colors</param>
 		/// <returns name="GeometryColor[]">A list of colored geometries</returns>
-		static IEnumerable<Modifiers::GeometryColor^>^ Display(EnergyModel^ energyModel, IEnumerable<DSCore::Color^>^ colors);
+		static IList<Modifiers::GeometryColor^>^ Display(EnergyModel^ energyModel, IList<DSCore::Color^>^ colors);
 
 		/// <summary>
 		/// Outputs the color range of the data. The first element is the colors, the second element is the normalised position within the spectrum. The colors are sorted by the values.
@@ -56,7 +56,7 @@ namespace TopologicEnergy
 		/// <param name="maxDomain">An optional maximum domain</param>
 		/// <param name="count">The number of sampled colors</param>
 		/// <returns name="int[][]">The color range</returns>
-		IEnumerable<IEnumerable<int>^>^ LegendRGB(
+		IList<IList<int>^>^ LegendRGB(
 			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Nullable<double> minDomain,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Nullable<double> maxDomain,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("10")] int count);
@@ -68,7 +68,7 @@ namespace TopologicEnergy
 		/// <param name="maxDomain">An optional maximum domain</param>
 		/// <param name="count">The number of sampled values</param>
 		/// <returns name="double[]">The sampled values</returns>
-		IEnumerable<double>^ LegendValues(
+		IList<double>^ LegendValues(
 			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Nullable<double> minDomain,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Nullable<double> maxDomain,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("10")] int count);
@@ -76,25 +76,25 @@ namespace TopologicEnergy
 		/// <summary>
 		/// Returns the names of the data.
 		/// </summary>
-		property IEnumerable<String^>^ Names
+		property IList<String^>^ Names
 		{
-			IEnumerable<String^>^ get();
+			IList<String^>^ get();
 		}
 
 		/// <summary>
 		/// Returns the values of the data.
 		/// </summary>
-		property IEnumerable<double>^ Values
+		property IList<double>^ Values
 		{
-			IEnumerable<double>^ get();
+			IList<double>^ get();
 		}
 
 		/// <summary>
 		/// Returns the domain of the data, represented by the minimum and maximum values.
 		/// </summary>
-		property IEnumerable<double>^ Domain
+		property IList<double>^ Domain
 		{
-			IEnumerable<double>^ get();
+			IList<double>^ get();
 		}
 
 		/// <summary>
@@ -103,7 +103,7 @@ namespace TopologicEnergy
 		/// <param name="minDomain">The</param>
 		/// <param name="maxDomain"></param>
 		/// <returns name="int[][]"></returns>
-		IEnumerable<IEnumerable<int>^>^ RGB(
+		IList<IList<int>^>^ RGB(
 			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Nullable<double> minDomain, 
 			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Nullable<double> maxDomain);
 
@@ -114,7 +114,7 @@ namespace TopologicEnergy
 		SimulationResult(Dictionary<String^, Dictionary<String^, Object^>^>^ data);
 		~SimulationResult();
 
-		IEnumerable<double>^ LegendRatios(
+		IList<double>^ LegendRatios(
 			Nullable<double> minDomain,
 			Nullable<double> maxDomain,
 			int count,

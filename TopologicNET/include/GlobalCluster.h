@@ -33,7 +33,7 @@ namespace Topologic
 		/// </summary>
 		/// <param name="refresh"></param>
 		/// <returns></returns>
-		static IEnumerable<Topology^>^ SubTopologies(bool refresh);
+		static IList<Topology^>^ SubTopologies(bool refresh);
 
 	protected:
 		GlobalCluster() {}

@@ -20,7 +20,7 @@
 
 namespace Topologic
 {
-	IEnumerable<Topology^>^ GlobalCluster::SubTopologies(bool refresh)
+	IList<Topology^>^ GlobalCluster::SubTopologies(bool refresh)
 	{
 		if (!refresh)
 			return nullptr;

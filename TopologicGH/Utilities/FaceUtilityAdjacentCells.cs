@@ -73,7 +73,7 @@ namespace TopologicGH.Utilities
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
 
-            IEnumerable<global::Topologic.Cell> adjacentCells = global::Topologic.Utilities.FaceUtility.AdjacentCells(face, parentTopology);
+            IList<global::Topologic.Cell> adjacentCells = global::Topologic.Utilities.FaceUtility.AdjacentCells(face, parentTopology);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, adjacentCells);

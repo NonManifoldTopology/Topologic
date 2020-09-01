@@ -36,7 +36,7 @@ namespace Topologic {
 			/// </summary>
 			/// <param name="wires">A set of Wires</param>
 			/// <returns name="Cell">The created Cell</returns>
-			static Cell^ ByLoft(System::Collections::Generic::IEnumerable<Wire^>^ wires);
+			static Cell^ ByLoft(System::Collections::Generic::IList<Wire^>^ wires);
 
 			/// <summary>
 			/// Creates a Cell by a Cuboid.
@@ -120,7 +120,7 @@ namespace Topologic {
 #ifdef TOPOLOGIC_DYNAMO
 			[IsVisibleInDynamoLibrary(false)]
 #endif
-			static IEnumerable<double>^ GetMinMax(Cell^ cell);
+			static IList<double>^ GetMinMax(Cell^ cell);
 
 			/// <summary>
 			/// Returns a Vertex inside the Cell.

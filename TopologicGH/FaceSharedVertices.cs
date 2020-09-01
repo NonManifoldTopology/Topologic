@@ -75,7 +75,7 @@ namespace TopologicGH
             //char[] chars = data.ToCharArray();
 
 
-            IEnumerable<Topologic.Vertex> sharedVertices = face1.SharedVertices(face2);
+            IList<Topologic.Vertex> sharedVertices = face1.SharedVertices(face2);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, sharedVertices);

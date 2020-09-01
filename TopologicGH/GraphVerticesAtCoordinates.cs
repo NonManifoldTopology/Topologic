@@ -83,7 +83,7 @@ namespace TopologicGH
             //char[] chars = data.ToCharArray();
 
 
-            IEnumerable<Topologic.Vertex> vertices = graph.VerticesAtCoordinates(x, y, z, tolerance);
+            IList<Topologic.Vertex> vertices = graph.VerticesAtCoordinates(x, y, z, tolerance);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, vertices);

@@ -25,7 +25,7 @@
 namespace Topologic {
 	namespace Utilities {
 
-		Shell^ ShellUtility::ByLoft(System::Collections::Generic::IEnumerable<Wire^>^ wires)
+		Shell^ ShellUtility::ByLoft(System::Collections::Generic::IList<Wire^>^ wires)
 		{
 			std::list<TopologicCore::Wire::Ptr> coreWires;
 			for each(Wire^ pWire in wires)

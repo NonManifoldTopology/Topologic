@@ -28,7 +28,7 @@
 
 namespace Topologic
 {
-	Cluster^ Cluster::ByTopologies(System::Collections::Generic::IEnumerable<Topology^>^ topologies)
+	Cluster^ Cluster::ByTopologies(System::Collections::Generic::IList<Topology^>^ topologies)
 	{
 		std::list<std::shared_ptr<TopologicCore::Topology>> coreTopologies;
 		for each(Topology^ topology in topologies)
@@ -126,7 +126,7 @@ namespace Topologic
 	}
 
 
-	IEnumerable<Shell^>^ Cluster::Shells::get()
+	IList<Shell^>^ Cluster::Shells::get()
 	{
 		TopologicCore::Cluster::Ptr pCoreCluster = TopologicCore::Topology::Downcast<TopologicCore::Cluster>(GetCoreTopologicalQuery());
 
@@ -145,7 +145,7 @@ namespace Topologic
 		return pShells;
 	}
 
-	IEnumerable<Face^>^ Cluster::Faces::get()
+	IList<Face^>^ Cluster::Faces::get()
 	{
 		TopologicCore::Cluster::Ptr pCoreCluster = TopologicCore::Topology::Downcast<TopologicCore::Cluster>(GetCoreTopologicalQuery());
 
@@ -164,7 +164,7 @@ namespace Topologic
 		return pFaces;
 	}
 
-	IEnumerable<Wire^>^ Cluster::Wires::get()
+	IList<Wire^>^ Cluster::Wires::get()
 	{
 		TopologicCore::Cluster::Ptr pCoreCluster = TopologicCore::Topology::Downcast<TopologicCore::Cluster>(GetCoreTopologicalQuery());
 
@@ -183,7 +183,7 @@ namespace Topologic
 		return pWires;
 	}
 
-	IEnumerable<Edge^>^ Cluster::Edges::get()
+	IList<Edge^>^ Cluster::Edges::get()
 	{
 		TopologicCore::Cluster::Ptr pCoreCluster = TopologicCore::Topology::Downcast<TopologicCore::Cluster>(GetCoreTopologicalQuery());
 
@@ -202,7 +202,7 @@ namespace Topologic
 		return pEdges;
 	}
 
-	IEnumerable<Vertex^>^ Cluster::Vertices::get()
+	IList<Vertex^>^ Cluster::Vertices::get()
 	{
 		TopologicCore::Cluster::Ptr pCoreCluster = TopologicCore::Topology::Downcast<TopologicCore::Cluster>(GetCoreTopologicalQuery());
 
@@ -221,7 +221,7 @@ namespace Topologic
 		return pVertices;
 	}
 
-	IEnumerable<Cell^>^ Cluster::Cells::get()
+	IList<Cell^>^ Cluster::Cells::get()
 	{
 		TopologicCore::Cluster::Ptr pCoreCluster = TopologicCore::Topology::Downcast<TopologicCore::Cluster>(GetCoreTopologicalQuery());
 
@@ -240,7 +240,7 @@ namespace Topologic
 		return pCells;
 	}
 
-	IEnumerable<CellComplex^>^ Cluster::CellComplexes::get()
+	IList<CellComplex^>^ Cluster::CellComplexes::get()
 	{
 		TopologicCore::Cluster::Ptr pCoreCluster = TopologicCore::Topology::Downcast<TopologicCore::Cluster>(GetCoreTopologicalQuery());
 

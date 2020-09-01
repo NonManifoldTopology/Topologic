@@ -32,7 +32,7 @@ namespace Topologic {
 			/// <param name="wire">A Wire</param>
 			/// <param name="parentTopology">A parent Topology</param>
 			/// <returns name="Shell[]">A list of Shells adjacent to the input Wire</returns>
-			static IEnumerable<Shell^>^ AdjacentShells(Wire^ wire, Topology^ parentTopology);
+			static IList<Shell^>^ AdjacentShells(Wire^ wire, Topology^ parentTopology);
 
 			/// <summary>
 			/// Returns a list of Cells that are the adjacent to the input Wire.
@@ -40,7 +40,7 @@ namespace Topologic {
 			/// <param name="wire">A Wire</param>
 			/// <param name="parentTopology">A parent Topology</param>
 			/// <returns name="Cell[]">A list of Cells adjacent to the input Wire</returns>
-			static IEnumerable<Cell^>^ AdjacentCells(Wire^ wire, Topology^ parentTopology);
+			static IList<Cell^>^ AdjacentCells(Wire^ wire, Topology^ parentTopology);
 
 			/// <summary>
 			/// Remove collinear edges in a Wire.

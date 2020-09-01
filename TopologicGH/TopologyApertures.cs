@@ -71,7 +71,7 @@ namespace TopologicGH
             //char[] chars = data.ToCharArray();
 
 
-            IEnumerable<Topologic.Aperture> apertures = topology.Apertures;
+            IList<Topologic.Aperture> apertures = topology.Apertures;
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, apertures);

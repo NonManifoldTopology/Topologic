@@ -182,7 +182,7 @@ namespace TopologicGH
 
         private List<Object> ToBreps(CellComplex cellComplex, double tolerance)
         {
-            IEnumerable<Cell> cells = cellComplex.Cells;
+            IList<Cell> cells = cellComplex.Cells;
             List<Object> ghBreps = new List<Object>();
             foreach (Cell cell in cells)
             {
@@ -195,7 +195,7 @@ namespace TopologicGH
 
         private List<Object> ToGeometries(Topology topology, double tolerance)
         {
-            IEnumerable<Topology> subTopologies = topology.SubTopologies;
+            IList<Topology> subTopologies = topology.SubTopologies;
             List<Object> ghGeometries = new List<Object>();
             foreach(Topology subTopology in subTopologies)
             {
@@ -216,7 +216,7 @@ namespace TopologicGH
 
         private List<Object> ToBrep(Topology topology, double tolerance)
         {
-            IEnumerable<Face> faces = topology.Faces;
+            IList<Face> faces = topology.Faces;
             List<Brep> ghBrepSurfaces = new List<Brep>();
             foreach(Face face in faces)
             {
@@ -571,7 +571,7 @@ namespace TopologicGH
 
             List<GeometryBase> ghGeometryBases = new List<GeometryBase>();
 
-            IEnumerable<Edge> outerEdges = face.ExternalBoundary.Edges;
+            IList<Edge> outerEdges = face.ExternalBoundary.Edges;
             List<Curve> ghCurves = new List<Curve>();
             foreach (Edge edge in outerEdges)
             {
@@ -604,7 +604,7 @@ namespace TopologicGH
                 return null;
             }
 
-            IEnumerable<Wire> internalBoundaries = face.InternalBoundaries;
+            IList<Wire> internalBoundaries = face.InternalBoundaries;
             if(((List<Wire>)internalBoundaries).Count == 0)
             {
                 return ghBrep2;
@@ -616,7 +616,7 @@ namespace TopologicGH
             List<Curve> ghInternalCurves = new List<Curve>();
             foreach(Wire internalBoundary in internalBoundaries)
             {
-                IEnumerable<Object> ghCurvesFromWireAsObjects = ToCurves(internalBoundary);
+                IList<Object> ghCurvesFromWireAsObjects = ToCurves(internalBoundary);
                 foreach(Object ghCurveFromWireAsObject in ghCurvesFromWireAsObjects)
                 {
                     Curve ghCurveFromWire = ghCurveFromWireAsObject as Curve;
@@ -662,7 +662,7 @@ namespace TopologicGH
 
         private List<Object> ToCurves(Wire wire)
         {
-            IEnumerable<Edge> edges = wire.Edges;
+            IList<Edge> edges = wire.Edges;
             List<Curve> ghOriginalCurves = new List<Curve>();
             foreach (Edge edge in edges)
             {
@@ -675,7 +675,7 @@ namespace TopologicGH
                 return null;
             }
 
-            IEnumerable<Curve> ghFinalCurves = Curve.JoinCurves(ghOriginalCurves).ToList();
+            IList<Curve> ghFinalCurves = Curve.JoinCurves(ghOriginalCurves).ToList();
 
             List<Object> ghFinalCurvesAsObjects = new List<object>();
             foreach (Curve ghFinalCurve in ghFinalCurves)

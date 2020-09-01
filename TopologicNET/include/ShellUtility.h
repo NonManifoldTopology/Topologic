@@ -36,7 +36,7 @@ namespace Topologic {
 			/// </summary>
 			/// <param name="wires">A set of Wires</param>
 			/// <returns name="Shell">The created Shell</returns>
-			static Shell^ ByLoft(System::Collections::Generic::IEnumerable<Wire^>^ wires);
+			static Shell^ ByLoft(System::Collections::Generic::IList<Wire^>^ wires);
 
 		public protected:
 			ShellUtility() {}

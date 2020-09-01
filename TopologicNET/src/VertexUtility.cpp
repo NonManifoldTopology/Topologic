@@ -21,7 +21,7 @@
 
 namespace Topologic {
 	namespace Utilities {
-		IEnumerable<Edge^>^ VertexUtility::AdjacentEdges(Vertex ^ vertex, Topology ^ parentTopology)
+		IList<Edge^>^ VertexUtility::AdjacentEdges(Vertex ^ vertex, Topology ^ parentTopology)
 		{
 			TopologicCore::Vertex::Ptr pCoreVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex->GetCoreTopologicalQuery());
 			TopologicCore::Topology::Ptr pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());

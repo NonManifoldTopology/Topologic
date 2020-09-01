@@ -73,7 +73,7 @@ namespace TopologicGH.Utilities
             // Convert the String to a character array.
             //char[] chars = data.ToCharArray();
 
-            IEnumerable<global::Topologic.Shell> adjacentShells = global::Topologic.Utilities.WireUtility.AdjacentShells(wire, parentTopology);
+            IList<global::Topologic.Shell> adjacentShells = global::Topologic.Utilities.WireUtility.AdjacentShells(wire, parentTopology);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, adjacentShells);

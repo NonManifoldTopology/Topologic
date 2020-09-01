@@ -70,7 +70,7 @@ namespace TopologicGH
             if (edge1 == null) { return; }
             if (edge2 == null) { return; }
 
-            IEnumerable<Topologic.Vertex> vertices = edge1.SharedVertices(edge2);
+            IList<Topologic.Vertex> vertices = edge1.SharedVertices(edge2);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, vertices);

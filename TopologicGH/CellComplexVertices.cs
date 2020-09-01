@@ -71,7 +71,7 @@ namespace TopologicGH
             //char[] chars = data.ToCharArray();
 
 
-            IEnumerable<Topologic.Vertex> vertices = cellComplex.Vertices;
+            IList<Topologic.Vertex> vertices = cellComplex.Vertices;
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, vertices);

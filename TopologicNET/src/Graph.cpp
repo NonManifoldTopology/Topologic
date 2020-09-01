@@ -69,7 +69,7 @@ namespace Topologic
 		}
 	}
 
-	IEnumerable<Vertex^>^ Graph::VerticesAtCoordinates(double x, double y, double z, double tolerance)
+	IList<Vertex^>^ Graph::VerticesAtCoordinates(double x, double y, double z, double tolerance)
 	{
 		TopologicCore::Graph::Ptr pCoreGraph = *m_pCoreGraph;
 
@@ -85,7 +85,7 @@ namespace Topologic
 		return vertices;
 	}
 
-	Graph ^ Graph::AddVertices(IEnumerable<Vertex^>^ vertices, double tolerance)
+	Graph ^ Graph::AddVertices(IList<Vertex^>^ vertices, double tolerance)
 	{
 		TopologicCore::Graph::Ptr pCoreGraph = *m_pCoreGraph;
 		TopologicCore::Graph::Ptr pCoreCopyGraph = std::make_shared<TopologicCore::Graph>(pCoreGraph.get());
@@ -103,7 +103,7 @@ namespace Topologic
 		return gcnew Graph(pCoreCopyGraph);
 	}
 
-	Graph ^ Graph::AddEdges(IEnumerable<Topologic::Edge^>^ edges, double tolerance)
+	Graph ^ Graph::AddEdges(IList<Topologic::Edge^>^ edges, double tolerance)
 	{
 		TopologicCore::Graph::Ptr pCoreGraph = *m_pCoreGraph;
 		TopologicCore::Graph::Ptr pCoreCopyGraph = std::make_shared<TopologicCore::Graph>(pCoreGraph.get());
@@ -121,7 +121,7 @@ namespace Topologic
 		return gcnew Graph(pCoreCopyGraph);
 	}
 
-	IEnumerable<Wire^>^ Graph::AllPaths(Vertex ^ startVertex, Vertex ^ endVertex, Nullable<int> timeLimitInSeconds)
+	IList<Wire^>^ Graph::AllPaths(Vertex ^ startVertex, Vertex ^ endVertex, Nullable<int> timeLimitInSeconds)
 	{
 		TopologicCore::Vertex::Ptr pCoreStartVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(startVertex->GetCoreTopologicalQuery());
 		TopologicCore::Vertex::Ptr pCoreEndVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(endVertex->GetCoreTopologicalQuery());
@@ -178,7 +178,7 @@ namespace Topologic
 		}
 	}
 	
-	IEnumerable<Wire^>^ Graph::ShortestPaths(Vertex ^ startVertex, Vertex ^ endVertex,	String^ vertexKey, String^ edgeKey, Nullable<int> timeLimitInSeconds)
+	IList<Wire^>^ Graph::ShortestPaths(Vertex ^ startVertex, Vertex ^ endVertex,	String^ vertexKey, String^ edgeKey, Nullable<int> timeLimitInSeconds)
 	{
 		TopologicCore::Vertex::Ptr pCoreStartVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(startVertex->GetCoreTopologicalQuery());
 		TopologicCore::Vertex::Ptr pCoreEndVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(endVertex->GetCoreTopologicalQuery());
@@ -227,7 +227,7 @@ namespace Topologic
         }
 	}
 
-	bool Graph::IsErdoesGallai(IEnumerable<int>^ sequence)
+	bool Graph::IsErdoesGallai(IList<int>^ sequence)
 	{
 		std::list<int> coreSequence;
 		for each(int i in sequence)
@@ -237,7 +237,7 @@ namespace Topologic
 		return (*m_pCoreGraph)->IsErdoesGallai(coreSequence);
 	}
 
-	Graph^  Graph::RemoveVertices(IEnumerable<Vertex^>^ vertices)
+	Graph^  Graph::RemoveVertices(IList<Vertex^>^ vertices)
 	{
 		TopologicCore::Graph::Ptr pCoreGraph = *m_pCoreGraph;
 		TopologicCore::Graph::Ptr pCoreCopyGraph = std::make_shared<TopologicCore::Graph>(pCoreGraph.get());
@@ -245,8 +245,8 @@ namespace Topologic
 		std::list<TopologicCore::Vertex::Ptr> coreIdenticalVertices; // find by coordinates
 		for each(Vertex^ vertex in vertices)
 		{
-			IList<double>^ coordinate = (IList<double>^)vertex->Coordinates;
-			IEnumerable<Vertex^>^ identicalVertices = VerticesAtCoordinates(coordinate[0], coordinate[1], coordinate[2], 0.001);
+			IList<double>^ coordinate = vertex->Coordinates;
+			IList<Vertex^>^ identicalVertices = VerticesAtCoordinates(coordinate[0], coordinate[1], coordinate[2], 0.001);
 			for each(Vertex^ identicalVertex in identicalVertices)
 			{
 				TopologicCore::Vertex::Ptr pCoreIdenticalVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(identicalVertex->GetCoreTopologicalQuery());
@@ -259,7 +259,7 @@ namespace Topologic
 		return gcnew Graph(pCoreCopyGraph);
 	}
 
-	Graph^ Graph::RemoveEdges(IEnumerable<Topologic::Edge^>^ edges, double tolerance)
+	Graph^ Graph::RemoveEdges(IList<Topologic::Edge^>^ edges, double tolerance)
 	{
 		TopologicCore::Graph::Ptr pCoreGraph = *m_pCoreGraph;
 		TopologicCore::Graph::Ptr pCoreCopyGraph = std::make_shared<TopologicCore::Graph>(pCoreGraph.get());
@@ -327,7 +327,7 @@ namespace Topologic
 		}
 	}
 
-	IEnumerable<Vertex^>^ Graph::Vertices::get()
+	IList<Vertex^>^ Graph::Vertices::get()
 	{
 		std::list<TopologicCore::Vertex::Ptr> coreVertices;
 		(*m_pCoreGraph)->Vertices(coreVertices);
@@ -341,7 +341,7 @@ namespace Topologic
 		return vertices;
 	}
 
-	IEnumerable<Vertex^>^ Graph::IsolatedVertices::get()
+	IList<Vertex^>^ Graph::IsolatedVertices::get()
 	{
 		std::list<TopologicCore::Vertex::Ptr> coreIsolatedVertices;
 		(*m_pCoreGraph)->IsolatedVertices(coreIsolatedVertices);
@@ -355,7 +355,7 @@ namespace Topologic
 		return isolatedVertices;
 	}
 
-	IEnumerable<Edge^>^ Graph::Edges(IEnumerable<Vertex^>^ vertices, double tolerance)
+	IList<Edge^>^ Graph::Edges(IList<Vertex^>^ vertices, double tolerance)
 	{
 		std::list<TopologicCore::Vertex::Ptr> coreVertices;
 		if (vertices != nullptr)
@@ -386,7 +386,7 @@ namespace Topologic
 		return (*m_pCoreGraph)->VertexDegree(pCoreVertex);
 	}
 
-	IEnumerable<Vertex^>^ Graph::AdjacentVertices(Vertex ^ vertex)
+	IList<Vertex^>^ Graph::AdjacentVertices(Vertex ^ vertex)
 	{
 		TopologicCore::Vertex::Ptr pCoreVertex = TopologicCore::Topology::Downcast<TopologicCore::Vertex>(vertex->GetCoreTopologicalQuery());
 		std::list<TopologicCore::Vertex::Ptr> coreAdjacentVertices;
@@ -402,8 +402,8 @@ namespace Topologic
 	}
 
     Graph ^ Graph::Connect(
-		IEnumerable<Vertex^>^ vertices1,
-		IEnumerable<Vertex^>^ vertices2,
+		IList<Vertex^>^ vertices1,
+		IList<Vertex^>^ vertices2,
         double tolerance)
     {
         std::list<TopologicCore::Vertex::Ptr> coreVertices1;
@@ -441,7 +441,7 @@ namespace Topologic
 		return (*m_pCoreGraph)->ContainsEdge(pCoreEdge, tolerance);
 	}
 
-	IEnumerable<int>^ Graph::DegreeSequence::get()
+	IList<int>^ Graph::DegreeSequence::get()
 	{
 		std::list<int> coreDegreeSequence;
 		(*m_pCoreGraph)->DegreeSequence(coreDegreeSequence);

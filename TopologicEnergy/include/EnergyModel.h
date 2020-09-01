@@ -57,7 +57,7 @@ namespace TopologicEnergy
 		static EnergyModel^ ByCellComplex(
 			CellComplex^ building,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Cluster^ shadingSurfaces,
-			IEnumerable<double>^ floorLevels,
+			IList<double>^ floorLevels,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("Building")] String^ buildingName,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("Commercial")] String^ buildingType,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("ASHRAE 189.1-2009 ClimateZone 4-8 MediumOffice")] String^ defaultSpaceType,
@@ -89,9 +89,9 @@ namespace TopologicEnergy
 		/// <summary>
 		/// Returns the Topology of this EnergyModel.
 		/// </summary>
-		property IEnumerable<Topologic::Cell^>^ Topology
+		property IList<Topologic::Cell^>^ Topology
 		{
-			IEnumerable<Topologic::Cell^>^ get();
+			IList<Topologic::Cell^>^ get();
 		}
 
 		/// <summary>
@@ -111,7 +111,7 @@ namespace TopologicEnergy
 		static EnergyModel^ ByImportedgbXML(String^ filePath, [Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")] double tolerance);
 
 	public protected:
-		static IEnumerable<int>^ GetColor(double ratio);
+		static IList<int>^ GetColor(double ratio);
 
 		static double DoubleValueFromQuery(OpenStudio::SqlFile^ sqlFile, String^ EPReportName, String^ EPReportForString, String^ EPTableName, String^ EPColumnName, String^ EPRowName, String^ EPUnits);
 
@@ -134,7 +134,7 @@ namespace TopologicEnergy
 		}
 
 	private:
-		EnergyModel(OpenStudio::Model^ osModel, OpenStudio::Building^ osBuilding, IEnumerable<Topologic::Cell^>^ pBuildingCells, Cluster^ shadingSurfaces, OpenStudio::SpaceVector^ osSpaceVector);
+		EnergyModel(OpenStudio::Model^ osModel, OpenStudio::Building^ osBuilding, IList<Topologic::Cell^>^ pBuildingCells, Cluster^ shadingSurfaces, OpenStudio::SpaceVector^ osSpaceVector);
 		~EnergyModel() {}
 
 		/// <summary>
@@ -160,7 +160,7 @@ namespace TopologicEnergy
 			OpenStudio::Model^ osModel,
 			Autodesk::DesignScript::Geometry::Vector^ upVector,
 			double buildingHeight,
-			IEnumerable<double>^ floorLevels,
+			IList<double>^ floorLevels,
 			[Autodesk::DesignScript::Runtime::DefaultArgument("null")] Nullable<double> glazingRatio,
 			double heatingTemp,
 			double coolingTemp
@@ -183,11 +183,11 @@ namespace TopologicEnergy
 
 		static OpenStudio::Model^ GetModelFromTemplate(String^ osmTemplatePath, String^ epwWeatherPath, String^ ddyPath);
 
-		static IEnumerable<Vertex^>^ ScaleFaceVertices(Face^ buildingFace, double scaleFactor);
+		static IList<Vertex^>^ ScaleFaceVertices(Face^ buildingFace, double scaleFactor);
 
-		static IEnumerable<Vertex^>^ ScaleVertices(IEnumerable<Vertex^>^ vertices, double scaleFactor);
+		static IList<Vertex^>^ ScaleVertices(IList<Vertex^>^ vertices, double scaleFactor);
 
-		static Vertex^ GetCentreVertex(IEnumerable<Vertex^>^ vertices);
+		static Vertex^ GetCentreVertex(IList<Vertex^>^ vertices);
 
 		static OpenStudio::Point3dVector^ GetFacePoints(Face^ buildingFace);
 
@@ -200,14 +200,14 @@ namespace TopologicEnergy
 		static int StoryNumber(
 			Cell^ buildingCell,
 			double buildingHeight,
-			IEnumerable<double>^ floorLevels
+			IList<double>^ floorLevels
 		);
 
 		static OpenStudio::ThermalZone^ CreateThermalZone(OpenStudio::Model^ model, OpenStudio::Space^ space, double ceilingHeight, double heatingTemp, double coolingTemp);
 
 		static OpenStudio::BuildingStory^ AddBuildingStory(OpenStudio::Model^ model, int floorNumber);
 
-		static OpenStudio::SubSurface^ CreateSubSurface(IEnumerable<Topologic::Vertex^>^ vertices, OpenStudio::Model^ osModel);
+		static OpenStudio::SubSurface^ CreateSubSurface(IList<Topologic::Vertex^>^ vertices, OpenStudio::Model^ osModel);
 
 		static OpenStudio::Building^ ComputeBuilding(
 			OpenStudio::Model^ osModel,
@@ -223,7 +223,7 @@ namespace TopologicEnergy
 
 		static OpenStudio::DefaultConstructionSet^ getDefaultConstructionSet(OpenStudio::Model^ model);
 
-		static IEnumerable<OpenStudio::BuildingStory^>^ CreateBuildingStories(OpenStudio::Model^ osModel, int numFloors);
+		static IList<OpenStudio::BuildingStory^>^ CreateBuildingStories(OpenStudio::Model^ osModel, int numFloors);
 
 		static OpenStudio::SqlFile^ CreateSqlFile(OpenStudio::Model^ osModel, String^ sqlFilePath);
 
@@ -233,18 +233,18 @@ namespace TopologicEnergy
 			OpenStudio::Model^ osModel, 
 			[Autodesk::DesignScript::Runtime::DefaultArgument("0.0001")] double tolerance,
 			OpenStudio::Building^% osBuilding,
-			IEnumerable<Cell^>^% buildingCells,
+			IList<Cell^>^% buildingCells,
 			Topologic::Cluster^% shadingFaces,
 			OpenStudio::SpaceVector^% osSpaceVector);
 
-		static IEnumerable<OpenStudio::BuildingStory^>^ buildingStories;
+		static IList<OpenStudio::BuildingStory^>^ buildingStories;
 		static OpenStudio::DefaultConstructionSet^ defaultConstructionSet;
 		static OpenStudio::DefaultScheduleSet^ defaultScheduleSet;
 
 		static int numOfApertures;
 		static int numOfAppliedApertures;
 
-		IEnumerable<Topologic::Cell^>^ m_buildingCells;
+		IList<Topologic::Cell^>^ m_buildingCells;
 		Cluster^ m_shadingSurfaces;
 		OpenStudio::SpaceVector^ m_osSpaceVector;
 		OpenStudio::Model^ m_osModel;

@@ -58,7 +58,7 @@ namespace TopologicGH
         {
             // Declare a variable for the input String
             List<Topologic.Vertex> vertices = new List<Topologic.Vertex>();
-            List<List<int>> indices = new List<List<int>>();
+            List<IList<int>> indices = new List<IList<int>>();
 
             //// Use the DA object to retrieve the data inside the first input parameter.
             //// If the retieval fails (for example if there is no data) we need to abort.
@@ -75,7 +75,7 @@ namespace TopologicGH
             //char[] chars = data.ToCharArray();
 
 
-            IEnumerable<Topologic.Topology> topologies = Topologic.Topology.ByVerticesIndices(vertices, indices);
+            IList<Topologic.Topology> topologies = Topologic.Topology.ByVerticesIndices(vertices, indices);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, topologies);

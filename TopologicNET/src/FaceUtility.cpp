@@ -30,10 +30,10 @@ namespace Topologic {
 			return TopologicUtilities::FaceUtility::Area(pCoreFace);
 		}
 
-		Face ^ FaceUtility::ByVertices(System::Collections::Generic::IEnumerable<System::Collections::Generic::IEnumerable<Vertex^>^>^ vertices)
+		Face ^ FaceUtility::ByVertices(System::Collections::Generic::IList<System::Collections::Generic::IList<Vertex^>^>^ vertices)
 		{
 			std::list<std::list<TopologicCore::Vertex::Ptr>> coreVertices;
-			for each(System::Collections::Generic::IEnumerable<Vertex^>^ verticesList in vertices)
+			for each(System::Collections::Generic::IList<Vertex^>^ verticesList in vertices)
 			{
 				std::list<TopologicCore::Vertex::Ptr> coreVerticesList;
 				for each(Vertex^ vertex in verticesList)
@@ -52,7 +52,7 @@ namespace Topologic {
 			}
 		}
 
-		IEnumerable<double>^ FaceUtility::ParametersAtVertex(Face^ face, Vertex^ vertex)
+		IList<double>^ FaceUtility::ParametersAtVertex(Face^ face, Vertex^ vertex)
 		{
 			TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
 			double u = 0.0, v = 0.0;
@@ -68,7 +68,7 @@ namespace Topologic {
 			return uv;
 		}
 
-		IEnumerable<double>^ FaceUtility::NormalAtParameters(Face^ face, double u, double v)
+		IList<double>^ FaceUtility::NormalAtParameters(Face^ face, double u, double v)
 		{
 			TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
 			gp_Dir normal = TopologicUtilities::FaceUtility::NormalAtParameters(pCoreFace, u, v);
@@ -104,7 +104,7 @@ namespace Topologic {
 			return safe_cast<Face^>(Topology::ByCoreTopology(pTrimmedFace));
 		}
 
-		IEnumerable<Face^>^ FaceUtility::Triangulate(Face ^ face, double deflection)
+		IList<Face^>^ FaceUtility::Triangulate(Face ^ face, double deflection)
 		{
 			TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
 			std::list<TopologicCore::Face::Ptr> triangulation;
@@ -119,7 +119,7 @@ namespace Topologic {
 			return faces;
 		}
 
-		IEnumerable<Shell^>^ FaceUtility::AdjacentShells(Face ^ face, Topology ^ parentTopology)
+		IList<Shell^>^ FaceUtility::AdjacentShells(Face ^ face, Topology ^ parentTopology)
 		{
 			TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
 			TopologicCore::Topology::Ptr pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());
@@ -145,7 +145,7 @@ namespace Topologic {
 			return adjacentShells;
 		}
 
-		IEnumerable<Cell^>^ FaceUtility::AdjacentCells(Face ^ face, Topology ^ parentTopology)
+		IList<Cell^>^ FaceUtility::AdjacentCells(Face ^ face, Topology ^ parentTopology)
 		{
 			TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
 			TopologicCore::Topology::Ptr pCoreParentTopology = TopologicCore::Topology::Downcast<TopologicCore::Topology>(parentTopology->GetCoreTopologicalQuery());

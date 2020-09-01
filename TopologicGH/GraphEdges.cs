@@ -74,7 +74,7 @@ namespace TopologicGH
             if (graph == null) { return; }
 
 
-            IEnumerable<Topologic.Edge> edges = graph.Edges(vertices, tolerance);
+            IList<Topologic.Edge> edges = graph.Edges(vertices, tolerance);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, edges);

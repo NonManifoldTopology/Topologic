@@ -71,7 +71,7 @@ namespace TopologicGH
             //char[] chars = data.ToCharArray();
 
 
-            IEnumerable<Topologic.Edge> edges = wire.Edges;
+            IList<Topologic.Edge> edges = wire.Edges;
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, edges);

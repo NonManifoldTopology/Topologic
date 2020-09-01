@@ -207,12 +207,12 @@ namespace TopologicGH
                     Wire partialTrimmingWire = topology as Wire;
                     if (partialTrimmingWire != null)
                     {
-                        IEnumerable<Edge> partialTrimmingEdges = partialTrimmingWire.Edges;
+                        IList<Edge> partialTrimmingEdges = partialTrimmingWire.Edges;
                         trimmingEdges.AddRange(partialTrimmingEdges);
                     }
                 }
                 Wire trimmingWire = Wire.ByEdges(trimmingEdges);
-                IEnumerable<Vertex> trimmingVertices = trimmingWire.Vertices;
+                IList<Vertex> trimmingVertices = trimmingWire.Vertices;
 
                 if (ghLoop == ghOuterLoop)
                 {
@@ -245,7 +245,7 @@ namespace TopologicGH
                 vertices.Add(vertex);
             }
 
-            List<List<int>> indices2D = new List<List<int>>();
+            List<IList<int>> indices2D = new List<IList<int>>();
             for (int i = 0; i < ghMeshFaceCount; ++i)
             {
                 MeshFace ghMeshFace = ghMeshFaces[i];
@@ -262,7 +262,7 @@ namespace TopologicGH
                 indices2D.Add(indices1D);
             }
 
-            IEnumerable<Topology> topologies = Topology.ByVerticesIndices(vertices, indices2D);
+            IList<Topology> topologies = Topology.ByVerticesIndices(vertices, indices2D);
 
             Cluster cluster = Cluster.ByTopologies(topologies);
             Topology topology = cluster.SelfMerge();
@@ -418,7 +418,7 @@ namespace TopologicGH
             {
                 //vertices.Add(vertices[0]);
                 //indices.Add(0);
-                List<List<int>> listOfIndices = new List<List<int>>();
+                List<IList<int>> listOfIndices = new List<IList<int>>();
                 listOfIndices.Add(indices);
                 IList<Topology> topologyList = (IList<Topology>)Topologic.Topology.ByVerticesIndices(vertices, listOfIndices);
                 IList<Wire> wireList = (IList<Wire>)topologyList[0].Wires;
@@ -426,7 +426,7 @@ namespace TopologicGH
             }
             else
             {
-                List<List<int>> listOfIndices = new List<List<int>>();
+                List<IList<int>> listOfIndices = new List<IList<int>>();
                 listOfIndices.Add(indices);
                 IList<Topology> topologyList = (IList<Topology>)Topologic.Topology.ByVerticesIndices(vertices, listOfIndices);
                 return topologyList[0] as Topologic.Wire;
@@ -502,8 +502,8 @@ namespace TopologicGH
             vKnots.Add(vKnots.Last());
 
             NurbsSurfacePointList ghControlPoints = ghNurbsSurface.Points;
-            List<List<Topologic.Vertex>> controlPoints = new List<List<Topologic.Vertex>>();
-            List<List<double>> weights = new List<List<double>>();
+            List<IList<Topologic.Vertex>> controlPoints = new List<IList<Topologic.Vertex>>();
+            List<IList<double>> weights = new List<IList<double>>();
             for (int i = 0; i < ghControlPoints.CountU; ++i)
             {
                 List<Topologic.Vertex> controlPoints1D = new List<Topologic.Vertex>();

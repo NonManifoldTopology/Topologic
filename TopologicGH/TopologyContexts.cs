@@ -71,7 +71,7 @@ namespace TopologicGH
             //char[] chars = data.ToCharArray();
 
 
-            IEnumerable<Topologic.Context> contexts = topology.Contexts;
+            IList<Topologic.Context> contexts = topology.Contexts;
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, contexts);

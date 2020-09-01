@@ -34,7 +34,7 @@ namespace Topologic {
 			/// <param name="vertex">A Vertex</param>
 			/// <param name="parentTopology">A parent Topology</param>
 			/// <returns name="Edge[]">A list of Edges adjacent to the input Vertex</returns>
-			static IEnumerable<Edge^>^ AdjacentEdges(Vertex^ vertex, Topology^ parentTopology);
+			static IList<Edge^>^ AdjacentEdges(Vertex^ vertex, Topology^ parentTopology);
 
 			/// <summary>
 			/// Returns the distance between a Vertex and a Topology.

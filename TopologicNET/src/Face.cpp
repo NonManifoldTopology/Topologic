@@ -59,7 +59,7 @@
 
 namespace Topologic
 {
-	IEnumerable<Face^>^ Face::AdjacentFaces::get()
+	IList<Face^>^ Face::AdjacentFaces::get()
 	{
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Face::Ptr> pAdjacentCoreFaces;
@@ -79,7 +79,7 @@ namespace Topologic
 		return pAdjacentFaces;
 	}
 
-	IEnumerable<Cell^>^ Face::Cells::get()
+	IList<Cell^>^ Face::Cells::get()
 	{
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Cell::Ptr> pCoreCells;
@@ -98,7 +98,7 @@ namespace Topologic
 		return pCells;
 	}
 
-	IEnumerable<Shell^>^ Face::Shells::get()
+	IList<Shell^>^ Face::Shells::get()
 	{
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Shell::Ptr> pCoreShells;
@@ -132,7 +132,7 @@ namespace Topologic
         }
 	}
 
-	Face ^ Face::ByExternalInternalBoundaries(Wire ^ externalBoundary, System::Collections::Generic::IEnumerable<Wire^>^ internalBoundaries)
+	Face ^ Face::ByExternalInternalBoundaries(Wire ^ externalBoundary, System::Collections::Generic::IList<Wire^>^ internalBoundaries)
 	{
 		TopologicCore::Wire::Ptr pCoreExternalBoundary = TopologicCore::Topology::Downcast<TopologicCore::Wire>(externalBoundary->GetCoreTopologicalQuery());
 		std::list<TopologicCore::Wire::Ptr> coreInternalBoundaries;
@@ -147,26 +147,21 @@ namespace Topologic
 		return gcnew Face(pCoreFace);
 	}
 
-	Face^ Face::ByNurbsParameters(IEnumerable<IEnumerable<Vertex^>^>^ controlPoints, IEnumerable<IEnumerable<double>^>^ weights, 
-		IEnumerable<double>^ uKnots, IEnumerable<double>^ vKnots, 
+	Face^ Face::ByNurbsParameters(IList<IList<Vertex^>^>^ controlPoints, IList<IList<double>^>^ weights, 
+		IList<double>^ uKnots, IList<double>^ vKnots, 
 		bool isRational, bool isUPeriodic, bool isVPeriodic, int uDegree, int vDegree)
 	{
-		IList<IList<Vertex^>^>^ controlPointList = (IList<IList<Vertex^>^>^) controlPointList;
-		IList<IList<double>^>^ weightList = (IList<IList<double>^>^) weights;
-		IList<double>^ uKnotList = (IList<double>^) uKnots;
-		IList<double>^ vKnotList = (IList<double>^) vKnots;
-
-		if (controlPointList->Count == 0 || controlPointList[0]->Count == 0 ||
-			weightList->Count == 0 || weightList[0]->Count == 0)
+		if (controlPoints->Count == 0 || controlPoints[0]->Count == 0 ||
+			weights->Count == 0 || weights[0]->Count == 0)
 		{
 			return nullptr;
 		}
 		// 1. NURBS parameters
 		// Transfer the poles/control points
-		TColgp_Array2OfPnt occtPoles(0, controlPointList->Count - 1, 0, controlPointList[0]->Count - 1);
+		TColgp_Array2OfPnt occtPoles(0, controlPoints->Count - 1, 0, controlPoints[0]->Count - 1);
 		for (int i = occtPoles.LowerRow(); i <= occtPoles.UpperRow(); i++)
 		{
-			IList<Vertex^>^ controlPoints1D = controlPointList[i];
+			IList<Vertex^>^ controlPoints1D = controlPoints[i];
 			for (int j = occtPoles.LowerCol(); j <= occtPoles.UpperCol(); j++)
 			{
 				IList<double>^ coordinates = (IList<double>^)controlPoints1D[j]->Coordinates;
@@ -176,10 +171,10 @@ namespace Topologic
 
 		// Transfer the weights
 		//array<array<double>^>^ pDynamoWeights = pDynamoNurbsSurface->Weights();
-		TColStd_Array2OfReal occtWeights(0, weightList->Count - 1, 0, weightList[0]->Count - 1);
+		TColStd_Array2OfReal occtWeights(0, weights->Count - 1, 0, weights[0]->Count - 1);
 		for (int i = occtWeights.LowerRow(); i <= occtWeights.UpperRow(); i++)
 		{
-			IList<double>^ weights1D = weightList[i];
+			IList<double>^ weights1D = weights[i];
 			for (int j = occtWeights.LowerCol(); j <= occtWeights.UpperCol(); j++)
 			{
 				double weight = weights1D[j];
@@ -190,13 +185,13 @@ namespace Topologic
 		// Transfer the U knots and U multiplicities. Note the format difference. OCCT has a separate multiplicity list, while Dynamo simply repeats the knots.
 		List<double>^ uniqueUKnots = gcnew List<double>();
 		List<int>^ pUMultiplicities = gcnew List<int>();
-		double previousUKnot = uKnotList[0] - 1.0;
+		double previousUKnot = uKnots[0] - 1.0;
 		int uMultiplicity = 0;
 		for each(double uKnot in uKnots)
 		{
 			if (uKnot > previousUKnot)
 			{
-				if (previousUKnot > uKnotList[0] - 1.0)
+				if (previousUKnot > uKnots[0] - 1.0)
 					pUMultiplicities->Add(uMultiplicity);
 				uniqueUKnots->Add(uKnot);
 				uMultiplicity = 1;
@@ -224,13 +219,13 @@ namespace Topologic
 		// Transfer the V knots and V multiplicities. Note the format difference. OCCT has a separate multiplicity list, while Dynamo simply repeats the knots.
 		List<double>^ uniqueVKnots = gcnew List<double>();
 		List<int>^ pVMultiplicities = gcnew List<int>();
-		double previousVKnot = vKnotList[0] - 1.0;
+		double previousVKnot = vKnots[0] - 1.0;
 		int vMultiplicity = 0;
 		for each(double vKnot in vKnots)
 		{
 			if (vKnot > previousVKnot)
 			{
-				if (previousVKnot > vKnotList[0] - 1.0)
+				if (previousVKnot > vKnots[0] - 1.0)
 					pVMultiplicities->Add(vMultiplicity);
 				uniqueVKnots->Add(vKnot);
 				vMultiplicity = 1;
@@ -283,7 +278,7 @@ namespace Topologic
 		return gcnew Face(pCoreFace);
 	}
 
-	Face^ Face::ByEdges(System::Collections::Generic::IEnumerable<Edge^>^ edges)
+	Face^ Face::ByEdges(System::Collections::Generic::IList<Edge^>^ edges)
 	{
 		return ByWire(Wire::ByEdges(edges));
 	}
@@ -454,7 +449,7 @@ namespace Topologic
 			// It needs to be trimmed by the outer wire and inner wires.
 			List<Autodesk::DesignScript::Geometry::PolyCurve^>^ pDynamoEdgeLoops = gcnew List<Autodesk::DesignScript::Geometry::PolyCurve^>();
 
-			IEnumerable<Wire^>^ pWires = Wires;
+			IList<Wire^>^ pWires = Wires;
 			for each(Wire^ pWire in pWires)
 			{
 				try {
@@ -628,7 +623,7 @@ namespace Topologic
 
 			// Get the wires and edges.
 			ICollection<Wire^>^ pWires = (ICollection<Wire^>^)Wires;
-			IEnumerable<Edge^>^ pEdges = Edges;
+			IList<Edge^>^ pEdges = Edges;
 
 			// If there is only one wire, create a surface and return it.
 			if (pWires->Count < 2)
@@ -671,7 +666,7 @@ namespace Topologic
 				{
 					if (TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(pWire->GetCoreTopologicalQuery())->GetOcctShape().IsSame(rkOcctOuterWire))
 					{
-						IEnumerable<Edge^>^ pOuterEdges = pWire->Edges;
+						IList<Edge^>^ pOuterEdges = pWire->Edges;
 						List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoOuterCurves = gcnew List<Autodesk::DesignScript::Geometry::Curve^>();
 						for each(Edge^ pOuterEdge in pOuterEdges)
 						{
@@ -763,7 +758,7 @@ namespace Topologic
 			throw gcnew NotImplementedException("Feature not yet implemented");
 		}
 
-		IEnumerable<Vertex^>^ pVertices = Vertices;
+		IList<Vertex^>^ pVertices = Vertices;
 		List<Autodesk::DesignScript::Geometry::Point^>^ pDynamoPoints = gcnew List<Autodesk::DesignScript::Geometry::Point^>();
 		for each(Vertex^ pVertex in pVertices)
 		{
@@ -1228,7 +1223,7 @@ namespace Topologic
 	}
 #endif
 
-	IEnumerable<Edge^>^ Face::SharedEdges(Face^ face)
+	IList<Edge^>^ Face::SharedEdges(Face^ face)
 	{
 		TopologicCore::Face::Ptr pCoreFace1 = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
 		TopologicCore::Face::Ptr pCoreFace2 = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
@@ -1249,7 +1244,7 @@ namespace Topologic
 		return pSharedEdges;
 	}
 
-	IEnumerable<Vertex^>^ Face::SharedVertices(Face^ face)
+	IList<Vertex^>^ Face::SharedVertices(Face^ face)
 	{
 		TopologicCore::Face::Ptr pCoreFace1 = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
 		TopologicCore::Face::Ptr pCoreFace2 = TopologicCore::Topology::Downcast<TopologicCore::Face>(face->GetCoreTopologicalQuery());
@@ -1276,7 +1271,7 @@ namespace Topologic
 		return gcnew Wire(pCoreFace->ExternalBoundary());
 	}
 
-	IEnumerable<Wire^>^ Face::InternalBoundaries::get()
+	IList<Wire^>^ Face::InternalBoundaries::get()
 	{
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Wire::Ptr> pCoreWires;
@@ -1294,7 +1289,7 @@ namespace Topologic
 		return pInternalBoundaries;
 	}
 
-	Face^ Face::AddInternalBoundaries(IEnumerable<Wire^>^ internalBoundaries)
+	Face^ Face::AddInternalBoundaries(IList<Wire^>^ internalBoundaries)
 	{
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
 		TopologicCore::Face::Ptr pCoreCopyFace = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Face>(pCoreFace->DeepCopy());
@@ -1309,7 +1304,7 @@ namespace Topologic
 		return gcnew Face(pCoreCopyFace);
 	}
 
-	IEnumerable<Vertex^>^ Face::Vertices::get()
+	IList<Vertex^>^ Face::Vertices::get()
 	{
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Vertex::Ptr> pCoreVertices;
@@ -1327,7 +1322,7 @@ namespace Topologic
 		return pVertices;
 	}
 
-	IEnumerable<Edge^>^ Face::Edges::get()
+	IList<Edge^>^ Face::Edges::get()
 	{
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Edge::Ptr> pCoreEdges;
@@ -1346,7 +1341,7 @@ namespace Topologic
 		return pEdges;
 	}
 
-	IEnumerable<Wire^>^ Face::Wires::get()
+	IList<Wire^>^ Face::Wires::get()
 	{
 		TopologicCore::Face::Ptr pCoreFace = TopologicCore::Topology::Downcast<TopologicCore::Face>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Wire::Ptr> pCoreWires;
@@ -1423,14 +1418,14 @@ namespace Topologic
 		}
 		// 1. Convert the apertures and boundary as faces.
 		Wire^ pOuterApertureWire = apertureDesign->ExternalBoundary;
-		IEnumerable<Wire^>^ pApertureWires = apertureDesign->InternalBoundaries;
+		IList<Wire^>^ pApertureWires = apertureDesign->InternalBoundaries;
 
 		List<Topology^>^ pFaces = gcnew List<Topology^>();
 
 		// 2. For each wires, iterate through the edges, sample points, and map them to the 
 		for each(Wire^ pApertureWire in pApertureWires)
 		{
-			IEnumerable<Edge^>^ pApertureEdges = pApertureWire->Edges;
+			IList<Edge^>^ pApertureEdges = pApertureWire->Edges;
 			List<Edge^>^ pMappedApertureEdges = gcnew List<Edge^>();
 
 			for each(Edge^ pApertureEdge in pApertureEdges)
@@ -1452,7 +1447,7 @@ namespace Topologic
 					Vertex^ pSampleVertex = Topologic::Utilities::EdgeUtility::VertexAtParameter(pApertureEdge, t);
 
 					// Find the UV-coordinate of the point on the aperture design
-					IList<double>^ uv = (IList<double>^)Topologic::Utilities::FaceUtility::ParametersAtVertex(apertureDesign, pSampleVertex);
+					IList<double>^ uv = Topologic::Utilities::FaceUtility::ParametersAtVertex(apertureDesign, pSampleVertex);
 					assert(uv->Count == 2);
 					double checkedU = uv[0], checkedV = uv[1];
 					if (checkedU < 0.0)

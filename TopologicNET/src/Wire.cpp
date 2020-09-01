@@ -23,7 +23,7 @@
 
 namespace Topologic
 {
-	IEnumerable<Edge^>^ Wire::Edges::get()
+	IList<Edge^>^ Wire::Edges::get()
 	{
 		TopologicCore::Wire::Ptr pCoreWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Edge::Ptr> pCoreEdgeList;
@@ -42,7 +42,7 @@ namespace Topologic
 		return pEdges;
 	}
 
-	IEnumerable<Face^>^ Wire::Faces::get()
+	IList<Face^>^ Wire::Faces::get()
 	{
 		TopologicCore::Wire::Ptr pCoreWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Face::Ptr> pCoreFaceList;
@@ -66,7 +66,7 @@ namespace Topologic
 		return TopologicCore::Topology::Downcast<TopologicCore::Wire>(GetCoreTopologicalQuery())->IsClosed();
 	}
 
-	IEnumerable<Vertex^>^ Wire::Vertices::get()
+	IList<Vertex^>^ Wire::Vertices::get()
 	{
 		TopologicCore::Wire::Ptr pCoreWire = TopologicCore::Topology::Downcast<TopologicCore::Wire>(GetCoreTopologicalQuery());
 		std::list<TopologicCore::Vertex::Ptr> pCoreVertexList;
@@ -91,7 +91,7 @@ namespace Topologic
 		return pCoreWire->NumberOfBranches();
 	}
 
-	Wire^ Wire::ByEdges(System::Collections::Generic::IEnumerable<Edge^>^ edges)
+	Wire^ Wire::ByEdges(System::Collections::Generic::IList<Edge^>^ edges)
 	{
 		std::list<TopologicCore::Edge::Ptr> coreEdges;
 		for each(Edge^ pEdge in edges)
@@ -148,7 +148,7 @@ namespace Topologic
 	{
 #ifdef TOPOLOGIC_DYNAMO
 		List<Autodesk::DesignScript::Geometry::Curve^>^ pDynamoCurves = gcnew List<Autodesk::DesignScript::Geometry::Curve^>();
-		IEnumerable<Edge^>^ pEdges = Edges;
+		IList<Edge^>^ pEdges = Edges;
 		for each(Edge^ pEdge in pEdges)
 		{
 			pDynamoCurves->Add(pEdge->Curve());

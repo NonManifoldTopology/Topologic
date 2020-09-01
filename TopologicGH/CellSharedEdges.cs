@@ -70,7 +70,7 @@ namespace TopologicGH
             if (cell1 == null) { return; }
             if (cell2 == null) { return; }
 
-            IEnumerable<Topologic.Edge> edges = cell1.SharedEdges(cell2);
+            IList<Topologic.Edge> edges = cell1.SharedEdges(cell2);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, edges);

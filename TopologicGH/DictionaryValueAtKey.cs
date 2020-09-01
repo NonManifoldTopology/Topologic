@@ -96,7 +96,7 @@ namespace TopologicGH
 
             Object value = Topologic.Dictionary.ValueAtKey(dictionary, key);
 
-            var valueEnum = value as System.Collections.IEnumerable;
+            var valueEnum = value as System.Collections.IList;
             if(valueEnum == null)
             {
                 List<Object> values = new List<Object>();

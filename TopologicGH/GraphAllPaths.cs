@@ -82,7 +82,7 @@ namespace TopologicGH
             //char[] chars = data.ToCharArray();
 
 
-            IEnumerable<Topologic.Wire> paths = graph.AllPaths(startVertex, endVertex, timeLimitInSeconds);
+            IList<Topologic.Wire> paths = graph.AllPaths(startVertex, endVertex, timeLimitInSeconds);
 
             // Use the DA object to assign a new String to the first output parameter.
             DA.SetDataList(0, paths);

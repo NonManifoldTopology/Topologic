@@ -111,7 +111,7 @@ namespace TopologicEnergy
 		return gcnew SimulationResult(data);
 	}
 
-	IEnumerable<Modifiers::GeometryColor^>^ SimulationResult::Display(EnergyModel^ energyModel, IEnumerable<DSCore::Color^>^ colors)
+	IList<Modifiers::GeometryColor^>^ SimulationResult::Display(EnergyModel^ energyModel, IList<DSCore::Color^>^ colors)
 	{
 		IList<DSCore::Color^>^ colorList = (IList<DSCore::Color^>^) colors;
 		if (((IList<Topology^>^)energyModel->Topology)->Count != colorList->Count)
@@ -155,7 +155,7 @@ namespace TopologicEnergy
 			}
 
 			DSCore::Color^ contentColor = DSCore::Color::ByARGB(255, 128, 128, 128);
-			IEnumerable<Topologic::Topology^>^ subcontents = cell->SubContents;
+			IList<Topologic::Topology^>^ subcontents = cell->SubContents;
 			for each(Topologic::Topology^ subcontent in subcontents)
 			{
 				System::Object^ contentGeometry = subcontent->BasicGeometry;
@@ -189,27 +189,27 @@ namespace TopologicEnergy
 		return dynamoGeometryColors;
 	}
 
-	IEnumerable<IEnumerable<int>^>^ SimulationResult::LegendRGB(Nullable<double> minDomain, Nullable<double> maxDomain, int count)
+	IList<IList<int>^>^ SimulationResult::LegendRGB(Nullable<double> minDomain, Nullable<double> maxDomain, int count)
 	{
-		IEnumerable<IEnumerable<int>^>^ colors = gcnew List<IEnumerable<int>^>();
+		IList<IList<int>^>^ colors = gcnew List<IList<int>^>();
 		double finalMinDomain = 0.0;
 		double finalMaxDomain = 0.0;
-		IEnumerable<double>^ ratios = LegendRatios(minDomain, maxDomain, count, finalMinDomain, finalMaxDomain);
+		IList<double>^ ratios = LegendRatios(minDomain, maxDomain, count, finalMinDomain, finalMaxDomain);
 		for each(double ratio in ratios)
 		{
-			IEnumerable<int>^ color = EnergyModel::GetColor(ratio);
-			((List<IEnumerable<int>^>^)colors)->Add(color);
+			IList<int>^ color = EnergyModel::GetColor(ratio);
+			((List<IList<int>^>^)colors)->Add(color);
 		}
 
 		return colors;
 	}
 
-	IEnumerable<double>^ SimulationResult::LegendValues(Nullable<double> minDomain, Nullable<double> maxDomain, int count)
+	IList<double>^ SimulationResult::LegendValues(Nullable<double> minDomain, Nullable<double> maxDomain, int count)
 	{
 		List<double>^ values = gcnew List<double>();
 		double finalMinDomain = 0.0;
 		double finalMaxDomain = 0.0;
-		IEnumerable<double>^ ratios = LegendRatios(minDomain, maxDomain, count, finalMinDomain, finalMaxDomain);
+		IList<double>^ ratios = LegendRatios(minDomain, maxDomain, count, finalMinDomain, finalMaxDomain);
 		double deltaFinalDomain = finalMaxDomain - finalMinDomain; // Any problem with this should have been caught in LegendRatios
 		for each(double ratio in ratios)
 		{
@@ -220,12 +220,12 @@ namespace TopologicEnergy
 		return values;
 	}
 
-	IEnumerable<String^>^ SimulationResult::Names::get()
+	IList<String^>^ SimulationResult::Names::get()
 	{
 		return gcnew List<String^>(m_data->Keys);
 	}
 
-	IEnumerable<double>^ SimulationResult::Values::get()
+	IList<double>^ SimulationResult::Values::get()
 	{
 		List<double>^ values = gcnew List<double>();
 		for each(KeyValuePair<String^, Dictionary<String^, Object^>^> pair in m_data)
@@ -249,7 +249,7 @@ namespace TopologicEnergy
 		return values;
 	}
 
-	IEnumerable<double>^ SimulationResult::Domain::get()
+	IList<double>^ SimulationResult::Domain::get()
 	{
 		ICollection<double>^ values = (ICollection<double>^)Values;
 
@@ -264,9 +264,9 @@ namespace TopologicEnergy
 		return domain;
 	}
 
-	IEnumerable<IEnumerable<int>^>^ SimulationResult::RGB(Nullable<double> minDomain, Nullable<double> maxDomain)
+	IList<IList<int>^>^ SimulationResult::RGB(Nullable<double> minDomain, Nullable<double> maxDomain)
 	{
-		IEnumerable<double>^ domain = Domain;
+		IList<double>^ domain = Domain;
 		double finalMinDomain = Enumerable::Min(domain);
 		double finalMaxDomain = Enumerable::Max(domain);
 
@@ -285,12 +285,12 @@ namespace TopologicEnergy
 			throw gcnew Exception("The domain is too small. Please increase it.");
 		}
 
-		IList<IEnumerable<int>^>^ colorList = gcnew List<IEnumerable<int>^>();
-		IEnumerable<double>^ values = Values;
+		IList<IList<int>^>^ colorList = gcnew List<IList<int>^>();
+		IList<double>^ values = Values;
 		for each(double value in values)
 		{
 			double ratio = (value - finalMinDomain) / deltaFinalDomain;
-			IEnumerable<int>^ rgb = EnergyModel::GetColor(ratio);
+			IList<int>^ rgb = EnergyModel::GetColor(ratio);
 			colorList->Add(rgb);
 		}
 
@@ -308,14 +308,14 @@ namespace TopologicEnergy
 
 	}
 
-	IEnumerable<double>^ SimulationResult::LegendRatios(Nullable<double> minDomain, Nullable<double> maxDomain, int count, double% finalMinDomain, double& finalMaxDomain)
+	IList<double>^ SimulationResult::LegendRatios(Nullable<double> minDomain, Nullable<double> maxDomain, int count, double% finalMinDomain, double& finalMaxDomain)
 	{
 		if (count < 2)
 		{
 			throw gcnew Exception("The number of steps must be more than 2.");
 		}
 
-		IEnumerable<double>^ domain = Domain;
+		IList<double>^ domain = Domain;
 		finalMinDomain = Enumerable::Min(domain);
 		finalMaxDomain = Enumerable::Max(domain);
 
