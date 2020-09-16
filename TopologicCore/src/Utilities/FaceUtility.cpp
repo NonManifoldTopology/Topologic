@@ -101,10 +101,13 @@ namespace TopologicUtilities
 			i++;
 		}
 		try {
-                        /* doesn't compile with gcc: error: conversion from ‘handle<Geom_BSplineSurface>’ to non-scalar type ‘handle<Geom_Surface>’ requested
+#ifdef _WIN32
 			Handle(Geom_Surface) pSurface = GeomAPI_PointsToBSplineSurface(occtPoints).Surface();
 			return TopologicCore::Face::BySurface(pSurface);
-                        */
+#else
+			/* doesn't compile with gcc: error: conversion from ‘handle<Geom_BSplineSurface>’ to non-scalar type ‘handle<Geom_Surface>’ requested
+			 */
+#endif
 		}
 		catch (...)
 		{

@@ -114,7 +114,9 @@
       <AdditionalLibraryDirectories>$(SolutionDir)references\opencascade-7.4.0\win64\vc14\libd</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>copy "C:\OpenCASCADE-7.4.0-vc14-64\opencascade-7.4.0\win64\vc14\bin\*.dll" "$(SolutionDir)output\$(Platform)\$(Configuration)"
+      <Command>copy "$(SolutionDir)references\opencascade-7.4.0\win64\vc14\bind\TK*.dll" "$(SolutionDir)output\$(Platform)\$(Configuration)"
+
+copy "$(SolutionDir)references\opencascade-7.4.0\win64\vc14\bind\tbb*.dll" "$(SolutionDir)output\$(Platform)\$(Configuration)"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -158,7 +160,8 @@
       <AdditionalLibraryDirectories>$(SolutionDir)references\opencascade-7.4.0\win64\vc14\lib</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>copy "C:\OpenCASCADE-7.4.0-vc14-64\opencascade-7.4.0\win64\vc14\bin\*.dll" "$(SolutionDir)output\$(Platform)\$(Configuration)"</Command>
+      <Command>copy "$(SolutionDir)references\opencascade-7.4.0\win64\vc14\bin\TK*.dll" "$(SolutionDir)output\$(Platform)\$(Configuration)"
+copy "$(SolutionDir)references\opencascade-7.4.0\win64\vc14\bin\tbb*.dll" "$(SolutionDir)output\$(Platform)\$(Configuration)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

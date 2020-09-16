@@ -293,6 +293,7 @@ Erase "$(TargetDir)\TopologicGH.dll"
 set GH_PACKAGES_DIR=$(APPDATA)\Grasshopper\Libraries\Topologic\
 if not exist "%25GH_PACKAGES_DIR%25" mkdir "%25GH_PACKAGES_DIR%25"
 
+copy "$(TargetDir)tb*.dll" "%25GH_PACKAGES_DIR%25"
 copy "$(TargetDir)TK*.dll" "%25GH_PACKAGES_DIR%25"
 copy "$(TargetDir)TopologicCore.dll" "%25GH_PACKAGES_DIR%25"
 copy "$(TargetDir)TopologicNET.dll" "%25GH_PACKAGES_DIR%25"
