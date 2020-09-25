@@ -104,7 +104,7 @@ namespace Topologic
 		}
 		catch (const std::exception& e)
 		{
-			throw gcnew Exception(gcnew String(e.what()));
+			throw gcnew Exception(gcnew System::String(e.what()));
 		}
 	}
 
@@ -127,7 +127,7 @@ namespace Topologic
 		}
 		catch (const std::exception& rkException)
 		{
-			e = gcnew Exception(gcnew String(rkException.what()));
+			e = gcnew Exception(gcnew System::String(rkException.what()));
 		}
 
 		for each(Autodesk::DesignScript::Geometry::Curve^ pDynamoCurve in pDynamoCurves)

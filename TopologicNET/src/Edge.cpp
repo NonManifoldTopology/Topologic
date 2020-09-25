@@ -189,7 +189,7 @@ namespace Topologic
 		}
 		catch (Standard_Failure e)
 		{
-			throw gcnew Exception(gcnew String(e.GetMessageString()));
+			throw gcnew Exception(gcnew System::String(e.GetMessageString()));
 		}
 	}
 
@@ -414,11 +414,11 @@ namespace Topologic
 		}
 		catch (Standard_Failure occtException)
 		{
-			e = gcnew Exception(gcnew String(occtException.GetMessageString()));
+			e = gcnew Exception(gcnew System::String(occtException.GetMessageString()));
 		}
 		catch (const std::exception& rkException)
 		{
-			e = gcnew Exception(gcnew String(rkException.what()));
+			e = gcnew Exception(gcnew System::String(rkException.what()));
 		}
 
 		delete pDynamoCenterPoint;
@@ -451,7 +451,7 @@ namespace Topologic
 		}
 		catch (const std::exception& rkException)
 		{
-			e = gcnew Exception(gcnew String(rkException.what()));
+			e = gcnew Exception(gcnew System::String(rkException.what()));
 		}
 
 		delete dynamoStartPoint;
@@ -492,7 +492,7 @@ namespace Topologic
 		}
 		catch (Standard_Failure e)
 		{
-			throw gcnew Exception(gcnew String(e.GetMessageString()));
+			throw gcnew Exception(gcnew System::String(e.GetMessageString()));
 		}
 	}
 #endif
@@ -563,7 +563,7 @@ namespace Topologic
 		}
 		catch (const std::exception& rkException)
 		{
-			e = gcnew Exception(gcnew String(rkException.what()));
+			e = gcnew Exception(gcnew System::String(rkException.what()));
 		}
 
 		if (e != nullptr)
@@ -585,7 +585,7 @@ namespace Topologic
 		}
 		catch (const std::exception& rkException)
 		{
-			throw gcnew Exception(gcnew String(rkException.what()));
+			throw gcnew Exception(gcnew System::String(rkException.what()));
 		}
 	}
 

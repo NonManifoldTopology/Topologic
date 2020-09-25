@@ -349,6 +349,12 @@
   <data name="Topologic.Topology.ByImportedBRep.Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Topologic.Large.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Topologic.Topology.ByString.Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Topologic.Large.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Topologic.Topology.String.Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Topologic.Large.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Topologic.Topology.AddApertures.Large" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Topologic.Large.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -965,6 +971,12 @@
     <value>Topologic.Small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Topologic.Topology.ByImportedBRep.Small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Topologic.Small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Topologic.Topology.ByString.Small" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Topologic.Small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Topologic.Topology.String.Small" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Topologic.Small.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Topologic.Topology.AddApertures.Small" type="System.Resources.ResXFileRef, System.Windows.Forms">

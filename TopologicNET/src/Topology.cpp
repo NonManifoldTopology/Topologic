@@ -193,7 +193,7 @@ namespace Topologic
 		}
 		catch (const std::exception& rkException)
 		{
-			throw gcnew Exception(gcnew String(rkException.what()));
+			throw gcnew Exception(gcnew System::String(rkException.what()));
 		}
 
 		return Topology::ByCoreTopology(pCoreTopology);
@@ -246,14 +246,14 @@ namespace Topologic
 		return BasicGeometry;
 	}
 
-	bool Topology::ExportToBRep(String^ path)
+	bool Topology::ExportToBRep(System::String^ path)
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		std::string cppPath = msclr::interop::marshal_as<std::string>(path);
 		return pCoreTopology->ExportToBRep(cppPath);
 	}
 
-	Topology^ Topology::ByImportedBRep(String^ filePath)
+	Topology^ Topology::ByImportedBRep(System::String^ filePath)
 	{
 		std::string cppPath = msclr::interop::marshal_as<std::string>(filePath);
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::Topology::ByImportedBRep(cppPath);
@@ -261,10 +261,25 @@ namespace Topologic
 		return pTopology;
 	}
 
+	Topology^ Topology::ByString(System::String^ brepString)
+	{
+		std::string cppBrepString = msclr::interop::marshal_as<std::string>(brepString);
+		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::Topology::ByString(cppBrepString);
+		Topology^ pTopology = Topology::ByCoreTopology(pCoreTopology);
+		return pTopology;
+	}
+
+	String^ Topology::String::get()
+	{
+		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
+		std::string cppBrepString = pCoreTopology->String();
+		return gcnew System::String(cppBrepString.c_str());
+	}
+
 	String^ Topology::Analyze()
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
-		return gcnew String(pCoreTopology->Analyze().c_str());
+		return gcnew System::String(pCoreTopology->Analyze().c_str());
 	}
 
 	bool Topology::IsSame(Topology^ topology)
@@ -304,7 +319,7 @@ namespace Topologic
 	{
 		std::shared_ptr<TopologicCore::Topology> pCoreTopology = TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 		std::string strType = pCoreTopology->GetTypeAsString();
-		return gcnew String(strType.c_str());
+		return gcnew System::String(strType.c_str());
 	}
 
 	int Topology::Type::get()
@@ -314,7 +329,7 @@ namespace Topologic
 		return topologyType;
 	}
 
-	Topology ^ Topology::SetDictionary(System::Collections::Generic::Dictionary<String^, Object^>^ dictionary)
+	Topology ^ Topology::SetDictionary(System::Collections::Generic::Dictionary<System::String^, Object^>^ dictionary)
 	{
 		try {
 			TopologicCore::Topology::Ptr pCoreTopology =
@@ -326,13 +341,13 @@ namespace Topologic
 		}
 		catch (const std::exception& e)
 		{
-			throw gcnew Exception(gcnew String(e.what()));
+			throw gcnew Exception(gcnew System::String(e.what()));
 		}
 	}
 
 	Topology ^ Topology::SetDictionaries(
 		IList<Vertex^>^ selectors,
-		IList<System::Collections::Generic::Dictionary<String^, Object^>^>^ dictionaries,
+		IList<System::Collections::Generic::Dictionary<System::String^, Object^>^>^ dictionaries,
 		int typeFilter)
 	{
 		TopologicCore::Topology::Ptr pCoreTopology =
@@ -348,10 +363,10 @@ namespace Topologic
 		}
 		
 		std::list<std::map<std::string, TopologicCore::Attribute::Ptr>> coreDictionaries;
-		for each(System::Collections::Generic::Dictionary<String^, Object^>^ dictionary in dictionaries)
+		for each(System::Collections::Generic::Dictionary<System::String^, Object^>^ dictionary in dictionaries)
 		{
 			std::map<std::string, TopologicCore::Attribute::Ptr> coreDictionary;
-			for each(KeyValuePair<String^, Object^>^ entry in dictionary)
+			for each(KeyValuePair<System::String^, Object^>^ entry in dictionary)
 			{
 				Attributes::AttributeFactory^ attributeFactory = 
 					Attributes::AttributeFactoryManager::Instance->GetFactory(entry->Value);
@@ -372,7 +387,7 @@ namespace Topologic
 		}
 		catch (const std::exception& e)
 		{
-			throw gcnew Exception(gcnew String(e.what()));
+			throw gcnew Exception(gcnew System::String(e.what()));
 		}
 	}
 
@@ -388,10 +403,10 @@ namespace Topologic
 			return nullptr;
 		}
 		
-		System::Collections::Generic::Dictionary<String^, Object^>^ dictionary = gcnew System::Collections::Generic::Dictionary<String^, Object^>();
+		System::Collections::Generic::Dictionary<System::String^, Object^>^ dictionary = gcnew System::Collections::Generic::Dictionary<System::String^, Object^>();
 		for (const std::pair<std::string, TopologicCore::Attribute::Ptr>& rkAttributePair : coreAttributes)
 		{
-			String^ key = gcnew String(rkAttributePair.first.c_str());
+			System::String^ key = gcnew System::String(rkAttributePair.first.c_str());
 			Attributes::AttributeFactory^ attributeFactory = Attributes::AttributeFactoryManager::Instance->GetFactory(rkAttributePair.second);
 			dictionary->Add(key, attributeFactory->CreateValue(rkAttributePair.second));
 		}
@@ -406,7 +421,7 @@ namespace Topologic
 		{
 			return nullptr;
 		}
-		String^ guid = gcnew String(kpCoreTopology->GetInstanceGUID().c_str());
+		System::String^ guid = gcnew System::String(kpCoreTopology->GetInstanceGUID().c_str());
 		Factories::TopologyFactory^ topologyFactory = nullptr;
 		try {
 			topologyFactory = Factories::TopologyFactoryManager::Instance->Find(guid);
@@ -468,7 +483,7 @@ namespace Topologic
 		Factories::TopologyFactoryManager::Instance->Add(kpCoreTopology, topologyFactory);
 	}
 
-	void Topology::RegisterFactory(String^ guid, Factories::TopologyFactory^ topologyFactory)
+	void Topology::RegisterFactory(System::String^ guid, Factories::TopologyFactory^ topologyFactory)
 	{
 		Factories::TopologyFactoryManager::Instance->Add(guid, topologyFactory);
 	}
@@ -479,15 +494,15 @@ namespace Topologic
 		static bool areFactoriesAdded = false;
 		if(!areFactoriesAdded)
 		{
-			RegisterFactory(gcnew String(TopologicCore::VertexGUID::Get().c_str()), gcnew Factories::VertexFactory());
-			RegisterFactory(gcnew String(TopologicCore::EdgeGUID::Get().c_str()), gcnew Factories::EdgeFactory());
-			RegisterFactory(gcnew String(TopologicCore::WireGUID::Get().c_str()), gcnew Factories::WireFactory());
-			RegisterFactory(gcnew String(TopologicCore::FaceGUID::Get().c_str()), gcnew Factories::FaceFactory());
-			RegisterFactory(gcnew String(TopologicCore::ShellGUID::Get().c_str()), gcnew Factories::ShellFactory());
-			RegisterFactory(gcnew String(TopologicCore::CellGUID::Get().c_str()), gcnew Factories::CellFactory());
-			RegisterFactory(gcnew String(TopologicCore::CellComplexGUID::Get().c_str()), gcnew Factories::CellComplexFactory());
-			RegisterFactory(gcnew String(TopologicCore::ClusterGUID::Get().c_str()), gcnew Factories::ClusterFactory());
-			RegisterFactory(gcnew String(TopologicCore::ApertureGUID::Get().c_str()), gcnew Factories::ApertureFactory());
+			RegisterFactory(gcnew System::String(TopologicCore::VertexGUID::Get().c_str()), gcnew Factories::VertexFactory());
+			RegisterFactory(gcnew System::String(TopologicCore::EdgeGUID::Get().c_str()), gcnew Factories::EdgeFactory());
+			RegisterFactory(gcnew System::String(TopologicCore::WireGUID::Get().c_str()), gcnew Factories::WireFactory());
+			RegisterFactory(gcnew System::String(TopologicCore::FaceGUID::Get().c_str()), gcnew Factories::FaceFactory());
+			RegisterFactory(gcnew System::String(TopologicCore::ShellGUID::Get().c_str()), gcnew Factories::ShellFactory());
+			RegisterFactory(gcnew System::String(TopologicCore::CellGUID::Get().c_str()), gcnew Factories::CellFactory());
+			RegisterFactory(gcnew System::String(TopologicCore::CellComplexGUID::Get().c_str()), gcnew Factories::CellComplexFactory());
+			RegisterFactory(gcnew System::String(TopologicCore::ClusterGUID::Get().c_str()), gcnew Factories::ClusterFactory());
+			RegisterFactory(gcnew System::String(TopologicCore::ApertureGUID::Get().c_str()), gcnew Factories::ApertureFactory());
 			areFactoriesAdded = true;
 		}
 	}
@@ -497,14 +512,14 @@ namespace Topologic
 
 	}
 
-	Topology ^ Topology::AddAttributesNoCopy(System::Collections::Generic::Dictionary<String^, Object^>^ attributes)
+	Topology ^ Topology::AddAttributesNoCopy(System::Collections::Generic::Dictionary<System::String^, Object^>^ attributes)
 	{
 		if (attributes != nullptr)
 		{
 			TopologicCore::Topology::Ptr pCoreTopology =
 				TopologicCore::TopologicalQuery::Downcast<TopologicCore::Topology>(GetCoreTopologicalQuery());
 
-			for each(KeyValuePair<String^, Object^>^ entry in attributes)
+			for each(KeyValuePair<System::String^, Object^>^ entry in attributes)
 			{
 				System::Type^ entryValueType = entry->Value->GetType();
 				Attributes::AttributeFactoryManager::Instance->SetAttribute(this, entry->Key, entry->Value);
@@ -594,7 +609,7 @@ namespace Topologic
 		}
 		catch (std::exception& e)
 		{
-			throw gcnew Exception(gcnew String(e.what()));
+			throw gcnew Exception(gcnew System::String(e.what()));
 		}
 	}
 
@@ -617,7 +632,7 @@ namespace Topologic
 		}
 		catch (std::exception& e)
 		{
-			throw gcnew Exception(gcnew String(e.what()));
+			throw gcnew Exception(gcnew System::String(e.what()));
 		}
 	}
 
@@ -674,7 +689,7 @@ namespace Topologic
 		}
 		catch (std::exception& e)
 		{
-			throw gcnew Exception(gcnew String(e.what()));
+			throw gcnew Exception(gcnew System::String(e.what()));
 		}
 		List<Topology^>^ pSharedTopologies = gcnew List<Topology^>();
 		for (std::list<std::shared_ptr<TopologicCore::Topology>>::const_iterator kCoreSharedTopologyIterator = coreSharedTopologies.begin();
@@ -700,7 +715,7 @@ namespace Topologic
 		}
 		catch (std::exception& e)
 		{
-			throw gcnew Exception(gcnew String(e.what()));
+			throw gcnew Exception(gcnew System::String(e.what()));
 		}
 	}
 
@@ -718,7 +733,7 @@ namespace Topologic
 		}
 		catch (std::exception& e)
 		{
-			throw gcnew Exception(gcnew String(e.what()));
+			throw gcnew Exception(gcnew System::String(e.what()));
 		}
 	}
 
@@ -736,7 +751,7 @@ namespace Topologic
 		}
 		catch (std::exception& e)
 		{
-			throw gcnew Exception(gcnew String(e.what()));
+			throw gcnew Exception(gcnew System::String(e.what()));
 		}
 	}
 
@@ -754,7 +769,7 @@ namespace Topologic
 		}
 		catch (std::exception& e)
 		{
-			throw gcnew Exception(gcnew String(e.what()));
+			throw gcnew Exception(gcnew System::String(e.what()));
 		}
 	}
 	
@@ -772,7 +787,7 @@ namespace Topologic
 		}
 		catch (std::exception& e)
 		{
-			throw gcnew Exception(gcnew String(e.what()));
+			throw gcnew Exception(gcnew System::String(e.what()));
 		}
 	}
 
@@ -786,7 +801,7 @@ namespace Topologic
 		}
 		catch (std::exception& e)
 		{
-			throw gcnew Exception(gcnew String(e.what()));
+			throw gcnew Exception(gcnew System::String(e.what()));
 		}
 	}
 
@@ -804,7 +819,7 @@ namespace Topologic
 		}
 		catch (std::exception& e)
 		{
-			throw gcnew Exception(gcnew String(e.what()));
+			throw gcnew Exception(gcnew System::String(e.what()));
 		}
 	}
 
@@ -822,7 +837,7 @@ namespace Topologic
 		}
 		catch (std::exception& e)
 		{
-			throw gcnew Exception(gcnew String(e.what()));
+			throw gcnew Exception(gcnew System::String(e.what()));
 		}
 	}
 
@@ -840,7 +855,7 @@ namespace Topologic
 		}
 		catch (std::exception& e)
 		{
-			throw gcnew Exception(gcnew String(e.what()));
+			throw gcnew Exception(gcnew System::String(e.what()));
 		}
 	}
 
@@ -858,7 +873,7 @@ namespace Topologic
 		}
 		catch (std::exception& e)
 		{
-			throw gcnew Exception(gcnew String(e.what()));
+			throw gcnew Exception(gcnew System::String(e.what()));
 		}
 	}
 

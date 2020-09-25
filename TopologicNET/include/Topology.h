@@ -405,10 +405,26 @@ namespace Topologic
 		static Topology^ ByImportedBRep(String^ filePath);
 
 		/// <summary>
+		/// Imports a Topology from a BRep string.
+		/// </summary>
+		/// <param name="brepString">A string in BRep format.</param>
+		/// <returns name="Topology">A Topology</returns>
+		static Topology^ ByString(String^ brepString);
+
+		/// <summary>
+		/// Returns a string in the BRep format.
+		/// </summary>
+		/// <returns name="String">A string in the BRep format</returns>
+		property String^ String
+		{
+			System::String^ get();
+		}
+
+		/// <summary>
 		/// Prints the topological information of a Topology.
 		/// </summary>
 		/// <returns name="String">The topological information of the input Topology</returns>
-		String^ Analyze();
+		System::String^ Analyze();
 
 #ifdef TOPOLOGIC_DYNAMO
 		[IsVisibleInDynamoLibrary(false)]
@@ -544,9 +560,9 @@ namespace Topologic
 		/// Returns the instance type as a string.
 		/// </summary>
 		/// <returns>The instance type as a string</returns>
-		property String^ TypeAsString
+		property System::String^ TypeAsString
 		{
-			String^ get();
+			System::String^ get();
 		}
 
 		/// <summary>
@@ -574,13 +590,13 @@ namespace Topologic
 #ifdef TOPOLOGIC_DYNAMO
 		[IsVisibleInDynamoLibrary(false)]
 #endif
-		void RegisterFactory(String^ rkGUID, Factories::TopologyFactory^ topologyFactory);
+		void RegisterFactory(System::String^ rkGUID, Factories::TopologyFactory^ topologyFactory);
 
 		/// <summary>
 		/// Sets a dictionary for a Topology.
 		/// </summary>
 		/// <returns name="Topology">The Topology with the dictionary</returns>
-		Topology^ SetDictionary(Dictionary<String^, Object^>^ dictionary);
+		Topology^ SetDictionary(Dictionary<System::String^, Object^>^ dictionary);
 
 		/// <summary>
 		/// Sets a list of dictionaries for a Topology.
@@ -589,7 +605,7 @@ namespace Topologic
 		/// <param name="dictionaries">A list of dictionaries</param>
 		/// <param name="typeFilter"></param>
 		/// <returns name="Topology">The Topology with the dictionary</returns>
-		Topology^ SetDictionaries(IList<Vertex^>^ selectors, IList<Dictionary<String^, Object^>^>^ dictionaries, 
+		Topology^ SetDictionaries(IList<Vertex^>^ selectors, IList<Dictionary<System::String^, Object^>^>^ dictionaries,
 #ifdef TOPOLOGIC_DYNAMO
 			[Autodesk::DesignScript::Runtime::DefaultArgument("255")]
 #endif
@@ -599,9 +615,9 @@ namespace Topologic
 		/// Returns the dictionary of a Topology.
 		/// </summary>
 		/// <returns name="Dictionary">The dictionary</returns>
-		property System::Collections::Generic::Dictionary<String^, Object^>^ Dictionary
+		property System::Collections::Generic::Dictionary<System::String^, Object^>^ Dictionary
 		{
-			System::Collections::Generic::Dictionary<String^, Object^>^ get();
+			System::Collections::Generic::Dictionary<System::String^, Object^>^ get();
 		}
 
 	public protected:

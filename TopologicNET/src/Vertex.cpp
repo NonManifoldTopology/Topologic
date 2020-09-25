@@ -52,7 +52,7 @@ namespace Topologic
 			pCoreVertex->Edges(coreEdges);
 		}catch(const std::exception& e)
 		{
-			throw gcnew Exception(gcnew String(e.what()));
+			throw gcnew Exception(gcnew System::String(e.what()));
 		}
 
 		List<Edge^>^ edges = gcnew List<Edge^>();
@@ -146,7 +146,7 @@ namespace Topologic
 		}
 		catch (const std::exception& e)
 		{
-			throw gcnew Exception(gcnew String(e.what()));
+			throw gcnew Exception(gcnew System::String(e.what()));
 		}
 	}
 }

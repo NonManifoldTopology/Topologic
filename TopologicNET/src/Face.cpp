@@ -128,7 +128,7 @@ namespace Topologic
         }
         catch (std::exception& e)
         {
-            throw gcnew Exception(gcnew String(e.what()));
+            throw gcnew Exception(gcnew System::String(e.what()));
         }
 	}
 
@@ -272,7 +272,7 @@ namespace Topologic
 		}
 		catch (const std::exception& rkException)
 		{
-			throw gcnew Exception(gcnew String(rkException.what()));
+			throw gcnew Exception(gcnew System::String(rkException.what()));
 		}
 
 		return gcnew Face(pCoreFace);
@@ -500,13 +500,13 @@ namespace Topologic
 			}
 			catch (std::exception& e)
 			{
-				String^ str = gcnew String(e.what());
+				System::String^ str = gcnew System::String(e.what());
 			}
 			catch (Exception^ e)
 			{
 				//throw e;
-				String^ str(e->Message);
-				//if (e->Message->Equals(gcnew String("trim_with_edge_loops requires all curves to touch surface")))
+				System::String^ str(e->Message);
+				//if (e->Message->Equals(gcnew System::String("trim_with_edge_loops requires all curves to touch surface")))
 				{
 					// Project to surface
 					List<Autodesk::DesignScript::Geometry::PolyCurve^>^ pDynamoProjectedEdgeLoops = gcnew List<Autodesk::DesignScript::Geometry::PolyCurve^>();
@@ -702,7 +702,7 @@ namespace Topologic
 			}
 			catch (Exception^ e)
 			{
-				String^ str(e->Message);
+				System::String^ str(e->Message);
 				throw e;
 			}
 			catch (...)
@@ -1095,7 +1095,7 @@ namespace Topologic
 			}
 			catch (const std::exception& rkException)
 			{
-				e = gcnew Exception(gcnew String(rkException.what()));
+				e = gcnew Exception(gcnew System::String(rkException.what()));
 			}
 
 			for each(array<Autodesk::DesignScript::Geometry::Point^>^ pDynamo1DControlPoints in pDynamoControlPoints)

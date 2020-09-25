@@ -45,7 +45,7 @@ namespace Topologic
 		}
 		catch (const std::exception& rkException)
 		{
-			throw gcnew Exception(gcnew String(rkException.what()));
+			throw gcnew Exception(gcnew System::String(rkException.what()));
 		}
 
 		return gcnew Cell(pCoreCell);
@@ -59,7 +59,7 @@ namespace Topologic
 		}
 		catch (const std::exception& rkException)
 		{
-			throw gcnew Exception(gcnew String(rkException.what()));
+			throw gcnew Exception(gcnew System::String(rkException.what()));
 		}
 	}
 
@@ -185,7 +185,7 @@ namespace Topologic
 		}
 		catch (const std::exception& rkException)
 		{
-			throw gcnew Exception(gcnew String(rkException.what()));
+			throw gcnew Exception(gcnew System::String(rkException.what()));
 		}
 
 		List<Cell^>^ pAdjacentCells = gcnew List<Cell^>();
@@ -435,7 +435,7 @@ namespace Topologic
 		}
 		catch (const std::exception& rkException)
 		{
-			throw gcnew Exception(gcnew String(rkException.what()));
+			throw gcnew Exception(gcnew System::String(rkException.what()));
 		}
 
 

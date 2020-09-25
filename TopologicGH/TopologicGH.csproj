@@ -68,8 +68,10 @@
     <Compile Include="GhToNetConverter.cs" />
     <Compile Include="GraphShortestPaths.cs" />
     <Compile Include="TopologyAddContent.cs" />
+    <Compile Include="TopologyByString.cs" />
     <Compile Include="TopologyRemoveContents.cs" />
     <Compile Include="TopologySetDictionaries.cs" />
+    <Compile Include="TopologyString.cs" />
     <Compile Include="Utilities\CellUtilityInternalVertex.cs" />
     <Compile Include="Utilities\FaceUtilityAdjacentCells.cs" />
     <Compile Include="GraphAddEdges.cs" />

@@ -1256,6 +1256,23 @@ namespace TopologicCore
 		return pTopology;
 	}
 
+	Topology::Ptr Topology::ByString(const std::string& rkBrepString)
+	{
+		TopoDS_Shape occtShape;
+		BRep_Builder brepBuilder;
+		std::istringstream iss(rkBrepString, std::ios_base::in);
+		BRepTools::Read(occtShape, iss, brepBuilder);
+		Topology::Ptr pTopology = Topology::ByOcctShape(occtShape, "");
+		return pTopology;
+	}
+
+	std::string Topology::String() const
+	{
+		std::ostringstream oss(std::ios_base::out);
+		BRepTools::Write(GetOcctShape(), oss);
+		return oss.str();
+	}
+
 	void Topology::Filter(const std::list<Topology::Ptr>& rkTopologies, const int kTypeFilter, std::list<Topology::Ptr>& rFilteredTopologies)
 	{
 		for (const Topology::Ptr& kpTopology : rkTopologies)

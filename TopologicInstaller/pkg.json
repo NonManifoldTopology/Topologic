@@ -2,7 +2,7 @@
 	"license": "AGPL v3",
 	"file_hash": null,
 	"name": "Topologic",
-	"version": "1.4.0",
+	"version": "1.4.0.1",
 	"description": "Build. Connect. Analyse",
 	"group": "",
 	"keywords": ["topology"],

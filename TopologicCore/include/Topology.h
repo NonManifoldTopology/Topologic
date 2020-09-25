@@ -357,7 +357,11 @@ namespace TopologicCore
 		/// </summary>
 		/// <param name="rkFilePath"></param>
 		/// <returns></returns>
-		static TOPOLOGIC_API Topology::Ptr ByImportedBRep(const std::string& rkFilePath);
+		TOPOLOGIC_API static Topology::Ptr ByImportedBRep(const std::string& rkFilePath);
+
+		TOPOLOGIC_API static Topology::Ptr ByString(const std::string& rkBrepString);
+
+		TOPOLOGIC_API std::string String() const;
 
 		static TOPOLOGIC_API void Filter(const std::list<Topology::Ptr>& rkTopologies, const int kTypeFilter, std::list<Topology::Ptr>& rFilteredTopologies);
 

@@ -205,4 +205,10 @@
       <Filter>Attributes</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="config\TopologicDynamo_DynamoCustomization.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="resources\Topologic.resx" />
+  </ItemGroup>
 </Project>

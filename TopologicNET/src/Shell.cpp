@@ -129,7 +129,7 @@ namespace Topologic
 		}
 		catch (const std::exception& rkException)
 		{
-			throw gcnew Exception(gcnew String(rkException.what()));
+			throw gcnew Exception(gcnew System::String(rkException.what()));
 		}
 
 		return gcnew Shell(pCoreShell);
