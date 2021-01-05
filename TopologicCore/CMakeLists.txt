@@ -1,5 +1,31 @@
 project(TopologicCore CXX)
 
+# Specify where to install files
+IF(NOT INCLUDEDIR)
+    set(INCLUDEDIR include)
+ENDIF()
+IF(NOT IS_ABSOLUTE ${INCLUDEDIR})
+    set(INCLUDEDIR ${CMAKE_INSTALL_PREFIX}/${INCLUDEDIR})
+ENDIF()
+MESSAGE(STATUS "INCLUDEDIR: ${INCLUDEDIR}")
+
+IF(NOT LIBDIR)
+    set(LIBDIR lib)
+ENDIF()
+IF(NOT IS_ABSOLUTE ${LIBDIR})
+    set(LIBDIR ${CMAKE_INSTALL_PREFIX}/${LIBDIR})
+ENDIF()
+MESSAGE(STATUS "LIBDIR: ${LIBDIR}")
+
+# Create cache entries if absent for environment variables
+MACRO(UNIFY_ENVVARS_AND_CACHE VAR)
+        IF ((NOT DEFINED ${VAR}) AND (NOT "$ENV{${VAR}}" STREQUAL ""))
+                SET(${VAR} "$ENV{${VAR}}" CACHE STRING "${VAR}" FORCE)
+        ENDIF()
+ENDMACRO()
+
+UNIFY_ENVVARS_AND_CACHE(OCC_INCLUDE_DIR)
+
 ################################################################################
 # Source groups
 ################################################################################
@@ -134,10 +160,14 @@ set(ALL_FILES
     ${Utilities}
 )
 
+file(GLOB TOPOLOGICCORE_H_FILES include/*.h)
+file(GLOB TOPOLOGICCORE_UTILITIES_H_FILES include/Utilities/*.h)
+
 ################################################################################
 # Target
 ################################################################################
 add_library(${PROJECT_NAME} SHARED ${ALL_FILES})
+set_target_properties(${PROJECT_NAME} PROPERTIES VERSION "0.0.0" SOVERSION "0")
 
 use_props(${PROJECT_NAME} "${CMAKE_CONFIGURATION_TYPES}" "${DEFAULT_CXX_PROPS}")
 set(ROOT_NAMESPACE TopologicCore)
@@ -177,20 +207,38 @@ endif()
 ################################################################################
 # Include directories
 ################################################################################
+
+# Find opencascade
+IF("${OCC_INCLUDE_DIR}" STREQUAL "")
+        SET(OCC_INCLUDE_DIR "/usr/include/opencascade/" CACHE FILEPATH "Open CASCADE header files")
+        MESSAGE(STATUS "Looking for Open CASCADE include files in: ${OCC_INCLUDE_DIR}")
+        MESSAGE(STATUS "Use OCC_INCLUDE_DIR to specify another directory")
+ELSE()
+        SET(OCC_INCLUDE_DIR ${OCC_INCLUDE_DIR} CACHE FILEPATH "Open CASCADE header files")
+        MESSAGE(STATUS "Looking for Open CASCADE include files in: ${OCC_INCLUDE_DIR}")
+ENDIF()
+
+FIND_FILE(gp_Pnt_hxx "gp_Pnt.hxx" ${OCC_INCLUDE_DIR})
+IF(gp_Pnt_hxx)
+        MESSAGE(STATUS "Header files found")
+ELSE()
+        MESSAGE(FATAL_ERROR "Unable to find header files, aborting. Set OCC_INCLUDE_DIR")
+ENDIF()
+
 if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Any CPU")
     target_include_directories(${PROJECT_NAME} PUBLIC
         "${CMAKE_CURRENT_SOURCE_DIR}/include;"
-        "/usr/include/opencascade"
+        ${OCC_INCLUDE_DIR}
     )
 elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
     target_include_directories(${PROJECT_NAME} PUBLIC
         "${CMAKE_CURRENT_SOURCE_DIR}/include;"
-        "/usr/include/opencascade"
+        ${OCC_INCLUDE_DIR}
     )
 elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
     target_include_directories(${PROJECT_NAME} PUBLIC
         "${CMAKE_CURRENT_SOURCE_DIR}/include;"
-        "/usr/include/opencascade"
+        ${OCC_INCLUDE_DIR}
     )
 endif()
 
@@ -430,4 +478,16 @@ elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         ">"
     )
 endif()
+
+# CMake installation targets
+INSTALL(FILES ${TOPOLOGICCORE_H_FILES}
+        DESTINATION ${INCLUDEDIR}/${PROJECT_NAME}
+)
+INSTALL(FILES ${TOPOLOGICCORE_UTILITIES_H_FILES}
+        DESTINATION ${INCLUDEDIR}/${PROJECT_NAME}/Utilities
+)
+
+INSTALL(TARGETS ${PROJECT_NAME}
+        LIBRARY DESTINATION ${LIBDIR}
+)
 
