@@ -180,6 +180,7 @@ copy "$(SolutionDir)references\opencascade-7.4.0\win64\vc14\bin\tbb*.dll" "$(Sol
     <ClInclude Include="include\ContentManager.h" />
     <ClInclude Include="include\Context.h" />
     <ClInclude Include="include\ContextManager.h" />
+    <ClInclude Include="include\Dictionary.h" />
     <ClInclude Include="include\DoubleAttribute.h" />
     <ClInclude Include="include\Geometry.h" />
     <ClInclude Include="include\GlobalCluster.h" />
@@ -234,6 +235,7 @@ copy "$(SolutionDir)references\opencascade-7.4.0\win64\vc14\bin\tbb*.dll" "$(Sol
     <ClCompile Include="src\ContentManager.cpp" />
     <ClCompile Include="src\Context.cpp" />
     <ClCompile Include="src\ContextManager.cpp" />
+    <ClCompile Include="src\Dictionary.cpp" />
     <ClCompile Include="src\DoubleAttribute.cpp" />
     <ClCompile Include="src\Geometry.cpp" />
     <ClCompile Include="src\GlobalCluster.cpp" />

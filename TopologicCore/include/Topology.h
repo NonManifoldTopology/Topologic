@@ -19,6 +19,7 @@
 #include "Utilities.h"
 #include "GlobalCluster.h"
 #include "TopologicalQuery.h"
+#include "Dictionary.h"
 
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_DataMapOfShapeShape.hxx>
@@ -643,6 +644,10 @@ namespace TopologicCore
 		TOPOLOGIC_API bool IsReversed();
 
 		Topology::Ptr DeepCopyAttributesFrom(const std::list<Topology::Ptr>& kpOriginTopologies);
+
+		void SetDictionary(const Dictionary& dictionary); 
+
+		Dictionary Dictionary();
 
 	protected:
 		Topology(const int kDimensionality, const TopoDS_Shape& rkOcctShape, const std::string& rkGuid = "");

@@ -3507,4 +3507,27 @@ namespace TopologicCore
 		assert(value);
 		return guid;
 	}
+
+	void Topology::SetDictionary(const TopologicCore::Dictionary& attributes)
+	{
+		auto occtShape = GetOcctShape();
+	
+		AttributeManager& attrManager = AttributeManager::GetInstance();
+
+		attrManager.ClearOne(occtShape);
+
+		for (auto entry : attributes)
+		{
+			attrManager.Add(occtShape, entry.first, entry.second);
+		}
+		
+	}
+
+	Dictionary Topology::Dictionary()
+	{
+		TopologicCore::Dictionary dict;
+		AttributeManager::GetInstance().FindAll(GetOcctShape(), dict);
+		return dict;
+	}
+
 }
