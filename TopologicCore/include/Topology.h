@@ -647,7 +647,7 @@ namespace TopologicCore
 
 		void SetDictionary(const Dictionary& dictionary); 
 
-		Dictionary Dictionary();
+		Dictionary GetDictionary();
 
 	protected:
 		Topology(const int kDimensionality, const TopoDS_Shape& rkOcctShape, const std::string& rkGuid = "");

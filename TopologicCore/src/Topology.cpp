@@ -3523,7 +3523,7 @@ namespace TopologicCore
 		
 	}
 
-	Dictionary Topology::Dictionary()
+	Dictionary Topology::GetDictionary()
 	{
 		TopologicCore::Dictionary dict;
 		AttributeManager::GetInstance().FindAll(GetOcctShape(), dict);
