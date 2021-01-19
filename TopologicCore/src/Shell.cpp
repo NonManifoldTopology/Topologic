@@ -116,14 +116,14 @@ namespace TopologicCore
 		try{
 			TopoDS_Shell occtShell = TopoDS::Shell(occtShape);
 			Shell::Ptr pShell = std::make_shared<Shell>(occtShell);
-			Shell::Ptr pCopyShell = std::dynamic_pointer_cast<Shell>(pShell->DeepCopy());
+			//Shell::Ptr pCopyShell = std::dynamic_pointer_cast<Shell>(pShell->DeepCopy());
 			std::list<Topology::Ptr> facesAsTopologies;
 			for (const Face::Ptr& kpFace: rkFaces)
 			{
 				facesAsTopologies.push_back(kpFace);
 				//AttributeManager::GetInstance().DeepCopyAttributes(kpFace->GetOcctFace(), pCopyShell->GetOcctShell());
 			}
-			pCopyShell->DeepCopyAttributesFrom(facesAsTopologies);
+			Shell::Ptr pCopyShell = std::dynamic_pointer_cast<Shell>(pShell->DeepCopyAttributesFrom(facesAsTopologies));
 
 			GlobalCluster::GetInstance().AddTopology(pCopyShell);
 			return pCopyShell;
