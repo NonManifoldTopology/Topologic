@@ -224,7 +224,15 @@ FIND_FILE(gp_Pnt_hxx "gp_Pnt.hxx" ${OCC_INCLUDE_DIR})
 IF(gp_Pnt_hxx)
         MESSAGE(STATUS "Header files found")
 ELSE()
+    SET(OCC_INCLUDE_DIR "C:/OpenCASCADE-7.4.0-vc14-64/opencascade-7.4.0/inc/" CACHE FILEPATH "Open CASCADE header files" FORCE)
+    MESSAGE(STATUS "Looking for Open CASCADE include files in: ${OCC_INCLUDE_DIR}")
+    FIND_FILE(gp_Pnt_hxx "gp_Pnt.hxx" ${OCC_INCLUDE_DIR})
+    IF(gp_Pnt_hxx)
+        MESSAGE(STATUS "Header files found")
+        link_directories("C:/OpenCASCADE-7.4.0-vc14-64/opencascade-7.4.0/win64/vc14/lib")
+    ELSE()
         MESSAGE(FATAL_ERROR "Unable to find header files, aborting. Set OCC_INCLUDE_DIR")
+    ENDIF()
 ENDIF()
 
 if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Any CPU")
@@ -372,7 +380,21 @@ elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         POST_BUILD
         COMMANDS
         COMMAND   $<CONFIG:Debug> copy "C:\\OpenCASCADE-7.4.0-vc14-64\\opencascade-7.4.0\\win64\\vc14\\bin\\*.dll" "$<SHELL_PATH:${CMAKE_SOURCE_DIR}/>output\\${CMAKE_VS_PLATFORM_NAME}\\$<CONFIG>"
+        COMMAND   $<CONFIG:Debug> copy "C:\\OpenCASCADE-7.4.0-vc14-64\\ffmpeg-3.3.4-64\\bin\\*.dll" "$<SHELL_PATH:${CMAKE_SOURCE_DIR}/>output\\${CMAKE_VS_PLATFORM_NAME}\\$<CONFIG>"
+        COMMAND   $<CONFIG:Debug> copy "C:\\OpenCASCADE-7.4.0-vc14-64\\freeimage-3.17.0-vc14-64\\bin\\*.dll" "$<SHELL_PATH:${CMAKE_SOURCE_DIR}/>output\\${CMAKE_VS_PLATFORM_NAME}\\$<CONFIG>"
+        COMMAND   $<CONFIG:Debug> copy "C:\\OpenCASCADE-7.4.0-vc14-64\\tbb_2017.0.100\\bin\\intel64\\vc14\\*.dll" "$<SHELL_PATH:${CMAKE_SOURCE_DIR}/>output\\${CMAKE_VS_PLATFORM_NAME}\\$<CONFIG>"
+        COMMAND   $<CONFIG:Debug> copy "C:\\OpenCASCADE-7.4.0-vc14-64\\vtk-6.1.0-vc14-64\\bin\\*.dll" "$<SHELL_PATH:${CMAKE_SOURCE_DIR}/>output\\${CMAKE_VS_PLATFORM_NAME}\\$<CONFIG>"
+        COMMAND   $<CONFIG:Debug> copy "C:\\OpenCASCADE-7.4.0-vc14-64\\tcltk-86-64\\bin\\*.dll" "$<SHELL_PATH:${CMAKE_SOURCE_DIR}/>output\\${CMAKE_VS_PLATFORM_NAME}\\$<CONFIG>"
+        COMMAND   $<CONFIG:Debug> copy "C:\\OpenCASCADE-7.4.0-vc14-64\\qt5.11.2-vc14-64\\bin\\*.dll" "$<SHELL_PATH:${CMAKE_SOURCE_DIR}/>output\\${CMAKE_VS_PLATFORM_NAME}\\$<CONFIG>"
+        COMMAND   $<CONFIG:Debug> copy "C:\\OpenCASCADE-7.4.0-vc14-64\\freetype-2.5.5-vc14-64\\bin\\*.dll" "$<SHELL_PATH:${CMAKE_SOURCE_DIR}/>output\\${CMAKE_VS_PLATFORM_NAME}\\$<CONFIG>"
         COMMAND $<CONFIG:Release> copy "C:\\OpenCASCADE-7.4.0-vc14-64\\opencascade-7.4.0\\win64\\vc14\\bin\\*.dll" "$<SHELL_PATH:${CMAKE_SOURCE_DIR}/>output\\${CMAKE_VS_PLATFORM_NAME}\\$<CONFIG>"
+        COMMAND $<CONFIG:Release> copy "C:\\OpenCASCADE-7.4.0-vc14-64\\ffmpeg-3.3.4-64\\bin\\*.dll" "$<SHELL_PATH:${CMAKE_SOURCE_DIR}/>output\\${CMAKE_VS_PLATFORM_NAME}\\$<CONFIG>"
+        COMMAND $<CONFIG:Release> copy "C:\\OpenCASCADE-7.4.0-vc14-64\\freeimage-3.17.0-vc14-64\\bin\\*.dll" "$<SHELL_PATH:${CMAKE_SOURCE_DIR}/>output\\${CMAKE_VS_PLATFORM_NAME}\\$<CONFIG>"
+        COMMAND $<CONFIG:Release> copy "C:\\OpenCASCADE-7.4.0-vc14-64\\tbb_2017.0.100\\bin\\intel64\\vc14\\*.dll" "$<SHELL_PATH:${CMAKE_SOURCE_DIR}/>output\\${CMAKE_VS_PLATFORM_NAME}\\$<CONFIG>"
+        COMMAND $<CONFIG:Release> copy "C:\\OpenCASCADE-7.4.0-vc14-64\\vtk-6.1.0-vc14-64\\bin\\*.dll" "$<SHELL_PATH:${CMAKE_SOURCE_DIR}/>output\\${CMAKE_VS_PLATFORM_NAME}\\$<CONFIG>"
+        COMMAND $<CONFIG:Release> copy "C:\\OpenCASCADE-7.4.0-vc14-64\\tcltk-86-64\\bin\\*.dll" "$<SHELL_PATH:${CMAKE_SOURCE_DIR}/>output\\${CMAKE_VS_PLATFORM_NAME}\\$<CONFIG>"
+        COMMAND $<CONFIG:Release> copy "C:\\OpenCASCADE-7.4.0-vc14-64\\qt5.11.2-vc14-64\\bin\\*.dll" "$<SHELL_PATH:${CMAKE_SOURCE_DIR}/>output\\${CMAKE_VS_PLATFORM_NAME}\\$<CONFIG>"
+        COMMAND $<CONFIG:Release> copy "C:\\OpenCASCADE-7.4.0-vc14-64\\freetype-2.5.5-vc14-64\\bin\\*.dll" "$<SHELL_PATH:${CMAKE_SOURCE_DIR}/>output\\${CMAKE_VS_PLATFORM_NAME}\\$<CONFIG>"
     )
 elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
     add_custom_command_if(
@@ -388,95 +410,108 @@ endif()
 ################################################################################
 if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Any CPU")
     set(ADDITIONAL_LIBRARY_DEPENDENCIES
-        "TKCAF;"
-        "TKLCAF;"
-        "TKOffset;"
-        "TKIGES;"
-        "TKPrim;"
-        "TKMesh;"
-        "TKXSBase;"
-        "TKBool;"
-        "TKBO;"
-        "TKShHealing;"
-        "TKG3d;"
-        "TKG2d;"
-        "TKGeomBase;"
-        "TKGeomAlgo;"
-        "TKTopAlgo;"
-        "TKernel;"
-        "TKMath;"
-        "uuid;"
+    "TKCAF;"
+    "TKLCAF;"
+    "TKOffset;"
+    "TKIGES;"
+    "TKPrim;"
+    "TKMesh;"
+    "TKXSBase;"
+    "TKBool;"
+    "TKBO;"
+    "TKShHealing;"
+    "TKG3d;"
+    "TKG2d;"
+    "TKGeomBase;"
+    "TKGeomAlgo;"
+    "TKTopAlgo;"
+    "TKernel;"
+    "TKMath;"
+    "uuid;"
     )
 elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
     set(ADDITIONAL_LIBRARY_DEPENDENCIES
-        "TKCAF;"
-        "TKLCAF;"
-        "TKOffset;"
-        "TKIGES;"
-        "TKPrim;"
-        "TKMesh;"
-        "TKXSBase;"
-        "TKBool;"
-        "TKBO;"
-        "TKShHealing;"
-        "TKG3d;"
-        "TKG2d;"
-        "TKGeomBase;"
-        "TKGeomAlgo;"
-        "TKTopAlgo;"
-        "TKernel;"
-        "TKMath;"
-        "uuid;"
+    "TKCAF;"
+    "TKLCAF;"
+    "TKOffset;"
+    "TKIGES;"
+    "TKPrim;"
+    "TKMesh;"
+    "TKXSBase;"
+    "TKBool;"
+    "TKBO;"
+    "TKShHealing;"
+    "TKG3d;"
+    "TKG2d;"
+    "TKGeomBase;"
+    "TKGeomAlgo;"
+    "TKTopAlgo;"
+    "TKernel;"
+    "TKMath;"
+    "uuid;"
     )
 elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
     set(ADDITIONAL_LIBRARY_DEPENDENCIES
-        "TKCAF;"
-        "TKLCAF;"
-        "TKOffset;"
-        "TKIGES;"
-        "TKPrim;"
-        "TKMesh;"
-        "TKXSBase;"
-        "TKBool;"
-        "TKBO;"
-        "TKShHealing;"
-        "TKG3d;"
-        "TKG2d;"
-        "TKGeomBase;"
-        "TKGeomAlgo;"
-        "TKTopAlgo;"
-        "TKernel;"
-        "TKMath;"
-        "uuid;"
+    "TKCAF;"
+    "TKLCAF;"
+    "TKOffset;"
+    "TKIGES;"
+    "TKPrim;"
+    "TKMesh;"
+    "TKXSBase;"
+    "TKBool;"
+    "TKBO;"
+    "TKShHealing;"
+    "TKG3d;"
+    "TKG2d;"
+    "TKGeomBase;"
+    "TKGeomAlgo;"
+    "TKTopAlgo;"
+    "TKernel;"
+    "TKMath;"
+    "uuid;"
     )
 endif()
+
+if (MSVC)
+    set (ADDITIONAL_LIBRARY_DEPENDENCIES "${ADDITIONAL_LIBRARY_DEPENDENCIES};TKBrep;TKStep;")
+endif()
+
 target_link_libraries(${PROJECT_NAME} PUBLIC "${ADDITIONAL_LIBRARY_DEPENDENCIES}")
+
+if(MSVC)
+    SET (CUSTOM_LIB_PATH "C:/OpenCASCADE-7.4.0-vc14-64/opencascade-7.4.0/win64/vc14/lib")
+ELSE()
+    SET (CUSTOM_LIB_PATH "/usr/lib64")
+ENDIF()
+
+MESSAGE (STATUS "Target: ${CMAKE_VS_PLATFORM_NAME}")
 
 if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Any CPU")
     target_link_directories(${PROJECT_NAME} PUBLIC
         "$<$<CONFIG:Debug>:"
-            "/usr/lib64"
+            "${CUSTOM_LIB_PATH}"
         ">"
         "$<$<CONFIG:Release>:"
-            "/usr/lib64"
+            "${CUSTOM_LIB_PATH}"
         ">"
     )
 elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
     target_link_directories(${PROJECT_NAME} PUBLIC
         "$<$<CONFIG:Debug>:"
-            "/usr/lib64"
+            "${CUSTOM_LIB_PATH}"
         ">"
         "$<$<CONFIG:Release>:"
-            "/usr/lib64"
+            "${CUSTOM_LIB_PATH}"
         ">"
     )
 elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
     target_link_directories(${PROJECT_NAME} PUBLIC
         "$<$<CONFIG:Debug>:"
-            "/usr/lib64"
+            "${CUSTOM_LIB_PATH}"
         ">"
         "$<$<CONFIG:Release>:"
-            "/usr/lib64"
+            "${CUSTOM_LIB_PATH}"
         ">"
     )
 endif()
