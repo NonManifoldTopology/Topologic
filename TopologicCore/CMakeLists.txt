@@ -1,5 +1,31 @@
 project(TopologicCore CXX)
 
+# Specify where to install files
+IF(NOT INCLUDEDIR)
+    set(INCLUDEDIR include)
+ENDIF()
+IF(NOT IS_ABSOLUTE ${INCLUDEDIR})
+    set(INCLUDEDIR ${CMAKE_INSTALL_PREFIX}/${INCLUDEDIR})
+ENDIF()
+MESSAGE(STATUS "INCLUDEDIR: ${INCLUDEDIR}")
+
+IF(NOT LIBDIR)
+    set(LIBDIR lib)
+ENDIF()
+IF(NOT IS_ABSOLUTE ${LIBDIR})
+    set(LIBDIR ${CMAKE_INSTALL_PREFIX}/${LIBDIR})
+ENDIF()
+MESSAGE(STATUS "LIBDIR: ${LIBDIR}")
+
+# Create cache entries if absent for environment variables
+MACRO(UNIFY_ENVVARS_AND_CACHE VAR)
+        IF ((NOT DEFINED ${VAR}) AND (NOT "$ENV{${VAR}}" STREQUAL ""))
+                SET(${VAR} "$ENV{${VAR}}" CACHE STRING "${VAR}" FORCE)
+        ENDIF()
+ENDMACRO()
+
+UNIFY_ENVVARS_AND_CACHE(OCC_INCLUDE_DIR)
+
 ################################################################################
 # Source groups
 ################################################################################
@@ -136,10 +162,14 @@ set(ALL_FILES
     ${Utilities}
 )
 
+file(GLOB TOPOLOGICCORE_H_FILES include/*.h)
+file(GLOB TOPOLOGICCORE_UTILITIES_H_FILES include/Utilities/*.h)
+
 ################################################################################
 # Target
 ################################################################################
 add_library(${PROJECT_NAME} SHARED ${ALL_FILES})
+set_target_properties(${PROJECT_NAME} PROPERTIES VERSION "0.0.0" SOVERSION "0")
 
 use_props(${PROJECT_NAME} "${CMAKE_CONFIGURATION_TYPES}" "${DEFAULT_CXX_PROPS}")
 set(ROOT_NAMESPACE TopologicCore)
@@ -179,20 +209,46 @@ endif()
 ################################################################################
 # Include directories
 ################################################################################
+
+# Find opencascade
+IF("${OCC_INCLUDE_DIR}" STREQUAL "")
+        SET(OCC_INCLUDE_DIR "/usr/include/opencascade/" CACHE FILEPATH "Open CASCADE header files")
+        MESSAGE(STATUS "Looking for Open CASCADE include files in: ${OCC_INCLUDE_DIR}")
+        MESSAGE(STATUS "Use OCC_INCLUDE_DIR to specify another directory")
+ELSE()
+        SET(OCC_INCLUDE_DIR ${OCC_INCLUDE_DIR} CACHE FILEPATH "Open CASCADE header files")
+        MESSAGE(STATUS "Looking for Open CASCADE include files in: ${OCC_INCLUDE_DIR}")
+ENDIF()
+
+FIND_FILE(gp_Pnt_hxx "gp_Pnt.hxx" ${OCC_INCLUDE_DIR})
+IF(gp_Pnt_hxx)
+        MESSAGE(STATUS "Header files found")
+ELSE()
+    SET(OCC_INCLUDE_DIR "C:/OpenCASCADE-7.4.0-vc14-64/opencascade-7.4.0/inc/" CACHE FILEPATH "Open CASCADE header files" FORCE)
+    MESSAGE(STATUS "Looking for Open CASCADE include files in: ${OCC_INCLUDE_DIR}")
+    FIND_FILE(gp_Pnt_hxx "gp_Pnt.hxx" ${OCC_INCLUDE_DIR})
+    IF(gp_Pnt_hxx)
+        MESSAGE(STATUS "Header files found")
+        link_directories("C:/OpenCASCADE-7.4.0-vc14-64/opencascade-7.4.0/win64/vc14/lib")
+    ELSE()
+        MESSAGE(FATAL_ERROR "Unable to find header files, aborting. Set OCC_INCLUDE_DIR")
+    ENDIF()
+ENDIF()
+
 if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Any CPU")
     target_include_directories(${PROJECT_NAME} PUBLIC
         "${CMAKE_CURRENT_SOURCE_DIR}/include;"
-        "/usr/include/opencascade"
+        ${OCC_INCLUDE_DIR}
     )
 elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
     target_include_directories(${PROJECT_NAME} PUBLIC
         "${CMAKE_CURRENT_SOURCE_DIR}/include;"
-        "/usr/include/opencascade"
+        ${OCC_INCLUDE_DIR}
     )
 elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
     target_include_directories(${PROJECT_NAME} PUBLIC
         "${CMAKE_CURRENT_SOURCE_DIR}/include;"
-        "/usr/include/opencascade"
+        ${OCC_INCLUDE_DIR}
     )
 endif()
 
@@ -324,7 +380,21 @@ elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         POST_BUILD
         COMMANDS
         COMMAND   $<CONFIG:Debug> copy "C:\\OpenCASCADE-7.4.0-vc14-64\\opencascade-7.4.0\\win64\\vc14\\bin\\*.dll" "$<SHELL_PATH:${CMAKE_SOURCE_DIR}/>output\\${CMAKE_VS_PLATFORM_NAME}\\$<CONFIG>"
+        COMMAND   $<CONFIG:Debug> copy "C:\\OpenCASCADE-7.4.0-vc14-64\\ffmpeg-3.3.4-64\\bin\\*.dll" "$<SHELL_PATH:${CMAKE_SOURCE_DIR}/>output\\${CMAKE_VS_PLATFORM_NAME}\\$<CONFIG>"
+        COMMAND   $<CONFIG:Debug> copy "C:\\OpenCASCADE-7.4.0-vc14-64\\freeimage-3.17.0-vc14-64\\bin\\*.dll" "$<SHELL_PATH:${CMAKE_SOURCE_DIR}/>output\\${CMAKE_VS_PLATFORM_NAME}\\$<CONFIG>"
+        COMMAND   $<CONFIG:Debug> copy "C:\\OpenCASCADE-7.4.0-vc14-64\\tbb_2017.0.100\\bin\\intel64\\vc14\\*.dll" "$<SHELL_PATH:${CMAKE_SOURCE_DIR}/>output\\${CMAKE_VS_PLATFORM_NAME}\\$<CONFIG>"
+        COMMAND   $<CONFIG:Debug> copy "C:\\OpenCASCADE-7.4.0-vc14-64\\vtk-6.1.0-vc14-64\\bin\\*.dll" "$<SHELL_PATH:${CMAKE_SOURCE_DIR}/>output\\${CMAKE_VS_PLATFORM_NAME}\\$<CONFIG>"
+        COMMAND   $<CONFIG:Debug> copy "C:\\OpenCASCADE-7.4.0-vc14-64\\tcltk-86-64\\bin\\*.dll" "$<SHELL_PATH:${CMAKE_SOURCE_DIR}/>output\\${CMAKE_VS_PLATFORM_NAME}\\$<CONFIG>"
+        COMMAND   $<CONFIG:Debug> copy "C:\\OpenCASCADE-7.4.0-vc14-64\\qt5.11.2-vc14-64\\bin\\*.dll" "$<SHELL_PATH:${CMAKE_SOURCE_DIR}/>output\\${CMAKE_VS_PLATFORM_NAME}\\$<CONFIG>"
+        COMMAND   $<CONFIG:Debug> copy "C:\\OpenCASCADE-7.4.0-vc14-64\\freetype-2.5.5-vc14-64\\bin\\*.dll" "$<SHELL_PATH:${CMAKE_SOURCE_DIR}/>output\\${CMAKE_VS_PLATFORM_NAME}\\$<CONFIG>"
         COMMAND $<CONFIG:Release> copy "C:\\OpenCASCADE-7.4.0-vc14-64\\opencascade-7.4.0\\win64\\vc14\\bin\\*.dll" "$<SHELL_PATH:${CMAKE_SOURCE_DIR}/>output\\${CMAKE_VS_PLATFORM_NAME}\\$<CONFIG>"
+        COMMAND $<CONFIG:Release> copy "C:\\OpenCASCADE-7.4.0-vc14-64\\ffmpeg-3.3.4-64\\bin\\*.dll" "$<SHELL_PATH:${CMAKE_SOURCE_DIR}/>output\\${CMAKE_VS_PLATFORM_NAME}\\$<CONFIG>"
+        COMMAND $<CONFIG:Release> copy "C:\\OpenCASCADE-7.4.0-vc14-64\\freeimage-3.17.0-vc14-64\\bin\\*.dll" "$<SHELL_PATH:${CMAKE_SOURCE_DIR}/>output\\${CMAKE_VS_PLATFORM_NAME}\\$<CONFIG>"
+        COMMAND $<CONFIG:Release> copy "C:\\OpenCASCADE-7.4.0-vc14-64\\tbb_2017.0.100\\bin\\intel64\\vc14\\*.dll" "$<SHELL_PATH:${CMAKE_SOURCE_DIR}/>output\\${CMAKE_VS_PLATFORM_NAME}\\$<CONFIG>"
+        COMMAND $<CONFIG:Release> copy "C:\\OpenCASCADE-7.4.0-vc14-64\\vtk-6.1.0-vc14-64\\bin\\*.dll" "$<SHELL_PATH:${CMAKE_SOURCE_DIR}/>output\\${CMAKE_VS_PLATFORM_NAME}\\$<CONFIG>"
+        COMMAND $<CONFIG:Release> copy "C:\\OpenCASCADE-7.4.0-vc14-64\\tcltk-86-64\\bin\\*.dll" "$<SHELL_PATH:${CMAKE_SOURCE_DIR}/>output\\${CMAKE_VS_PLATFORM_NAME}\\$<CONFIG>"
+        COMMAND $<CONFIG:Release> copy "C:\\OpenCASCADE-7.4.0-vc14-64\\qt5.11.2-vc14-64\\bin\\*.dll" "$<SHELL_PATH:${CMAKE_SOURCE_DIR}/>output\\${CMAKE_VS_PLATFORM_NAME}\\$<CONFIG>"
+        COMMAND $<CONFIG:Release> copy "C:\\OpenCASCADE-7.4.0-vc14-64\\freetype-2.5.5-vc14-64\\bin\\*.dll" "$<SHELL_PATH:${CMAKE_SOURCE_DIR}/>output\\${CMAKE_VS_PLATFORM_NAME}\\$<CONFIG>"
     )
 elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
     add_custom_command_if(
@@ -340,96 +410,121 @@ endif()
 ################################################################################
 if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Any CPU")
     set(ADDITIONAL_LIBRARY_DEPENDENCIES
-        "TKCAF;"
-        "TKLCAF;"
-        "TKOffset;"
-        "TKIGES;"
-        "TKPrim;"
-        "TKMesh;"
-        "TKXSBase;"
-        "TKBool;"
-        "TKBO;"
-        "TKShHealing;"
-        "TKG3d;"
-        "TKG2d;"
-        "TKGeomBase;"
-        "TKGeomAlgo;"
-        "TKTopAlgo;"
-        "TKernel;"
-        "TKMath;"
-        "uuid;"
+    "TKCAF;"
+    "TKLCAF;"
+    "TKOffset;"
+    "TKIGES;"
+    "TKPrim;"
+    "TKMesh;"
+    "TKXSBase;"
+    "TKBool;"
+    "TKBO;"
+    "TKShHealing;"
+    "TKG3d;"
+    "TKG2d;"
+    "TKGeomBase;"
+    "TKGeomAlgo;"
+    "TKTopAlgo;"
+    "TKernel;"
+    "TKMath;"
+    "uuid;"
     )
 elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
     set(ADDITIONAL_LIBRARY_DEPENDENCIES
-        "TKCAF;"
-        "TKLCAF;"
-        "TKOffset;"
-        "TKIGES;"
-        "TKPrim;"
-        "TKMesh;"
-        "TKXSBase;"
-        "TKBool;"
-        "TKBO;"
-        "TKShHealing;"
-        "TKG3d;"
-        "TKG2d;"
-        "TKGeomBase;"
-        "TKGeomAlgo;"
-        "TKTopAlgo;"
-        "TKernel;"
-        "TKMath;"
-        "uuid;"
+    "TKCAF;"
+    "TKLCAF;"
+    "TKOffset;"
+    "TKIGES;"
+    "TKPrim;"
+    "TKMesh;"
+    "TKXSBase;"
+    "TKBool;"
+    "TKBO;"
+    "TKShHealing;"
+    "TKG3d;"
+    "TKG2d;"
+    "TKGeomBase;"
+    "TKGeomAlgo;"
+    "TKTopAlgo;"
+    "TKernel;"
+    "TKMath;"
+    "uuid;"
     )
 elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
     set(ADDITIONAL_LIBRARY_DEPENDENCIES
-        "TKCAF;"
-        "TKLCAF;"
-        "TKOffset;"
-        "TKIGES;"
-        "TKPrim;"
-        "TKMesh;"
-        "TKXSBase;"
-        "TKBool;"
-        "TKBO;"
-        "TKShHealing;"
-        "TKG3d;"
-        "TKG2d;"
-        "TKGeomBase;"
-        "TKGeomAlgo;"
-        "TKTopAlgo;"
-        "TKernel;"
-        "TKMath;"
-        "uuid;"
+    "TKCAF;"
+    "TKLCAF;"
+    "TKOffset;"
+    "TKIGES;"
+    "TKPrim;"
+    "TKMesh;"
+    "TKXSBase;"
+    "TKBool;"
+    "TKBO;"
+    "TKShHealing;"
+    "TKG3d;"
+    "TKG2d;"
+    "TKGeomBase;"
+    "TKGeomAlgo;"
+    "TKTopAlgo;"
+    "TKernel;"
+    "TKMath;"
+    "uuid;"
     )
 endif()
+
+if (MSVC)
+    set (ADDITIONAL_LIBRARY_DEPENDENCIES "${ADDITIONAL_LIBRARY_DEPENDENCIES};TKBrep;TKStep;")
+endif()
+
 target_link_libraries(${PROJECT_NAME} PUBLIC "${ADDITIONAL_LIBRARY_DEPENDENCIES}")
+
+if(MSVC)
+    SET (CUSTOM_LIB_PATH "C:/OpenCASCADE-7.4.0-vc14-64/opencascade-7.4.0/win64/vc14/lib")
+ELSE()
+    SET (CUSTOM_LIB_PATH "/usr/lib64")
+ENDIF()
+
+MESSAGE (STATUS "Target: ${CMAKE_VS_PLATFORM_NAME}")
 
 if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Any CPU")
     target_link_directories(${PROJECT_NAME} PUBLIC
         "$<$<CONFIG:Debug>:"
-            "/usr/lib64"
+            "${CUSTOM_LIB_PATH}"
         ">"
         "$<$<CONFIG:Release>:"
-            "/usr/lib64"
+            "${CUSTOM_LIB_PATH}"
         ">"
     )
 elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
     target_link_directories(${PROJECT_NAME} PUBLIC
         "$<$<CONFIG:Debug>:"
-            "/usr/lib64"
+            "${CUSTOM_LIB_PATH}"
         ">"
         "$<$<CONFIG:Release>:"
-            "/usr/lib64"
+            "${CUSTOM_LIB_PATH}"
         ">"
     )
 elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
     target_link_directories(${PROJECT_NAME} PUBLIC
         "$<$<CONFIG:Debug>:"
-            "/usr/lib64"
+            "${CUSTOM_LIB_PATH}"
         ">"
         "$<$<CONFIG:Release>:"
-            "/usr/lib64"
+            "${CUSTOM_LIB_PATH}"
         ">"
     )
 endif()
+
+# CMake installation targets
+INSTALL(FILES ${TOPOLOGICCORE_H_FILES}
+        DESTINATION ${INCLUDEDIR}/${PROJECT_NAME}
+)
+INSTALL(FILES ${TOPOLOGICCORE_UTILITIES_H_FILES}
+        DESTINATION ${INCLUDEDIR}/${PROJECT_NAME}/Utilities
+)
+
+INSTALL(TARGETS ${PROJECT_NAME}
+        LIBRARY DESTINATION ${LIBDIR}
+)
 
