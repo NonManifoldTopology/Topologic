@@ -282,6 +282,7 @@ endif()
 # Compile and link options
 ################################################################################
 if(MSVC)
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Any CPU")
         target_compile_options(${PROJECT_NAME} PRIVATE
             $<$<CONFIG:Debug>:
