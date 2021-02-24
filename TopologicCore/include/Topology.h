@@ -645,9 +645,9 @@ namespace TopologicCore
 
 		Topology::Ptr DeepCopyAttributesFrom(const std::list<Topology::Ptr>& kpOriginTopologies);
 
-		void SetDictionary(const Dictionary& dictionary); 
+		TOPOLOGIC_API void SetDictionary(const Dictionary& dictionary);
 
-		Dictionary GetDictionary();
+		TOPOLOGIC_API Dictionary GetDictionary();
 
 	protected:
 		Topology(const int kDimensionality, const TopoDS_Shape& rkOcctShape, const std::string& rkGuid = "");

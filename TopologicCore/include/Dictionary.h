@@ -5,11 +5,12 @@
 #include <string>
 #include <memory>
 
+#include "Utilities.h"
 #include "Attribute.h"
 
 namespace TopologicCore
 {
-    class Dictionary :
+    class TOPOLOGIC_API Dictionary :
         public std::map <std::string, Attribute::Ptr>
     {
     public:
