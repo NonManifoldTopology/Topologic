@@ -259,6 +259,11 @@ function(source_file_compile_options SOURCE_FILE)
     set_source_files_properties("${SOURCE_FILE}" PROPERTIES COMPILE_OPTIONS "${COMPILE_OPTIONS}")
 endfunction()
 
+macro (set_xcode_property TARGET XCODE_PROPERTY XCODE_VALUE)
+set_property (TARGET ${TARGET} PROPERTY XCODE_ATTRIBUTE_${XCODE_PROPERTY}
+    ${XCODE_VALUE})
+endmacro (set_xcode_property)
+
 ################################################################################
 # Default properties of visual studio projects
 ################################################################################

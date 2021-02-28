@@ -212,7 +212,7 @@ endif()
 
 # Find opencascade
 IF("${OCC_INCLUDE_DIR}" STREQUAL "")
-        SET(OCC_INCLUDE_DIR "/usr/include/opencascade/" CACHE FILEPATH "Open CASCADE header files")
+        SET(OCC_INCLUDE_DIR "${INCLUDEDIR}/opencascade/" CACHE FILEPATH "Open CASCADE header files")
         MESSAGE(STATUS "Looking for Open CASCADE include files in: ${OCC_INCLUDE_DIR}")
         MESSAGE(STATUS "Use OCC_INCLUDE_DIR to specify another directory")
 ELSE()
@@ -231,7 +231,14 @@ ELSE()
         MESSAGE(STATUS "Header files found")
         link_directories("C:/OpenCASCADE-7.4.0-vc14-64/opencascade-7.4.0/win64/vc14/lib")
     ELSE()
-        MESSAGE(FATAL_ERROR "Unable to find header files, aborting. Set OCC_INCLUDE_DIR")
+        SET (OCC_INCLUDE_DIR "/usr/local/include/opencascade/")
+        MESSAGE(STATUS "Looking for Open CASCADE include files in: ${OCC_INCLUDE_DIR}")
+        FIND_FILE(gp_Pnt_hxx "gp_Pnt.hxx" ${OCC_INCLUDE_DIR})
+        IF(gp_Pnt_hxx)
+            MESSAGE(STATUS "Header files found")
+        ELSE()
+            MESSAGE(FATAL_ERROR "Unable to find header files, aborting. Set OCC_INCLUDE_DIR")
+        ENDIF()
     ENDIF()
 ENDIF()
 
@@ -281,6 +288,9 @@ endif()
 ################################################################################
 # Compile and link options
 ################################################################################
+
+set_xcode_property(${PROJECT_NAME}  CLANG_CXX_LANGUAGE_STANDARD "c++14")
+set_xcode_property(${PROJECT_NAME}  CLANG_CXX_LIBRARY "libc++")
 if(MSVC)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Any CPU")
@@ -432,7 +442,7 @@ if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Any CPU")
     )
 elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
     set(ADDITIONAL_LIBRARY_DEPENDENCIES
-    "TKCAF;"
+    #"TKCAF;"
     "TKLCAF;"
     "TKOffset;"
     "TKIGES;"
@@ -478,12 +488,17 @@ if (MSVC)
     set (ADDITIONAL_LIBRARY_DEPENDENCIES "${ADDITIONAL_LIBRARY_DEPENDENCIES};TKBrep;TKStep;")
 endif()
 
-target_link_libraries(${PROJECT_NAME} PUBLIC "${ADDITIONAL_LIBRARY_DEPENDENCIES}")
+find_library(TEST_LIB NAMES TKCAF)
+
+target_link_libraries(${PROJECT_NAME} PUBLIC "${TEST_LIB};${ADDITIONAL_LIBRARY_DEPENDENCIES}")
 
 if(MSVC)
     SET (CUSTOM_LIB_PATH "C:/OpenCASCADE-7.4.0-vc14-64/opencascade-7.4.0/win64/vc14/lib")
+ELSEIF (APPLE)
+    SET (CUSTOM_LIB_PATH "/usr/local/lib")
 ELSE()
     SET (CUSTOM_LIB_PATH "/usr/lib64")
+    
 ENDIF()
 
 MESSAGE (STATUS "Target: ${CMAKE_VS_PLATFORM_NAME}")
