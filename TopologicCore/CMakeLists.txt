@@ -532,6 +532,11 @@ elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
     )
 endif()
 
+find_library(TEST_LIB NAMES TKCAF)
+
+target_link_libraries(${PROJECT_NAME} PUBLIC "${TEST_LIB};${ADDITIONAL_LIBRARY_DEPENDENCIES}")
+
+
 # CMake installation targets
 INSTALL(FILES ${TOPOLOGICCORE_H_FILES}
         DESTINATION ${INCLUDEDIR}/${PROJECT_NAME}
