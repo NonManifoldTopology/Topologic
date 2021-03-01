@@ -2,7 +2,14 @@ cmake_minimum_required(VERSION 3.13.0 FATAL_ERROR)
 
 set(CMAKE_SYSTEM_VERSION 10.0.18362.0 CACHE STRING "" FORCE)
 
+# Fix behavior of CMAKE_CXX_STANDARD when targeting macOS.
+if (POLICY CMP0025)
+    cmake_policy(SET CMP0025 NEW)
+endif ()
+
 project(Topologic CXX)
+
+set (CMAKE_CXX_STANDARD 14)
 
 ################################################################################
 # Set target arch type if empty. Visual studio solution generator provides it.
