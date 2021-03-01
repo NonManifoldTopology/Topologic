@@ -212,7 +212,7 @@ endif()
 
 # Find opencascade
 IF("${OCC_INCLUDE_DIR}" STREQUAL "")
-        SET(OCC_INCLUDE_DIR "${INCLUDEDIR}/opencascade/" CACHE FILEPATH "Open CASCADE header files")
+        SET(OCC_INCLUDE_DIR "/usr/include/opencascade/" CACHE FILEPATH "Open CASCADE header files")
         MESSAGE(STATUS "Looking for Open CASCADE include files in: ${OCC_INCLUDE_DIR}")
         MESSAGE(STATUS "Use OCC_INCLUDE_DIR to specify another directory")
 ELSE()
