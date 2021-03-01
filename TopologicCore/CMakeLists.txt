@@ -442,7 +442,7 @@ if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "Any CPU")
     )
 elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
     set(ADDITIONAL_LIBRARY_DEPENDENCIES
-    #"TKCAF;"
+    "TKCAF;"
     "TKLCAF;"
     "TKOffset;"
     "TKIGES;"
@@ -484,7 +484,7 @@ elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
     )
 endif()
 
-if (MSVC)
+if (MSVC OR APPLE)
     set (ADDITIONAL_LIBRARY_DEPENDENCIES "${ADDITIONAL_LIBRARY_DEPENDENCIES};TKBrep;TKStep;")
 endif()
 
@@ -494,8 +494,6 @@ endif()
 
 if(MSVC)
     SET (CUSTOM_LIB_PATH "C:/OpenCASCADE-7.4.0-vc14-64/opencascade-7.4.0/win64/vc14/lib")
-ELSEIF (APPLE)
-    SET (CUSTOM_LIB_PATH "/usr/local/lib")
 ELSE()
     SET (CUSTOM_LIB_PATH "/usr/lib64")
     
@@ -532,9 +530,25 @@ elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
     )
 endif()
 
-find_library(TEST_LIB NAMES TKCAF)
+#find_library(TEST_LIB NAMES TKCAF)
 
-target_link_libraries(${PROJECT_NAME} PUBLIC "${TEST_LIB};${ADDITIONAL_LIBRARY_DEPENDENCIES}")
+
+IF (APPLE)
+    FOREACH (LIB ${ADDITIONAL_LIBRARY_DEPENDENCIES})
+        #set (FIND_LIB "")
+        find_library(FIND_LIB NAMES "${LIB}")
+        
+        
+        IF (NOT (${FIND_LIB} STREQUAL "FIND_LIB-NOTFOUND"))
+            target_link_libraries(${PROJECT_NAME} PUBLIC ${FIND_LIB})
+            MESSAGE (STATUS "${LIB}: ${FIND_LIB}")
+            #MESSAGE (STATUS "${LIB}: ${FIND_LIB}")
+        ENDIF()
+        unset (FIND_LIB CACHE)
+    ENDFOREACH()
+ELSE ()
+    target_link_libraries(${PROJECT_NAME} PUBLIC "${ADDITIONAL_LIBRARY_DEPENDENCIES}")
+ENDIF()
 
 
 # CMake installation targets
