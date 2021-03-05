@@ -202,6 +202,17 @@ namespace TopologicCore
             const std::list<int>& rkTypeFilters,
             const bool expectDuplicateTopologies = false);
 
+		TOPOLOGIC_API Topology::Ptr SetDictionaries(
+			const std::list<std::shared_ptr<Vertex>>& rkSelectors,
+			const std::list<Dictionary>& rkDictionaries,
+			const int kTypeFilter = TOPOLOGY_ALL);
+
+		Topology::Ptr SetDictionaries(
+			const std::list<std::shared_ptr<Vertex>>& rkSelectors,
+			const std::list<Dictionary>& rkDictionaries,
+			const std::list<int>& rkTypeFilters,
+			const bool expectDuplicateTopologies = false);
+
 		/// <summary>
 		/// 
 		/// </summary>

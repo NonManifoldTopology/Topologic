@@ -120,9 +120,9 @@ namespace TopologicCore
 						minDistance = distance;
 						occtClosestSubshape = rkCurrentChildShape;
 					}
-					else if (minDistance <= distance && 
-						     distance <= minDistance + Precision::Confusion() && 
-							 rkCurrentChildShape.ShapeType() > occtClosestSubshape.ShapeType()) // larger value = lower dimension
+					else if (minDistance <= distance &&
+						distance <= minDistance + Precision::Confusion() &&
+						rkCurrentChildShape.ShapeType() > occtClosestSubshape.ShapeType()) // larger value = lower dimension
 					{
 						TopAbs_ShapeEnum closestShapeType = occtClosestSubshape.ShapeType();
 						TopAbs_ShapeEnum currentShapeType = rkCurrentChildShape.ShapeType();
@@ -142,7 +142,7 @@ namespace TopologicCore
 		return Topology::ByOcctShape(occtClosestSubshape, "");
 	}
 
-	Topology::Ptr Topology::SelectSubtopology(const Vertex::Ptr & kpSelector, const int kTypeFilter) const
+	Topology::Ptr Topology::SelectSubtopology(const Vertex::Ptr& kpSelector, const int kTypeFilter) const
 	{
 		TopoDS_Shape occtClosestSubshape;
 		double minDistance = std::numeric_limits<double>::max();
@@ -158,7 +158,7 @@ namespace TopologicCore
 			{
 				continue;
 			}
-			
+
 			TopAbs_ShapeEnum occtShapeType = occtShapeTypes[i];
 			TopTools_MapOfShape occtCells;
 			for (TopExp_Explorer occtExplorer(kOcctThisShape, occtShapeType); occtExplorer.More(); occtExplorer.Next())
@@ -194,21 +194,21 @@ namespace TopologicCore
 		return Topology::ByOcctShape(occtClosestSubshape, "");
 	}
 
-	TopoDS_Shape Topology::SelectSubtopology(const TopoDS_Shape & rkOcctShape, const TopoDS_Shape& rkOcctSelectorShape, const int kTypeFilter, const double kDistanceThreshold)
+	TopoDS_Shape Topology::SelectSubtopology(const TopoDS_Shape& rkOcctShape, const TopoDS_Shape& rkOcctSelectorShape, const int kTypeFilter, const double kDistanceThreshold)
 	{
 		double minDistance = 0.0;
 		return SelectSubtopology(rkOcctShape, rkOcctSelectorShape, minDistance, kTypeFilter, kDistanceThreshold);
 	}
 
-	TopoDS_Shape Topology::SelectSubtopology(const TopoDS_Shape & rkOcctShape, const TopoDS_Shape& rkOcctSelectorShape, double& rMinDistance, const int kTypeFilter, const double kDistanceThreshold)
+	TopoDS_Shape Topology::SelectSubtopology(const TopoDS_Shape& rkOcctShape, const TopoDS_Shape& rkOcctSelectorShape, double& rMinDistance, const int kTypeFilter, const double kDistanceThreshold)
 	{
 		TopoDS_Shape occtClosestSubshape;
 		Vertex::Ptr pSelector = TopologicalQuery::Downcast<Vertex>(Topology::ByOcctShape(rkOcctSelectorShape));
 		rMinDistance = std::numeric_limits<double>::max();
-		for (int i = 0; i < (int) TopAbs_SHAPE; ++i)
+		for (int i = 0; i < (int)TopAbs_SHAPE; ++i)
 		{
 			TopAbs_ShapeEnum occtShapeType = (TopAbs_ShapeEnum)i;
-			int shapeType = (int) GetTopologyType(occtShapeType);
+			int shapeType = (int)GetTopologyType(occtShapeType);
 			if ((shapeType & kTypeFilter) == 0)
 			{
 				continue;
@@ -253,7 +253,7 @@ namespace TopologicCore
 		}
 	}
 
-	TopoDS_Vertex Topology::CenterOfMass(const TopoDS_Shape & rkOcctShape)
+	TopoDS_Vertex Topology::CenterOfMass(const TopoDS_Shape& rkOcctShape)
 	{
 		switch (rkOcctShape.ShapeType())
 		{
@@ -270,7 +270,7 @@ namespace TopologicCore
 		}
 	}
 
-	TopologyType Topology::GetTopologyType(const TopAbs_ShapeEnum & rkOcctType)
+	TopologyType Topology::GetTopologyType(const TopAbs_ShapeEnum& rkOcctType)
 	{
 		switch (rkOcctType)
 		{
@@ -287,7 +287,7 @@ namespace TopologicCore
 		}
 	}
 
-	TopAbs_ShapeEnum Topology::GetOcctTopologyType(const TopologyType & rkType)
+	TopAbs_ShapeEnum Topology::GetOcctTopologyType(const TopologyType& rkType)
 	{
 		switch (rkType)
 		{
@@ -312,14 +312,14 @@ namespace TopologicCore
 		m_numOfTopologies++;
 	}
 
-	TopoDS_Shape Topology::FixShape(const TopoDS_Shape & rkOcctShape)
+	TopoDS_Shape Topology::FixShape(const TopoDS_Shape& rkOcctShape)
 	{
 		ShapeFix_Shape occtShapeFix(rkOcctShape);
 		occtShapeFix.Perform();
 		return occtShapeFix.Shape();
 	}
 
-	void Topology::RegisterFactory(const std::string & rkGuid, const TopologyFactory::Ptr & kpTopologyFactory)
+	void Topology::RegisterFactory(const std::string& rkGuid, const TopologyFactory::Ptr& kpTopologyFactory)
 	{
 		TopologyFactoryManager::GetInstance().Add(rkGuid, kpTopologyFactory);
 	}
@@ -522,7 +522,7 @@ namespace TopologicCore
 		return pTopology;
 	}
 
-	void Topology::AddContent(const Topology::Ptr & rkTopology)
+	void Topology::AddContent(const Topology::Ptr& rkTopology)
 	{
 		bool hasContent = ContentManager::GetInstance().HasContent(GetOcctShape(), rkTopology->GetOcctShape());
 		if (hasContent)
@@ -575,8 +575,8 @@ namespace TopologicCore
 			else
 			{
 				Vertex::Ptr pCenterOfMass = kpContentTopology->CenterOfMass();
-                if ((kTypeFilter & Cell::Type()) != 0)
-                {
+				if ((kTypeFilter & Cell::Type()) != 0)
+				{
 					// Iterate over all Cells of the original Topology. If any Cell contains this content,
 					// continue
 					bool hasContent = false;
@@ -596,7 +596,7 @@ namespace TopologicCore
 							}
 						}
 
-						if(hasContent)
+						if (hasContent)
 						{
 							break;
 						}
@@ -607,48 +607,48 @@ namespace TopologicCore
 						continue;
 					}
 
-                    // Select the closest Face from the copy Topology
-                    Face::Ptr face = TopologicalQuery::Downcast<Face>(
-                        pCopyTopology->SelectSubtopology(pCenterOfMass, Face::Type()));
+					// Select the closest Face from the copy Topology
+					Face::Ptr face = TopologicalQuery::Downcast<Face>(
+						pCopyTopology->SelectSubtopology(pCenterOfMass, Face::Type()));
 
-                    std::list<Cell::Ptr> adjacentCells;
-                    TopologicUtilities::FaceUtility::AdjacentCells(face, pCopyTopology, adjacentCells);
+					std::list<Cell::Ptr> adjacentCells;
+					TopologicUtilities::FaceUtility::AdjacentCells(face, pCopyTopology, adjacentCells);
 
-                    for (const Cell::Ptr& kpCell : adjacentCells)
-                    {
-                        //ShapeFix_Solid occtShapeFixSolid(kpCell->GetOcctSolid());
-                        //occtShapeFixSolid.Perform();
-                        BRepClass3d_SolidClassifier occtSolidClassifier(kpCell->GetOcctSolid(), pCenterOfMass->Point()->Pnt(), 0.1);
-                        TopAbs_State occtState = occtSolidClassifier.State();
+					for (const Cell::Ptr& kpCell : adjacentCells)
+					{
+						//ShapeFix_Solid occtShapeFixSolid(kpCell->GetOcctSolid());
+						//occtShapeFixSolid.Perform();
+						BRepClass3d_SolidClassifier occtSolidClassifier(kpCell->GetOcctSolid(), pCenterOfMass->Point()->Pnt(), 0.1);
+						TopAbs_State occtState = occtSolidClassifier.State();
 
-                        if (occtState == TopAbs_IN || occtState == TopAbs_ON)
-                        {
-                            selectedSubtopology = kpCell;
-                            break;
-                        }
-                    }
+						if (occtState == TopAbs_IN || occtState == TopAbs_ON)
+						{
+							selectedSubtopology = kpCell;
+							break;
+						}
+					}
 
-                    // If selectedSubtopology is still null, try with the rest of the Cells.
-                    if (selectedSubtopology == nullptr)
-                    {
-                        std::list<Cell::Ptr> cells;
-                        //face->Cells(adjacentCells);
+					// If selectedSubtopology is still null, try with the rest of the Cells.
+					if (selectedSubtopology == nullptr)
+					{
+						std::list<Cell::Ptr> cells;
+						//face->Cells(adjacentCells);
 						pCopyTopology->Cells(cells);
 
-                        for (const Cell::Ptr& kpCell : cells)
-                        {
-                            //ShapeFix_Solid occtShapeFixSolid(kpCell->GetOcctSolid());
-                            //occtShapeFixSolid.Perform();
-                            BRepClass3d_SolidClassifier occtSolidClassifier(kpCell->GetOcctSolid(), pCenterOfMass->Point()->Pnt(), 0.1);
-                            TopAbs_State occtState = occtSolidClassifier.State();
+						for (const Cell::Ptr& kpCell : cells)
+						{
+							//ShapeFix_Solid occtShapeFixSolid(kpCell->GetOcctSolid());
+							//occtShapeFixSolid.Perform();
+							BRepClass3d_SolidClassifier occtSolidClassifier(kpCell->GetOcctSolid(), pCenterOfMass->Point()->Pnt(), 0.1);
+							TopAbs_State occtState = occtSolidClassifier.State();
 
-                            if (occtState == TopAbs_IN)
-                            {
-                                selectedSubtopology = kpCell;
-                                break;
-                            }
-                        }
-                    }
+							if (occtState == TopAbs_IN)
+							{
+								selectedSubtopology = kpCell;
+								break;
+							}
+						}
+					}
 				}
 				else
 				{
@@ -719,7 +719,7 @@ namespace TopologicCore
 	{
 		std::list<Topology::Ptr> contents;
 		Contents(contents);
-		
+
 		std::list<Topology::Ptr> addedContents;
 		for (const Topology::Ptr& kpContent : contents)
 		{
@@ -828,13 +828,13 @@ namespace TopologicCore
 		return copyTopology;
 	}
 
-	void Topology::SharedTopologies(const Topology::Ptr & kpTopology, const int kFilterType, std::list<Topology::Ptr>& rSharedTopologies) const
+	void Topology::SharedTopologies(const Topology::Ptr& kpTopology, const int kFilterType, std::list<Topology::Ptr>& rSharedTopologies) const
 	{
 		const TopoDS_Shape& rkOcctShape1 = GetOcctShape();
 		const TopoDS_Shape& rkOcctShape2 = kpTopology->GetOcctShape();
 
 		// Bitwise shift
-		for(int i = 0; i < 9; ++i)
+		for (int i = 0; i < 9; ++i)
 		{
 			int intTopologyType = 1 << i;
 
@@ -868,136 +868,161 @@ namespace TopologicCore
 	}
 
 	Topology::Ptr Topology::SetDictionaries(
-		const std::list<Vertex::Ptr>& rkSelectors, 
+		const std::list<Vertex::Ptr>& rkSelectors,
 		const std::list<std::map<std::string, Attribute::Ptr>>& rkDictionaries,
 		const int kTypeFilter)
 	{
-        int selectorSize = (int)rkSelectors.size();
-        std::list<int> typeFilters(selectorSize, kTypeFilter);
+		int selectorSize = (int)rkSelectors.size();
+		std::list<int> typeFilters(selectorSize, kTypeFilter);
 		return SetDictionaries(rkSelectors, rkDictionaries, typeFilters);
 	}
 
-    Topology::Ptr Topology::SetDictionaries(
-        const std::list<Vertex::Ptr>& rkSelectors,
-        const std::list<std::map<std::string, Attribute::Ptr>>& rkDictionaries,
-        const std::list<int>& rkTypeFilters, const bool expectDuplicateTopologies)
-    {
-        if (rkSelectors.size() != rkDictionaries.size())
-        {
-            throw std::runtime_error("The lists of selectors and dictionaries do not have the same length.");
-        }
+	Topology::Ptr Topology::SetDictionaries(
+		const std::list<Vertex::Ptr>& rkSelectors,
+		const std::list<std::map<std::string, Attribute::Ptr>>& rkDictionaries,
+		const std::list<int>& rkTypeFilters, const bool expectDuplicateTopologies)
+	{
+		if (rkSelectors.size() != rkDictionaries.size())
+		{
+			throw std::runtime_error("The lists of selectors and dictionaries do not have the same length.");
+		}
 
-        if (rkSelectors.size() != rkTypeFilters.size())
-        {
-            throw std::runtime_error("The lists of selectors and type filters do not have the same length.");
-        }
+		if (rkSelectors.size() != rkTypeFilters.size())
+		{
+			throw std::runtime_error("The lists of selectors and type filters do not have the same length.");
+		}
 
-        Topology::Ptr pCopyTopology = std::dynamic_pointer_cast<Topology>(DeepCopy());
-        std::string contextInstanceGUID;
+		Topology::Ptr pCopyTopology = std::dynamic_pointer_cast<Topology>(DeepCopy());
+		std::string contextInstanceGUID;
 
-        std::list<Topology::Ptr> selectedSubtopologies;
-        std::list<Vertex::Ptr>::const_iterator kSelectorIterator = rkSelectors.begin();
-        std::list<int>::const_iterator kTypeFilterIterator = rkTypeFilters.begin();
-        for(; kSelectorIterator != rkSelectors.end() && kTypeFilterIterator != rkTypeFilters.end();
-            kSelectorIterator++, kTypeFilterIterator++)
-        {
-            const Vertex::Ptr& kpSelector  = *kSelectorIterator;
-            const int kTypeFilter = *kTypeFilterIterator;
-            if (kTypeFilter == 0)
-            {
-                throw std::runtime_error("No type filter specified.");
-            }
+		std::list<Topology::Ptr> selectedSubtopologies;
+		std::list<Vertex::Ptr>::const_iterator kSelectorIterator = rkSelectors.begin();
+		std::list<int>::const_iterator kTypeFilterIterator = rkTypeFilters.begin();
+		for (; kSelectorIterator != rkSelectors.end() && kTypeFilterIterator != rkTypeFilters.end();
+			kSelectorIterator++, kTypeFilterIterator++)
+		{
+			const Vertex::Ptr& kpSelector = *kSelectorIterator;
+			const int kTypeFilter = *kTypeFilterIterator;
+			if (kTypeFilter == 0)
+			{
+				throw std::runtime_error("No type filter specified.");
+			}
 
-            Topology::Ptr selectedSubtopology = nullptr;
-            if ((kTypeFilter & Cell::Type()) != 0)
-            {
-                Topology::Ptr closestFaceAsTopology = pCopyTopology->SelectSubtopology(kpSelector, Face::Type());
-                // Select the closest Face. Note: if there is no Face, there is no Cell.
-                Face::Ptr closestFace = nullptr;
-                try {
-                    closestFace = TopologicalQuery::Downcast<Face>(closestFaceAsTopology);
-                }
-                catch (const std::runtime_error&)
-                {
+			Topology::Ptr selectedSubtopology = nullptr;
+			if ((kTypeFilter & Cell::Type()) != 0)
+			{
+				Topology::Ptr closestFaceAsTopology = pCopyTopology->SelectSubtopology(kpSelector, Face::Type());
+				// Select the closest Face. Note: if there is no Face, there is no Cell.
+				Face::Ptr closestFace = nullptr;
+				try {
+					closestFace = TopologicalQuery::Downcast<Face>(closestFaceAsTopology);
+				}
+				catch (const std::runtime_error&)
+				{
 
-                }
+				}
 
-                // Only continue if there is a closestFace.
-                if (closestFace != nullptr)
-                {
-                    std::list<Cell::Ptr> adjacentCells;
-                    TopologicUtilities::FaceUtility::AdjacentCells(closestFace, pCopyTopology, adjacentCells);
+				// Only continue if there is a closestFace.
+				if (closestFace != nullptr)
+				{
+					std::list<Cell::Ptr> adjacentCells;
+					TopologicUtilities::FaceUtility::AdjacentCells(closestFace, pCopyTopology, adjacentCells);
 
-                    for (const Cell::Ptr& kpCell : adjacentCells)
-                    {
-                        BRepClass3d_SolidClassifier occtSolidClassifier(kpCell->GetOcctSolid(), kpSelector->Point()->Pnt(), 0.1);
-                        TopAbs_State occtState = occtSolidClassifier.State();
+					for (const Cell::Ptr& kpCell : adjacentCells)
+					{
+						BRepClass3d_SolidClassifier occtSolidClassifier(kpCell->GetOcctSolid(), kpSelector->Point()->Pnt(), 0.1);
+						TopAbs_State occtState = occtSolidClassifier.State();
 
-                        if (occtState == TopAbs_IN)
-                        {
-                            selectedSubtopology = kpCell;
-                            break;
-                        }
-                    }
+						if (occtState == TopAbs_IN)
+						{
+							selectedSubtopology = kpCell;
+							break;
+						}
+					}
 
-                    // If selectedSubtopology is still null, try with the rest of the Cells.
-                    if (selectedSubtopology == nullptr)
-                    {
-                        std::list<Cell::Ptr> cells;
-                        pCopyTopology->Cells(cells);
+					// If selectedSubtopology is still null, try with the rest of the Cells.
+					if (selectedSubtopology == nullptr)
+					{
+						std::list<Cell::Ptr> cells;
+						pCopyTopology->Cells(cells);
 
-                        for (const Cell::Ptr& kpCell : cells)
-                        {
-                            BRepClass3d_SolidClassifier occtSolidClassifier(kpCell->GetOcctSolid(), kpSelector->Point()->Pnt(), 0.1);
-                            TopAbs_State occtState = occtSolidClassifier.State();
+						for (const Cell::Ptr& kpCell : cells)
+						{
+							BRepClass3d_SolidClassifier occtSolidClassifier(kpCell->GetOcctSolid(), kpSelector->Point()->Pnt(), 0.1);
+							TopAbs_State occtState = occtSolidClassifier.State();
 
-                            if (occtState == TopAbs_IN)
-                            {
-                                selectedSubtopology = kpCell;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                selectedSubtopology = pCopyTopology->SelectSubtopology(kpSelector, kTypeFilter);
-            }
+							if (occtState == TopAbs_IN)
+							{
+								selectedSubtopology = kpCell;
+								break;
+							}
+						}
+					}
+				}
+			}
+			else
+			{
+				selectedSubtopology = pCopyTopology->SelectSubtopology(kpSelector, kTypeFilter);
+			}
 
-            if (selectedSubtopology != nullptr && !expectDuplicateTopologies)
-            {
-                for (const Topology::Ptr& kpSelectedSubtopology : selectedSubtopologies)
-                {
-                    if (kpSelectedSubtopology != nullptr && kpSelectedSubtopology->IsSame(selectedSubtopology))
-                    {
-                        throw std::runtime_error("Another selector has selected the same member of the input Topology.");
-                    }
-                }
-            }
+			if (selectedSubtopology != nullptr && !expectDuplicateTopologies)
+			{
+				for (const Topology::Ptr& kpSelectedSubtopology : selectedSubtopologies)
+				{
+					if (kpSelectedSubtopology != nullptr && kpSelectedSubtopology->IsSame(selectedSubtopology))
+					{
+						throw std::runtime_error("Another selector has selected the same member of the input Topology.");
+					}
+				}
+			}
 
-            selectedSubtopologies.push_back(selectedSubtopology);
-        }
+			selectedSubtopologies.push_back(selectedSubtopology);
+		}
 
-        auto rkDictionaryIterator = rkDictionaries.begin();
-        for (const Topology::Ptr& kpSelectedSubtopology : selectedSubtopologies)
-        {
-            if (kpSelectedSubtopology != nullptr)
-            {
-                AttributeManager::GetInstance().ClearOne(kpSelectedSubtopology->GetOcctShape());
-                for (const auto kpAttributePair : *rkDictionaryIterator)
-                {
-                    AttributeManager::GetInstance().Add(kpSelectedSubtopology->GetOcctShape(), kpAttributePair.first, kpAttributePair.second);
-                }
-            }
+		auto rkDictionaryIterator = rkDictionaries.begin();
+		for (const Topology::Ptr& kpSelectedSubtopology : selectedSubtopologies)
+		{
+			if (kpSelectedSubtopology != nullptr)
+			{
+				AttributeManager::GetInstance().ClearOne(kpSelectedSubtopology->GetOcctShape());
+				for (const auto kpAttributePair : *rkDictionaryIterator)
+				{
+					AttributeManager::GetInstance().Add(kpSelectedSubtopology->GetOcctShape(), kpAttributePair.first, kpAttributePair.second);
+				}
+			}
 
-            rkDictionaryIterator++;
-        }
+			rkDictionaryIterator++;
+		}
 
-        GlobalCluster::GetInstance().AddTopology(pCopyTopology->GetOcctShape());
+		GlobalCluster::GetInstance().AddTopology(pCopyTopology->GetOcctShape());
 
-        return pCopyTopology;
-    }
+		return pCopyTopology;
+	}
+
+	TOPOLOGIC_API Topology::Ptr Topology::SetDictionaries(
+		const std::list<std::shared_ptr<Vertex>>& rkSelectors,
+		const std::list<Dictionary>& rkDictionaries,
+		const int kTypeFilter = TOPOLOGY_ALL)
+	{
+		std::list<std::map<std::string, Attribute::Ptr>> newRkDictionaries;
+		for (auto i : rkDictionaries)
+			newRkDictionaries.push_back(i);
+
+		return SetDictionaries(rkSelectors, newRkDictionaries, kTypeFilter);
+	}
+
+	Topology::Ptr Topology::SetDictionaries(
+		const std::list<std::shared_ptr<Vertex>>& rkSelectors,
+		const std::list<Dictionary>& rkDictionaries,
+		const std::list<int>& rkTypeFilters,
+		const bool expectDuplicateTopologies = false)
+	{
+		std::list<std::map<std::string, Attribute::Ptr>> newRkDictionaries;
+		for (auto i : rkDictionaries)
+			newRkDictionaries.push_back(i);
+
+		return SetDictionaries(rkSelectors, newRkDictionaries, rkTypeFilters, expectDuplicateTopologies);
+	}
 
 	TopoDS_Shape Topology::OcctSewFaces(const TopTools_ListOfShape & rkOcctFaces, const double kTolerance)
 	{
