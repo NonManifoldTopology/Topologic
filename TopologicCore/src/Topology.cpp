@@ -1002,7 +1002,7 @@ namespace TopologicCore
 	TOPOLOGIC_API Topology::Ptr Topology::SetDictionaries(
 		const std::list<std::shared_ptr<Vertex>>& rkSelectors,
 		const std::list<Dictionary>& rkDictionaries,
-		const int kTypeFilter = TOPOLOGY_ALL)
+		const int kTypeFilter)
 	{
 		std::list<std::map<std::string, Attribute::Ptr>> newRkDictionaries;
 		for (auto i : rkDictionaries)
@@ -1015,7 +1015,7 @@ namespace TopologicCore
 		const std::list<std::shared_ptr<Vertex>>& rkSelectors,
 		const std::list<Dictionary>& rkDictionaries,
 		const std::list<int>& rkTypeFilters,
-		const bool expectDuplicateTopologies = false)
+		const bool expectDuplicateTopologies)
 	{
 		std::list<std::map<std::string, Attribute::Ptr>> newRkDictionaries;
 		for (auto i : rkDictionaries)
